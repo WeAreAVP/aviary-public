@@ -16,7 +16,6 @@ class Organization < ApplicationRecord
   validates :logo_image, attachment_presence: true
   validates :banner_image, attachment_presence: true
   validate :validate_url
-  validate :custom_domain_valid
   enum banner_type: %i[banner_image featured_resources_slider]
   enum banner_title_type: %i[banner_title_image banner_title_text]
   # playlists
@@ -34,18 +33,6 @@ class Organization < ApplicationRecord
   before_create :create_bucket
   after_save :update_solr, :update_resource_column_fields, :update_resource_search_column_fields, :update_resource_files_fields
 
-  def custom_domain_valid
-    begin
-      if ENV['RAILS_ENV'] == 'production' && !custom_domain.blank? && custom_domain.match(/(?=^.{4,253}$)(^((?!-)[a-zA-Z0-9-]{1,63}(?<!-)\.)+[a-zA-Z]{2,63}$)/).blank?
-        errors.add(:custom_domain, 'Provided custom domain is invalid.')
-        return false
-      end
-    rescue StandardError => ex
-      puts ex
-      return false
-    end
-    true
-  end
   searchable do
     integer :id, stored: true
     integer :organization_organization_id, stored: false do
