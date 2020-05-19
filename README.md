@@ -1,7 +1,7 @@
 aviary 
 ------------------------------------------------------------------------------
 [![Build Status](https://travis-ci.com/WeAreAVP/aviary-public.svg?branch=master)](https://travis-ci.com/WeAreAVP/aviary-public)
-
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/4c72e65fb35047cdae145e68f6290f45)](https://www.codacy.com/gh/WeAreAVP/aviary-public?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=WeAreAVP/aviary-public&amp;utm_campaign=Badge_Grade)
 
 Description
 ===
