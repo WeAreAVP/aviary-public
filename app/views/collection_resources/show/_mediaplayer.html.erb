@@ -14,7 +14,6 @@
       <div class="video-placeholder">
         <div class="video-hold">
           <video width='100%' height='360' id="player" poster="<%= presenter.embed_type == 0 ? presenter.thumbnail.url : '' %>">
-            <%== presenter.trancode_source %>
             <source src="<%= presenter.embed_code %>" type="video/mp4" data-quality=' Original '>
             <%== presenter.tracks %>
           </video>

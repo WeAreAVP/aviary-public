@@ -1,6 +1,6 @@
 aviary 
 ------------------------------------------------------------------------------
-[![Build Status](https://travis-ci.com/WeAreAVP/aviary.svg?token=u4u7PWMQM2UCpq17ndGR&branch=master)](https://travis-ci.com/WeAreAVP/aviary)
+[![Build Status](https://travis-ci.com/WeAreAVP/aviary-public.svg?token=u4u7PWMQM2UCpq17ndGR&branch=master)](https://travis-ci.com/WeAreAVP/aviary)
 
 
 Description

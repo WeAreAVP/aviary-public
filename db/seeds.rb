@@ -730,4 +730,4 @@ subscription.renewal_date = end_time
 subscription.current_price = 0.0
 subscription.status = :active
 subscription.save(validate: false)
-binding.pry
+
