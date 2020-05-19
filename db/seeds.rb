@@ -711,6 +711,8 @@ organization.user = user
 organization.name = 'Public'
 organization.storage_type = :free_storage
 organization.bucket_name = 'aviary-p_public'
+organization.logo_image = open("#{Rails.root}/public/aviary_default_logo.png")
+organization.banner_image = open("#{Rails.root}/public/aviary_default_banner.png")
 organization.save(validate: false)
 
 org_user = user.organization_users.where(organization_id: organization.id, role_id: Role.role_organization_owner.id).first_or_initialize
