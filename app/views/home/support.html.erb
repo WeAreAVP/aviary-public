@@ -1,0 +1,58 @@
+<div class="support-page">
+  <div class="head">
+    <div class="container">
+      <h1>Aviary <%= title 'Support' %></h1>
+      <p><%= description 'The Aviary documentation can help you find answers about specific features, collection and resource management,
+        user levels, permissions, imports, exports and much more!' %></p>
+      <a href="https://confluence.weareavp.com/display/AVIARYSUPP/Aviary+Documentation" target="_blank" class="btn btn-primary">Aviary
+        User Guide</a>
+
+    </div>
+  </div>
+  <div class="text">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-4">
+          <div class="holder">
+            <h2>Still have questions? Get in touch!</h2>
+            <p>Please fill out the form or use
+              <a href="https://groups.google.com/d/forum/aviary-users" target="_blank">the Aviary Google group</a>. An
+              Aviary team member will get back to you shortly.</p>
+            <div class="img-holder">
+              <img src="https://<%= ENV['S3_HOST_CDN'] %>/public/support.png" alt="">
+            </div>
+
+          </div>
+        </div>
+        <div class="col-md-8">
+          <div class="form">
+            <%= simple_form_for @support_request, url: submit_request_path do |form| %>
+              <%= form.input :request_type, as: :hidden, input_html: { value: :support } %>
+              <div class="form-group">
+                <%= form.label :name, 'Name' %>
+                <%= form.text_field :name, class: 'form-control', placeholder: 'Enter your name' %>
+                <%= form.error :name %>
+              </div>
+              <div class="form-group">
+                <%= form.label :organization, 'Organization' %>
+                <%= form.text_field :organization, class: 'form-control', placeholder: 'Enter name of the Organization' %>
+                <%= form.error :organization %>
+              </div>
+              <div class="form-group">
+                <%= form.label :email, 'Email' %>
+                <%= form.text_field :email, class: 'form-control', placeholder: 'Enter your email' %>
+                <%= form.error :email %>
+              </div>
+              <div class="form-group">
+                <%= form.label :message, 'Message' %>
+                <%= form.text_area :message, class: 'form-control', placeholder: 'Enter your message here' %>
+                <%= form.error :message %>
+              </div>
+              <%= form.submit 'Submit', class: 'btn btn-primary ' %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

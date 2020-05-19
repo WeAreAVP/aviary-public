@@ -1,0 +1,79 @@
+<div class="form-signin">
+  <div class="">Sign up for Aviary! Experience a new way of accessing, browsing and displaying AV collections
+    as a user or member of an organization. You must register first as an individual to create an organization account.
+  </div>
+  <br/>
+  <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: {id: 'sign_up_user_form', class: 'row'}) do |f| %>
+    <%= f.hidden_field :first_url, value: request.url %>
+    <div class="col-md-6">
+      <%= f.label :first_name, class: 'sr-only' %>
+      <%= f.text_field :first_name, autocomplete: 'first_name', required: true, class: 'form-control', placeholder: 'First Name' %>
+    </div>
+    <div class="col-md-6">
+      <%= f.label :last_name, class: 'sr-only' %>
+      <%= f.text_field :last_name, autocomplete: 'last_name', required: true, class: 'form-control', placeholder: 'Last Name' %>
+    </div>
+    <div class="col-md-12">
+      <%= f.label :email, class: 'sr-only' %>
+      <%= f.email_field :email, autofocus: true, required: true, class: 'form-control', placeholder: 'Email Address' %>
+    </div>
+    <div class="col-md-6">
+      <%= f.label :password, class: 'sr-only' %>
+      <%= f.password_field :password, autocomplete: 'off', required: true, class: 'form-control', placeholder: 'Password' %>
+    </div>
+    <div class="col-md-6">
+      <%= f.label :password_confirmation, class: 'sr-only' %>
+      <%= f.password_field :password_confirmation, autocomplete: 'off', required: true, class: 'form-control', placeholder: 'Password Confirmation' %>
+    </div>
+    <div>
+      <div class="row" id="pswd_info">
+        <div class="col-md-6">
+          <h4>Password must contain:</h4>
+          <ul class="list-unstyled">
+            <li id="capital" class="invalid-signup">At least <strong> 1 uppercase letter</strong></li>
+            <li id="lower" class="invalid-signup">At least <strong> 1 lowercase letter</strong></li>
+            <li id="number" class="invalid-signup">At least <strong> one number</strong></li>
+            <li id="length" class="invalid-signup">At least <strong> 8 characters</strong></li>
+            <li id="special_character" class="invalid-signup">At least <strong> 1 special character (.@$!%*?&amp;)</strong></li>
+            <li id="can_only_have_special_character" class="invalid-signup">Can only have <strong> special character (.@$!%*?&amp;)</strong></li>
+          </ul>
+        </div>
+        <div class="col-md-6">
+          <h4>Password must match:</h4>
+          <ul class="list-unstyled">
+            <li id="password_match" class="invalid-signup"><strong> Password and Password Confirmation must match</strong></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div style="display: none !important;">
+      <%= f.label :username, class: 'sr-only' %>
+      <%= f.text_field :username, autocomplete: 'username', required: false, class: 'form-control', placeholder: 'Username' %>
+    </div>
+
+    <div style="display: none !important;">
+      <%= f.label :preferred_language, class: 'sr-only' %>
+      <%= f.select :preferred_language, iso_639_1_languages, {prompt: 'Preferred language'}, required: false, label: false, class: 'custom-placeholder' %>
+    </div>
+    <div class="checkbox ml-4  mb-3">
+      <%= f.check_box :agreement, required: true, class: 'form-check-input' %>
+      <label for="user_agreement" style="margin-left: 3px;margin-top:3px;">I agree to the
+        <a href="<%= terms_of_service_path %>" target="_blank">Terms of Service</a></label>
+    </div>
+    <br>
+    <%= f.submit 'Register', class: 'btn btn-lg btn-primary btn-block submit-registration-form' %>
+  <% end %>
+  <div class="d-block text-center w-100">
+    <div class="mt-2">Have an account?
+      <a href="" type="submit" data-toggle="modal" data-target="#signinmodal" data-dismiss="modal">Sign In</a>
+    </div>
+  </div>
+
+</div>
+<script>
+    var app_helper = new App();
+    userObj = new UserRegister(app_helper);
+    $(function () {
+        userObj.initialize();
+    });
+</script>

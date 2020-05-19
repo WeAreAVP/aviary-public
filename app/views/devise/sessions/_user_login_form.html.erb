@@ -1,0 +1,26 @@
+<div class="form-signin">
+  <%= form_for resource, as: resource_name, url: session_path(resource_name), validate: true  do |f| %>
+    <%= f.label :email  %>
+    <%= f.email_field :email, autofocus: true, required: true, class:'form-control', placeholder:'Email Address' %>
+
+    <%= f.label :password  %>
+    <%= f.password_field :password, autocomplete: 'off', class:'form-control', placeholder:'Password' %>
+
+    <div class="row">
+      <div class="col-5 ml-4">
+        <div class="checkbox mb-3">
+          <%= f.check_box :remember_me, class: 'form-check-input' %>
+          <%= f.label :remember_me %>
+        </div>
+      </div>
+
+      <div class="col-6 text-right">
+        <a href="#" type="submit" data-toggle="modal" data-target="#forgot_password_modal"  data-dismiss="modal"  class="forgot ml-3">Forgot Password</a>
+      </div>
+    </div>
+    <%= f.submit 'Sign in', class:'btn btn-lg btn-primary btn-block checking' %>
+  <% end %>
+  <div class="mt-1">Don't have an account?
+    <a href="javascript://" class="sign_up_link">Join now!</a>
+  </div>
+</div>

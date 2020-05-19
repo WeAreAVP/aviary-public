@@ -1,0 +1,20 @@
+<!--overridden this template to Aviary theme instead of blacklight-->
+<% if show_sort_and_per_page? and has_alternative_views? -%>
+  <div class="view-type">
+    <style>
+      .filter-holder ul li a.active {
+        color: #879999 !important;
+      }
+    </style>
+    <div class="filter-holder">
+      <ul>
+        <% document_index_view_controls.each do |view, _config| %>
+          <li>
+            <a href="<%= url_for(search_state.to_h.merge(view: view)) %>" class="<%= view == :grid ? 'box': 'list' %><%= params['view'] == view.to_s ? ' active' : '' %>">
+              <span class="<%= view == :grid ? 'icon-four-grid-layout-design-interface-symbol': 'icon-if_Untitled-2-21_536285' %>"></span></a>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+  </div>
+<% end -%>

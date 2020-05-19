@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta content='text/html; charset=UTF-8' http-equiv='Content-Type'/>
+</head>
+<body>
+<p>Dear <%= @user.full_name %>!</p>
+<p>
+  <b><%= @organization.name %></b> has added you as a member in aviary. Please confirm using the link below:
+</p>
+<p><a href="<%= @confirmation_link %>">Confirm my member status</a></p>
+<p>Best,</p>
+<p>The Aviary Team</p>
+</body>
+</html>

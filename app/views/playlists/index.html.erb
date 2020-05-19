@@ -1,0 +1,55 @@
+<div id="main_container" class="container-fluid">
+  <div class="main_contain">
+    <main>
+      <div class="text-headline jumbotron">
+        <div class="heading-holder table-head">
+          <div class="row">
+            <div class="col-md-6"><h1>Playlists</h1></div>
+            <div class="col-md-6">
+              <%= link_to 'Add Playlist', new_playlist_path, class: 'btn btn-primary btn-xs pull-right' %>
+              <%= link_to 'Export to CSV', playlist_export_path, class: 'btn btn-primary btn-xs pull-right mr-1' %>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="data-table">
+        <div>
+          <table class="table table-striped" id="playlist_data_table">
+            <thead>
+            <tr>
+              <th>Name</th>
+              <th>Entries</th>
+              <th>Featured</th>
+              <th>Public</th>
+              <th>Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            <% if @playlists.present?
+                 @playlists.each do |list| %>
+                <tr>
+                  <td><%= list.name %></td>
+                  <td><%= list.playlist_resources_count %></td>
+                  <td><%= list.is_featured? ? 'Yes' : 'No' %></td>
+                  <td><%= list.public? ? 'Yes' : 'No' %></td>
+                  <td>
+                    &nbsp;<%= link_to 'View', playlist_show_path(list), class: 'btn-sm btn-default' %>
+                    &nbsp;<%= link_to 'Edit', playlist_edit_path(list), class: 'btn-sm btn-success' %>&nbsp;
+                    <%= link_to 'Delete', 'javascript://', class: 'btn-sm btn-danger playlist_delete', data: { url: playlist_path(list), name: list.name } %>&nbsp;
+                  </td>
+                </tr>
+              <% end %>
+            <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+<script type="text/javascript">
+    var playlist = new Playlist();
+    document.addEventListener("DOMContentLoaded", function (event) {
+        playlist.initialize();
+    });
+</script>

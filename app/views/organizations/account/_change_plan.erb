@@ -1,0 +1,76 @@
+<div class="modal fade" id="changePopup" tabindex="-1" role="dialog" aria-labelledby="changePopup" aria-hidden="true">
+  <div class="modal-md modal-dialog" role="document">
+    <%= simple_form_for current_organization.subscription, url: subscription_path(current_organization.subscription), html: { id: 'change_plan_form', novalidate: false } do |f| %>
+
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title h4"><%= current_organization.subscription.status == :active.to_s ? 'Change Plan' : 'Renew Plan' %></h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <% if current_organization.subscription.plan.frequency == Plan::Frequency::MONTHLY || current_organization.subscription.status == :inactive.to_s || (current_organization.subscription.plan.frequency == Plan::Frequency::YEARLY && (current_organization.subscription.renewal_date.to_date - Time.now.to_date) <= 15) %>
+            <div class="row">
+              <div class="col-md-12">
+                <div class="form-group">
+                  <div class="field-title">
+                    <label for="cardholder-name">Subscription Type</label>
+                  </div>
+                  <%= f.select :plan_type, options_for_select(Plan::Frequency.for_select + [['Pay-as-you-go',Plan.pay_a_y_go]], current_organization.subscription.plan.stripe_id == Plan.pay_a_y_go ? Plan.pay_a_y_go : current_organization.subscription.plan.frequency) %>
+                </div>
+              </div>
+            </div>
+            <div class="row monthly_plan d-none">
+              <div class="col-md-12">
+                <div class="form-group">
+                  <div class="field-title">
+                    <label for="cardholder-name">Subscription Plan</label>
+                  </div>
+                  <%= f.collection_select :monthly_plan, @monthly_plans, :id, :name, selected: current_organization.subscription.plan_id %>
+                </div>
+              </div>
+            </div>
+          <% end %>
+          <div class="row yearly_plan d-none">
+            <div class="col-md-12">
+              <div class="form-group">
+                <div class="field-title">
+                  <label for="cardholder-name">Subscription Plan</label>
+                </div>
+                <%= f.collection_select :yearly_plan, @yearly_plans, :id, :name, selected: current_organization.subscription.plan_id %>
+              </div>
+            </div>
+          </div>
+          <div class="row subscripation_price">
+            <div class="col-md-12">
+              <div class="form-group">
+                <div class="field-title">
+                  <label for="cardholder-name">Subscription Price</label>
+                </div>
+                <div id="price_plan">
+                  <%= number_to_currency(current_organization.subscription.plan.amount) %>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <div id="response_message" class="text-danger"></div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary" id="change_plan_btn"><%= current_organization.subscription.status == :active.to_s ? 'Change Plan' : 'Renew Plan' %></button>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
+<script type="text/javascript">
+    var pricing = new Pricing();
+    document.addEventListener("DOMContentLoaded", function (event) {
+        pricing.changePlan('<%= (@monthly_plans + @yearly_plans).to_json(only: [:id, :amount])  %>', '<%= current_organization.subscription.plan_id %>', '<%= current_organization.subscription.plan.stripe_id == Plan.pay_a_y_go ? Plan.pay_a_y_go : current_organization.subscription.plan.frequency %>');
+    });
+</script>

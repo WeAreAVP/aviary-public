@@ -1,0 +1,108 @@
+<div class="modal fade bd-example-modal-lg bulk-edit-review-modal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
+  <div class="modal-dialog modal-xl" role="document">
+
+    <div class="modal-content ">
+
+      <div class="modal-header">
+        <h1 class="font-weight-bold modal-title" style="font-size: 21px;">Bulk Edit Review</h1>
+      </div>
+      <div class="modal-body">
+        <h1 class="alert-danger font-size-21px text-center mb-20px p-2 "> Are you sure you want to
+          <span id="confirm_msg_pop_bulk">change the access status of the resources listed below</span>? </h1>
+        <table class="table table-striped review_resources table-sm " style="width: 100%;">
+          <thead>
+          <tr>
+            <td  class="font-weight-bold"> ID</td>
+            <td  class="font-weight-bold"> Resource Name</td>
+          </tr>
+          </thead>
+          <tbody class="bulk-edit-review-content">
+          </tbody>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button class="btn btn-primary bulk-edit-do-it" onclick="$('#bulk_edit_form').submit();">Apply</button>
+      </div>
+    </div>
+  </div>
+</div>
+<span id="url_form_progress" data-url="<%= update_progress_collections_path %>"></span>
+
+<div class="modal fade bd-example-modal-lg bulk-edit-modal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <%= form_for 'bulk_edit', :html => {:class => 'bulk_edit_form', id: 'bulk_edit_form', 'data-bar' => 'baz'}, url: bulk_edit_operation_collections_path do |form| %>
+        <div class="modal-header">
+          <h1 class="font-weight-bold modal-title" style="font-size: 21px;">Bulk Edit</h1>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+
+            <div class="col-12 ">
+              <div class="row">
+                <div class="col-12 float-left">
+                  <select class="bulk_operation">
+                    <option value="assign_to_collection">Assign to Collection</option>
+                    <option value="assign_to_playlist">Assign to Playlist</option>
+                    <option value="bulk_delete">Bulk Delete</option>
+                    <option value="change_featured">Change Featured</option>
+                    <option value="change_resource_index_status">Change Index Status</option>
+                    <option value="change_media_file_status">Change Media File Status</option>
+                    <option value="change_status">Change Status</option>
+                    <option value="change_resource_transcript_status">Change Transcript Status</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <input type="hidden" name='action' value="bulk_edit_operation"/>
+            <%= form.hidden_field 'type_of_bulk_operation', value: 'change_status' %>
+            <div class="col-12 mt-20px">
+              <div class="bulk_delete_content operation_content d-none">
+                <h1 class="font-size-21px text-center"> Delete selected resources</h1>
+              </div>
+              <div class="change_status_content operation_content">
+                <h1 class="font-size-21px text-center"> Change the access status of selected resources </h1>
+                <label class="font-weight-bold">Select Status</label>
+                <%= form.select 'status', CollectionResource.accesses.map { |key, _| [key.split('_').second.humanize, key] } %>
+              </div>
+              <div class="change_featured_content operation_content  d-none">
+                <h1 class="font-size-21px text-center"> Change the featured status of selected resources</h1>
+                <label class="font-weight-bold">Featured?</label>
+                <%= form.select 'featured', %i[Yes No] %>
+              </div>
+
+              <div class="change_child_status_content operation_content d-none">
+                <h1 class="font-size-21px text-center"> Change the access status of <span id="typeofchildaction"></span>
+                  of selected resources </h1>
+                <label class="font-weight-bold">Select Status</label>
+                <select name="bulk_edit[child_status]">
+                  <option value="access_private"> Private</option>
+                  <option value="access_public"> Public</option>
+                </select>
+              </div>
+
+              <div class="assign_to_collection_content operation_content  d-none">
+                <h1 class="font-size-21px text-center"> Assign selected resources to a new collection</h1>
+                <label class="font-weight-bold">Select Collections</label>
+                <%= form.collection_select 'collections', current_organization.collections, :id, :title %>
+              </div>
+              <div class="assign_to_playlist_content operation_content  d-none">
+                <h1 class="font-size-21px text-center"> Assign selected resources to a new playlist</h1>
+                <label class="font-weight-bold">Select Playlist</label>
+                <%= form.collection_select 'playlists', current_organization.playlists, :id, :name %>
+              </div>
+            </div>
+            <div class="col-12 mt-20px">
+              <span id="number_of_bulk_selected_popup" class="float-right"></span>
+            </div>
+          </div>
+        </div>
+      <% end %>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button class="btn btn-primary bulk-edit-submit" data-url="<%= fetch_bulk_edit_resource_list_collections_path %>" onclick="$('.bulk-edit-review-modal').modal()" data-dismiss="modal">Apply</button>
+      </div>
+    </div>
+  </div>
+</div>

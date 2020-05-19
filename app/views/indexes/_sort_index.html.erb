@@ -1,0 +1,29 @@
+<div class="modal fade" id="index_sort_popup" tabindex="-1" role="dialog" aria-labelledby="indexUploadLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Index Management</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+
+        <% if (@resource_file.present? && @resource_file.file_indexes.present?) %>
+          <div class="pb-20px">Drag and drop indexes to reorder. The first index on the list will show by default in the index tab when user plays back this file.</div>
+          <div class="pb-10px">
+            <b class="font-weight-bold">Existing Indexes for this file:</b>
+          </div>
+          <ul id="sortable_index">
+            <% @resource_file.file_indexes.order_index.each do |file_index| %>
+              <li id="<%= file_index.id %>" class="sortable-li">
+                <i class="fa fa-bars handle pr-10px pl-10px"></i><%= file_index.title %></li>
+            <% end %>
+          </ul>
+        <% end %>
+
+        <a href="javascript://" class="btn btn-info sort_index_btn float-right" data-url="<%= index_sort_path(@resource_file.id) %>">Save Sequence</a>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,41 @@
+<div class="search-result-bottom single_term_handler active <%= type %> open ">
+  <div class="box">
+    <strong class="title">&nbsp;&nbsp;&nbsp;
+      <a href="javascript:void(0)" onclick="$('.single_term_handler.<%= type %>').toggleClass('open');" class=""><span><i class="fa fa-bars"></i> Search Results </span></a></strong>
+      <ul>
+        <% unless session[:session_video_text_all].blank?
+             session[:session_video_text_all].each do |index, single_keyword| %>
+            <% unless single_keyword.blank? %>
+              <% count_for_keyword = 0
+                 case type
+                   when 'description'
+                     count_for_keyword = session[:description_count] && session[:description_count].key?(single_keyword) ? session[:description_count][single_keyword] : 0
+                   when 'index'
+                     unless @resource_file.nil?
+                       count_for_keyword = session[:index_count] && session[:index_count].key?(@resource_file.id) && session[:index_count][@resource_file.id].key?(single_keyword) ? session[:index_count][@resource_file.id][single_keyword] : 0
+                     end
+                   when 'transcript'
+                     unless @resource_file.nil?
+                       count_for_keyword = session[:transcript_count] && session[:transcript_count].key?(@resource_file.id) && session[:transcript_count][@resource_file.id].key?(single_keyword) ? session[:transcript_count][@resource_file.id][single_keyword] : 0
+                     end
+                 end
+              %>
+              <li>
+                <span class="badge badge-pill badge-danger <%= index %>"> <div class="current_location d-inline"><%= count_for_keyword > 0 ? 1 : 0 %></div>/ <%= count_for_keyword %></span>
+                <span><%== single_keyword %></span>
+                <div class="button_handle">
+                  <% if count_for_keyword > 0 %>
+                    <button class='next_button <%= type %> <%= index %> cursor_not-allowed' data-search="next" data-identifire="<%= index %>">↓</button>
+                    <button class='back_button <%= type %> <%= index %> cursor_not-allowed' data-search="prev" data-identifire="<%= index %>">↑</button>
+                  <% end %>
+                  <button class='cancel_button <%= type %> <%= index %> cursor_not-allowed' class="cancel" data-identifire="<%= index %>" data-url="<%= collection_collection_resource_search_text_path %>" data-type="<%= type %>" data-search="cancel">x</button>
+                </div>
+              </li>
+            <% end %>
+          <% end %>
+        <% else %>
+          <li><h1> No Results.</h1></li>
+        <% end %>
+      </ul>
+  </div>
+</div>

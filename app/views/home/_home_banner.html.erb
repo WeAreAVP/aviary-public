@@ -1,0 +1,53 @@
+<% if banner_type == 'featured_resources_slider' && banner_slider_resources.present? %>
+  <div class="org-banner-slider owl-carousel owl-theme">
+    <% banner_files = CollectionResourceFile.where(collection_resource_id: JSON.parse(banner_slider_resources).pluck('id')).where.not(thumbnail_file_name: nil).sample(10) %>
+    <% banner_files.each do |single_banner| %>
+      <% thumb_url = single_banner.thumbnail.url(:medium) %>
+      <% unless thumb_url.present? %>
+        <% present(single_banner) do |presenter| %>
+          <% thumb_url = presenter.media_type.include?('avalon') || presenter.media_type.include?('video') ? "https://#{ENV['S3_HOST_CDN']}/public/images/video-default.png" : "https://#{ENV['S3_HOST_CDN']}/public/images/audio-default.png" %>
+        <% end %>
+      <% end %>
+      <a href="<%= collection_collection_resource_path(single_banner.collection_resource.collection_id, single_banner.collection_resource.id) %>">
+        <span><%= image_tag(thumb_url) %></span>
+        <div class="banner-text-or-logo">
+          <% if banner_view_from == 'organization' %>
+            <% if current_organization.banner_title_type == 'banner_title_image' %>
+              <%= image_tag(current_organization.banner_title_image.url(:small), { class: '' }) %>
+            <% elsif current_organization.banner_title_type.present? %>
+              <div style="<%= "color:#{current_organization.title_font_color} !important; font-family:#{current_organization.title_font_family} !important; font-size: #{current_organization.title_font_size} !important;" %>">
+                <%= current_organization.banner_title_text %>
+              </div>
+            <% end %>
+          <% end %>
+        </div>
+        <div class="text-detail">
+          <strong><%= single_banner.collection_resource.title %></strong>
+          <span class="collection"><%= single_banner.collection_resource.collection.title %></span>
+        </div>
+      </a>
+    <% end %>
+  </div>
+
+<% else %>
+  <div class="visual org-visual org-image-visual">
+    <img src="<%= banner_image.url %>" alt="">
+    <div class="banner-text-or-logo">
+      <% if banner_view_from == 'organization' %>
+        <% if current_organization.banner_title_type == 'banner_title_image' %>
+          <%= image_tag(current_organization.banner_title_image.url(:small), { class: '' }) %>
+        <% else %>
+          <div style="<%= "color:#{current_organization.title_font_color} !important; font-family:#{current_organization.title_font_family} !important; font-size: #{current_organization.title_font_size} !important;" %>">
+            <%= current_organization.banner_title_text %>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+
+  </div>
+<% end %>
+<script type="application/javascript">
+    $(function () {
+        show_slider('.org-banner-slider', true);
+    });
+</script>

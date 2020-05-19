@@ -1,0 +1,4 @@
+.flipcard .card-front,
+.flipcard .card-back {
+    backface-visibility: visible !important;
+}

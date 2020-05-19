@@ -1,0 +1,14 @@
+en:
+  blacklight:
+    application_name: 'Blacklight'
+    search:
+      sort:
+        label: 'Sort by: %{field}'
+        submit: 'sort results'
+      filters:
+        title: ''
+        label: '%{label}:'
+        remove:
+          value: 'Remove constraint %{value}'
+          label_value: 'Remove constraint %{label}: %{value}'
+      start_over: 'Reset'

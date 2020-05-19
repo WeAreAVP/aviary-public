@@ -1,0 +1,27 @@
+<% if params[:embed].nil? || params[:embed] == 'true' || params[:media_player] == 'true' %>
+
+  <% all_files = if @playlist_files.present?
+                   @playlist_files
+                 else
+                   @collection_resource.present? && @collection_resource.collection_resource_files && @collection_resource.collection_resource_files.order_file.present? ? @collection_resource.collection_resource_files.order_file : {}
+                 end %>
+  <% if all_files.present? %>
+    <div class="media carousel-wrap  d-none" data-filescount="<%= all_files.count %>" data-sortorder='<%= (all_files.pluck(:id).index(@resource_file.id) + 1) %>'>
+      <div class="total-files">
+        <span class="d-block text-muted">Media Files</span>
+        <strong>Viewing
+          <% if @playlist_files.present? %>
+            <%= (all_files.pluck(:id).index(@resource_file.id) + 1) %> of <%= all_files.count %>
+          <% else %>
+            <%= (all_files.pluck(:id).index(@resource_file.id) + 1) %> of <%= all_files.count %>
+          <% end %>
+        </strong>
+      </div>
+      <button class="prev mediacarousel-prev"><i class="fa fa-angle-left" aria-hidden="true"></i></button>
+      <div class="mediacarousel">
+        <%= yield %>
+      </div>
+      <button class="next mediacarousel-next"><i class="fa fa-angle-right" aria-hidden="true"></i></button>
+    </div>
+  <% end %>
+<% end %>

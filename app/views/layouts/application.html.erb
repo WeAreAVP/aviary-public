@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+  <!-- set the encoding of your site -->
+  <meta charset="utf-8">
+  <!-- set the viewport width and initial-scale on mobile devices -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <%= display_meta_tags site: current_organization ? "#{current_organization.name} | Aviary" : 'Aviary',reverse:true  %>
+  <%= favicon_link_tag current_organization.present? ? current_organization.favicon(:medium) : "https://#{ENV['S3_HOST_CDN']}/public/fav.ico" %>
+  <%= csrf_meta_tags %>
+  <%= action_cable_meta_tag %>
+  <!--[if lt IE 9]>
+  <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+
+  <![endif]-->
+  <!--[if gt IE 9]>
+  <link rel="stylesheet" href="../../assets/stylesheets/ie-css.css">
+
+  <![endif]-->
+  <!-- google fonts -->
+  <% if params[:controller] == 'collections' && params[:action] == 'show' && collection_feed(params[:id]).present? %>
+    <link type="application/rss+xml" rel="alternate" title="Your Podcast's Name" href="<%= collection_feed(params[:id]) %>"/>
+  <% end %>
+
+  <link href="https://fonts.googleapis.com/css?family=Roboto:100,400,500,700" rel="stylesheet">
+  <%= stylesheet_link_tag 'application', media: 'all' %>
+  <%= javascript_include_tag 'application', 'https://js.stripe.com/v3/' %>
+
+
+<!--  TODO:: Need to use this tag when need to integrate React JS-->
+  <%#= javascript_pack_tag 'transcript-bundle' %>
+</head>
+<body class="<%= "#{params[:controller]} #{params[:action]} #{params[:controller]}-#{params[:action]}" %>">
+<span class='d-none' id="record_tracking_path" href="<%== record_tracking_path %>"> </span>
+<% if (browser.ie? || browser.opera? || browser.safari?) && cookies[:alert_bypass].blank? %>
+  <div class="alert alert-light browser-update" role="alert">
+    <span>Aviary works best with the latest versions of Google Chrome and Firefox. </span>
+  </div>
+  <% cookies[:alert_bypass] = true %>
+<% end %>
+
+<div id="wrapper">
+  <% unless current_organization %>
+    <style>
+      @media screen and (max-width: 767px) {
+        .textBox {
+          width: 55% !important;
+        }
+      }
+    </style>
+    <div style="background-color: #333;overflow: hidden;background-image: url(https://www.color-hex.com/palettes/4914.png);background-repeat: repeat-x;background-size: 400px;padding: 15px 145px 9px 35px;background-position: 0 -260px;">
+      <div class="container-fluid">
+        <div style="width: 70px;height: 50px;float: left;padding: 10px 0;margin-right: 25px;">
+          <img src="https://www.weareavp.com/wp-content/uploads/2016/06/Aviary-logo-color-e1546634499297.png" alt="" style="width: 100%; height: auto; display: block;">
+        </div>
+        <div class="textBox" style="width: 80%;overflow: hidden;color: #dadada;font-size: 13px;font-weight: 400;line-height: 18px;display: inline-block;padding-top: 6px;">
+
+          <p><span class="d-inline">As part of our response to COVID19 we are offering free 90-day Starter Plan subscriptions. Click the Take Flight button to sign up for a free account now.</span>
+            <span class="d-lg-inline d-md-inline d-none"> <a href="https://blog.weareavp.com/take-flight" target="_blank">Read more about how Aviary can help you during this time.</a> </span>
+          </p>
+        </div>
+        <div style="float: right;">
+          <a data-toggle="modal" data-target="#covid19SubscriptionPopup" href="javascript://" class="btn btn-primary" style="background: #fff !important;color: #000 !important;border-color: #fff !important;margin: 8px;position: absolute;right: 30px;">Take
+            Flight</a>
+        </div>
+      </div>
+    </div>
+  <% end %>
+  <% unless params[:embed] == 'true' || params[:action] == 'embed_file' %>
+    <% if organization_layout? %>
+      <%= render partial: 'shared/headers/organization_header', cached: iscached? %>
+    <% else %>
+      <%= render partial: 'shared/headers/header', cached: iscached? %>
+    <% end %>
+  <% end %>
+  <div class="inner-wrapper">
+    <% unless params[:embed] == 'true' || params[:action] == 'embed_file' %>
+      <% if user_signed_in? && (can? :manage, current_organization) %>
+        <%= render partial: 'shared/side_bar' %>
+      <% end %>
+    <% end %>
+    <div class="main-content <%= 'open' if (current_organization && session[:layout] == 'not-collapsed') %>">
+      <main id="main" role="main">
+        <div id="content">
+          <div class="loadingCus text-center" style="display: none;">&#8230;</div>
+          <div class="loadingtextCus text-center" style="display: none;" style=""></div>
+          <%= yield %>
+        </div>
+      </main>
+    </div>
+  </div>
+</div>
+<% unless params[:embed] == 'true' || params[:action] == 'embed_file' %>
+  <% if organization_layout? %>
+    <%= render 'shared/footer/organization_footer', cached: iscached? %>
+  <% else %>
+    <%= render 'shared/footer/application_footer', cached: iscached? %>
+  <% end %>
+<% end %>
+<%= render 'shared/modal', cached: iscached? %>
+<%= render 'shared/messages', cached: iscached? %>
+<% show_popup_compatibility = compatibility_definition %>
+<% if show_popup_compatibility && cookies[:update_pop_bypass].blank? %>
+  <style>
+    body {
+      overflow-y: hidden !important;
+    }
+  </style>
+  <div class="not-supported">
+    <div class="text">
+      <div class="logo">
+        <img src="https://<%= ENV['S3_HOST_CDN'] %>/public/aviary-logo.png">
+      </div>
+      <h1>Your Browser is not Supported</h1>
+      <p>To use aviary, please update your browser to the latest version</p>
+      <h2><span>Download Supported Browser</span></h2>
+      <ul>
+        <li><a target="_blank" href="https://www.google.com/chrome/"><i class="fa fa-chrome"></i> Chrome</a></li>
+        <li>
+          <a target="_blank" href="https://www.mozilla.org/en-US/firefox/new/"><i class="fa fa-firefox"></i> Firefox</a>
+        </li>
+        <li><a target="_blank" href="https://support.apple.com/downloads/safari"><i class="fa fa-safari"></i> Mac Safari</a>
+        </li>
+        <li>
+          <a target="_blank" href="https://www.microsoft.com/download"><i class="fa fa-internet-explorer"></i> Internet
+            Explorer 11</a>
+        </li>
+        <li><a target="_blank" href="https://www.microsoft.com/download"><i class="fa fa-edge"></i> Edge</a></li>
+      </ul>
+      <h2><span>or</span></h2>
+      <p class="unstnd">I understand the consequences <br>
+        <a href="<%= root_url + '?update_pop_bypass=true' %>">Go to Homepage</a></p>
+    </div>
+  </div>
+<% end %>
+
+</body>
+</html>

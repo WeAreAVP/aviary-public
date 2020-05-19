@@ -1,0 +1,21 @@
+<header id="header">
+  <div class="container-fluid">
+    <nav class="navbar navbar-expand-lg navbar-light">
+      <%= link_to image_tag("homepage/main-logo.png"), root_path, class: 'navbar-brand' %>
+
+      <div class="search-nav search1cus">
+        <% unless current_page?('/catalog') %>
+          <div class="form-group">
+            <div class="<%= container_classes %>">
+              <%= render_search_bar %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+      <div class="nav-right col-lg-3 pull-right text-right">
+        <%= link_to 'Logout', destroy_admin_session_path, method: :delete, class: 'btn btn-danger' %>
+      </div>
+    </nav>
+  </div>
+  <%= render 'shared/sub_nav' %>
+</header>

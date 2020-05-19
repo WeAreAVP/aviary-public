@@ -1,0 +1,62 @@
+<div id="main_container" class="container-fluid">
+  <div class="main_contain">
+    <main>
+      <div class="text-headline jumbotron">
+        <div class="heading-holder table-head">
+          <div class="row">
+            <div class="col-md-6"><h1> Edit Collection </h1></div>
+            <div class="col-md-6"></div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="upload-main collection_nav">
+            <div class="hold">
+              <ul class="nav nav-tabs" id="collectionTabs" role="tablist">
+                <li class="nav-item">
+                  <a class="nav-link active" id="general_settings_tab" data-tab="general_settings" data-toggle="tab" href="#general_settings" role="tab" aria-controls="general_settings" aria-selected="true">General
+                    Settings</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" id="collection_description_tab" data-tab="collection_description" data-toggle="tab" href="#collection_description" role="tab" aria-controls="collection_description" aria-selected="false">Collection
+                    Description</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" id="resource_description_tab" data-tab="resource_description" data-toggle="tab" href="#custom_preview" role="tab" aria-controls="custom_preview" aria-selected="false" data-path="<%= edit_collection_path(@collection) %>">Resource
+                    Description</a>
+                </li>
+              </ul>
+              <%= simple_form_for @collection, :url => @collection.new_record? ? collections_path : collection_path, html: { novalidate: true, class: "collection-edit-form display_settings_form" } do |c| %>
+
+                <div class="tab-content" id="CollectionTabsContent">
+                  <div class="tab-pane fade show active" id="general_settings" role="tabpanel" aria-labelledby="general_settings">
+                    <div class="organization-section mt-4">
+                      <%= render partial: 'edit_form', locals: { c: c } %>
+                    </div>
+                  </div>
+                  <div class="tab-pane fade" id="collection_description" role="tabpanel" aria-labelledby="collection_description">
+                    <section class="form-common">
+                      <%= render partial: "collection_default" %>
+                    </section>
+                  </div>
+                  <div class="tab-pane fade" id="custom_preview" role="tabpanel" aria-labelledby="custom_preview_tab">
+                    <%= render partial: 'collection_field_visibility' %>
+                  </div>
+
+                </div>
+              <% end %>
+
+            </div>
+          </div>
+          <div class="text-right mb-4">
+            <%= link_to "Update", 'javascript://', class: "update-collection-forms-btn btn btn-info mt-2 mr-2" %>
+            <%= link_to "Cancel", collections_path, class: "btn btn-default mt-2 mr-2" %>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+<div id="custom_fields_popup"></div>
+

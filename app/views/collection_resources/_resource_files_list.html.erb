@@ -1,0 +1,111 @@
+<div class="row">
+  <div class="col-md-12">
+    <div class="files-hold">
+      <h5 class="file-up-one-heading">Uploaded Media Files</h5>
+      <div id="filesUploaded" class="files">
+        <ul id="sort_resource_files" data-path="<%= collection_collection_resource_resource_file_sort_path(@collection, @collection_resource) %>">
+          <% resource_files.each_with_index do |file, index| %>
+            <li class="sortable-li">
+              <div class="drag_handle_video">
+                <i class="fa fa-bars handle pr-10px pl-10px ui-sortable-handle"></i>
+                <% thumb_url = file.thumbnail.url(:small) %>
+                <% unless thumb_url.present? %>
+                  <% present(file) do |presenter| %>
+                    <% thumb_url = presenter.media_type.include?('avalon') || presenter.media_type.include?('video') ? "https://#{ENV['S3_HOST_CDN']}/public/images/video-default.png" : "https://#{ENV['S3_HOST_CDN']}/public/images/audio-default.png" %>
+                  <% end %>
+                <% end %>
+                <span><%= image_tag(thumb_url, style: 'width:40px;height:39px;object-fit:cover;') %></span>
+              </div>
+              <div class="video_name">
+                <%= hidden_field_tag "resource_file_sort[#{file.id}][sort_order]", file.sort_order, class: "sort-order-field", data: { id: file.id } %>
+                <%= index + 1 %>-
+                <span data-bip-type="input" data-bip-attribute="title" data-bip-object="collection_resource" data-bip-original-content="<%= file.file_display_name %>"
+                      data-bip-skip-blur="false" data-bip-url="<%= collection_collection_resource_update_file_name_path(collection_id: @collection_resource.collection.id, id: @collection_resource.id, collection_resource_file_id: file.id) %>" data-bip-value="<%= @collection_resource.title %>"
+                      class="best_in_place" id="best_in_place_av_resource_2_title" method="PUT"><%= file.file_display_name %></span>
+                <i class="fa fa-pencil edit_title"></i>
+              </div>
+              <div class="remove_video">
+                <a href="javascript://" class="btn btn-default manage-media manage-media-thumbnail text-white" data-url="<%= collection_collection_resource_update_thumbnail_path(collection, @collection_resource, collection_resource_file_id: file.id) %>" data-file-id="<%= file.id %>" data-sort="<%= file.sort_order %>" data-file-status="<%= file.access %>" data-file-downloadable="<%= file.is_downloadable %>" data-file-download_enabled_for="<%= file.download_enabled_for %>"  data-file-downloadable_till="<%= file.downloadable_duration %>">
+                  Manage Media </a>
+                <%= link_to collection_collection_resource_delete_resource_file_path(@collection, @collection_resource, file), class: "btn btn-outline-danger delete-resource-file", style: "float: right;" do %>
+                  Remove
+                <% end %>
+              </div>
+            </li>
+          <% end %>
+        </ul>
+
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade bd-example-modal-lg manage-media-modal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="font-weight-bold modal-title" style="font-size: 21px;">Manage Media File</h1>
+      </div>
+      <div class="modal-body">
+        <ul class="manage-media-main-tab nav nav-tabs">
+          <li class="nav-item width_33">
+            <a class="nav-link active" href="#tab-one" data-toggle="tab" role="tab" aria-controls="t1" aria-selected="true">Update Media File</a>
+          </li>
+          <li class="nav-item width_33">
+            <a class="nav-link " data-toggle="tab" href="#tab-two" role="tab" aria-controls="t2" aria-selected="true">Manage Media Info</a>
+          </li>
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane fade show active" id="tab-one">
+            <%= render partial: "resource_files_tabs", locals: { collection: @collection, tab: '_edit', multiple: true, browse_file_name: 'av_resource[resource_files]', file_class: 'fileuploadTab' , append_file_class: 'filesTab', progress: 'tab-progress-bar', button_title: 'Update', close_class: '' } %>
+          </div>
+          <div class="tab-pane fade" id="tab-two">
+            <%= form_for :collection_resource_file, url: '', method: :post, html: { class: "single-file-upload-form-thumbnail" } do |f| %>
+              <div class="row">
+                <div class="col-12">
+                  <h1 class="file-up-one-heading font-size-21px"> Set Thumbnail</h1>
+                </div>
+                <div class="col-12 mb-20px">
+                  <h5 class="file-up-one-heading">Select Thumbnail files to upload from your local
+                    environment.</h5>
+                  <%= f.file_field :thumbnail, accept: '.jpeg,.png,.jpg', multiple: false, class: '', data: { url: '' } %>
+                  <div class="mt-20px">Supported formats for thumbnail are: png, jpg, jpeg</div>
+                </div>
+                <div class="col-12 mt-20px">
+                  <h1 class="file-up-one-heading font-size-21px"> Public?</h1>
+                </div>
+                <div class="col-12">
+                  <%= f.select :access, CollectionResourceFile.accesses.map { |key, _| [key.humanize, key] }, {}, required: false, label: false, class: 'custom-placeholder file-status-custom' %>
+                </div>
+
+                <div class="col-12 mt-20px">
+                  <h1 class="file-up-one-heading font-size-21px"> Downloadable?</h1>
+                </div>
+                <div class="col-12">
+                  <%= f.select :is_downloadable, [['Yes', true], ['No', false]], {}, required: false, label: false, class: 'custom-placeholder file-download-custom' %>
+                </div>
+                <div class="col-12 d-none" id='downloadable_duration'>
+                  <div class="mt-20px">
+                    <h1 class="file-up-one-heading font-size-21px">(Optional) Set a duration to assign to the downloadable status</h1>
+                  </div>
+                  <div class="">
+                    <%= f.select "download_enabled_for", [['Hours', 'hour'], ['Days', 'day'], ['Date', 'date']], {include_blank: true}, required: false, label: false, class: 'custom-placeholder' %>
+                  </div>
+                  <div class="">
+                    <%= f.text_field "downloadable_till", required: false, label: false, class: 'form-control' %>
+                  </div>
+                  <br/>
+                  <small class="form-text text-muted">Enable download media file for hours/days or until a specified date.</small>
+                </div>
+
+              </div>
+              <div class="bottom">
+                <button type="button" class="btn btn-secondary mt-20px float-right" data-dismiss="modal">Close</button>
+                <button class="btn btn-default mr-10px mt-20px float-right"> Update</button>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

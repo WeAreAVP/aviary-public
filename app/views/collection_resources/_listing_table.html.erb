@@ -1,0 +1,31 @@
+<thead>
+<tr>
+  <% if table_called_from == 'permission_group' %>
+    <% resource_table_column_detail = CollectionResource.permission_group_columns.to_json %>
+    <% JSON.parse(resource_table_column_detail)['columns_status'].each do |_, value| %>
+      <% if !value['status'].blank? && value['status'] == 'true' %>
+        <th>
+          <span style="max-width: 180px; width: 180px; float: left; min-width: 100px;"><%= display_field_title_table(value['value']) %></span>
+        </th>
+      <% end %>
+    <% end %>
+  <% else %>
+    <th>
+      <input type="checkbox" class="select_all_checkbox_resources" data-url="<%= bulk_resource_list_collections_path %>"/>
+    </th>
+
+    <% if current_organization.present? && !current_organization.resource_table_column_detail.blank? && !JSON.parse(current_organization.resource_table_column_detail).blank? %>
+      <% JSON.parse(current_organization.resource_table_column_detail)['columns_status'].each do |_, value| %>
+        <% if !value['status'].blank? && value['status'] == 'true' %>
+          <th>
+            <span style="max-width: 180px; width: 180px; float: left; min-width: 100px;"><%= display_field_title_table(value['value']) %></span>
+          </th>
+        <% end %>
+      <% end %>
+    <% end %>
+  <% end %>
+  <th>Action</th>
+</tr>
+</thead>
+<tbody>
+</tbody>

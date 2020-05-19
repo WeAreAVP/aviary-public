@@ -1,0 +1,13 @@
+<div class="dropdown float-right ml-2">
+  <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    Table Options
+  </button>
+  <div class="dropdown-menu dropdown-menu-right">
+    <% if from != 'automated_metadata' %>
+      <button class="dropdown-item manage-resource-columns-btn"> Manage Table</button>
+      <%= link_to 'Export Resources to CSV', export_collections_path(collection_id: params[:id], export_type: 'resources'), class: 'dropdown-item export_btn d-none' %>
+    <% end %>
+    <button class="dropdown-item bluk-edit-btn">Bulk Edit Options</button>
+
+  </div>
+</div>

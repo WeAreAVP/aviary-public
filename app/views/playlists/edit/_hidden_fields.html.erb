@@ -1,0 +1,8 @@
+<% if @playlist_resource.present? %>
+  <% start_time = @current_playlist_item.present? && @current_playlist_item.start_time.present? ? @current_playlist_item.start_time.to_f : 0.0 %>
+  <% end_time = @current_playlist_item.present? && @current_playlist_item.end_time.present? ? @current_playlist_item.end_time.to_f : @resource_file.duration.to_f %>
+  <input type='hidden' id="start_time_current_update" value='<%= start_time %>'/>
+  <input type='hidden' id="end_time_current_update" value='<%= end_time %>'/>
+  <input type='hidden' name='mediafile_current' id="mediafile_current" value='<%= @resource_file.id %>'/>
+  <input type='hidden' id="url_for_range" data-url="<%= toggle_item_playlist_playlist_resource_path(@playlist, @playlist_resource) %>"/>
+<% end %>

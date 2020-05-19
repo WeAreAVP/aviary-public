@@ -1,0 +1,101 @@
+<div id="main_container" class="container-fluid">
+  <div class="main_contain">
+    <main>
+      <div class="organization-section">
+        <div class="heading-holder table-head">
+          <h1>Profile</h1>
+        </div>
+        <div class="container-fluid">
+          <div class="form">
+            <%= simple_form_for(resource, as: resource_name, url: registration_path(resource_name), html: { :class => 'form-horizontal edit-user-form', method: :put }) do |f| %>
+              <%= devise_error_messages! %>
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <%= f.label :first_name, required: false %>
+                    <%= f.input :first_name, label: false, input_html: { class: 'form-control' } %>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <%= f.label :last_name, required: false %>
+                    <%= f.input :last_name, label: false, autocomplete: 'last_name', input_html: { class: 'form-control' } %>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <%= f.label :username, required: false %>
+                    <%= f.input :username, label: false, input_html: { class: 'form-control' } %>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <%= f.label :email, required: false %>
+                    <%= f.input :email, label: false, input_html: { class: 'form-control with_pass', autocomplete: 'email' } %>
+
+
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-md-6 d-none">
+                  <div class="form-group">
+                    <%= f.label :preferred_language, required: false %>
+                    <%= f.select :preferred_language, iso_639_1_languages, { prompt: 'Preferred language' }, required: false, label: false, class: 'custom-placeholder' %>
+                  </div>
+                </div>
+                <div class="col-md-12">
+                  <div class="form-group">
+                    <%= f.label 'Receive email notifications?', for: 'user_receive_emails' %>
+                    <%= f.select :receive_emails, [['Yes', true], ['No', false]], { prompt: 'Receive emails' }, required: true, label: false, class: 'custom-placeholder' %>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label>Profile Image</label>
+                    <%= image_tag resource.photo(:thumb) if resource.photo? %>
+                    <%= f.file_field :photo %><br/>
+                    <span class="img-hint-cust bg_img_cls" style="">200px by 200px wide jpg/gif/png.</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row" id="pass_fields_cus">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <%= f.label :password %> <i>(leave blank if you don't want to change it)</i><br/>
+                    <%= f.input :password, label: false, input_html: { autocomplete: "off", class: 'form-control with_pass' } %>
+                    <span id="password_help_edit" data-toggle="tooltip" data-placement="top" data-html="true" title="At least 8 characters<br/>At least 1 number<br/>At least 1 uppercase letter<br/>At least 1 lowercase letter<br/>At least 1 special character (.@$!%*?&)">Password Help <i class="fa fa-question-circle"></i></span>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <%= f.label :password_confirmation %><br/>
+                    <%= f.input :password_confirmation, label: false, input_html: { autocomplete: 'off', class: 'form-control with_pass' } %>
+                  </div>
+                </div>
+              </div>
+              <
+
+              <%= render partial: "current_password_update_popup", locals: { f: f } %>
+
+              <%= f.submit 'Update', class: 'btn btn-block btn-primary update_cus_prof' %>
+            <% end %>
+
+            <br>
+
+            <%= button_to "Cancel my account", registration_path(resource_name), data: { confirm: "Are you sure?" }, method: :delete, class: 'btn btn-danger' %>
+
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>

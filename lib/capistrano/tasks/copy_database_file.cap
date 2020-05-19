@@ -1,0 +1,10 @@
+namespace :copy do
+  desc 'copy database file'
+  task :database_file do
+    on roles(:app) do
+        with rails_env: "#{fetch(:stage)}" do
+          execute "mkdir -p #{shared_path}/config && yes | cp -rf /var/www/shared/config/database.yml #{shared_path}/config/database.yml"
+        end
+      end
+  end
+end

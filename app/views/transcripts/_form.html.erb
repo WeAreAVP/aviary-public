@@ -1,0 +1,75 @@
+<div class="organization-section">
+  <%= simple_form_for @file_transcript, url: transcript_upload_path(@resource_file.id), method: :post do |form| %>
+    <div class="row">
+      <div class="col-md-12">
+        <div class="form-group">
+          <div id="progress_transcript" class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="background-color: #ffffff;">
+            <div class="progress-bar progress-bar-success" style="width:0%;"></div>
+          </div>
+          <label class="pb-10px" for="associated_file">Select a transcript to associate to this file. Allowed
+            formats: OHMS XML and
+            WebVTT.</label>
+          <span class="btn btn-primary fileinput-button">Select File
+            <%= form.file_field :associated_file, as: :file, error: false, label: false, class: 'form-control' %>
+              </span>
+          <small id="file_name_transcript" class="text-muted">
+            No file selected.
+          </small>
+          <div class="associated_file text-danger"></div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <div class="form-group">
+          <label for="title" class="pb-5px"><b>Assign a Title to this transcript.</b> Title will be used to
+            differentiate
+            multiple transcripts
+            for a single file.</label>
+          <%= form.text_field :title, label: false, class: 'form-control' %>
+          <div class="title text-danger"></div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-8">
+        <div class="form-group">
+          <%= form.label :language, 'Transcript Language', class: 'pb-5px' %>
+          <%= form.select :language, iso_639_1_languages, required: true, label: false, selected: 'en', class: 'custom-placeholder' %>
+          <div class="language text-danger"></div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-8">
+        <div class="form-group">
+          <%= form.label 'Public?', for: 'file_transcript_public', class: 'pb-5px' %>
+          <%= form.select :is_public, [['Yes', true], ['No', false]], required: true, label: false, class: 'custom-placeholder' %>
+          <div class="is_public text-danger"></div>
+        </div>
+      </div>
+    </div>
+    <div class="row d-none is_caption_section">
+      <div class="col-md-8">
+        <div class="form-group">
+          <%= form.input_field :is_caption, as: :boolean, boolean_style: :inline,class: 'float-left mt-5px' %>
+          <label class="mt-1 float-left ml-10px">Is Caption?</label>
+        </div>
+      </div>
+    </div>
+    <div class="row d-none remove_title_section">
+      <div class="col-md-8">
+        <div class="form-group">
+          <%= form.input_field :remove_title, as: :boolean, boolean_style: :inline,class: 'float-left mt-5px' %>
+          <label class="mt-1 float-left ml-10px">Ignore Title</label>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <p class="text-success" id="transcript_upload_success"></p>
+      </div>
+    </div>
+    <a href="javascript://" class="btn btn-info upload_transcript_btn float-right">Upload Transcript</a>
+  <% end %>
+</div>

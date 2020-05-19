@@ -1,0 +1,10 @@
+namespace :copy do
+  desc 'create Symbloic links'
+  task :create_symbolic_links do
+    on roles(:app) do
+        with rails_env: "#{fetch(:stage)}" do
+          execute "mkdir -p #{shared_path}/public/reports && ln -s #{shared_path}/public/reports #{release_path}/public/reports"
+        end
+      end
+  end
+end

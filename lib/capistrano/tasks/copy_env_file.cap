@@ -1,0 +1,10 @@
+namespace :copy do
+  desc 'copy env file'
+  task :env_file do
+    on roles(:app) do
+        with rails_env: "#{fetch(:stage)}" do
+          execute "cp -rf /var/www/shared/.env #{shared_path}/.env"
+        end
+    end
+  end
+end

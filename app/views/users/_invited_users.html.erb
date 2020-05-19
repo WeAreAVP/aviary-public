@@ -1,0 +1,32 @@
+<div class="row">
+  <div class="col-md-12">
+    <table class="table table-striped addDatatabletoThisTable">
+      <thead>
+      <tr>
+        <th>Email</th>
+        <th>Organization</th>
+        <th>Role</th>
+        <th>Action</th>
+      </tr>
+      </thead>
+      <tbody>
+      <% if @member_invites.present? %>
+        <% @member_invites.each do |member_invite| %>
+          <tr>
+            <td><%= member_invite.user.email %></td>
+            <td><%= member_invite.organization.try(&:name) if member_invite %></td>
+            <td><%= member_invite.role.name if member_invite %></td>
+            <td><%= link_to 'Delete', user_path(member_invite.user), method: 'delete', class: 'btn-sm btn-danger' %></td>
+          </tr>
+        <% end %>
+      <% else %>
+        <tr>
+          <td colspan="4">
+            <center><h5> No Records found </h5></center>
+          </td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

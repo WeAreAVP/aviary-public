@@ -1,0 +1,19 @@
+namespace :restart do
+  desc 'Stop and Start docker containers'
+  
+  task :docker_containers_down do
+    on roles(:app) do
+      with rails_env: "#{fetch(:stage)}" do
+        execute "cd #{current_path} && sudo /usr/local/bin/docker-compose -p aviary_#{fetch(:stage)} down"
+      end
+    end
+  end
+
+  task :docker_containers_up do
+    on roles(:app) do
+      with rails_env: "#{fetch(:stage)}" do
+        execute "cd #{current_path} && sudo /usr/local/bin/docker-compose -p aviary_#{fetch(:stage)} up -d --build"
+      end
+    end
+  end
+end

@@ -1,0 +1,15 @@
+<thead>
+<tr>
+  <th>
+    <input type="checkbox" class="select_all_checkbox_resources" data-url="<%= bulk_resource_list_collections_path %>"/>
+  </th>
+  <% columns_details.each do |_k, h| %>
+    <% if h['status'] == 'true' %>
+      <th><span style="max-width: 180px; width: 180px; float: left; min-width: 100px;"><%= CollectionResourceFile.fields_values[h['value']] %></span></th>
+    <% end %>
+  <% end %>
+  <th>Action</th>
+</tr>
+</thead>
+<tbody>
+</tbody>

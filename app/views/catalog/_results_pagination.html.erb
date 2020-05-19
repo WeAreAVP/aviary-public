@@ -1,0 +1,18 @@
+<!--Overriden: changes-->
+<div class=" record-padding">
+  <% if !@response.blank? && @response.total_count > 0 %>
+    <div class="number_of_page mr-2 mt-3 mb-2"><%= @response.offset_value + 1 %>
+      - <%= (@response.offset_value + 12) > @response.total_count ? @response.total_count : @response.offset_value + 12 %>
+      of <%= @response.total_count %>
+    </div>
+  <% end %>
+  <% if !@response.blank? and show_pagination? and @response.total_pages > 1 %>
+    <div class="mr-2 mt-2 mb-2">
+      <div class="pageinate-holder">
+        <div class="pagination">
+          <%= paginate @response %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>

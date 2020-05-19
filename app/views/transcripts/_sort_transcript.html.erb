@@ -1,0 +1,36 @@
+<div class="modal fade" id="transcript_sort_popup" tabindex="-1" role="dialog" aria-labelledby="transcriptUploadLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="transcriptModalLabel">Transcript Management</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <% if (@resource_file.present? && @resource_file.file_transcripts.present?) %>
+          <div class="pb-20px">Drag and drop transcripts to reorder. The first transcript on the list will show by
+            default in the transcript tab when user plays back this file.
+          </div>
+          <div class="pb-20px">WEBVTT files can be used for closed caption in the player. If you wish to use your WEBVTT files as closed caption, check the box next to the file.
+          </div>
+          <div class="pb-10px">
+            <b class="font-weight-bold">Existing Transcripts for this file:</b>
+          </div>
+          <ul id="sortable_transcript">
+            <% @resource_file.file_transcripts.order_transcript.each do |file_transcript| %>
+              <li id="<%= file_transcript.id %>" class="sortable-li">
+                <i class="fa fa-bars handle pr-10px pl-10px"></i><%= file_transcript.title %>
+                <% if ['text/vtt', 'text/webvtt', 'vtt', 'webvtt'].include? file_transcript.associated_file_content_type %>
+                  <input type="checkbox" class="cc_checkbox" <%= file_transcript.is_caption? ? 'checked' : '' %> title="Enable Close Caption" value="<%= file_transcript.id %>" id="cc_<%= file_transcript.id %>"/>
+                <% end %>
+              </li>
+            <% end %>
+          </ul>
+        <% end %>
+        <a href="javascript://" class="btn btn-info sort_transcript_btn float-right" data-url="<%= transcript_sort_path(@resource_file.id) %>">Save
+          Sequence</a>
+      </div>
+    </div>
+  </div>
+</div>

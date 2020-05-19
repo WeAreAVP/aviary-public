@@ -1,0 +1,38 @@
+<div class="card" id="single_playlist_container" style="border: none;">
+  <div class="card-header pr-0 pl-0 pt-1 pb-1" id="heading<%= playlist.id %>">
+    <h2 class="mb-0">
+      <span class="cursor-pointer d-flex align-items-center collapsed" data-toggle="collapse" data-target="#collapse<%= playlist.id %>" aria-expanded="false" aria-controls="collapsec<%= playlist.id %>">
+        <div><%= image_tag(playlist.thumbnail.present? ? playlist.thumbnail.url(:small) : image_path('playlist_add.png'), class: 'mr-2 h-20px w-20px rounded-circle') %></div>
+        <strong data-toggle="tooltip" title="<%= playlist.name %>">
+          <%= link_to(playlist.name, playlist_show_path(playlist), class: 'playlist_title') %>
+          <% if collection_resource_playlist_ids.include?(playlist.id) %>
+            <%= image_tag(image_path('already_part_of_playlsit.png'), class: 'float-right mt-1') %>
+          <% end %>
+        </strong>
+        <% if current_user_is_org_user?(organization) && from_action == 'listing_for_add_to_playlist' %>
+            <a href="javascript:void(0);" class="add_resource_to_playlist d-flex btn btn-sm ml-auto align-items-center text-primary" data-url="<%= playlist_add_to_resource_url(playlist_id: playlist.id, collection_resource_id: collection_resource.id) %>"
+               data-playlistid="<%= playlist.id %>" data-resourceid="<%= collection_resource.id %>">
+              <i class="fa fa-plus mr-1 float-left"></i><span class="float-left">Add</span>
+              <div id="playlist_loader_<%= playlist.id %>" class="ml-1 playlist_loader d-none float-left">
+                <div class="img">
+                  <div class="hold">
+                    <%= image_tag("https://#{ENV['S3_HOST_CDN']}/public/images/ajax-loader.gif", class: 'h-20px') %>
+                  </div>
+                </div>
+              </div>
+            </a>
+
+          <% if playlist.try(:playlist_resources).present? && !playlist.playlist_resources.size.zero? %>
+            <a href="<%= playlist_edit_path(playlist.id) %>" class="add_resource_to_playlist_specific btn btn-sm ml-1 align-items-center text-primary">
+              <i class="fa fa-plus mr-1"></i>Select specific media files
+            </a>
+          <% else %>
+            <span  class="add_resource_to_playlist_specific add_resource_to_playlist_specific_disabled btn btn-sm ml-1 align-items-center text-primary">
+              <i class="fa fa-plus mr-1"></i>Select specific media files
+            </span>
+          <% end %>
+        <% end %>
+      </span>
+    </h2>
+  </div>
+</div>

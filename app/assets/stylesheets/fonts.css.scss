@@ -1,0 +1,176 @@
+@import url(//stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css);
+
+@font-face {
+  font-family: 'icomoon';
+  src: font-url('icomoon.eot?bkgsw9');
+  src: font-url('icomoon.eot?bkgsw9#iefix') format('embedded-opentype'),
+  font-url('icomoon.ttf?bkgsw9') format('truetype'),
+  font-url('icomoon.woff?bkgsw9') format('woff'),
+  font-url('icomoon.svg?bkgsw9#icomoon') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* simple_form show errors */
+.form_error {
+  top: -1.5em;
+  padding: 0.5em 1em 0.4em;
+  background-color: #f66;
+  border: 1px solid #f00;
+  border-radius: 5px;
+  color: #fff;
+  font-size: x-small;
+}
+
+[class^="icon-"],
+[class*=" icon-"] {
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: 'icomoon' !important;
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-Add-Assets:before {
+  content: "\e900";
+}
+
+.icon-My-Library:before {
+  content: "\e901";
+}
+
+.icon-My-Organization:before {
+  content: "\e902";
+}
+
+.icon-User:before {
+  content: "\e903";
+}
+
+.icon-if_Untitled-2-21_536285:before {
+  content: "\e904";
+}
+
+.icon-four-grid-layout-design-interface-symbol:before {
+  content: "\e905";
+}
+
+.icon-Vector-Smart-Object3:before {
+  content: "\e906";
+}
+
+.icon-Close:before {
+  content: "\e909";
+}
+
+.icon-chevron-with-circle-left:before {
+  content: "\e90a";
+}
+
+.icon-chevron-with-circle-right:before {
+  content: "\e90b";
+}
+
+.icon-Annotate:before {
+  content: "\e90c";
+}
+
+.icon-check-mark:before {
+  content: "\e90d";
+}
+
+.icon-down-chevron:before {
+  content: "\e90e";
+}
+
+.icon-magnifying-glass:before {
+  content: "\e90f";
+}
+
+.icon-play-button:before {
+  content: "\e907";
+  color: #fff;
+}
+
+.icon-Annotate-Video:before {
+  content: "\e908";
+}
+
+.icon-Annotate-Transcript:before {
+  content: "\e910";
+}
+
+.icon-Generate-Transcript:before {
+  content: "\e911";
+}
+
+.icon-icon-docfile:before {
+  content: "\e912";
+}
+
+.icon-icon-pdf:before {
+  content: "\e913";
+}
+
+.icon-icon-powerpoint:before {
+  content: "\e914";
+}
+
+.icon-icon-image:before {
+  content: "\e915";
+}
+
+.icon-icon-map:before {
+  content: "\e916";
+}
+
+.icon-Index:before {
+  content: "\e917";
+}
+
+.icon-Metadata:before {
+  content: "\e918";
+}
+
+.icon-Layout-Grid-C:before {
+  content: "\e919";
+}
+
+.icon-Layout-Grid-B:before {
+  content: "\e91a";
+}
+
+.icon-Layout-Grid-A:before {
+  content: "\e91b";
+}
+
+.icon-Transcript:before {
+  content: "\e91c";
+}
+
+.icon-Upload-Transcript:before {
+  content: "\e91d";
+}
+
+.icon-facebook:before {
+  content: "\ea90";
+}
+
+.icon-twitter:before {
+  content: "\ea96";
+}
+
+.icon-youtube:before {
+  content: "\ea9d";
+}
+
+.icon-linkedin2:before {
+  content: "\eaca";
+}

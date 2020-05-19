@@ -1,0 +1,32 @@
+<div class="container pt-4 pl-4 pr-4">
+  <div class="heading-holder table-head">
+      <div class="row mb-4">
+        <div class="col-md-6"><h1>Users</h1></div>
+        <div class="col-md-6 "><%= link_to "Add User", new_admin_user_path, class: "btn btn-primary float-right" %>
+          <%= link_to 'Export Users',export_users_admin_users_url, class: "btn btn-primary btn-xs pull-right mr-2 export_btn" %>
+        </div>
+      </div>
+  </div>
+  <div class="data-table">
+    <div class="hold">
+      <%= content_tag :table, role: :datatable, class: ["table", "table-striped"], id: 'admin_user_data_table', data: { url: admin_users_path(format: :json) } do %>
+        <thead>
+        <tr>
+          <th>Email</th>
+          <th>Name</th>
+          <th>Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        </tbody>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+    adminUser = new AdminUsers();
+    $(function () {
+        adminUser.initialize()
+    });
+</script>

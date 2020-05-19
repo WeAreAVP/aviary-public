@@ -1,0 +1,149 @@
+/*
+    @author Nouman Tayyab <nouman@weareavp.com>
+*/
+.page-link {
+    color: #3d62e6;
+}
+
+.page-item.active .page-link {
+    background-color: #fff !important;
+    border: 2px solid #666 !important;
+    color: #666 !important;
+    padding: 5px 4px !important;
+}
+
+.page-item.active .page-link:hover {
+    background-color: #666 !important;
+    color: #fff !important;
+}
+
+.resource-heading-text a {
+    color: #333;
+    font-weight: normal;
+}
+
+.timeline-player-bar {
+    background: #E5E5E5;
+    height: 30px;
+    position: relative;
+    z-index: 3;
+}
+
+.timeline-player-bar span {
+    width: 5px;
+    position: absolute;
+    height: 30px;
+    cursor: pointer;
+}
+
+.timeline-player-bar span.light-orange {
+    background-color: #FEB542;
+}
+
+.timeline-player-bar span.dark-orange {
+    background-color: #FC7C34 !important;
+}
+
+.timeline-player-bar span.yellow {
+    background-color: #ffd102;
+}
+
+.timeline-player-bar span.blue {
+    background-color: #3d62e6;
+}
+
+.timeline-player-bar span.green {
+    background-color: #04f51e;
+}
+
+.cc_checkbox {
+    float: right;
+    margin-right: 10px;
+}
+
+#sortable_transcript .sortable-li,
+#sortable_index .sortable-li {
+    padding: 5px;
+    margin-bottom: 0;
+}
+
+.manage-media-thumbnail {
+    margin-right: 80px !important;
+    border-radius: 0px !important;
+}
+
+#collection_resource_datatable th:after {
+    display: none !important;
+}
+
+#collection_resource_datatable th:before {
+    display: none !important;
+}
+
+.bulk-edit-review-modal .dataTables_filter {
+    float: right !important;
+}
+
+.file_index_mark_custom .highlight-marker,
+.file_transcript_mark_custom .highlight-marker {
+    cursor: pointer;
+}
+
+.service_type_cls {
+    text-transform: capitalize;
+}
+
+h1.MsoNormal span {
+    display: block;
+    font-size: 2em;
+    margin: 0.67em 0;
+    font-weight: bold;
+}
+
+h2.MsoNormal span {
+    display: block;
+    font-size: 1.5em;
+    margin: 0.83em 0;
+    font-weight: bold;
+}
+
+h3.MsoNormal span {
+    display: block;
+    font-size: 1.17em;
+    margin: 1em 0;
+    font-weight: bold;
+}
+
+h4.MsoNormal span {
+    display: block;
+    font-size: 1em;
+    margin: 1.33em 0;
+    font-weight: bold;
+}
+
+h5.MsoNormal span {
+    display: block;
+    font-size: 0.83em;
+    margin: 1.67em 0;
+    font-weight: bold;
+}
+
+.selectize-dropdown-content .badge-danger,
+.selectize-input .badge-danger {
+    background-color: #f26928;
+}
+
+.finish_editing {
+    display: inline-block;
+    position: absolute;
+    right: 0;
+    font-size: 12px !important;
+    white-space: nowrap;
+    color: #fff !important;
+    cursor: pointer;
+}
+
+.finish_editing:hover {
+    text-decoration: none;
+}
+

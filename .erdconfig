@@ -1,0 +1,23 @@
+attributes:
+  - content
+  - foreign_key
+  - inheritance
+  - primary_keys
+disconnected: true
+filename: erd
+filetype: pdf
+indirect: false
+inheritance: false
+markup: true
+notation: bachman
+orientation: vertical
+polymorphism: false
+sort: false
+warn: true
+title: Aviary
+exclude: null
+only: null
+only_recursion_depth: null
+prepend_primary: true
+cluster: true
+splines: spline

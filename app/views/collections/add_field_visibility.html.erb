@@ -1,0 +1,30 @@
+<div id="wrapper">
+  <main id="main" role="main">
+    <div class="org-metadata">
+      <div class="container">
+        <div class="row">
+
+
+          <div class="col-md-8 offset-md-2">
+            <table class="table pb-0 mb-0">
+
+            </table>
+            <div class="holder custom_fields_container">
+              <%= render partial: "custom_fields_table", locals: { latest_field_label: nil } %>
+            </div>
+            <div class="row bottom">
+              <div class="col-md-6">
+                <%= link_to "Add Custom Fields", new_edit_custom_field_collection_path(@collection), class: "btn btn-primary edit-custom-field-button edit-custom-field-button-new-custom-spec", data: {method_type: "new"} %>
+                <br>
+                <br>
+                <br>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<div id="show_custom_fields_add"></div>
+<div id="show_custom_vocabulary_modal"></div>

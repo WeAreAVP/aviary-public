@@ -1,0 +1,51 @@
+<div class="contact-page">
+  <div class="head">
+    <div class="container">
+      <h1>
+        <% title 'Contact Us' %>Tell us about your Aviary experience!</h1>
+    </div>
+  </div>
+  <div class="text">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-4">
+          <div class="holder">
+            <h2>Get in Touch with Aviary Team</h2>
+            <p><%= description 'If you have a specific question about Aviary, or if you want to reach out with suggestions and/or concerns, we want to hear from you!' %></p>
+            <div class="img-holder">
+              <img src="https://<%= ENV['S3_HOST_CDN'] %>/public/contact-us.png" alt="">
+            </div>
+          </div>
+        </div>
+        <div class="col-md-8">
+          <div class="form">
+            <%= simple_form_for @support_request, url: submit_request_path do |form| %>
+              <%= form.input :request_type, as: :hidden, input_html: { value: :contact_us } %>
+              <div class="form-group">
+                <%= form.label :name, 'Name' %>
+                <%= form.text_field :name, class: 'form-control', placeholder: 'Enter your name' %>
+                <%= form.error :name %>
+              </div>
+              <div class="form-group">
+                <%= form.label :organization, 'Organization' %>
+                <%= form.text_field :organization, class: 'form-control', placeholder: 'Enter name of the Organization' %>
+                <%= form.error :organization %>
+              </div>
+              <div class="form-group">
+                <%= form.label :email, 'Email' %>
+                <%= form.text_field :email, class: 'form-control', placeholder: 'Enter your email' %>
+                <%= form.error :email %>
+              </div>
+              <div class="form-group">
+                <%= form.label :message, 'Message' %>
+                <%= form.text_area :message, class: 'form-control', placeholder: 'Enter your message here' %>
+                <%= form.error :message %>
+              </div>
+              <%= form.submit 'Submit', class: 'btn btn-primary ' %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

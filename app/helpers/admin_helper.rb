@@ -1,0 +1,3 @@
+# AdminHelper
+module AdminHelper
+end

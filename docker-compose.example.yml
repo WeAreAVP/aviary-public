@@ -1,0 +1,54 @@
+version: '3.7'
+services:
+  db:
+    image: mysql:5.7
+    restart: always
+    volumes:
+      - db-data:/var/lib/mysql
+    env_file: .env.development
+  
+  redis:
+    image: redis:alpine
+  
+  solr:
+    image: solr:7.5
+    ports:
+      - "8983:8983"
+    volumes:
+      - solr-data:/opt/solr/server/solr/mycores
+      - ./solr:/solr-config
+    entrypoint:
+      - docker-entrypoint.sh
+      - solr-precreate
+      - development
+      - /solr-config/configsets/sunspot/conf
+    links:
+      - db
+
+  app: &app_base
+    build: .
+    env_file: .env.development
+    ports:
+      - "3000:3000"
+    links:
+      - db
+      - redis
+      - solr
+    volumes:
+      - .:/aviary
+  
+  worker:
+    <<: *app_base
+    command: bundle exec sidekiq
+    volumes:
+      - cron-data:/var/spool/cron/crontabs
+    ports: []
+    depends_on:
+      - app
+      - db
+      - redis
+
+volumes:
+  db-data:
+  solr-data:
+  cron-data:

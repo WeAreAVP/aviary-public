@@ -1,0 +1,24 @@
+<div id="main_container" class="container-fluid">
+  <div class="main_contain">
+    <main>
+      <div class="text-headline jumbotron">
+        <div class="heading-holder">
+          <div class="container-fluid">
+            <div class="row">
+              <div class="col-md-9"><h1>Organization Profile</h1></div>
+              <div class="col-md-3"><%= link_to 'View Organization Page', root_url(host: Utilities::AviaryDomainHandler.subdomain_handler(@organization)), class: 'btn btn-primary btn-xs pull-right' %></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="organization-section">
+        <div class="container-fluid">
+
+          <div class="">
+            <%= render 'form' %>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>

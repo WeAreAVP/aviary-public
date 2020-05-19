@@ -1,0 +1,60 @@
+<div class="text-headline jumbotron">
+  <h3>Collection Description</h3>
+  There are optional description fields to add to your Collection. This will appear in "About this collection" on your collection page
+</div>
+<a class="btn btn-default text-white mb-10px float-right" onclick="$('#collection_field_sort_popup').modal()">Sort
+  Collection Fields</a>
+<div class="org-metadata" style="margin-top: 80px;">
+  <div class="holder">
+
+    <table class="table" id="sort_collection_default_fields_values">
+      <tbody>
+      <% @dynamic_fields['Collection'].each do |collection_field_sort| %>
+        <tr>
+          <td>
+            <%= render partial: 'collection_fields_template', locals: { collection_field_sort: collection_field_sort } %>
+          </td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
+
+<div class="modal fade" id="collection_field_sort_popup" tabindex="-1" role="dialog" aria-labelledby="transcriptUploadLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title font-size-21px font-weight-bold">Sort Collection Fields</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <table class="table" id="sort_collection_default_fields">
+          <tbody>
+
+         <% @dynamic_fields['Collection'].each do |collection_field_sort| %>
+            <tr>
+              <td>
+                <input type="hidden" name="collection_settings[<%= collection_field_sort['field'].id %>][field_id]" id="collection_settings_<%= collection_field_sort['field'].id %>_field_id" value="<%= collection_field_sort['field'].id %>">
+                <input type="hidden" name="collection_settings[<%= collection_field_sort['field'].id %>][is_visible]" id="collection_settings_<%= collection_field_sort['field'].id %>_is_visible" value="<%= collection_field_sort['settings']['is_visible'] %>">
+                <input type="hidden" name="collection_settings[<%= collection_field_sort['field'].id %>][is_tombstone]" id="collection_settings_<%= collection_field_sort['field'].id %>_is_tombstone" value="<%= collection_field_sort['settings']['is_tombstone'] %>">
+                <div>
+                  <i style="cursor: crosshair;" class="fa fa-bars handle float-left collection-metadata-sorting"></i><span class="description-title float-left font-weight-bold"><%= collection_field_sort['field'].label  %></span>
+                </div>
+              </td>
+            </tr>
+          <% end %>
+          </tbody>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <a class="update-collection-forms-btn btn btn-info mt-2 mr-2" href="javascript://">Update</a>
+        <a class="btn btn-danger mt-2 mr-2" href="javascript:void(0);" onclick="$('#collection_field_sort_popup').modal('hide')">Close</a>
+      </div>
+    </div>
+  </div>
+</div>

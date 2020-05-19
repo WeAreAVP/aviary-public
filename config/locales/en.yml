@@ -1,0 +1,88 @@
+# Files in the config/locales directory are used for internationalization
+# and are automatically loaded by Rails. If you want to use locales other
+# than English, add the necessary files in this directory.
+#
+# To use the locales, use `I18n.t`:
+#
+#     I18n.t 'hello'
+#
+# In views, this is aliased to just `t`:
+#
+#     <%= t('hello') %>
+#
+# To use a different locale, set it with `I18n.locale`:
+#
+#     I18n.locale = :es
+#
+# This would use the information in config/locales/es.yml.
+#
+# The following keys must be escaped otherwise they will not be retrieved by
+# the default I18n backend:
+#
+# true, false, on, off, yes, no
+#
+# Instead, surround them with single quotes.
+#
+# en:
+#   'true': 'foo'
+#
+# To learn more, please read the Rails Internationalization guide
+# available at http://guides.rubyonrails.org/i18n.html.
+
+en:
+  updated_successfully: "Information successfully updated!"
+  file_successfully_uploaded: "File successfully uploaded."
+  error_update_again: "We're sorry, but something went wrong and we were unable to complete your request. Please contact us at aviary@weareavp.com and we'll investigate the error for you."
+  collection_deleted: "Collection deleted successfully."
+  playlist_deleted: "Playlist deleted successfully."
+  error_update_user: "Something went wrong, User could not updated."
+  user_status_updated: "User status successfully updated."
+  organization_status_updated: "Organization status successfully updated."
+  organization_integration_status_updated: "Organization Integration status successfully updated."
+  user_role_updated: "User role successfully updated."
+  invitation_sent: "Following user(s) isn't registered in Aviary yet! We'll send them an invite and add them to your organization after they register"
+  already_member: "Following user(s) is already a member of given organization"
+  user_successfully_added: "Following user(s) is successfully added to your organization"
+  dont_have_permission: "You do not have permission to access this Collection, contact site admin for more details"
+  dont_have_permission_resource: "You do not have permission to access this Resource, contact site admin for more details "
+  collection_not_available: "Collection not found."
+  collection_created: "Your new collection was created successfully."
+  playlist_created: 'Your new playlist was created successfully.'
+  collection_not_present: "Collection not longer accessible. Contact site admin for more details"
+  collection_updated: "Your changes have been saved successfully."
+  playlist_updated: "Your changes have been saved successfully."
+  information_updated: "Information Successfully Updated"
+  description_metadata_updated: "Resource description metadata has been updated successfully."
+  invalid_url: "Invalid File url. Please provide correct url and try again."
+  resource_file_error: "Invalid Resource file. Enable to process. Please try again."
+  invalid_search: "Invalid keyword searched, please try different keyword"
+  error_update: "Something went wrong, Information could not be updated."
+  some_error_update: "Some of information could not be update."
+  add_collection_error: "No collection exists for this Organization, please add collection and try again."
+  resource_created: "Resource created successfully."
+  invalid_credentials: "Invalid Credentials"
+  valid_credentials: "Provided credentials are valid"
+  integration_successfully: "Integration was successfully saved."
+  sync_success: "Sync Process successfully started."
+  sync_paused: "Sync process successfully paused."
+  Integration_credentials_missing: "Credentials for current integration does not exist or wrong please add valid credentials are try again."
+  integration_not_available: 'Integration not available'
+  resource_limit: 'You have reached the total resource limit of your subscription. Please consider upgrading to the next subscription level in order to be able to create more resources in Aviary.'
+  downgrade_not_allowed: 'You currently have more resources than allowed by the new plan you are selecting. Please delete some resources in order to downgrade.'
+  change_plan_success: 'Your plan has been changed successfully and changes will be applied immediately using the current billing information. Costs will be prorated.'
+  already_same_plan: 'You are already subscribed to same plan. Please choose different plan.'
+  renew_success: 'Your subscription has been renewed/changed successfully.'
+  size_limit_exceed: 'You have reached the total TB limit of your subscription. Please consider upgrading to the next subscription level in order to be able to upload more media files to Aviary storage.'
+  added_to_playlist: "Resource successfully added to playlist."
+  missing_resource: "Resource does not existed anymore."
+  rss_podcast_feed_created: "The RSS/podcast feed for this collection has been created successfully. Make sure to enable the feed once it is ready for publication."
+  rss_podcast_feed_updated: "The RSS/podcast feed for this collection has been enabled successfully."
+  invalid_file_format: "We're sorry, but the file or link you provided is not valid or is not supported by Aviary."
+  delete_resource_file: 'Are you sure you want to delete this media file from Aviary?'
+  media_file_deleted_successfully: 'The media file you selected has been deleted successfully from Avairy.'
+  transcript_deleted: 'The transcript was deleted successfully.'
+  Import_successfully_undo: 'The import was rolled-back successfully.'
+  transcription_deleted_successfully: 'The record of the selected transcription request has been deleted successfully.'
+  request_access_success: 'Your permission request has been successfully submitted. An organization administrator will contact you shortly.'
+  request_access_duplicate: 'Please check your email to see if the organization has approved or denied your request.'
+  allowed_permission_group: 'You have already submitted an access request for a resource in this collection. Once you have been approved to access a resource in this collection, you will gain access to the entire collection. Please check your email to see if the organization has approved or denied your request.'

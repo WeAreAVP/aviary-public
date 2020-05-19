@@ -1,0 +1,178 @@
+<div id="main_container" class="container-fluid">
+  <div class="main_contain">
+    <div class="analytics">
+      <div class="most-pop-res row mb-3">
+        <div class="col-md-12">
+          <div class="box">
+            <div class="row pb-15px">
+              <div class="col-md-6">
+                <h2>Most Popular Resources</h2>
+              </div>
+              <div class="col-md-6">
+                <a class='float-right export_resource_view_path btn btn-link' href="javascript:void(0);" data-url="<%= export_resource_view_path %>" >Export
+                  to CSV</a>
+              </div>
+            </div>
+            <div class="head">
+              <div class="date-range">
+                <span class="bold float-left w-50">User Type</span>
+                <select class="resource_views_user_type w-100">
+                  <%= render partial: 'analytics/user_type_list' %>
+                </select>
+                <span class="bold float-left">Date</span>
+                <input type="text" class="form-control resource_views_datepicker float-left" id="resource_views_date_start">
+                <a class="btn bt-sm btn-primary resource_views_limit_result float-left">limit</a>
+              </div>
+
+            </div>
+            <div class="table-hold">
+              <%= content_tag :table, role: :datatable, class: ['table', 'table-striped'], id: 'resource_views', data: { url: resource_view_report_path } do %>
+                <%= render partial: 'analytics/resource_view_report', locals: {} %>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="most-pop-res row mb-3">
+        <div class="col-md-12">
+          <div class="box">
+            <div class="row pb-15px">
+              <div class="col-md-6">
+                <h2>Most Popular Indexes</h2>
+              </div>
+              <div class="col-md-6">
+                <a class='float-right export_index_view_path btn btn-link'  href="javascript:void(0)" data-url="<%= export_index_view_path %>">Export
+                  to CSV</a>
+              </div>
+            </div>
+            <div class="head">
+              <div class="date-range">
+                <span class="bold float-left w-50">User Type</span>
+                <select class="indexes_views_user_type w-100">
+                  <%= render partial: 'analytics/user_type_list' %>
+                </select>
+                <span class="bold float-left">Date</span>
+                <input type="text" class="form-control index_views_datepicker float-left" id="index_views_date_start">
+                <a class="btn bt-sm btn-primary indexes_views_limit_result float-left">limit</a>
+              </div>
+            </div>
+            <div class="table-hold">
+              <%= content_tag :table, role: :datatable, class: ['table', 'table-striped'], id: 'indexes_views', data: { url: indexes_view_report_path } do %>
+                <%= render partial: 'analytics/indexes_view_report', locals: {} %>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="most-pop-res row mb-3">
+        <div class="col-md-12">
+          <div class="box">
+            <div class="row pb-15px">
+              <div class="col-md-6">
+                <h2>Most Popular Transcript</h2>
+              </div>
+              <div class="col-md-6">
+                <a class='float-right btn export_transcript_view_path btn-link' href="javascript:void(0);" data-url="<%= export_transcript_view_path %>">Export
+                  to CSV</a>
+              </div>
+            </div>
+            <div class="head">
+              <div class="date-range">
+                <span class="bold float-left w-50">User Type</span>
+                <select class="transcripts_views_user_type w-100">
+                  <%= render partial: 'analytics/user_type_list' %>
+                </select>
+                <span class="bold float-left">Date</span>
+                <input type="text" class="form-control transcript_views_datepicker float-left" id="transcript_views_date_start">
+                <a class="btn bt-sm btn-primary transcripts_views_date_start float-left">limit</a>
+              </div>
+            </div>
+            <div class="table-hold">
+              <%= content_tag :table, role: :datatable, class: ['table', 'table-striped'], id: 'transcripts_views', data: { url: transcripts_view_report_path } do %>
+                <%= render partial: 'analytics/indexes_view_report', locals: {} %>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="most-pop-res row mb-3">
+        <div class="col-md-12">
+          <div class="box">
+            <div class="row pb-15px">
+              <div class="col-md-6">
+                <h2>Most Popular Media Files</h2>
+              </div>
+              <div class="col-md-6">
+                <a class='float-right btn export_media_plays_path btn-link' href="javascript:void(0);" data-url="<%= export_resource_view_path %>">Export
+                  to CSV</a>
+              </div>
+            </div>
+            <div class="head">
+              <div class="date-range">
+                <span class="bold float-left w-50">User Type</span>
+                <select class="media_plays_user_type w-100">
+                  <%= render partial: 'analytics/user_type_list' %>
+                </select>
+                <span class="bold float-left">Date</span>
+                <input type="text" class="form-control media_plays_datepicker float-left" id="media_plays_date_start">
+                <a class="btn bt-sm btn-primary media_plays_date_start float-left">limit</a>
+              </div>
+            </div>
+            <div class="table-hold">
+              <%= content_tag :table, role: :datatable, class: ['table', 'table-striped'], id: 'media_plays', data: { url: media_plays_report_path } do %>
+                <%= render partial: 'media_play_report', locals: {} %>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="most-pop-res row mb-3">
+        <div class="col-md-12">
+          <div class="box">
+            <div class="row pb-15px">
+              <div class="col-md-6">
+                <h2>RSS/Podcast Analytics</h2>
+              </div>
+              <div class="col-md-6">
+                <a class='float-right export_rss_podcast_path btn btn-link'  href="javascript:void(0)" data-url="<%= export_rss_podcast_path %>">Export
+                  to CSV</a>
+              </div>
+            </div>
+            <div class="head">
+              <div class="date-range">
+                <span class="bold float-left">Date</span>
+                <input type="text" class="form-control rss_podcast_datepicker float-left" id="rss_podcast_date_start">
+                <a class="btn bt-sm btn-primary rss_podcast_limit_result float-left">limit</a>
+              </div>
+            </div>
+            <div class="table-hold">
+              <%= content_tag :table, role: :datatable, class: ['table', 'table-striped'], id: 'rss_podcast', data: { url: rss_podcast_report_path } do %>
+                <%= render partial: 'analytics/rss_podcast_report', locals: {} %>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+<script type="text/javascript">
+    if (navigator.userAgent.match(/IEMobile\/10\.0/)) {
+        var msViewportStyle = document.createElement('style');
+        msViewportStyle.appendChild(
+            document.createTextNode(
+                '@-ms-viewport{width:auto!important}'
+            )
+        );
+        document.querySelector('head').appendChild(msViewportStyle)
+    }
+</script>
+<script>
+    var analytics = new Analytics();
+    analytics.initialize_resource_reports();
+
+</script>

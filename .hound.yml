@@ -1,0 +1,9 @@
+ruby:
+  config_file: .rubocop.yml
+  enabled: true
+scss:
+  enabled: false
+java_script:
+  enabled: false
+coffeescript:
+    enabled: false

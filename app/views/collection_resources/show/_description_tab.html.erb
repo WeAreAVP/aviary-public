@@ -1,0 +1,4 @@
+<div id="view_edit_custom"><%= render partial: 'collection_resources/details_view' %></div>
+<% if can? :edit, @collection_resource &&  params[:controller] != 'playlists' %>
+  <div id="form_edit_custom"><%= render partial: 'collection_resources/details_form' %></div>
+<% end %>

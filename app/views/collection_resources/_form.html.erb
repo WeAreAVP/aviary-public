@@ -1,0 +1,39 @@
+<main id="main" role="main">
+  <div class="upload-main container">
+    <% if @collection_resource.errors.any? %>
+      <div id="error_explanation">
+        <h2><%= pluralize(collection_resource.errors.count, "error") %> prohibited this resource from being saved:</h2>
+        <ul>
+          <% @collection_resource.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+    <img src="" class="upload-lass">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="hold">
+          <%= render partial: "resource_files_tabs", locals: { collection: collection, tab: '_save', multiple: true, browse_file_name: 'av_resource[resource_files][]', file_class: 'fileuploadAll', append_file_class: 'files', progress: 'progress-bar', button_title: 'Upload and Continue', close_class: 'd-none' } %>
+          <div id="resource_files_list">
+            <%= render partial: "resource_files_list", locals: { collection: collection, av_resource: @collection_resource, resource_files: @resource_files } %>
+          </div>
+
+          <div class="text-right">
+            <%= link_to "Edit Description", collection_collection_resource_details_path(@collection_resource.collection, @collection_resource, edit_description: true), class: "btn btn-default ml-2" %>
+            <%= link_to "Save", collection_collection_resource_details_path(@collection_resource.collection, @collection_resource), class: "btn btn-primary ml-2" %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+    var app_helper = new App();
+    
+    var UploadManagerObj = new UploadManager(app_helper);
+    $(function () {
+        UploadManagerObj.initialize();
+    });
+</script>

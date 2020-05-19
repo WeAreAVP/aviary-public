@@ -1,0 +1,68 @@
+<div class="shareHolder">
+  <div class="row">
+    <div class="col-md-7">
+    </div>
+    <div class="col-md-5 d-flex justify-content-end">
+      <% unless params[:embed] == 'true' %>
+        <button type="button" class="badge mr-1 font-weight-bold float-right" data-toggle="modal" data-target="#playlist_share_modal">
+          <i class="fa fa-share" aria-hidden="true"></i> Share Playlist
+        </button>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<div class="shareModal modal fade" id="playlist_share_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+          <li class="nav-item">
+            <a class="nav-link active" id="sharelink-tab" data-toggle="tab" data-tabname="share_link" href="#sharelink" role="tab" aria-controls="sharelink" aria-selected="true">Share
+              Link</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link share_tabs" id="embed-tab" data-toggle="tab" data-tabname="embed_code" href="#embed" role="tab" aria-controls="embed" aria-selected="true">
+              Embed Playlist</a>
+          </li>
+          <% if current_user_is_org_owner_or_admin? %>
+            <li class="nav-item">
+              <a class="nav-link share_tabs" id="public_access_url-tab" data-toggle="tab" data-tabname="public_access_url_tab" href="#public_access_url_tab" role="tab" aria-controls="embed" aria-selected="true">
+                Super View URL</a>
+            </li>
+          <% end %>
+        </ul>
+        <div class="tab-content" id="myTabContent">
+          <div class="tab-pane fade show active" id="sharelink" role="tabpanel" aria-labelledby="sharelink-tab">
+            <div class="content">
+              <div class="shareLink">
+                <input title="Resource Share URL" readonly id="share_link" type="text" class="form-control share_value" value="<%= playlist_short_url(Base64.urlsafe_encode64('share' + @playlist_resource.playlist.id.to_s), host: Utilities::AviaryDomainHandler.subdomain_handler(@playlist_resource.playlist.organization)) %>"/>
+                <button class="btn btn-default btn-block copy-link" data-clipboard-action="copy" data-clipboard-target="#share_link">Copy
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="tab-pane fade" id="embed" role="tabpanel" aria-labelledby="embed-tab">
+            <div class="content">
+              <div class="shareLink">
+                <textarea readonly class="form-control mb-3 share_value" id="embed_resource_media_player" placeholder="Embed Playlist"><iframe src="<%= playlist_show_url(@playlist_resource.playlist, collection_resource_file_id: @resource_file.id, playlist_resource_id: @playlist_resource.id, embed: true, media_player: true) %>" height="800" width="1200" style="width: 100%;"></iframe></textarea>
+                <button class="btn btn-default btn-block copy-link" data-clipboard-action="copy" data-clipboard-target="#embed_resource_media_player" data-original-title="" title="">Copy</button>
+              </div>
+            </div>
+          </div>
+          <div class="tab-pane fade" id="public_access_url_tab" role="tabpanel" aria-labelledby="public_access_url-tab">
+            <div class="content">
+              <div class="shareLink">
+                <textarea readonly class="form-control mb-3 share_value" id="public_access_url" placeholder="Super View URL"><%= playlist_short_url(Base64.urlsafe_encode64('share' + @playlist_resource.playlist.id.to_s), host: Utilities::AviaryDomainHandler.subdomain_handler(@playlist_resource.playlist.organization)) %></textarea>
+                <label class='label font-weight-bold mb-1usel-wrap .mediacarousel").jCarouse'> Access Duration:</label>
+                <input type='hidden' id='public_access_base_url' value='<%= playlist_short_url(Base64.urlsafe_encode64('share' + @playlist_resource.playlist.id.to_s), host: Utilities::AviaryDomainHandler.subdomain_handler(@playlist_resource.playlist.organization)) %>'/>
+                <input type='text' data-url='<%= encrypted_info_url %>' data-resoruceid="<%= @playlist_resource.playlist.id %>" id='public_access_time_period' name='public_access_time_period' class='form-control'/>
+                <button class="btn btn-default btn-block copy-link" data-clipboard-action="copy" data-clipboard-target="#public_access_url" data-original-title="" title="">Copy</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

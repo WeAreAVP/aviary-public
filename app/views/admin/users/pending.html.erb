@@ -1,0 +1,39 @@
+<div class="container pt-4 pl-4 pr-4">
+  <div class="heading-holder table-head">
+    <div class="row mb-4">
+      <div class="col-md-6"><h1>Pending Invites</h1></div>
+      <div class="col-md-6 "><%= link_to "Add User", new_admin_user_path, class: "btn btn-primary float-right" %></div>
+    </div>
+  </div>
+  <div class="data-table">
+    <div class="hold">
+      <%= content_tag :table, role: :datatable, class: ["table", "table-striped"], id: 'admin_pending_user_table' do %>
+        <thead>
+        <tr>
+          <th>Email</th>
+          <th>Invited at</th>
+          <th>Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        <% @pending_users.each do |user| %>
+          <tr>
+            <td><%= user.email %></td>
+            <td><%= Time.at(user.invitation_created_at.to_f).in_time_zone('Eastern Time (US & Canada)').strftime('%m/%d/%Y  %H:%M:%S') %></td>
+            <td>
+              <a href="javascript://" class="btn-sm btn-danger admin_user_delete" data-type="pending" data-url="<%= admin_user_path(user) %>?pending=true" data-name="<%= user.email %>">Delete</a>
+            </td>
+          </tr>
+        <% end %>
+        </tbody>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+    adminUser = new AdminUsers();
+    $(function () {
+        adminUser.pendingUserInitialize()
+    });
+</script>

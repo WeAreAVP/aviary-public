@@ -1,0 +1,9 @@
+<% unless current_page?('/catalog') || !organization_layout? %>
+  <div class="search-nav search1cus">
+    <div class="form-group">
+      <div class="<%= container_classes %>">
+        <%= render_search_bar %>
+      </div>
+    </div>
+  </div>
+<% end %>

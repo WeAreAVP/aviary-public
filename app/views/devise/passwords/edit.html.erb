@@ -1,0 +1,16 @@
+<%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { class: "form-signin", method: :put }) do |f| %>
+  <h1 class="h3 mb-3 font-weight-normal text-center">Reset Password</h1>
+  <%= devise_error_messages! %>
+  <%= f.hidden_field :reset_password_token %>
+
+  <%= f.label :password, "New password", for: "user_password", class: 'sr-only' %>
+  <% if @minimum_password_length %>
+    <em>(<%= @minimum_password_length %> characters minimum)</em><br/>
+  <% end %>
+  <%= f.password_field :password, autofocus: true, minlength: 6, required: true, autocomplete: "new-password", class: "form-control", placeholder: "New Password" %>
+
+  <%= f.label :password_confirmation, "Confirm new password", for: "user_password_confirmation", class: 'sr-only' %>
+  <%= f.password_field :password_confirmation, minlength: 6, required: true, autocomplete: "off", class: "form-control", placeholder: "Confirm New Password" %>
+
+  <%= f.submit "Change my password", class: "btn btn-lg btn-primary btn-block" %>
+<% end %>

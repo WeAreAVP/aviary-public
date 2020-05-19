@@ -1,0 +1,455 @@
+// Place all the styles related to the organizations controller here.
+// They will automatically be included in application.css.
+// You can use Sass (SCSS) here: http://sass-lang.com/
+
+/* orgainzation form styles */
+
+.organization-section {
+  padding: 0;
+}
+
+.organization-section .form-head {
+  padding: 25px 20px;
+}
+
+.organization-section .form-head h1 {
+  font-size: 37px;
+  font-weight: bold;
+  text-align: center;
+  color: #010101;
+  font-family: "Roboto";
+}
+
+.organization-section .form {
+  background: #fff;
+  padding: 35px 0;
+  margin: 0 auto;
+
+  .selectize-dropdown {
+    top: auto !important;
+    bottom: 100% !important;
+  }
+}
+
+.organization-section .form textarea {
+  height: 150px;
+  resize: none;
+}
+
+.organization-section .form label {
+  font-weight: 600;
+  display: block;
+  font-family: "Roboto";
+  margin: 0;
+}
+
+.organization-section .form small {
+  font-weight: 600;
+  color: #8c8c8c;
+  position: relative;
+  top: -2px;
+  margin: 0 0 5px;
+  display: block;
+}
+
+.file-upload {
+  display: block;
+  text-align: center;
+  font-family: Helvetica, Arial, sans-serif;
+  font-size: 12px;
+}
+
+.file-upload .file-select {
+  display: block;
+  cursor: pointer;
+  height: 40px;
+  text-align: left;
+  background: #fff;
+  overflow: hidden;
+  position: relative;
+  padding: 0.375rem 0.75rem;
+  font-size: 1rem;
+  color: #495057;
+  border: 1px solid #ced4da;
+  line-height: 1.5;
+}
+
+.file-upload .file-select .file-select-button {
+  color: #3d62e6;
+  font-family: "Roboto";
+  font-size: 14px;
+  padding: 0 10px;
+  display: inline-block;
+  float: right;
+  margin: -10px -12px 0 0;
+  height: 42px;
+  line-height: 48px;
+}
+
+.file-upload .file-select .file-select-name {
+  display: inline-block;
+  font-family: "Roboto";
+  padding: 0 10px;
+}
+
+.file-upload .file-select:hover {
+  border-color: #80bdff;
+  transition: all .2s ease-in-out;
+  -moz-transition: all .2s ease-in-out;
+  -webkit-transition: all .2s ease-in-out;
+  -o-transition: all .2s ease-in-out;
+}
+
+.file-upload .file-select:hover .file-select-button {
+  color: #000;
+  transition: all .2s ease-in-out;
+  -moz-transition: all .2s ease-in-out;
+  -webkit-transition: all .2s ease-in-out;
+  -o-transition: all .2s ease-in-out;
+}
+
+.file-upload .file-select input[type=file] {
+  z-index: 100;
+  cursor: pointer;
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  filter: alpha(opacity=0);
+}
+
+.file-upload .file-select.file-select-disabled {
+  opacity: 0.65;
+}
+
+.file-upload .file-select.file-select-disabled:hover {
+  display: block;
+  border: 2px solid #dce4ec;
+  color: #34495e;
+  cursor: pointer;
+  height: 40px;
+  line-height: 40px;
+  margin-top: 5px;
+  text-align: left;
+  background: #fff;
+  overflow: hidden;
+  position: relative;
+}
+
+.file-upload .file-select.file-select-disabled:hover .file-select-button {
+  background: #dce4ec;
+  color: #666;
+  padding: 0 10px;
+  display: inline-block;
+  height: 40px;
+  line-height: 40px;
+}
+
+.file-upload .file-select.file-select-disabled:hover .file-select-name {
+  line-height: 40px;
+  display: inline-block;
+  padding: 0 10px;
+}
+
+.organization-section .form-group label {
+  font-weight: 600;
+  display: block;
+  font-family: "Roboto";
+  margin: 0 0 5px;
+}
+
+.organization-section .left-aligned {
+  margin-left: 0;
+  margin-right: -1px;
+}
+
+.organization-section .left-aligned span {
+  -webkit-border-radius: 4px 0 0 4px !important;
+  -moz-border-radius: 4px 0 0 4px !important;
+  border-radius: 4px 0 0 4px !important;
+}
+
+.organization-section .form-group strong label {
+  display: inline-block;
+  vertical-align: middle;
+  margin: 0;
+}
+
+.file-upload {
+  input[type="file"] {
+    display: none;
+
+  }
+
+  label {
+    color: #444;
+    font-size: 16px;
+    margin-top: 10px;
+    background: #e9ecef;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin: 5px 0 0 !important;
+    text-align: center;
+    cursor: pointer;
+
+    &:hover {
+      color: #222;
+      background: #dcdfe2;
+    }
+  }
+}
+
+.organization_url {
+  width: 38%;
+  flex: 1;
+}
+
+.organization_custom_domain {
+  flex: 1;
+}
+
+.image-box {
+  width: 100%;
+  height: 50px !important;
+  border: 1px solid #ddd;
+  overflow: hidden;
+  text-align: center;
+  padding: 5px 5px 0px;
+  display: table;
+  vertical-align: middle;
+
+  .holder {
+    display: table-cell;
+    height: 100%;
+    vertical-align: middle;
+
+    img {
+      max-width: 100%;
+      max-height: 60px;
+      display: inline-block;
+    }
+  }
+}
+
+.date-fields {
+  letter-spacing: -5px;
+
+  label {
+    letter-spacing: normal;
+  }
+
+  .selectize-control {
+    width: 33%;
+    display: inline-block;
+    vertical-align: top;
+    letter-spacing: normal;
+    margin-left: -1px;
+  }
+}
+
+.mgT20 {
+  margin-top: 20px;
+}
+
+.mgL20 {
+  margin-left: 20px;
+}
+
+.user_org_role .selectize-input:after {
+  display: none !important;
+}
+
+.all-organizations h1 {
+  font-size: 40px;
+  font-weight: bold;
+  text-align: center;
+  color: #1b1b1b;
+  position: relative;
+  font-family: "Roboto";
+  padding-bottom: 15px;
+  margin-bottom: 15px;
+}
+
+.all-organizations h1:after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: 30px;
+  height: 5px;
+  margin-left: -15px;
+  background: #f05c1f;
+  border-radius: 30px;
+}
+
+.all-organizations .head {
+  background: #f1f3f6;
+}
+
+.all-organizations .form-head {
+  text-align: center;
+  font-size: 16px;
+  line-height: 1.4;
+  color: #797979;
+  max-width: 740px;
+  margin: 0 auto;
+  padding: 45px 20px 30px;
+}
+
+.all-organizations .form-head .form-control {
+  height: 50px;
+  margin-top: 20px;
+}
+
+.all-organizations .panel {
+  background: #f3f3f3;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.all-organizations .form {
+  padding: 30px;
+}
+
+.all-organizations .form .row {
+  align-items: center;
+}
+
+.all-organizations .box {
+  margin-bottom: 35px;
+  -webkit-box-shadow: 0 9px 20px #dadada;
+  -moz-box-shadow: 0 9px 20px #dadada;
+  box-shadow: 0 9px 20px #dadada;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.all-organizations .box .image {
+  background-repeat: no-repeat;
+  -webkit-background-size: cover;
+  background-size: cover;
+  height: 150px;
+  background-color: #f5f4f3;
+  position: relative;
+}
+
+.all-organizations .box .image:after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: -1px;
+  bottom: 0;
+  background: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.23) 100%);
+}
+
+.all-organizations .box a {
+  display: block;
+  overflow: hidden;
+}
+
+.all-organizations .box .details {
+  padding: 8px 0;
+  background: #fff;
+}
+
+.all-organizations .box .main-hold {
+  overflow: hidden;
+}
+
+.all-organizations .box .title {
+  width: 80%;
+  display: inline-block;
+  vertical-align: middle;
+  margin-left: 10px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  padding: 10px 0;
+  color: #333;
+}
+
+.all-organizations .box .img-hold {
+  width: 40px;
+  height: 40px;
+  background: #fff;
+  border: 2px solid #f8f8f8;
+  border-radius: 70px;
+  overflow: hidden;
+  float: left;
+  padding: 11px 4px;
+}
+
+.all-organizations .box .img-hold img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.home-featured-resources,
+.home-featured-collections,
+.home-featured-organizations {
+  margin: 0 -15px;
+  padding-bottom: 20px;
+  letter-spacing: -5px;
+  overflow: hidden;
+}
+
+.home-featured-resources .item,
+.home-featured-collections .item,
+.home-featured-organizations .item {
+  width: 25%;
+  display: inline-block;
+  vertical-align: top;
+  padding: 0 15px;
+  letter-spacing: normal;
+  margin: 0 0 30px;
+}
+
+.home-featured-resources .item a,
+.home-featured-collections .item a,
+.home-featured-organizations .item a {
+  background: #fff;
+  -webkit-box-shadow: 0 9px 20px #ececec;
+  -moz-box-shadow: 0 9px 20px #ececec;
+  box-shadow: 0 9px 20px #ececec;
+  display: block;
+}
+
+.home-featured-resources .item a:hover,
+.home-featured-collections .item a:hover,
+.home-featured-organizations .item a:hover {
+  text-decoration: none;
+}
+
+@media screen and (max-width: 1024px) {
+  .home-featured-resources .item,
+  .home-featured-collections .item,
+  .home-featured-organizations .item {
+    width: 33%;
+  }
+}
+
+@media screen and (max-width: 767px) {
+  .home-featured-resources .item,
+  .home-featured-collections .item,
+  .home-featured-organizations .item {
+    width: 50%;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .home-featured-resources .item,
+  .home-featured-collections .item,
+  .home-featured-organizations .item {
+    width: 100%;
+  }
+}
+
+.category_listings {
+  max-height: 400px;
+  overflow: scroll;
+}

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta content='text/html; charset=UTF-8' http-equiv='Content-Type'/>
+</head>
+<body>
+<p>Dear <%= @user.email %>,</p>
+<p>
+  An Aviary administrator has assigned you as the owner of <b><%= @organization.name %></b> in Aviary. You can login and
+  access the
+  new Organization here: <%= root_url(host: Utilities::AviaryDomainHandler.subdomain_handler(@organization)) %>
+</p>
+<br>
+<p>Best,</p>
+<p>The Aviary Team</p>
+
+
+</body>
+</html>

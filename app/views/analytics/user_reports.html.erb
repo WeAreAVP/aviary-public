@@ -1,0 +1,96 @@
+<div id="main_container" class="container-fluid">
+  <div class="main_contain">
+    <div class="analytics">
+      <div class="row mb-3 most-pop-res">
+        <div class="col-md-12">
+          <div class="box">
+            <div class="row pb-15px">
+              <div class="col-md-6">
+                <h2>User Locations</h2>
+              </div>
+              <div class="col-md-6">
+                <a class="float-right export_user_locations_report_path btn btn-link" data-url="/analytics/export_user_locations_report">Export
+                  to CSV</a>
+              </div>
+            </div>
+            <div class="head">
+              <div class="date-range" id='user_location_report' data-url="<%= location_wise_users_path %>">
+                <span class="bold float-left w-50">User Type</span>
+                <select class="user_location_user_type w-100">
+                  <%= render partial: 'analytics/user_type_list' %>
+                </select>
+
+                <span class="bold float-left">Date</span>
+                <input type="text" class="form-control user_location_datepicker float-left" id="user_location_datepicker">
+                <a class="btn bt-sm btn-primary user_location_limit_result float-left"> limit</a>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <div id="vmap" style="height: 300px;"></div>
+              </div>
+              <div class="col-md-6">
+                <div class="table-hold">
+                  <%= render partial: 'analytics/location_wise_report', locals: {} %>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row mb-3">
+        <div class="col-md-12">
+          <div class="box">
+            <div class="row">
+              <div class="col-md-12">
+                <div>
+                  <div class="row pb-15px">
+                    <div class="col-md-6"><h2>User Visits</h2></div>
+                  </div>
+                  <div class="head">
+                    <select class="user_visit_user_type w-100">
+                      <%= render partial: 'analytics/user_type_list' %>
+                    </select>
+
+                    <div class="w-50 pl-1 pr-1">
+                      <input type="text" class="user_visit_date_range form-control" id="user_visit_date_range"/>
+                    </div>
+                    <div class="w-25 pl-1 pr-1">
+                      <select class="user_visit_type_of_report" id="user_visit_type_of_report"/>
+                      <option value="yearly">Year</option>
+                      <option value="monthly">Month</option>
+                      <option value="weekly">Week</option>
+                      <option value="daily">Day</option>
+                      </select>
+                    </div>
+                    <div class="w-25 pl-1 pr-1">
+                      <a class="btn btn-sm btn-primary" data-url="<%= user_visit_report_path %>" id="limit_user_visit_report">Limit</a>
+                    </div>
+                  </div>
+                </div>
+                <div id="user_visit_view_report"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+<script type="text/javascript">
+    if (navigator.userAgent.match(/IEMobile\/10\.0/)) {
+        var msViewportStyle = document.createElement('style');
+        msViewportStyle.appendChild(
+            document.createTextNode(
+                '@-ms-viewport{width:auto!important}'
+            )
+        );
+        document.querySelector('head').appendChild(msViewportStyle)
+    }
+</script>
+<script>
+    var analytics = new Analytics();
+    analytics.initialize_user_reports();
+
+</script>

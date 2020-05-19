@@ -1,0 +1,14 @@
+<% if @collection_resource.collection_resource_files.present? %>
+  <div class="timeline-bar-parent-div ">
+    <div class="bottom_layer timeline-player-bar ">
+      <div class="loader loader-details loader-small">
+        <div class="img">
+          <div class="hold">
+            <%= image_tag("https://#{ENV['S3_HOST_CDN']}/public/images/ajax-loader.gif") %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>
+

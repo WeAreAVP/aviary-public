@@ -1,0 +1,36 @@
+<% single_field['values'].each do |single_value| %>
+  <% @description_count = count_occurrence(single_value, session[:session_video_text_all], @description_count, 'description')
+     unless single_value['value'].blank? && single_value['vocab_value'].blank? %>
+    <div class="single-value single-non-tombstone ">
+      <% if single_field['field'].is_vocabulary %>
+        <span class="badge badge-secondary single_value_non_tombstone"><%= single_value['vocab_value'] if single_value['vocab_value'].present? %></span>
+      <% end %>
+      <% case single_field['field'].column_type.to_s %>
+      <% when CustomFields::Field::TypeInformation::TOKEN.to_s %>
+        <% single_value['value'].split(',').each do |single_token| %>
+          <span class="tag">  <%= single_token %> </span>
+        <% end %>
+      <% else %>
+        <% if single_field['field'].label == 'language' %>
+          <span class="single_value single_value_non_tombstone"><%= languages_array_simple[0][single_value['value']].present? ? languages_array_simple[0][single_value['value']].html_safe : single_value['value'] %> </span>
+        <% elsif single_field['field'].system_name == 'source_metadata_uri' %>
+          <%
+            show_value = single_value['value']
+            unless show_value.include? '</a>'
+              results = show_value.scan(/\S+[.]\S+/xms)
+              if results.present?
+                results.each do |single_result| %>
+                <% show_value = show_value.gsub(single_result, "<a href=\"#{single_result}\"> #{single_result}</a>").html_safe if single_result.include? 'http'  %>
+              <% end %>
+            <% end %>
+          <% end %>
+          <%= show_value %>
+        <% else %>
+          <% value = single_field['field'].system_name == 'duration' ? time_to_duration(single_value['value']) : single_value['value'] %>
+          <span class="single_value single_value_non_tombstone"><%= value.to_s.html_safe %> </span>
+        <% end %>
+      <% end %>
+      <br>
+    </div>
+  <% end %>
+<% end %>

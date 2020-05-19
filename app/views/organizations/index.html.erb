@@ -1,0 +1,51 @@
+<div class="organization-section all-organizations">
+  <div class="head">
+    <div class="form-head">
+      <h1><%= title 'Aviary Sites' %></h1>
+      <p><%= description 'Many organizations use Aviary to provide access to their sound and audiovisual content. Aviary is designed to
+        provide flexibility for organizations to determine their own look and feel as they make use of the common
+        features of the platform. Browse below to see how organizations make use of Aviary and to explore the content
+        they make available on their distinct Aviary sites.' %></p>
+      <form action="" method="GET">
+        <div class="form-group">
+          <input placeholder="Search for Aviary Sites" type="text" name="title" value="<%= params[:title] %>" class="form-control">
+        </div>
+      </form>
+    </div>
+  </div>
+  <div class="container-fluid">
+    <div class="form">
+      <div class="row">
+        <% @organizations.each do |organization| %>
+          <div class="col-md-3">
+            <div class="box">
+              <a target="_blank" href="<%= root_url(host: Utilities::AviaryDomainHandler.subdomain_handler(organization)) %>">
+                <div class="image" style="background-size:cover;background-image: <%= url_image(organization.banner_image.url(:small))%>; background-position: center;">
+                </div>
+                <div class="details">
+                  <div class="col-12">
+                    <div class="main-hold">
+                      <div class="img-hold">
+                        <%= image_tag(organization.favicon.present? ? organization.favicon(:small) : organization.logo_image(:medium), alt: organization.name) %>
+                      </div>
+                      <span class="title"><%= organization.name %></span>
+                    </div>
+                  </div>
+                </div>
+              </a>
+              <div class="browse-org">
+                <a target="_blank" href="<%= search_catalog_url(host: Utilities::AviaryDomainHandler.subdomain_handler(organization), f: { organization_id_is: [organization.id] }, indexes: [], keywords: [], op: [], resource_description: [], search_field: 'advanced', search_type: 'simple', title_text: '', transcript: [], type_of_search: ['simple']) %>">
+                  Browse this Site &gt;&gt;</a>
+              </div>
+            </div>
+          </div>
+        <% end %>
+        <% unless @organizations.present? %>
+          <div class="col-md-12">
+            <div class="h3 text-center p-4">No Aviary Site found.</div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

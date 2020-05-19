@@ -1,0 +1,15 @@
+<div class="single-value single-tombstone">
+  <% if single_field['field'].is_vocabulary %>
+    <span class="badge badge-secondary"><%= single_value['vocab_value'] if !single_value.is_a?(String) && single_value['vocab_value'].present? %></span>
+  <% end %>
+  <% if single_field['field'].label == 'language' %>
+    <span class="single_value"><%= languages_array_simple[0][single_value['vocab_value']] %> </span>
+  <% else %>
+    <% value = single_value.is_a?(String) ? single_value : single_value['value'].to_s
+       if custom_html_tags == 'strip'
+         value = strip_tags(value)
+       end
+       value = single_field['field'].system_name == 'duration' ? time_to_duration(value) : value %>
+    <span class="single_value"> <%= value.html_safe %></span>
+  <% end %>
+</div>

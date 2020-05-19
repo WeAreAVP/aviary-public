@@ -1,0 +1,9 @@
+<% unless @resources.blank?
+     @resources.each do |single_resource| %>
+    <tr>
+      <td><%= single_resource.id %></td>
+      <td><%=h truncate(single_resource.collection_resource.title, :length => 128) %></td>
+      <td><%=h truncate(single_resource.description, length: 100, separator: '...').strip_tags %></td>
+    </tr>
+  <% end %>
+<% end %>

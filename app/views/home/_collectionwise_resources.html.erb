@@ -1,0 +1,14 @@
+<% if collection_wise_resources.present? %>
+<% collection_wise_resources.each do |collection_resource| %>
+        <% if collection_resource[:resources].present? %>
+          <div class="head"><h3>
+            <a href="<%= collection_path(collection.id) %>" style="color: #333;" target="_blank"><%= collection.title %></a>
+          </h3></div>
+          <div class="row">
+            <% collection_resource[:resources].each do |collection_resource| %>
+              <%= render partial: 'home/home_single_resource_view', locals: { collection_resource: collection_resource } %>
+            <% end %>
+          </div>
+        <% end %>
+    <% end %>
+<% end %>

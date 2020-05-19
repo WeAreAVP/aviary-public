@@ -1,0 +1,7 @@
+<% if user_signed_in? %>
+	<%= render partial: "shared/headers/user_header" %>
+<% elsif admin_signed_in? %>
+	<%= render partial: "shared/headers/admin_header" %>
+<% else %>
+  <%= render partial: "shared/headers/before_sign_in_header" %>
+<% end %>

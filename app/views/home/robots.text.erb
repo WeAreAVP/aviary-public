@@ -1,0 +1,13 @@
+<% if ENV['ENABLE_SEO'] %>
+  <% site_url = if current_organization.present?
+                  root_url(host: Utilities::AviaryDomainHandler.subdomain_handler(current_organization)) + "sitemaps/#{current_organization.id}/sitemap.xml"
+                else
+                  root_url + 'sitemap.xml'
+                end %>
+User-Agent: *
+Allow: /
+Sitemap: <%= "#{site_url}" %>
+<% else %>
+User-Agent: *
+Disallow: /
+<% end %>

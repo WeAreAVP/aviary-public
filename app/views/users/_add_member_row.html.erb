@@ -1,0 +1,14 @@
+<div class="row">
+  <div class="col-sm-5">
+    <%= text_field_tag :search_team_members, params[:search], name: 'user[][search]', type: 'email', class: 'form-control', placeholder: 'Email Address' %>
+  </div>
+  <div class="col-sm-5">
+    <div class="">
+      <%=
+        select_tag "user[][user_role]", options_from_collection_for_select(@roles, 'id', 'name') %>
+    </div>
+  </div>
+  <div class="col-sm-2">
+    <button type="button" class="btn btn-danger remove_member_row">Remove</button>
+  </div>
+</div>

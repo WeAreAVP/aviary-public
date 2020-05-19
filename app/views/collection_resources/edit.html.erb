@@ -1,0 +1,63 @@
+<div id="main_container" class="container-fluid">
+  <div class="breadcrumb">
+    <%= render_breadcrumbs %>
+  </div>
+  <div class="main_contain">
+    <main>
+      <div class="heading-holder table-head">
+        <div class="row">
+          <div class="col-md-6"><h1> Edit Resource </h1></div>
+          <div class="col-md-6"></div>
+        </div>
+      </div>
+      <%= form_for([@collection, @collection_resource]) do |f| %>
+        <div class="data-table ">
+          <div class="details">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="admin_user_roles">Collection</label>
+                  <%= f.collection_select :collection_id, @collections, :id, :title, { selected: @collection.id }, {} %>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="">Display Title</label>
+                  <%= f.text_field :title, class: 'form-control', required: true %>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <%= f.label 'Featured ?', for: 'collection_resource_featured' %>
+                  <%= f.select :is_featured, [['Yes', true], ['No', false]], {}, required: false, label: false, class: 'custom-placeholder' %>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <%= f.label 'Status', for: 'collection_resource_public' %>
+                  <%= f.select :access, CollectionResource.accesses.map { |key, _| [key.split('_').second.humanize, key] }, {}, required: false, label: false, class: 'custom-placeholder' %>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-12 text-right">
+                <button class="btn btn-primary ml-2 saveBtnCus">Save</button>
+                <%= link_to "Next", collection_collection_resource_add_resource_file_path(@collection, @collection_resource), class: "btn btn-primary ml-2" %>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </main>
+  </div>
+</div>
+
+<script type="text/javascript">
+    var collection_resource = new CollectionResource();
+    document.addEventListener("DOMContentLoaded", function () {
+        collection_resource.rss_metadata("collection_resource");
+    });
+</script>

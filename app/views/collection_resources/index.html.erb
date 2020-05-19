@@ -1,0 +1,33 @@
+<div id="main_container" class="container-fluid">
+  <div class="main_contain">
+    <main>
+      <div class="text-headline jumbotron">
+        <div class="heading-holder table-head">
+          <div class="row">
+            <div class="col-md-7"><h1>Resources</h1></div>
+            <div class="col-md-5 ">
+              <%= render partial: 'collection_resources/show/collection_resource_buttons', locals: {from: 'collection_resource'} %>
+              <%= link_to "Add Resource", new_collection_resource_path, class: "btn btn-primary float-right" %>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="data-table">
+        <div class="container-fluid">
+          <%= content_tag :table, role: :datatable, class: ['table', 'table-striped'], id: 'collection_resource_datatable', data: { url: collection_resources_path(format: :json) } do %>
+            <%= render partial: 'collection_resources/listing_table', locals: { table_called_from: 'collection_resource_index', columns_details: JSON.parse(current_organization.resource_table_column_detail), organization_id: current_organization.id } %>
+          <% end %>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+<%= render partial: 'collections/bulk_edit_popups' %>
+<%= render partial: 'collection_resources/manage_column', locals: { columns_details: JSON.parse(current_organization.resource_table_column_detail), search_columns_details: JSON.parse(current_organization.resource_table_search_columns), organization_id: current_organization.id } %>
+<script type="text/javascript">
+    var collection_resource_table = new CollectionResourceTable();
+    document.addEventListener("DOMContentLoaded", function () {
+        collection_resource_table.initialize('<%== current_organization.resource_table_column_detail %>', '<%= session[:resource_list_bulk_edit] %>');
+    });
+</script>

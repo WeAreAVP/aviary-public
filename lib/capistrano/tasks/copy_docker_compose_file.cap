@@ -1,0 +1,10 @@
+namespace :copy do
+  desc 'copy docker-compose.yml to current folder for docker'
+  task :docker_compose_file do
+    on roles(:app) do
+        with rails_env: "#{fetch(:stage)}" do
+          execute "cp -rf /var/www/shared/aviary_#{fetch(:stage)}/docker-compose.yml #{current_path}/docker-compose.yml"
+        end
+      end
+  end
+end

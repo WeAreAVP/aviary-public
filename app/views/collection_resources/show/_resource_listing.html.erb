@@ -1,0 +1,11 @@
+<ul>
+  <% all_files = @collection_resource.collection_resource_files.order_file %>
+  <% all_files.each_with_index do |single_file, index| %>
+    <% can_access = permission_to_access_file?(single_file) %>
+    <%= render partial: 'collection_resources/show/resource_file_slider_card_start', locals: {single_file: single_file, can_access: can_access, index: index} %>
+      <% media_url = collection_collection_resource_details_path(single_file.collection_resource.collection, single_file.collection_resource, single_file, share: params[:share])
+        media_url = embeded_url(collection_resource_url(@collection_resource), 'media_player', single_file.id) if params[:media_player] == 'true' %>
+      <%= render partial: 'collection_resources/show/single_card', locals: {single_file: single_file, index: index, media_url_inner: media_url, can_access: can_access} %>
+    </li>
+  <% end %>
+</ul>

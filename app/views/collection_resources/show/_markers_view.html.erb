@@ -1,0 +1,5 @@
+<% unless session[:session_video_text_all].blank? %>
+  <%= render partial: 'collection_resources/show/marker_list_hanlder', locals: { type: 'description', count: session[:description_count] } %>
+  <%= render partial: 'collection_resources/show/marker_list_hanlder', locals: { type: 'index', count: session[:index_count] } %>
+  <%= render partial: 'collection_resources/show/marker_list_hanlder', locals: { type: 'transcript', count: session[:transcript_count] } %>
+<% end %>

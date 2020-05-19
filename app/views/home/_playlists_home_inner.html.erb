@@ -1,0 +1,44 @@
+<% if featured_playlists.present? %>
+  <div class="home-featured-collections playlist_home_cont row">
+    <% featured_playlists.includes([:organization]).each do |playlist| %>
+      <div class="col-md-3">
+        <div class="box <%= 'featured' if playlist.is_featured %>">
+          <a href="<%= playlist_show_path(playlist) %>">
+            <div class="image" style="background-size:cover;background-image: url(<%= playlist.thumbnail.url(:small) %>); background-position: center;">
+            </div>
+          </a>
+          <div class="resource-detail-data">
+            <div class="col-12 organization">
+              <div class="main-hold">
+                <div class="img-hold">
+                  <%= image_tag(playlist.organization.favicon.present? ? playlist.organization.favicon(:small) : playlist.organization.logo_image(:medium), alt: playlist.organization.name) %>
+                </div>
+              </div>
+              <div class="details">
+                <%= link_to playlist_show_path(playlist) do %>
+                  <span class="title"><%= playlist.name %></span>
+                <% end %>
+                <span class="description_collection">
+                    <%= strip_tags(playlist.description) %></span>
+                <a data-toggle="modal" class='show_hide_description' data-type="Playlist" data-id="description_<%= playlist.id %>" data-collection-img='<%= url_image(playlist.thumbnail.url(:small)) %>'
+                   data-collection-title="<%= playlist.name %>" data-org-logo="<%= playlist.organization.logo_image.url(:medium) %>" data-collection-path="<%= playlist_show_path(playlist) %>" data-org-title="<%= playlist.organization.name %>"
+                   data-collection-search="<%= playlist_show_path(playlist) %>">
+                  <i class="fa fa-info-circle"></i></a>
+                <div class="description description_<%= playlist.id %> d-none">
+                  <ul>
+                    <li><strong>Description</strong>
+                      <div><%= playlist.description.try(:html_safe) %></div>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="browse-org">
+            <a target="_blank" href="<%= playlist_show_path(playlist) %>"> View Playlist >></a>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+<% end %>

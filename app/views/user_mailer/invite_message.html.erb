@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta content='text/html; charset=UTF-8' http-equiv='Content-Type'/>
+</head>
+<body>
+<p>Dear <%= @user.email %>,</p>
+<p>
+  <b><%= @organization.name %></b> has invited you to join them in Aviary. Please sign up by clicking here: <%= @invitation_link %>
+</p>
+<p>Best,</p>
+<p>The Aviary Team</p>
+</body>
+</html>

@@ -1,0 +1,11 @@
+namespace :custom do
+      desc 'run some rake db task'
+  task :deploy_env_file do
+    on roles(:app) do
+        with rails_env: "#{fetch(:stage)}" do
+          execute "mkdir -p /var/www/aviary/current && yes | cp -rf /var/www/env_files/.env /var/www/aviary/current/.env "
+          execute "ln -nfs #{shared_path}/public/system #{release_path}/public/system"
+        end
+    end
+  end
+end

@@ -1,0 +1,71 @@
+
+<div class="text heading_and_tombstone ">
+  <dl>
+    <dd class="name">
+      <% if @inside_playlist && !params[:media_player].to_s.to_boolean? && !params[:embed].to_s.to_boolean? %>
+        <a href="<%= collection_collection_resource_path(@collection_resource.collection_id, @collection_resource.id) %>"> <%= @collection_resource.title %></a>
+      <% elsif !@inside_playlist and can? :manage, @collection_resource %>
+        <span data-bip-type="input" data-bip-attribute="title" data-bip-object="collection_resource" data-bip-original-content="<%= @collection_resource.title %>" data-bip-skip-blur="false" data-bip-url="<%= collection_collection_resource_path(collection_id: @collection_resource.collection.id, id: @collection_resource.id) %>" data-bip-value="<%= @collection_resource.title %>" class="best_in_place" id="best_in_place_av_resource_2_title" method="PUT"><%= @collection_resource.title %></span>
+        <i class="fa fa-pencil edit_title"></i>
+      <% else %>
+        <span> <%= @collection_resource.title %></span>
+      <% end %>
+    </dd>
+    <dt>Collection:</dt>
+    <dd>
+      <span class="resource-heading-text"><%= link_to @collection_resource.collection.title, collection_url(@collection_resource.collection, host: Utilities::AviaryDomainHandler.subdomain_handler(@collection_resource.collection.organization)), target: "_blank" %></span>
+    </dd>
+    <div class="clearfix"></div>
+    <dt>Organization:</dt>
+    <dd>
+      <span class="resource-heading-text">
+        <%= link_to @collection_resource.collection.organization.name, root_url(host: Utilities::AviaryDomainHandler.subdomain_handler(@collection_resource.collection.organization)), target: "_blank" %>
+      </span>
+    </dd>
+    <div class="clearfix"></div>
+    <% resource_custom_fields = @collection_resource.all_fields %>
+    <% tombstone_data = resource_custom_fields['tombstones'].empty? ? resource_custom_fields['default_tombstone'] : resource_custom_fields['tombstones'] %>
+    <% if tombstone_data.length > 0 %>
+      <% tombstone_data.each do |single_field| %>
+        <% field = single_field['values'] %>
+        <% if field.length > 0 %>
+          <dt><%= single_field['field'].label.titleize %>:</dt>
+          <dd class="with-select">
+            <div class="tombstone-main_cus">
+              <% field.each do |single_value| %>
+                <%= render partial: 'collection_resources/single_tombstone', locals: {single_field: single_field, single_value: single_value, custom_html_tags: 'strip'} %>
+              <% end %>
+              <% random = random_number %>
+              <span class='moreclick' style="display: none;" data-id="<%= random %>"> ...more </span>
+            </div>
+            <div class="custom-modal custom-modal-normal" style="display: none" id="<%= random %>">
+              <div class="header">
+                <span class="btn-close " data-id="<%= random %>" style="cursor: pointer"><span class="icon-Close"></span></span>
+                <%= single_field['field'].label.titleize %>:
+              </div>
+              <div class="body">
+                <% field.each do |single_value| %>
+                  <%= render partial: 'collection_resources/single_tombstone', locals: {single_field: single_field, single_value: single_value, custom_html_tags: 'dont_strip'} %>
+                  <br/>
+                <% end %>
+              </div>
+            </div>
+          </dd>
+          <div class="clearfix"></div>
+        <% end %>
+      <% end %>
+    <% end %>
+  </dl>
+</div>
+<script>
+    $(function () {
+        document.querySelectorAll('.tombstone-main_cus').forEach(function (element) {
+            /* Only works in Blink browsers and Firefox 50+
+               no Safari or IE/Edge support */
+            if ((element.offsetHeight + 5 < element.scrollHeight) || ((element.offsetWidth) < element.scrollWidth)) {
+                // your element have overflow
+                element.getElementsByClassName("moreclick")[0].style.display = "block";
+            }
+        });
+    })
+</script>

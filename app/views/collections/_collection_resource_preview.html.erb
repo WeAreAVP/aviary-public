@@ -1,0 +1,108 @@
+<main id="main" role="main">
+  <div class="search-detail-main container-fluid">
+    <div class="one-col">
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="text-content">
+            <h5>Preview</h5>
+            <div class="text-holder">This is the preview of the Resource Detail page with your current settings.</div>
+          </div>
+        </div>
+      </div>
+      <div class="row main_preview">
+        <div class="col-lg-4">
+          <div>
+            <% if resource_file.present? %>
+              <%= image_tag(resource_file.thumbnail.url, height: 70) %>
+            <% else %>
+              <%= image_tag('video-thumbnail.png', height: 70) %>
+            <% end %>
+          </div>
+        </div>
+        <div class="col-lg-8">
+          <div class="video-detail preview collection-preview-container" data-preview-hash="<%= data_hash %>">
+            <div class="text">
+              <dl>
+                <dt>Title:</dt>
+                <dd class="name">
+                  <span class="preview_resource_title"><%= data_hash["resource_title"] %></span>
+                </dd>
+                <dt>Collection:</dt>
+                <dd>
+                  <span class="resource-heading-text preview_collection_title"><%= data_hash["collection_title"] %></span>
+                </dd>
+                <dt>Organization:</dt>
+                <dd>
+                  <span class="resource-heading-text preview-organization-title">
+                    <%= data_hash["organization_title"] %>
+                  </span>
+                </dd>
+                <% data_hash["fields"].compact.each do |key, value| %>
+                  <% value.each do |h_k, h_v| %>
+                    <% if h_v.first["is_tombstone"] && h_v.first["is_visible"] %>
+                      <dt><%= h_k.titleize %>:</dt>
+                      <dd class="with-select">
+                        <div class="tombstone-main_cus">
+                          <% h_v.last.each do |k, v| %>
+                            <div class="single-value single-tombstone">
+                              <% if k["is_vocabulary"] %>
+                                <span class="badge badge-secondary"><%= k["vocabulary_value"] %></span>
+                              <% end %>
+                              <% if h_k == 'language' %>
+                                <span class="single_value"><%= languages_array_simple[0][k["value"]] %> </span>
+                              <% else %>
+                                <span class="single_value"><%= k["value"] %> </span>
+                              <% end %>
+                            </div>
+                          <% end %>
+                        </div>
+                      </dd>
+                    <% end %>
+                  <% end %>
+                <% end %>
+              </dl>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="bottom_preview">
+        <div class="tab preview">
+          <h6 class="title-preview">Description</h6>
+          <dl class="form preview_details">
+            <section class="form-common">
+              <% data_hash["fields"].compact.each do |key, value| %>
+                <% value.each do |h_k, h_v| %>
+                  <% if h_v.first["is_visible"] %>
+                    <dt><%= h_k.titleize %>:</dt>
+                    <dd class="with-select">
+                      <% h_v.last.each do |k, v| %>
+                        <div class="single-value single-non-tombstone ">
+                          <% if k["is_vocabulary"] %>
+                            <span class="badge badge-secondary"><%= k["vocabulary_value"] %></span>
+                          <% end %>
+                          <% case k['token'] %>
+                          <% when CustomFields::Field::TypeInformation::TOKEN.to_s %>
+                            <% k["token_value"].each do |single_token| %>
+                              <span class="tag">  <%= single_token %> </span>
+                            <% end %>
+                          <% else %>
+                            <% if h_k == 'language' %>
+                              <span class="single_value"><%= languages_array_simple[0][k["value"]] %> </span>
+                            <% else %>
+                              <span class="single_value"><%= k["value"] %> </span>
+                            <% end %>
+                          <% end %>
+                          <br>
+                        </div>
+                      <% end %>
+                    </dd>
+                  <% end %>
+                <% end %>
+              <% end %>
+            </section>
+          </dl>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>

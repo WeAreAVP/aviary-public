@@ -1,0 +1,9 @@
+# Sample localization file for Kaminari. You can override these values in your app's locales file if you want.
+en:
+  views:
+    pagination:
+      first: "<span class='fa fa-angle-double-left font-weight-bold' style='color:#3d62e6'></span> "
+      last: "<span class='fa fa-angle-double-right font-weight-bold' style='color:#3d62e6'></span>"
+      previous: "<span class='fa fa-angle-left font-weight-bold' style='color:#3d62e6'></span>"
+      next: "<span class='fa fa-angle-right font-weight-bold' style='color:#3d62e6'></span>"
+      truncate: "&hellip;"

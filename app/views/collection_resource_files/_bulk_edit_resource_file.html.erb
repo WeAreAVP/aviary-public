@@ -1,0 +1,109 @@
+<div class="modal fade bd-example-modal-lg bulk-edit-review-modal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
+  <div class="modal-dialog modal-xl" role="document">
+
+    <div class="modal-content ">
+
+      <div class="modal-header">
+        <h1 class="font-weight-bold modal-title" style="font-size: 21px;">Bulk Edit Review</h1>
+      </div>
+      <div class="modal-body">
+        <h1 class="alert-danger font-size-21px text-center mb-20px p-2 "> Are you sure you want to
+          <span id="confirm_msg_pop_bulk">apply changes to the resources files listed below</span>? </h1>
+        <table class="table table-striped review_resources_file_bulk table-sm " style="width: 100%;">
+          <thead>
+          <tr>
+            <td class="font-weight-bold"> ID</td>
+            <td class="font-weight-bold"> Resource File Name</td>
+            <td class="font-weight-bold"> Resource Name</td>
+          </tr>
+          </thead>
+          <tbody class="bulk-edit-review-content-resource-file">
+            
+          </tbody>
+        </table>
+        <input id="token" name="token" type="hidden" value="" />
+        <%= hidden_field_tag "check_type", '', class: 'resource-file-check-type' %>
+        <%= hidden_field_tag "access_type", '', class: 'resource-file-access-type' %>
+        <%= hidden_field_tag "ids", '', class: 'resource-file-ids' %>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button class="btn btn-primary bulk-edit-do-it" onclick="$('#bulk_edit_form').submit();" data-url="<%= bulk_resource_file_edit_collection_resource_files_path %>">Apply</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade bulk-edit-resource-file-modal bulk-edit-modal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <%= form_tag bulk_resource_file_edit_collection_resource_files_path, {id: 'bulk_edit_form'} do %>
+        <div class="modal-header">
+          <h1 class="font-weight-bold modal-title" style="font-size: 21px;">Bulk Edit</h1>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+
+            <div class="col-md-12">
+              <div class="row">
+                <div class="col-12 float-left">
+                  <select class="bulk_operation_collection_file" name="check_type">
+                    <option value="change_status">Change Status</option>
+                    <option value="downloadable">Change Downloadable Status</option>
+                    <option value="bulk_delete">Bulk Delete</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <input type="hidden" name='action' value="bulk_edit_operation"/>
+            <div class="col-md-12 mt-20px">
+              <div class="bulk_delete_content operation_content d-none">
+                <h1 class="font-size-18px text-left"> Delete selected resources</h1>
+              </div>
+              
+              <div class="change_status_content operation_content">
+                <h1 class="font-size-18px text-left"> Change the access status of <span id="typeofchildaction"></span>
+                  of selected resources files </h1>
+                <label class="font-weight-bold text-left d-block mb-1">Select Status</label>
+                <select name="access_type" class="change_status_select_option">
+                  <option value="no"> Private</option>
+                  <option value="yes"> Public</option>
+                </select>
+              </div>
+
+              <div class="change_downloadable_status operation_content d-none">
+                <h1 class="font-size-18px text-left">Select options below, to change the downloadable status of <span id="typeofchildaction"></span>
+                  selected media files</h1>
+                <br/>
+                <label class="font-weight-bold text-left d-block mb-1">Select Downloadable Status</label>
+                <select name="is_downloadable" class="change_downloadable_status_option">
+                  <option value="true">Yes</option>
+                  <option value="false">No</option>
+                </select>
+                <br/>
+                <div id="downloadable_duration" class="">
+                <label class="font-weight-bold text-left d-block mb-1">(Optional) Set a duration to assign to the downloadable status</label>
+                <select name="download_enabled_for" class="change_download_enabled_for">
+                  <option value=""></option>
+                  <option value="hour">Hours</option>
+                  <option value="day">Days</option>
+                  <option value="date">Date</option>
+                </select>
+                <input type="text" class="set_downloadable_duration form-control" name="downloadable_duration">
+                <br/>
+                <small class="form-text text-muted">Enable download media file for hours/days or until a specified date.</small>
+                </div>
+              </div>
+            </div>
+            <div class="col-12 mt-20px">
+              <span id="number_of_bulk_selected_popup" class="float-right"></span>
+            </div>
+          </div>
+        </div>
+      <% end %>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button class="btn btn-primary bulk-edit-submit" data-url="<%= fetch_bulk_edit_resource_list_collections_path %>" onclick="$('.bulk-edit-review-modal').modal()" data-dismiss="modal">Apply</button>
+      </div>
+    </div>
+  </div>
+</div>

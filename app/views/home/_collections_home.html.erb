@@ -1,0 +1,28 @@
+<% if featured_collections.present? %>
+  <h3>Featured Collections</h3>
+  <div class="home-featured-collections">
+    <% featured_collections.each do |collection| %>
+      <div class="item">
+        <%= link_to collection_url(collection, host: Utilities::AviaryDomainHandler.subdomain_handler(collection.organization)) do %>
+          <div class="image" style="<%= url_image(collection.image.url(:small))%>; background-position: center;">
+          </div>
+
+          <div class="resource-detail-data">
+            <div class="col-12 organization">
+              <div class="main-hold">
+                <div class="img-hold">
+                  <%= image_tag(collection.organization.favicon.present? ? collection.organization.favicon(:small) : collection.organization.logo_image(:medium), alt: collection.organization.name) %>
+                </div>
+              </div>
+              <div class="details">
+                <span class="title"><%= collection.title %></span>
+                <span class="collection-title"><%= collection.organization.name %></span>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+<% end %>
+

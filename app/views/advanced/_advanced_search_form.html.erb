@@ -1,0 +1,53 @@
+<% @view_type = 'actual' %>
+
+<%= form_tag add_facet_params_to_url(search_catalog_path, session[:search_facets]), :class => 'advanced form-horizontal', :method => :get do %>
+  <input type='hidden' name='update_advance_search' value='update_advance_search'/>
+  <input type='hidden' name='search_type' value='advance'/>
+  <%== add_facet_params_to_form(session[:search_facets]) %>
+  <div class="input-criteria">
+
+    <div class="query-criteria mb-5px ">
+      <div id="advanced_search">
+        <div class="collapse show" id="collapseExample" style="">
+          <div class="card card-body w-100" id="lines_search_bar">
+          </div>
+          <div class="bottom-panel-adv">
+            <div class="row">
+              <div class="col-md-6 text-left">
+                <a href="javascript:void(0);" class="btn btn-add add_new_search_row_handler "><i class="fa fa-plus  Z"></i>
+                  Add new criteria</a>
+              </div>
+              <div class="col-md-6">
+                <div class="sort-submit-buttons clearfix">
+                  <%= render 'advanced/advanced_search_submit_btns' %>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<% end
+   @view_type = 'clone_able'
+%>
+
+<div class="cloneable_search d-none">
+  <%= render 'advanced/advanced_search_fields', locals: {} %>
+</div>
+
+<style>
+  .query-criteria-heading .selectize-control {
+    margin-left: 5px !important;
+    margin-top: 5px !important;
+  }
+</style>
+
+<script>
+    var multiple_search_simplifier = <%== multiple_search_simplifier(session[:searched_keywords]).present? ? multiple_search_simplifier(session[:searched_keywords]).to_json : '[]' %> ;
+    document.addEventListener("DOMContentLoaded", function () {
+        var advance_search_handler = new AdvanceSearchHandler();
+        advance_search_handler.initialize(multiple_search_simplifier, '<%= params[:search_type] %>');
+    });
+</script>

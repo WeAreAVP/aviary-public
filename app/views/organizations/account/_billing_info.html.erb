@@ -1,0 +1,154 @@
+<div class="account_info_content billing_info_content">
+  <div class="row">
+    <div class="h4">Selected Payment Method</div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <% if current_organization.subscription.stripe_id %>
+        <div class="box">
+          <div>
+            <strong>Card
+              <%= '**** **** **** ' + current_organization.subscription.last_four %></strong>
+            <%= image_tag "cc/#{current_organization.subscription.card_type.downcase.gsub(/\s+/, '')}.png", alt: current_organization.subscription.card_type, height: 20 %>
+            <div class="bottom">
+              <div><span>Expiry</span> <%= current_organization.subscription.card_expiry %></div>
+              <div><span>CVC</span> ***</div>
+            </div>
+          </div>
+        </div>
+      <% end %>
+      <div class="pt-4">
+        <a href="javascript://" data-toggle="modal" data-target="#subscriptionPopup" class="btn btn-primary"><%= current_organization.subscription.stripe_id ? 'Change ' : 'Add ' %>
+          Payment
+          Method</a>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="notes container mt-3">
+  <div class="box">
+    <h1>Storage Billing</h1>
+    <ul>
+      <li>Storage costs will be calculated based on your actual monthly usage. All storage costs
+        will be billed to the credit card on file by the end of every month. Aviary services are
+        billed separately.
+      </li>
+      <li>Wasabi costs $0.0059 per GB/month ($5.99 per TB/month)<sup class="text-muted">*</sup> for
+        storage of audio and video files. Aviary will calculate your monthly storage usage from
+        Wasabi and bill you
+        directly for this cost using the payment method you have designated for your subscription to
+        Aviary. Storage
+        costs are billed monthly, even if you select a yearly subscription.
+      </li>
+    </ul>
+    <small class="form-text text-muted">* Storage pricing is subject to change based on Wasabi’s
+      storage
+      pricing.</small>
+  </div>
+</div>
+<div class="modal fade" id="subscriptionPopup" tabindex="-1" role="dialog" aria-labelledby="subscriptionPopup" aria-hidden="true">
+  <div class="modal-md modal-dialog" role="document">
+    <%= simple_form_for current_organization.subscription, url: subscription_update_billing_path(current_organization.subscription), html: { id: 'subscription_form', novalidate: false } do |f| %>
+      <input type="hidden" name="token" id="s_token"/>
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title h4">Change Billing Information</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <%= f.fields_for :organization, Organization.new do |ff| %>
+            <div class="h4">Billing Info</div>
+            <div class="row">
+              <div class="col-md-12">
+                <div class="form-group">
+                  <div class="field-title">
+                    <label for="cardholder-name">Billing Address</label>
+                  </div>
+                  <%= ff.input :address_line_1, label: false, required: true, placeholder: 'Address Line 1', input_html: { class: 'form-control' } %>
+
+                  <br/>
+                  <%= ff.input :address_line_2, label: false, placeholder: 'Address Line 2', input_html: { class: 'form-control' } %>
+                </div>
+                <div class="error_address_line_1 text-danger"></div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <div class="field-title">
+                    <label for="cardholder-name">City</label>
+                  </div>
+                  <%= ff.input :city, label: false, required: true, placeholder: 'City', input_html: { class: 'form-control' } %>
+                </div>
+                <div class="error_city text-danger"></div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <div class="field-title">
+                    <label for="cardholder-name">Zip Code</label>
+                  </div>
+                  <%= ff.input :zip, label: false, required: true, placeholder: 'Zip Code', input_html: { class: 'form-control' } %>
+                </div>
+                <div class="error_zip text-danger"></div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <div class="field-title">
+                    <label for="cardholder-name">State</label>
+                  </div>
+                  <%= ff.select :state, available_states.map { |l| [l[1], l[0], { data: { type: l[2] } }] }, {}, priority: 'none', label: false, placeholder: 'State', required: true %>
+                </div>
+                <div class="error_state text-danger"></div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <div class="field-title">
+                    <label for="cardholder-name">Country</label>
+                  </div>
+                  <%= ff.input :country, as: :country, priority: ['US', 'CA'], label: false, placeholder: 'Country', required: true %>
+                </div>
+                <div class="error_country text-danger"></div>
+              </div>
+            </div>
+          <% end %>
+          <div class="row">
+            <div class="col-md-12">
+              <div class="form-group">
+                <div class="field-title">
+                  <label for="cardholder-name">Name on Card</label>
+                </div>
+                <input name="cardholder-name" class="form-control" placeholder="Name on card" required/>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <div class="form-group">
+                <div class="field-title">
+                  <label for="card_element">Card Info </label>
+                </div>
+                <div id="card-element" style="margin-top: -5px;"></div>
+                <div class="text-danger" id="subscription_card_error"></div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-primary" id="submit_sub_btn">Submit</button>
+          </div>
+        </div>
+      </div>
+    <% end %>
+
+  </div>
+</div>
+<script type="text/javascript">
+    var subscriptions = new Subscriptions();
+    document.addEventListener("DOMContentLoaded", function (event) {
+        subscriptions.initialize('update');
+    });
+</script>

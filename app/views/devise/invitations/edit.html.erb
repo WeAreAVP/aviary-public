@@ -1,0 +1,33 @@
+<div class="form-signin">
+  <h1 class="h3 font-weight-normal text-center"><%= t 'devise.invitations.edit.header' %></h1>
+  <%= simple_form_for resource, as: resource_name, url: invitation_path(resource_name), html: { method: :put } do |f| %>
+    <%= f.hidden_field :invitation_token %>
+    <%= f.hidden_field :status, value: true %>
+    <%= f.label :email, class: 'sr-only' %>
+    <%= f.input_field :email, autocomplete: 'email', required: true, class: 'form-control', placeholder: 'Email', readonly: true %>
+    <%= f.label :first_name, class: 'sr-only' %>
+    <%= f.input_field :first_name, autocomplete: 'first_name', required: true, class: 'form-control', placeholder: 'First Name' %>
+    <%= f.error :first_name %>
+    <%= f.label :last_name, class: 'sr-only' %>
+    <%= f.input_field :last_name, autocomplete: 'last_name', required: true, class: 'form-control', placeholder: 'Last Name' %>
+    <%= f.error :last_name %>
+    <%= f.label :preferred_language, class: 'sr-only' %>
+    <%= f.select :preferred_language, iso_639_1_languages, { prompt: 'Preferred language' }, required: false, label: false, class: 'custom-placeholder d-none' %>
+    <%= f.error :preferred_language %>
+    <%= f.label :password, class: 'sr-only' %>
+    <span id="password_help_edit" data-toggle="tooltip" data-placement="top" data-html="true" title="At least 8 characters<br/>At least 1 number<br/>At least 1 uppercase letter<br/>At least 1 lowercase letter<br/>At least 1 special character (.@$!%*?&)">Password Help <i class="fa fa-question-circle"></i></span>
+    <%= f.password_field :password, autocomplete: 'off', required: true, class: 'form-control', placeholder: 'Password' %>
+    <%= f.error :password %>
+    <%= f.label :password_confirmation, class: 'sr-only' %>
+    <%= f.password_field :password_confirmation, autocomplete: 'off', required: true, class: 'form-control', placeholder: 'Password Confirmation' %>
+    <%= f.error :password_confirmation %>
+    <div class="checkbox ml-4">
+      <%= f.check_box :agreement, required: true, class: 'form-check-input' %>
+      <label for="user_agreement" style="margin-left: 3px;margin-top:3px;">I agree to the
+        <a href="<%= terms_of_service_path %>" target="_blank">Terms of Service</a></label>
+    </div>
+    <%= f.error :agreement %>
+    <br>
+    <%= f.button :submit, t("devise.invitations.edit.submit_button"), class: 'btn btn-lg btn-primary btn-block' %>
+  <% end %>
+</div>

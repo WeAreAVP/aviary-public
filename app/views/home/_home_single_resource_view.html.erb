@@ -1,0 +1,41 @@
+<% file = collection_resource.collection_resource_files.order_file.first %>
+<% can_access = (can? :read, collection_resource) || collection_resource.can_view || collection_resource.can_edit || (can? :edit, collection_resource.collection.organization) %>
+  <div class="col-md-3">
+    <div class="box <%= 'featured' if collection_resource.is_featured %>">
+      <div class="<%= can_access ? '' : 'locked' %>">
+      <% resource_url = collection_collection_resource_details_url(collection_resource.collection, collection_resource, host: Utilities::AviaryDomainHandler.subdomain_handler(collection_resource.collection.organization)) %>
+      <% unless can_access %>
+        <% resource_url = 'javascript://' %>
+
+      <% end %>
+      <%= link_to resource_url do %>
+        <% thumb_url = file.thumbnail.url(:small) %>
+        <% unless thumb_url.present? %>
+          <% present(file) do |presenter| %>
+            <% thumb_url = presenter.media_type.include?('avalon') || presenter.media_type.include?('video') ? "https://#{ENV['S3_HOST_CDN']}/public/images/video-default.png" : "https://#{ENV['S3_HOST_CDN']}/public/images/audio-default.png" %>
+          <% end %>
+        <% end %>
+        <div class="image " style="background: url(<%= thumb_url %>); background-size:cover;background-position: center;min-height: 120px;">
+          <h4 class="reso-title">
+            <time><%= !collection_resource.custom_field_value('duration').blank? ? time_to_duration(collection_resource.custom_field_value('duration').first['value']) : '00:00:00' %></time>
+          </h4>
+        </div>
+
+        <div class="resource-detail-data">
+          <div class="col-12 organization">
+            <div class="main-hold">
+              <div class="img-hold">
+                <%= image_tag(collection_resource.collection.organization.favicon.present? ? collection_resource.collection.organization.favicon(:small) : collection_resource.collection.organization.logo_image(:medium), alt: collection_resource.collection.organization.name) %>
+              </div>
+            </div>
+            <div class="details">
+              <span class="title"><%= collection_resource.title %></span>
+              <span class="collection-title"><%= file.collection_resource.collection.title %>
+                - <%= collection_resource.collection.organization.name %></span>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

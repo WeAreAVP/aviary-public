@@ -1,0 +1,55 @@
+<% unless current_theme.nil? %>
+  <style>
+    #footer {
+    <%= footer_font_family %>;
+    <%= footer_font_color %>;
+    <%= footer_bg_color %>;
+    }
+
+    #logoCst h3, #logoCst span {
+    <%= footer_title_font %>;
+    <%= footer_title_color %>;
+    }
+
+    #footer_menu li a {
+    <%= footer_menu_font_family %>;
+    <%= footer_menu_font_color %>;
+    }
+
+    <%== fetch_custom_css %>
+  </style>
+<% end %>
+<footer id="footer">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8">
+        <div class="row">
+          <div class="col-md-5">
+            <div class="logo" id="logoCst">
+              <h3><%== footer_title %></p></h3>
+            </div>
+          </div>
+          <div class="col-md-7">
+            <ul id="footer_menu">
+              <%= footer_menu %>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-4">
+        <div class="row">
+          <div class="col-md-5">
+            <p class="address"><%= footer_address %></p>
+          </div>
+          <div class="col-md-3">
+            <p class="hours"><%= footer_hours %></p>
+          </div>
+          <div class="col-md-4">
+            <p class="copyright">
+              <%= footer_copy_rights %></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta content='text/html; charset=UTF-8' http-equiv='Content-Type'/>
+</head>
+<body>
+<p>Error Log Email <%== @subject %>,</p>
+
+<h1>Error Trace String</h1>
+<p style="color:red !important;">
+  <%== @error_trace_string %>
+</p>
+<br/><br/>
+<p style="color:red !important;">
+  <%== @error_message %>
+</p>
+<br/><br/>
+<p style="color:red !important;">
+  <%== @extra_information %>
+</p>
+
+</body>
+</html>

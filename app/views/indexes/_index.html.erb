@@ -1,0 +1,49 @@
+<div class="row">
+  <div class="col-md-12 text-right mb-5px">
+    <% checked = @collection_resource.collection.enable_itc_autoscroll ? 'checked="checked"' : '' %>
+    <input type="checkbox" class="checkbox index-trance-checkbox" id="index-auto-scroll" <%= checked %>/>
+    <label class="font-weight-bold mr-15px">Auto Scroll </label>
+  </div>
+  <div class="top_indexes">
+    <div class="drop_drag <%= !(can? :manage, @collection_resource) and !@collection_resource.can_edit ? 'w-100' : '' %>">
+      <% if (@resource_file.present? && @resource_file.file_indexes.present?) %>
+        <% file_indexes = @resource_file.file_indexes.order_index %>
+
+        <div class="select-index-drop">
+          <% if (can? :manage, @collection_resource) || @collection_resource.can_view %>
+            <a href="javascript:void(0);" data-toggle="modal" data-target="#index_sort_popup" class="black" id="sort_index"><i class="fa fa-bars fa-2x pull-left pt-5px"></i></a>
+          <% end %>
+          <div class="col-md-12 p-0">
+            <% if file_indexes.present? %>
+              <select id="file_index_select" class="select_type_transcript">
+                <% file_indexes.each do |file_index| %>
+                  <option value="<%= file_index.id %>"><%= file_index.title %></option>
+                <% end %>
+              </select>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+    <div class="buttons_option">
+      <div class="button-holder text-right">
+        <% if ((can? :manage, @collection_resource) || @collection_resource.can_edit) && !params[:from_playlist].to_s.to_boolean? %>
+          <% if @resource_file.present? %>
+            <a href="javascript:void(0);" data-toggle="modal" data-target="#index_upload" class="btn btn-sm btn-outline-primary" title="Add"><i class="fa fa-plus"></i></a>
+            <% if @resource_file.file_indexes.present? %>
+              <div class="update-btn">
+                <a href="javascript:void(0);" data-url="/indexes/delete/" id="delete_index" class="btn btn-sm btn-outline-danger" title="Delete"><i class="fa fa-trash"></i>
+                </a>
+                <a href="javascript:void(0);" data-toggle="modal" id="index_update_btn" data-target="#index_upload" class="btn btn-sm btn-outline-info" title="Update"><i class="fa fa-refresh"></i>
+                </a>
+              </div>
+            <% end %>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-12">
+    <%= render partial: 'indexes/show', locals: { file_indexes: file_indexes } %>
+  </div>
+</div>

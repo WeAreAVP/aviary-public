@@ -1,0 +1,53 @@
+        <div class="edit_form" id="edit_form">
+          <div class="info">
+            <% if can? :manage, @collection_resource %>
+              <div class="text-holder"><span class="text-info font-weight-bold">Note!</span> Only visible fields can be
+                edited. To make a field visible in the Resource
+                Description, go to
+                “Collections” and click on the “Edit” button for the Collection this Resource belongs to.
+              </div>
+            <% end %>
+
+          </div>
+          <div>
+            <style>
+              .bootstrap-tagsinput input {
+                color: #1b1e21 !important;
+                padding: 2px !important;
+                width: 200px !important;
+                margin: 5px !important;
+              }
+            </style>
+
+            <%= simple_form_for @collection_resource, :url => collection_collection_resource_update_metadata_path(@collection_resource.collection, @collection_resource),
+                                html: { novalidate: true } do |form| %>
+              <section class="form-common" style="display: block">
+                <%= hidden_field_tag "resource_file_id", @resource_file.try(&:id) %>
+                <% dynamic_fields['CollectionResource'].each do |single_field| %>
+                  <div class="current-parent <%= single_field['settings'][:is_visible] == true && single_field['field'].system_name != 'duration' ? '' : 'd-none' %>">
+                    <dt><%= single_field['field'].label %>:
+                      <span class="badge badge-info addmore-row " data-type="<%= CustomFields::Field::TypeInformation.fetch_type(single_field['field'].column_type).to_s %>" data-is_repeatable="<%= single_field['field'].is_repeatable %>"> Add More </span>
+                    </dt>
+                    <%# end %>
+                    <dd class="with-date">
+                      <div class="row single_row_dynamic_form <%= single_field['field'].system_name.to_s %>">
+                        <% single_field['values'].each do |single_value| %>
+                          <% if single_value['value'].present? || single_value['vocab_value'].present? %>
+                          <%= render partial: 'collection_resources/fields_partail_form', locals: { single_field: single_field, single_value: single_value, type_for_view: 'value_holder' } %>
+                        <% end %>
+                        <% end %>
+                        <div style="display: none;" class="row_clone">
+                          <%= render partial: 'collection_resources/fields_partail_form', locals: { single_field: single_field, single_value: '', type_for_view: 'cloner' } %>
+                        </div>
+                      </div>
+                    </dd>
+                  </div>
+                <% end %>
+              </section>
+            <% end %>
+          </div>
+          <div class="button-holder">
+            <button class="btn btn-primary saveDesriptionCus" onclick="$('.edit_collection_resource').submit()">Save</button>
+            <button id="modal-close" class="btn btn-secondary">Close</button>
+          </div>
+        </div>

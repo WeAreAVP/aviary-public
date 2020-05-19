@@ -1,0 +1,22 @@
+namespace :sidekiq do
+  desc 'Stop and Start Sidekiq service'
+  task :stop do
+    on roles(:app) do
+      with rails_env: "#{fetch(:stage)}" do
+        execute "sudo /etc/init.d/sidekiq-aviary stop"
+      end
+    end
+  end
+  task :start do
+      on roles(:app) do
+        with rails_env: "#{fetch(:stage)}" do
+          execute "sudo /etc/init.d/sidekiq-aviary start"
+        end
+      end
+    end
+  task :restart do
+      on roles(:app) do
+        execute :sudo, :systemctl, :restart, :sidekiq
+      end
+    end
+end

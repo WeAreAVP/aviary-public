@@ -1,0 +1,3 @@
+$("#forgot_password_user").on("ajax:success",function(event,xhr,settings){var data=event.detail[0];var success=data.success;if(success){jsMessages('success','You will receive an email with instructions on how to reset your password in a few minutes.');$('#forgot_password_modal').modal('hide');setTimeout(function(){location.reload();},10000);}else{if(data.email_error){if(typeof data.validation_error!=='undefined'&&data.validation_error.length>0)
+jsMessages('danger',data.validation_error);else
+jsMessages('danger','Email does not exist, please provide valid email.');}else{jsMessages('danger','Something went wrong please try again.');}}});

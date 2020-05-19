@@ -1,0 +1,26 @@
+
+  <ul class="nav nav-tabs" id="myTab" role="tablist">
+    <li class="nav-item">
+      <a class="nav-link share_tabs active" id="home-tab" data-toggle="tab" data-tabname="share_link_custom" href="#home" role="tab" aria-controls="home" aria-selected="true">
+        <%= from_action == 'listing_for_add_to_playlist' ? 'Add To ' : '' %>Playlists</a>
+    </li>
+  </ul>
+  <div class="tab-content" id="myTabContent">
+    <div class="tab-pane fade show active share_link_custom" id="home" role="tabpanel" aria-labelledby="home-tab">
+      <div class="content pt-0 pl-0 pr-0 <%= from_action == 'listing_for_add_to_playlist' ? 'pb-60' : '' %>">
+        <input type="text" placeholder="Search Playlist" class="form-control" id="search_playlist_for_resource"/>
+        <div class="accordion <%= from_action %>_accordian" id="accordionPlaylist">
+          <% playlists.each do |single_playlist| %>
+            <%= render 'playlists/single_playlist', {playlist: single_playlist, collection_resource: collection_resource, from_action: from_action, collection_resource_playlist_ids: collection_resource_playlist_ids, organization: organization} %>
+          <% end %>
+        </div>
+        <% if from_action == 'listing_for_add_to_playlist' && current_user_is_org_user?(organization) && current_organization.present? %>
+          <div class="input-group container" style="position: fixed;">
+            <input type="text" placeholder="Create Playlist" id="playlist_title" class="form-control" data-resourceid="<%= collection_resource.id %>"/>
+            <a href="javascript:void(0)" class="btn btn-primary create_playlist d-flex align-items-center ml-2" data-url="<%= playlists_path %>">Create
+              Playlist </a>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>

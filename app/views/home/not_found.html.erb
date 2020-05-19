@@ -1,0 +1,27 @@
+<%= render template: 'home/index' %>
+<div class="modal fade" id="not_found_popup" tabindex="-1" role="dialog" aria-labelledby="not_found_popup" aria-hidden="true">
+  <div class="modal-md modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title h4">Content is not available.</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-20px">We are sorry! This organization is temporarily unavailable.
+          Please contact the system administrator for more details.
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <a href="<%= root_path %>" class="btn btn-default">Go Back</a>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+    $('#not_found_popup').modal({
+        backdrop: 'static'
+    });
+</script>

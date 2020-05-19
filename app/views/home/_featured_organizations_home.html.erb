@@ -1,0 +1,30 @@
+<% if featured_organizations.present? %>
+  <h3>Aviary Sites</h3>
+  <div class="home-featured-organizations">
+    <% featured_organizations.each do |organization| %>
+      <div class="item">
+        <%= link_to root_url(host: Utilities::AviaryDomainHandler.subdomain_handler(organization)), target: "_blank" do %>
+          <div class="image" style="<%= url_image(organization.banner_image.url(:small))%>; background-position: center;">
+
+          </div>
+          <div class="resource-detail-data">
+            <div class="col-12 organization">
+              <div class="main-hold">
+                <div class="img-hold">
+                  <%= image_tag(organization.favicon.present? ? organization.favicon(:small) : organization.logo_image(:medium), alt: organization.name) %>
+                </div>
+              </div>
+              <div class="details">
+                <span class="title"><%= organization.name %></span>
+              </div>
+            </div>
+          </div>
+        <% end %>
+
+      </div>
+    <% end %>
+  </div>
+    <div class="text-right">
+      <a href="<%= organizations_path %>" class="view-all-sites">View all Sites</a>
+    </div>
+<% end %>

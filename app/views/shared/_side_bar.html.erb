@@ -1,0 +1,154 @@
+<% unless admin_signed_in? %>
+  <% if current_user.organization_users.active.present? && current_organization.present? %>
+    <% disabled_organization_cls = current_organization.status ? '' : 'd-none' %>
+    <div id="sidebar-main" class="<%= session[:layout] %>">
+      <div id="accordion" class="main_sidebar">
+        <div class="scroll">
+          <div class="hold">
+            <div class="side-nav-logo">
+              <div class="img-holder">
+                <%= image_tag organization_logo %>
+              </div>
+              <div class="title"><%= current_organization.name %></div>
+              <a href="javascript://" id="close-button"><i class="fa fa-times"></i></a>
+            </div>
+            <div class="card <%= disabled_organization_cls %>">
+              <div class="card-header" id="headingTwo">
+                <h5 class="mb-0">
+                  <button class="btn btn-link collapsed no_sub_colaps" onclick="document.location.href='<%= collections_path %>'" aria-expanded="<%= params[:controller] == 'collections' ? 'true' : '' %>">
+                    <div class="nav-box">
+                      <span class="ico" data-toggle="tooltip" data-placement="right" title="Collections"><%= image_tag 'icons/collection.png' %></span>
+                      <span class="title">Collections</span>
+                    </div>
+                  </button>
+                </h5>
+              </div>
+            </div>
+            <div class="card <%= disabled_organization_cls %>">
+              <div class="card-header" id="headingTwo">
+                <h5 class="mb-0">
+                  <button class="btn btn-link collapsed no_sub_colaps assetsNavCus" onclick="document.location.href='<%= collection_resources_path %>'" aria-expanded="<%= ((request.path).include?("collection_resources") ? 'active' : '') != '' ? 'true' : '' %>" aria-controls="collapseTwo">
+                    <div class="nav-box">
+                      <span class="ico" data-toggle="tooltip" data-placement="right" title="Resources"><%= image_tag 'icons/resource-icon.svg' %></span>
+                      <span class="title">
+                        Resources
+                      </span>
+                    </div>
+                  </button>
+                </h5>
+              </div>
+            </div>
+            <div class="card <%= disabled_organization_cls %>">
+              <div class="card-header" id="headingTwo">
+                <h5 class="mb-0">
+                  <button class="btn btn-link collapsed no_sub_colaps assetsNavCus" onclick="document.location.href='<%= collection_resource_files_path %>'" aria-expanded="<%= ((request.path).include?("collection_resource_files") ? 'active' : '') != '' ? 'true' : '' %>" aria-controls="collapseTwo">
+                    <div class="nav-box">
+                      <span class="ico" data-toggle="tooltip" data-placement="right" title="Media"><%= image_tag 'icons/media.png' %></span>
+                      <span class="title">
+                        Media
+                      </span>
+                    </div>
+                  </button>
+                </h5>
+              </div>
+            </div>
+            <div class="card <%= disabled_organization_cls %>">
+              <div class="card-header" id="headingTwo">
+                <h5 class="mb-0">
+                  <button class="btn btn-link collapsed no_sub_colaps assetsNavCus" onclick="document.location.href='<%= playlists_path %>'" aria-expanded="<%= ((request.path).include?("playlists") ? 'active' : '') != '' ? 'true' : '' %>" aria-controls="collapseTwo">
+                    <div class="nav-box">
+                      <span class="ico" data-toggle="tooltip" data-placement="right" title="Playlists"><%= image_tag image_path('playlist_icon.png'), style: 'padding-top: 3px;' %></span>
+                      <span class="title">
+                        Playlists
+                      </span>
+                    </div>
+                  </button>
+                </h5>
+              </div>
+            </div>
+
+
+            <% if current_user.current_org_owner_admin(current_organization).present? %>
+
+              <div class="card <%= disabled_organization_cls %>">
+                <div class="card-header" id="headingOne">
+                  <h5 class="mb-0">
+                    <button class="btn btn-link collapsed no_sub_colaps" onclick="document.location.href='<%= users_path %>'" aria-expanded="<%= active_class_multiple([users_path]) != '' ? 'true' : '' %>">
+                      <div class="nav-box">
+                        <span class="ico" data-toggle="tooltip" data-placement="right" title="Users"><%= image_tag 'icons/users.png' %></span>
+                        <span class="title">
+                          Users
+                        </span>
+                      </div>
+                    </button>
+                  </h5>
+                </div>
+              </div>
+
+              <div class="card <%= disabled_organization_cls %>">
+                <div class="card-header" id="organization">
+                  <h5 class="mb-0">
+                    <button class="btn btn-link <%= (["organizations"].include?(params[:controller])) ? '' : 'collapsed' %>" data-toggle="collapse" data-target="#organization_subnav" aria-expanded="<%= (["organizations"].include?(params[:controller])) ? 'true' : '' %>" aria-controls="organization">
+                      <div class="nav-box">
+                        <span class="ico" data-toggle="tooltip" data-placement="right" title="Organization"><%= image_tag 'icons/profile.png' %></span>
+                        <span class="title">Organization</span>
+                      </div>
+                    </button>
+                  </h5>
+                </div>
+                <div id="organization_subnav" class="collapse <%= (["organizations"].include?(params[:controller]) || ["themes"].include?(params[:controller])) ? 'show' : '' %>" aria-labelledby="headingOne"
+                     data-parent="#accordion" style="">
+                  <div class="card-body">
+                    <div id="accordion">
+                     <div class="card <%= disabled_organization_cls %>">
+                        <div class="card-header headingOne">
+                          <h5 class="mb-0">
+                            <button onclick="document.location.href='<%= display_settings_organization_path %>'" class="btn btn-link  no_sub_colaps" data-toggle="collapse" aria-expanded="<%= ((params[:controller] == "organizations" && params[:action] == "display_settings") ? 'active' : '') != '' ? 'true' : '' %>" aria-controls="collapse">
+                              <div class="nav-box">
+                                <span class="ico" data-toggle="tooltip" data-placement="right" title="Display Settings"><%= image_tag 'icons/display.png' %></span>
+                                <span class="title">Display Settings</span>
+                              </div>
+                            </button>
+                          </h5>
+                        </div>
+                      </div>
+                      <div class="card <%= disabled_organization_cls %>">
+                        <div class="card-header headingOne">
+                          <h5 class="mb-0">
+                            <button onclick="document.location.href='<%= edit_organization_path %>'" class="btn btn-link  no_sub_colaps" data-toggle="collapse" aria-expanded="<%= ((params[:controller] == "organizations" && params[:action] == "edit") ? 'active' : '') != '' ? 'true' : '' %>" aria-controls="collapse">
+                              <div class="nav-box">
+                                <span class="ico" data-toggle="tooltip" data-placement="right" title="Profile"><%= image_tag 'icons/profile_settings.png' %></span>
+                                <span class="title">Profile</span>
+                              </div>
+                            </button>
+                          </h5>
+                        </div>
+                      </div>
+
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            <% end %>
+
+          </div>
+          <% unless ['', Plan.pay_a_y_go].include? current_organization.subscription.plan.stripe_id %>
+            <div class="storage resources">
+              <div>
+                <span class="ico"><%= image_tag 'icons/folder.png' %></span>
+                <strong>Resources</strong>
+                <p><%= number_with_delimiter(current_organization.resource_count) %>
+                  <span>&nbsp;of <%= number_with_delimiter(current_organization.subscription.plan.max_resources) %>
+                    used</span></p>
+              </div>
+              <div class="progress">
+                <div class="progress-bar" role="progressbar" style="width:<%= resource_percent(current_organization.resource_count,current_organization.subscription.plan.max_resources) %>%" aria-valuenow="<%= resource_percent(current_organization.resource_count, current_organization.subscription.plan.max_resources) %>" aria-valuemin="0" aria-valuemax="100"></div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+<% end %>

@@ -1,0 +1,109 @@
+<div class="form">
+  <%= simple_form_for @user, url: @user.new_record? ? admin_users_path : admin_user_path(@user) do |f| %>
+    <div class="row">
+      <div class="col-md-6">
+        <div class="form-group">
+          <div class="field-title">
+            <%= f.label :first_name, required: false %>
+          </div>
+          <%= f.input :first_name, label: false, input_html: { class: 'form-control' } %>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group">
+          <div class="field-title">
+            <%= f.label :last_name, required: false %>
+          </div>
+          <%= f.input :last_name, label: false, autocomplete: 'last_name', input_html: { class: 'form-control' } %>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-6">
+        <div class="form-group">
+          <div class="field-title">
+            <%= f.label :username, required: false %>
+          </div>
+          <%= f.input :username, label: false, input_html: { class: 'form-control' } %>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group">
+          <div class="field-title">
+            <%= f.label :email, required: false %>
+          </div>
+          <%= f.input :email, label: false, input_html: { class: 'form-control with_pass', autocomplete: 'email' } %>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-6 d-none">
+        <div class="form-group">
+          <div class="field-title">
+            <%= f.label :preferred_language, required: false %>
+          </div>
+          <%= f.select :preferred_language, iso_639_1_languages, { prompt: 'Preferred language' }, required: false, label: false, class: 'custom-placeholder' %>
+        </div>
+      </div>
+      <div class="col-md-12">
+        <div class="form-group">
+          <div class="field-title">
+            <%= f.label 'Receive email notifications?', for: 'user_receive_emails' %>
+          </div>
+          <%= f.select :receive_emails, [['Yes', true], ['No', false]], { prompt: 'Receive emails' }, required: true, label: false, class: 'custom-placeholder' %>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-6">
+        <div class="form-group">
+          <div class="field-title">
+            <label>Profile Image</label>
+            <small>200px by 200px wide jpg/gif/png</small>
+          </div>
+          <span class="btn fileinput-button profile-image"><%= image_tag resource.photo(:thumb) if resource.photo? %>
+            <%= f.file_field :photo %> Browse</span>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-6">
+        <div class="form-group">
+          <div class="field-title">
+            <%= f.label :password %>
+          </div>
+          <%= f.input :password, label: false, input_html: { autocomplete: "off", class: 'form-control with_pass' } %>
+          <% if @minimum_password_length %>
+            <em><%= @minimum_password_length %> characters minimum</em>
+          <% end %>
+          <div class="field-title" style="margin: 10px 0;">
+            <small>leave blank if you don't want to change it.</small>
+          </div>
+        </div>
+
+      </div>
+      <div class="col-md-6">
+        <div class="form-group">
+          <div class="field-title">
+            <%= f.label :password_confirmation %>
+          </div>
+          <%= f.input :password_confirmation, label: false, input_html: { autocomplete: 'off', class: 'form-control with_pass' } %>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12 text-right">
+        <%= f.submit @user.new_record? ? 'Add' : 'Update', class: 'btn btn-primary' %>
+        <% unless @user.new_record? %>
+          <%= link_to 'Delete', 'javascript://', class: 'btn btn-danger admin_user_delete', data: { url: admin_user_path(@user), name: @user.full_name } %>&nbsp;
+        <% end %>
+        <%= link_to 'Cancel', admin_users_path, class: 'btn btn-default' %>
+      </div>
+    </div>
+    <br/>
+  <% end %>
+</div>
+

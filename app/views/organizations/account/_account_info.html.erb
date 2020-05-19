@@ -1,0 +1,81 @@
+<% is_pay_as_yo_go = ['', Plan.pay_a_y_go].include? current_organization.subscription.plan.stripe_id %>
+<div class="row">
+  <div class="main">Subscription Plan</div>
+  <div class="detail"><%= current_organization.subscription.plan.name %></div>
+</div>
+<% unless is_pay_as_yo_go %>
+  <div class="row">
+    <div class="main">Subscription Type</div>
+    <div class="detail"><%= Plan.frequency(current_organization.subscription.plan.frequency) %></div>
+  </div>
+<% end %>
+<div class="row">
+  <div class="main">Cost</div>
+
+  <% if is_pay_as_yo_go %>
+    <% active_resources = current_organization.used_resources.nil? ? current_organization.resource_count : current_organization.used_resources %>
+    <% cost = cost_pay_as_you_go(active_resources) %>
+  <% else %>
+    <% cost = current_organization.subscription.current_price %>
+  <% end %>
+  <div class="detail">
+    <%= number_to_currency(cost) %><%= current_organization.subscription.plan.frequency == Plan::Frequency::MONTHLY ? '/month' : '/year' %>
+  </div>
+</div>
+<div class="row">
+  <div class="main">Subscription Date</div>
+  <div class="detail"><%= Time.at(current_organization.subscription.start_date).utc.strftime('%m/%d/%Y') %></div>
+</div>
+<div class="row">
+  <div class="main">Expiration Date</div>
+  <div class="detail"><%= Time.at(current_organization.subscription.renewal_date).utc.strftime('%m/%d/%Y') %></div>
+</div>
+<div class="row">
+  <div class="main">Number of Resources</div>
+  <div class="detail"><%= number_with_delimiter(current_organization.resource_count) %>
+    <% unless is_pay_as_yo_go %>
+      of <%= number_with_delimiter(current_organization.subscription.plan.max_resources) %>
+    <% end %>
+  </div>
+</div>
+<div class="row">
+  <div class="main">Storage Used</div>
+  <div class="detail"><%= number_to_human_size(current_organization.storage_used.to_f * 1048576) %>
+  </div>
+</div>
+<div class="row">
+  <div class="main">Storage Provider</div>
+  <div class="detail"><%= current_organization.storage_type.humanize %>
+  </div>
+</div>
+<div class="row">
+  <div class="main">Account Status</div>
+  <div class="detail">
+    <% if current_organization.subscription.status == :inactive.to_s && Time.now.to_date - current_organization.subscription.renewal_date.to_date < 0 %>
+      <%= 'Cancels on ' + Time.at(current_organization.subscription.renewal_date).utc.strftime('%b %d, %Y') %>
+    <% else %>
+      <%= current_organization.subscription.status.titleize %>
+    <% end %>
+  </div>
+</div>
+<div class="row float-right pt-4">
+  <% if current_organization.subscription.stripe_id.present? %>
+    <a href="javascript://" data-toggle="modal" data-target="#changePopup" class="btn btn-primary mr-2">
+      <%= current_organization.subscription.status == :active.to_s ? 'Change Plan or Upgrade' : 'Renew Plan' %>
+    </a>
+  <% else %>
+    <a href="javascript:$('#billing_info_tab').click();" class="btn btn-primary mr-2">Add Billing info to change or
+      renew plan</a>
+  <% end %>
+  <% if current_organization.subscription.status == :active.to_s %>
+    <a href="javascript://" id="cancel_sub_btn" class="btn btn-secondary" data-url="<%= subscription_path(current_organization.subscription) %>">Cancel
+      Account</a>
+  <% end %>
+</div>
+<%= render 'organizations/account/change_plan' %>
+<script type="text/javascript">
+    var subscriptions = new Subscriptions();
+    document.addEventListener("DOMContentLoaded", function (event) {
+        subscriptions.cancelSubscription();
+    });
+</script>

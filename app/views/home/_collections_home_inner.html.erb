@@ -1,0 +1,74 @@
+<% if featured_collections.present? %>
+  <div class="home-featured-collections row">
+    <% featured_collections.includes([:organization]).each do |collection| %>
+      <div class="col-md-3">
+        <div class="box <%= 'featured' if collection.is_featured %>">
+
+          <%= link_to collection_url(collection, host: Utilities::AviaryDomainHandler.subdomain_handler(collection.organization)) do %>
+            <div class="image" style="<%= url_image(collection.image.url(:small))%>; background-position: center;">
+            </div>
+          <% end %>
+          <div class="resource-detail-data">
+            <div class="col-12 organization">
+              <div class="main-hold">
+                <div class="img-hold">
+                  <%= image_tag(collection.organization.favicon.present? ? collection.organization.favicon(:small) : collection.organization.logo_image(:medium), alt: collection.organization.name) %>
+                </div>
+              </div>
+              <div class="details">
+                <%= link_to collection_url(collection, host: Utilities::AviaryDomainHandler.subdomain_handler(collection.organization)) do %>
+                  <span class="title"><%= collection.title %></span>
+                <% end %>
+                <span class="description_collection">
+                    <%= strip_tags(collection.about) %></span>
+                <a data-toggle="modal" class='show_hide_description' data-type="Collection" data-id="description_<%= collection.id %>" data-collection-img='<%= url_image(collection.image.url(:small)) %>'
+                   data-collection-title="<%= collection.title %>" data-org-logo="<%= collection.organization.logo_image.url(:medium) %>" data-collection-path="<%= collection_path(collection) %>" data-org-title="<%= collection.organization.name %>"
+                   data-collection-search="<%= search_catalog_path({ f: { collection_id_is: [collection.id] }, indexes: [], keywords: [], op: [], resource_description: [], search_field: 'advanced', search_type: 'simple', title_text: '', transcript: [], type_of_search: ['simple'] }) %>">
+                  <i class="fa fa-info-circle"></i></a>
+
+                <div class="description description_<%= collection.id %> d-none">
+                  <ul>
+                    <li><strong>Description</strong>
+                      <div><%= collection.about.try(:html_safe) %></div>
+                    </li>
+                    <%
+                      is_recorded = [] %>
+                    <% collection.all_fields["Collection"].each do |single_value| %>
+                      <% init_is_recorded = false %>
+                      <% single_value['values'].each do |value|  %>
+                        <% if value['value'].present? %>
+                          <% unless init_is_recorded %>
+                            <% is_recorded[single_value['field'].id] ||= { label: nil, value: [] } %>
+                            <% is_recorded[single_value['field'].id][:label] = single_value['field'].label %>
+                          <% init_is_recorded = true
+                             end %>
+                          <% is_recorded[single_value['field'].id][:value] << value['value'].html_safe %>
+                        <% end %>
+                      <% end %>
+                    <% end %>
+                    <% is_recorded.each do |single_values| %>
+                      <% if single_values.present? %>
+                        <li>
+                          <strong><%= single_values[:label] %></strong>
+                          <div class="main">
+                            <% single_values[:value].each do |single_values| %>
+                              <div><%= single_values.html_safe %></div>
+                            <% end %>
+                          </div>
+                        </li>
+                      <% end %>
+                    <% end %>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="browse-org">
+            <a target="_blank" href="<%= search_catalog_path({ f: { collection_id_is: [collection.id] }, indexes: [], keywords: [], op: [], resource_description: [], search_field: 'advanced', search_type: 'simple', title_text: '', transcript: [], type_of_search: ['simple'] }) %>">
+              Browse Collection >></a>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+<% end %>

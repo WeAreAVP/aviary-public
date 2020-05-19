@@ -1,0 +1,133 @@
+
+.shareHolder {
+    border-bottom: 1px solid #d3d3d3;
+    padding: 12px;
+}
+
+.shareHolder strong {
+    padding: 7px;
+    display: inline-block;
+}
+
+.shareHolder button {
+    float: right;
+    background: #e6e6e6 !important;
+    color: #000 !important;
+    border: none !important;
+    padding: 6px 15px !important;
+}
+
+.time-share {
+    margin-top: -120px;
+    padding: 0 40px;
+}
+
+.time-share .custom-checkbox {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.time-share .custom-checkbox label {
+    font: 14px/17px Roboto, sans-serif;
+    margin: 0;
+    padding: 3px 0 3px 30px;
+}
+
+.time-share .custom-checkbox label:before {
+    width: 21px;
+    height: 21px;
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: #fff;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+}
+
+.time-share .custom-checkbox label:after {
+    top: 6px;
+    left: 5px;
+    width: 11px;
+    height: 5px;
+}
+
+.shareModal .modal-body {
+    padding: 0;
+}
+
+.shareModal .content {
+    padding: 40px;
+    margin: 0 !important;
+    background: #f7f7f7;
+}
+
+.shareModal .nav-tabs {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+    justify-content: center;
+    padding-top: 10px;
+}
+
+.shareModal .content .btn-default {
+    background: rgb(221, 221, 221) !important;
+    color: #000;
+    border: none;
+    padding: 8px;
+    margin-top: 60px;
+    font-size: 16px;
+    font-weight: normal;
+}
+
+.shareModal .nav-item {
+    width: auto !important;
+}
+
+.shareModal .nav-link {
+    font-size: 14px !important;
+    color: #888 !important;
+    margin: 0 15px !important;
+    border-radius: 0 !important;
+    border: none !important;
+    height: auto !important;
+    padding: 10px 5px !important;
+    border-bottom: 3px solid transparent !important;
+}
+
+.shareModal .nav-link:hover {
+    border: none;
+    background: none;
+    border-bottom: 3px solid #999 !important;
+    color: #000;
+}
+
+.shareModal .nav-link.active {
+    border: none !important;
+    border-bottom: 3px solid #f26822 !important;
+    border-radius: 0 !important;
+    color: #333 !important;
+    font-weight: bold !important;
+    background-color: transparent !important;
+}
+
+.embedLink textarea {
+    resize: none;
+    height: 150px;
+}
+
+.replace_do {
+    margin-top: 8px;
+}
+
+.replace_do input[type="checkbox"] {
+    float: left;
+    margin-right: 5px;
+}
+
+.replace_do p {
+    overflow: hidden;
+}
+
+.checkbox-theme {
+    float: left;
+    margin-right: 5px;
+}

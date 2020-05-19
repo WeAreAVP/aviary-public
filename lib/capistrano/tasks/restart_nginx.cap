@@ -1,0 +1,10 @@
+namespace :restart do
+  desc 'Restart the nginx service after deployment'
+  task :nginx do
+    on roles(:app) do
+      with rails_env: "#{fetch(:stage)}" do
+        execute "sudo /etc/init.d/nginx restart"
+      end
+    end
+  end
+end

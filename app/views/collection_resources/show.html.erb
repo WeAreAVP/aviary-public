@@ -1,0 +1,66 @@
+<% title @collection_resource.title %>
+<% description @description_seo['value'].strip_tags if @description_seo.present? %>
+
+<main id="main" role="main">
+  <% if (can? :manage, @collection_resource) %>
+    <div class="breadcrumb resources-details">
+      <%= render_breadcrumbs %>
+    </div>
+  <% end %>
+  <div class="search-detail-main container-fluid">
+    <!-- we don't need annotation view -->
+    <% if false || session[:view_type] == 'detail' %>
+      <%= render 'collection_resources/show/show' %>
+    <% else %>
+      <%= render 'collection_resources/show/show_annotation' %>
+    <% end %>
+  </div>
+</main>
+<% if @resource_file.present? %>
+  <% if (can? :manage, @collection_resource) || @collection_resource.can_edit %>
+    <%= render 'indexes/upload_index' %>
+    <%= render 'indexes/sort_index' %>
+    <%= render 'transcripts/upload_transcript' %>
+    <%= render 'transcripts/sort_transcript' %>
+  <% end %>
+<% end %>
+<% track_params = params.clone.except('controller').except('action').to_json %>
+
+<% can_access = permission_to_access_file?(@resource_file) %>
+<script type="text/javascript">
+    var collectionResource = new CollectionResource();
+    collectionResource.player_time = <%= params['t'].present? ? params['t'] : 0 %>;
+    let params = {
+        target_id: '',
+        params: '<%=track_params %>',
+        ip: '<%=request.remote_ip %>',
+        organization_id: '<%=@collection_resource.collection.organization_id %>',
+        user_type: '<%= role_type(current_user, current_organization) %>'
+    };
+    var events_tracker = new EventsTracker(params);
+    collectionResource.events_tracker = events_tracker;
+    collectionResource.file_access = <%= can_access %>;
+    document.addEventListener("DOMContentLoaded", function () {
+        setTimeout(function () {
+            collectionResource.events_tracker.views_track = JSON.parse('<%== session[:resource_tracking].present? ? session[:resource_tracking].clone.to_enum.to_h.to_json : '{}' %>');
+            let params = {
+                target_id: '',
+                params: '<%=track_params %>',
+                ip: '<%=request.remote_ip %>',
+                organization_id: '<%=@collection_resource.collection.organization_id %>',
+                user_type: '<%= role_type(current_user, current_organization) %>'
+            };
+            collectionResource.initializeDetail('<%= session[:session_video_text_all].present? ? session[:session_video_text_all].to_json.html_safe : '{}' %>', <%= @selected_index.present? ? @selected_index: 0 %>, <%= @selected_transcript.present? ? @selected_transcript : 0 %>, <%= params[:edit_description].present? ? params[:edit_description] : 0 %>, '<%= params[:embed] %>', <%= @resource_file.present? ? @resource_file.id : '0' %>, params);
+            <% if params.key?(:collection_resource_id) %>
+            collectionResource.events_tracker.track_hit('collection_resource', '<%= params[:collection_resource_id]%>');
+            <% end %>
+
+            <% if @resource_file.present? %>
+            collectionResource.events_tracker.track_hit('collection_resource_file', '<%=  @resource_file.id %>');
+            $('#player').bind('playing', function () {
+                collectionResource.events_tracker.track_hit('collection_resource_file_play', '<%=  @resource_file.id %>');
+            });
+            <% end %>
+        }, 500);
+    });
+</script>

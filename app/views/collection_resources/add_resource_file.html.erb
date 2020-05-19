@@ -1,0 +1,59 @@
+<div id="main_container" class="container-fluid">
+  <div class="breadcrumb">
+    <%= render_breadcrumbs %>
+  </div>
+  <div class="main_contain">
+    <main>
+      <div class="text-headline jumbotron">
+        <div class="heading-holder table-head">
+          <h1>Add Resource Files</h1>
+        </div>
+        <div class="mt-3">
+          <p>There are three ways of adding files to your resources: direct upload from your local environment,
+            link upload from a remote storage location, and providing an embed code from another platform.</p>
+        </div>
+      </div>
+      <%= render 'form', av_resource: @av_resource, collection: @collection %>
+    </main>
+  </div>
+</div>
+
+<div class="modal" id="progress_modal" tabindex="-1" data-backdrop="static" data-keyboard="false" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Uploading Resource</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>File upload in progress. Do not leave this page or the file upload process will be terminated.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary">Save changes</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="delete_resource_file_popup" tabindex="-1" data-backdrop="static" data-keyboard="false" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Delete Resource File</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p><%= t('delete_resource_file') %></p>
+      </div>
+      <div class="modal-footer">
+        <%= link_to "Delete", "", class: "btn btn-danger", id: "delete_resource_file_button", data: { method: 'delete' } %>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>

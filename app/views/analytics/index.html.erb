@@ -1,0 +1,178 @@
+<div id="main_container" class="container-fluid">
+  <div class="main_contain">
+    <div class="analytics">
+<!--      @total_resource, @total_files, @total_views, @total_users, @total_plays, @total_minutes-->
+      <div class="row mb-3 small-box">
+        <div class="col-md-2">
+          <div class="box">
+
+            <div id="spark1">
+              <img src="<%= image_url 'analytics-icons/clock.png' %>" alt="">
+              <h1 class="sb-title"> <%= @total_minutes %></h1>
+              <span class="sb-title-small"> Total Duration</span>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-2">
+          <div class="box">
+            <div id="spark2">
+              <img src="<%= image_url 'analytics-icons/play.png' %>" alt="">
+              <h1 class="sb-title"> <%= number_with_delimiter(@total_resource) %></h1>
+              <span class="sb-title-small"> Resources</span>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-2">
+          <div class="box">
+            <div id="spark3">
+              <img src="<%= image_url 'analytics-icons/view.png' %>" alt="">
+              <h1 class="sb-title"> <%= number_with_delimiter(@total_views) %></h1>
+              <span class="sb-title-small"> Views</span>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-2">
+          <div class="box">
+            <div id="spark4">
+              <img src="<%= image_url 'analytics-icons/folder.png' %>" alt="">
+              <h1 class="sb-title"> <%= number_with_delimiter(@total_files) %></h1>
+              <span class="sb-title-small"> Media Files</span>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-2">
+          <div class="box">
+            <div id="spark4">
+              <img src="<%= image_url 'analytics-icons/play.png' %>" alt="">
+              <h1 class="sb-title"> <%= number_with_delimiter(@total_plays) %></h1>
+              <span class="sb-title-small"> Media Plays</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-2">
+          <div class="box">
+            <div id="spark4">
+              <img src="<%= image_url 'analytics-icons/user.png' %>" alt="">
+              <h1 class="sb-title"> <%= number_with_delimiter(@total_users) %></h1>
+              <span class="sb-title-small"> Users</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row mb-3">
+        <div class="col-md-12">
+          <div class="box">
+            <div class="row pb-15px">
+              <div class="col-md-6"><h2>Statistics</h2></div>
+              <div class="col-md-6">
+                <a class="float-right export_view_report_path btn btn-link" href="javascript:void(0);" data-url="/analytics/export_view_report">Export
+                  to CSV</a>
+              </div>
+            </div>
+            <div class="head">
+              <select class="statistics_user_type w-100">
+                <%= render partial: 'analytics/user_type_list' %>
+              </select>
+
+              <div class="w-50 pl-1 pr-1">
+                <input type="text" class="statistics_date_range form-control" id="statistics_date_range"/>
+              </div>
+              <div class="w-25 pl-1 pr-1">
+                <select class="type_of_report" id="type_of_report"/>
+                <option value="yearly">Year</option>
+                <option value="monthly">Month</option>
+                <option value="weekly">Week</option>
+                <option value="daily">Day</option>
+                </select>
+              </div>
+              <div class="w-25 pl-1 pr-1">
+                <a class="btn btn-sm btn-primary" data-url="<%= view_report_path %>" id="limit_statistics_report">Limit</a>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-9">
+                <div id="statistics_view_report"></div>
+              </div>
+              <div class="col-md-3">
+                <div class="inner">
+                  <div class="out-of storage">
+                    <span><%= number_to_human_size(current_organization.storage_used.to_f * 1048576) %></span>
+                    <br>Storage Used
+                  </div>
+                </div>
+
+                <div class="inner resource_circle_chart" data-count="<%= current_organization.resource_count %>" data-max="<%= current_organization.subscription.plan.max_resources %>">
+                  <div id="resourcesC2"></div>
+                  <div class="out-of resources">Resources
+                    <br><span><%= number_with_delimiter(current_organization.resource_count) %></span>
+                    of <%= number_with_delimiter(current_organization.subscription.plan.max_resources) %> Used
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="most-pop-res most-pop-sea-term row mb-3">
+        <div class="col-md-12">
+          <div class="box">
+            <div class="row pb-15px">
+              <div class="col-6"><h2>Most Popular Search Terms</h2></div>
+              <div class="col-6">
+                <a class='float-right export_search_terms_path btn btn-link' data-url="<%= export_search_terms_path %>">Export
+                  to CSV</a>
+              </div>
+            </div>
+            <div class="head">
+              <div class="date-range">
+                <span class="bold float-left w-50">User Type</span>
+                <select class="popular_search_terms_user_type w-100">
+                  <%= render partial: 'analytics/user_type_list' %>
+                </select>
+
+                <span class="bold">Date</span>
+                <input type="text" class="form-control popular_search_datepicker" id="popular_search_terms_date_start">
+                <a class="btn bt-sm btn-primary popular_search_terms_limit_result"> limit</a>
+              </div>
+              <div class="checks">
+                <div class="custom-control custom-radio">
+                  <input type="radio" id="detail_search" name="search_report_type" value="detail_search" class="custom-control-input">
+                  <label class="custom-control-label" for="detail_search">Resource Page Search</label>
+                </div>
+                <div class="custom-control custom-radio">
+                  <input type="radio" id="search_page" name="search_report_type" value="search_page" class="custom-control-input" checked>
+                  <label class="custom-control-label" for="search_page">Main Page Search </label>
+                </div>
+              </div>
+            </div>
+            <div class="table-hold">
+              <%= content_tag :table, role: :datatable, class: ['table', 'table-striped'], id: 'popular_search_terms', data: { url: search_terms_path } do %>
+                <%= render partial: 'analytics/search_term_report', locals: {} %>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+<script type="text/javascript">
+    if (navigator.userAgent.match(/IEMobile\/10\.0/)) {
+        var msViewportStyle = document.createElement('style');
+        msViewportStyle.appendChild(
+            document.createTextNode(
+                '@-ms-viewport{width:auto!important}'
+            )
+        );
+        document.querySelector('head').appendChild(msViewportStyle)
+    }
+</script>
+<script>
+    var analytics = new Analytics();
+    analytics.initialize_general();
+
+</script>

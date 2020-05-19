@@ -1,0 +1,10 @@
+namespace :copy do
+  desc 'copy env production file to current folder instead of symlink for docker'
+  task :env_file_for_docker do
+    on roles(:app) do
+        with rails_env: "#{fetch(:stage)}" do
+          execute "cp -rf /var/www/shared/aviary_#{fetch(:stage)}/.env #{current_path}/.env.production"
+        end
+    end
+  end
+end

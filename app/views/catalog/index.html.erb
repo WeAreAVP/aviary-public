@@ -1,0 +1,160 @@
+<% title 'Search' %>
+<% description 'Search the content' %>
+<style type="text/css">
+  <% if organization_layout? %>
+  <%== search_panel_bg_color.html_safe %>
+  <%== search_panel_font_color.html_safe %>
+  <% end %>
+</style>
+<div class="search-result-visual">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="form-group">
+          <%= render 'search_sidebar' %>
+          <div class="filter-holder">
+            <%= render :partial => 'catalog/view_type_group' %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="container">
+  <div class="row">
+    <div class="col-md-3">
+
+      <div id="facets" class="facets sidenav">
+        <div class="reset">
+          <span class="pl-10px pt-1 float-left">FILTER</span>
+          <%= link_to search_catalog_url(q: '', search_field: 'advanced', search_type: params[:search_type], utf8: '✓', reset_facets: 'true'), :class => "btn-reset-filters", :id => "startOverLink" do %>
+            <i class="fa fa-times"></i> <%= t('blacklight.search.start_over') %>
+          <% end %>
+        </div>
+        <div id="facet-panel-collapse" class="collapse panel-group show">
+          <% user_ip = request.ip %>
+          <% unless current_organization.present? %>
+            <% org_facet_manager = SearchPresenter.organization_facet_manager(current_organization, current_user, user_ip, params, has_facet_values?, session[:last_fq]) %>
+            <%= render partial: 'catalog/limited_facets', locals: { org_n_collection_facet_manager: org_facet_manager } %>
+          <% end %>
+          <% collection_facet_manager = SearchPresenter.collection_facet_manager(current_organization, current_user, user_ip, params, has_facet_values?, session[:last_fq]) %>
+          <%= render partial: 'catalog/limited_facets', locals: { org_n_collection_facet_manager: collection_facet_manager } %>
+          <% if has_facet_values? %>
+            <%= render_facet_partials %>
+          <% end %>
+        </div>
+      </div>
+
+    </div>
+    <div id="sidebar" class="col-md-9">
+
+      <div id="content">
+        <div class="row">
+          <div class="col-md-8">
+            <%= render :partial => 'sort_widget' %>
+          </div>
+
+          <div class="col-md-4 text-right filters mb-0">
+            <div class=""><%= render 'results_pagination' %></div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12 text-right add_bulk_playlist_actions mb-1">
+            <% if current_organization.present? && current_user_is_org_user?(current_organization) %>
+              <span id="select_all" class="playlist_actions" data-type="select"> Select All</span>
+              <span class="separator_action">|</span>
+              <span id="deselect_all" class="playlist_actions" data-type="deselect"> Deselect All</span>
+              <span class="separator_action add_to_playlist_sep ">|</span>
+              <a href="javascript:void(0)" id="add_to_playlist" class="badge badge-secondary font-size-12px playlist_actions" data-url="<%= fetch_bulk_edit_resource_list_collections_path %>">
+                Add Selected Resource to Playlist
+                (<span id="number_of_selected_resources" class="grey"><%= session['search_playlist_id'].present? ? session['search_playlist_id'].size : 0 %></span>)</a>
+            <% end %>
+          </div>
+        </div>
+        <% unless has_search_parameters? %>
+          <%# if there are no input/search related params, display the "home" partial -%>
+          <%= render 'home' %>
+          <%= render 'shared/sitelinks_search_box' %>
+        <% else %>
+          <%= render 'search_results' %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+<span id='update_selected_playlist_catalog_url' data-url="<%= update_selected_playlist_catalog_path %>"></span>
+<div class="modal fade bd-example-modal-lg bulk-edit-review-playlist-modal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content ">
+      <div class="modal-header">
+        <h2 class="font-weight-bold modal-title font-size-18px">Bulk Review</h2>
+      </div>
+      <div class="modal-body">
+        <h1 class="font-size-16px text-center mb-2 p-2 font-weight-bold"> Select Playlist </h1>
+        <select id="select_playlist">
+          <% if current_organization.present? %>
+            <% current_organization.playlists.each do |single_playlist| %>
+              <option value="<%= single_playlist.id %>"> <%= single_playlist.name %> </option>
+            <% end %>
+          <% end %>
+        </select>
+
+        <h1 class="font-size-16px text-center mb-2 p-2 mt-3 font-weight-bold"> Selected Resources </h1>
+        <table class="table table-striped review_resources table-sm " style="width: 100%;">
+          <thead>
+          <tr>
+            <td class="font-weight-bold"> ID</td>
+            <td class="font-weight-bold"> Resource Name</td>
+          </tr>
+          </thead>
+          <tbody class="bulk-edit-review-playlist-content">
+          </tbody>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button class="btn btn-primary bulk-add-to-playlist" data-url="<%= assign_to_playlist_catalog_path %>">Apply</button>
+      </div>
+    </div>
+  </div>
+</div>
+<% track_params = params.clone.except('controller').except('action').to_json %>
+
+<script>
+    let search_obj = new SearchPage();
+    let params = {
+        target_id: '',
+        params: '<%=track_params %>',
+        ip: '<%=request.remote_ip %>',
+        organization_id: '<%= current_organization.present? ? current_organization.id : '' %>',
+        result_count: '<%= @document_list.count %>',
+        user_type: '<%= role_type(current_user, current_organization) %>'
+    };
+    let events_tracker = new EventsTracker(params);
+    $(function () {
+        search_obj.initialize();
+        setTimeout(function () {
+            <% session[:searched_keywords].each do |_, value| %>
+            <% unless value['op'] == 'NOT' %>
+            <% if value['keywords'].present? && (value['keywords'].include?('AND') || value['keywords'].include?('OR') || value['keywords'].include?('NOT'))
+                all_terms = tracking_term_separator(value)
+                all_terms.each do |value_single| %>
+            if (events_tracker.check_keyword_already_tracked('search_page', '<%=value_single %>')) {
+                events_tracker.track_params.search_keyword = '<%= value_single %>';
+                events_tracker.track_hit('search_page', '');
+            }
+            <% end %>
+            <%  else %>
+            <% keyword = value['keywords'].present? ? value['keywords'] : value['keyword_searched']  %>
+            if (events_tracker.check_keyword_already_tracked('search_page', '<%=keyword %>')) {
+                events_tracker.track_params.search_keyword = '<%= keyword %>';
+                events_tracker.track_hit('search_page', '');
+            }
+            <%  end %>
+            <% end %>
+            <% end %>
+        }, 500);
+    });
+</script>
+
+`

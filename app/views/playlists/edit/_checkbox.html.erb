@@ -1,0 +1,11 @@
+<% if @inside_playlist && @playlist_action == 'edit' %>
+  <div data-id='' class='selection-box' style='position: absolute; right: 10px; z-index: 5;'>
+    <form action='<%= toggle_item_playlist_playlist_resource_path(@playlist, @playlist_resource) %>' method='POST' remote='true'>
+      <input type='checkbox' data-fileid='<%= single_file.id.to_s %>' class='choose-file mt-2 ' <%= @playlist_resource.playlist_items.present? && @playlist_resource.playlist_items.pluck(:collection_resource_file_id).include?(single_file.id) ? 'checked' : '' %> />
+      <input type='hidden' name='mediafile' value='<%= single_file.id %>'/>
+      <input type='hidden' name='mediafile_current' value='<%= @resource_file.id %>'/>
+      <input type='hidden' id='start_time_<%= single_file.id %>' name='start_time'/>
+      <input type='hidden' id='end_time_<%= single_file.id %>' name='end_time'/>
+    </form>
+  </div>
+<% end %>

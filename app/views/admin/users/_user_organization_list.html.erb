@@ -1,0 +1,60 @@
+<div class="row">
+  <div class="col-md-6">
+    <h3 class="h3">Organizations</h3>
+  </div>
+  <div class="col-md-6"></div>
+</div>
+<div class="data-table">
+  <% if @user.organization_users.present? %>
+  <table class="table">
+    <thead>
+    <tr>
+      <th>Organization</th>
+      <th>Role</th>
+      <th>Status</th>
+      <th>Action</th>
+    </tr>
+    </thead>
+    <tbody>
+
+    <% @user.organization_users.each do |user_organization| %>
+      <tr data-organization="<%= user_organization.organization_id %>" data-path="<%= admin_user_organization_path(@user) %>">
+        <td><%= user_organization.organization.name %></td>
+
+        <td><%= select_tag 'roles_' + user_organization.id.to_s, options_for_select(Role.organization_roles.collect { |u| [u.name, u.id] }, selected: user_organization.role_id),
+                           class: 'user_org_role' %>
+        </td>
+        <td>
+          <%=
+            content_tag(:label, '', class: 'toggle-switch org_status_cus') do
+              content_tag(:input, nil, type: 'checkbox', checked: (user_organization.status == true), class: 'toggle-switch__input') +
+                content_tag(:span, '', class: 'toggle-switch__slider')
+            end
+          %>
+        </td>
+        <td>
+          <a href="javascript://" class="btn-sm btn-danger admin_user_delete" data-type="association" data-url="<%= admin_user_organization_delete_path(@user, user_organization) %>" data-name="<%= user_organization.organization.name %>">Remove</a>
+        </td>
+      </tr>
+    <% end %>
+
+
+    </tbody>
+  </table>
+<% end %>
+</div>
+<% if @organizations.present? %>
+  <div class="row">
+    <div class="col-md-5">
+      <%= select_tag 'organizations', options_for_select(@organizations.collect { |u| [u.name, u.id] }), prompt: 'Select Organization' %>
+    </div>
+    <div class="col-md-5">
+      <%= select_tag 'roles', options_for_select(Role.organization_roles.collect { |u| [u.name, u.id] }), prompt: 'Select Role' %>
+
+    </div>
+    <div class="col-md-2">
+      <a href="javascript://" class="btn btn-primary" id="assign_organization" data-path="<%= admin_user_organization_path(@user) %>">Add</a>
+    </div>
+  </div>
+<% end %>
+

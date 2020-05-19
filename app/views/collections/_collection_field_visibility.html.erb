@@ -1,0 +1,43 @@
+  <div id="wrapper">
+    <main id="main" role="main">
+      <div class="org-metadata">
+        <div class="text-headline jumbotron">
+          <h4>Resource Description</h4>
+          <p>The description fields below can be used to describe resources in this collection.
+              From this, you can establish a customized template for the resources in this collection.
+              The settings you define here will affect which descriptive fields are available for description and
+              for visibility on the “Description” tab of the detail view of a resource in this collection.</p>
+            <p>You can drag and drop the fields below to reorder them into a sequence that you prefer.
+              This will change the sequence in which the fields are displayed on the resource detail page.</p>
+            <p>“Tombstone” fields are fixed metadata fields that will always be visible in the main view
+              of the Resource Detail page, as well as in search results where the resource is shown,
+              and anywhere the resource is listed publicly throughout the Aviary interface,
+              except the Aviary home page. You can select up to three fields to be displayed
+              as Tombstone fields for the resources in this collection. Title is part of the Tomstone by default.</p>
+            <p>Description fields that have been enabled will appear in the “Description” tab of all the Resource in this collection (when you have opted to make a field visible).</p>
+        </div>
+        <div class="container">
+          <div class="row">
+            <div class="col-md-6">
+              <table class="table pb-0 mb-0">
+              </table>
+              <%= link_to "Add Custom Fields", new_edit_custom_field_collection_path(@collection), class: "btn btn-primary btn-sm mb-4 edit-custom-field-button edit-custom-field-button-new-custom-spec", data: { method_type: "new" } %>
+              <div class="holder custom_fields_container">
+                <%= render partial: "custom_fields_table", locals: { latest_field_label: nil } %>
+              </div>
+              <div class="row bottom">
+                <div class="col-md-6">
+                  <%= link_to "Add Custom Fields", new_edit_custom_field_collection_path(@collection), class: "btn btn-primary btn-sm mb-4 edit-custom-field-button edit-custom-field-button-new-custom-spec", data: { method_type: "new" } %>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6 collection_resource_preview">
+              <%= render partial: "collection_resource_preview", locals: { data_hash: @data_hash, resource_file: @resource_file } %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+  <div id="show_custom_fields_add"></div>
+  <div id="show_custom_vocabulary_modal"></div>

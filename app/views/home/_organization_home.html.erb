@@ -1,0 +1,132 @@
+<% if current_organization.display_banner %>
+  <%= render partial: 'home/home_banner', locals: { banner_type: current_organization.banner_type,
+                                                    display_banner: current_organization.display_banner,
+                                                    banner_image: current_organization.banner_image,
+                                                    banner_slider_resources: current_organization.banner_slider_resources,
+                                                    banner_title_type: current_organization.banner_title_type,
+                                                    banner_title_image: current_organization.banner_title_image,
+                                                    banner_title_text: current_organization.banner_title_text,
+                                                    title_font_family: current_organization.title_font_family,
+                                                    title_font_size: current_organization.title_font_size,
+                                                    title_font_color: current_organization.title_font_color,
+                                                    banner_view_from: 'organization'
+  } %>
+<% end %>
+
+<div class="organization-details">
+  <div class="container-fluid">
+    <div class="holder">
+      <div class="img-holder">
+        <div class="layout"><%= image_tag organization_logo %></div>
+      </div>
+      <div class="text"><%= current_organization.name %></div>
+    </div>
+    <div class="browse-org">
+      <a target="_blank" class="ml-5px bc-link" href="<%= search_catalog_path({ f: { organization_id_is: [current_organization.id] }, indexes: [], keywords: [], op: [], resource_description: [], search_field: 'advanced', search_type: 'simple', title_text: '', transcript: [], type_of_search: ['simple'] }) %>">Browse
+        Organization >></a></div>
+  </div>
+</div>
+<ul class="org-tab-main nav nav-tabs">
+  <li class="nav-item width_33 playlist_tab_clickable d-none">
+    <a class="nav-link <%= current_organization.default_tab_selection == 'playlists' || current_organization.default_tab_selection.blank? ? 'active' : '' %>" data-toggle="tab" href="#nav-playlist" role="tab" aria-controls="nav-playlist" aria-selected="true">Playlists</a>
+  </li>
+  <li class="nav-item width_33">
+    <a class="nav-link <%= current_organization.default_tab_selection == 'resources' ? 'active' : '' %>" href="#nav-home" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">Resources</a>
+  </li>
+  <li class="nav-item width_33">
+    <a class="nav-link <%= current_organization.default_tab_selection == 'collections' ? 'active' : '' %>" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile" aria-selected="true">Collections</a>
+  </li>
+  <li class="nav-item width_33">
+    <a class="nav-link <%= current_organization.default_tab_selection == 'about' || current_organization.default_tab_selection.blank? ? 'active' : '' %>" data-toggle="tab" href="#nav-contact" role="tab" aria-controls="nav-contact" aria-selected="true">About</a>
+  </li>
+</ul>
+
+<div class="tab-content" id="nav-tabContent">
+  <div class="tab-pane fade <%= current_organization.default_tab_selection == 'playlists' ? 'active show' : '' %>" id="nav-playlist" role="tabpanel" aria-labelledby="playlist-tab">
+    <div class="all-resources container home-index-view">
+
+      <div id="playlists_home" data-path="<%= get_playlists_path %>">
+      </div>
+    </div>
+  </div>
+  <div class="tab-pane fade <%= current_organization.default_tab_selection == 'resources' ? 'active show' : '' %>" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+    <div class="all-resources container home-index-view">
+
+      <div id="resources_home" data-path="<%= get_resources_path %>">
+      </div>
+    </div>
+  </div>
+  <div class="tab-pane fade <%= current_organization.default_tab_selection == 'collections' ? 'active show' : '' %>" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+    <div class="all-resources container home-index-view">
+      <div id="collections_home" data-path="<%= get_collections_path %>">
+      </div>
+    </div>
+  </div>
+  <div class="tab-pane fade <%= current_organization.default_tab_selection == 'about' || current_organization.default_tab_selection.blank? ? 'active show' : '' %>" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">
+    <div class="all-resources container">
+      <div class="org-about-panel">
+        <p><%== description current_organization.description %></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="all-resources container home-index-view">
+</div>
+<br/>
+<div class="modal fade collection-detail-modal" id="detailDisplayModal" tabindex="-1" role="dialog" aria-labelledby="detailDisplayModal" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="image-holder collection_image_holder d-none" style="">
+            </div>
+            <div class="details">
+              <div class="org-icon">
+                <div class="hold">
+                  <img class="collection-org-logo" src="">
+                </div>
+              </div>
+              <div class="text">
+                <strong><a style="color: #333;" target="_blank" class="collection_collection_title" href=""></a></strong>
+                <span class="collection_org_title"></span>
+              </div>
+              <a href="#" target="_blank" class="btn-link collection_search_collection">Browse</a>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <div class="list list-collection-info">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+<% track_params = params.clone.except('controller').except('action').to_json %>
+<script type="text/javascript">
+
+    let params = {
+        target_id: '',
+        params: '<%=track_params %>',
+        ip: '<%=request.remote_ip %>',
+        organization_id: '<%= current_organization.present? ? current_organization.id : '' %>',
+        user_type: '<%= role_type(current_user, current_organization) %>'
+    };
+    let events_tracker = new EventsTracker(params);
+    $(function () {
+        setTimeout(function () {
+            events_tracker.track_hit('organization', '<%= current_organization.id %>');
+        }, 500);
+    });
+    let colelction_resources = new CollectionResource();
+    document.addEventListener("DOMContentLoaded", function (event) {
+        colelction_resources.loadCollectionwiseResources();
+    });
+</script>

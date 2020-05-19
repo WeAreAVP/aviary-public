@@ -1,0 +1,28 @@
+<% if org_n_collection_facet_manager['facet_counts']['facet_fields'].keys.present? %>
+  <% org_n_collection_facet_manager['facet_counts']['facet_fields'].keys.each do |single_facets| %>
+    <% display_facet = facet_by_field_name(single_facets) %>
+    <% facet_field = facet_configuration_for_field(single_facets) %>
+    <% current_counts = Hash[*org_n_collection_facet_manager['facet_counts']['facet_fields'][single_facets]] %>
+
+    <div class="panel panel-default facet_limit blacklight-<%= facet_field.key.parameterize %> <%= 'facet_limit-active' if facet_field_in_params?(facet_field.key) %>">
+      <div class="<%= "collapsed" if should_collapse_facet?(facet_field) %> collapse-toggle panel-heading" data-toggle="collapse" data-target="#<%= facet_field_id(facet_field) %>">
+        <h3 class="panel-title facet-field-heading">
+          <%= link_to facet_field_label(facet_field.key), "javascript:void(0)", :"data-turbolinks" => false, :"data-no-turbolink" => true %>
+        </h3>
+
+      </div>
+
+      <div id="<%= facet_field_id(facet_field) %>" class="panel-collapse facet-content <%= should_collapse_facet?(facet_field) ? 'collapse' : 'in' %>">
+        <input type="text" placeholder="Search..." class="form-control input search_facet search_facet_<%= facet_field_id(facet_field) %> h-30px" data-target="<%= single_facets %>" />
+        <div class="panel-body">
+          <ol class="facet-values list-unstyled">
+            <% current_counts.each do |index, single_count| %>
+              <% item = Blacklight::Solr::Response::Facets::FacetItem.new(value: index, hits: single_count, label: index) %>
+              <li class="li-facet"> <%= render_facet_item(facet_field.key, item) %> </li>
+            <% end %>
+          </ol>
+        </div>
+      </div>
+    </div>
+  <% end %>
+<% end %>

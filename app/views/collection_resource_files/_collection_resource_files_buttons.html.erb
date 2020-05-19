@@ -1,0 +1,10 @@
+<div class="dropdown float-right ml-2">
+  <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    Table Options
+  </button>
+  <div class="dropdown-menu dropdown-menu-right">
+    <button class="dropdown-item manage-resource-columns-btn"> Manage Table</button>
+    <%= link_to 'Export Resources File to CSV', export_resource_file_collection_resource_files_path, data: { url: export_resource_file_collection_resource_files_path }, class: 'dropdown-item export_btn export_btn_resource' %>
+    <button class="dropdown-item bluk-edit-btn">Bulk Edit Options</button>
+  </div>
+</div>

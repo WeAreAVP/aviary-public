@@ -1,0 +1,67 @@
+<main id="main" role="main">
+
+  <div class="collection-landing details">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="banner">
+            <div class="hold">
+              <%= image_tag(@organization.banner_image.url, class: "img-fluid") %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <ul>
+      <li>
+        <div class="name"><%= @organization.name %></div>
+      </li>
+      <li>
+        <div class=""><%== @organization.description %></div>
+      </li>
+    </ul>
+
+    <div class="all-resources container">
+
+
+      <h3>Collections</h3>
+      <div class="home-featured-collections">
+        <% if @public_collections.present? %>
+          <% @public_collections.each do |collection| %>
+            <%= link_to collection_path(collection) do %>
+              <div class="item wrap-text" style="background: url(<%= collection.image.url(:small) %>);">
+                <h4 class="reso-title"><%= collection.organization.name %></h4>
+              </div>
+              <div class="text">
+                <strong><%= collection.title %></strong>
+                <strong><%= collection.av_resources.count %> resources</strong>
+              </div>
+            <% end %>
+          <% end %>
+        <% end %>
+      </div>
+      <h3><%= link_to "Resources", "" %></h3>
+      <div class="home-featured-resources owl-carousel owl-theme">
+        <% if @public_resources.present? %>
+          <% @public_resources.each do |file| %>
+            <%= link_to collection_av_resource_details_path(file.av_resource.collection, file.av_resource, file) do %>
+              <div class="item" style="background: url(<%= file.thumbnail.url %>);">
+                <h4 class="reso-title"><%= file.av_resource.title %></h4>
+              </div>
+              <div class="text wrap-text">
+                <% if file.av_resource.fetch_tombstone_values.present? %>
+                  <% file.av_resource.fetch_tombstone_values.each do |single_feild| %>
+                    <%= render :partial => 'av_resources/defalt_field_partials/' + single_feild.model_title + '_view', locals: { is_tombstone: true, av_resource: file.av_resource, form: {} } %>
+                  <% end %>
+                <% else %>
+                  <%= render :partial => 'av_resources/defalt_field_partials/template_agent_view', locals: { is_tombstone: true, av_resource: file.av_resource, form: {} } %>
+                  <%= render :partial => 'av_resources/defalt_field_partials/template_date_view', locals: { is_tombstone: true, av_resource: file.av_resource, form: {} } %>
+                <% end %>
+              </div>
+            <% end %>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</main>

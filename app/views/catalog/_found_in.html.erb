@@ -1,0 +1,22 @@
+<% html = ''
+   inner_html = '' %>
+<% counts = ready_keyword_for_count(SearchBuilder::keywords_array(session[:searched_keywords]), document_current, description_search_fields, index_search_fields, transcript_search_fields, other_fields) %>
+<% counts.each do |index, single_keyword_occurrence| %>
+  <% next if single_keyword_occurrence['total_custom_keyword'] <= 0 %>
+  <% inner_html += "<div class='list'> <label><strong>#{index.delete(')').delete('(')}:</strong></label><ul style='display:inline;'/>" %>
+  <% single_keyword_occurrence.each do |index_field_occurrence, single_field_occurrence| %>
+    <% next if index_field_occurrence == 'total_custom_keyword' %>
+    <% index_field_occurrence = 'Description' if index_field_occurrence == 'Custom Field Values' %>
+    <% inner_html += "<li>#{index_field_occurrence} (#{single_field_occurrence})</li>" if single_field_occurrence > 0 %>
+  <% end %>
+  <% inner_html += "</ul>" %>
+  <% inner_html += "</div>" %>
+<% end %>
+<% if html.present? || inner_html.present? %>
+  <label class="cursor-pointer mt-1 mb-1" style="color: #222; font-size: 15px;">
+    <strong>Found in: </strong></label>
+  <div class="alllist">
+    <%= html.html_safe %>
+    <%= inner_html.html_safe %>
+  </div>
+<% end %>

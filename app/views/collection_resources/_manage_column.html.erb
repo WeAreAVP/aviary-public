@@ -1,0 +1,85 @@
+<div class="modal fade" data-url="<%= update_resource_column_sort_path(organization_id) %>" id="manage_resource_columns_modal" tabindex="-1" role="dialog" aria-labelledby="ipPopupLabel" aria-hidden="true">
+  <div class="modal-lg modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title h5">Manage Table </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="upload-main">
+
+          <ul class="nav nav-tabs " id="myTab" role="tablist">
+            <li class="nav-item w-50">
+              <a class="nav-link active show" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Manage Table Display Columns</a>
+            </li>
+            <li class="nav-item w-50">
+              <a class="nav-link " id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">
+                Manage Table Search Columns</a>
+            </li>
+          </ul>
+          <div class="tab-content" id="myTabContent">
+            <div class="tab-pane fade active show" id="home" role="tabpanel" aria-labelledby="home-tab">
+              <div class="row">
+                <div class="col-6">
+                  <label class="font-weight-bold mt-10px"> Number of fixed columns</label>
+                </div>
+                <div class="col-6">
+                  <select class="number_of_column_fixed" id="number_of_column_fixed">
+                    <% (0 .. 2).each do |i| %>
+                      <option <%= columns_details['number_of_column_fixed'].to_s == i.to_s ? 'selected="selected"' : '' %> ><%= i %></option>
+                    <% end %>
+                  </select>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-12">
+                  <h1 class="mt-10px mb-10px font-weight-bold font-size-18px"> Search Fields Status:
+                    <span class="badge badge-danger font-size-13px mb-5px float-right font-weight-bold uncheck_all_fields " data-search-status="false" data-search-field="all_fields_identifier" id="uncheck_all_fields"> Disable all</span>
+                    <span class="badge badge-success mb-5px float-right mr-5px font-size-13px font-weight-bold check_all_fields" data-search-status="true" data-search-field="all_fields_identifier" id="check_all_fields">Enable all</span>
+                  </h1>
+                  <ul id="sortable_resource_columns" class="list-group w-100" style="max-height: 400px;overflow-y: scroll;">
+                    <% columns_details['columns_status'].each do |_, value| %>
+                      <li id="<%= value['value'] %>" class="sortable-li">
+                        <i class="fa fa-bars handle pr-10px pl-10px"></i>
+                        <input id="<%= value['value'] %>_status" class=" all_fields_identifier ml-5px" type="checkbox" <%= !value['status'].blank? && value['status'] == 'true' ? 'checked' : '' %>/>
+                        <th> <%= display_field_title_table(value['value']) %></th>
+                      </li>
+                    <% end %>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+              <div class="row">
+                <div class="col-12">
+                  <h1 class="mt-10px mb-10px font-weight-bold font-size-18px"> Search Fields Status:
+                    <span class="badge badge-danger font-size-13px mb-5px float-right font-weight-bold uncheck_all_fields" data-search-status="false" data-search-field="all_fields_search_identifier" id="uncheck_all_fields"> Disable all</span>
+                    <span class="badge badge-success mb-5px float-right mr-5px font-size-13px font-weight-bold check_all_fields" data-search-status="true" data-search-field="all_fields_search_identifier" id="check_all_fields">Enable all</span>
+                  </h1>
+                  <% if search_columns_details.present? %>
+                    <ul id="resource_search_columns" class="list-group w-100" style="max-height: 400px;overflow-y: scroll;">
+                      <% search_columns_details.each do |_, value| %>
+                        <li id="<%= value['value'] %>" class="sortable-li">
+                          <i class="pr-10px pl-10px"></i>
+                          <input id="<%= value['value'] %>" data-value='' class=" all_fields_search_identifier ml-5px" type="checkbox" <%= !value['status'].blank? && value['status'] == 'true' ? 'checked' : '' %>/>
+                          <th> <%= !%w(index transcript).include?(value['value']) ? display_field_title_table(value['value']) : value['value'].titleize %></th>
+                        </li>
+                      <% end %>
+                    </ul>
+                  <% end %>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="modal-footer" id="modalPopupFooter">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+        <a href="javascript://" class="btn btn-success" id="update_column_status">Update</a>
+      </div>
+    </div>
+  </div>
+</div>

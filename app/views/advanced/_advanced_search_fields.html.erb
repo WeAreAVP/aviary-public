@@ -1,0 +1,50 @@
+<div class="line <%= @view_type %>">
+  <div class="row">
+    <div class="col-md-2 operator_term">
+      <div class="form-group">
+        <select class="op_selector <%= @view_type == 'clone_able' ? 'add_wanted_class' : '' %> " data_identifier="<%= (@view_type == 'clone_able' ? 'add_wanted_info' : '') %>">
+          <option>AND</option>
+          <option>OR</option>
+          <option>NOT</option>
+        </select>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="form-group">
+        <select class="type_of_field_selector">
+          <%- search_fields_for_advanced_search.each do |key, field_def| -%>
+            <option value="<%= key %>"><%= field_def.label %></option>
+          <%- end -%>
+        </select>
+      </div>
+    </div>
+    <div class="col-md-2">
+      <select class="type_of_search <%= @view_type == 'clone_able' ? 'add_wanted_class' : '' %> " data_identifier="<%= (@view_type == 'clone_able' ? 'add_wanted_info' : '') %>">
+        <option value="wildcard"> Contains</option>
+        <option value="endswith"> Ends With</option>
+        <option value="startswith"> Starts With</option>
+        <option value="simple"> Exact </option>
+      </select>
+    </div>
+    <div class="col-md-4">
+      <div class="form-group">
+        <input type="text" class="form-control search_field_selector <%= @view_type == 'clone_able' ? 'add_wanted_class' : '' %>" data_identifier="<%= (@view_type == 'clone_able' ? 'add_wanted_info' : '') %>"/>
+      </div>
+    </div>
+    <div class="col-md-1 remove_div_term">
+      <div class="form-group">
+        <a href="javascript://" class="btn remove_current_line <%= @view_type == 'clone_able' ? 'add_wanted_class' : '' %>" data_identifier="<%= (@view_type == 'clone_able' ? 'add_wanted_info' : '') %>"><i class="fa fa-times"></i></a>
+      </div>
+    </div>
+  </div>
+  <%- search_fields_for_advanced_search.each do |key, _| -%>
+    <%= hidden_field_tag "#{key}[]", label_tag_default_for(key), :id => '', :class => " form-control #{key  } hidden_advance_search search_field_selector_hidden " + (@view_type == 'clone_able' ? 'add_wanted_class' : ''), :data_identifier => (@view_type == 'clone_able' ? 'add_wanted_info' : '') %>
+  <%- end -%>
+  <input type="hidden" name="op[]" class="form-control op add_wanted_class" data_identifier="<%= (@view_type == 'clone_able' ? 'add_wanted_info' : '') %>"/>
+  <input type="hidden" name="type_of_search[]" value="wildcard" class="form-control type_of_search_field add_wanted_class" data_identifier="<%= (@view_type == 'clone_able' ? 'add_wanted_info' : '') %>"/>
+  <input type="hidden" name="type_of_field_selector[]" value="wildcard" class="form-control type_of_field_selector add_wanted_class d-none">
+</div>
+
+
+
+

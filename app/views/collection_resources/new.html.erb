@@ -1,0 +1,66 @@
+<div id="main_container" class="container-fluid">
+  <div class="main_contain">
+    <main>
+      <div class="text-headline jumbotron">
+        <div class="heading-holder table-head">
+          <div class="row">
+            <div class="col-md-6"><h1>Add Resource</h1></div>
+            <div class="col-md-6"></div>
+          </div>
+        </div>
+      </div>
+
+      <%= form_for @collection_resource do |f| %>
+        <div class="data-table ">
+          <div class="details">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <div class="field-title">
+                    <label for="admin_user_roles">Collection</label>
+                  </div>
+                  <%= f.collection_select :collection_id, @collections, :id, :title, selected: params[:id] %>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <div class="field-title">
+                    <label for="">Display Title</label>
+                  </div>
+                  <%= f.text_field :title, class: 'form-control', required: true %>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <div class="field-title">
+                    <%= f.label 'Featured ?', for: 'collection_resource_featured' %>
+                  </div>
+                  <%= f.select :is_featured, [['Yes', true], ['No', false]], {}, required: false, label: false, class: 'custom-placeholder' %>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <div class="field-title">
+                    <%= f.label 'Access', for: 'collection_resource_public' %>
+                  </div>
+                  <%= f.select :access, CollectionResource.accesses.map { |key, value| [key.split('_').second.humanize, key] }, {}, required: false, label: false, class: 'custom-placeholder' %>
+                </div>
+              </div>
+            </div>
+
+
+
+
+            <div class="row">
+              <div class="col-md-12 text-right">
+                <button class="btn btn-primary ml-2 saveBtnCus">Save</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </main>
+  </div>
+</div>

@@ -1,0 +1,53 @@
+<style type="text/css">
+  .two-col .col-lg-7:first-child:after,
+  .one-col .col-lg-7:first-child:after {
+    display: none;
+  }
+
+  .one-col > .row:first-child {
+    border: none;
+  }
+
+  .mejs__container,
+  .mejs__overlay-play,
+  .mejs__layer,
+  .mejs__mediaelement video {
+    height: 100vh !important;
+  }
+
+  <% if params[:media_player] == 'true' %>
+  .mejs__container {
+    height: 78vh !important;
+  }
+
+  <% end %>
+</style>
+<main id="main" role="main">
+  <div class="search-detail-main">
+    <div class="video-main carousel slide" data-ride="carousel">
+      <div class="carousel-inner">
+        <div class="carousel-item active">
+          <% if @resource_file.present? %>
+            <% is_audio_only = @collection_resource.present? ? @collection_resource.collection.is_audio_only : false  %>
+            <%= render partial: 'collection_resources/show/mediaplayer', locals: {single_file: @resource_file, is_audio_only: is_audio_only} %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+    <% unless @resource_file.nil? %>
+      <%= render layout: 'collection_resources/show/media_carousel' do %>
+        <%= render partial: 'collection_resources/show/resource_listing' %>
+      <% end %>
+    <% end %>
+    <%= render 'collection_resources/show/share_link' %>
+  </div>
+</main>
+<script type="text/javascript">
+    var collectionResource = new CollectionResource();
+    document.addEventListener("DOMContentLoaded", function (event) {
+        setTimeout(function () {
+            collectionResource.player_time = <%= params['t'].present? ? params['t'] : 0 %>;
+            collectionResource.initializePlayer();
+        }, 500);
+    });
+</script>

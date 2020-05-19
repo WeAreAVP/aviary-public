@@ -1,0 +1,20 @@
+<!--Overriden: Change-->
+<div class="search-details">
+  <ul class="details <%= params[:view] == 'grid' ? 'list-view' : '' %>">
+    <div id="documents" class="documents-<%= document_index_view_type %>">
+      <%= render documents, :as => :document %>
+    </div>
+  </ul>
+</div>
+
+
+<div class="add_to_playlist_container" >
+  <%= render partial: 'playlists/add_to_playlist_container' %>
+</div>
+<script type="text/javascript">
+    var playlist = new Playlist();
+    document.addEventListener("DOMContentLoaded", function () {
+        playlist.initialize_playlist_search_page();
+    });
+</script>
+

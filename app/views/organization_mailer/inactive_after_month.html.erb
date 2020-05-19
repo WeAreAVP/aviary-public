@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta content='text/html; charset=UTF-8' http-equiv='Content-Type'/>
+</head>
+<body>
+<p>Dear <%= @user.full_name %>,</p>
+<p>
+  On <%= Time.at(@organization.subscription.cancel_at.to_f).in_time_zone('Eastern Time (US & Canada)').strftime('%m/%d/%Y') %> you have canceled your account for <%= @organization.name %> in Aviary. Your content will be
+  deleted from Aviary in 15 days. This operation can not be undone.
+</p>
+<p>Best,</p>
+<p>The Aviary Team</p>
+</body>
+</html>

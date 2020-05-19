@@ -1,0 +1,13 @@
+.list-group-custom {
+    margin-left: 25px;
+}
+
+.import-tab-content {
+    margin: 20px 0;
+    padding: 0;
+}
+
+.disable_btn {
+    opacity: 0.4;
+    cursor: not-allowed;
+}

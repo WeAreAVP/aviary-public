@@ -1,0 +1,15 @@
+<div class="shareModal modal fade" id="playlistModalCenter" tabindex="-1" role="dialog" aria-labelledby="playlistModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-lg  modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-body add_to_playlist_container_body ">
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+          <li class="nav-item">
+            <a class="nav-link share_tabs active" id="home-tab" data-toggle="tab" data-tabname="share_link_custom" href="#home" role="tab" aria-controls="home" aria-selected="true">
+              Add To Playlist</a>
+          </li>
+        </ul>
+        <%= image_tag("https://#{ENV['S3_HOST_CDN']}/public/images/ajax-loader.gif", class: 'h-25px ml-48per mt-3 mb-3') %>
+      </div>
+    </div>
+  </div>
+</div>

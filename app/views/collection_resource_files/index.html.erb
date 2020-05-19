@@ -1,0 +1,34 @@
+<div id="main_container" class="container-fluid">
+  <div class="main_contain">
+    <main>
+      <div class="text-headline jumbotron">
+        <div class="heading-holder table-head">
+          <div class="row">
+            <div class="col-md-7"><h1>Resources Files</h1></div>
+            <div class="col-md-5 ">
+              <%= render partial: 'collection_resource_files/collection_resource_files_buttons' %>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="data-table">
+        <div class="container-fluid">
+          <%= content_tag :table, role: :datatable, class: ['table', 'table-striped'], id: 'collection_resource_datatable', data: { url: collection_resource_files_path(format: :json) } do %>
+            <%= render partial: 'collection_resource_files/files_listing_table', locals: { columns_details: JSON.parse(current_organization.resource_file_display_column)['columns_status'], organization_id: current_organization.id } %>
+          <% end %>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<span id="url_form_progress" data-url="<%= update_progress_files_collections_path %>"></span>
+<%= render partial: 'collection_resource_files/manage_column', locals: { columns_details: JSON.parse(current_organization.resource_file_display_column)['columns_status'], search_columns_details: JSON.parse(current_organization.resource_file_search_column), organization_id: current_organization.id } %>
+<%= render partial: 'collection_resource_files/bulk_edit_resource_file' %>
+<script type="text/javascript">
+    var collection_resource_file_table = new CollectionResourceFileTable();
+    document.addEventListener("DOMContentLoaded", function () {
+        collection_resource_file_table.initialize('<%== current_organization.resource_file_display_column %>', '<%= session[:resource_file_list_bulk_edit] %>');
+    });
+</script>

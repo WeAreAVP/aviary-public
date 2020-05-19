@@ -1,0 +1,55 @@
+<div id="main_container" class="container-fluid">
+  <div class="main_contain">
+    <main>
+      <div class="text-headline jumbotron">
+        <div class="heading-holder">
+          <div class="container">
+            <div class="row">
+              <div class="col-md-9"><h1>Manage Account</h1></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="organization-section">
+        <div class="container-fluid">
+          <div class="row">
+            <div class="upload-main">
+              <div class="hold">
+                <ul class="nav nav-tabs" id="importTab" role="tablist">
+                  <li class="nav-item">
+                    <a class="nav-link active" id="account_info_tab" data-toggle="tab" href="#account_info" role="tab" aria-controls="account_info" aria-selected="true">Account
+                      Information</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" id="billing_info_tab" data-toggle="tab" href="#billing_info" role="tab" aria-controls="billing_info" aria-selected="false">Payment
+                      Information</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" id="billing_history_tab" data-toggle="tab" href="#billing_history" role="tab" aria-controls="billing_history" aria-selected="false">Billing
+                      History</a>
+                  </li>
+                </ul>
+                <div class="tab-content" id="importContent">
+                  <div class="tab-pane fade show active" id="account_info" role="tabpanel" aria-labelledby="account_info">
+                    <div class="account_info_content">
+                      <%= render 'organizations/account/account_info' %>
+                    </div>
+                  </div>
+                  <div class="tab-pane fade" id="billing_info" role="tabpanel" aria-labelledby="aviary_upload">
+                    <%= render 'organizations/account/billing_info' %>
+                  </div>
+                  <div class="tab-pane fade" id="billing_history" role="tabpanel" aria-labelledby="aviary_upload">
+                    <div class="account_info_content billing_history_content">
+                      <%= render 'organizations/account/billing_history' %>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </main>
+  </div>
+</div>

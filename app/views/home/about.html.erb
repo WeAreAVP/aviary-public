@@ -1,0 +1,128 @@
+<div class="about-main-page">
+  <div class="head">
+    <h1>
+      <% title 'About Us' %>Welcome to Aviary!</h1>
+    <p><%= description 'Aviary is a new hosted platform that allows users to easily discover and navigate audiovisual content.
+      Whether you are a researcher trying to find specific audiovisual resources for your work, an organization trying
+      to enhance discoverability of your collections, or a user who wants to watch content online, Aviary offers
+      advanced tools to display, describe, and search audio and video.' %></p>
+  </div>
+  <div class="image">
+    <div class="container">
+      <h2>The Aviary Ecosystem</h2>
+      <%= image_tag("https://#{ENV['S3_HOST_CDN']}/public/about-image.png") %>
+    </div>
+  </div>
+  <div class="annotations">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-6">
+          <div class="image-holder">
+            <%= image_tag("https://#{ENV['S3_HOST_CDN']}/public/annotations-image.png") %>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="text">
+            <h3>Annotations</h3>
+            <p>Available in our next release, user-based, fully searchable annotations <br> will be available
+              for all Aviary elements.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="users">
+    <div class="container">
+      <h2>The Aviary Users</h2>
+      <article>
+        <div class="row">
+          <div class="col-md-6">
+            <div class="img-holder">
+              <%= image_tag("https://#{ENV['S3_HOST_CDN']}/public/pub-user.png") %>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="text">
+              <h3>Public Users</h3>
+              <p>Searching content in Aviary is free of charge! Any content made public in Aviary
+                is fully searchable in the platform. As a public user, you can search organizations,
+                collections, resources, and even transcripts and indexes, as well as navigate content
+                using the different visualization tools.</p>
+              <p>Ready to start searching?</p>
+              <a href="<%= search_catalog_url(q: '', search_field: 'all_fields', utf8: '✓') %>" class="btn btn-primary">Search
+                Now!</a>
+            </div>
+          </div>
+        </div>
+      </article>
+      <article>
+        <div class="row">
+          <div class="col-md-6">
+            <div class="text">
+              <h3>Registered Users</h3>
+              <p>As a registered user, you can enjoy all the search features offered to
+                public users. Additionally you have the ability to request access to private
+                content directly from the content administrators. In future releases, registered
+                users will be able to annotate content at any level (collection, resource, media, and
+                transcript/index).</p>
+              <% unless user_signed_in? %>
+                <p>Ready to register?</p>
+                <a href="javascript://" data-toggle="modal" data-target="#signupmodal" class="btn btn-primary">Join
+                  Now!</a>
+              <% end %>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="img-holder two">
+              <%= image_tag("https://#{ENV['S3_HOST_CDN']}/public/reg-user.png") %>
+            </div>
+
+          </div>
+        </div>
+      </article>
+      <article>
+        <div class="row">
+          <div class="col-md-6">
+            <div class="img-holder three">
+              <%= image_tag("https://#{ENV['S3_HOST_CDN']}/public/org-about.png") %>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="text">
+              <h3>Organizations</h3>
+              <p>Take full advantage of enhanced discoverability for your audiovisual collections!
+                Putting your content in Aviary is easy thanks to our integrations with Youtube, Vimeo,
+                Avalon, SoundCloud, and bulk import functionalities. We offer different plans to fit
+                your needs.</p>
+
+              <p>Ready to put your content in Aviary?</p>
+              <a href="<%= pricing_path %>" class="btn btn-primary">See Available Plans!</a>
+
+            </div>
+          </div>
+        </div>
+      </article>
+    </div>
+  </div>
+  <div class="plans-bottom">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-6">
+          <div class="jumbotron">
+            <h1>More about Aviary?</h1>
+            <p>Check Aviary's features to learn how our platform can help your organization provide enhanced access to
+              your audiovisual collections.</p>
+            <a class="btn btn-info btn-lg" href="<%= features_path %>" role="button">View Features</a>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="jumbotron">
+            <h1>Questions?</h1>
+            <p>Still have questions about pricing? Get in touch!</p>
+            <a class="btn btn-info btn-lg" href="<%= contact_us_path %>" role="button">Contact Us</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

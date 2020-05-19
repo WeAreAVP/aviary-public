@@ -1,0 +1,58 @@
+<div class="organization-section">
+  <%= simple_form_for @file_index, url: upload_index_path(@resource_file.id), method: :post do |form| %>
+    <div class="row">
+      <div class="col-md-12">
+        <div class="form-group">
+          <div id="progress_index" class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="background-color: #ffffff;">
+            <div class="progress-bar progress-bar-success" style="width:0%;"></div>
+          </div>
+          <label class="pb-10px" for="associated_file">Select an index to associate to this file. Allowed
+            formats: OHMS XML and
+            WebVTT.</label>
+          <span class="btn btn-primary fileinput-button">Select File
+            <%= form.file_field :associated_file, as: :file, error: false, label: false, class: 'form-control' %>
+              </span>
+          <small id="file_name_index" class="text-muted">
+            No file selected.
+          </small>
+          <div class="associated_file text-danger"></div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <div class="form-group">
+          <label for="title" class="pb-5px"><b>Assign a Title to this index.</b> Title will be used to differentiate
+            multiple indexes
+            for a single file.</label>
+          <%= form.text_field :title, label: false, class: 'form-control' %>
+          <div class="title text-danger"></div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-8">
+        <div class="form-group">
+          <%= form.label :language, 'Index Language', class: 'pb-5px' %>
+          <%= form.select :language, iso_639_1_languages, required: true, label: false, selected: 'en', class: 'custom-placeholder' %>
+          <div class="language text-danger"></div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-8">
+        <div class="form-group">
+          <%= form.label 'Public?', for: 'file_index_public', class: 'pb-5px' %>
+          <%= form.select :is_public, [['Yes', true], ['No', false]], required: true, label: false, class: 'custom-placeholder' %>
+          <div class="is_public text-danger"></div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <p class="text-success" id="index_upload_success"></p>
+      </div>
+    </div>
+    <a href="javascript://" class="btn btn-info upload_index_btn float-right">Upload Index</a>
+  <% end %>
+</div>

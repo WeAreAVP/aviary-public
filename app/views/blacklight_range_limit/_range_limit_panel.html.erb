@@ -1,0 +1,95 @@
+<% field_config = range_config(solr_field)
+   label = facet_field_label(solr_field)
+   # requires solr_config local passed in
+   input_label_range_begin = field_config[:input_label_range_begin] || t("blacklight.range_limit.range_begin", field_label: label)
+   input_label_range_end = field_config[:input_label_range_end] || t("blacklight.range_limit.range_end", field_label: label)
+   maxlength = field_config[:maxlength]
+
+-%>
+
+<div class="limit_content range_limit">
+  <% if has_selected_range_limit?(solr_field) %>
+    <ul class="current list-unstyled facet-values">
+      <li class="selected">
+        <span class="facet-label">
+          <span class="selected"><%= range_display(solr_field, params, label) %></span>
+          <%= link_to remove_range_param(solr_field), :class => "remove", :title => t('blacklight.range_limit.remove_limit') do %>
+            <span class="glyphicon glyphicon-remove"></span>
+            <span class="sr-only">[<%= t('blacklight.range_limit.remove_limit') %>]</span>
+           <% end %>
+        </span>
+        <span class="selected facet-count"><%= number_with_delimiter(@response.total) %></span>
+      </li>
+    </ul>
+  <% end %>
+  <% if solr_field == 'description_date_search_lms' %>
+    <small class="font-size-12px sub_note"> - Date format must be yyyy-mm-dd<br/> - To select a range, use space-hyphen-space " - " between two valid dates, e.g., 2019-05-10 - 2019-05-15.</small>
+  <% end %>
+  <% unless selected_missing_for_range_limit?(solr_field) %>
+    <%= form_tag add_facet_params_to_url(search_catalog_path, session[:search_facets]), :method => :get, class: [BlacklightRangeLimit.classes[:form] + (solr_field == 'description_date_search_lms' ? ' mr-4 ' : ''), "range_#{solr_field}"].join(' ') do %>
+      <input type='hidden' name='search_type' value='<%= params[:search_type] %>'/>
+      <input type='hidden' name='search_field' value='advanced'/>
+      <%== add_facet_params_to_form(session[:search_facets]) %>
+      <!-- we need to include a dummy search_field parameter if none exists,
+           to trick blacklight into displaying actual search results instead
+           of home page. Not a great solution, but easiest for now. -->
+      <% unless params.has_key?(:search_field) %>
+        <%= hidden_field_tag("search_field", "dummy_range") %>
+      <% end %>
+
+
+      <span style="<%= solr_field == 'description_duration_ls' ? 'display: none;':'width:70% !important; margin-right: 10px ' %> ">
+        <%= render_range_input(solr_field, :begin, input_label_range_begin, maxlength) %>
+
+        <% unless solr_field == 'description_date_search_lms' %>
+          <span class="between">To</span>
+          <%= render_range_input(solr_field, :end, input_label_range_end, maxlength) %>
+        <% end %>
+      </span>
+      <% unless solr_field == 'description_date_search_lms' %>
+        <div class="hold date-duration">
+          <div class="form-group">
+            <label>H</label>
+            <input type="text" pattern="[0-9]+" id="hrs_start" class="form-control range_end range_duration text-center"/>
+          </div>
+          <div class="form-group">
+            <label>M</label>
+            <input type="text" id="minutes_start" pattern="[0-9]+" class="form-control range_end range_duration text-center"/>
+          </div>
+          <div class="between">to</div>
+          <div class="form-group">
+            <label>H</label>
+            <input type="text" id="hrs_end" class="form-control range_begin range_duration text-center" pattern="[0-9]+"/>
+          </div>
+          <div class="form-group">
+            <label>M</label>
+            <input type="text" id="minutes_end" class="form-control range_begin range_duration text-center" pattern="[0-9]+"/>
+          </div>
+        </div>
+      <% end %>
+      <%= submit_tag t('blacklight.range_limit.submit_limit'), class: 'btn btn-primary range_button ' + (solr_field == 'description_date_search_lms' ? ' w-25 mb-1' : '') + (solr_field == 'description_duration_ls' ? 'w-100p mt-2 description_duration_ls_validator' : '') %>
+
+    <% end %>
+  <% end %>
+
+  <!-- no results profile if missing is selected -->
+  <% if !selected_missing_for_range_limit?(solr_field) && solr_field != 'description_duration_ls' %>
+    <!-- you can hide this if you want, but it has to be on page if you want
+         JS slider and calculated facets to show up, JS sniffs it. -->
+    <div class="profile ">
+      <% if stats_for_field?(solr_field) %>
+        <!-- No stats information found for field  in search response -->
+      <% end %>
+
+      <% if (min = range_results_endpoint(solr_field, :min)) &&
+          (max = range_results_endpoint(solr_field, :max)) %>
+        <% unless solr_field == 'description_date_search_lms' %>
+          <p class="range subsection <%= "slider_js" unless field_config[:slider_js] == false %>">
+            Current results range from <span class="min"><%= range_results_endpoint(solr_field, :min) %></span> to
+            <span class="max"><%= range_results_endpoint(solr_field, :max) %></span>
+          </p>
+        <% end %>
+      <% end %>
+    </div>
+  <% end %>
+</div>

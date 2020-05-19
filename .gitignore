@@ -1,0 +1,115 @@
+# Ignore bundler config.
+/.bundle
+/vendor/bundle
+public/thumbnail
+public/reports
+# infomational docs
+erd.pdf
+
+# Solr ignorfiles
+/solr/default
+/solr/development
+/solr/test
+/solr/pids
+/solr/default/*
+/solr/development/*
+/solr/test/*
+/solr/pids/*
+
+
+# these should all be checked in to normalize the environment:
+Gemfile.lock, .ruby-version, .ruby-gemset
+
+# Ignore the default SQLite database.
+/db/*.sqlite3
+/db/*.sqlite3-journal
+/db/schema.rb
+
+# Ignore all test tmp files.
+*.rbc
+capybara-*.html
+.rspec
+
+# Ignore all logfiles and tempfiles.
+/log/*
+/tmp/*
+!/log/.keep
+!/tmp/.keep
+
+/node_modules
+/yarn-error.log
+
+.byebug_history
+
+# Ignore RubyMine Files
+.idea/*
+# Ignore File Visual Code
+.history/*
+.history
+
+/public/assets/
+/public/system
+/coverage/
+/spec/tmp
+*.orig
+rerun.txt
+pickle-email-*.html
+
+# TODO Comment out this rule if you are OK with secrets being uploaded to the repo
+config/initializers/secret_token.rb
+config/master.key
+config/database.yml
+
+# Only include if you have production secrets in this file, which is no longer a Rails default
+# config/secrets.yml
+
+# dotenv
+# TODO Comment out this rule if environment variables can be committed
+.env
+.env.development
+
+# these should all be checked in to normalize the environment:
+# Gemfile.lock, .ruby-version, .ruby-gemset
+
+# unless supporting rvm < 1.11.0 or doing something fancy, ignore this:
+.rvmrc
+
+# if using bower-rails ignore default bower_components path bower.json files
+/vendor/assets/bower_components
+*.bowerrc
+bower.json
+
+# Ignore pow environment settings
+.powenv
+
+# Ignore Byebug command history file.
+
+# Ignore node_modules
+node_modules/
+
+.DS_Store
+#Never include the key file
+config/deploy_id_rsa
+coverage
+.ssl
+
+transcodings/
+extracts/
+
+solr-7.5.0.tgz
+solr-7.5.0/*
+solr-7.5.0
+solr-7.5.0/
+solr-7.5.0.tgz
+
+public/sitemaps/*
+public/sitemap.xml
+public/sitemap.xml.gz
+public/robots.txt
+
+/public/packs
+/public/packs-test
+/node_modules
+/yarn-error.log
+yarn-debug.log*
+.yarn-integrity

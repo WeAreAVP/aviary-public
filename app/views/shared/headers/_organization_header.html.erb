@@ -1,0 +1,64 @@
+<% unless current_theme.nil? %>
+  <style>
+    .parentLink {
+    <%= header_font_family %>;
+    <%= header_font_color %>;
+    }
+
+    .parentLink:before {
+    <%= header_font_color_before %>
+    }
+
+    #header {
+    <%= header_bg_style %>
+    }
+
+    <%== fetch_custom_css %>
+  </style>
+<% end %>
+<header id="header">
+  <div class="container-fluid">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <% unless current_organization.nil? %>
+        <%= link_to root_path, class: 'navbar-brand' do %>
+          <%= image_tag organization_logo %>
+        <% end %>
+      <% end %>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo03" aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
+        <ul class="navbar-nav mr-auto mt-2 mt-lg-0 mr-auto-custom-header-nav">
+          <% header_menu = valid_json?(current_theme.header_menu) %>
+          <% if header_menu %>
+            <% header_menu.each do |key, value| %>
+              <li class="nav-item dropdown active">
+                <% if value['childrenNum'] == 0 %>
+                  <a class="nav-link parentLink" href="
+                    <%= value['url'] %>">
+                    <%= value['text'] %></a>
+                <% else %>
+                  <a class="nav-link dropdown-toggle parentLink" href="<%= value['url'] %>"
+                     role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <%= value['text'] %></a>
+                  <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <% value['children'].each do |ckey, cvalue| %>
+                      <a class="dropdown-item" href="<%= cvalue['url'] %>"><%= cvalue['text'] %> </a>
+                    <% end %>
+                  </div>
+                <% end %>
+              </li>
+            <% end %>
+          <% end %>
+        </ul>
+      </div>
+    </nav>
+  </div>
+  <%= render 'shared/sub_nav' %>
+</header>
+<% unless user_signed_in? %>
+  <%= render 'shared/user_login_popup' %>
+  <%= render 'shared/user_registration_popup' %>
+  <%= render 'shared/forgot_password' %>
+<% end %>
+

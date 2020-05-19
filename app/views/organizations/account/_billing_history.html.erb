@@ -1,0 +1,41 @@
+<div class="row">
+  <div class="col-md-12"></div>
+  <div class="h4">Billing History</div>
+</div>
+<div class="row">
+  <div class="data-table col-md-12">
+    <table class="table table-striped" id="billing_history_table">
+      <thead>
+      <tr>
+        <th>Time Period</th>
+        <th>Type</th>
+        <th>Cost</th>
+        <th>Storage Provider</th>
+        <th>Detail</th>
+        <th>Status</th>
+      </tr>
+      </thead>
+      <tbody>
+      <% billings = current_organization.billing_histories.order('id DESC') %>
+      <% billings.each do |billing| %>
+        <tr>
+          <td><%= billing.start_date.strftime('%b/%Y') %> - <%= billing.end_date.strftime('%b/%Y') %></td>
+          <td><%= billing.billing_type.humanize %></td>
+          <td><%= number_to_currency(billing.current_price) %></td>
+          <td><%= billing.billing_type == :storage.to_s ? current_organization.storage_type.humanize : '' %></td>
+          <td><%= billing.description %></td>
+          <td><%= billing.status? ? 'Paid' : 'Failed' %></td>
+        </tr>
+      <% end %>
+
+      </tbody>
+    </table>
+  </div>
+
+</div>
+<script type="text/javascript">
+    var subscriptions = new Subscriptions();
+    document.addEventListener("DOMContentLoaded", function (event) {
+        subscriptions.initializeBillingHistory();
+    });
+</script>
