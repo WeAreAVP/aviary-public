@@ -120,7 +120,7 @@ class CollectionResourcesController < ApplicationController
   # GET /collection_resources/1/edit
   def edit
     CollectionResourcePresenter.new(@collection_resource, view_context).breadcrumb_manager('edit', @collection_resource, @collection) if can? :manage, @collection_resource
-    @collections = current_organization.collections
+    @collections = current_organization.collections.order('title')
   end
 
   # POST /collection_resources

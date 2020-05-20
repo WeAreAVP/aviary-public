@@ -411,8 +411,8 @@ class CollectionResource < ApplicationRecord
           when 'id_ss', 'title_ss', 'id_is', 'title_text', 'custom_unique_identifier_texts', 'custom_unique_identifier_ss'
             fq_filters_inner += simple_field_search_handler(value, fq_filters_inner, counter, q)
           when 'description_agent_search_texts', 'description_coverage_search_texts', 'description_description_search_texts', 'description_identifier_search_texts', 'description_keyword_search_texts',
-              'description_language_search_texts', 'description_preferred_citation_search_texts', 'description_publisher_search_texts', 'description_relation_search_texts', 'description_rights_statement_search_texts',
-              'description_source_metadata_uri_search_texts', 'description_source_search_texts', 'description_subject_search_texts', 'description_title_search_texts', 'description_type_search_texts', 'description_format_search_texts'
+            'description_language_search_texts', 'description_preferred_citation_search_texts', 'description_publisher_search_texts', 'description_relation_search_texts', 'description_rights_statement_search_texts',
+            'description_source_metadata_uri_search_texts', 'description_source_search_texts', 'description_subject_search_texts', 'description_title_search_texts', 'description_type_search_texts', 'description_format_search_texts'
             fq_filters_inner = fq_filters_inner + (counter != 0 ? ' OR ' : ' ') + " #{search_perp(q, value['value'])} "
             alter_search = value['value'].clone
             alter_search_wildcard = value['value'].clone
@@ -496,9 +496,18 @@ class CollectionResource < ApplicationRecord
     col_fields = assigned_col.dynamic_attributes['settings']['CollectionResource']
     updated_values = []
     resource_fields.each do |field|
-      field_index = col_fields.index { |hash| hash['field_id'].to_i == field['field'].id }
+      field_index = nil
+      col_fields.each do |col_field|
+        db_field = CustomFields::Field.find(col_field['field_id'])
+        if field['field'].id == col_field['field_id'].to_i
+          field_index = field['field'].id
+          break
+        elsif field['field'].system_name == db_field.system_name && field['field'].column_type == db_field.column_type && field['field'].source_type == db_field.source_type
+          field_index = db_field.id
+          break
+        end
+      end
       row = {}
-      row['field_id'] = field['field'].id
       if field_index.nil?
         new_field =
           {
@@ -509,6 +518,8 @@ class CollectionResource < ApplicationRecord
           }
         field_id = assigned_col.create_update_dynamic(new_field, nil, field['settings'])
         row['field_id'] = field_id
+      else
+        row['field_id'] = field_index
       end
       row['values'] = field['values']
       updated_values << row

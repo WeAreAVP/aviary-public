@@ -119,6 +119,9 @@ class HomeController < ApplicationController
     playlist = Playlist.find_by_id!(playlist_id)
     session[:share] = params[:share] if params[:share].present?
     redirect_to playlist_show_path(playlist, share: params[:share])
+  rescue StandardError
+    flash[:error] = 'Not a valid playlist url'
+    return redirect_to root_path
   end
 
   def resource_unique_identifier
