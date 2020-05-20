@@ -121,7 +121,7 @@ class HomeController < ApplicationController
     redirect_to playlist_show_path(playlist, share: params[:share])
   rescue StandardError
     flash[:error] = 'Not a valid playlist url'
-    return redirect_to root_path
+    redirect_to root_path
   end
 
   def resource_unique_identifier

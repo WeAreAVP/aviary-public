@@ -509,7 +509,9 @@
 
   .set_clip_end_time_custom,
   .set_clip_start_time_custom {
-    border-radius: 0px;
+    border-radius: 0;
+    width: 10%;
+    font-size: 10px;
   }
 
   .ui-sortable-handle {
