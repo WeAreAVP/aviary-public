@@ -1,26 +1,26 @@
 <div class="w-100 time-picket-slider mt-1">
 
-    <div>
+  <div>
 
-      <div class="w-100" style="margin: 0 auto;background: #ffffff;height: 25px;display: flex;">
-        <button class="btn btn-primary btn-sm float-left set_clip_start_time_custom h-25px" data-type="start"><i class="fa fa-sliders" aria-hidden="true"></i> Set
-          Start
-        </button>
-        <div id="slider-range" class="ml-4 mb-1 float-left " style="width: 90%;margin-top: 0;margin: 0 auto !important;height: 100% !important;border: none;border-radius: 0;background: #e9ecef;border: none;"></div>
-        <button class="btn btn-primary btn-sm float-right set_clip_end_time_custom h-25px" data-type="end"><i class="fa fa-sliders" aria-hidden="true"></i> Set
-          End
-        </button>
+    <div class="w-100" style="margin: 0 auto;background: #ffffff;height: 25px;display: flex;">
+      <button class="btn btn-primary btn-sm float-left set_clip_start_time_custom h-25px" data-type="start"><i class="fa fa-sliders" aria-hidden="true"></i> Set
+        Start
+      </button>
+      <div id="slider-range" class="ml-4 mb-1 float-left playlist-slider-range"></div>
+      <button class="btn btn-primary btn-sm float-right set_clip_end_time_custom h-25px" data-type="end"><i class="fa fa-sliders" aria-hidden="true"></i> Set
+        End
+      </button>
+    </div>
+  </div>
+  <div class="">
+    <div class="font-size-11px text-center d-inline-block w-100 mb-1 pt-0" style="margin-top: -5px !important;">
+      <label for="amount" class="time_range_label "><i class="fa fa-clock-o" aria-hidden="true"></i> Time range:</label>
+      <input type="text" id="amount" class="amount-slider font-weight-bold d-inline-block h-25px mt-3" style="border: 1px solid rgba(0, 0, 0, 0.1);">
+      <button class="btn btn-primary btn-sm update_time_range badge mr-1 mt-3 d-inline-block h-25px " style="padding-top: 4px;"><i class="fa fa-plus" aria-hidden="true"></i> Add Clip
+      </button>
+      <div class="d-inline-block " style="margin-bottom: -10px;">
+        <%= render partial: 'shared/container_loader', locals: {loader_id: 'time_range_loader', loader_class: 'time_range_loader'} %>
       </div>
     </div>
-    <div class="">
-      <div class="font-size-11px text-center d-inline-block w-100 mb-1 pt-0" style="margin-top: -5px !important;">
-        <label for="amount" class="time_range_label "><i class="fa fa-clock-o" aria-hidden="true"></i> Time range:</label>
-        <input type="text" id="amount" class="amount-slider font-weight-bold d-inline-block h-25px mt-3" style="border: 1px solid rgba(0, 0, 0, 0.1);">
-        <button class="btn btn-primary btn-sm update_time_range badge mr-1 mt-3 d-inline-block h-25px " style="padding-top: 4px;"><i class="fa fa-plus" aria-hidden="true"></i> Add Clip
-        </button>
-        <div class="d-inline-block " style="margin-bottom: -10px;">
-          <%= render partial: 'shared/container_loader', locals: {loader_id: 'time_range_loader', loader_class: 'time_range_loader'} %>
-        </div>
-      </div>
-    </div>
+  </div>
 </div>
