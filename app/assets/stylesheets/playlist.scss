@@ -6,10 +6,6 @@
 
   }
 
-  .time-picket-slider .ui-slider-horizontal {
-    height: 5px !important;
-  }
-
   .time-picket-slider .ui-slider-handle.ui-corner-all.ui-state-default {
     height: 12px !important;
   }
@@ -507,13 +503,6 @@
     display: none !important;
   }
 
-  .set_clip_end_time_custom,
-  .set_clip_start_time_custom {
-    border-radius: 0;
-    width: 10%;
-    font-size: 10px;
-  }
-
   .ui-sortable-handle {
     border-bottom: 1px solid rgba(153, 153, 153, 0.1);
     padding-bottom: 6px;
@@ -643,5 +632,31 @@
 
   .ellipses_description {
     line-height: 20px !important;
+  }
+
+  .playlist-slider-range {
+    width: 70%;
+    margin: 0 auto !important;
+    height: 100% !important;
+    border: none;
+    border-radius: 0;
+    background: #e9ecef;
+  }
+
+  .set_clip_end_time_custom,
+  .set_clip_start_time_custom {
+    border-radius: 0;
+    width: 15%;
+    font-size: 10px;
+  }
+
+  @media screen and (max-width: 992px) {
+    .playlist-slider-range {
+      width: 60%;
+    }
+    .set_clip_end_time_custom,
+    .set_clip_start_time_custom {
+      width: 20%;
+    }
   }
 }
