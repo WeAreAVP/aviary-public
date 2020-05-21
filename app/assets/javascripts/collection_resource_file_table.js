@@ -90,6 +90,7 @@ function CollectionResourceFileTable() {
                     infoFiltered: '',
                     zeroRecords: 'No Resource found.',
                 },
+                order: [[ 1, 'asc' ]],
                 columnDefs: [
                     {orderable: false, targets: -1}, {orderable: false, targets: 0}
                 ],

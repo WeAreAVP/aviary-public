@@ -20,7 +20,7 @@
       </div>
       <div class="data-table">
           <div class="hold">
-            <%= content_tag :table, role: :datatable, class: ["table", "table-striped"], id: 'listUserDatatable', data: { url: users_path(format: :json) } do %>
+            <%= content_tag :table, role: :datatable, class: ["table", "table-striped" , 'table-bordered'], id: 'listUserDatatable', data: { url: users_path(format: :json) } do %>
               <thead>
               <tr>
                 <th>Email</th>
