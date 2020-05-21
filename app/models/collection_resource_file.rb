@@ -258,6 +258,11 @@ class CollectionResourceFile < ApplicationRecord
 
     filters << limit_condition if limit_condition.present?
     query_params = { q: solr_q_condition, fq: filters.flatten }
+    query_params[:fq] << if export_and_current_organization[:current_organization].present?
+                           "organization_id_is:#{export_and_current_organization[:current_organization].id}"
+                         else
+                           'id_is:0'
+                         end
     query_params[:defType] = 'complexphrase' if complex_phrase_def_type
     query_params[:wt] = 'json'
     total_response = Curl.post(select_url, query_params)
