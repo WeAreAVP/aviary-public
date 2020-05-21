@@ -90,6 +90,7 @@ function CollectionResourceTable() {
                     leftColumns: resource_table_column_detail.number_of_column_fixed > 0 ? parseInt(resource_table_column_detail.number_of_column_fixed, 10) + 1 : 0,
                     rightColumns: rightColumns
                 },
+                order: [[ 1, 'asc' ]],
                 destroy: true,
                 bInfo: true,
                 pagingType: 'simple_numbers',
