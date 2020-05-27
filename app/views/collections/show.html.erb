@@ -12,7 +12,6 @@
         <div class="img-holder"><div class="layout"><%= image_tag(@collection.favicon.url, class: "img-fluid") %> </div></div>
         <div class="text"><%=@collection.title %></div>
       </div>
-      <div class="browse-org"> <a target="_blank" class="ml-5px bc-link" href="<%= search_catalog_path({ f: { collection_id_is:[@collection.id] }, indexes: [], keywords: [], op: [], resource_description: [], search_field: 'advanced', search_type: 'simple', title_text: '', transcript: [], type_of_search: ['simple'] }) %>">Browse Collection &gt;&gt;</a></div>
     </div>
   </div>
 
