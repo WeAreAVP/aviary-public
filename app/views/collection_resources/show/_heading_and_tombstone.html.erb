@@ -15,13 +15,7 @@
     <dd>
       <span class="resource-heading-text"><%= link_to @collection_resource.collection.title, collection_url(@collection_resource.collection, host: Utilities::AviaryDomainHandler.subdomain_handler(@collection_resource.collection.organization)), target: "_blank" %></span>
     </dd>
-    <div class="clearfix"></div>
-    <dt>Organization:</dt>
-    <dd>
-      <span class="resource-heading-text">
-        <%= link_to @collection_resource.collection.organization.name, root_url(host: Utilities::AviaryDomainHandler.subdomain_handler(@collection_resource.collection.organization)), target: "_blank" %>
-      </span>
-    </dd>
+
     <div class="clearfix"></div>
     <% resource_custom_fields = @collection_resource.all_fields %>
     <% tombstone_data = resource_custom_fields['tombstones'].empty? ? resource_custom_fields['default_tombstone'] : resource_custom_fields['tombstones'] %>

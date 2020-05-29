@@ -232,7 +232,6 @@
     overflow: hidden;
     margin-bottom: 0;
     text-overflow: ellipsis;
-    word-break: break-all;
   }
 
   .playlist .edit {
@@ -620,9 +619,19 @@
 
   .title_resource_playlist {
     font-family: "Roboto";
-    font-size: 16px;
+    font-size: 17px;
     padding: 18px 0 5px;
-    font-weight: bold;
+  }
+
+  .nav-item {
+    font-size: 12px;
+    width: 25%;
+    text-align: center;
+  }
+
+  .nav-link{
+    padding: .5rem 5px;
+    color: #495057;
   }
 
   .edit-description-resource {

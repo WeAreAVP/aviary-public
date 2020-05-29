@@ -36,7 +36,7 @@
             <i class="fa fa-plus" aria-hidden="true"></i> Add Resources
           </button>
         <% end %>
-        <ul class="nav nav-tabs w-100 float-left" role="tablist">
+        <ul class="nav nav-tabs" role="tablist">
           <li class="nav-item">
             <a class="nav-link <%= active_tab.include?('show_playlist') ? 'active show' : '' %> playlist_edit_tabs" id="resource-list-tab" data-tabtype="show_playlist" data-urltab="<%= update_selected_tab_playlist_url(@playlist, type: 'both') %>" data-toggle="tab" href="#resource-list-container">
               <% if @playlist_show.present? && @playlist_show %>
@@ -132,7 +132,7 @@
                         </div>
                         <%= link_to pl_rsrc.collection_resource.collection.title, collection_url(pl_rsrc.collection_resource.collection, host: Utilities::AviaryDomainHandler.subdomain_handler(pl_rsrc.collection_resource.collection.organization)), target: "_blank", class: "text" %>
                       </div>
-                      <div class="d-none title_desc ription_text"> <%= pl_rsrc.name %> <%= pl_rsrc.description.strip_tags %></div>
+                      <div class="d-none title_description_text"> <%= pl_rsrc.name %> <%= pl_rsrc.description.strip_tags %></div>
                       <div class="title_description">
 
 
@@ -149,7 +149,7 @@
                         <% end %>
                         <div data-html="true" data-placement="bottom" class="playlist_resource_description white-tooltip d-none float-left playlist_resource_description_<%= pl_rsrc.id %>" style="max-width: 85%;">
                           <p>
-                            <%= pl_rsrc.description.strip_tags %>
+                            <%= simple_format(pl_rsrc.description) %>
                           </p>
                         </div>
                         <div>
@@ -246,11 +246,11 @@
             <% end %>
             <br>
           </div>
-          <div id='metadata-container' class="metadata-section search-detail-main tab-pane fade <%= (active_tab.include? 'show_metadata') ? 'active show' : '' %>" style='padding: 25px 0px 0px 0px;'>
+          <div id='metadata-container' class="metadata-section search-detail-main tab-pane fade <%= (active_tab.include? 'show_metadata') ? 'active show' : '' %>">
             <div style="position: relative;" class="<%= @inside_playlist ? 'col-lg-12' : 'col-lg-5' %> video-detail-container resources_info_holder">
               <% if @collection_resource.present? %>
                 <div class="title_resource_playlist">
-                  <a href="<%= collection_collection_resource_path(@collection_resource.collection_id, @collection_resource.id) %>"> <%= @collection_resource.title %></a>
+                  <b class="font-weight-bold">Resource Title:</b> <%= @collection_resource.title %> <a target="_blank" href="<%= collection_collection_resource_path(@collection_resource.collection_id, @collection_resource.id) %>"><i class="fa fa-external-link"></i></a>
                 </div>
                 <div class="info_tabs" data-template-url="<%= collection_collection_resource_load_resource_details_template_path(@collection, @collection_resource, @resource_file, share: params[:share]) %>" data-search-size="12" data-tabs-size="12">
                 </div>
