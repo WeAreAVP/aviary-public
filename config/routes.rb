@@ -14,6 +14,9 @@ Rails.application.routes.draw do
   end
   devise_for :admins
   root 'home#index'
+  get '/collection', to: 'home#index', as: :org_collection
+  get '/playlist', to: 'home#index', as: :org_playlist
+  get '/aboutus', to: 'home#index', as: :org_aboutus
   get '/robots.:format' => 'home#robots', constraints: { format: /(txt)/ }
   devise_for :users, controllers: {
     registrations: 'users/registrations',

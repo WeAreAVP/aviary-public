@@ -4,6 +4,12 @@ class HomeController < ApplicationController
 
   def index
     organization = current_organization
+    if organization.present? && organization.default_tab_selection == 'resources' && request.fullpath == '/'
+      redirect_to search_catalog_url(f: { organization_id_is: [current_organization.id] },
+                                     indexes: [], keywords: [], op: [], resource_description: [],
+                                     search_field: 'advanced', search_type: 'simple', title_text: '',
+                                     transcript: [], type_of_search: ['simple'])
+    end
     title_bread_crumb = organization.present? ? "Back to <strong>#{organization.name.truncate(25, omission: '...')}</strong>" : 'Back to Aviary Home'
     record_last_bread_crumb(request.fullpath, title_bread_crumb)
     HomePresenter.manage_home_tracking(cookies, organization, session, ahoy)

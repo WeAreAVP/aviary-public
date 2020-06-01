@@ -198,7 +198,7 @@ module Aviary::ExtractVideoMetadata
       return false unless video_url
       metadata = {}
       begin
-        doc = Nokogiri::HTML(open(video_url, read_timeout: 10))
+        doc = Nokogiri::HTML(open(video_url, read_timeout: 10, ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE))
         title_node = doc.search("//meta[@itemprop='name']")
         thumbnail_node = doc.search("//meta[@itemprop='image']")
         duration_node = doc.search("//meta[@itemprop='duration']")

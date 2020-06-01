@@ -18,17 +18,28 @@ function HomePage() {
         stepAmt = 1,
         minMovement = 0.1,
         ts = 0.1;
+
+    this.orgInitialize = function () {
+        var url = document.location.toString();
+        if (url.match('#')) {
+            $('.nav-tabs a[href="#' + url.split('#')[1] + '"]').tab('show');
+        }
+        $('.nav-tabs a').on('shown.bs.tab', function (e) {
+            window.location.hash = e.target.hash;
+        });
+    };
+
     this.initialize = function () {
         bannerSlider();
         $('.mouse').click(function () {
             $([document.documentElement, document.body]).animate({
-                scrollTop: $(".mouse").offset().top-20
+                scrollTop: $(".mouse").offset().top - 20
             }, 1000);
 
         });
         $('.move-to-how').click(function () {
             $([document.documentElement, document.body]).animate({
-                scrollTop: $(".about-landing").offset().top-70
+                scrollTop: $(".about-landing").offset().top - 70
             }, 1000);
 
         });
@@ -171,7 +182,7 @@ function HomePage() {
         });
     };
     if ($(window).width() >= 960) {
-        
+
 
         var controller;
 
@@ -210,8 +221,8 @@ function HomePage() {
                 duration: 3830,
                 triggerHook: (0.16),
             }).setPin('#pin2', {
-                    pushFollowers: false
-                })
+                pushFollowers: false
+            })
                 .setTween(tween2)
                 .addTo(controller2);
 
@@ -221,7 +232,7 @@ function HomePage() {
 
     if ($(window).width() > 1400) {
 
-        scene1= new ScrollMagic.Scene({triggerElement: "#trigger"});
+        scene1 = new ScrollMagic.Scene({triggerElement: "#trigger"});
 
         // change the position of the trigger
         $("#pin").css("top", 30);

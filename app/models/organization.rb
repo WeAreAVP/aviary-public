@@ -54,7 +54,9 @@ class Organization < ApplicationRecord
   end
 
   def update_default_values
-    self.default_tab_selection = 0 if default_tab_selection.blank?
+    self.default_tab_selection = 2 if default_tab_selection.blank?
+    self.title_font_color = '#ffffff' if title_font_color.blank?
+    self.title_font_size = '28px' if title_font_size.blank?
   end
 
   def update_resource_column_fields

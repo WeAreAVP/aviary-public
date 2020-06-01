@@ -2,72 +2,53 @@
 <main id="main" role="main">
   <div class="details main-collection-page">
     <%= render partial: 'home/home_banner', locals: { banner_type: @collection.banner_type, banner_image: @collection.image, banner_slider_resources: @collection.banner_slider_resources,
-                                                      banner_title_type: nil, banner_title_image: nil, banner_title_text: nil,
-                                                      title_font_family: nil, title_font_size: nil, title_font_color: nil, banner_view_from: 'collection' } %>
+                                                      banner_title_text: @collection.title,
+                                                      title_font_family: current_organization.title_font_family, title_font_size: current_organization.title_font_size, title_font_color: current_organization.title_font_color, banner_view_from: 'collection' } %>
   </div>
 
-  <div class="organization-details collection-details">
-    <div class="container-fluid">
-      <div class="holder">
-        <div class="img-holder"><div class="layout"><%= image_tag(@collection.favicon.url, class: "img-fluid") %> </div></div>
-        <div class="text"><%=@collection.title %></div>
+
+  <div id="collection_resource_container" style="<%= @collection.default_tab_selection == 'resources' ? '' : 'display:none;' %>">
+    <div class="link-toggle-collection"><a href="javascript://" class="btn video-link">Learn more about Collection</a></div>
+    <div class="all-resources container home-index-view">
+      <div id="resources_home-notfeatured" data-url="<%= collection_path(@collection) %>">
       </div>
     </div>
+    <div class="w-100 text-center d-none" id="loader-gif-laxy"> <%= image_tag("https://#{ENV['S3_HOST_CDN']}/public/images/ajax-loader.gif", { style: 'width: 50px;' }) %></div>
   </div>
 
-  <ul class="main-collection-page-details nav nav-tabs org-tab-main">
-    <li class="nav-item w_50">
-      <a class="nav-link <%= @collection.default_tab_selection == 'resources' ? 'active' : '' %>" href="#nav-home" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">Resources</a>
-    </li>
-    <li class="nav-item w_50">
-      <a class="nav-link <%= @collection.default_tab_selection == 'about' || @collection.default_tab_selection.blank? ? 'active' : '' %>" data-toggle="tab" href="#nav-contact" role="tab" aria-controls="nav-contact" aria-selected="true">About</a>
-    </li>
-  </ul>
+  <div id="about_collection_container" class="about_collection_container" style="<%= @collection.default_tab_selection == 'about' || @collection.default_tab_selection.blank? ? '' : 'display:none;' %>">
 
-  <div class="tab-content" id="nav-tabContent">
-    <div class="tab-pane fade <%= @collection.default_tab_selection == 'resources' ? 'active show' : '' %>" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
-      <div class="all-resources container home-index-view">
-        <div id="resources_home-notfeatured" data-url="<%= collection_path(@collection) %>">
-        </div>
-      </div>
-      <div class="w-100 text-center d-none" id="loader-gif-laxy"> <%= image_tag("https://#{ENV['S3_HOST_CDN']}/public/images/ajax-loader.gif", { style: 'width: 50px;' }) %></div>
-    </div>
-
-    <div class="testingscroll"></div>
-    <div class="tab-pane fade <%= @collection.default_tab_selection == 'about' || @collection.default_tab_selection.blank? ? 'active show' : '' %>" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">
-      <div class="all-resources container collection-about-detail">
-        <div class="title">
-          <h1 class="collection-title"><%= title @collection.title %></h1>
-        </div>
-        <p><%== description @collection.about %></p>
-        <div class="search-detail-main">
-          <ul class="tab">
-            <% @collection.all_fields['Collection'].each do |single_field| %>
-              <% display_label = false %>
-              <% single_field['values'].each_with_index do |single_value, single_key| %>
-                <% if single_value.present? && (single_value['value'].present? || single_value['vocab_value'].present?) %>
-                  <% unless display_label %>
-                    <li>
-                      <strong><%= single_field['field'].label %>:</strong>
-                      <div class="details">
-                    <% display_label = true %>
-                  <% end %>
-                  <span><%== single_value['value'] %></span>
-                  <% if single_key + 1 == single_field['values'].count %>
-                    </div>
-                    </li>
-                  <% end %>
+    <div class="link-toggle-collection"><a href="javascript://" class="btn video-link">See Resources of Collection</a></div>
+    <div class="all-resources container collection-about-detail" id="collection-about-detail">
+      <p><%== description @collection.about %></p>
+      <div class="search-detail-main">
+        <ul class="tab">
+          <% @collection.all_fields['Collection'].each do |single_field| %>
+            <% display_label = false %>
+            <% single_field['values'].each_with_index do |single_value, single_key| %>
+              <% if single_value.present? && (single_value['value'].present? || single_value['vocab_value'].present?) %>
+                <% unless display_label %>
+                  <li>
+                    <strong><%= single_field['field'].label %>:</strong>
+                    <div class="details">
+                      <% display_label = true %>
+                <% end %>
+                <span><%== single_value['value'] %></span>
+                <% if single_key + 1 == single_field['values'].count %>
+                  </div>
+                  </li>
                 <% end %>
               <% end %>
             <% end %>
-          </ul>
-        </div>
+          <% end %>
+        </ul>
       </div>
     </div>
   </div>
+
 </main>
 <% track_params = params.clone.except('controller').except('action').to_json %>
-
+<%= render 'request_accesses/shared_request_modal' %>
 <script type="text/javascript">
     let params = {
         target_id: '',
@@ -80,6 +61,7 @@
     let events_tracker = new EventsTracker(params);
     $(function () {
         display_settings.continues_loading();
+        display_settings.toggleCollectionSection();
         setTimeout(function () {
             events_tracker.track_hit('collection', '<%= params[:id]%>');
         }, 500);

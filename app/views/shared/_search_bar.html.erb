@@ -1,4 +1,4 @@
-<% unless current_page?('/catalog') || !organization_layout? %>
+<% unless current_page?('/catalog') || !organization_layout? || current_page?(root_path) || current_page?(org_aboutus_path) || current_page?(org_collection_path) || current_page?(org_playlist_path) %>
   <div class="search-nav search1cus">
     <div class="form-group">
       <div class="<%= container_classes %>">

@@ -213,8 +213,6 @@
     border: 2px solid #f4f4f4 !important;
     color: #ececec !important;
     font-size: 14px !important;
-    -webkit-box-shadow: 0 2px 15px rgba(0, 0, 0, 0.57);
-    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.57);
     text-shadow: 0 2px 2px #000;
 }
 
@@ -231,14 +229,15 @@
 }
 
 .org-banner-slider .text-detail strong {
-    font-size: 25px;
+    font-size: 18px;
     line-height: 1.4;
     color: #fff;
     display: block;
+    font-weight: bold;
 }
 
 .org-banner-slider .text-detail .collection {
-    font-size: 16px;
+    font-size: 15px;
     line-height: 1.4;
     font-weight: 400;
     color: #fff;
@@ -468,7 +467,7 @@
 #collections_home .browse-org,
 .browse-org {
     padding: 10px;
-    background: #f4f5f7;
+    background: #ecf0f1;
     text-align: right;
 }
 

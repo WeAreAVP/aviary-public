@@ -34,7 +34,7 @@ function DisplaySettings() {
                 }
                 setTimeout(function () {
                     that.load_resource_again = true;
-                    if($(window).scrollTop() + $(window).height() == $(document).height() && that.load_resource_again==true) {
+                    if ($(window).scrollTop() + $(window).height() == $(document).height() && that.load_resource_again == true) {
                         call_lazy_loader();
                     }
                 }, 1000);
@@ -56,11 +56,18 @@ function DisplaySettings() {
             var elemBottom = elemTop + $(elem).height();
             if ((elemBottom <= docViewBottom) && that.load_resource_again == true && $('#resources_home-notfeatured .home-featured-resources').length) {
                 call_lazy_loader();
-                }
+            }
         });
     };
+    this.toggleCollectionSection = function () {
+        $('.link-toggle-collection a').click(function (e) {
+            e.preventDefault();
+            $('#collection_resource_container').slideToggle('slow');
+            $('#about_collection_container').slideToggle('slow');
+        });
 
-    const call_lazy_loader = function(){
+    };
+    const call_lazy_loader = function () {
         $('#loader-gif-laxy').removeClass('d-none');
         that.load_resource_again = false;
         let data = {
