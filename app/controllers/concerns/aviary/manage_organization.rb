@@ -48,7 +48,8 @@ module Aviary::ManageOrganization
     params.require(:organization).permit(:name, :url, :description, :address_line_1,
                                          :address_line_2, :city, :state, :country, :zip, :logo_image,
                                          :banner_image, :display_banner, :logo_image, :status, :storage_type, :banner_image,
-                                         :banner_title_text, :banner_title_image, :banner_title_type, :banner_type, :banner_slider_resources, :default_tab_selection,
-                                         :title_font_color, :title_font_family, :title_font_size, :favicon, :hide_on_home, :custom_url_for_resource)
+                                         banner_title_text, :banner_type, :banner_slider_resources, :default_tab_selection,
+                                         :title_font_color, :title_font_family, :title_font_size, :favicon, :hide_on_home,
+                                         :custom_domain, :custom_url_for_resource, :search_panel_bg_color, :search_panel_font_color)
   end
 end

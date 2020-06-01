@@ -18,7 +18,6 @@ RSpec.describe Organization, type: :model do
       expect(subject).to have_attribute(:country)
       expect(subject).to have_attribute(:zip)
       expect(subject).to have_attribute(:status)
-      expect(subject).to have_attribute(:display_banner)
       expect(subject).to have_attribute(:logo_image_file_name)
       expect(subject).to have_attribute(:banner_image_file_name)
       expect(subject).to have_attribute(:storage_type)

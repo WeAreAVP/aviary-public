@@ -147,6 +147,11 @@
               </div>
             </div>
           <% end %>
+          <div class="sidebar-logo">
+            <%= link_to root_url(host: ENV['APP_HOST']) do %>
+              <%= image_tag 'homepage/main-logo.png' %>
+            <% end %>
+          </div>
         </div>
       </div>
     </div>

@@ -11,7 +11,7 @@ class Theme < ApplicationRecord
     BGIMAGETYPE = { BGIMAGE => 'Background Image', BGCOLOR => 'Background Color' }.freeze
 
     def self.font_sizes
-      %i[9px 10px 11px 12px 13px 14px 15px 16px 17px 18px 19px 20px 21px 22px 23px]
+      %i[20px 21px 22px 23px 24px 25px 26px 27px 28px 29px 30px]
     end
 
     def self.for_select

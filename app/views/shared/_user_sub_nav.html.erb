@@ -9,14 +9,10 @@
                 <a href="javascript://" class="menu" id="menu-bar" data-url="<%= set_layout_path %>" data-layout="<%= session[:layout] %>"><i class="fa fa-bars"></i></a>
               </li>
             <% end %>
-            <li class="nav-item" style="">
-              <%= link_to root_url(host: ENV['APP_HOST']), class: 'nav-link pb-0' do %>
-                <%= image_tag 'homepage/main-logo.png', :class => "img_preview_cus_small" %>
-              <% end %>
-            </li>
+
           <% end %>
           <% if current_user.organization_users.active.present? %>
-            <li class="nav-item dropdown">
+            <li class="nav-item dropdown pr-2">
               <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <span class="icon-My-Organization"></span>
                 <strong><%= current_organization.present? && (can? :manage, current_organization) ? current_organization.name.truncate(25, omission: '...') : 'My Organization' %></strong>
@@ -24,7 +20,7 @@
               <div class="dropdown-menu" aria-labelledby="navbarDropdown">
 
                 <% current_user.organization_users.active.each do |organization_user| %>
-                  <% home_url = organization_user.organization.status ? collections_url(host:  Utilities::AviaryDomainHandler.subdomain_handler(organization_user.organization)) : account_organization_url(host:  Utilities::AviaryDomainHandler.subdomain_handler(organization_user.organization)) %>
+                  <% home_url = organization_user.organization.status ? collections_url(host: Utilities::AviaryDomainHandler.subdomain_handler(organization_user.organization)) : account_organization_url(host: Utilities::AviaryDomainHandler.subdomain_handler(organization_user.organization)) %>
                   <%= link_to organization_user.organization.name.truncate(55, omission: '...'), home_url, class: "dropdown-item" %>
                 <% end %>
               </div>
@@ -42,10 +38,30 @@
           </li>
         <% else %>
           <li class="nav-item">
-            <a class="nav-link" type="submit" data-toggle="modal" data-target="#signinmodal">Login</a>
+            <a href="javascript://" class="nav-link" type="submit" data-toggle="modal" data-target="#signinmodal"><strong>Login</strong></a>
           </li>
         <% end %>
-        <%= render 'shared/search_bar', cached: iscached? %>
+      </ul>
+      <ul class="navbar-nav navbar-right">
+        <% if current_organization.present? %>
+          <li class="nav-item <%= current_page?(org_playlist_path) || (current_page?(root_path) && current_organization.default_tab_selection == 'playlists') ? 'active' : '' %>">
+            <a class="nav-link" href="<%= org_playlist_path %>">Playlists</a>
+          </li>
+          <li class="nav-item <%= current_page?(search_catalog_path) || (current_page?(search_catalog_path) && current_organization.default_tab_selection == 'resources') ? 'active' : '' %>">
+            <a id="resource_search_tab" class="nav-link" href="<%= search_catalog_path({ f: { organization_id_is: [current_organization.id] }, indexes: [], keywords: [], op: [], resource_description: [], search_field: 'advanced', search_type: 'simple', title_text: '', transcript: [], type_of_search: ['simple'] }) %>">Resources</a>
+          </li>
+          <li class="nav-item <%= current_page?(org_collection_path) || (current_page?(root_path) && current_organization.default_tab_selection == 'collections') ? 'active' : '' %>">
+            <a class="nav-link" href="<%= org_collection_path %>">Collections</a>
+          </li>
+          <li class="nav-item <%= current_page?(org_aboutus_path) || (current_page?(root_path) && current_organization.default_tab_selection == 'about') ? 'active' : '' %>">
+            <a class="nav-link" href="<%= org_aboutus_path %>">About</a>
+          </li>
+        <% end %>
+        <li class="nav-item">
+          <%= link_to root_url(host: ENV['APP_HOST']), class: 'nav-link pb-0' do %>
+            <%= image_tag 'homepage/main-logo.png', :class => "img_preview_cus_small" %>
+          <% end %>
+        </li>
       </ul>
     </nav>
     <%#= render 'shared/resource_layout_nav' %>

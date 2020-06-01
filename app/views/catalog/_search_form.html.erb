@@ -3,15 +3,7 @@
   <%= form_tag search_action_url, method: :get, class: 'search-query-form clearfix navbar-form', role: 'search' do %>
     <%= render_hash_as_hidden_fields(search_state.params_for_search.except(:q, :search_field, :qt, :page, :utf8)) %>
     <input name="search_field" type="hidden" value="advanced">
-    <% placeholder = 'Find content in Aviary' %>
-    <% if current_organization && !current_organization.blank? && params[:controller] == 'home' && params[:action] == 'index' %>
-      <% placeholder = "Find content in #{current_organization.name.truncate(25, omission: '...')}" %>
-    <% elsif params[:controller] == 'collection_resources' && params[:action] == 'show' %>
-      <% placeholder = "Find content in #{current_organization.name.truncate(25, omission: '...')}" %>
-    <% elsif params[:controller] == 'collections' && params[:action] == 'show' && params.has_key?(:id) %>
-      <input name="f[collection_id_is][]" type="hidden" value="<%= params[:id] %>">
-      <% placeholder = "Find content in #{@collection.title.truncate(25, omission: '...')}" %>
-    <% end %>
+    <% placeholder = 'Search' %>
     <input type="hidden" name="search_type" value="simple"/>
     <input type="hidden" name="title_text[]" id="" value="">
     <input type="hidden" name="resource_description[]" id="" value="">
@@ -20,7 +12,7 @@
     <input type="hidden" name="op[]" value="" class="op ">
     <input type="hidden" name="type_of_search[]" value="simple" class="form-control type_of_search add_wanted_class">
     <input type="hidden" name="type_of_field_selector[]" value="simple" class="form-control type_of_field_selector add_wanted_class d-none">
-    <%= text_field_tag 'keywords[]', params[:q], placeholder: placeholder, class: "form-control search-field-blacklight search_field_selector_main", id: "q_single" %>
+    <%= text_field_tag 'keywords[]', params[:q], placeholder: placeholder, class: "form-control search-field-blacklight search_field_selector_main", id: "q_single" , autocomplete: "off" %>
 
     <div class="buttons-search">
       <a class='advanced-search-btn' href="<%= search_action_url %>?utf8=✓&search_field=advanced&update_advance_search=update_advance_search&search_type=advance">Advanced Search</a>

@@ -6,7 +6,7 @@ $(function () {
             $('.collection_collection_title').html($(this).data('collection-title'));
             $('.collection_image_holder').attr('style', $(this).data('collection-img'));
             $('.collection_org_title').html($(this).data('org-title'));
-            $('.collection_search_collection').text('Browse ' + $(this).data('type') + ' >>');
+            $('.collection_search_collection').html($(this).data('type') + ' <i class="fa fa-angle-double-right"></i>');
             $('.collection_search_collection').attr('href', $(this).data('collection-search'));
             $('.collection_collection_title').attr('href', $(this).data('collection-path'));
             $('#detailDisplayModal').modal('show');

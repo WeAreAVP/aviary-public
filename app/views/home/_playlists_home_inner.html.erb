@@ -20,7 +20,7 @@
                 <% end %>
                 <span class="description_collection">
                     <%= strip_tags(playlist.description) %></span>
-                <a data-toggle="modal" class='show_hide_description' data-type="Playlist" data-id="description_<%= playlist.id %>" data-collection-img='<%= url_image(playlist.thumbnail.url(:small)) %>'
+                <a data-toggle="modal" class='show_hide_description' data-type="View Playlist" data-id="description_<%= playlist.id %>" data-collection-img='<%= url_image(playlist.thumbnail.url(:small)) %>'
                    data-collection-title="<%= playlist.name %>" data-org-logo="<%= playlist.organization.logo_image.url(:medium) %>" data-collection-path="<%= playlist_show_path(playlist) %>" data-org-title="<%= playlist.organization.name %>"
                    data-collection-search="<%= playlist_show_path(playlist) %>">
                   <i class="fa fa-info-circle"></i></a>
@@ -35,7 +35,7 @@
             </div>
           </div>
           <div class="browse-org">
-            <a target="_blank" href="<%= playlist_show_path(playlist) %>"> View Playlist >></a>
+            <a target="_blank" href="<%= playlist_show_path(playlist) %>"> View Playlist <i class="fa fa-angle-double-right"></i></a>
           </div>
         </div>
       </div>
