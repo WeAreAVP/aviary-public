@@ -7,6 +7,10 @@
     padding: 0 0 20px;
 }
 
+#organization_display_banner {
+    margin-top: 2px;
+}
+
 .organization-section .form-head {
     padding: 25px 20px;
 }
