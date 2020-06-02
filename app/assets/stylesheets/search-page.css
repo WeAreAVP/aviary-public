@@ -760,7 +760,7 @@ form.range_limit .hold input:nth-child(2) {
     background: #fff;
     border: none;
     height: 40px;
-    border-radius: 0 4px 4px 0 !important;
+    border-radius: 0 9px 9px 0 !important;
 }
 
 .content {
@@ -838,10 +838,15 @@ form.range_limit .hold input:nth-child(2) {
     padding: 14px 8px;
 }
 
+.search-result-visual card {
+    border-radius: 9px;
+}
+
 .bottom-panel-adv {
     background: #f4f4f4;
     padding: 12px 20px;
     margin: 0px -20px -25px;
+    border-radius: 0 0 9px 9px;
 }
 
 .btn-add {
@@ -873,7 +878,7 @@ form.range_limit .hold input:nth-child(2) {
     border-color: #eef3f2;
     height: 40px;
     padding: 9px 15px;
-    border-radius: 4px 0 0 4px;
+    border-radius: 9px 0 0 9px;
 }
 
 .search-query-form .selectize-control .selectize-input .item {
@@ -975,7 +980,7 @@ form.range_limit .hold input:nth-child(2) {
 }
 
 .flipcard.flipped .card-back {
-    min-height: 145px;
+    min-height: 125px;
     overflow-y: auto;
     position: relative;
 }

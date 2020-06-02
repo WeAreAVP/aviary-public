@@ -1,4 +1,5 @@
 <%= render partial: 'home/home_banner', locals: { banner_type: current_organization.banner_type,
+                                                  display_banner: current_organization.display_banner,
                                                   banner_image: current_organization.banner_image,
                                                   banner_slider_resources: current_organization.banner_slider_resources,
                                                   banner_title_text: current_organization.banner_title_text.present? ? current_organization.banner_title_text : current_organization.name ,

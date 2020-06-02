@@ -62,12 +62,12 @@
     </div>
   </div>
 </div>
-<a class="btn-adv advance_option_search pb-10px mb-20px <%= params[:search_type] == 'advance' ? 'd-none' : '' %> float-right text-white font-size-13px" data-type="advance" href="javascript:void(0)">Advanced
+<a class="btn-adv simple_option_search float-right text-white font-size-13px <%= params[:search_type] == 'advance' ? '' : 'd-none' %>" data-type="simple" href="javascript:void(0)">
+  Simple Search </a>
+<a class="btn-adv advance_option_search <%= params[:search_type] == 'advance' ? 'd-none' : '' %> float-right text-white font-size-13px" data-type="advance" href="javascript:void(0)">Advanced
   Search </a>
 <span class="simple_start_over  <%= params[:search_type] == 'advance' ? 'd-none' : '' %> float-right text-white mr-5px" style="margin-top: -4px;"> | </span>
-<a class="btn-adv bold font-weight-bold pb-10px mb-20px simple_start_over <%= params[:search_type] == 'advance' ? 'd-none' : '' %> float-right text-white font-size-13px mr-5px" href="<%= add_facet_params_to_url(search_catalog_url(q: '', search_field: 'all_fields', utf8: '✓'), session[:search_facets]) %>">Clear Search Terms </a>
+<a class="btn-adv bold font-weight-bold simple_start_over <%= params[:search_type] == 'advance' ? 'd-none' : '' %> float-right text-white font-size-13px mr-5px" href="<%= add_facet_params_to_url(search_catalog_url(q: '', search_field: 'all_fields', utf8: '✓'), session[:search_facets]) %>">Clear Search Terms </a>
 <span class="simple_start_over  <%= params[:search_type] == 'advance' ? 'd-none' : '' %> float-right text-white mr-5px" style="margin-top: -4px;"> | </span>
-<a class='btn-adv theme_font_color pb-10px mb-20px float-right text-white font-size-13px font-weight-bold ml-10px mr-10px' href="<%= search_catalog_url(q: '', search_field: 'all_fields', utf8: '✓') %>"> Start Over </a>
-<a class="btn-adv simple_option_search pb-10px mb-20px float-right text-white font-size-13px <%= params[:search_type] == 'advance' ? '' : 'd-none' %>" data-type="simple" href="javascript:void(0)">
-  Simple Search </a>
+<a class='btn-adv theme_font_color float-right text-white font-size-13px font-weight-bold ml-10px mr-10px' href="<%= search_catalog_url(q: '', search_field: 'all_fields', utf8: '✓') %>"> Start Over </a>
 <div class="clearfix"></div>
