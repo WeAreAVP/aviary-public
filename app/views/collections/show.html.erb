@@ -2,14 +2,13 @@
 <main id="main" role="main">
   <div class="details main-collection-page">
     <%= render partial: 'home/home_banner', locals: { banner_type: @collection.banner_type, banner_image: @collection.image, banner_slider_resources: @collection.banner_slider_resources,
-                                                      banner_title_text: @collection.title, display_banner: @collection.display_banner,
+                                                      banner_title_text: @collection.title, display_banner: @collection.display_banner, panel_color: current_organization.search_panel_bg_color.present? ? current_organization.search_panel_bg_color : '#f05d1f',
                                                       title_font_family: current_organization.title_font_family, title_font_size: current_organization.title_font_size, title_font_color: current_organization.title_font_color, banner_view_from: 'collection' } %>
   </div>
 
 
   <div id="collection_resource_container" style="<%= @collection.default_tab_selection == 'resources' ? '' : 'display:none;' %>">
-    <div class="link-toggle-collection"><a href="javascript://" class="btn video-link">Learn more about Collection</a>
-    </div>
+    <div class="link-toggle-collection"><a href="javascript://" class="btn video-link">Read about this collection</a></div>
     <div class="all-resources container home-index-view">
       <div id="resources_home-notfeatured" data-url="<%= collection_path(@collection) %>">
       </div>
@@ -19,8 +18,7 @@
 
   <div id="about_collection_container" class="about_collection_container" style="<%= @collection.default_tab_selection == 'about' || @collection.default_tab_selection.blank? ? '' : 'display:none;' %>">
 
-    <div class="link-toggle-collection"><a href="javascript://" class="btn video-link">See Resources of Collection</a>
-    </div>
+    <div class="link-toggle-collection"><a href="javascript://" class="btn video-link">See media in this collection</a></div>
     <div class="all-resources container collection-about-detail" id="collection-about-detail">
       <p><%== description @collection.about %></p>
       <div class="search-detail-main">

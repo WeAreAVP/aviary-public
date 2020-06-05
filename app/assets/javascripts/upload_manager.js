@@ -150,49 +150,56 @@ function UploadManager(app_helper) {
             });
         });
 
-        $('.manage-media-thumbnail').on('click', function(){
+        $('.manage-media-thumbnail').on('click', function () {
             $('.video_embed_player').html('');
         });
 
         binding_embed_local('');
-        
-        $('#closeuploadandcontinue').on('click', function(){
+
+        $('#closeuploadandcontinue').on('click', function () {
             binding_embed_local('')
         });
 
-        $('.edit_close, .closeuploadandcontinue').click(function(){
+        $('.edit_close, .closeuploadandcontinue').click(function () {
             location.reload();
         });
     };
 
 
-    const binding_embed_local = function(class_opt){
-        setTimeout(function() {
+    const binding_embed_local = function (class_opt) {
+        setTimeout(function () {
             $(class_opt + '.check_embed_button').unbind('click');
-            $(class_opt + '.check_embed_button').on('click', function() {
+            $(class_opt + '.check_embed_button').on('click', function () {
                 $(class_opt + '#check_file_embed').remove();
-                var pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
-                    '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // domain name
-                    '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
-                    '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
-                    '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
-                    '(\\#[-a-z\\d_]*)?$','i');
-                if($(class_opt + '#collection_resource_embed_code').val() !='' && 0 != $(class_opt + '#collection_resource_embed_code').val().length && pattern.test($(class_opt + '#collection_resource_embed_code').val())) {
-                    $(class_opt + '.video_embed_player').html("<video id=\"player_check\" class=\"float-right\" style=\"width:100% !important;height: 200px !important;\">" +
-                        "           <source id='check_file_embed' src='"+ $(class_opt + '#collection_resource_embed_code').val() + "'>" +
-                        "      </video>" );
+                var pattern = new RegExp('^(https?:\\/\\/)?' + // protocol
+                    '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // domain name
+                    '((\\d{1,3}\\.){3}\\d{1,3}))' + // OR ip (v4) address
+                    '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
+                    '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
+                    '(\\#[-a-z\\d_]*)?$', 'i');
+                if ($(class_opt + '#collection_resource_embed_code').val() != '' && 0 != $(class_opt + '#collection_resource_embed_code').val().length && pattern.test($(class_opt + '#collection_resource_embed_code').val())) {
+                    $(class_opt + '.video_embed_player').html("<video preload=\"metadata\" id=\"player_check\" class=\"float-right\" style=\"width:100% !important;height: 200px !important;\">" +
+                        "           <source id='check_file_embed' src='" + $(class_opt + '#collection_resource_embed_code').val() + "'>" +
+                        "      </video>");
                     $(class_opt + '#player_check')[0].load();
-                    if(selfUM.media_player){
+                    if (selfUM.media_player) {
                         selfUM.media_player.remove();
                     }
-                    selfUM.media_player = $(class_opt + '#player_check').mediaelementplayer({});
+                    selfUM.media_player = $(class_opt + '#player_check').mediaelementplayer({
+                        success: function (mediaElement, domObject) {
+                            mediaElement.addEventListener('loadedmetadata', function () {
+                                $('#other-info-holder .media-duration').val(secondsToHuman(mediaElement.duration));
+                                $('#other-info-holder .media-duration').next().val(mediaElement.duration);
+                            });
+                        }
+                    });
                 } else {
                     $(class_opt + '.video_embed_player').html('');
                 }
             });
 
-            setTimeout(function(){
-                $(class_opt + '.check_embed_clear').on('click', function(){
+            setTimeout(function () {
+                $(class_opt + '.check_embed_clear').on('click', function () {
                     $(class_opt + '.video_embed_player').html('');
                     $(class_opt + '#collection_resource_embed_code').val('');
                 });
