@@ -458,6 +458,9 @@ a:hover,
 /* header styles */
 #header.aviary-header {
   background: #333333;
+  .navbar {
+    padding: 0;
+  }
 }
 
 #header {
@@ -560,7 +563,8 @@ a:hover,
   }
 
   a[data-target="#signinmodal"] {
-    color: #f5f5f7;
+    color:
+        #f5f5f7;
   }
 }
 
@@ -743,10 +747,8 @@ a:hover,
   appearance: none;
 
 }
-
 #sub_nav .navbar-right .nav-item .nav-link {
   position: relative;
-
   &:before {
     content: "";
     position: absolute;
@@ -757,10 +759,9 @@ a:hover,
     width: 1px;
   }
 }
-
 #sub_nav .navbar-right .nav-item {
   &:last-child,
-  &:nth-last-child(2) {
+  &:nth-last-child(2){
     .nav-link {
       &:before {
         display: none;
@@ -2776,7 +2777,6 @@ div.dataTables_wrapper div.dataTables_info {
     height: 25px;
   }
 }
-
 .nav-overlay {
   position: absolute;
   top: 0;
@@ -2948,9 +2948,9 @@ div.dataTables_wrapper div.dataTables_info {
   position: fixed;
   padding: 10px 120px 10px 35px;
   margin-bottom: 1rem;
-  top: 82px;
+  top: 45px;
   transition: 1.0s all ease-in-out;
-  right: 20px;
+  right: 10px;
   box-shadow: 0 3px 5px rgba(167, 167, 167, 0.27);
   border-radius: 0 0 6px 6px;
   font-weight: 400;

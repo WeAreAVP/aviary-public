@@ -83,6 +83,7 @@
                   <div class="form-group">
                     <label for="" class="col-form-label">Banner Title Text</label>
                     <%= f.input :banner_title_text, label: false, placeholder: 'Title Text', input_html: { class: ' form-control ' } %>
+                    <small class="form-text text-muted mt-1">This text will be used as the title that is displayed above the search bar on your organization landing page. If you leave it blank, no title will be displayed.</small>
                     <%= f.error :banner_title_text %>
                   </div>
 
@@ -91,6 +92,7 @@
                   <div class="form-group">
                     <label for="" class="col-form-label font-weight-bold">Banner Title Text Color</label>
                     <%= f.input :title_font_color, label: false, placeholder: 'Color Picker', input_html: { class: ' form-control  color_picker' } %>
+                    <small class="form-text text-muted mt-1">This color is used for the Banner Title Text that is displayed above the search bar on your organization landing page.</small>
                   </div>
                 </div>
 
@@ -99,14 +101,16 @@
               <div class="row">
                 <div class="col-md-6">
                   <div class="form-group">
-                    <label for="" class="col-form-label font-weight-bold">Title Font Family</label>
+                    <label for="" class="col-form-label font-weight-bold">Banner Title Font Family</label>
                     <%= f.select :title_font_family, options_for_select(Theme::FontHandler.for_select, @organization.title_font_family), {}, { class: " meta-type-select" } %>
+                    <small class="form-text text-muted mt-1">This font is used for the Banner Title Text that is displayed above the search bar on your organization landing page.</small>
                   </div>
                 </div>
                 <div class="col-md-6">
                   <div class="form-group">
-                    <label for="" class="col-form-label font-weight-bold">Title Font Size</label>
+                    <label for="" class="col-form-label font-weight-bold">Banner Title Font Size</label>
                     <%= f.select :title_font_size, Theme::FontHandler.font_sizes.map { |key, _| [key, key] }, {}, { class: "" } %>
+                    <small class="form-text text-muted mt-1">This font size is used for the Banner Title Text that is displayed above the search bar on your organization landing page.</small>
                   </div>
                 </div>
               </div>
@@ -116,12 +120,14 @@
                   <div class="form-group">
                     <label for="">Search Panel Background Color</label>
                     <%= f.input :search_panel_bg_color, label: false, input_html: { class: 'form-control color_picker', placeholder: 'Font Color' }, :required => true %>
+                    <small class="form-text text-muted mt-1">This color will be used as the background color behind the search bar on the search resources page. It will also be used as the background color behind the search bar on your organization landing page and your collection landing page if you do not display a banner on those pages.</small>
                   </div>
                 </div>
                 <div class="col-md-6">
                   <div class="form-group">
                     <label for="">Search Panel Font Color</label>
                     <%= f.input :search_panel_font_color, label: false, input_html: { class: 'form-control color_picker', placeholder: 'Font Color' }, :required => true %>
+                    <small class="form-text text-muted mt-1">This color will be used as the color of the text that is displayed below the search bar on the search resources page.</small>
                   </div>
                 </div>
               </div>
