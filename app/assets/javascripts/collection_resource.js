@@ -708,9 +708,14 @@ function CollectionResource() {
 
             let tabType = window.location.pathname.substr(window.location.pathname.lastIndexOf('/') + 1);
             let currentTab = $(this).data().tab;
-            if (!$(this).hasClass('active') && selfCR.events_tracker.length > 0) {
-                selfCR.events_tracker.track_tab_hits(currentTab);
+            try {
+                if (!$(this).hasClass('active')) {
+                    selfCR.events_tracker.track_tab_hits(currentTab);
+                }
+            } catch (e) {
+                e;
             }
+
             $.each(selfCR.markerHandlerArray, function (identifier, markerHandler) {
                 markerHandler.update_result_current_index(currentTab);
             });
@@ -739,9 +744,14 @@ function CollectionResource() {
         });
 
         if (selfCR.has_loaded == false) {
-            if (typeof selfCR.events_tracker != 'undefined' && selfCR.events_tracker.length > 0) {
-                selfCR.events_tracker.track_tab_hits(tabType);
+            try {
+                if (typeof selfCR.events_tracker != 'undefined') {
+                    selfCR.events_tracker.track_tab_hits(tabType);
+                }
+            } catch (e) {
+                e;
             }
+
             selfCR.has_loaded = true;
         }
     };

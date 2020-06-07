@@ -127,8 +127,12 @@ function IndexTranscript() {
             $('.' + cuePointType + '_point_container').mCustomScrollbar("scrollTo", 0);
             $('#selected_' + cuePointType).val($('#file_' + cuePointType + '_select').val());
             collectionResource.init_scoll(cuePointType, collectionResource.currentTime, true);
-            if (typeof collectionResource.events_tracker != 'undefined' && collectionResource.events_tracker.length > 0)
-                collectionResource.events_tracker.track_tab_hits(cuePointType, true);
+            try {
+                if (typeof collectionResource.events_tracker != 'undefined')
+                    collectionResource.events_tracker.track_tab_hits(cuePointType, true);
+            } catch (e) {
+                e;
+            }
             activate_export($('#file_' + cuePointType + '_select').val());
 
         });
