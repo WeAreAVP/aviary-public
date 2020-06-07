@@ -35,6 +35,20 @@ class PlaylistResourcesController < ApplicationController
     respond_with_json('Success', 200)
   end
 
+
+  def list_playlist_items
+    @playlist_show = params[:view_type].to_boolean?
+    @playlist_resource = PlaylistResource.find_by_id(params[:playlist_resource_id])
+    @collection_resource ||= @playlist_resource.collection_resource if @playlist_resource
+    @playlist_resources = @playlist.playlist_resources.order(:sort_order).includes(:organization, :collection_resource, :playlist_items).offset(params[:per_page].to_i * params[:page_number].to_i).limit(params[:per_page])
+    if params[:query].present?
+      @playlist_resources = @playlist_resources.where('name LIKE ? OR description LIKE ? ', "%#{params[:query]}%", "%#{params[:query]}%")
+    end
+
+    @playlist_resources
+    render partial: 'playlists/list_playlist_items'
+  end
+
   def update_description
     flag = if params[:playlist_resource].present? && params[:playlist_resource][:title].present?
              @playlist_resource.update(name: params[:playlist_resource][:title])

@@ -16,7 +16,7 @@
           <%= render partial: 'playlists/edit_playlist' %>
         </div>
       </div>
-
+      <%= render 'request_accesses/shared_request_modal' %>
       <%
         active_tab = session[:playlist_active_tab] if session[:playlist_active_tab].present?
         active_tab = if @playlist_show.present?
@@ -72,109 +72,36 @@
         <div class='tab-content'>
           <div class="loadingCus text-center" style="display: none;">…</div>
           <div id='resource-list-container' class='float-left w-100 tab-pane fade in <%= (active_tab.include? 'show_playlist') ? 'active show' : '' %>' data-url="<%= sort_playlist_playlist_resources_path(@playlist) %>">
-            <% if @playlist_resources.length > 0 %>
-              <div class="text-right float-right playlist_operations_actions pr-1 mt-1 mb-1 ">
-                <input type="text" id="search_playlist_resource" placeholder="Search within playlist" class="form-control mb-1 mt-1"/>
-                <% if !@playlist_show.present? && !@playlist_show && (can? :manage, @playlist) %>
-                  <a href="javascript:void(0);" class="mb-1" data-url="<%= bulk_delete_playlist_playlist_resources_path(@playlist) %>" data-fetch_resource_list="<%= fetch_resource_list_playlists_path %>" style="color:#dc3545;" id="bulk_delete_playlist_resources">
-                    <i class="fa fa-trash-o" aria-hidden="true"></i> Bulk Delete</a> |
-                  <a href="javascript:void(0);" class="select_all_playlist_resources "><i class="fa fa-plus" aria-hidden="true"></i>
-                    Select All</a>
-                  <a href="javascript:void(0);" style="display: none;" class="deselect_all_playlist_resources ">
-                    <i class="fa fa-minus" aria-hidden="true"></i> Deselect
-                    All</a>
-                <% end %>
-              </div>
-              <div class="playlist-list float-left w-100">
-                <% @playlist_resources.each do |pl_rsrc| %>
-                  <% collection_resource_playlsit = pl_rsrc.collection_resource %>
-                  <% can_access = (can? :read, collection_resource_playlsit) || collection_resource_playlsit.can_view || collection_resource_playlsit.can_edit || (can? :edit, collection_resource_playlsit.collection.organization) %>
-                  <% org = pl_rsrc.organization %>
 
-                  <div id='playlist_resource_<%= pl_rsrc.id %>' data-id="<%= pl_rsrc.id %>" class="box <%= pl_rsrc == @playlist_resource ? 'now-playing' : 'not-playing' %> playlist_resource_single mt-2 mb-2 pb-4 <%= can_access ? 'canplay' : ' locked ' %>  <%= pl_rsrc != @playlist_resource && !can_access ? 'p-5-0-5-0px' : ' ' %>">
-                    <% if !@playlist_show.present? && !@playlist_show && (can? :manage, @playlist) %>
-                      <input type="checkbox" data-bulk_edit_playlist_resource_id="<%= pl_rsrc.id %>" data-bulk_edit_resource_id="<%= pl_rsrc.collection_resource_id %>" class="choose-resource mt-2 ">
-                      <div class="form-group no-field plr-sort-container">
-                        <span class="sort-icon"><i class="fa fa-bars"></i></span>
-                        <input type="text" value='<%= pl_rsrc.sort_order %>' disabled='disabled' class="form-control plr-sort-index position-relative only_allow_number" style="z-index: 9" data-id='<%= pl_rsrc.id %>' name="playlist_resource_sort[<%= pl_rsrc.id %>]">
-                      </div>
-                    <% end %>
-                    <% unless @playlist_show.present? && @playlist_show %>
-                      <% playlist_link = (pl_rsrc == @playlist_resource) ? 'javascript:void(0)' : playlist_edit_path(@playlist, playlist_resource_id: pl_rsrc.id) %>
-                    <% else %>
-                      <% param_link = {playlist_id: @playlist.id, playlist_resource_id: pl_rsrc.id}
-                         param_link = param_link.merge(@embed_params)
-                         param_link[:share] = params[:share] if params[:share].present?
-                         playlist_link = (pl_rsrc == @playlist_resource) ? 'javascript:void(0)' : playlist_show_path(param_link) %>
-                    <% end %>
+            <div class="text-right float-right playlist_operations_actions pr-1 mt-1 mb-1 ">
+              <input type="text" id="search_playlist_resource" placeholder="Search within playlist" class="form-control mb-1 mt-1"/>
+              <% if !@playlist_show.present? && !@playlist_show && (can? :manage, @playlist) %>
+                <a href="javascript:void(0);" class="mb-1" data-url="<%= bulk_delete_playlist_playlist_resources_path(@playlist) %>" data-fetch_resource_list="<%= fetch_resource_list_playlists_path %>" style="color:#dc3545;" id="bulk_delete_playlist_resources">
+                  <i class="fa fa-trash-o" aria-hidden="true"></i> Bulk Delete</a> |
+                <a href="javascript:void(0);" class="select_all_playlist_resources "><i class="fa fa-plus" aria-hidden="true"></i>
+                  Select All</a>
+                <a href="javascript:void(0);" style="display: none;" class="deselect_all_playlist_resources ">
+                  <i class="fa fa-minus" aria-hidden="true"></i> Deselect
+                  All</a>
+              <% end %>
+            </div>
+            <input type="hidden" id="playlist-list-page-no" value="0"/>
+            <%
+              param = {}
+              param[:playlist_id] = @playlist.id
+              param[:embed] = true if params[:embed].present?
+              param[:media_player] = true if params[:media_player].present?
+            %>
 
+            <div id='playlist-list-contanier' class="playlist-list float-left w-100" data-url="<%= list_playlist_items_playlist_playlist_resources_path(param) %>">
 
-                    <a href="<%= playlist_link %>" class="image ml-1">
-                      <% thumb_url = nil %>
-                      <% if pl_rsrc.playlist_items.present? %>
-                        <% if pl_rsrc.playlist_items.first.collection_resource_file.present? %>
-                          <% thumb_url = pl_rsrc.playlist_items.first.collection_resource_file.thumbnail.url if pl_rsrc.playlist_items.first.try(:collection_resource_file) %>
-                          <% if thumb_url.blank? && pl_rsrc.playlist_items.first.try(:collection_resource_file) %>
-                            <% present(pl_rsrc.playlist_items.first.collection_resource_file) do |presenter| %>
-                              <% thumb_url = presenter.media_type.include?('avalon') || presenter.media_type.include?('video') ? "https://#{ENV['S3_HOST_CDN']}/public/images/video-default.png" : "https://#{ENV['S3_HOST_CDN']}/public/images/audio-default.png" %>
-                            <% end %>
-                          <% end %>
-                        <% end %>
-                      <% end %>
-                      <% thumb_url = "https://#{ENV['S3_HOST_CDN']}/public/images/video-default.png" if thumb_url.blank? %>
-                      <%= image_tag(thumb_url) %>
-                    </a>
-                    <div class="text">
-                      <div class="coll-name">
-                        <div class="ico">
-                          <% icon_src = (pl_rsrc.collection_resource.collection.present? && pl_rsrc.collection_resource.collection.favicon.present?) ? pl_rsrc.collection_resource.collection.favicon.url(:small) : image_url('collection_folder_icon.svg') %>
-                          <img src="<%= icon_src %>" alt="collection">
-                        </div>
-                        <%= link_to pl_rsrc.collection_resource.collection.title, collection_url(pl_rsrc.collection_resource.collection, host: Utilities::AviaryDomainHandler.subdomain_handler(pl_rsrc.collection_resource.collection.organization)), target: "_blank", class: "text" %>
-                      </div>
-                      <div class="d-none title_description_text"> <%= pl_rsrc.name %> <%= pl_rsrc.description.strip_tags %></div>
-                      <div class="title_description">
+            </div>
+            <div class="loader-playlist_items text-center d-none" style="top: 10%;">
+              <%= image_tag("https://#{ENV['S3_HOST_CDN']}/public/images/ajax-loader.gif", {style: 'height: 30px;width: 30px;'}) %>
+            </div>
+            <h1 id="no_resource_found" class="text-center font-size-21px mt-3" style="display: none !important;">
+              No Resource Found!</h1>
 
-
-                        <% if !@playlist_show.present? && !@playlist_show && (can? :manage, @playlist) %>
-
-                          <i class="ml-1 mt-1 fa fa-pencil float-left edit-description-resource"></i>
-                          <span style="font-size: 16px;font-weight: 400;color: #000;display: block;text-decoration: none;line-height: 1.25;" data-bip-type="input" data-bip-attribute="title" data-bip-object="playlist_resource" data-bip-original-content="<%= pl_rsrc.name %>"
-                                data-bip-skip-blur="false" data-bip-url="<%= update_description_playlist_playlist_resource_path(playlist_id: pl_rsrc.playlist_id, id: pl_rsrc.id) %>" data-bip-value="<%= pl_rsrc.name %>"
-                                class="best_in_place" id="best_in_place_pl_resource_2_title" method="PUT">  &nbsp;<%= pl_rsrc.name %>
-                            </span>
-
-                        <% else %>
-                          <a href="<%= playlist_link %>" class='title <%= can_access ? 'can-play-resource' : ' ' %>'> <%= pl_rsrc.name %> </a>
-                        <% end %>
-                        <div data-html="true" data-placement="bottom" class="playlist_resource_description white-tooltip d-none float-left playlist_resource_description_<%= pl_rsrc.id %>" style="max-width: 85%;">
-                          <p>
-                            <%= simple_format(pl_rsrc.description) %>
-                          </p>
-                        </div>
-                        <div>
-                          <p class="playlist_resource_description_content float-left">
-                            <%= pl_rsrc.description.strip_tags.truncate(45, omission: '...', :separator => ' ') %>
-                          </p>
-                        </div>
-                        <% if pl_rsrc.description.strip_tags.present? && pl_rsrc.description.strip_tags.size > 38 %>
-                          <a class="show_full_description "> <i class="fa fa-info-circle" aria-hidden="true"></i></a>
-                          <a class="show_less_description  d-none"> ...less</a>
-                        <% end %>
-                      </div>
-                      <% unless @playlist_show.present? && @playlist_show && (can? :manage, @playlist) %>
-                        <button class="text-primary edit_description_playlist badge badge-primary" data-toggle="modal" data-target="#edit_playlist_resource_description_modal_center" data-playlist_resource_id='<%= pl_rsrc.id %>' data-url="<%= update_description_playlist_playlist_resource_path(playlist_id: pl_rsrc.playlist_id, id: pl_rsrc.id) %>">
-                          <span class="fa fa-pencil"></span> Edit Description
-                        </button>
-                        <%= link_to "<i class='fa fa-trash'></i> Remove".html_safe, playlist_playlist_resource_url(pl_rsrc, playlist_id: @playlist.id), method: :delete, data: {confirm: 'Are you sure you want to delete this Resource from Playlist?'}, class: ' badge badge-danger remove_playlist_resoure' %>
-                      <% end %>
-                    </div>
-                  </div>
-                <% end %>
-              </div>
-              <h1 id="no_resource_found" class="text-center font-size-21px mt-3" style="display: none !important;">
-                No Resource Found!</h1>
-            <% end %>
           </div>
           <div id='edit-playlist-container' class="playlist-section tab-pane fade <%= (active_tab.include? 'edit_playlist') ? 'active show' : '' %>" style='padding: 25px 25px 0px 15px;'>
             <% if (can? :manage, @playlist) && @playlist_show.blank? %>
@@ -237,6 +164,8 @@
                   </div>
                 </div>
 
+                <%= render partial: 'shared/rss_feed/rss_feed', locals: {c: pl, feedable: @playlist} %>
+
                 <div class="row">
                   <div class="col-md-12 text-right">
                     <%= pl.submit @playlist.new_record? ? 'Save' : 'Update', class: 'btn btn-primary' %>
@@ -250,7 +179,8 @@
             <div style="position: relative;" class="<%= @inside_playlist ? 'col-lg-12' : 'col-lg-5' %> video-detail-container resources_info_holder">
               <% if @collection_resource.present? %>
                 <div class="title_resource_playlist">
-                  <b class="font-weight-bold">Resource Title:</b> <%= @collection_resource.title %> <a target="_blank" href="<%= collection_collection_resource_path(@collection_resource.collection_id, @collection_resource.id) %>"><i class="fa fa-external-link"></i></a>
+                  <b class="font-weight-bold">Resource Title:</b> <%= @collection_resource.title %>
+                  <a target="_blank" href="<%= collection_collection_resource_path(@collection_resource.collection_id, @collection_resource.id) %>"><i class="fa fa-external-link"></i></a>
                 </div>
                 <div class="info_tabs" data-template-url="<%= collection_collection_resource_load_resource_details_template_path(@collection, @collection_resource, @resource_file, share: params[:share]) %>" data-search-size="12" data-tabs-size="12">
                 </div>
@@ -276,7 +206,7 @@
     </div>
   </div>
 </div>
-
+<%= render 'shared/rss_feed/rss_feed_modal' %>
 <div class="shareModal modal fade show" id="edit_playlist_resource_description_modal_center" tabindex="-1" role="dialog" aria-labelledby="edit_playlist_resource_description">
   <div class="modal-dialog modal-md  modal-dialog-centered" role="document">
     <div class="modal-content">
@@ -393,7 +323,7 @@
         playlist.start_time = '<%= start_time %>';
         playlist.end_time = '<%= end_time %>';
         playlist.max = '<%= max %>';
-        playlist.playlist_show = '<%= @playlist_show %>';
+        playlist.playlist_show = '<%= @playlist_show ? true : false  %>';
         playlist.collection_resource = collectionResource;
         playlist.initialize();
         playlist.edit_page_bindings();
