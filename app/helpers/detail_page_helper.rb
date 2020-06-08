@@ -124,6 +124,9 @@ module DetailPageHelper
         end
       end
     end
+    if document_current['title_ss'].present?
+      counts[query_string]['Title'] += count_em(document_current['title_ss'], query_string)
+    end
     counts
   end
 end
