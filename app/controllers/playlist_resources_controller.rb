@@ -35,7 +35,6 @@ class PlaylistResourcesController < ApplicationController
     respond_with_json('Success', 200)
   end
 
-
   def list_playlist_items
     @playlist_show = params[:view_type].to_boolean?
     @playlist_resource = PlaylistResource.find_by_id(params[:playlist_resource_id])
