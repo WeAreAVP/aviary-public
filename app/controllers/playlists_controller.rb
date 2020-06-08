@@ -89,7 +89,7 @@ class PlaylistsController < ApplicationController
       redirect_to playlist_show_path(time_prams(params))
       return
     end
-    @playlist_resources = @playlist.playlist_resources.order(:sort_order).includes(:organization, :collection_resource, :playlist_items)
+
     @resource_file = @collection_resource.collection_resource_files.find_by_id(params[:collection_resource_file_id])
     begin
       @collection = @collection_resource.collection

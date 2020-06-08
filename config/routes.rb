@@ -123,6 +123,7 @@ Rails.application.routes.draw do
       collection do
         post :sort
         get :bulk_delete
+        get :list_playlist_items
       end
       member do
         post :toggle_item

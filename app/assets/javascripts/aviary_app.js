@@ -41,7 +41,7 @@ function App() {
             selfApp.show_loader();
             selfApp.show_loader_text();
         }
-        $.ajax({
+        let object_ajax = $.ajax({
             url: url,
             data: requestData,
             error: function (response) {
@@ -58,7 +58,7 @@ function App() {
             },
             type: requestType
         });
-        return false;
+        return object_ajax;
     };
 
     /**
