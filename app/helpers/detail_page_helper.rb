@@ -81,7 +81,7 @@ module DetailPageHelper
     search_text_found
   end
 
-  def ready_keyword_for_count(searched_keywords, document_current, description_search_fields, index_search_fields, transcript_search_fields, _other_fields)
+  def ready_keyword_for_count(searched_keywords, document_current, description_search_fields, index_search_fields, transcript_search_fields)
     special_keywords = []
     all_keywords = searched_keywords
     if all_keywords
@@ -124,9 +124,9 @@ module DetailPageHelper
           end
         end
       end
-    end
-    if document_current['title_ss'].present?
-      counts[query_string]['Title'] += count_em(document_current['title_ss'], query_string)
+      if document_current['title_ss'].present?
+        counts[query_string]['Title'] += count_em(document_current['title_ss'], query_string)
+      end
     end
     counts
   end
