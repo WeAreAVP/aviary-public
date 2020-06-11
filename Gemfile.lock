@@ -283,7 +283,7 @@ GEM
     ffi (1.12.2-java)
     ffi (1.12.2-x64-mingw32)
     ffi (1.12.2-x86-mingw32)
-    geocoder (1.5.0)
+    geocoder (1.6.3)
     geoip (1.6.4)
     globalid (0.4.2)
       activesupport (>= 4.2.0)
