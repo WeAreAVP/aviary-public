@@ -45,7 +45,7 @@ class CatalogController < ApplicationController
     Rails.logger.error e
     session[:search_playlist_id] = {}
     respond_to do |format|
-      format.json { render json: t('error_update_again') + e.to_s, status: :unprocessable_entity }
+      format.json { render json: t('error_update_again') , status: :unprocessable_entity }
     end
   end
 

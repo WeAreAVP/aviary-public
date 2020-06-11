@@ -190,3 +190,4 @@ gem 'webpacker'
 gem 'mini_racer', platforms: :ruby
 
 gem "rubyzip", ">= 1.3.0"
+gem 'sanitize'

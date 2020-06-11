@@ -103,7 +103,8 @@ module DetailPageHelper
     special_keywords.each do |query_string|
       query_string = query_string.delete('"').delete('*').strip
       counts[query_string] ||= {}
-      [description_search_fields, index_search_fields, transcript_search_fields, other_fields].reduce([], :concat).each do |values|
+      counts[query_string]['Title'] ||= 0
+      [description_search_fields, index_search_fields, transcript_search_fields].reduce([], :concat).each do |values|
         title = values.to_s.titleize
         %w[Description Texts Text Search Keywords Subjects Synopsis Subjects Speaker Script Partial Point].each do |single_word|
           title = title.sub! single_word, '' if title.include?(single_word)

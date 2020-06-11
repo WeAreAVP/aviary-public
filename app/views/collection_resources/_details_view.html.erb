@@ -4,7 +4,6 @@
 
 <%
   @description_count = {}
-  @description_count = count_occurrence({'value' => @collection_resource.title}, session[:session_video_text_all], @description_count, 'description')
   if @collection_resource.present? %>
   <section class="form-common mCustomScrollbar mCustomScrollbar_description">
     <% dynamic_fields['CollectionResource'].each do |single_field| %>

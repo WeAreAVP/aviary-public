@@ -80,7 +80,7 @@
           <% end %>
           <div data-html="true" data-placement="bottom" class="playlist_resource_description white-tooltip d-none float-left playlist_resource_description_<%= pl_rsrc.id %>" style="max-width: 85%;">
             <p>
-              <%= pl_rsrc.description.strip_tags %>
+              <%= Sanitize.fragment(pl_rsrc.description, :elements => ['br']).html_safe %>
             </p>
           </div>
           <div>

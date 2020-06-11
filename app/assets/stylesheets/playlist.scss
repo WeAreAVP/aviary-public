@@ -619,8 +619,10 @@
 
   .title_resource_playlist {
     font-family: "Roboto";
-    font-size: 17px;
-    padding: 18px 0 5px;
+    font-size: 19px;
+    padding: 18px 0 10px;
+    border-bottom: 1px solid gainsboro;
+    margin-bottom: 5px;
   }
 
   .nav-item {
