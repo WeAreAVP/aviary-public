@@ -24,6 +24,7 @@
               <section class="form-common" style="display: block">
                 <%= hidden_field_tag "resource_file_id", @resource_file.try(&:id) %>
                 <% dynamic_fields['CollectionResource'].each do |single_field| %>
+                  <% next if single_field['field'].label == 'Title' %>
                   <div class="current-parent <%= single_field['settings'][:is_visible] == true && single_field['field'].system_name != 'duration' ? '' : 'd-none' %>">
                     <dt><%= single_field['field'].label %>:
                       <span class="badge badge-info addmore-row " data-type="<%= CustomFields::Field::TypeInformation.fetch_type(single_field['field'].column_type).to_s %>" data-is_repeatable="<%= single_field['field'].is_repeatable %>"> Add More </span>

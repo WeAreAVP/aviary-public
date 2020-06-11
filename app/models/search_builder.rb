@@ -371,7 +371,7 @@ class SearchBuilder < Blacklight::SearchBuilder
     sum_score << 0
     all_keywords = SearchBuilder.keywords_array(session_solr)
     unless all_keywords.blank?
-      [description_search_fields, index_search_fields, transcript_search_fields, other_fields].reduce([], :concat).each do |values|
+      [description_search_fields, index_search_fields, transcript_search_fields].reduce([], :concat).each do |values|
         all_keywords.each do |query_string|
           query_string = query_string.delete('"').strip
           query_string = remove_illegal_characters(query_string, 'advance')

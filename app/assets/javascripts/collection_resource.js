@@ -173,6 +173,14 @@ function CollectionResource() {
                 keyword = keyword.replace(/[{}]/g, '');
                 selfCR.markerHandlerArray[identifier] = new MarkerHandler(identifier, keyword);
                 selfCR.markerHandlerArray[identifier].initialize();
+                if(!selfCR.from_playlist){
+                    $(".title_resource_custom").mark(keyword, {
+                        "element": "div",
+                        "className": "highlight-marker mark d-inline",
+                        "caseSensitive": false,
+                        "separateWordSearch": false
+                    });
+                }
             });
         }
         selfCR.manageTabs(selfCR.edit_description);
@@ -752,7 +760,7 @@ function CollectionResource() {
                 e;
             }
 
-            selfCR.has_loaded = true;
+                selfCR.has_loaded = true;
         }
     };
 

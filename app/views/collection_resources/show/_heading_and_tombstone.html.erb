@@ -1,14 +1,15 @@
 
-<div class="text heading_and_tombstone ">
+<div class="text heading_and_tombstone d-inline">
   <dl>
     <dd class="name">
+      <% title_resource = @collection_resource.title %>
       <% if @inside_playlist && !params[:media_player].to_s.to_boolean? && !params[:embed].to_s.to_boolean? %>
-        <a href="<%= collection_collection_resource_path(@collection_resource.collection_id, @collection_resource.id) %>"> <%= @collection_resource.title %></a>
+        <a class="title_resource_custom" href="<%= collection_collection_resource_path(@collection_resource.collection_id, @collection_resource.id) %>"> <%= title_resource %></a>
       <% elsif !@inside_playlist and can? :manage, @collection_resource %>
-        <span data-bip-type="input" data-bip-attribute="title" data-bip-object="collection_resource" data-bip-original-content="<%= @collection_resource.title %>" data-bip-skip-blur="false" data-bip-url="<%= collection_collection_resource_path(collection_id: @collection_resource.collection.id, id: @collection_resource.id) %>" data-bip-value="<%= @collection_resource.title %>" class="best_in_place" id="best_in_place_av_resource_2_title" method="PUT"><%= @collection_resource.title %></span>
+        <span data-bip-type="input" data-bip-attribute="title" data-bip-object="collection_resource" data-bip-original-content="<%= @collection_resource.title %>" data-bip-skip-blur="false" data-bip-url="<%= collection_collection_resource_path(collection_id: @collection_resource.collection.id, id: @collection_resource.id) %>" data-bip-value="<%= @collection_resource.title %>" class="best_in_place title_resource_custom" id="best_in_place_av_resource_2_title" method="PUT"><%= title_resource %></span>
         <i class="fa fa-pencil edit_title"></i>
       <% else %>
-        <span> <%= @collection_resource.title %></span>
+        <span class="title_resource_custom"> <%= title_resource %></span>
       <% end %>
     </dd>
     <dt>Collection:</dt>
