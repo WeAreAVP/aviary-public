@@ -328,7 +328,7 @@ function Playlist() {
         selfPL.playlist_ajaxs.push(object_ajax);
     };
 
-    this.list_playlist_items_action = function (response) {
+    this.list_playlist_items_action = function (response, _container, requestData) {
 
         $('#playlist-list-page-no').val(parseInt($('#playlist-list-page-no').val(), 10) + 1);
         $('#playlist-list-contanier').append(response);
@@ -341,6 +341,13 @@ function Playlist() {
                 $('#no_resource_found').hide();
                 $('#playlist_resources_count').text($('.playlist_resource_single:visible').length);
             }
+            $(".title_description .title, .title_description .playlist_resource_description, .title_description .playlist_resource_description_content").unmark();
+            $(" .title_description  .title,  .title_description .playlist_resource_description, .title_description .playlist_resource_description_content").mark(requestData['query'].trim(), {
+                "element": "span",
+                "className": "highlight-marker ",
+                "caseSensitive": false,
+                "separateWordSearch": false
+            });
         }, 500);
         selfPL.calls_inprogress--;
         if (selfPL.calls_inprogress == 0) {
@@ -349,6 +356,8 @@ function Playlist() {
         if ($('.playlist_resource_single').length == 0 && selfPL.calls_inprogress <= 0) {
             $('#no_resource_found').show();
         }
+
+
     };
 
     this.update_description_playlist_action = function (response, _container, request) {

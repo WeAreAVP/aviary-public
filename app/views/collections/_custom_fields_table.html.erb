@@ -18,7 +18,7 @@
     <tbody>
 
     <% @dynamic_fields['CollectionResource'].each do |customfield| %>
-
+      <% next if customfield['field'].label.titleize == 'Title' %>
       <tr class="<%= customfield['field'].id %>">
         <%= hidden_field_tag "collection_template_field_sort[#{customfield['field'].id}][field_id]", customfield['field'].id, class: "sort-order-field", data: { field_name: customfield['field'].system_name} %>
 
