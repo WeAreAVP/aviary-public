@@ -7,16 +7,11 @@
   if @collection_resource.present? %>
   <section class="form-common mCustomScrollbar mCustomScrollbar_description">
     <% dynamic_fields['CollectionResource'].each do |single_field| %>
+      <% next if single_field['field'].label == 'Title' %>
       <% if single_field['settings'][:is_visible] %>
         <% if single_field['values'].length > 0  && (!single_field['values'][0]['value'].blank? || !single_field['values'][0]['vocab_value'].blank?) %>
           <dt><%= single_field['field'].label %>:</dt>
           <dd class="with-select">
-            <% if single_field['field'].label == 'Title' %>
-              <div class="single-value single-non-tombstone ">
-                <span class="single_value single_value_non_tombstone"><%= @collection_resource.title %> </span>
-                <br>
-              </div>
-            <% end %>
             <%= render partial: 'collection_resources/fields_partail_view', locals: {single_field: single_field} %>
           </dd>
           <div class="clearfix"></div>

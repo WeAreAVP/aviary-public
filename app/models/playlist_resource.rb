@@ -11,7 +11,7 @@ class PlaylistResource < ApplicationRecord
 
   def update_description
     if description.strip_tags.blank? && collection_resource.custom_field_value('description').present? && !collection_resource.custom_field_value('description').first['value'].strip_tags.blank?
-      self.description = collection_resource.custom_field_value('description').first['value'].strip_tags
+      self.description = Sanitize.fragment(collection_resource.custom_field_value('description').first['value'], elements: %w[p br])
       save
     end
   rescue StandardError => e
