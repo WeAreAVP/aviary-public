@@ -21,7 +21,6 @@
           <%= render partial: 'playlists/edit_playlist' %>
         </div>
       </div>
-      <%= render 'request_accesses/shared_request_modal' %>
       <%
         active_tab = session[:playlist_active_tab] if session[:playlist_active_tab].present?
         active_tab = if @playlist_show.present?
