@@ -175,8 +175,6 @@
                   </div>
                 </div>
 
-                <%= render partial: 'shared/rss_feed/rss_feed', locals: { c: pl, feedable: @playlist } %>
-
                 <div class="row">
                   <div class="col-md-12 text-right">
                     <%= pl.submit @playlist.new_record? ? 'Save' : 'Update', class: 'btn btn-primary' %>
@@ -219,7 +217,7 @@
     </div>
   </div>
 </div>
-<%= render 'shared/rss_feed/rss_feed_modal' %>
+
 <div class="shareModal modal fade show" id="edit_playlist_resource_description_modal_center" tabindex="-1" role="dialog" aria-labelledby="edit_playlist_resource_description">
   <div class="modal-dialog modal-md  modal-dialog-centered" role="document">
     <div class="modal-content">

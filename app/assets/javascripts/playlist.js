@@ -357,7 +357,7 @@ function Playlist() {
 
             $('.playlist_resource_description').each(function () {
                 let content = $(this).children('.less-description').html();
-                let show_Char = $(this).width() / 3.5;
+                let show_Char = $('.title_description').width() / 4;
                 if (content.length > show_Char) {
                     let c = content.substr(0, show_Char);
                     c = c.substr(0, c.lastIndexOf(" "));
