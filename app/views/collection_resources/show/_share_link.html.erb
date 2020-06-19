@@ -1,32 +1,33 @@
 <% unless @resource_file.nil? %>
   <% unless params[:embed] == 'true' %>
     <div class="shareHolder">
-      <div class="row">
-        <div class="col-md-7">
-        </div>
-        <div class="col-md-5 d-flex justify-content-end">
+      <div class="btn-group">
+        <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <i class="fa fa-ellipsis-v"></i>
+        </button>
+        <div class="dropdown-menu dropdown-menu-right">
           <% can_access = permission_to_access_file?(@resource_file) %>
           <% if can_access %>
             <% if @resource_file.is_downloadable && @resource_file.embed_type.nil? && @resource_file.resource_file_file_name.present? %>
-              <form method="get" action="<%= download_media_path(@resource_file.id) %>">
-                <button href="" class="btn btn-default mr-2" title="Download">
-                  <i class="fa fa-download" aria-hidden="true"></i> Download
+              <form method="get" class="dropdown-item" action="<%= download_media_path(@resource_file.id) %>">
+                <button href="" class="btn" title="Download">
+                  <i class="material-icons">get_app</i> Download
                 </button>
               </form>
             <% end %>
           <% end %>
-          <button type="button" class="badge mr-1 font-weight-bold" data-toggle="modal" data-target="#exampleModalCenter">
-            <i class="fa fa-share" aria-hidden="true"></i> Share
+          <button type="button" class="dropdown-item btn share-btn" data-toggle="modal" data-target="#exampleModalCenter">
+            <i class="material-icons">reply</i> Share
           </button>
           <% if current_user_is_current_org_user? %>
             <input type="hidden" id="type_of_playlist_view" value="add_to_playlist_view">
-            <button type="button" class="badge mr-1 font-weight-bold" data-toggle="modal" data-target="#playlistModalCenter">
-              <%= image_tag image_path('playlist_add.png'), style: 'margin-bottom: -5px;' %> Playlist
+            <button type="button" class="dropdown-item btn playlist-btn" data-toggle="modal" data-target="#playlistModalCenter">
+              <i class="material-icons">playlist_add</i> Playlist
             </button>
           <% else %>
             <input type="hidden" id="type_of_playlist_view" value="only_playlist_view">
             <button type="button" class="badge font-weight-bold" data-toggle="modal" data-target="#resourcePlaylistModel">
-              <%= image_tag image_path('resource_playlist.png'), style: 'margin-bottom: -5px;' %> Playlist
+              Playlist
             </button>
           <% end %>
         </div>

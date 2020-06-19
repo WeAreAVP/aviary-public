@@ -8,15 +8,8 @@
       <% can_access_transcript = file_transcript.is_public || @collection_resource.can_view || @collection_resource.can_edit || (can? :edit, @collection_resource.collection.organization) %>
       <div class="file_transcript file_transcript_<%= file_transcript.id %> d-none pb-10px" data-language="<%= file_transcript.language %>" data-title="<%= file_transcript.title %>" data-public="<%= file_transcript.is_public %>" data-webvtt="<%= file_transcript.associated_file_content_type.include?('vtt') %>" data-json="<%= file_transcript.timestamps.present? %>" data-access="<%= can_access_transcript %>" data-edit="<%= file_transcript.is_edit %>">
         <% if (can? :manage, @collection_resource) || @collection_resource.can_edit %>
-          <span class="font-size-13px">Edited By <b class="font-weight-bold"><%= file_transcript.user.full_name %></b> at <b class="font-weight-bold"><%= Time.at(file_transcript.updated_at.to_f).utc.strftime('%b %d, %Y %H:%M:%S') %></b></span>
-          <% if !file_transcript.is_edit && file_transcript.timestamps.present? %>
-            <a class="edit_fields edit_transcript" href="javascript://"
-               data-url="<%= edit_transcript_url(file_transcript, host: Utilities::AviaryDomainHandler.subdomain_handler(current_organization)) %>">
-              <i class="fa fa-pencil"></i>
-            </a>
-          <% elsif file_transcript.is_edit && (file_transcript.locked_by == current_user.id) %>
-            <a href="javascript://" class="btn-sm btn-success finish_editing" data-url="<%= edit_transcript_url(file_transcript, host: Utilities::AviaryDomainHandler.subdomain_handler(current_organization)) %>">Finish
-              Editing</a>
+          <% unless params[:from_playlist].to_s.to_boolean? %>
+            <span class="font-size-13px">Edited By <b class="font-weight-bold"><%= file_transcript.user.full_name %></b> at <b class="font-weight-bold"><%= Time.at(file_transcript.updated_at.to_f).utc.strftime('%b %d, %Y %H:%M:%S') %></b></span>
           <% end %>
         <% end %>
         <% if can_access_transcript %>

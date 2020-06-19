@@ -109,7 +109,7 @@ function Playlist() {
             var code = (e.keyCode || e.which);
             console.log(code);
             console.log(e);
-            if(code == 37 || code == 38 || code == 39 || code == 40 || e.ctrlKey || e.altKey || e.shiftKey || code == '9') {
+            if (code == 37 || code == 38 || code == 39 || code == 40 || e.ctrlKey || e.altKey || e.shiftKey || code == '9') {
                 return;
             }
             if ($('#search_playlist_resource').val().trim().length > 2 || $('#search_playlist_resource').val().trim().length == 0) {
@@ -175,36 +175,41 @@ function Playlist() {
     };
 
     const description_detail = function () {
+        const showChar = 220;  // How many characters are shown by default
+        const ellipsestext = "...";
+        const moretext = "Show more";
+        const lesstext = "Show less";
 
-        document_level_binding_element('.show_full_description', 'click', function () {
-            $($(this).closest('.text')[0]).find('.playlist_resource_description_content').addClass('d-none');
-            $($(this).closest('.text')[0]).find('.playlist_resource_description').removeClass('d-none');
-
-            $(this).addClass('d-none');
-            $('.ellipses_description').addClass('d-none');
-            $($(this).closest('.text')[0]).find('.show_less_description').removeClass('d-none');
+        $('.playlist_resource_description').each(function () {
+            let content = $(this).children('.less-description').html();
+            let show_Char = $(this).width() / 4;
+            if (content.length > show_Char) {
+                var c = content.substr(0, show_Char);
+                var html = c + '<span class="moreellipses">' + ellipsestext + '&nbsp;</span>&nbsp;&nbsp;<a href="" class="morelink">' + moretext + '</a>';
+                $(this).children('.less-description').html(html);
+            }
+        });
+        $('.playlist_description_full').each(function () {
+            var content = $(this).html();
+            if (content.length > showChar) {
+                var c = content.substr(0, showChar);
+                var h = content.substr(showChar, content.length - showChar);
+                var html = c + '<span class="moreellipses">' + ellipsestext + '&nbsp;</span><span class="morecontent"><span>' + h + '</span>&nbsp;&nbsp;<a href="" class="morelink">' + moretext + '</a></span>';
+                $(this).html(html);
+            }
         });
 
-        document_level_binding_element('.show_less_description', 'click', function () {
-            $($(this).closest('.text')[0]).find('.playlist_resource_description').addClass('d-none');
-            $($(this).closest('.text')[0]).find('.playlist_resource_description_content').removeClass('d-none');
-            $(this).addClass('d-none');
-            $($(this).closest('.text')[0]).find('.show_full_description').removeClass('d-none');
-            $($(this).closest('.text')[0]).find('.ellipses_description').removeClass('d-none');
-
-        });
-
-        document_level_binding_element('.show_full_description_playlist', 'click', function () {
-            $('.playlist_description_full').attr('style', 'z-index: 2;height: auto;');
-            $(this).addClass('d-none');
-            $('.show_less_description_playlist').removeClass('d-none');
-
-        });
-        document_level_binding_element('.show_less_description_playlist', 'click', function () {
-            $('.playlist_description_full').attr('style', 'z-index: 2;height: 30px;');
-            $(this).addClass('d-none');
-            $('.show_full_description_playlist').removeClass('d-none');
-
+        $(".morelink").click(function () {
+            if ($(this).hasClass("less")) {
+                $(this).removeClass("less");
+                $(this).html(moretext);
+            } else {
+                $(this).addClass("less");
+                $(this).html(lesstext);
+            }
+            $(this).parent().prev().toggle();
+            $(this).prev().toggle();
+            return false;
         });
 
     };
@@ -348,6 +353,28 @@ function Playlist() {
                 "caseSensitive": false,
                 "separateWordSearch": false
             });
+
+
+            $('.playlist_resource_description').each(function () {
+                let content = $(this).children('.less-description').html();
+                let show_Char = $(this).width() / 3.5;
+                if (content.length > show_Char) {
+                    let c = content.substr(0, show_Char);
+                    c = c.substr(0, c.lastIndexOf(" "));
+                    var html = c + '<span class="moreellipses">...&nbsp;</span>&nbsp;&nbsp;<span class="lessToMore">Show more</span>';
+                    $(this).children('.less-description').html(html);
+                    $(this).children('.full-description').append('<span class="moreToLess">Show less</span>')
+                }
+            });
+            $('.lessToMore').click(function () {
+                $(this).parent().addClass('d-none');
+                $(this).parent().next().removeClass('d-none');
+            });
+            $('.moreToLess').click(function () {
+                $(this).parent().addClass('d-none');
+                $(this).parent().prev().removeClass('d-none');
+            });
+
         }, 500);
         selfPL.calls_inprogress--;
         if (selfPL.calls_inprogress == 0) {

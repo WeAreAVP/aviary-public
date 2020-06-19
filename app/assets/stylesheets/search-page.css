@@ -703,18 +703,40 @@ form.range_limit .hold input:nth-child(2) {
 }
 
 .mark.current-active-index {
-    background: #FC7C34 !important;
+    background: rgba(252, 124, 52, 0.2) !important;
+    border: 1px solid #E26F2F;
 }
 
 .mark.current {
-    background: #FC7C34 !important;
+    background: rgba(252, 124, 52, 0.2) !important;
+    border: 1px solid #E26F2F;
     border-radius: 2px;
-    font-weight: bold;
-    padding: 3px;
-    font-size: 15px;
-    margin: 3px;
-    color: white;
+    color: #222;
+}
 
+
+.mark.annotation-active-index {
+    background: rgba(126, 251, 199, 0.3) !important;
+    border: 1px solid #1C4F3C;
+}
+
+.mark.annotation {
+    background: rgba(126, 251, 199, 0.3) !important;
+    border: 1px solid #1C4F3C;
+    border-radius: 2px;
+    color: #222;
+}
+
+.mark.non-annotation-active-index {
+    background: #fff !important;
+    border: 1px solid #959595;
+}
+
+.mark.non-annotation {
+    background: #fff !important;
+    border: 1px solid #959595;
+    border-radius: 2px;
+    color: #222;
 }
 
 .header {

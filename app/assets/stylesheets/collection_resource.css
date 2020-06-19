@@ -23,8 +23,8 @@
 }
 
 .timeline-player-bar {
-    background: #E5E5E5;
-    height: 30px;
+    background: #336075;
+    height: 40px;
     position: relative;
     z-index: 3;
 }
@@ -32,7 +32,7 @@
 .timeline-player-bar span {
     width: 5px;
     position: absolute;
-    height: 30px;
+    height: 40px;
     cursor: pointer;
 }
 
@@ -87,6 +87,9 @@
 .file_index_mark_custom .highlight-marker,
 .file_transcript_mark_custom .highlight-marker {
     cursor: pointer;
+    border: 1px solid #ffc800;
+    background: rgba(254, 181, 66, 0.15) !important;
+    color: #222 !important;
 }
 
 .service_type_cls {
@@ -130,7 +133,7 @@ h5.MsoNormal span {
 
 .selectize-dropdown-content .badge-danger,
 .selectize-input .badge-danger {
-    background-color: #f26928;
+    background-color: #fc7c34;
 }
 
 .finish_editing {
@@ -147,3 +150,30 @@ h5.MsoNormal span {
     text-decoration: none;
 }
 
+.learn-more-watson {
+    padding-top: 40px;
+    padding-left: 0;
+}
+
+.watson-nowrap {
+    white-space: nowrap;
+}
+
+.transcription_log_info {
+    cursor: pointer;
+}
+
+.mejs__vrview-button > button,
+.mejs-vrview-button > button {
+    display: none;
+}
+
+.mejs__vrview-button {
+    display: none;
+}
+
+.resource-edit-breadcrumb.breadcrumb {
+    padding: 10px 0;
+    margin: 0;
+    border-radius: 0;
+}
