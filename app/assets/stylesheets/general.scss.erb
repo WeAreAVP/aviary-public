@@ -367,32 +367,38 @@ a:hover,
 .custom-checkbox label {
   display: inline-block;
   vertical-align: top;
-  padding: 3px 0 3px 52px;
+  padding: 1px 0 0px 25px;
   position: relative;
-  font: 19px/23px Lato, serif;
-  margin: 0 0 25px;
+  font-family: Roboto;
+  font-size: 14px;
+  font-weight: 500;
+  margin: 0;
+  color: #000B11;
+  cursor: pointer;
 }
 
 .custom-checkbox label:before {
-  width: 29px;
-  height: 29px;
+  width: 17px;
+  height: 17px;
   content: "";
   position: absolute;
   top: 0;
   left: 0;
-  background: #f5f0e9;
+  background: #fff;
+  border: 2px solid #336075;
+  border-radius: 2px;
 }
 
 .custom-checkbox label:after {
-  width: 14px;
-  height: 6px;
+  width: 9px;
+  height: 5px;
   content: '';
-  border-width: 0 0 1px 1px;
+  border-width: 0 0 2px 2px;
   border-style: solid;
-  border-color: #333;
+  border-color: #336074;
   position: absolute;
-  top: 9px;
-  left: 8px;
+  top: 5px;
+  left: 4px;
   -webkit-transform: rotate(-45deg);
   transform: rotate(-45deg);
   display: none;
@@ -458,6 +464,7 @@ a:hover,
 /* header styles */
 #header.aviary-header {
   background: #333333;
+
   .navbar {
     padding: 0;
   }
@@ -476,7 +483,7 @@ a:hover,
 }
 
 #main_container {
-  padding-top: 30px;
+  padding-top: 10px;
   padding-bottom: 30px;
 }
 
@@ -498,7 +505,7 @@ a:hover,
 }
 
 #header .navbar-brand {
-  margin: 5px 0 0 20px;
+  margin: 5px 0 5px 20px;
   padding: 0;
 }
 
@@ -563,8 +570,7 @@ a:hover,
   }
 
   a[data-target="#signinmodal"] {
-    color:
-        #f5f5f7;
+    color: #f5f5f7;
   }
 }
 
@@ -671,10 +677,8 @@ a:hover,
 #sub_nav {
   position: relative;
   height: 40px;
-  box-shadow: 0 6px 10px rgba(12, 13, 14, 0.07);
   border-right: 0;
   border-left: 0;
-  margin-top: 5px;
   border-top: 0;
   background: #ecf0f1;
   z-index: 9;
@@ -747,8 +751,10 @@ a:hover,
   appearance: none;
 
 }
+
 #sub_nav .navbar-right .nav-item .nav-link {
   position: relative;
+
   &:before {
     content: "";
     position: absolute;
@@ -759,9 +765,10 @@ a:hover,
     width: 1px;
   }
 }
+
 #sub_nav .navbar-right .nav-item {
   &:last-child,
-  &:nth-last-child(2){
+  &:nth-last-child(2) {
     .nav-link {
       &:before {
         display: none;
@@ -1023,7 +1030,7 @@ a:hover,
 
 .search-field .form-control {
   border: none;
-  border-bottom: 1px solid #dcdcdc;
+  border-bottom: 2px solid #984B1F;
   border-radius: 0;
   padding: 10px 35px 11px;
   font-family: "Roboto";
@@ -1039,9 +1046,9 @@ a:hover,
   position: absolute;
   top: 12px;
   left: 7px;
-  font-size: 17px;
+  font-size: 13px;
   font-weight: bold;
-  color: #676565;
+  color: #984b1f;
 }
 
 .search-field .form-control:focus {
@@ -2777,6 +2784,7 @@ div.dataTables_wrapper div.dataTables_info {
     height: 25px;
   }
 }
+
 .nav-overlay {
   position: absolute;
   top: 0;

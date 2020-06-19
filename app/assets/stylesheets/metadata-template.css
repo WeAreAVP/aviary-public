@@ -393,14 +393,6 @@
     border: 1px solid #eee;
 }
 
-.drop_drag,
-.buttons_option {
-    letter-spacing: normal;
-    display: inline-block;
-    vertical-align: top;
-    width: 65%;
-}
-
 .buttons_option {
     width: 35%;
     padding-top: 2px;
@@ -424,7 +416,7 @@
 }
 
 .col-md-2 .play-timecode {
-    color: #0a8dc3;
+    color: #1A4679;
 }
 
 .play-timecode {
@@ -447,22 +439,7 @@
     display: inline-block;
 }
 
-#sort_index,
-#sort_transcript {
-    position: absolute;
-    left: 11px;
-    font-size: 9px;
-    top: 12px;
-    color: #727272;
-    background: #f9f9f9;
-    display: inline-block;
-    text-align: center;
-    border-radius: 4px;
-    padding: 3px 6px 7px 11px;
-}
-
 .select-index-drop {
-    padding-left: 50px;
     width: 100%;
     display: inline-block;
 }

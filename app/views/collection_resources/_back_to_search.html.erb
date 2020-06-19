@@ -1,5 +1,5 @@
 <% if session[:last_page].present? %>
   <%= link_to session[:last_page][:path], id: 'back-to-search-btn' do %>
-    <span class="fa fa-angle-left "></span> <%= session[:last_page][:title].html_safe %>
+    <span class="fa fa-angle-left "></span> <small><%= session[:last_page][:title].html_safe %></small>
   <% end %>
 <% end %>

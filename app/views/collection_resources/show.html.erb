@@ -2,11 +2,6 @@
 <% description @description_seo['value'].strip_tags if @description_seo.present? %>
 
 <main id="main" role="main">
-  <% if (can? :manage, @collection_resource) %>
-    <div class="breadcrumb resources-details">
-      <%= render_breadcrumbs %>
-    </div>
-  <% end %>
   <div class="search-detail-main container-fluid">
     <!-- we don't need annotation view -->
     <% if false || session[:view_type] == 'detail' %>

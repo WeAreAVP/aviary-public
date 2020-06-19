@@ -94,7 +94,7 @@ y-axis
 	.mCSB_scrollTools a + .mCSB_draggerContainer{ margin: 20px 0; }
 
 	.mCSB_scrollTools .mCSB_draggerRail{
-		width: 1px;
+		width: 2px;
 		height: 100%;
 		margin: 0 auto;
 		-webkit-border-radius: 16px; -moz-border-radius: 16px; border-radius: 16px;
@@ -350,7 +350,7 @@ yx-axis
 	}
 
 	.mCSB_scrollTools .mCSB_dragger .mCSB_dragger_bar{
-		background-color: #fff; background-color: #dcdcdc;
+		background-color: #fff; background-color: #336074;
 		filter: "alpha(opacity=75)"; -ms-filter: "alpha(opacity=75)"; 
 	}
 

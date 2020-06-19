@@ -5,7 +5,7 @@ class PlaylistResourcesController < ApplicationController
   include Aviary::SearchManagement
   before_action :set_config
   before_action :set_playlist
-  before_action :authenticate_user!, except: %I[search_text]
+  before_action :authenticate_user!, except: %I[search_text list_playlist_items]
   before_action :set_playlist_resource, only: %I[toggle_item update_description]
   before_action :set_json_variables
 

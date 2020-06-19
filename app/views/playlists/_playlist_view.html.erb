@@ -3,19 +3,25 @@
    embed_params[:media_player] = params[:media_player].present?
 %>
 <div id="main_container" class="container-fluid edit-playlist">
-  <div class="main_contain" style="padding: 0px;">
+  <div class="main_contain playlist-holder" style="padding: 0px;">
     <div class='row'>
       <!-- Playlist Player -->
       <div class='col-md-7' style="padding: 0px;border-right: 1px solid gainsboro;">
-        <div class="row">
-          <div class="col-12">
-            <h1 class="playlist_title mr-1"> <%= title @playlist.name %> </h1>
+        <div class="col-12">
+          <div class="p-2">
+            <h1 class="playlist_title"> <%= title @playlist.name %> </h1>
+            <div class="playlist_description_main">
+              <div class="playlist_description_full">
+                <%= Sanitize.fragment(@playlist.description, :elements => ['p', 'br']) %>
+              </div>
+            </div>
           </div>
         </div>
         <div class="resources-details">
           <%= render partial: 'playlists/edit_playlist' %>
         </div>
       </div>
+      <%= render 'request_accesses/shared_request_modal' %>
       <%
         active_tab = session[:playlist_active_tab] if session[:playlist_active_tab].present?
         active_tab = if @playlist_show.present?
@@ -62,7 +68,7 @@
                 Playlist Info</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="<%= playlist_show_path({playlist_id: @playlist}) %>">
+              <a class="nav-link" href="<%= playlist_show_path({ playlist_id: @playlist }) %>">
                 <i class="fa fa-th-list" aria-hidden="true"></i> View Playlist </a>
             </li>
           <% end %>
@@ -71,19 +77,26 @@
         <div class='tab-content'>
           <div class="loadingCus text-center" style="display: none;">…</div>
           <div id='resource-list-container' class='float-left w-100 tab-pane fade in <%= (active_tab.include? 'show_playlist') ? 'active show' : '' %>' data-url="<%= sort_playlist_playlist_resources_path(@playlist) %>">
-
-            <div class="text-right float-right playlist_operations_actions pr-1 mt-1 mb-1 ">
+            <div class="grey-box">
+              <div class="playlist_duration">
+                <strong>Playlist Duration: </strong>
+                <span class="single_value"> <%= time_to_duration(@playlist.duration) %></span>
+              </div>
+            </div>
+            <div class="grey-box playlist_operations_actions">
               <input type="text" id="search_playlist_resource" placeholder="Search within playlist" class="form-control mb-1 mt-1"/>
-              <% if !@playlist_show.present? && !@playlist_show && (can? :manage, @playlist) %>
-                <a href="javascript:void(0);" class="mb-1" data-url="<%= bulk_delete_playlist_playlist_resources_path(@playlist) %>" data-fetch_resource_list="<%= fetch_resource_list_playlists_path %>" style="color:#dc3545;" id="bulk_delete_playlist_resources">
-                  <i class="fa fa-trash-o" aria-hidden="true"></i> Bulk Delete</a> |
-                <a href="javascript:void(0);" class="select_all_playlist_resources "><i class="fa fa-plus" aria-hidden="true"></i>
+            </div>
+            <% if !@playlist_show.present? && !@playlist_show && (can? :manage, @playlist) %>
+              <div class="grey-box">
+                <a href="javascript:void(0);" class="select_all_playlist_resources btn-custom-small"><i class="fa fa-plus" aria-hidden="true"></i>
                   Select All</a>
+                <a href="javascript:void(0);" class="btn-custom-small" data-url="<%= bulk_delete_playlist_playlist_resources_path(@playlist) %>" data-fetch_resource_list="<%= fetch_resource_list_playlists_path %>" id="bulk_delete_playlist_resources">
+                  <i class="fa fa-trash-o" aria-hidden="true"></i> Bulk Delete</a>
                 <a href="javascript:void(0);" style="display: none;" class="deselect_all_playlist_resources ">
                   <i class="fa fa-minus" aria-hidden="true"></i> Deselect
                   All</a>
-              <% end %>
-            </div>
+              </div>
+            <% end %>
             <input type="hidden" id="playlist-list-page-no" value="0"/>
             <%
               param = {}
@@ -96,7 +109,7 @@
 
             </div>
             <div class="loader-playlist_items text-center d-none" style="top: 10%;">
-              <%= image_tag("https://#{ENV['S3_HOST_CDN']}/public/images/ajax-loader.gif", {style: 'height: 30px;width: 30px;'}) %>
+              <%= image_tag("https://#{ENV['S3_HOST_CDN']}/public/images/ajax-loader.gif", { style: 'height: 30px;width: 30px;' }) %>
             </div>
             <h1 id="no_resource_found" class="text-center font-size-21px mt-3" style="display: none !important;">
               No Resource Found!</h1>
@@ -104,7 +117,7 @@
           </div>
           <div id='edit-playlist-container' class="playlist-section tab-pane fade <%= (active_tab.include? 'edit_playlist') ? 'active show' : '' %>" style='padding: 25px 25px 0px 15px;'>
             <% if (can? :manage, @playlist) && @playlist_show.blank? %>
-              <%= simple_form_for @playlist, :url => @playlist.new_record? ? playlists_path : playlist_path(@playlist), html: {novalidate: true} do |pl| %>
+              <%= simple_form_for @playlist, :url => @playlist.new_record? ? playlists_path : playlist_path(@playlist), html: { novalidate: true } do |pl| %>
                 <div class="row">
                   <div class="col-sm-4" style='padding: 0px 5px;'>
                     <div class="form-group" style='margin-bottom: 0px;'>
@@ -114,7 +127,7 @@
                         </div>
                         <div class="file-upload" style='position: absolute;left: 0px;bottom: 0px;background:rgba(0,0,0, 0.5);width: 100%;'>
                           <%= pl.label @playlist.new_record? ? 'Add' : 'Change', for: 'playlist_thumbnail', style: 'background: none;border: none;padding: 0px 15px;color:#fff;font-weight: normal;font-size: 10px;' %>
-                          <%= pl.input :thumbnail, as: :file, error: false, label: false, input_html: {onchange: "readURL(this, 'banner');", accept: 'image/*'} %>
+                          <%= pl.input :thumbnail, as: :file, error: false, label: false, input_html: { onchange: "readURL(this, 'banner');", accept: 'image/*' } %>
                         </div>
                       </div>
                       <%= pl.error :thumbnail %>
@@ -122,14 +135,14 @@
                     </div>
                   </div>
                   <div class='col-sm-8' style='padding: 0px 5px;'>
-                    <%= pl.input :name, label: false, input_html: {class: 'form-control playlist-name-field'} %>
+                    <%= pl.input :name, label: false, input_html: { class: 'form-control playlist-name-field' } %>
                   </div>
                 </div>
 
                 <div class="row">
                   <div class="col-md-12 no-padding" style='margin-left: 5px;'>
                     <div class="form-group">
-                      <%= pl.input :description, label: false, input_html: {class: 'form-control'} %>
+                      <%= pl.input :description, label: false, input_html: { class: 'form-control' } %>
                     </div>
                   </div>
                 </div>
@@ -149,7 +162,7 @@
                       <div class="field-title">
                         <%= pl.label 'Featured ?', for: 'pl._featured' %>
                       </div>
-                      <%= pl.select :is_featured, [['Yes', true], ['No', false]], {prompt: 'Receive emails'}, required: true, label: false, class: 'custom-placeholder' %>
+                      <%= pl.select :is_featured, [['Yes', true], ['No', false]], { prompt: 'Receive emails' }, required: true, label: false, class: 'custom-placeholder' %>
                     </div>
                   </div>
                 </div>
@@ -163,6 +176,7 @@
                   </div>
                 </div>
 
+                <%= render partial: 'shared/rss_feed/rss_feed', locals: { c: pl, feedable: @playlist } %>
 
                 <div class="row">
                   <div class="col-md-12 text-right">
@@ -174,11 +188,13 @@
             <br>
           </div>
           <div id='metadata-container' class="metadata-section search-detail-main tab-pane fade <%= (active_tab.include? 'show_metadata') ? 'active show' : '' %>">
-            <div style="position: relative;" class="<%= @inside_playlist ? 'col-lg-12' : 'col-lg-5' %> video-detail-container resources_info_holder">
+            <div style="position: relative;" class="<%= @inside_playlist ? '' : '' %> video-detail-container resources_info_holder">
               <% if @collection_resource.present? %>
-                <div class="title_resource_playlist">
-                  <b class="font-weight-bold">Resource Title:</b> <%= @collection_resource.title %>
-                  <a target="_blank" href="<%= collection_collection_resource_path(@collection_resource.collection_id, @collection_resource.id) %>"><i class="fa fa-external-link"></i></a>
+                <div class="grey-box">
+                  <div class="title_resource_playlist">
+                    <strong>Resource Title:</strong> <%= @collection_resource.title %>
+                    <a target="_blank" href="<%= collection_collection_resource_path(@collection_resource.collection_id, @collection_resource.id) %>"><i class="fa fa-external-link"></i></a>
+                  </div>
                 </div>
                 <div class="info_tabs" data-template-url="<%= collection_collection_resource_load_resource_details_template_path(@collection, @collection_resource, @resource_file, share: params[:share]) %>" data-search-size="12" data-tabs-size="12">
                 </div>
@@ -204,6 +220,7 @@
     </div>
   </div>
 </div>
+<%= render 'shared/rss_feed/rss_feed_modal' %>
 <div class="shareModal modal fade show" id="edit_playlist_resource_description_modal_center" tabindex="-1" role="dialog" aria-labelledby="edit_playlist_resource_description">
   <div class="modal-dialog modal-md  modal-dialog-centered" role="document">
     <div class="modal-content">
@@ -236,8 +253,8 @@
       <div class="modal-body">
         <div class="data-table">
           <div class="container-fluid">
-            <%= content_tag :table, role: :datatable, class: ['table', 'table-striped'], id: 'collection_resource_datatable', data: {url: collection_resources_path(format: :json)} do %>
-              <%= render partial: 'collection_resources/listing_table', locals: {table_called_from: 'permission_group', columns_details: {}, organization_id: current_organization.id} %>
+            <%= content_tag :table, role: :datatable, class: ['table', 'table-striped'], id: 'collection_resource_datatable', data: { url: collection_resources_path(format: :json) } do %>
+              <%= render partial: 'collection_resources/listing_table', locals: { table_called_from: 'permission_group', columns_details: {}, organization_id: current_organization.id } %>
             <% end %>
           </div>
         </div>

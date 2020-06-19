@@ -41,11 +41,6 @@
           <% end %>
 
           <% unless session[:session_video_text_all].blank? %>
-            <div class="button_handle">
-              <span class="clear_search_video_cus_all font-weight-bold cursor-pointer" data-identifire="all" data-url="<%= collection_collection_resource_search_text_path %>">Clear Search Terms</span>
-            </div>
-          <% end %>
-          <% unless session[:session_video_text_all].blank? %>
             <div class="search-result-bottom active ">
               <a href="javascript:void(0);" class="btn-search-result-nav "><span><i class="fa fa-bars"></i> Search Results </span></a>
               <div class="marker_list_hanlder_custom">
