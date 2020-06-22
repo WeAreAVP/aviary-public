@@ -23,23 +23,6 @@
           playlist_link = (pl_rsrc == @playlist_resource) ? 'javascript:void(0)' : playlist_show_path(param_link) %>
       <% end %>
 
-      <% unless can_access %>
-        <div class="access_hold feat-reso-locked">
-          <div class="holder">
-            <div class="box">
-              <div class="col-12">
-                <div class="col-12 mt-2 d-inline-block">
-                  <%= lock_image('h-20px') %>
-                  <%= access_request_link('playlist_resource_single_access', { organization_id: pl_rsrc.collection_resource.collection.organization.id, title: pl_rsrc.collection_resource.title, id: pl_rsrc.collection_resource.id, click_through: pl_rsrc.collection_resource.collection.click_through, conditions_for_access: pl_rsrc.collection_resource.collection.conditions_for_access }) %>
-                </div>
-                <div class="col-12 mt-1">
-                  <span class="text-white font-size-12px">You don't have access to this resource.</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      <% end %>
 
       <a href="<%= playlist_link %>" class="image ml-2">
         <% thumb_url = nil %>
@@ -64,30 +47,28 @@
           </div>
           <%= link_to pl_rsrc.collection_resource.collection.title, collection_url(pl_rsrc.collection_resource.collection, host: Utilities::AviaryDomainHandler.subdomain_handler(pl_rsrc.collection_resource.collection.organization)), target: "_blank", class: "text" %>
         </div>
-        <div class="d-none title_desc ription_text"> <%= pl_rsrc.name %> <%= simple_format(pl_rsrc.description) %></div>
+
         <div class="title_description">
-
-
           <% if !@playlist_show.present? && !@playlist_show && (can? :manage, @playlist) %>
 
             <span style="font-size: 15px;font-weight: 500;color: #000;display: inline-block;text-decoration: none;line-height: 1.25;" data-bip-type="input" data-bip-attribute="title" data-bip-object="playlist_resource" data-bip-original-content="<%= pl_rsrc.name %>"
                   data-bip-skip-blur="false" data-bip-url="<%= update_description_playlist_playlist_resource_path(playlist_id: pl_rsrc.playlist_id, id: pl_rsrc.id) %>" data-bip-value="<%= pl_rsrc.name %>"
                   class="best_in_place" id="best_in_place_pl_resource_2_title" method="PUT">  <%= pl_rsrc.name %>
-              <i class="ml-1 mt-1 fa fa-pencil edit-description-resource"></i>
-                            </span>
+            </span>
+            <i class="ml-1 mt-1 fa fa-pencil edit-description-resource"></i>
 
           <% else %>
             <a href="<%= playlist_link %>" class='title <%= can_access ? 'can-play-resource' : ' ' %>'> <%= pl_rsrc.name %> </a>
           <% end %>
-          <div class="playlist_description_full playlist_resource_description float-left playlist_resource_description_<%= pl_rsrc.id %>">
-            <div class="less-description">
-              <%= pl_rsrc.description.strip_tags %>
-            </div>
-            <div class="d-none full-description">
-              <%= Sanitize.fragment(pl_rsrc.description, :elements => ['p', 'br']).html_safe %>
-            </div>
-
+        </div>
+        <div class="playlist_description_full playlist_resource_description float-left playlist_resource_description_<%= pl_rsrc.id %>">
+          <div class="less-description">
+            <%= pl_rsrc.description.strip_tags %>
           </div>
+          <div class="d-none full-description">
+            <%= Sanitize.fragment(pl_rsrc.description, :elements => ['p', 'br']).html_safe %>
+          </div>
+
         </div>
         <% unless @playlist_show.present? && @playlist_show && (can? :manage, @playlist) %>
           <button class="text-primary edit_description_playlist badge badge-primary" data-toggle="modal" data-target="#edit_playlist_resource_description_modal_center" data-playlist_resource_id='<%= pl_rsrc.id %>' data-url="<%= update_description_playlist_playlist_resource_path(playlist_id: pl_rsrc.playlist_id, id: pl_rsrc.id) %>">

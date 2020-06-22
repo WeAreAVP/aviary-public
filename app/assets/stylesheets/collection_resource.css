@@ -41,7 +41,7 @@
 }
 
 .timeline-player-bar span.dark-orange {
-    background-color: #FC7C34 !important;
+    background-color: #001721 !important;
 }
 
 .timeline-player-bar span.yellow {
@@ -49,7 +49,7 @@
 }
 
 .timeline-player-bar span.blue {
-    background-color: #3d62e6;
+    background-color: #f2f5f6;
 }
 
 .timeline-player-bar span.green {
@@ -90,6 +90,12 @@
     border: 1px solid #ffc800;
     background: rgba(254, 181, 66, 0.15) !important;
     color: #222 !important;
+}
+
+.file_index .no-access,
+.file_transcript .no-access {
+    font-size: 16px;
+    line-height: 1.5;
 }
 
 .service_type_cls {
@@ -133,7 +139,7 @@ h5.MsoNormal span {
 
 .selectize-dropdown-content .badge-danger,
 .selectize-input .badge-danger {
-    background-color: #fc7c34;
+    background-color: #e26f2f;
 }
 
 .finish_editing {

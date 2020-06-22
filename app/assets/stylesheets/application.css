@@ -352,31 +352,31 @@ th.table-head-id {
     border: 1px solid rgba(0, 0, 0, 0.1);
     padding: 2px;
     min-width: 100px;
-    border-top: 3px solid #f05c1f;
+    border-top: 3px solid #e26f2f;
 }
 
 /* Tooltip on top */
 .tooltip.top > .tooltip-arrow {
-    border-top: 5px solid #f05c1f;
-    background-color: #f05c1f;
+    border-top: 5px solid #e26f2f;
+    background-color: #e26f2f;
 }
 
 /* Tooltip on bottom */
 .tooltip.bottom > .tooltip-arrow {
-    border-bottom: 3px solid #f05c1f;
-    background-color: #f05c1f;
+    border-bottom: 3px solid #e26f2f;
+    background-color: #e26f2f;
 }
 
 /* Tooltip on left */
 .tooltip.left > .tooltip-arrow {
-    border-left: 3px solid #f05c1f;
-    background-color: #f05c1f;
+    border-left: 3px solid #e26f2f;
+    background-color: #e26f2f;
 }
 
 /* Tooltip on right */
 .tooltip.right > .tooltip-arrow {
-    border-right: 3px solid #f05c1f;
-    background-color: #f05c1f;
+    border-right: 3px solid #e26f2f;
+    background-color: #e26f2f;
 }
 
 .tooltip.show {
