@@ -444,7 +444,7 @@ GEM
     public_suffix (3.0.3)
     puma (3.12.6)
     puma (3.12.6-java)
-    rack (2.2.2)
+    rack (2.2.3)
     rack-attack (6.1.0)
       rack (>= 1.0, < 3)
     rack-contrib (2.0.1)
