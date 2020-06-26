@@ -34,10 +34,11 @@
             <% if @resource_file.present? %>
               <a href="javascript:void(0);" data-toggle="modal" data-target="#index_upload" class="dropdown-item" title="Add"><i class="fa fa-plus-circle" aria-hidden="true"></i>
                 Upload index</a>
-              <div class="dropdown-divider"></div>
+
               <% if @resource_file.file_indexes.present? %>
+                <div class="dropdown-divider"></div>
                 <a href="javascript:void(0);" data-toggle="modal" data-target="#index_sort_popup" class="dropdown-item" id="sort_index"><i class="material-icons custom-transcript-icon">menu</i>
-                  Manage Index</a>
+                  Manage indexes</a>
                 <a href="javascript:void(0);" data-toggle="modal" id="index_update_btn" data-target="#index_upload" class="dropdown-item" title="Update"><i class="fa fa-refresh"></i>
                   Edit this index
                 </a>

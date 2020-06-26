@@ -357,8 +357,8 @@ function Playlist() {
                 $(this).parent().addClass('d-none');
                 $(this).parent().prev().removeClass('d-none');
             });
-            $(".title, .less-description, .full-description").unmark();
-            $(".title, .less-description, .full-description").mark(requestData['query'].trim(), {
+            $(".title_description, .less-description, .full-description").unmark();
+            $(".title_description, .less-description, .full-description").mark(requestData['query'].trim(), {
                 "element": "span",
                 "className": "highlight-marker ",
                 "caseSensitive": false,

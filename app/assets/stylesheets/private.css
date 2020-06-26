@@ -65,6 +65,10 @@
     visibility: visible;
 }
 
+#back-to-search-btn:hover + h1 {
+    visibility: hidden;
+}
+
 .video-detail-holder {
     position: relative;
     transition: all 0.2s linear;
@@ -72,6 +76,7 @@
 }
 
 .shareHolder {
+    margin-right: 15px;
     position: absolute;
     z-index: 2;
     right: 0;
@@ -79,6 +84,11 @@
     transition: all 0.2s linear;
     padding: 0 15px 15px 10px;
     background: linear-gradient(to left, rgba(0, 0, 0, 0.63) 50%, transparent);
+}
+
+.shareHolder button:hover,
+.shareHolder button:active {
+    background: transparent !important;
 }
 
 .video-detail-holder:hover .shareHolder,
