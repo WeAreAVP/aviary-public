@@ -37,7 +37,7 @@
             <% if @resource_file.present? %>
               <li>
                 <a href="javascript:void(0);" data-toggle="modal" data-target="#transcript_upload" class="dropdown-item"><i class="fa fa-plus-circle" aria-hidden="true"></i>
-                  Upload another transcript</a></li>
+                  Upload transcript</a></li>
               <li>
               <li>
                 <div class="dropdown-divider"></div>
@@ -50,7 +50,7 @@
               <% if @resource_file.file_transcripts.present? %>
                 <li>
                   <a href="javascript:void(0);" data-toggle="modal" id="transcript_update_btn" data-target="#transcript_upload" class="dropdown-item"><i class="fa fa-refresh" aria-hidden="true"></i>
-                    Replace this transcript
+                    Edit this transcript
                   </a></li>
                 <li>
                   <a href="javascript:void(0);" data-url="/transcripts/delete/" id="delete_transcript" class="dropdown-item"><i class="material-icons custom-delete-icon">delete</i>

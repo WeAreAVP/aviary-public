@@ -44,10 +44,10 @@ class ApplicationController < ActionController::Base
   end
 
   def search_param_handler
-    methods = %w[load_resource_details_template show load_head_and_tombstone_template search_text record_tracking]
-    controllers = %w[playlists transcripts indexes]
+    methods = %w[load_resource_details_template show load_head_and_tombstone_template search_text record_tracking list_playlist_items]
+    controllers = %w[playlists transcripts indexes playlist_resources]
     session[:solr_params] = '' if params[:controller] != 'collection_resources' && !methods.include?(params[:action]) && params[:controller] != 'catalog'
-    session[:search_text] = {} if !controllers.include?(params[:controller]) && !%w[upload].include?(params[:action]) && (params[:controller] != 'collection_resources' && !methods.include?(params[:action]))
+    session[:search_text] = {} if !controllers.search_param_handlerinclude?(params[:controller]) && !%w[upload].include?(params[:action]) && (params[:controller] != 'collection_resources' && !methods.include?(params[:action]))
     session[:resource_tracking] = {} if (params[:controller] != 'transcripts' && params[:controller] != 'indexes') && !%w[upload].include?(params[:action]) && (params[:controller] != 'collection_resources' && !methods.include?(params[:action]))
     session[:playlist_resource_id] = {} if params[:controller] != 'catalog' && !%w[update_selected_playlist fetch_bulk_edit_resource_list].include?(params[:action])
     if params.key?('resource_file_id') && params['resource_file_id'].present? && params['resource_file_id'] != session[:last_resource_file_id]
