@@ -78,18 +78,7 @@
     visibility: hidden;
     transition: all 0.2s linear;
     padding: 0 15px 15px 10px;
-    background-image: linear-gradient(black, transparent);
-}
-.shareHolder:after {
-    content: "";
-    position: absolute;
-    top: 0px;
-    right: 0px;
-    bottom: 0;
-    background: linear-gradient(to top, transparent 0%, rgba(0, 0, 0, 0.1) 90%);
-    width: 130px;
-    height: 100px;
-    border-radius: 0;
+    background: linear-gradient(to left, rgba(0, 0, 0, 0.63) 50%, transparent);
 }
 
 .video-detail-holder:hover .shareHolder,
