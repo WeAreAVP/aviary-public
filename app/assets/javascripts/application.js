@@ -349,10 +349,11 @@ function resourceSearchBar() {
     if ($(".search_details_bar > div").length > 0) {
         $(".search_details_bar > div").unstick();
         if ($(window).width() >= 992) {
-            $(".search_details_bar > div").sticky({topSpacing: 40});
+            $(".search_details_bar > div").sticky({topSpacing: 40, responsiveWidth: true});
         } else {
-            $(".search_details_bar > div").sticky({topSpacing: 0});
+            $(".search_details_bar > div").sticky({topSpacing: 0, responsiveWidth: true});
         }
+        $(".search_details_bar > div").sticky('update');
     }
 }
 

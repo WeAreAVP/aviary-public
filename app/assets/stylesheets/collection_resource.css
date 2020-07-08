@@ -84,6 +84,7 @@
     float: right !important;
 }
 
+.highlight-marker,
 .file_index_mark_custom .highlight-marker,
 .file_transcript_mark_custom .highlight-marker {
     cursor: pointer;

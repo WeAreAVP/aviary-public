@@ -180,23 +180,21 @@
   }
 
   .playlist-list .image {
-    width: 80px;
-    flex: 0 0 80px;
-    margin-right: 10px;
+    width: 17%;
     border-radius: 2px;
     overflow: hidden;
+    float: right;
   }
 
   .playlist-list .image img {
     width: 100%;
-    height: 50px;
     object-fit: cover;
-    display: block;
   }
 
   .playlist-list .text .coll-name {
     display: flex;
     align-items: center;
+    margin: 5px 0;
   }
 
   .playlist-list .text .coll-name .ico {
@@ -232,9 +230,9 @@
   }
 
   .playlist-list .text {
-    font-size: 12px;
+    font-size: 14px;
     color: #999;
-    width: 80%;
+    width: 100%;
   }
 
   .playlist-list .text p {
@@ -372,7 +370,7 @@
 
   .plr-sort-index {
     height: 20px;
-    margin-top: 11px;
+    margin-top: 25px;
     font-size: 12px;
     padding: 5px 5px;
     text-align: center;
@@ -380,6 +378,9 @@
     max-width: 30px;
   }
 
+  .sort-icon {
+    margin-left: 5px;
+  }
   .edit_description_playlist {
     border: none;
     font-weight: normal !important;
@@ -520,6 +521,7 @@
 
   .plr-sort-container {
     position: relative;
+    right: 5px;
   }
 
   .search-detail-main .nav-item a strong {
@@ -543,14 +545,14 @@
   }
 
   .choose-resource {
-    top: 3px;
-    left: 18px;
+    margin-top: 25px;
+    margin-left: 5px;
     z-index: 9;
     position: absolute;
   }
 
-  .now-playing .choose-resource {
-    top: 15px;
+  .title_description {
+    width: 80%;
   }
 
   .playlist_operations_actions {

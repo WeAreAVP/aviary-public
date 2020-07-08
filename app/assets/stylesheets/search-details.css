@@ -1625,19 +1625,11 @@ dl.form textarea.text {
     padding-bottom: 0;
     padding-left: 15px;
     padding-right: 15px;
-    border-radius: 0 0 9px 9px;
+    border-radius: 0 0 2px 2px;
     overflow: hidden;
 }
-
-.search_details_bar .col-md-12.sticked .form-control {
-    font-size: 14px;
-    height: 40px;
-    padding-left: 45px;
-}
-
-.search_details_bar .col-md-12.sticked .icon {
-    font-size: 14px;
-    left: 15px;
+.search_details_bar form {
+    margin-top: 5px !important;
 }
 
 .search_details_bar .col-md-12.sticked .form-group {
@@ -1646,28 +1638,6 @@ dl.form textarea.text {
 
 .search_details_bar .col-md-12.sticked strong.title {
     display: none;
-}
-
-.search_details_bar .col-md-12.sticked .search-result-bottom.open .box {
-    border: none;
-}
-
-.search_details_bar .col-md-12.sticked .search-result-bottom ul {
-    padding: 5px 0;
-}
-
-.search_details_bar .col-md-12.sticked .search-result-bottom li {
-    padding: 0 6px;
-    border-bottom: none;
-}
-
-.search_details_bar .col-md-12.sticked .search-result-bottom li .box {
-    padding: 0 0 0 10px;
-}
-
-.search_details_bar .col-md-12.sticked .search-result-bottom li i {
-    font-size: 13px;
-    padding: 4px 1px;
 }
 
 .search_details_bar .col-md-12.sticked .button_handle {
@@ -1793,7 +1763,6 @@ dl.form textarea.text {
     left: 0;
     position: relative;
     z-index: 9;
-    border: 1px solid transparent;
     transition: 0.2s all linear;
     -webkit-transition: 0.2s all linear;
     -moz-transition: 0.2s all linear;
@@ -1841,7 +1810,7 @@ dl.form textarea.text {
     -ms-transition: 0.2s all linear;
     opacity: 0;
     visibility: hidden;
-    padding: 7px;
+    padding: 5px 0;
     border-top: 2px solid #CCD7DD;
     background: #F2F5F6;
 }
@@ -1857,13 +1826,14 @@ dl.form textarea.text {
 }
 
 .search_details_bar .form-group {
-    margin: 0 0 5px;
+    margin: 0;
 }
 
 .search-result-bottom li {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding: 0 6px;
 }
 
 .search-result-bottom li .box {
@@ -1872,7 +1842,7 @@ dl.form textarea.text {
     align-items: center;
     flex: 1;
     border-radius: 0;
-    padding: 5px 10px;
+    padding: 0 0 0 10px;
     background: #fff;
 }
 
@@ -1888,8 +1858,8 @@ dl.form textarea.text {
 }
 
 .search-result-bottom li .cancel_button i {
-    font-size: 18px;
-    padding: 8px 5px 8px 2px;
+    font-size: 13px;
+    padding: 4px 1px;
     color: #984b1f;
 }
 

@@ -180,15 +180,6 @@ function Playlist() {
         const moretext = "Show more";
         const lesstext = "Show less";
 
-        $('.playlist_resource_description').each(function () {
-            let content = $(this).children('.less-description').html();
-            let show_Char = $(this).width() / 4;
-            if (content.length > show_Char) {
-                var c = content.substr(0, show_Char);
-                var html = c + '<span class="moreellipses">' + ellipsestext + '&nbsp;</span>&nbsp;&nbsp;<a href="" class="morelink">' + moretext + '</a>';
-                $(this).children('.less-description').html(html);
-            }
-        });
         $('.playlist_description_full').each(function () {
             var content = $(this).html();
             if (content.length > showChar) {
@@ -346,18 +337,10 @@ function Playlist() {
                 $('#no_resource_found').hide();
                 $('#playlist_resources_count').text($('.playlist_resource_single:visible').length);
             }
-            $(".title_description .title, .title_description .playlist_resource_description, .title_description .playlist_resource_description_content").unmark();
-            $(" .title_description  .title,  .title_description .playlist_resource_description, .title_description .playlist_resource_description_content").mark(requestData['query'].trim(), {
-                "element": "span",
-                "className": "highlight-marker ",
-                "caseSensitive": false,
-                "separateWordSearch": false
-            });
-
 
             $('.playlist_resource_description').each(function () {
                 let content = $(this).children('.less-description').html();
-                let show_Char = $('.title_description').width() / 4;
+                let show_Char =120;
                 if (content.length > show_Char) {
                     let c = content.substr(0, show_Char);
                     c = c.substr(0, c.lastIndexOf(" "));
@@ -373,6 +356,13 @@ function Playlist() {
             $('.moreToLess').click(function () {
                 $(this).parent().addClass('d-none');
                 $(this).parent().prev().removeClass('d-none');
+            });
+            $(".title_description, .less-description, .full-description").unmark();
+            $(".title_description, .less-description, .full-description").mark(requestData['query'].trim(), {
+                "element": "span",
+                "className": "highlight-marker ",
+                "caseSensitive": false,
+                "separateWordSearch": false
             });
 
         }, 500);

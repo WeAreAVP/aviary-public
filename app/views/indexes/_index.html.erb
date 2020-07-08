@@ -33,13 +33,14 @@
           <% if ((can? :manage, @collection_resource) || @collection_resource.can_edit) && !params[:from_playlist].to_s.to_boolean? %>
             <% if @resource_file.present? %>
               <a href="javascript:void(0);" data-toggle="modal" data-target="#index_upload" class="dropdown-item" title="Add"><i class="fa fa-plus-circle" aria-hidden="true"></i>
-                Upload another index</a>
-              <div class="dropdown-divider"></div>
+                Upload index</a>
+
               <% if @resource_file.file_indexes.present? %>
+                <div class="dropdown-divider"></div>
                 <a href="javascript:void(0);" data-toggle="modal" data-target="#index_sort_popup" class="dropdown-item" id="sort_index"><i class="material-icons custom-transcript-icon">menu</i>
-                  Manage Index</a>
+                  Manage indexes</a>
                 <a href="javascript:void(0);" data-toggle="modal" id="index_update_btn" data-target="#index_upload" class="dropdown-item" title="Update"><i class="fa fa-refresh"></i>
-                  Replace this index
+                  Edit this index
                 </a>
                 <a href="javascript:void(0);" data-url="/indexes/delete/" id="delete_index" class="dropdown-item" title="Delete"><i class="material-icons custom-delete-icon">delete</i>
                   Delete this index

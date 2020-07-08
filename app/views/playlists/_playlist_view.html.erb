@@ -100,6 +100,7 @@
             <%
               param = {}
               param[:playlist_id] = @playlist.id
+	      param[:playlist_resource_id] = @playlist_resource.id
               param[:embed] = true if params[:embed].present?
               param[:media_player] = true if params[:media_player].present?
             %>
