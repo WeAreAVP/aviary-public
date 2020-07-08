@@ -1,8 +1,4 @@
 @media screen and (max-width: 1365px) {
-  .search-details .details.list-view li {
-    margin: 0 20px 30px 0;
-  }
-
   .video-text:after {
     -webkit-background-size: 600px;
     background-size: 600px;
@@ -119,17 +115,9 @@
   }
   .search-details .details > li,
   .search-details .details.list-view li {
-    width: 33.333%;
-    margin: 0 0 20px !important;
-    float: left;
-    letter-spacing: normal;
-    padding: 0 10px;
-    background-color: transparent;
+    width: 50%;
   }
-  .search-details .details .text-holder {
-    background: #eef3f2;
-    padding: 20px !important;
-  }
+
   .search-details .details .text-holder .list b {
     float: left;
   }

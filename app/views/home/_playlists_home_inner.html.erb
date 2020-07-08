@@ -19,7 +19,7 @@
                   <span class="title"><%= playlist.name %></span>
                 <% end %>
                 <span class="description_collection">
-                    <%= strip_tags(playlist.description) %></span>
+                    <%= strip_tags(playlist.description).truncate(60, omission: '...', :separator => ' ') %></span>
                 <a data-toggle="modal" class='show_hide_description' data-type="View Playlist" data-id="description_<%= playlist.id %>" data-collection-img='<%= url_image(playlist.thumbnail.url(:small)) %>'
                    data-collection-title="<%= playlist.name %>" data-org-logo="<%= playlist.organization.logo_image.url(:medium) %>" data-collection-path="<%= playlist_show_path(playlist) %>" data-org-title="<%= playlist.organization.name %>"
                    data-collection-search="<%= playlist_show_path(playlist) %>">

@@ -370,7 +370,6 @@ form.range_limit .hold {
 
 .search_tombstone_cust_parent {
     position: relative;
-    max-height: 21px;
 }
 
 .search_tombstone_cust_parent .moreclick {
@@ -1126,16 +1125,15 @@ form.range_limit .hold input:nth-child(2) {
     text-overflow: ellipsis;
     float: left;
     overflow: hidden;
-    max-width: 43%;
+    max-width: 80%;
     height: 1.2em;
     white-space: nowrap;
 }
 
 .collection-label-search {
     position: relative;
-    padding-left: 24px;
-    padding-top: 3px;
-    min-height: 20px;
+    padding-left: 5px;
+    padding-top: 25px;
     line-height: 1;
     font-weight: normal;
 }

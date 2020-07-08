@@ -129,12 +129,7 @@
 
     .search-details .details > li,
     .search-details .details.list-view li {
-        width: 33.333%;
-        margin: 0 0 20px !important;
-        float: left;
-        letter-spacing: normal;
-        padding: 0 10px;
-        background-color: transparent;
+        width: 50%;
     }
 
     .search-details .details .text-holder .list b {
