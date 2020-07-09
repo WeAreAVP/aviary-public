@@ -152,6 +152,7 @@ function ResourceBulkFileEdit(ids_session_raw) {
             action: 'update_progress',
             bulk_edit_type_of_bulk_operation: $('.bulk_operation_collection_file').val(),
             access_type: $('.change_status_select_option').val(),
+            is_downloadable: $('.change_downloadable_status_option').val(),
             ids: selfRBE.ids_session
         }, 'JSON', 'GET', '', selfRBE, false);
     };

@@ -40,6 +40,8 @@ module Aviary::BulkOperation
         count = params[:ids].length.to_i - CollectionResourceFile.where(id: params[:ids]).length.to_i
       when 'change_status'
         count = CollectionResourceFile.where(id: params[:ids], access: params[:access_type]).length
+      when 'downloadable'
+        count = CollectionResourceFile.where(id: params[:ids], is_downloadable: ActiveRecord::Type::Boolean.new.cast(params[:is_downloadable])).length
       end
     rescue StandardError
       count = 0
