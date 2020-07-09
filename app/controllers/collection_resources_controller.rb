@@ -225,8 +225,8 @@ class CollectionResourcesController < ApplicationController
   def embed_file
     params[:embed] = 'true'
     @resource_file = CollectionResourceFile.includes(collection_resource: [:collection])
-                         .where(id: params[:resource_file_id])
-                         .where(collections: { organization_id: current_organization }).try(:first)
+                                           .where(id: params[:resource_file_id])
+                                           .where(collections: { organization_id: current_organization }).try(:first)
     authorize! :read, @resource_file
     if @resource_file.present?
       @collection_resource = @resource_file.collection_resource if params[:media_player] == 'true'

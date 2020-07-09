@@ -73,7 +73,7 @@ module DetailPageHelper
 
   def count_index_occurrence(index_point, single_keyword, index_count, is_file_wise, counter)
     index_point_sum = count_em(index_point.synopsis, single_keyword) + count_em(index_point.title, single_keyword) + count_em(index_point.partial_script, single_keyword) +
-        count_em(index_point.subjects, single_keyword) + count_em(index_point.keywords, single_keyword)
+                      count_em(index_point.subjects, single_keyword) + count_em(index_point.keywords, single_keyword)
 
     index_count[index_point.file_index.collection_resource_file_id] ||= {}
     index_count[index_point.file_index.collection_resource_file_id]['total-index'] ||= 0
