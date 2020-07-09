@@ -382,11 +382,10 @@ form.range_limit .hold {
     width: 90%;
     overflow: hidden;
     margin-bottom: 2px;
-    text-overflow: ellipsis;
 }
 
 .search-details .list-view .search_tombstone_cust {
-    width: 85%;
+    width: 77%;
 }
 
 .search_tombstone_cust_parent .custom-modal-normal p {
@@ -1116,7 +1115,7 @@ form.range_limit .hold input:nth-child(2) {
     line-height: 1;
     min-height: 20px;
     margin-right: 20px;
-    padding-top: 3px;
+    padding-top: 2px;
     font-weight: normal;
 }
 
@@ -1133,7 +1132,7 @@ form.range_limit .hold input:nth-child(2) {
 .collection-label-search {
     position: relative;
     padding-left: 5px;
-    padding-top: 25px;
+    padding-top: 1px;
     line-height: 1;
     font-weight: normal;
 }
