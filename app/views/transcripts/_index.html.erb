@@ -4,7 +4,7 @@
        file_transcript = @file_transcript %>
     <% recorded[file_transcript.id] ||= [] %>
     <% can_access_transcript = file_transcript.is_public || @collection_resource.can_view || @collection_resource.can_edit || (can? :edit, @collection_resource.collection.organization) %>
-    <div class="file_transcript file_transcript_<%= file_transcript.id %> pb-10px pl-15px" data-language="<%= file_transcript.language %>" data-title="<%= file_transcript.title %>" data-public="<%= file_transcript.is_public %>" data-webvtt="<%= file_transcript.associated_file_content_type.include?('vtt') %>" data-json="<%= file_transcript.timestamps.present? %>" data-access="<%= can_access_transcript %>" data-edit="<%= file_transcript.is_edit %>" data-annotation="<%= file_transcript.annotation_set.try(:id) %>" data-annotation_access="<%= can_access_annotation %>">
+    <div class="file_transcript file_transcript_<%= file_transcript.id %> pb-10px pl-15px" data-language="<%= file_transcript.language %>" data-title="<%= file_transcript.title %>" data-public="<%= file_transcript.is_public %>" data-webvtt="<%= file_transcript.associated_file_content_type.include?('vtt') %>" data-json="<%= file_transcript.timestamps.present? %>" data-access="<%= can_access_transcript %>" data-edit="<%= file_transcript.is_edit %>" >
       <% if (can? :manage, @collection_resource) || @collection_resource.can_edit %>
         <% unless params[:from_playlist].to_s.to_boolean? %>
           <% if params['page_type'] == 'previous_page' || ((@total_transcript_points / Aviary::IndexTranscriptManager::POINTS_PER_PAGE) <= 1 && params['page_type'] == 'current_page') %>
