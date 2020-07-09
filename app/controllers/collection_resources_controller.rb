@@ -37,7 +37,6 @@ class CollectionResourcesController < ApplicationController
     @detail_page = true
     @file_index = FileIndex.new
     @file_transcript = FileTranscript.new
-    @transcription = Transcription.new
     @selected_transcript = 0
     @selected_index = 0
     @file_indexes = {}
