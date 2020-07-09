@@ -107,6 +107,8 @@ Rails.application.routes.draw do
       post :save_resource_file
       put :update_file_name
       get '/load_resource_details_template(/file/:resource_file_id)', to: 'collection_resources#load_resource_details_template', as: 'load_resource_details_template'
+      get '/load_index(/file/:resource_file_id)', to: 'collection_resources#load_index_template', as: 'load_index_template'
+      get '/load_transcript(/file/:resource_file_id)', to: 'collection_resources#load_transcript_template', as: 'load_transcript_template'
       get '/show_search_counts/file(/:resource_file_id)', to: 'collection_resources#show_search_counts', as: 'show_search_counts'
       get '/load_head_and_tombstone_template', to: 'collection_resources#load_head_and_tombstone_template', as: 'load_head_and_tombstone_template'
       post '/update_thumbnail/:collection_resource_file_id', to: 'collection_resources#update_thumbnail', as: 'update_thumbnail'

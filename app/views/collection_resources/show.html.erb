@@ -18,10 +18,14 @@
     <%= render 'transcripts/upload_transcript' %>
     <%= render 'transcripts/sort_transcript' %>
   <% end %>
+  <% if current_user.present? && current_user.current_org_owner_admin(current_organization).present? %>
+    <%= render 'transcriptions/request_transcript' %>
+  <% end %>
 <% end %>
 <% track_params = params.clone.except('controller').except('action').to_json %>
-
+<%= render 'request_accesses/shared_request_modal' %>
 <% can_access = permission_to_access_file?(@resource_file) %>
+<div id="dynamic_section"></div>
 <script type="text/javascript">
     var collectionResource = new CollectionResource();
     collectionResource.player_time = <%= params['t'].present? ? params['t'] : 0 %>;
@@ -35,6 +39,22 @@
     var events_tracker = new EventsTracker(params);
     collectionResource.events_tracker = events_tracker;
     collectionResource.file_access = <%= can_access %>;
+
+    collectionResource.index_page_wise_count = JSON.parse('<%== @index_count && @index_count[:page_wise].present? ? @index_count[:page_wise][:index].to_h.to_json : '{}' %>');
+    collectionResource.transcript_page_wise_count = JSON.parse('<%== @transcript_count && @transcript_count[:page_wise].present? ? @transcript_count[:page_wise][:transcript].to_h.to_json : '{}' %>');
+
+    collectionResource.index_hits_count = JSON.parse('<%== @index_count && @index_count[:hits].present? ? @index_count[:hits].to_h.to_json : '{}' %>');
+    collectionResource.transcript_hits_count = JSON.parse('<%== @transcript_count && @transcript_count[:hits].present? ? @transcript_count[:hits].to_h.to_json : '{}' %>');
+
+    collectionResource.index_time_wise_page = JSON.parse('<%== @index_time_wise.present? ? @index_time_wise.to_h.to_json : '{}' %>');
+    collectionResource.transcript_time_wise_page = JSON.parse('<%== @transcript_time_wise.present? ? @transcript_time_wise.to_h.to_json : '{}' %>');
+
+    collectionResource.total_index_wise = JSON.parse('<%== @index_count && @index_count[:total_index_wise].present? ? @index_count[:total_index_wise].to_h.to_json : '{}' %>');
+    collectionResource.total_transcript_wise = JSON.parse('<%== @transcript_count && @transcript_count[:total_transcript_wise].present? ? @transcript_count[:total_transcript_wise].to_h.to_json : '{}' %>');
+
+    collectionResource.index_file_count = '<%= @resource_file.file_indexes.count > 0  ? @resource_file.file_indexes.count : 0  %>';
+    collectionResource.transcript_file_count = '<%= @resource_file.file_transcripts.count  > 0 ? @resource_file.file_transcripts.count : 0  %>';
+
     document.addEventListener("DOMContentLoaded", function () {
         setTimeout(function () {
             collectionResource.events_tracker.views_track = JSON.parse('<%== session[:resource_tracking].present? ? session[:resource_tracking].clone.to_enum.to_h.to_json : '{}' %>');

@@ -14,8 +14,6 @@ function CollectionResource() {
     var previousTime = 0;
     this.currentTime = 0;
     this.app_helper = {};
-    this.selected_index = 0;
-    this.selected_transcript = 0;
     this.edit_description = 0;
     this.search_text_val = 0;
     this.resource_file_id = 0;
@@ -26,20 +24,53 @@ function CollectionResource() {
     this.events_tracker = {};
     this.from_playlist = false;
     this.playlist_info = {};
+    this.embed = false;
+    this.selected_index = 0;
+    this.current_marker_index = null;
+    this.selected_transcript = 0;
+    this.index_page_wise_count = {};
+    this.transcript_page_wise_count = {};
+    this.index_hits_count = {};
+    this.transcript_hits_count = {};
+    this.transcript_time_wise_page = {};
+    this.index_time_wise_page = {};
+
+    this.total_transcript_wise = {};
+    this.total_index_wise = {};
+
+    this.index_file_count = 0;
+    this.transcript_file_count = 0;
+
+    this.requestAccess = new RequestAccess();
     this.initializeDetail = function (search_text_val, selected_index, selected_transcript, edit_description, embed, resource_file_id, track_params) {
         this.track_params = track_params;
         selfCR.resource_file_id = resource_file_id;
         selfCR.app_helper = new App();
         selfCR.edit_description = edit_description;
-        load_resource_details(selected_index, selected_transcript, embed);
-        load_head_and_tombstone();
-
+        selfCR.embed = embed;
+        load_resource_details(embed);
+        this.selected_index = selected_index;
+        this.selected_transcript = selected_transcript;
+        selfCR.requestAccess.initPermissionAccess();
         $('.index-trance-checkbox').prop('checked', false);
         selfCR.search_text_val = jQuery.parseJSON(search_text_val);
         initPlayer();
         initCopyLink();
+
+
     };
 
+    const detailsPageBinding = function () {
+        bindingElement('#collection_resource_custom_unique_identifier', 'keyup', function () {
+            let element_that = this;
+            setTimeout(function () {
+                if ($(element_that).val().match(/[/?!*'()"\\;:@&=+\]\[$,/?%# ]/)) {
+                    selfCR.app_helper.show_modal_message('Invalid Value', ' You provided an invalid character in your custom unique identifier.', 'danger');
+                    $(element_that).val($(element_that).val().replace(/[/?!*'()\\;:@&=+\]\[$,/?%# ]/g, ''));
+                }
+            }, 200);
+        }, false);
+    };
 
     this.initializePlayer = function () {
         selfCR.app_helper = new App();
@@ -92,13 +123,13 @@ function CollectionResource() {
 
 
     this.load_resource_details_template = function (response, container) {
-        if (response.includes('show_counts_tabs')) {
-            $(container).html(response);
+        if (response.includes('view_edit_custom')) {
+            $('.contact-description-tab').html(response);
             setTimeout(function () {
                 desc_trans_index_call_complete();
                 init_tinymce_for_element('.edit_collection_resource textarea.value_holder');
                 show_counts_tabs();
-
+                selfCR.requestAccess.initPermissionAccess();
 
                 $('.edit_collection_resource .select_option.value_holder').selectize();
                 /* Edit resource form */
@@ -118,26 +149,7 @@ function CollectionResource() {
         }
     };
 
-    this.load_head_and_tombstone_template = function (response, container) {
-        if (response.includes('heading_and_tombstone')) {
-            $(container).html(response);
-            $('.best_in_place').best_in_place();
-            $(".edit_title").on('click', function () {
-                $(this).parent().find("span").click();
-                $(this).addClass("d-none");
-            });
-            $(".best_in_place").on("focusout", function () {
-                $(this).parent().find("i.edit_title").removeClass("d-none");
-            });
-        }
-    };
-
     const desc_trans_index_call_complete = function () {
-        bindingElement('.select_type_transcript', 'change', function () {
-            $('.loadingCus').show();
-            selfCR.manageTabs(false);
-            $('.loadingCus').hide();
-        }, false);
 
         // move Marker list to top related div after created marker occurrence using using later updated variable session[:count][:index_count]s, @description_count and session[:count][:transcript_count]s
         $('.marker_list_hanlder_custom').html($('.marker_list_hanlder_custom_tmp').html());
@@ -147,24 +159,17 @@ function CollectionResource() {
         $('.timeline-bar-parent-div').html($('.timeline-bar-parent-div-tmp').html());
         $('.timeline-bar-parent-div-tmp').html('');
         initTimeline();
-        let indexes = new IndexTranscript();
-        indexes.initialize('index', selfCR.selected_index);
-
-        let transcript = new IndexTranscript();
-        transcript.initialize('transcript', selfCR.selected_transcript);
 
         if (selfCR.from_playlist) {
-            $('.index_point_container').attr('style', 'height:' + ($('.two_col_custom').height() - 50) + 'px!important;max-height:600px!important;');
-            $('.transcript_point_container').attr('style', 'height:' + ($('.two_col_custom').height() - 50) + 'px!important;max-height:600px!important;');
             $('#view_edit_custom').attr('style', 'height:' + ($('.two_col_custom').height()) + 'px!important;max-height:600px!important;');
         } else {
-            $('.index_point_container').attr('style', 'height:' + ($('.two_col_custom').height() - 270) + 'px!important;max-height:600px!important;');
-            $('.transcript_point_container').attr('style', 'height:' + ($('.two_col_custom').height() - 270) + 'px!important;max-height:600px!important;');
-            $('#view_edit_custom').attr('style', 'height:' + ($('.two_col_custom').height() - 200) + 'px!important;max-height:600px!important;');
+            $('#view_edit_custom').attr('style', 'height:' + ($('.two_col_custom').height()) + 'px!important;max-height:600px!important;');
+
         }
-        $(".index_point_container").mCustomScrollbar();
-        $(".transcript_point_container").mCustomScrollbar();
         $('.mCustomScrollbar_description').mCustomScrollbar();
+        selfCR.manageTabs(selfCR.edit_description);
+        initEvents();
+        initCreateTranscription();
         if (selfCR.search_text_val != '' && selfCR.search_text_val != 0) {
             $.each(selfCR.search_text_val, function (identifier, keyword) {
                 keyword = keyword.replace(/[\/\\()|'"*:^~`{}]/g, '');
@@ -173,29 +178,13 @@ function CollectionResource() {
                 keyword = keyword.replace(/[{}]/g, '');
                 selfCR.markerHandlerArray[identifier] = new MarkerHandler(identifier, keyword);
                 selfCR.markerHandlerArray[identifier].initialize();
-                if(!selfCR.from_playlist){
-                    $(".title_resource_custom").mark(keyword, {
-                        "element": "div",
-                        "className": "highlight-marker mark d-inline",
-                        "caseSensitive": false,
-                        "separateWordSearch": false
-                    });
-                }
+                selfCR.markerHandlerArray[identifier].collection_resource = selfCR;
             });
         }
-        selfCR.manageTabs(selfCR.edit_description);
-        initEvents();
-        initCreateTranscription();
         $('.loader-details').remove();
     };
 
-    const load_resource_details = function (selected_index, selected_transcript, embed) {
-        if (selected_transcript)
-            selfCR.selected_transcript = selected_transcript;
-
-        if (selected_index)
-            selfCR.selected_index = selected_index;
-
+    const load_resource_details = function (embed) {
         let data = {
             action: 'load_resource_details_template',
             tabs_size: $('.info_tabs').data('tabs-size'),
@@ -230,11 +219,7 @@ function CollectionResource() {
 
                 window.addEventListener('message', function (event) {
                     selfCR.currentTime = event.data.currentTime;
-                    if ($('#transcript-tab').hasClass('active')) {
-                        selfCR.init_scoll('transcript', event.data.currentTime);
-                    } else if ($('#index-tab').hasClass('active')) {
-                        selfCR.init_scoll('index', event.data.currentTime);
-                    }
+                    time_scroll_mover(event.data.currentTime);
                     var command = event.data.command;
                     if (command == 'currentTime')
                         offsetTime = event.data.currentTime;
@@ -249,16 +234,73 @@ function CollectionResource() {
                     player_widget('play');
                 }
 
+            } else if ($('#360_player').length > 0) {
+                player_widget = jwplayer('360_player').setup({
+                    playlist: [{
+                        file: $('#360_player').data('url'),
+                        tracks: $('#360_player').data('tracks'),
+                        mediaid: 'AgqYcfAT',
+                        stereomode: 'monoscopic',
+                        image: $('#360_player').data('poster'),
+                        autostart: window.location.href.indexOf('auto_play') > 0
+                    }]
+                });
+                player_widget.on('error', function (_event) {
+                    let confirm = window.confirm("Media file source not found or expired. Reload the page? Or contact organization admin.");
+                    if (confirm == true) {
+                        window.location.reload();
+                    }
+                });
+                player_widget.on('complete', function (_event) {
+                    if ($('.listings_files.my-slide').nextAll() && $('.listings_files.my-slide').nextAll().length > 0) {
+                        play_next_file();
+                    } else if ($('.box.now-playing.playlist_resource_single').nextAll() && $('.box.now-playing.playlist_resource_single').nextAll().length > 0) {
+                        play_next_resource();
+                    }
+                });
+                player_widget.on('time', function (event) {
+                    selfCR.currentTime = event.currentTime;
+                    // when end_time is elapsed, pause this video and jump to next
+                    time_scroll_mover(event.currentTime);
+
+                    if (selfCR.end_time != NaN && selfCR.end_time != undefined && event.currentTime >= selfCR.end_time && selfCR.end_time > 0) {
+                        // pause this video and jump to next
+                        player_widget.pause();
+                        if (collectionResource.playlist_info.playlist_view_type == 'true') {
+                            if ($('.listings_files.my-slide').nextAll() && $('.listings_files.my-slide').nextAll().length > 0) {
+                                play_next_file();
+                            } else if ($('.box.now-playing.playlist_resource_single').nextAll() && $('.box.now-playing.playlist_resource_single').nextAll().length > 0) {
+                                play_next_resource();
+                            }
+                        }
+                    }
+
+                    previousTime = event.currentTime;
+                });
+                player_widget.on('ready', function () {
+                    shareTimeUrl(player_widget.getCurrentTime(), $('#share_link').val());
+                    if (window.location.href.indexOf('auto_play') > 0) {
+                        let location = window.location.href;
+                        location = location.replace('auto_play=true', '').replace('?&', '?').replace('&&', '&');
+                        window.history.replaceState({}, 'auto_play=true', location);
+                        player_widget.seek(0).play();
+                    }
+                    if (selfCR.player_time > 0) {
+                        player_widget.seek(selfCR.player_time).play();
+                    }
+                })
             } else {
                 meJsFeatures = ['playpause', 'current', 'progress', 'duration', 'volume', 'tracks', 'fullscreen', 'autoplay'];
                 if ($('#player source').length > 1) {
                     meJsFeatures.push('quality');
                 }
-                selfCR.player_widget = $('#player').mediaelementplayer({
+                player_widget = $('#player').mediaelementplayer({
                     features: meJsFeatures,
                     success: function (mediaElement, domObject) {
-                        shareTimeUrl(mediaElement, $('#share_link').val());
+                        shareTimeUrl(mediaElement.currentTime, $('#share_link').val());
                         mediaElement.addEventListener('timeupdate', function (e) {
+
+                            time_scroll_mover(mediaElement.currentTime);
                             selfCR.currentTime = mediaElement.currentTime;
                             // when end_time is elapsed, pause this video and jump to next
                             if (selfCR.end_time != NaN && selfCR.end_time != undefined && mediaElement.currentTime >= selfCR.end_time && selfCR.end_time > 0) {
@@ -273,11 +315,6 @@ function CollectionResource() {
                                 }
                             }
 
-                            if ($('#transcript-tab').hasClass('active')) {
-                                selfCR.init_scoll('transcript', mediaElement.currentTime);
-                            } else if ($('#index-tab').hasClass('active')) {
-                                selfCR.init_scoll('index', mediaElement.currentTime);
-                            }
                             previousTime = mediaElement.currentTime;
                         }, false);
                         mediaElement.addEventListener('ended', function (e) {
@@ -324,7 +361,7 @@ function CollectionResource() {
             responsive: true,
         });
 
-        if (parseInt($('.carousel-wrap').data('filescount'), 10) <= 3)
+        if (parseInt($('.carousel-wrap').data('filescount'), 10) <= 4)
             $('.prev, .next').hide();
 
         scroll_mousewheel_playlist();
@@ -343,6 +380,48 @@ function CollectionResource() {
         });
 
     };
+
+
+    const time_scroll_mover = function (currentTime) {
+        if ($('#index-tab').hasClass('active')) {
+            if ($("#index-auto-scroll").prop("checked")) {
+                let start_time = parseFloat(selfCR.index_time_wise_page[selfCR.selected_index][selfCR.indexes.index_page_number].start_time);
+                let end_time = parseFloat(selfCR.index_time_wise_page[selfCR.selected_index][selfCR.indexes.index_page_number].end_time);
+                if (currentTime >= start_time && currentTime <= end_time) {
+                    selfCR.init_scoll('index', currentTime);
+                } else {
+                    $.each(selfCR.index_time_wise_page[selfCR.selected_index], function (index, time_wise) {
+                        if (currentTime >= time_wise.start_time && currentTime <= time_wise.end_time) {
+                            if (selfCR.indexes.index_page_number != time_wise.current_page) {
+                                selfCR.indexes.index_page_number = time_wise.current_page;
+                                selfCR.indexes.specific_page_load('timeline', time_wise.current_page, true);
+                                return false;
+                            }
+                        }
+                    });
+                }
+
+            }
+        } else if ($('#transcript-tab').hasClass('active')) {
+            if ($("#transcript-auto-scroll").prop("checked")) {
+                let start_time = parseFloat(selfCR.transcript_time_wise_page[selfCR.selected_transcript][selfCR.transcripts.transcript_page_number].start_time);
+                let end_time = parseFloat(selfCR.transcript_time_wise_page[selfCR.selected_transcript][selfCR.transcripts.transcript_page_number].end_time);
+                if (currentTime >= start_time && currentTime <= end_time) {
+                    selfCR.init_scoll('transcript', currentTime);
+                } else {
+                    $.each(selfCR.transcript_time_wise_page[selfCR.selected_transcript], function (index, time_wise) {
+                        if (currentTime >= time_wise.start_time && currentTime <= time_wise.end_time) {
+                            if (selfCR.transcripts.transcript_page_number != time_wise.current_page) {
+                                selfCR.transcripts.transcript_page_number = time_wise.current_page;
+                                selfCR.transcripts.specific_page_load_transcript('timeline', time_wise.current_page);
+                                return false;
+                            }
+                        }
+                    });
+                }
+            }
+        }
+    }
 
     const play_next_resource = function () {
         $.each($('.box.now-playing.playlist_resource_single').nextAll(), function () {
@@ -378,6 +457,7 @@ function CollectionResource() {
             }
         });
     };
+
     let selected_carosal = function (number_of_movies) {
         var counter = 1;
         var interval = setInterval(function () {
@@ -407,7 +487,7 @@ function CollectionResource() {
         mediaElement.play();
     };
 
-    let shareTimeUrl = function (mediaElement, url) {
+    let shareTimeUrl = function (currentTime, url) {
 
         $('.share_tabs').on('mouseup', function () {
             let active_tab = $(this).data('tabname');
@@ -424,7 +504,7 @@ function CollectionResource() {
             checkAndCreateUrl();
             if ($(this).prop("checked") === true) {
                 if ($('#start_time_share').val() == '')
-                    $('#start_time_share').val(secondsToHuman(mediaElement.currentTime));
+                    $('#start_time_share').val(secondsToHuman(currentTime));
                 $('.video-start-time').removeAttr('disabled');
 
             } else {
@@ -516,16 +596,17 @@ function CollectionResource() {
             }
         }
     };
+
     this.init_scoll = function (type, currentTime, trigger_refresh) {
         if (typeof trigger_refresh == 'undefined') {
             trigger_refresh = false;
         }
         if ($("#" + type + "-auto-scroll").prop("checked") && parseInt(currentTime, 10) > 0) {
-            if ($('.selected_' + type + 'file .' + type + '_time_start_' + parseInt(currentTime, 10)).length > 0 && trigger_refresh == false) {
+            if ($('.' + type + '_time_start_' + parseInt(currentTime, 10)).length > 0 && trigger_refresh == false) {
                 do_scroll(type, currentTime);
             } else if (parseFloat(currentTime) - parseFloat(previousTime) > 0.75 || parseFloat(currentTime) - parseFloat(previousTime) < -0.75 || trigger_refresh == true) {
                 setTimeout(function () {
-                    var allAttributes = $('.selected_' + type + 'file .' + type + '_time').map(function () {
+                    var allAttributes = $('.' + type + '_time').map(function () {
                         return $(this).data('' + type + '_timecode');
                     }).get();
                     if (currentTime > Math.max.apply(null, allAttributes)) {
@@ -533,7 +614,7 @@ function CollectionResource() {
                     } else {
                         var i;
                         for (i = parseInt(currentTime, 10); i != 0; i--) {
-                            if ($('.selected_' + type + 'file .' + type + '_time_start_' + parseInt(i, 10)).length > 0) {
+                            if ($('.' + type + '_time_start_' + parseInt(i, 10)).length > 0) {
 
                                 do_scroll(type, i);
                                 break;
@@ -556,17 +637,23 @@ function CollectionResource() {
                     }
 
                     if (!recorded_transcript[selected_point].includes(parseInt(currentTime, 10))) {
-                        $('.mCustomScrollbar').mCustomScrollbar("scrollTo", '.selected_' + type + 'file .' + type + '_time_start_' + parseInt(currentTime, 10));
                         recorded_transcript[selected_point].push(parseInt(currentTime, 10));
                     }
+                    setTimeout(function () {
+                        let pointToScroll = $('.' + type + '_time_start_' + parseInt(currentTime, 10));
+                        selfCR.transcripts.scroll_to_point(type, '.' + type + '_time_start_' + parseInt(currentTime, 10));
+                    }, 500);
+
                 } else {
                     if (typeof recorded_index[selected_point] == 'undefined') {
                         recorded_index[selected_point] = [];
                     }
                     if (!recorded_index[selected_point].includes(parseInt(currentTime, 10))) {
                         recorded_index[selected_point].push(parseInt(currentTime, 10));
-                        $('.mCustomScrollbar').mCustomScrollbar("scrollTo", '.selected_' + type + 'file .' + type + '_time_start_' + parseInt(currentTime, 10));
                     }
+                    setTimeout(function () {
+                        selfCR.indexes.scroll_to_point(type, '.' + type + '_time_start_' + parseInt(currentTime, 10));
+                    }, 500);
                 }
             }
         } catch (e) {
@@ -682,11 +769,23 @@ function CollectionResource() {
         }
     };
 
+    const active_transcript_index = function (type) {
+        return parseInt($('#file_' + type + '_select').val(), 10);
+    }
+    const transcript_scroll = function () {
+        selfCR.transcripts.index_scroll('transcript', active_transcript_index('transcript'));
+    };
+
+    const index_scroll = function () {
+        selfCR.indexes.index_scroll('index', active_transcript_index('index'));
+    };
+
     this.manageTabs = function (edit_description) {
         let tabType = window.location.pathname.substr(window.location.pathname.lastIndexOf('/') + 1);
         if (collectionResource.from_playlist == true) {
             tabType = $('#resourceTab .nav-link.active.show').data('tab');
         }
+
         $('.single_term_handler').addClass('d-none');
         $('.single_term_handler').removeClass('open');
         if (edit_description) {
@@ -695,27 +794,56 @@ function CollectionResource() {
             return true;
         } else if (tabType == 'transcript') {
             $('#transcript-tab').click();
-
         } else if (tabType == 'index') {
             $('#index-tab').click();
         }
         if ($.inArray(tabType, ['transcript', 'description', 'index']) < 0)
             tabType = 'description';
+        if (tabType == 'description') {
 
-        setTimeout(function () {
-            $.each(selfCR.markerHandlerArray, function (identifier, markerHandler) {
-                markerHandler.update_result_current_index(tabType);
+        }
+        $('.info_tab_loader').removeClass('d-inline-block');
+        $('.info_tab_loader').addClass('d-none');
+        if (selfCR.search_text_val != '' && selfCR.search_text_val != 0) {
+            $.each(selfCR.search_text_val, function (identifier, keyword) {
+                if (!selfCR.from_playlist) {
+                    $(".title_resource_custom").mark(keyword, {
+                        "element": "div",
+                        "className": "highlight-marker mark d-inline",
+                        "caseSensitive": false,
+                        "separateWordSearch": false
+                    });
+                }
             });
-        }, 100);
+        }
 
+        this.indexes = new IndexTranscript();
+        this.indexes.setup_prerequisites('index', selfCR.selected_index, selfCR, selfCR.embed, this.from_playlist);
+        this.indexes.initialize();
+        if (parseInt(selfCR.index_file_count, 10) > 0) {
+            this.indexes.first_time_index_call();
+        }
+
+        this.transcripts = new IndexTranscript();
+        this.transcripts.setup_prerequisites('transcript', selfCR.selected_transcript, selfCR, selfCR.embed, this.from_playlist);
+        this.transcripts.initialize();
+        if (parseInt(selfCR.transcript_file_count, 10) > 0) {
+            this.transcripts.first_time_transcript_call();
+        }
+
+        if (tabType == 'transcript') {
+            transcript_scroll();
+        } else if (tabType == 'index') {
+            index_scroll();
+        }
         $('.single_term_handler.' + tabType).removeClass('d-none');
         $('.single_term_handler.' + tabType).addClass('open');
 
         $('#resourceTab a').unbind('click');
         $('#resourceTab a').click(function () {
-
             let tabType = window.location.pathname.substr(window.location.pathname.lastIndexOf('/') + 1);
             let currentTab = $(this).data().tab;
+
             try {
                 if (!$(this).hasClass('active')) {
                     selfCR.events_tracker.track_tab_hits(currentTab);
@@ -724,33 +852,43 @@ function CollectionResource() {
                 e;
             }
 
-            $.each(selfCR.markerHandlerArray, function (identifier, markerHandler) {
-                markerHandler.update_result_current_index(currentTab);
-            });
+
             let append_params = '?';
             $.each(selfCR.app_helper.getUrlParameter(window.location.href)[0], function (index, single_obejct) {
                 if (typeof single_obejct != 'undefined') {
                     append_params += index + '=' + single_obejct + '&';
                 }
             });
+
             if (collectionResource.from_playlist == false) {
                 if ($.inArray(tabType, ['transcript', 'description', 'index']) >= 0)
                     window.history.replaceState({}, document.title, window.location.pathname.replace(/\/[^\/]*$/, '/' + currentTab) + append_params);
                 else
                     window.history.replaceState({}, document.title, window.location.pathname + '/' + currentTab + append_params);
             }
+
+            if (tabType == 'index') {
+                index_scroll('index');
+            }
+
+            if (tabType == 'transcript') {
+                transcript_scroll('transcript');
+            }
             $('.search-result-bottom').removeClass('open');
+            if (selfCR.search_text_val != '' && selfCR.search_text_val != 0) {
+                $.each(selfCR.markerHandlerArray, function (_index, object) {
+                    object.currentIndex = 1;
+                    $('.current_location').text(object.currentIndex)
+                });
+            }
             show_marker_hanlders(currentTab);
         });
-
         $('.btn-search-result-nav').on('click', function () {
             let tabType = window.location.pathname.substr(window.location.pathname.lastIndexOf('/') + 1);
             if ($.inArray(tabType, ['transcript', 'description', 'index']) < 0)
                 tabType = 'description';
-
             show_marker_hanlders(tabType);
         });
-
         if (selfCR.has_loaded == false) {
             try {
                 if (typeof selfCR.events_tracker != 'undefined') {
@@ -759,8 +897,7 @@ function CollectionResource() {
             } catch (e) {
                 e;
             }
-
-                selfCR.has_loaded = true;
+            selfCR.has_loaded = true;
         }
     };
 
@@ -772,23 +909,22 @@ function CollectionResource() {
     };
 
     const initTimeline = function () {
-        $('.timeline-point').click(function () {
+        document_level_binding_element('.timeline-point', 'click', function () {
             let data = $(this).data();
             $('.timeline-point.dark-orange').addClass('light-orange');
             $('.timeline-point.dark-orange').removeClass('dark-orange');
             $(this).addClass('dark-orange');
-
-            $('#' + data.type + '-tab').click();
-            $('.highlight-marker').removeClass('current-active-index');
-            $(".highlight-marker").removeClass('current');
-            setTimeout(function () {
-                $('#' + data.type + '_timecode_' + data.point + ' .mark').addClass('current-active-index');
-                $('.' + data.type + '_point_container').mCustomScrollbar("scrollTo", '#' + data.type + '_timecode_' + data.point);
-            }, 500);
-
+            if (!selfCR.indexes.index_visible_pages.includes(parseInt(data.pageNumber, 10))) {
+                if (typeof data.pageNumber != 'undefined') {
+                    selfCR.indexes.index_page_number = data.pageNumber;
+                }
+                selfCR.indexes.specific_page_load('timeline', data.pageNumber);
+            } else {
+                selfCR.indexes.to_index_transcript_point(data);
+            }
         });
-
     };
+
 
     const initCreateTranscription = function () {
         $('#transcription_service_type').change(function () {
@@ -858,6 +994,33 @@ function CollectionResource() {
         $('#public_access_url').text(text);
     };
 
+    this.rss_metadata = function (classname) {
+
+        if (Object.getOwnPropertyNames(selfCR.app_helper).length < 1) {
+            selfCR.app_helper = new App();
+        }
+        var clipboard = new Clipboard('.copy-link');
+        init_tinymce_for_element('#' + classname + '_content');
+        $("#" + classname + "_add_rss_information").on("change", function () {
+            if (this.checked) {
+                $(".show_metadata").removeClass("d-none");
+            } else {
+                $(".show_metadata").addClass("d-none");
+                var meta_fields = {
+                    "_keywords": "",
+                    "_explicit": "false",
+                    "_episode_type": "full",
+                    "_episode": "",
+                    "_season": "",
+                    "_content": "",
+                };
+                Object.keys(meta_fields).forEach(function (key) {
+                    $("#" + classname + key).val(meta_fields[key]);
+                });
+            }
+        }).change();
+        detailsPageBinding();
+    };
 
     this.loadCollectionwiseResources = function () {
         let loading = true;
@@ -883,7 +1046,7 @@ function CollectionResource() {
                                     $('#' + id).remove();
                                 }
                                 loading = true;
-
+                                selfCR.requestAccess.initPermissionAccess();
                             },
                             beforeSend: function () {
                                 jsloader('#' + id);
