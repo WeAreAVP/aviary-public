@@ -23,7 +23,6 @@
   <% end %>
 <% end %>
 <% track_params = params.clone.except('controller').except('action').to_json %>
-<%= render 'request_accesses/shared_request_modal' %>
 <% can_access = permission_to_access_file?(@resource_file) %>
 <div id="dynamic_section"></div>
 <script type="text/javascript">
