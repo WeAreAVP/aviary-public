@@ -626,7 +626,6 @@ function IndexTranscript() {
 
     let activatePoints = function (call_type) {
         let selected_element = '.file_' + that.cuePointType + '_' + $('#file_' + that.cuePointType + '_select').val();
-        showAnnotationSet(selected_element);
         $(selected_element).removeClass('d-none');
         $('.' + that.cuePointType + '_' + $('#file_' + that.cuePointType + '_select').val()).removeClass('d-none');
         $('.file_' + that.cuePointType + '_' + $('#file_' + that.cuePointType + '_select').val()).toggleClass('selected_' + that.cuePointType + 'file');
@@ -649,7 +648,6 @@ function IndexTranscript() {
             $('.file_' + that.cuePointType).removeClass('selected_' + that.cuePointType + 'file');
             $('.file_' + that.cuePointType + '_' + $('#file_' + that.cuePointType + '_select').val()).addClass('selected_' + that.cuePointType + 'file');
             $('#selected_' + that.cuePointType).val($('#file_' + that.cuePointType + '_select').val());
-            showAnnotationSet('.file_' + that.cuePointType + '_' + $('#file_' + that.cuePointType + '_select').val());
             that.collection_resource.init_scoll(that.cuePointType, that.collection_resource.currentTime, true);
             try {
                 if (typeof that.collection_resource.events_tracker != 'undefined')
@@ -841,33 +839,4 @@ function IndexTranscript() {
         }
     }
 
-    const showAnnotationSet = function (selected_element) {
-        if (that.cuePointType == 'transcript') {
-            if ($(selected_element).data('annotation_access')) {
-                if ($(selected_element).data('annotation') != '') {
-                    let file_selectize = $('#annotation_set_select')[0].selectize;
-                    file_selectize.setValue($(selected_element).data('annotation'));
-                    $('.show-annotation-box').removeClass('d-none');
-                    $('.annotation-option').removeClass('d-none');
-                    $('.add-annotation-box').addClass('d-none');
-                    $('.transcript_enable_annotation_section').removeClass('d-none');
-                } else {
-                    $('.show-annotation-box').addClass('d-none');
-                    $('.annotation-option').addClass('d-none');
-                    $('.add-annotation-box').removeClass('d-none');
-                    $('.transcript_enable_annotation_section').addClass('d-none');
-                }
-                $('.annotation-box').addClass('d-none');
-                $('.annotation_flag, .annotation_marker').removeClass('active');
-                $('.annotation_delete_section').addClass('d-none');
-                $('.annotation-box .text-box').removeClass('delete');
-            } else {
-                $('.show-annotation-box').addClass('d-none');
-                $('.annotation-option').addClass('d-none');
-                $('.add-annotation-box').addClass('d-none');
-                $('.transcript_enable_annotation_section').addClass('d-none');
-            }
-
-        }
-    }
 }
