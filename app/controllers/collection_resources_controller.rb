@@ -37,6 +37,7 @@ class CollectionResourcesController < ApplicationController
     @detail_page = true
     @file_index = FileIndex.new
     @file_transcript = FileTranscript.new
+    @transcription = Transcription.new
     @selected_transcript = 0
     @selected_index = 0
     @file_indexes = {}
@@ -46,14 +47,24 @@ class CollectionResourcesController < ApplicationController
     session[:session_video_text_all], @selected_transcript, @selected_index, @count_file_wise = CollectionResourcePresenter.new(@collection_resource, view_context).generate_params_for_detail_page(@resource_file, @collection_resource, session, params)
     begin
       @file_indexes = @resource_file.file_indexes.order_index
+    rescue StandardError => ex
+      puts ex.backtrace.join("\n")
+    end
+    begin
       @file_transcripts = @resource_file.file_transcripts.order_transcript
     rescue StandardError => ex
       puts ex.backtrace.join("\n")
     end
     begin
       @selected_index = @file_indexes.first.id if @selected_index.blank?
+    rescue StandardError => ex
+      @selected_index = 0
+      puts ex.backtrace.join("\n")
+    end
+    begin
       @selected_transcript = @file_transcripts.first.id if @selected_transcript.blank?
     rescue StandardError => ex
+      @selected_transcript = 0
       puts ex.backtrace.join("\n")
     end
   end
@@ -224,8 +235,8 @@ class CollectionResourcesController < ApplicationController
   def embed_file
     params[:embed] = 'true'
     @resource_file = CollectionResourceFile.includes(collection_resource: [:collection])
-                                           .where(id: params[:resource_file_id])
-                                           .where(collections: { organization_id: current_organization }).try(:first)
+                         .where(id: params[:resource_file_id])
+                         .where(collections: { organization_id: current_organization }).try(:first)
     authorize! :read, @resource_file
     if @resource_file.present?
       @collection_resource = @resource_file.collection_resource if params[:media_player] == 'true'

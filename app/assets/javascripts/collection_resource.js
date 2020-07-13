@@ -8,49 +8,49 @@ function CollectionResource() {
      */
     var file_access = true;
     var selfCR = this;
-    this.markerHandlerArray = {};
+    selfCR.markerHandlerArray = {};
     var recorded_transcript = [];
     var recorded_index = [];
     var previousTime = 0;
-    this.currentTime = 0;
-    this.app_helper = {};
-    this.edit_description = 0;
-    this.search_text_val = 0;
-    this.resource_file_id = 0;
-    this.player_widget = null;
-    this.track_params = null;
-    this.has_loaded = false;
-    this.player_time = 0;
-    this.events_tracker = {};
-    this.from_playlist = false;
-    this.playlist_info = {};
-    this.embed = false;
-    this.selected_index = 0;
-    this.current_marker_index = null;
-    this.selected_transcript = 0;
-    this.index_page_wise_count = {};
-    this.transcript_page_wise_count = {};
-    this.index_hits_count = {};
-    this.transcript_hits_count = {};
-    this.transcript_time_wise_page = {};
-    this.index_time_wise_page = {};
+    selfCR.currentTime = 0;
+    selfCR.app_helper = {};
+    selfCR.edit_description = 0;
+    selfCR.search_text_val = 0;
+    selfCR.resource_file_id = 0;
+    selfCR.player_widget = null;
+    selfCR.track_params = null;
+    selfCR.has_loaded = false;
+    selfCR.player_time = 0;
+    selfCR.events_tracker = {};
+    selfCR.from_playlist = false;
+    selfCR.playlist_info = {};
+    selfCR.embed = false;
+    selfCR.selected_index = 0;
+    selfCR.current_marker_index = null;
+    selfCR.selected_transcript = 0;
+    selfCR.index_page_wise_count = {};
+    selfCR.transcript_page_wise_count = {};
+    selfCR.index_hits_count = {};
+    selfCR.transcript_hits_count = {};
+    selfCR.transcript_time_wise_page = {};
+    selfCR.index_time_wise_page = {};
 
-    this.total_transcript_wise = {};
-    this.total_index_wise = {};
+    selfCR.total_transcript_wise = {};
+    selfCR.total_index_wise = {};
 
-    this.index_file_count = 0;
-    this.transcript_file_count = 0;
+    selfCR.index_file_count = 0;
+    selfCR.transcript_file_count = 0;
 
-    this.requestAccess = new RequestAccess();
+    selfCR.requestAccess = new RequestAccess();
     this.initializeDetail = function (search_text_val, selected_index, selected_transcript, edit_description, embed, resource_file_id, track_params) {
-        this.track_params = track_params;
+        selfCR.track_params = track_params;
         selfCR.resource_file_id = resource_file_id;
         selfCR.app_helper = new App();
         selfCR.edit_description = edit_description;
         selfCR.embed = embed;
         load_resource_details(embed);
-        this.selected_index = selected_index;
-        this.selected_transcript = selected_transcript;
+        selfCR.selected_index = selected_index;
+        selfCR.selected_transcript = selected_transcript;
         selfCR.requestAccess.initPermissionAccess();
         $('.index-trance-checkbox').prop('checked', false);
         selfCR.search_text_val = jQuery.parseJSON(search_text_val);
@@ -161,12 +161,30 @@ function CollectionResource() {
         initTimeline();
 
         if (selfCR.from_playlist) {
-            $('#view_edit_custom').attr('style', 'height:' + ($('.two_col_custom').height()) + 'px!important;max-height:600px!important;');
+            $('#view_edit_custom').attr('style', 'height:' + ($('.two_col_custom').height()) + 'px!important;max-height:550px!important;');
         } else {
-            $('#view_edit_custom').attr('style', 'height:' + ($('.two_col_custom').height()) + 'px!important;max-height:600px!important;');
+            $('#view_edit_custom').attr('style', 'height:' + ($('.two_col_custom').height()) + 'px!important;max-height:550px!important;');
 
         }
         $('.mCustomScrollbar_description').mCustomScrollbar();
+        selfCR.indexes = new IndexTranscript();
+        selfCR.indexes.setup_prerequisites('index', selfCR.selected_index, selfCR, selfCR.embed, selfCR.from_playlist);
+        selfCR.indexes.selected_index = selfCR.selected_index;
+        selfCR.indexes.selected_transcript = selfCR.selected_transcript;
+        selfCR.indexes.initialize(selfCR.selected_index);
+        if (parseInt(selfCR.index_file_count, 10) > 0) {
+            selfCR.indexes.first_time_index_call();
+        }
+
+        selfCR.transcripts = new IndexTranscript();
+        selfCR.transcripts.setup_prerequisites('transcript', selfCR.selected_transcript, selfCR, selfCR.embed, selfCR.from_playlist);
+        selfCR.transcripts.selected_index = selfCR.selected_index;
+        selfCR.transcripts.selected_transcript = selfCR.selected_transcript;
+        selfCR.transcripts.initialize(selfCR.selected_transcript);
+        if (parseInt(selfCR.transcript_file_count, 10) > 0) {
+            selfCR.transcripts.first_time_transcript_call();
+        }
+
         selfCR.manageTabs(selfCR.edit_description);
         initEvents();
         initCreateTranscription();
@@ -393,7 +411,6 @@ function CollectionResource() {
                     $.each(selfCR.index_time_wise_page[selfCR.selected_index], function (index, time_wise) {
                         if (currentTime >= time_wise.start_time && currentTime <= time_wise.end_time) {
                             if (selfCR.indexes.index_page_number != time_wise.current_page) {
-                                selfCR.indexes.index_page_number = time_wise.current_page;
                                 selfCR.indexes.specific_page_load('timeline', time_wise.current_page, true);
                                 return false;
                             }
@@ -412,7 +429,6 @@ function CollectionResource() {
                     $.each(selfCR.transcript_time_wise_page[selfCR.selected_transcript], function (index, time_wise) {
                         if (currentTime >= time_wise.start_time && currentTime <= time_wise.end_time) {
                             if (selfCR.transcripts.transcript_page_number != time_wise.current_page) {
-                                selfCR.transcripts.transcript_page_number = time_wise.current_page;
                                 selfCR.transcripts.specific_page_load_transcript('timeline', time_wise.current_page);
                                 return false;
                             }
@@ -817,19 +833,7 @@ function CollectionResource() {
             });
         }
 
-        this.indexes = new IndexTranscript();
-        this.indexes.setup_prerequisites('index', selfCR.selected_index, selfCR, selfCR.embed, this.from_playlist);
-        this.indexes.initialize();
-        if (parseInt(selfCR.index_file_count, 10) > 0) {
-            this.indexes.first_time_index_call();
-        }
 
-        this.transcripts = new IndexTranscript();
-        this.transcripts.setup_prerequisites('transcript', selfCR.selected_transcript, selfCR, selfCR.embed, this.from_playlist);
-        this.transcripts.initialize();
-        if (parseInt(selfCR.transcript_file_count, 10) > 0) {
-            this.transcripts.first_time_transcript_call();
-        }
 
         if (tabType == 'transcript') {
             transcript_scroll();
@@ -843,7 +847,6 @@ function CollectionResource() {
         $('#resourceTab a').click(function () {
             let tabType = window.location.pathname.substr(window.location.pathname.lastIndexOf('/') + 1);
             let currentTab = $(this).data().tab;
-
             try {
                 if (!$(this).hasClass('active')) {
                     selfCR.events_tracker.track_tab_hits(currentTab);
@@ -877,8 +880,8 @@ function CollectionResource() {
             $('.search-result-bottom').removeClass('open');
             if (selfCR.search_text_val != '' && selfCR.search_text_val != 0) {
                 $.each(selfCR.markerHandlerArray, function (_index, object) {
-                    object.currentIndex = 1;
-                    $('.current_location').text(object.currentIndex)
+                    object.currentIndex = 0;
+                    $('.current_location').text(object.currentIndex);
                 });
             }
             show_marker_hanlders(currentTab);
@@ -910,18 +913,17 @@ function CollectionResource() {
 
     const initTimeline = function () {
         document_level_binding_element('.timeline-point', 'click', function () {
+            $('#index-auto-scroll').prop("checked", false);
             let data = $(this).data();
             $('.timeline-point.dark-orange').addClass('light-orange');
             $('.timeline-point.dark-orange').removeClass('dark-orange');
             $(this).addClass('dark-orange');
             if (!selfCR.indexes.index_visible_pages.includes(parseInt(data.pageNumber, 10))) {
-                if (typeof data.pageNumber != 'undefined') {
-                    selfCR.indexes.index_page_number = data.pageNumber;
-                }
-                selfCR.indexes.specific_page_load('timeline', data.pageNumber);
+                selfCR.indexes.specific_page_load('timeline', data.pageNumber, false, '#' + data.type + '_timecode_' + data.point);
             } else {
                 selfCR.indexes.to_index_transcript_point(data);
             }
+
         });
     };
 

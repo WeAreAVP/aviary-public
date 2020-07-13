@@ -9,6 +9,7 @@ function MarkerHandler(identifier, keyword) {
 
     this.identifier = identifier;
     this.tab_type = 'description';
+    this.last_button_action = 'next';
     this.collection_resource = {};
     this.search_keyword = keyword;
     this.$input = $("#search_text");
@@ -112,10 +113,50 @@ function MarkerHandler(identifier, keyword) {
     };
 
     this.update_result_current_index = function () {
-        selfMH.tab_type = window.location.pathname.substr(window.location.pathname.lastIndexOf('/') + 1);
+        let type = window.location.pathname.substr(window.location.pathname.lastIndexOf('/') + 1);
+        let types = ["description", "index", "transcript"];
+        if (!types.includes(type)) {
+            if ($('.info_tabs .nav-link.active.show').length > 0)
+                type = $('.info_tabs .nav-link.active.show').data('tab');
+            else
+                type = 'description'
+        }
+        selfMH.tab_type = type;
         if (selfMH.tab_type.toLowerCase() == 'description') {
             selfMH.$results[selfMH.tab_type] = $('.single_value_non_tombstone').find(".mark." + selfMH.identifier);
         }
+    };
+
+    const load_occurrence_by_type = function (total_page, type, first_or_last) {
+        let indexPageInfo = load_marker(total_page, selfMH.identifier, type, first_or_last);
+        if (type == 'index') {
+            selfMH.collection_resource.indexes.specific_page_load('marker_button', indexPageInfo['page_number_inner']);
+        } else {
+            selfMH.collection_resource.transcripts.specific_page_load_transcript('marker_button', indexPageInfo['page_number_inner']);
+        }
+    };
+
+    const load_last_occurrence = function () {
+
+    };
+
+    const load_marker = function (total_page, identifire, type, last_or_first) {
+        let page_number_inner = false;
+        let all_hits = selfMH.collection_resource.transcript_hits_count[selfMH.collection_resource.selected_transcript][identifire];
+        if (type == 'index') {
+            all_hits = selfMH.collection_resource.index_hits_count[selfMH.collection_resource.selected_index][identifire];
+        }
+
+        let loop_all_hits = all_hits[0];
+        let indexCurrent = 0;
+        if (last_or_first == 'last') {
+            loop_all_hits = all_hits[all_hits.length - 1];
+        }
+
+        let information = loop_all_hits.split('||');
+        page_number_inner = parseInt(information[2], 10);
+
+        return {indexCurrent: indexCurrent, page_number_inner: page_number_inner};
     };
 
     const init_marker_buttons = function () {
@@ -153,94 +194,82 @@ function MarkerHandler(identifier, keyword) {
                     jumpToDescription();
                 }
             } else {
-
-
+                $('#' + selfMH.tab_type.toLowerCase() + '-auto-scroll').prop("checked", false);
                 let $current = {};
                 let number = $(this).is(selfMH.$prevBtn) ? -1 : 1;
-                let flag_change_page = false;
-                let total_page = selfMH.collection_resource.indexes.current_selected_total_page(selfMH.tab_type.toLowerCase(), selfMH.collection_resource.indexes.selected_index, false)
+                let is_next_button = $(this).hasClass('next_button');
+                let total_page = selfMH.collection_resource.transcripts.current_selected_total_page(selfMH.tab_type.toLowerCase(), selfMH.collection_resource.transcripts.selected_transcript, false);
+                let all_hits = selfMH.collection_resource.transcript_hits_count[selfMH.collection_resource.selected_transcript][$(this).data('identifire')];
+
                 if (selfMH.tab_type.toLowerCase() == 'index') {
-                    if (selfMH.collection_resource.total_index_wise[selfMH.collection_resource.selected_index][$(this).data('identifire')] > 0) {
-                        let all_hits = selfMH.collection_resource.index_hits_count[selfMH.collection_resource.selected_index][$(this).data('identifire')];
-                        if (typeof all_hits[selfMH.currentIndex] != 'undefined') {
+                    total_page = selfMH.collection_resource.indexes.current_selected_total_page(selfMH.tab_type.toLowerCase(), selfMH.collection_resource.indexes.selected_index, false)
+                    all_hits = selfMH.collection_resource.index_hits_count[selfMH.collection_resource.selected_index][$(this).data('identifire')];
+                }
+                if (all_hits.length > 0) {
+                    if (selfMH.last_button_action == 'next' && !is_next_button) {
+                        selfMH.currentIndex += -2
+                    } else if (selfMH.last_button_action == 'back' && is_next_button) {
+                        selfMH.currentIndex += +2
+                    }
+                    if (typeof all_hits[(selfMH.currentIndex)] != 'undefined') {
+                        let information = all_hits[(selfMH.currentIndex)].split('||');
+                        $current = $('#' + information[0]).find('.highlight-marker.mark.' + $(this).data('identifire'))[parseInt(information[1], 10)];
+                        if ($($current).length > 0) {
+                            // found and loading
+                            jumpTo($current, total_page);
+                            $(this).parents('li').find('.current_location').text(selfMH.currentIndex + 1);
+                            selfMH.currentIndex += number
+
+                        } else {
+                            // found but not on current pages;
                             let information = all_hits[selfMH.currentIndex].split('||');
-                            $current = $('#' + information[0]).find('.highlight-marker.mark.' + $(this).data('identifire'))[parseInt(information[1], 10)];
                             let page_number_index = information[2];
-                            if ($($current).length <= 0 && page_number_index != selfMH.collection_resource.indexes.index_page_number) {
-                                flag_change_page = true;
-                                if (page_number_index <= 0) {
-                                    page_number_index = 1;
-                                }
-                                selfMH.collection_resource.indexes.index_page_number = page_number_index;
+                            if (page_number_index <= 0) {
+                                page_number_index = 1;
+                            }
+                            if (page_number_index >= total_page) {
+                                page_number_index = total_page - 1;
+                            }
+                            if (selfMH.tab_type.toLowerCase() == 'index') {
+                                // index new page
+                                selfMH.collection_resource.indexes.specific_page_load('marker_button', parseInt(page_number_index, 10));
+                            } else {
+                                // new transcript page
+                                selfMH.collection_resource.transcripts.specific_page_load_transcript('marker_button', parseInt(page_number_index, 10));
                             }
                         }
-                    } else {
-                        return false;
-                    }
-                } else {
-                    total_page = selfMH.collection_resource.transcripts.current_selected_total_page(selfMH.tab_type.toLowerCase(), selfMH.collection_resource.transcripts.selected_transcript, false)
-                    if (selfMH.collection_resource.total_transcript_wise[selfMH.collection_resource.selected_transcript][$(this).data('identifire')] > 0) {
-                        let all_hits = selfMH.collection_resource.transcript_hits_count[selfMH.collection_resource.selected_transcript][$(this).data('identifire')];
-                        if (typeof all_hits[selfMH.currentIndex] != 'undefined') {
-                            let information = all_hits[selfMH.currentIndex].split('||');
-                            $current = $('#' + information[0]).find('.highlight-marker.mark.' + $(this).data('identifire'))[parseInt(information[1], 10)];
-                            let page_number_transcript = information[2];
-                            if (page_number_transcript != selfMH.collection_resource.transcripts.transcript_page_number && $($current).length <= 0) {
-                                flag_change_page = true;
-                                if (page_number_transcript <= 0) {
-                                    page_number_transcript = 1;
-                                }
-                                selfMH.collection_resource.transcripts.transcript_page_number = page_number_transcript;
-                            }
+                    } else if (selfMH.currentIndex > (all_hits.length - 1)) {
+                        //not found loading first occurrence
+                        selfMH.currentIndex = 0;
+                        let information = all_hits[(selfMH.currentIndex)].split('||');
+                        $current = $('#' + information[0]).find('.highlight-marker.mark.' + $(this).data('identifire'))[parseInt(information[1], 10)];
+                        if ($($current).length > 0) {
+                            jumpTo($current, total_page);
+                            selfMH.currentIndex += number;
+                            $(this).parents('li').find('.current_location').text(selfMH.currentIndex);
+                        } else {
+                            load_occurrence_by_type(total_page, selfMH.tab_type.toLowerCase(), 'first')
+                            $(this).parents('li').find('.current_location').text(selfMH.currentIndex);
                         }
-                    } else {
-                        return false;
-                    }
-
-                }
-
-                let page_number_index = selfMH.collection_resource.indexes.index_page_number;
-                let page_number_transcript = selfMH.collection_resource.transcripts.transcript_page_number;
-
-                if (flag_change_page) {
-                    if (selfMH.tab_type.toLowerCase() == 'index') {
-                        selfMH.collection_resource.indexes.specific_page_load('marker_button', parseInt(page_number_index, 10) + number);
-                    } else {
-                        selfMH.collection_resource.transcripts.specific_page_load_transcript('marker_button', parseInt(page_number_transcript, 10) + number);
-                    }
-                    return;
-                }
-
-                if ((selfMH.currentIndex + number) < 0) {
-                    if (selfMH.tab_type.toLowerCase() == 'index') {
-                        selfMH.collection_resource.indexes.specific_page_load('marker_button', parseInt(total_page, 10) - 1);
-                        selfMH.currentIndex = selfMH.collection_resource.index_hits_count[selfMH.collection_resource.selected_index][selfMH.identifier].length - 1;
-                    } else {
-                        selfMH.collection_resource.transcripts.specific_page_load_transcript('marker_button', parseInt(total_page, 10) - 1);
-                        selfMH.currentIndex = selfMH.collection_resource.transcript_hits_count[selfMH.collection_resource.selected_transcript][selfMH.identifier].length - 1;
-                    }
-                    return;
-                } else {
-                    if (selfMH.tab_type.toLowerCase() == 'index') {
-                        if ((selfMH.currentIndex + number) > selfMH.collection_resource.index_hits_count[selfMH.collection_resource.selected_index][selfMH.identifier].length) {
-                            selfMH.currentIndex = 1;
-                            selfMH.collection_resource.indexes.first_time_index_call();
-                            return;
-                        }
-                    } else {
-                        if ((selfMH.currentIndex + number) > selfMH.collection_resource.transcript_hits_count[selfMH.collection_resource.selected_transcript][selfMH.identifier].length) {
-                            selfMH.currentIndex = 1;
-                            selfMH.collection_resource.transcripts.first_time_transcript_call();
-                            return;
+                    } else if (selfMH.currentIndex < 0) {
+                        // not found loading last occurrence
+                        selfMH.currentIndex = all_hits.length - 1;
+                        let information = all_hits[(selfMH.currentIndex)].split('||');
+                        $current = $('#' + information[0]).find('.highlight-marker.mark.' + $(this).data('identifire'))[parseInt(information[1], 10)];
+                        if ($($current).length > 0) {
+                            jumpTo($current, total_page);
+                            selfMH.currentIndex += number;
+                            $(this).parents('li').find('.current_location').text(selfMH.currentIndex);
+                        } else {
+                            load_occurrence_by_type(total_page, selfMH.tab_type.toLowerCase(), 'last')
+                            $(this).parents('li').find('.current_location').text(selfMH.currentIndex + 1);
                         }
                     }
-                }
-
-                if (!flag_change_page) {
-                    $($current).addClass(selfMH.currentClass);
-                    jumpTo($current, total_page);
-                    selfMH.currentIndex += number
-                    $(this).parents('li').find('.current_location').text(selfMH.currentIndex);
+                    if (is_next_button) {
+                        selfMH.last_button_action = 'next';
+                    } else {
+                        selfMH.last_button_action = 'back';
+                    }
                 }
             }
         });

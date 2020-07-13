@@ -51,15 +51,6 @@ module DetailPageHelper
       transcript_count[:total_transcript_wise][transcript_point.file_transcript_id][OpenSSL::Digest::SHA256.new.hexdigest(single_keyword)] ||= 0
       transcript_count[:total_transcript_wise][transcript_point.file_transcript_id][OpenSSL::Digest::SHA256.new.hexdigest(single_keyword)] += transcript_point_sum
 
-      transcript_count[:time_wise] ||= {}
-      transcript_count[:time_wise][transcript_point.file_transcript_id] ||= {}
-      transcript_count[:time_wise][transcript_point.file_transcript_id][current_page + 1] ||= {}
-      transcript_count[:time_wise][transcript_point.file_transcript_id][current_page + 1][:start_time] ||= 0
-      transcript_count[:time_wise][transcript_point.file_transcript_id][current_page + 1][:end_time] ||= 0
-      transcript_count[:time_wise][transcript_point.file_transcript_id][current_page + 1][:start_time] = transcript_point.start_time unless transcript_count[:time_wise][transcript_point.file_transcript_id][current_page + 1][:start_time] > 0
-      transcript_count[:time_wise][transcript_point.file_transcript_id][current_page + 1][:end_time] = transcript_point.end_time
-      transcript_count[:time_wise][transcript_point.file_transcript_id][current_page + 1][:current_page] = current_page + 1
-
       x = 0
       while x < transcript_point_sum
         transcript_count[:hits][transcript_point.file_transcript_id][OpenSSL::Digest::SHA256.new.hexdigest(single_keyword)] << "transcript_timecode_#{transcript_point.id}||#{x}||#{current_page}"
@@ -73,7 +64,7 @@ module DetailPageHelper
 
   def count_index_occurrence(index_point, single_keyword, index_count, is_file_wise, counter)
     index_point_sum = count_em(index_point.synopsis, single_keyword) + count_em(index_point.title, single_keyword) + count_em(index_point.partial_script, single_keyword) +
-                      count_em(index_point.subjects, single_keyword) + count_em(index_point.keywords, single_keyword)
+        count_em(index_point.subjects, single_keyword) + count_em(index_point.keywords, single_keyword)
 
     index_count[index_point.file_index.collection_resource_file_id] ||= {}
     index_count[index_point.file_index.collection_resource_file_id]['total-index'] ||= 0
@@ -90,6 +81,7 @@ module DetailPageHelper
     index_count[:single_index_count] ||= {}
     index_count[:single_index_count][index_point.file_index_id] ||= 0
     index_count[:single_index_count][index_point.file_index_id] += index_point_sum
+
     if counter.present?
       index_count[:page_wise] ||= {}
       index_count[:page_wise][:index] ||= {}
@@ -112,7 +104,6 @@ module DetailPageHelper
         index_count[:hits][index_point.file_index_id][OpenSSL::Digest::SHA256.new.hexdigest(single_keyword)] << "index_timecode_#{index_point.id}||#{x}||#{current_page}"
         x += 1
       end
-
     end
 
     session[:count_presence][:index] = true if index_count[index_point.file_index.collection_resource_file_id][single_keyword] > 0 && !session[:count_presence][:index]

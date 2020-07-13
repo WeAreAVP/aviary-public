@@ -1,48 +1,52 @@
-<div class="row <%= params['page_type'] %>_type <%= params['page_number'] %>">
-  <div class="col-md-12">
-    <% recorded = []
-       file_transcript = @file_transcript %>
-    <% recorded[file_transcript.id] ||= [] %>
-    <% can_access_transcript = file_transcript.is_public || @collection_resource.can_view || @collection_resource.can_edit || (can? :edit, @collection_resource.collection.organization) %>
-    <div class="file_transcript file_transcript_<%= file_transcript.id %> pb-10px pl-15px" data-language="<%= file_transcript.language %>" data-title="<%= file_transcript.title %>" data-public="<%= file_transcript.is_public %>" data-webvtt="<%= file_transcript.associated_file_content_type.include?('vtt') %>" data-json="<%= file_transcript.timestamps.present? %>" data-access="<%= can_access_transcript %>" data-edit="<%= file_transcript.is_edit %>" >
-      <% if (can? :manage, @collection_resource) || @collection_resource.can_edit %>
-        <% unless params[:from_playlist].to_s.to_boolean? %>
-          <% if params['page_type'] == 'previous_page' || ((@total_transcript_points / Aviary::IndexTranscriptManager::POINTS_PER_PAGE) <= 1 && params['page_type'] == 'current_page') %>
-            <span class="font-size-13px">Edited By <b class="font-weight-bold"><%= file_transcript.user.full_name %></b> at <b class="font-weight-bold"><%= Time.at(file_transcript.updated_at.to_f).utc.strftime('%b %d, %Y %H:%M:%S') %></b></span>
-          <% end %>
+<% if !(@total_transcript_points <= Aviary::IndexTranscriptManager::POINTS_PER_PAGE && (params['page_type'] == 'next_page' || params['page_type'] == 'current_page')) %>
+  <div class="row <%= params['page_type'] %>_type <%= params['page_number'] %>">
+    <div class="col-md-12">
+      <% recorded = []
+         file_transcript = @file_transcript %>
+      <% recorded[file_transcript.id] ||= [] %>
+      <% can_access_transcript = file_transcript.is_public || @collection_resource.can_view || @collection_resource.can_edit || (can? :edit, @collection_resource.collection.organization) %>
+      <% can_access_annotation = (file_transcript.is_public && file_transcript.annotation_set.try(:is_public)) || @collection_resource.can_view || @collection_resource.can_edit || (can? :edit, @collection_resource.collection.organization) %>
+      <div class="file_transcript file_transcript_<%= file_transcript.id %> pb-10px pl-15px" data-language="<%= file_transcript.language %>" data-title="<%= file_transcript.title %>" data-public="<%= file_transcript.is_public %>" data-webvtt="<%= file_transcript.associated_file_content_type.include?('vtt') %>" data-json="<%= file_transcript.timestamps.present? %>" data-access="<%= can_access_transcript %>" data-edit="<%= file_transcript.is_edit %>" data-annotation="<%= file_transcript.annotation_set.try(:id) %>" data-annotation_access="<%= can_access_annotation %>">
+        <% if (can? :manage, @collection_resource) || @collection_resource.can_edit %>
+          <% unless params[:from_playlist].to_s.to_boolean? %>
+            <% if params['page_type'] == 'previous_page' %>
+              <span class="font-size-13px">Edited By <b class="font-weight-bold"><%= file_transcript.user.full_name %></b> at <b class="font-weight-bold"><%= Time.at(file_transcript.updated_at.to_f).utc.strftime('%b %d, %Y %H:%M:%S') %></b></span>
 
-          <% if !file_transcript.is_edit && file_transcript.timestamps.present? %>
-            <a class="edit_fields edit_transcript" href="javascript://"
-               data-url="<%= edit_transcript_url(file_transcript, host: Utilities::AviaryDomainHandler.subdomain_handler(current_organization)) %>">
-              <i class="fa fa-pencil"></i>
-            </a>
-          <% elsif file_transcript.is_edit && (file_transcript.locked_by == current_user.id) %>
-            <a href="javascript://" class="btn-sm btn-success finish_editing" data-url="<%= edit_transcript_url(file_transcript, host: Utilities::AviaryDomainHandler.subdomain_handler(current_organization)) %>">Finish
-              Editing</a>
+              <% if !file_transcript.is_edit && file_transcript.timestamps.present? %>
+                <a class="edit_fields edit_transcript" href="javascript://"
+                   data-url="<%= edit_transcript_url(file_transcript, host: Utilities::AviaryDomainHandler.subdomain_handler(current_organization)) %>">
+                  <i class="fa fa-pencil"></i>
+                </a>
+              <% elsif file_transcript.is_edit && (file_transcript.locked_by == current_user.id) %>
+                <a href="javascript://" class="btn-sm btn-success finish_editing" data-url="<%= edit_transcript_url(file_transcript, host: Utilities::AviaryDomainHandler.subdomain_handler(current_organization)) %>">Finish
+                  Editing</a>
+              <% end %>
+            <% end %>
+
           <% end %>
         <% end %>
-      <% end %>
-      <% if can_access_transcript %>
-        <% @file_transcript_points.each do |transcript_point| %>
-          <% present(transcript_point) do |presenter| %>
-            <% transcript_time_start_single = !recorded[file_transcript.id].include?(transcript_point.start_time.to_i) ? "transcript_time_start_#{transcript_point.start_time.to_i}" : '' %>
-            <%== presenter.show_transcript_point(transcript_time_start_single) %>
-          <% end
-             recorded[file_transcript.id] << transcript_point.start_time.to_i %>
-        <% end %>
-      <% else %>
-        <div class="text-center no-access">
-          <% if user_signed_in? %>
-            <p class="mb-20px">You don't have access to this transcript, please request access from the organization
-              owner.</p>
-          <% else %>
-            <p class="mb-20px">You don't have access to this transcript, please login to request access from the
-              organization
-              owner.</p>
+        <% if can_access_transcript %>
+          <% @file_transcript_points.each do |transcript_point| %>
+            <% present(transcript_point) do |presenter| %>
+              <% transcript_time_start_single = !recorded[file_transcript.id].include?(transcript_point.start_time.to_i) ? "transcript_time_start_#{transcript_point.start_time.to_i}" : '' %>
+              <%== presenter.show_transcript_point(transcript_time_start_single, can_access_annotation) %>
+            <% end
+               recorded[file_transcript.id] << transcript_point.start_time.to_i %>
           <% end %>
-          <%= access_request_link('', {organization_id: @collection_resource.collection.organization.id, title: @collection_resource.title, click_through: @collection_resource.collection.click_through, conditions_for_access: @collection_resource.collection.conditions_for_access, id: @collection_resource.id}) %>
-        </div>
-      <% end %>
+        <% else %>
+          <div class="text-center no-access">
+            <% if user_signed_in? %>
+              <p class="mb-20px">You don't have access to this transcript, please request access from the organization
+                owner.</p>
+            <% else %>
+              <p class="mb-20px">You don't have access to this transcript, please login to request access from the
+                organization
+                owner.</p>
+            <% end %>
+            <%= access_request_link('', {organization_id: @collection_resource.collection.organization.id, title: @collection_resource.title, click_through: @collection_resource.collection.click_through, conditions_for_access: @collection_resource.collection.conditions_for_access, id: @collection_resource.id}) %>
+          </div>
+        <% end %>
+      </div>
     </div>
   </div>
-</div>
+<% end %>

@@ -66,15 +66,24 @@ class PlaylistsController < ApplicationController
 
     begin
       @file_indexes = @resource_file.file_indexes.order_index
+    rescue StandardError => ex
+      puts ex.backtrace.join("\n")
+    end
+    begin
       @file_transcripts = @resource_file.file_transcripts.order_transcript
     rescue StandardError => ex
       puts ex.backtrace.join("\n")
     end
-
     begin
       @selected_index = @file_indexes.first.id if @selected_index.blank?
+    rescue StandardError => ex
+      @selected_index = 0
+      puts ex.backtrace.join("\n")
+    end
+    begin
       @selected_transcript = @file_transcripts.first.id if @selected_transcript.blank?
     rescue StandardError => ex
+      @selected_transcript = 0
       puts ex.backtrace.join("\n")
     end
   end
@@ -132,15 +141,24 @@ class PlaylistsController < ApplicationController
 
     begin
       @file_indexes = @resource_file.file_indexes.order_index
+    rescue StandardError => ex
+      puts ex.backtrace.join("\n")
+    end
+    begin
       @file_transcripts = @resource_file.file_transcripts.order_transcript
     rescue StandardError => ex
       puts ex.backtrace.join("\n")
     end
-
     begin
-      @selected_index = @file_indexes.first.id if @selected_index.blank?
+      @selected_index = @file_indexes.first.id @selected_index.blank?
+    rescue StandardError => ex
+      @selected_index = 0
+      puts ex.backtrace.join("\n")
+    end
+    begin
       @selected_transcript = @file_transcripts.first.id if @selected_transcript.blank?
     rescue StandardError => ex
+      @selected_transcript = 0
       puts ex.backtrace.join("\n")
     end
   end

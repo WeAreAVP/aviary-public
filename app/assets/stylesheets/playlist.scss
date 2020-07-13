@@ -218,6 +218,7 @@
     text-overflow: ellipsis;
     color: #999;
     flex: inherit;
+    text-decoration: none;
   }
 
   .playlist-list .text .title {
@@ -381,6 +382,7 @@
   .sort-icon {
     margin-left: 5px;
   }
+
   .edit_description_playlist {
     border: none;
     font-weight: normal !important;
@@ -747,5 +749,17 @@
 .playlist-holder {
   .two-col {
     border-bottom: none;
+  }
+}
+
+.loader-details.playlist-custom {
+  margin-top: 100px;
+}
+
+.playlists-edit,
+.playlists-show {
+  .index_point_inner_container,
+  .transcript_point_inner_container {
+    padding-left: 15px;
   }
 }

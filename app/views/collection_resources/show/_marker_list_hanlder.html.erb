@@ -34,7 +34,7 @@
                   <%= render partial: 'shared/over_layer_loader' %>
                   <% if count_for_keyword > 0 %>
                     <button class='back_button <%= type %> <%= index %> cursor_not-allowed' data-search="prev" data-identifire="<%= index %>"><i class="fa fa-angle-left" aria-hidden="true"></i></button>
-                    <span class="badge badge-pill badge-danger <%= index %>"> <div class="current_location d-inline"><%= count_for_keyword > 0 ? 1 : 0 %></div>/ <%= count_for_keyword %></span>
+                    <span class="badge badge-pill badge-danger <%= index %>"> <div class="current_location d-inline">0</div>/ <%= count_for_keyword %></span>
                     <button class='next_button <%= type %> <%= index %> cursor_not-allowed' data-search="next" data-identifire="<%= index %>"><i class="fa fa-angle-right" aria-hidden="true"></i></button>
                   <% else %>
                     <button class='back_button <%= type %> <%= index %> disabled'><i class="fa fa-angle-left" aria-hidden="true"></i> </button>
