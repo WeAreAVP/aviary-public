@@ -10,16 +10,6 @@
           <% unless params[:from_playlist].to_s.to_boolean? %>
             <% if params['page_type'] == 'previous_page' %>
               <span class="font-size-13px">Edited By <b class="font-weight-bold"><%= file_transcript.user.full_name %></b> at <b class="font-weight-bold"><%= Time.at(file_transcript.updated_at.to_f).utc.strftime('%b %d, %Y %H:%M:%S') %></b></span>
-
-              <% if !file_transcript.is_edit && file_transcript.timestamps.present? %>
-                <a class="edit_fields edit_transcript" href="javascript://"
-                   data-url="<%= edit_transcript_url(file_transcript, host: Utilities::AviaryDomainHandler.subdomain_handler(current_organization)) %>">
-                  <i class="fa fa-pencil"></i>
-                </a>
-              <% elsif file_transcript.is_edit && (file_transcript.locked_by == current_user.id) %>
-                <a href="javascript://" class="btn-sm btn-success finish_editing" data-url="<%= edit_transcript_url(file_transcript, host: Utilities::AviaryDomainHandler.subdomain_handler(current_organization)) %>">Finish
-                  Editing</a>
-              <% end %>
             <% end %>
 
           <% end %>
@@ -42,7 +32,6 @@
                 organization
                 owner.</p>
             <% end %>
-            <%= access_request_link('', {organization_id: @collection_resource.collection.organization.id, title: @collection_resource.title, click_through: @collection_resource.collection.click_through, conditions_for_access: @collection_resource.collection.conditions_for_access, id: @collection_resource.id}) %>
           </div>
         <% end %>
       </div>

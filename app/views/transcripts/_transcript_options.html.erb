@@ -40,13 +40,7 @@
           <i class="fa fa-ellipsis-v"></i>
         </button>
         <ul class="dropdown-menu dropdown-menu-right custom-right-dropdown" aria-labelledby="dropdownMenuButton">
-          <li>
-            <% if @resource_file.present? && !@resource_file.embed_code.present? && current_user.present? && current_user.current_org_owner_admin(current_organization).present? %>
-              <a href="javascript://" class="dropdown-item" data-toggle="modal" data-target="#request_transcript">
-                <i class="fa fa-paper-plane" aria-hidden="true"></i> Request new transcript
-              </a>
-            <% end %>
-          </li>
+
           <% if ((can? :manage, @collection_resource) || @collection_resource.can_edit) && !params[:from_playlist].to_s.to_boolean? %>
             <% if @resource_file.present? %>
               <li>

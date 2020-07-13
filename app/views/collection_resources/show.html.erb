@@ -18,9 +18,6 @@
     <%= render 'transcripts/upload_transcript' %>
     <%= render 'transcripts/sort_transcript' %>
   <% end %>
-  <% if current_user.present? && current_user.current_org_owner_admin(current_organization).present? %>
-    <%= render 'transcriptions/request_transcript' %>
-  <% end %>
 <% end %>
 <% track_params = params.clone.except('controller').except('action').to_json %>
 <% can_access = permission_to_access_file?(@resource_file) %>
