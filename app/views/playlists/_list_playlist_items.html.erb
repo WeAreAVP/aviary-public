@@ -63,7 +63,7 @@
             <% icon_src = (pl_rsrc.collection_resource.collection.present? && pl_rsrc.collection_resource.collection.favicon.present?) ? pl_rsrc.collection_resource.collection.favicon.url(:small) : image_url('collection_folder_icon.svg') %>
             <img src="<%= icon_src %>" alt="collection">
           </div>
-          <%= link_to pl_rsrc.collection_resource.collection.title, collection_url(pl_rsrc.collection_resource.collection, host: Utilities::AviaryDomainHandler.subdomain_handler(pl_rsrc.collection_resource.collection.organization)), target: "_blank", class: "text" %>
+          <%= link_to pl_rsrc.collection_resource.collection.title, playlist_link, class: "text" %>
         </div>
 
         <div class="title_description">
