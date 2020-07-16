@@ -1,42 +1,45 @@
 <div class="two-col two_col_custom">
   <div class="row">
-    <div class="col-lg-7">
+    <div class="col-lg-7 pr-0">
       <% if (can? :manage, @collection_resource) %>
         <div class="breadcrumb resources-details">
           <%= render_breadcrumbs %>
         </div>
       <% end %>
-      <div class="col-lg-12">
+      <div class="col-lg-12 p-0">
         <div class="top-video-part d-flex justify-content-between align-items-center">
           <%= render partial: 'collection_resources/back_to_search' %>
           <h1><%= @collection_resource.title %></h1>
         </div>
         <div class="video-detail-holder">
-          <%= render 'collection_resources/show/share_link' %>
+          <% if permission_to_access_file?(@resource_file) %>
+            <%= render 'collection_resources/show/share_link' %>
+          <% end %>
           <div class="video-main carousel slide" data-ride="carousel">
             <div class="carousel-inner">
               <div class="carousel-item active">
                 <% if @resource_file.present? %>
-                  <% is_audio_only = @collection_resource.present? ? @collection_resource.collection.is_audio_only : false  %>
-                  <%= render partial: 'collection_resources/show/mediaplayer', locals: { single_file: @resource_file , is_audio_only: is_audio_only} %>
+                  <% is_audio_only = @collection_resource.present? ? @collection_resource.collection.is_audio_only : false %>
+                  <%= render partial: 'collection_resources/show/mediaplayer', locals: { single_file: @resource_file, is_audio_only: is_audio_only } %>
                 <% end %>
               </div>
+              <%= render 'collection_resources/show/list_resource_files' %>
             </div>
-            <%= render 'collection_resources/show/list_resource_files' %>
           </div>
-        </div>
-        <% unless @resource_file.nil? %>
-          <%= render layout: 'collection_resources/show/media_carousel' do %>
-            <%= render partial: 'collection_resources/show/resource_listing' %>
+          <% unless @resource_file.nil? %>
+            <%= render layout: 'collection_resources/show/media_carousel' do %>
+              <%= render partial: 'collection_resources/show/resource_listing' %>
+            <% end %>
           <% end %>
-        <% end %>
+        </div>
       </div>
-
     </div>
-    <div style="position: relative;" class="col-lg-5 video-detail-container resources_info_holder">
-      <div class="info_tabs" data-template-url="<%= collection_collection_resource_load_resource_details_template_path(@collection, @collection_resource, @resource_file, share: params[:share]) %>" data-search-size="12" data-tabs-size="12">
-      </div>
-      <div class="loader loader-details">
+    <input type='hidden' id='current_index_marker' value="0"/>
+    <input type='hidden' id='current_transcript_marker' value="0"/>
+    <input type='hidden' id='current_description_marker' value="0"/>
+    <div style="position: relative;" class="col-lg-5 video-detail-container resources_info_holder pl-0">
+      <%= render partial: 'collection_resources/show/all_info_tabs', locals: {from_playlist: false} %>
+      <div class="loader loader-details d-none">
         <div class="img">
           <div class="hold">
             <%= image_tag("https://#{ENV['S3_HOST_CDN']}/public/images/ajax-loader.gif") %>

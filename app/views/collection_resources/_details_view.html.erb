@@ -1,23 +1,23 @@
-<% if (can? :edit, @collection_resource) && !params[:from_playlist].to_s.to_boolean? %>
-  <a class="edit_fields" href="javascript:void(0)"><i class="fa fa-pencil"></i></a>
-<% end %>
+<div class="col-md-12 pr-0">
+  <% if (can? :edit, @collection_resource) && !params[:from_playlist].to_s.to_boolean? %>
+    <a class="edit_fields" href="javascript:void(0)"><i class="fa fa-pencil"></i></a>
+  <% end %>
 
-<%
-  @description_count = {}
-  if @collection_resource.present? %>
-  <section class="form-common mCustomScrollbar mCustomScrollbar_description">
-    <% dynamic_fields['CollectionResource'].each do |single_field| %>
-      <% next if single_field['field'].label == 'Title' %>
-      <% if single_field['settings'][:is_visible] %>
-        <% if single_field['values'].length > 0  && (!single_field['values'][0]['value'].blank? || !single_field['values'][0]['vocab_value'].blank?) %>
-          <dt><%= single_field['field'].label %>:</dt>
-          <dd class="with-select">
-            <%= render partial: 'collection_resources/fields_partail_view', locals: {single_field: single_field} %>
-          </dd>
-          <div class="clearfix"></div>
+  <% if @collection_resource.present? %>
+    <section class="form-common mCustomScrollbar mCustomScrollbar_description">
+      <% dynamic_fields['CollectionResource'].each do |single_field| %>
+        <% next if single_field['field'].label == 'Title' %>
+        <% if single_field['settings'][:is_visible] %>
+          <% if single_field['values'].length > 0 && (!single_field['values'][0]['value'].blank? || !single_field['values'][0]['vocab_value'].blank?) %>
+            <dt><%= single_field['field'].label %>:</dt>
+            <dd class="with-select">
+              <%= render partial: 'collection_resources/fields_partail_view', locals: { single_field: single_field } %>
+            </dd>
+            <div class="clearfix"></div>
+          <% end %>
         <% end %>
       <% end %>
-    <% end %>
-  </section>
-<% end %>
-<% session[:description_count] = @description_count %>
+    </section>
+  <% end %>
+</div>
+

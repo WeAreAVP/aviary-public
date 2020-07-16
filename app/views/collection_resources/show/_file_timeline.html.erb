@@ -9,14 +9,14 @@
 %>
 <% if file_indexes.present? %>
   <div class="bottom_layer timeline-player-bar">
-  
     <% file_indexes.each do |index| %>
-      <% index.file_index_points.each do |point| %>
-        
+      <% index.file_index_points.each_with_index do |point, index_number| %>
         <% color = 'blue' %>
         <% color = 'light-orange' if !session[:index_count].blank? and session[:index_count]['individual']['index'].key? "id-#{point.id}" and session[:index_count]['individual']['index']["id-#{point.id}"] > 0 %>
         <% left = (100 * (point.start_time.to_f / (@resource_file.duration.to_f.nonzero? || 1))).floor %>
-        <span class="play-timecode timeline-point index_timeline index_<%= index.id %> <%= color %> d-none point_index_<%= point.id %>" data-type="index" data-point="<%= point.id %>" data-timecode="<%= point.start_time %>" data-toggle="tooltip" data-placement="bottom" title="<%= Time.at(point.start_time.to_f).utc.strftime('%H:%M:%S') + ' ' + point.title %>" style="left:<%= left %>%;"></span>
+        <% current_page = (index_number / Aviary::IndexTranscriptManager::POINTS_PER_PAGE).floor %>
+        <% current_page = (current_page <= 0 ? 0 : current_page) %>
+        <span class="play-timecode timeline-point index_timeline index_<%= index.id %> <%= color %> d-none point_index_<%= point.id %>" data-type="index" data-page-number="<%= current_page %>" data-point="<%= point.id %>" data-timecode="<%= point.start_time %>" data-toggle="tooltip" data-placement="bottom" title="<%= Time.at(point.start_time.to_f).utc.strftime('%H:%M:%S') + ' ' + point.title %>" style="left:<%= left %>%;"></span>
       <% end %>
     <% end %>
   </div>

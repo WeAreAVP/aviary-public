@@ -1,0 +1,71 @@
+<div class="grey-box">
+  <div class="custom-checkbox">
+    <% checked = @collection_resource.collection.enable_itc_autoscroll ? 'checked="checked"' : '' %>
+    <input type="checkbox" class="checkbox index-trance-checkbox" id="index-auto-scroll" <%= checked %>/>
+    <label for="index-auto-scroll">Auto Scroll with Media</label>
+  </div>
+</div>
+<div class="grey-box">
+  <div class="d-flex align-items-center">
+    <div class="drop_drag <%= !(can? :manage, @collection_resource) and !@collection_resource.can_edit ? 'w-100' : '' %>">
+      <% if (@resource_file.present? && @resource_file.file_indexes.present?) %>
+        <div class="select-index-drop">
+          <span class="label indexes_label">Indexes</span>
+          <div class="col-md-12 p-0">
+            <% if file_indexes.present? %>
+              <select id="file_index_select" class="select_type_transcript">
+                <% html = '' %>
+                <% file_indexes.each do |file_index| %>
+                  <option value="<%= file_index.id %>"><%= file_index.title %></option>
+                  <% html += "<input id='total_index_points_#{file_index.id}' type='hidden' value='#{file_index.file_index_points.count / Aviary::IndexTranscriptManager::POINTS_PER_PAGE}'/>" %>
+                <% end %>
+              </select>
+              <%= html.html_safe %>
+            <% end %>
+          </div>
+        </div>
+        <% if @file_indexes.present? %>
+          <% @index_time_wise = {} %>
+          <% @index_count = {} %>
+          <% @file_indexes.each do |file_index| %>
+            <% if file_index.is_public || @collection_resource.can_view || @collection_resource.can_edit || (can? :edit, @collection_resource.collection.organization) %>
+              <% file_index.file_index_points.each_with_index do |index_point, counter| %>
+                <% @index_time_wise = index_page_wise_time_range(@index_time_wise, index_point, counter) %>
+                <% @index_count = count_occurrence(index_point, session[:session_video_text_all], @index_count, 'index', false, counter) %>
+              <% end %>
+            <% end %>
+          <% end %>
+        <% end %>
+      <% end %>
+    </div>
+    <% unless params[:from_playlist].to_s.to_boolean? %>
+      <% if ((can? :manage, @collection_resource) || @collection_resource.can_edit) && !params[:from_playlist].to_s.to_boolean? %>
+        <div class="dropdown">
+          <button class="btn-icon dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="fa fa-ellipsis-v"></i>
+          </button>
+          <div class="dropdown-menu dropdown-menu-right custom-right-dropdown" aria-labelledby="dropdownMenuButton">
+
+            <% if @resource_file.present? %>
+              <a href="javascript:void(0);" data-toggle="modal" data-target="#index_upload" class="dropdown-item" title="Add"><i class="fa fa-plus-circle" aria-hidden="true"></i>
+                Upload another index</a>
+              <% if @resource_file.file_indexes.present? %>
+                <div class="dropdown-divider"></div>
+                <a href="javascript:void(0);" data-toggle="modal" data-target="#index_sort_popup" class="dropdown-item" id="sort_index"><i class="material-icons custom-transcript-icon">menu</i>
+                  Manage indexes</a>
+                <a href="javascript:void(0);" data-toggle="modal" id="index_update_btn" data-target="#index_upload" class="dropdown-item" title="Update"><i class="fa fa-refresh"></i>
+                  Update this index
+                </a>
+                <a href="javascript:void(0);" data-url="/indexes/delete/" id="delete_index" class="dropdown-item" title="Delete"><i class="material-icons custom-delete-icon">delete</i>
+                  Delete this index
+                </a>
+
+              <% end %>
+            <% end %>
+
+          </div>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+</div>

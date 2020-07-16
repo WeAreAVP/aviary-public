@@ -1,63 +1,33 @@
-<div class="grey-box">
-  <div class="custom-checkbox">
-    <% checked = @collection_resource.collection.enable_itc_autoscroll ? 'checked="checked"' : '' %>
-    <input type="checkbox" class="checkbox index-trance-checkbox" id="index-auto-scroll" <%= checked %>/>
-    <label for="index-auto-scroll">Auto Scroll with Media</label>
-  </div>
-</div>
-<div class="grey-box">
-  <div class="d-flex">
-    <div class="drop_drag <%= !(can? :manage, @collection_resource) and !@collection_resource.can_edit ? 'w-100' : '' %>">
-      <% if (@resource_file.present? && @resource_file.file_indexes.present?) %>
-        <% file_indexes = @resource_file.file_indexes.order_index %>
-
-        <div class="select-index-drop">
-          <div class="col-md-12 p-0">
-            <% if file_indexes.present? %>
-              <select id="file_index_select" class="select_type_transcript">
-                <% file_indexes.each do |file_index| %>
-                  <option value="<%= file_index.id %>"><%= file_index.title %></option>
-                <% end %>
-              </select>
+<% if !(@total_index_points <= Aviary::IndexTranscriptManager::POINTS_PER_PAGE && (params['page_type'] == 'next_page' || params['page_type'] == 'current_page')) %>
+  <div class="row <%= params['page_type'] %>_type <%= params['page_number'] %>">
+    <div class="col-md-12">
+      <% if @file_index.present?
+           recorded = []
+           file_index = @file_index
+           recorded[file_index.id] ||= [] %>
+        <div class="file_index file_index_<%= file_index.id %> pb-10px" data-language="<%= file_index.language %>" data-title="<%= file_index.title %>" data-public="<%= file_index.is_public %>">
+          <% if file_index.is_public || @collection_resource.can_view || @collection_resource.can_edit || (can? :edit, @collection_resource.collection.organization) %>
+            <% @file_index_points.each do |index_point| %>
+              <% present(index_point) do |presenter| %>
+                <% index_time_start = !recorded.include?(index_point.start_time.to_i) ? "index_time_start_#{index_point.start_time.to_i}" : '' %>
+                <%== presenter.single_index_point_hanlder(index_time_start) %>
+              <% end %>
+              <% recorded[file_index.id] << index_point.start_time.to_i %>
             <% end %>
-          </div>
+          <% else %>
+            <div class="text-center  no-access">
+              <% if user_signed_in? %>
+                <p class="mb-20px">You don't have access to this index, please request access from the organization
+                  owner.</p>
+              <% else %>
+                <p class="mb-20px">You don't have access to this index, please login to request access from the
+                  organization
+                  owner.</p>
+              <% end %>
+            </div>
+          <% end %>
         </div>
       <% end %>
     </div>
-    <% unless params[:from_playlist].to_s.to_boolean? %>
-      <div class="dropdown">
-        <button class="btn-icon dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          <i class="fa fa-ellipsis-v"></i>
-        </button>
-        <div class="dropdown-menu dropdown-menu-right custom-right-dropdown" aria-labelledby="dropdownMenuButton">
-          <% if ((can? :manage, @collection_resource) || @collection_resource.can_edit) && !params[:from_playlist].to_s.to_boolean? %>
-            <% if @resource_file.present? %>
-              <a href="javascript:void(0);" data-toggle="modal" data-target="#index_upload" class="dropdown-item" title="Add"><i class="fa fa-plus-circle" aria-hidden="true"></i>
-                Upload index</a>
-
-              <% if @resource_file.file_indexes.present? %>
-                <div class="dropdown-divider"></div>
-                <a href="javascript:void(0);" data-toggle="modal" data-target="#index_sort_popup" class="dropdown-item" id="sort_index"><i class="material-icons custom-transcript-icon">menu</i>
-                  Manage indexes</a>
-                <a href="javascript:void(0);" data-toggle="modal" id="index_update_btn" data-target="#index_upload" class="dropdown-item" title="Update"><i class="fa fa-refresh"></i>
-                  Edit this index
-                </a>
-                <a href="javascript:void(0);" data-url="/indexes/delete/" id="delete_index" class="dropdown-item" title="Delete"><i class="material-icons custom-delete-icon">delete</i>
-                  Delete this index
-                </a>
-
-
-              <% end %>
-            <% end %>
-          <% end %>
-        </div>
-      </div>
-    <% end %>
   </div>
-</div>
-
-<div class="row">
-  <div class="col-md-12">
-    <%= render partial: 'indexes/show', locals: { file_indexes: file_indexes } %>
-  </div>
-</div>
+<% end %>

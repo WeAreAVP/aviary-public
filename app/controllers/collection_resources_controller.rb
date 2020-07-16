@@ -1,10 +1,10 @@
 # Collection Resources Controller
 class CollectionResourcesController < ApplicationController
   before_action :set_av_resource, except: %I[new show create embed_file]
-  before_action :authenticate_user!, except: %I[show search_text load_head_and_tombstone_template load_resource_details_template load_time_line_template embed_file show_search_counts]
+  before_action :authenticate_user!, except: %I[show search_text load_head_and_tombstone_template load_resource_details_template load_time_line_template embed_file show_search_counts load_index_template load_transcript_template]
   before_action :check_resource_limit, only: %I[new create]
   before_action :check_if_playlist
-  load_and_authorize_resource except: %I[create search_text load_head_and_tombstone_template load_resource_details_template load_time_line_template embed_file show_search_counts]
+  load_and_authorize_resource except: %I[create search_text load_head_and_tombstone_template load_resource_details_template load_time_line_template embed_file show_search_counts load_index_template load_transcript_template]
   include ApplicationHelper
   include Aviary::ResourceFileManagement
   include Aviary::SearchManagement
@@ -37,11 +37,36 @@ class CollectionResourcesController < ApplicationController
     @detail_page = true
     @file_index = FileIndex.new
     @file_transcript = FileTranscript.new
+
     @selected_transcript = 0
     @selected_index = 0
+    @file_indexes = {}
+    @file_transcripts = {}
     session[:count_presence] = { index: false, transcript: false, description: false }
     session[:session_video_text_all] = session[:transcript_count] = session[:index_count] = session[:description_count] = {}
     session[:session_video_text_all], @selected_transcript, @selected_index, @count_file_wise = CollectionResourcePresenter.new(@collection_resource, view_context).generate_params_for_detail_page(@resource_file, @collection_resource, session, params)
+    begin
+      @file_indexes = @resource_file.file_indexes.order_index
+    rescue StandardError => ex
+      puts ex.backtrace.join("\n")
+    end
+    begin
+      @file_transcripts = @resource_file.file_transcripts.order_transcript
+    rescue StandardError => ex
+      puts ex.backtrace.join("\n")
+    end
+    begin
+      @selected_index = @file_indexes.first.id if @selected_index.blank?
+    rescue StandardError => ex
+      @selected_index = 0
+      puts ex.backtrace.join("\n")
+    end
+    begin
+      @selected_transcript = @file_transcripts.first.id if @selected_transcript.blank?
+    rescue StandardError => ex
+      @selected_transcript = 0
+      puts ex.backtrace.join("\n")
+    end
   end
 
   def update_metadata
@@ -68,6 +93,28 @@ class CollectionResourcesController < ApplicationController
       format.html { redirect_back(fallback_location: root_path) }
       format.js
     end
+  end
+
+  def load_index_template
+    @resource_file = params[:resource_file_id] ? CollectionResourceFile.find_by(id: params[:resource_file_id]) : @collection_resource.collection_resource_files.order_file.first
+    authorize! :read, @collection_resource
+    offset = params['page_number'].present? ? params['page_number'].to_i * Aviary::IndexTranscriptManager::POINTS_PER_PAGE : 0
+    offset = 0 if offset < 0
+    @file_index = params['selected_index'].to_i > 0 ? FileIndex.find(params['selected_index']) : @resource_file.file_indexes.order_index.first
+    @file_index_points = @file_index.file_index_points.limit(Aviary::IndexTranscriptManager::POINTS_PER_PAGE).offset(offset)
+    @total_index_points = @file_index.file_index_points.count
+    render partial: 'indexes/index', locals: { size: params[:tabs_size] }
+  end
+
+  def load_transcript_template
+    @resource_file = params[:resource_file_id] ? CollectionResourceFile.find_by(id: params[:resource_file_id]) : @collection_resource.collection_resource_files.order_file.first
+    authorize! :read, @collection_resource
+    offset = params['page_number'].present? ? params['page_number'].to_i * Aviary::IndexTranscriptManager::POINTS_PER_PAGE : 0
+    @file_transcript = params['selected_transcript'].to_i > 0 ? FileTranscript.find(params['selected_transcript']) : @resource_file.file_transcripts.order_transcript.first
+    offset = 0 if offset < 0 || @file_transcript.file_transcript_points.count <= Aviary::IndexTranscriptManager::POINTS_PER_PAGE
+    @file_transcript_points = @file_transcript.file_transcript_points.limit(Aviary::IndexTranscriptManager::POINTS_PER_PAGE).offset(offset)
+    @total_transcript_points = @file_transcript.file_transcript_points.count
+    render partial: 'transcripts/index', locals: { size: params[:tabs_size], xray: false }
   end
 
   def load_resource_details_template

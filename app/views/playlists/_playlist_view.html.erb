@@ -34,9 +34,9 @@
                      end
       %>
       <!-- Playlist Right Sidebar -->
-      <div class='col-md-5'>
+      <div class='col-md-5 pl-0'>
         <% if !@playlist_show.present? && !@playlist_show && (can? :manage, @playlist) %>
-          <button id="manage_resource_list" class="btn btn-sm btn-primary manage_resource_list mb-2 d-block">
+          <button id="manage_resource_list" class="btn btn-sm btn-primary manage_resource_list mb-2 d-block ml-2">
             <i class="fa fa-plus" aria-hidden="true"></i> Add Resources
           </button>
         <% end %>
@@ -76,17 +76,17 @@
         <div class='tab-content'>
           <div class="loadingCus text-center" style="display: none;">…</div>
           <div id='resource-list-container' class='float-left w-100 tab-pane fade in <%= (active_tab.include? 'show_playlist') ? 'active show' : '' %>' data-url="<%= sort_playlist_playlist_resources_path(@playlist) %>">
-            <div class="grey-box">
+            <div class="grey-box ml-0">
               <div class="playlist_duration">
                 <strong>Playlist Duration: </strong>
                 <span class="single_value"> <%= time_to_duration(@playlist.duration) %></span>
               </div>
             </div>
-            <div class="grey-box playlist_operations_actions">
+            <div class="grey-box playlist_operations_actions ml-0">
               <input type="text" id="search_playlist_resource" placeholder="Search within playlist" class="form-control mb-1 mt-1"/>
             </div>
             <% if !@playlist_show.present? && !@playlist_show && (can? :manage, @playlist) %>
-              <div class="grey-box">
+              <div class="grey-box ml-0">
                 <a href="javascript:void(0);" class="select_all_playlist_resources btn-custom-small"><i class="fa fa-plus" aria-hidden="true"></i>
                   Select All</a>
                 <a href="javascript:void(0);" class="btn-custom-small" data-url="<%= bulk_delete_playlist_playlist_resources_path(@playlist) %>" data-fetch_resource_list="<%= fetch_resource_list_playlists_path %>" id="bulk_delete_playlist_resources">
@@ -100,7 +100,7 @@
             <%
               param = {}
               param[:playlist_id] = @playlist.id
-	      param[:playlist_resource_id] = @playlist_resource.id
+              param[:playlist_resource_id] = @playlist_resource.id
               param[:embed] = true if params[:embed].present?
               param[:media_player] = true if params[:media_player].present?
             %>
@@ -194,10 +194,9 @@
                     <a target="_blank" href="<%= collection_collection_resource_path(@collection_resource.collection_id, @collection_resource.id) %>"><i class="fa fa-external-link"></i></a>
                   </div>
                 </div>
-                <div class="info_tabs" data-template-url="<%= collection_collection_resource_load_resource_details_template_path(@collection, @collection_resource, @resource_file, share: params[:share]) %>" data-search-size="12" data-tabs-size="12">
-                </div>
+                <%= render partial: 'collection_resources/show/all_info_tabs', locals: {from_playlist: true} %>
               <% end %>
-              <div class="loader loader-details">
+              <div class="loader loader-details playlist-custom">
                 <div class="img">
                   <div class="hold">
                     <%= image_tag("https://#{ENV['S3_HOST_CDN']}/public/images/ajax-loader.gif") %>
@@ -330,6 +329,20 @@
                 from_playlist: collectionResource.from_playlist,
                 playlist_view_type: '<%= @playlist_show %>'
             };
+            collectionResource.index_page_wise_count = JSON.parse('<%== @index_count && @index_count[:page_wise].present? ? @index_count[:page_wise][:index].to_h.to_json : '{}' %>');
+            collectionResource.transcript_page_wise_count = JSON.parse('<%== @transcript_count && @transcript_count[:page_wise].present? ? @transcript_count[:page_wise][:transcript].to_h.to_json : '{}' %>');
+
+            collectionResource.index_hits_count = JSON.parse('<%== @index_count && @index_count[:hits].present? ? @index_count[:hits].to_h.to_json : '{}' %>');
+            collectionResource.transcript_hits_count = JSON.parse('<%== @transcript_count && @transcript_count[:hits].present? ? @transcript_count[:hits].to_h.to_json : '{}' %>');
+
+            collectionResource.index_time_wise_page = JSON.parse('<%== @index_time_wise.present? ? @index_time_wise.to_h.to_json : '{}' %>');
+            collectionResource.transcript_time_wise_page = JSON.parse('<%== @transcript_time_wise.present? ? @transcript_time_wise.to_h.to_json : '{}' %>');
+
+            collectionResource.total_index_wise = JSON.parse('<%== @index_count && @index_count[:total_index_wise].present? ? @index_count[:total_index_wise].to_h.to_json : '{}' %>');
+            collectionResource.total_transcript_wise = JSON.parse('<%== @transcript_count && @transcript_count[:total_transcript_wise].present? ? @transcript_count[:total_transcript_wise].to_h.to_json : '{}' %>');
+
+            collectionResource.index_file_count = '<%= @resource_file.file_indexes.count > 0  ? @resource_file.file_indexes.count : 0  %>';
+            collectionResource.transcript_file_count = '<%= @resource_file.file_transcripts.count  > 0 ? @resource_file.file_transcripts.count : 0  %>';
             collectionResource.initializeDetail('<%= session[:session_video_text_all].present? ? session[:session_video_text_all].to_json.html_safe : '{}' %>', <%= @selected_index.present? ? @selected_index: 0 %>, <%= @selected_transcript.present? ? @selected_transcript : 0 %>, <%= params[:edit_description].present? ? params[:edit_description] : 0 %>, '<%= params[:embed] %>', <%= @resource_file.present? ? @resource_file.id : '0' %>, params);
         }, 500);
         playlist.start_time = '<%= start_time %>';

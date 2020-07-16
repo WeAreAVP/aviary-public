@@ -1,14 +1,14 @@
 # Detail Page Helper
 module DetailPageHelper
-  def count_occurrence(point, session_video_text, type_count, type, is_file_wise = false)
+  def count_occurrence(point, session_video_text, type_count, type, is_file_wise = false, counter = nil)
     return type_count if session_video_text.blank?
     session_video_text.each do |_, single_keyword|
       unless single_keyword.blank?
         single_keyword = single_keyword.delete '"'
         if type == 'transcript'
-          type_count = count_transcript_occurrence(point, single_keyword, type_count, is_file_wise)
+          type_count = count_transcript_occurrence(point, single_keyword, type_count, is_file_wise, counter)
         elsif type == 'index'
-          type_count = count_index_occurrence(point, single_keyword, type_count, is_file_wise)
+          type_count = count_index_occurrence(point, single_keyword, type_count, is_file_wise, counter)
         elsif type == 'description'
           type_count = count_description_occurrence(point, single_keyword, type_count)
         end
@@ -17,7 +17,7 @@ module DetailPageHelper
     type_count
   end
 
-  def count_transcript_occurrence(transcript_point, single_keyword, transcript_count, is_file_wise)
+  def count_transcript_occurrence(transcript_point, single_keyword, transcript_count, is_file_wise, counter)
     transcript_point_sum = count_em(transcript_point.text, single_keyword) + count_em(transcript_point.speaker, single_keyword)
     transcript_count[transcript_point.file_transcript.collection_resource_file_id] ||= {}
     transcript_count[transcript_point.file_transcript.collection_resource_file_id]['total-transcript'] ||= 0
@@ -29,25 +29,51 @@ module DetailPageHelper
     transcript_count['individual']['transcript'] ||= {}
     transcript_count['individual']['transcript']['id-' + transcript_point.id.to_s] ||= 0
     transcript_count['individual']['transcript']['id-' + transcript_point.id.to_s] += transcript_point_sum
+
     transcript_count[:single_transcript_count] ||= {}
     transcript_count[:single_transcript_count][transcript_point.file_transcript_id] ||= 0
     transcript_count[:single_transcript_count][transcript_point.file_transcript_id] += transcript_point_sum
+
+    if counter.present?
+      transcript_count[:page_wise] ||= {}
+      transcript_count[:page_wise][:transcript] ||= {}
+      transcript_count[:page_wise][:transcript][transcript_point.file_transcript_id] ||= {}
+      current_page = (counter / Aviary::IndexTranscriptManager::POINTS_PER_PAGE).floor
+      transcript_count[:page_wise][:transcript][transcript_point.file_transcript_id][current_page] ||= 0
+      transcript_count[:page_wise][:transcript][transcript_point.file_transcript_id][current_page] += transcript_point_sum
+
+      transcript_count[:hits] ||= {}
+      transcript_count[:hits][transcript_point.file_transcript_id] ||= {}
+      transcript_count[:hits][transcript_point.file_transcript_id][OpenSSL::Digest::SHA256.new.hexdigest(single_keyword)] ||= []
+
+      transcript_count[:total_transcript_wise] ||= {}
+      transcript_count[:total_transcript_wise][transcript_point.file_transcript_id] ||= {}
+      transcript_count[:total_transcript_wise][transcript_point.file_transcript_id][OpenSSL::Digest::SHA256.new.hexdigest(single_keyword)] ||= 0
+      transcript_count[:total_transcript_wise][transcript_point.file_transcript_id][OpenSSL::Digest::SHA256.new.hexdigest(single_keyword)] += transcript_point_sum
+
+      x = 0
+      while x < transcript_point_sum
+        transcript_count[:hits][transcript_point.file_transcript_id][OpenSSL::Digest::SHA256.new.hexdigest(single_keyword)] << "transcript_timecode_#{transcript_point.id}||#{x}||#{current_page}"
+        x += 1
+      end
+    end
+
     session[:count_presence][:transcript] = true if transcript_count[transcript_point.file_transcript.collection_resource_file_id][single_keyword] > 0 && !session[:count_presence][:transcript]
     transcript_count
   end
 
-  def count_index_occurrence(index_point, single_keyword, index_count, is_file_wise)
+  def count_index_occurrence(index_point, single_keyword, index_count, is_file_wise, counter)
     index_point_sum = count_em(index_point.synopsis, single_keyword) + count_em(index_point.title, single_keyword) + count_em(index_point.partial_script, single_keyword) +
                       count_em(index_point.subjects, single_keyword) + count_em(index_point.keywords, single_keyword)
 
     index_count[index_point.file_index.collection_resource_file_id] ||= {}
     index_count[index_point.file_index.collection_resource_file_id]['total-index'] ||= 0
     index_count[index_point.file_index.collection_resource_file_id]['total-index'] += index_point_sum
+
     return index_count if is_file_wise
 
     index_count[index_point.file_index.collection_resource_file_id][single_keyword] ||= 0
     index_count[index_point.file_index.collection_resource_file_id][single_keyword] += index_point_sum
-
     index_count['individual'] ||= {}
     index_count['individual']['index'] ||= {}
     index_count['individual']['index']['id-' + index_point.id.to_s] ||= 0
@@ -55,6 +81,31 @@ module DetailPageHelper
     index_count[:single_index_count] ||= {}
     index_count[:single_index_count][index_point.file_index_id] ||= 0
     index_count[:single_index_count][index_point.file_index_id] += index_point_sum
+
+    if counter.present?
+      index_count[:page_wise] ||= {}
+      index_count[:page_wise][:index] ||= {}
+      index_count[:page_wise][:index][index_point.file_index_id] ||= {}
+      current_page = (counter / Aviary::IndexTranscriptManager::POINTS_PER_PAGE).floor
+      index_count[:page_wise][:index][index_point.file_index_id][current_page] ||= 0
+      index_count[:page_wise][:index][index_point.file_index_id][current_page] += index_point_sum
+
+      index_count[:hits] ||= {}
+      index_count[:hits][index_point.file_index_id] ||= {}
+      index_count[:hits][index_point.file_index_id][OpenSSL::Digest::SHA256.new.hexdigest(single_keyword)] ||= []
+
+      index_count[:total_index_wise] ||= {}
+      index_count[:total_index_wise][index_point.file_index_id] ||= {}
+      index_count[:total_index_wise][index_point.file_index_id][OpenSSL::Digest::SHA256.new.hexdigest(single_keyword)] ||= 0
+      index_count[:total_index_wise][index_point.file_index_id][OpenSSL::Digest::SHA256.new.hexdigest(single_keyword)] += index_point_sum
+
+      x = 0
+      while x < index_point_sum
+        index_count[:hits][index_point.file_index_id][OpenSSL::Digest::SHA256.new.hexdigest(single_keyword)] << "index_timecode_#{index_point.id}||#{x}||#{current_page}"
+        x += 1
+      end
+    end
+
     session[:count_presence][:index] = true if index_count[index_point.file_index.collection_resource_file_id][single_keyword] > 0 && !session[:count_presence][:index]
     index_count
   end
@@ -79,6 +130,32 @@ module DetailPageHelper
       search_text_found = true if (count_file_wise.key? index) && (count_file_wise[index].fetch('total-index', 0) > 0 || count_file_wise[index].fetch('total-transcript', 0) > 0)
     end
     search_text_found
+  end
+
+  def index_page_wise_time_range(index_count_time_range, index_point, counter)
+    current_page = (counter / Aviary::IndexTranscriptManager::POINTS_PER_PAGE).floor
+    index_count_time_range ||= {}
+    index_count_time_range[index_point.file_index_id] ||= {}
+    index_count_time_range[index_point.file_index_id][current_page + 1] ||= {}
+    index_count_time_range[index_point.file_index_id][current_page + 1][:start_time] ||= 0
+    index_count_time_range[index_point.file_index_id][current_page + 1][:end_time] ||= 0
+    index_count_time_range[index_point.file_index_id][current_page + 1][:start_time] = index_point.start_time unless index_count_time_range[index_point.file_index_id][current_page + 1][:start_time] > 0
+    index_count_time_range[index_point.file_index_id][current_page + 1][:end_time] = index_point.end_time
+    index_count_time_range[index_point.file_index_id][current_page + 1][:current_page] = current_page + 1
+    index_count_time_range
+  end
+
+  def transcript_page_wise_time_range(transcript_count_time_range, transcript_point, counter)
+    current_page = (counter / Aviary::IndexTranscriptManager::POINTS_PER_PAGE).floor
+    transcript_count_time_range ||= {}
+    transcript_count_time_range[transcript_point.file_transcript_id] ||= {}
+    transcript_count_time_range[transcript_point.file_transcript_id][current_page + 1] ||= {}
+    transcript_count_time_range[transcript_point.file_transcript_id][current_page + 1][:start_time] ||= 0
+    transcript_count_time_range[transcript_point.file_transcript_id][current_page + 1][:end_time] ||= 0
+    transcript_count_time_range[transcript_point.file_transcript_id][current_page + 1][:start_time] = transcript_point.start_time unless transcript_count_time_range[transcript_point.file_transcript_id][current_page + 1][:start_time] > 0
+    transcript_count_time_range[transcript_point.file_transcript_id][current_page + 1][:end_time] = transcript_point.end_time
+    transcript_count_time_range[transcript_point.file_transcript_id][current_page + 1][:current_page] = current_page + 1
+    transcript_count_time_range
   end
 
   def ready_keyword_for_count(searched_keywords, document_current, description_search_fields, index_search_fields, transcript_search_fields)
@@ -112,6 +189,7 @@ module DetailPageHelper
         title = title.strip
         counts[query_string][title.to_s] ||= 0
         counts[query_string]['total_custom_keyword'] ||= 0
+
         unless title.blank?
           if document_current[values].is_a?(Array)
             document_current[values].each do |single_value|

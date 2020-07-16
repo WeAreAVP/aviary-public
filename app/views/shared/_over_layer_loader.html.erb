@@ -1,0 +1,10 @@
+<% display = false if display.blank? %>
+<div id="overlay-counters" class="overlay_custom text-center <%= display ? '' : 'd-none' %>">
+  <div class="loader-small d-inline-block">
+    <div class="img">
+      <div class="hold">
+        <%= image_tag("https://#{ENV['S3_HOST_CDN']}/public/images/ajax-loader.gif") %>
+      </div>
+    </div>
+  </div>
+</div>

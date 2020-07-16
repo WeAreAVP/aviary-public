@@ -45,8 +45,6 @@ class PlaylistsController < ApplicationController
       redirect_to playlist_edit_path(@playlist.id, playlist_resource_id: @playlist_resource.id)
       return
     end
-    @playlist_resources = @playlist.playlist_resources.order(:sort_order).includes(:organization, :collection_resource, :playlist_items)
-
     begin
       @collection = @collection_resource.collection
     rescue StandardError
@@ -63,6 +61,31 @@ class PlaylistsController < ApplicationController
     @playlist_files = {}
     @playlist_files = @collection_resource.collection_resource_files.order_file if @collection_resource.present? && @collection_resource.collection_resource_files.present?
     @detail_page = true
+    @file_indexes = {}
+    @file_transcripts = {}
+
+    begin
+      @file_indexes = @resource_file.file_indexes.order_index
+    rescue StandardError => ex
+      puts ex.backtrace.join("\n")
+    end
+    begin
+      @file_transcripts = @resource_file.file_transcripts.order_transcript
+    rescue StandardError => ex
+      puts ex.backtrace.join("\n")
+    end
+    begin
+      @selected_index = @file_indexes.first.id if @selected_index.blank?
+    rescue StandardError => ex
+      @selected_index = 0
+      puts ex.backtrace.join("\n")
+    end
+    begin
+      @selected_transcript = @file_transcripts.first.id if @selected_transcript.blank?
+    rescue StandardError => ex
+      @selected_transcript = 0
+      puts ex.backtrace.join("\n")
+    end
   end
 
   def update
@@ -104,6 +127,8 @@ class PlaylistsController < ApplicationController
     @detail_page = true
     @selected_transcript = 0
     @selected_index = 0
+    @file_indexes = {}
+    @file_transcripts = {}
     record_last_bread_crumb(request.fullpath, "Back to <strong>#{@playlist.name}</strong>") unless request.xhr?
     @embed_params = {}
     @embed_params = embed_params(@embed_params)
@@ -112,6 +137,30 @@ class PlaylistsController < ApplicationController
     params[:collection_resource_id] = @collection_resource.id if !params[:collection_resource_id].present? && @collection_resource.present?
     collection_resource_presenter = CollectionResourcePresenter.new(@collection_resource, view_context) if @collection_resource.present?
     session[:session_video_text_all], @selected_transcript, @selected_index, @count_file_wise = collection_resource_presenter.generate_params_for_detail_page(@resource_file, @collection_resource, session, params) if @collection_resource.present?
+    @dynamic_fields = @collection_resource.all_fields
+
+    begin
+      @file_indexes = @resource_file.file_indexes.order_index
+    rescue StandardError => ex
+      puts ex.backtrace.join("\n")
+    end
+    begin
+      @file_transcripts = @resource_file.file_transcripts.order_transcript
+    rescue StandardError => ex
+      puts ex.backtrace.join("\n")
+    end
+    begin
+      @selected_index = @file_indexes.first.id @selected_index.blank?
+    rescue StandardError => ex
+      @selected_index = 0
+      puts ex.backtrace.join("\n")
+    end
+    begin
+      @selected_transcript = @file_transcripts.first.id if @selected_transcript.blank?
+    rescue StandardError => ex
+      @selected_transcript = 0
+      puts ex.backtrace.join("\n")
+    end
   end
 
   def fetch_resource_list
