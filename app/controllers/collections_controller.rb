@@ -84,7 +84,7 @@ class CollectionsController < ApplicationController
           updated_field_values[value['collection_field_id']][:values] << { value: value['value'], vocab_value: '' }
         end
       end
-      @collection.batch_update_values(updated_field_values.values)
+      @collection.batch_update_values(updated_field_values.values, true)
       redirect_to collections_path, notice: t('collection_updated')
     else
       @dynamic_fields = @collection.all_fields
