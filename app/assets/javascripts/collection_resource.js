@@ -41,7 +41,7 @@ function CollectionResource() {
     selfCR.index_file_count = 0;
     selfCR.transcript_file_count = 0;
 
-    selfCR.requestAccess = new RequestAccess();
+
     this.initializeDetail = function (search_text_val, selected_index, selected_transcript, edit_description, embed, resource_file_id, track_params) {
         selfCR.track_params = track_params;
         selfCR.resource_file_id = resource_file_id;
@@ -51,7 +51,6 @@ function CollectionResource() {
         load_resource_details(embed);
         selfCR.selected_index = selected_index;
         selfCR.selected_transcript = selected_transcript;
-        selfCR.requestAccess.initPermissionAccess();
         $('.index-trance-checkbox').prop('checked', false);
         selfCR.search_text_val = jQuery.parseJSON(search_text_val);
         initPlayer();
@@ -129,8 +128,6 @@ function CollectionResource() {
                 desc_trans_index_call_complete();
                 init_tinymce_for_element('.edit_collection_resource textarea.value_holder');
                 show_counts_tabs();
-                selfCR.requestAccess.initPermissionAccess();
-
                 $('.edit_collection_resource .select_option.value_holder').selectize();
                 /* Edit resource form */
                 $('.edit_fields').click(function () {
@@ -1048,7 +1045,6 @@ function CollectionResource() {
                                     $('#' + id).remove();
                                 }
                                 loading = true;
-                                selfCR.requestAccess.initPermissionAccess();
                             },
                             beforeSend: function () {
                                 jsloader('#' + id);

@@ -1,6 +1,5 @@
 <% single_field['values'].each do |single_value| %>
-  <% @description_count = count_occurrence(single_value, session[:session_video_text_all], @description_count, 'description')
-     unless single_value['value'].blank? && single_value['vocab_value'].blank? %>
+  <% unless single_value['value'].blank? && single_value['vocab_value'].blank? %>
     <div class="single-value single-non-tombstone ">
       <% if single_field['field'].is_vocabulary %>
         <span class="badge badge-secondary single_value_non_tombstone"><%= single_value['vocab_value'] if single_value['vocab_value'].present? %></span>
