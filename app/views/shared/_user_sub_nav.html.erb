@@ -44,9 +44,11 @@
       </ul>
       <ul class="navbar-nav navbar-right">
         <% if current_organization.present? %>
-          <li class="nav-item <%= current_page?(org_playlist_path) || (current_page?(root_path) && current_organization.default_tab_selection == 'playlists') ? 'active' : '' %>">
-            <a class="nav-link" href="<%= org_playlist_path %>">Playlists</a>
-          </li>
+          <% if current_organization.playlists.present? %>
+            <li class="nav-item <%= current_page?(org_playlist_path) || (current_page?(root_path) && current_organization.default_tab_selection == 'playlists') ? 'active' : '' %>">
+              <a class="nav-link" href="<%= org_playlist_path %>">Playlists</a>
+            </li>
+          <% end %>
           <li class="nav-item <%= current_page?(search_catalog_path) || (current_page?(search_catalog_path) && current_organization.default_tab_selection == 'resources') ? 'active' : '' %>">
             <a id="resource_search_tab" class="nav-link" href="<%= search_catalog_path({ f: { organization_id_is: [current_organization.id] }, indexes: [], keywords: [], op: [], resource_description: [], search_field: 'advanced', search_type: 'simple', title_text: '', transcript: [], type_of_search: ['simple'] }) %>">Resources</a>
           </li>

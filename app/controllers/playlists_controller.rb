@@ -45,6 +45,7 @@ class PlaylistsController < ApplicationController
       redirect_to playlist_edit_path(@playlist.id, playlist_resource_id: @playlist_resource.id)
       return
     end
+
     begin
       @collection = @collection_resource.collection
     rescue StandardError
@@ -63,29 +64,8 @@ class PlaylistsController < ApplicationController
     @detail_page = true
     @file_indexes = {}
     @file_transcripts = {}
-
-    begin
-      @file_indexes = @resource_file.file_indexes.order_index
-    rescue StandardError => ex
-      puts ex.backtrace.join("\n")
-    end
-    begin
-      @file_transcripts = @resource_file.file_transcripts.order_transcript
-    rescue StandardError => ex
-      puts ex.backtrace.join("\n")
-    end
-    begin
-      @selected_index = @file_indexes.first.id if @selected_index.blank?
-    rescue StandardError => ex
-      @selected_index = 0
-      puts ex.backtrace.join("\n")
-    end
-    begin
-      @selected_transcript = @file_transcripts.first.id if @selected_transcript.blank?
-    rescue StandardError => ex
-      @selected_transcript = 0
-      puts ex.backtrace.join("\n")
-    end
+    return unless @collection_resource.present?
+    @file_indexes, @file_transcripts, @selected_index, @selected_transcript = CollectionResourcePresenter.new(@collection_resource, view_context).selected_index_transcript(@resource_file, @selected_index, @selected_transcript)
   end
 
   def update
@@ -106,14 +86,15 @@ class PlaylistsController < ApplicationController
   def show
     @playlist_show = true
     @playlist_resource = PlaylistResource.find_by_id(params[:playlist_resource_id])
-    @collection_resource ||= @playlist_resource.collection_resource if @playlist_resource
-    if params[:playlist_resource_id].nil? || params[:collection_resource_file_id].nil?
+    @collection_resource ||= @playlist_resource.collection_resource if @playlist_resource.present?
+
+    if (params[:playlist_resource_id].nil? || params[:collection_resource_file_id].nil?) && @playlist.playlist_resources.present?
       @playlist_resource = params[:playlist_resource_id].present? ? @playlist.playlist_resources.find(params[:playlist_resource_id]) : @playlist.playlist_resources.order(:sort_order).first
       redirect_to playlist_show_path(time_prams(params))
       return
     end
 
-    @resource_file = @collection_resource.collection_resource_files.find_by_id(params[:collection_resource_file_id])
+    @resource_file = @collection_resource.collection_resource_files.find_by_id(params[:collection_resource_file_id]) if @playlist_resource.present?
     begin
       @collection = @collection_resource.collection
     rescue StandardError
@@ -135,32 +116,11 @@ class PlaylistsController < ApplicationController
     session[:count_presence] = { index: false, transcript: false, description: false }
     session[:session_video_text_all] = session[:transcript_count] = session[:index_count] = session[:description_count] = {}
     params[:collection_resource_id] = @collection_resource.id if !params[:collection_resource_id].present? && @collection_resource.present?
-    collection_resource_presenter = CollectionResourcePresenter.new(@collection_resource, view_context) if @collection_resource.present?
-    session[:session_video_text_all], @selected_transcript, @selected_index, @count_file_wise = collection_resource_presenter.generate_params_for_detail_page(@resource_file, @collection_resource, session, params) if @collection_resource.present?
+    return unless @collection_resource.present?
+    collection_resource_presenter = CollectionResourcePresenter.new(@collection_resource, view_context)
+    session[:session_video_text_all], @selected_transcript, @selected_index, @count_file_wise = collection_resource_presenter.generate_params_for_detail_page(@resource_file, @collection_resource, session, params)
     @dynamic_fields = @collection_resource.all_fields
-
-    begin
-      @file_indexes = @resource_file.file_indexes.order_index
-    rescue StandardError => ex
-      puts ex.backtrace.join("\n")
-    end
-    begin
-      @file_transcripts = @resource_file.file_transcripts.order_transcript
-    rescue StandardError => ex
-      puts ex.backtrace.join("\n")
-    end
-    begin
-      @selected_index = @file_indexes.first.id @selected_index.blank?
-    rescue StandardError => ex
-      @selected_index = 0
-      puts ex.backtrace.join("\n")
-    end
-    begin
-      @selected_transcript = @file_transcripts.first.id if @selected_transcript.blank?
-    rescue StandardError => ex
-      @selected_transcript = 0
-      puts ex.backtrace.join("\n")
-    end
+    @file_indexes, @file_transcripts, @selected_index, @selected_transcript = collection_resource_presenter.selected_index_transcript(@resource_file, @selected_index, @selected_transcript)
   end
 
   def fetch_resource_list
@@ -212,8 +172,9 @@ class PlaylistsController < ApplicationController
   private
 
   def time_prams(params)
-    param = { playlist_id: @playlist.id, playlist_resource_id: @playlist_resource.id }
-    if @playlist_resource.playlist_items.present?
+    param = { playlist_id: @playlist.id }
+    param[:playlist_resource_id] = @playlist_resource.id if @playlist_resource.present?
+    if @playlist_resource.present? && @playlist_resource.playlist_items.present?
       param[:pst] = @playlist_resource.playlist_items.order(:sort_order).first.start_time if @playlist_resource.playlist_items.order(:sort_order).first.start_time.present?
       param[:pet] = @playlist_resource.playlist_items.order(:sort_order).first.end_time if @playlist_resource.playlist_items.order(:sort_order).first.end_time.present?
       param[:collection_resource_file_id] = @playlist_resource.playlist_items.order(:sort_order).first.collection_resource_file.id

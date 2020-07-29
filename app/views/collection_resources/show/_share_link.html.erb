@@ -24,7 +24,7 @@
             <button type="button" class="dropdown-item btn playlist-btn" data-toggle="modal" data-target="#playlistModalCenter">
               <i class="material-icons">playlist_add</i> Playlist
             </button>
-          <% else %>
+          <% elsif @collection_resource.playlist_resources.present? %>
             <input type="hidden" id="type_of_playlist_view" value="only_playlist_view">
             <button type="button" class="badge font-weight-bold" data-toggle="modal" data-target="#resourcePlaylistModel">
               Playlist

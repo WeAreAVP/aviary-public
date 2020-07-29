@@ -30,7 +30,7 @@
       <div class="search_details_bar col-md-12 pr-0">
         <% if @collection_resource.collection.enable_resource_search %>
           <div class="col-md-12">
-            <% search_path_common = if from_playlist.present? && from_playlist.to_s.to_boolean?
+            <% search_path_common = if from_playlist.present? && from_playlist.to_s.to_boolean? && @resource_file.present?
                                       playlist_playlist_resource_search_text_url(playlist_id: params[:playlist_id], playlist_resource_id:
                                           params[:playlist_resource_id], collection_resource_id: @collection_resource.id, collection_resource_file_id: @resource_file.id)
                                     else

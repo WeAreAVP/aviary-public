@@ -50,10 +50,12 @@
               <% end %>
               (<span id="playlist_resources_count"><%= @playlist.playlist_resources.count %></span>)</a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link playlist_edit_tabs <%= (active_tab.include? 'show_metadata') ? 'active show' : '' %>" id="metadata-list-tab" data-tabtype="show_metadata" data-toggle="tab" data-tab_type="" data-urltab="<%= update_selected_tab_playlist_url(@playlist, type: 'show') %>" href="#metadata-container">
-              <i class="fa fa-info-circle" aria-hidden="true"></i> Now Playing Info </a>
-          </li>
+          <% if @playlist.playlist_resources.present? %>
+              <li class="nav-item">
+              <a class="nav-link playlist_edit_tabs <%= (active_tab.include? 'show_metadata') ? 'active show' : '' %>" id="metadata-list-tab" data-tabtype="show_metadata" data-toggle="tab" data-tab_type="" data-urltab="<%= update_selected_tab_playlist_url(@playlist, type: 'show') %>" href="#metadata-container">
+                <i class="fa fa-info-circle" aria-hidden="true"></i> Now Playing Info </a>
+            </li>
+          <% end %>
           <% if @playlist_show.present? && @playlist_show %>
             <% if current_user_is_org_user?(current_organization) %>
               <li class="nav-item">
@@ -67,7 +69,7 @@
                 Playlist Info</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="<%= playlist_show_path({ playlist_id: @playlist }) %>">
+              <a class="nav-link" href="<%= playlist_show_path({playlist_id: @playlist}) %>">
                 <i class="fa fa-th-list" aria-hidden="true"></i> View Playlist </a>
             </li>
           <% end %>
@@ -100,7 +102,7 @@
             <%
               param = {}
               param[:playlist_id] = @playlist.id
-              param[:playlist_resource_id] = @playlist_resource.id
+              param[:playlist_resource_id] = @playlist_resource.id if @playlist_resource.present?
               param[:embed] = true if params[:embed].present?
               param[:media_player] = true if params[:media_player].present?
             %>
@@ -329,20 +331,8 @@
                 from_playlist: collectionResource.from_playlist,
                 playlist_view_type: '<%= @playlist_show %>'
             };
-            collectionResource.index_page_wise_count = JSON.parse('<%== @index_count && @index_count[:page_wise].present? ? @index_count[:page_wise][:index].to_h.to_json : '{}' %>');
-            collectionResource.transcript_page_wise_count = JSON.parse('<%== @transcript_count && @transcript_count[:page_wise].present? ? @transcript_count[:page_wise][:transcript].to_h.to_json : '{}' %>');
+            <%= render partial: 'collection_resources/show/js_params_show' %>
 
-            collectionResource.index_hits_count = JSON.parse('<%== @index_count && @index_count[:hits].present? ? @index_count[:hits].to_h.to_json : '{}' %>');
-            collectionResource.transcript_hits_count = JSON.parse('<%== @transcript_count && @transcript_count[:hits].present? ? @transcript_count[:hits].to_h.to_json : '{}' %>');
-
-            collectionResource.index_time_wise_page = JSON.parse('<%== @index_time_wise.present? ? @index_time_wise.to_h.to_json : '{}' %>');
-            collectionResource.transcript_time_wise_page = JSON.parse('<%== @transcript_time_wise.present? ? @transcript_time_wise.to_h.to_json : '{}' %>');
-
-            collectionResource.total_index_wise = JSON.parse('<%== @index_count && @index_count[:total_index_wise].present? ? @index_count[:total_index_wise].to_h.to_json : '{}' %>');
-            collectionResource.total_transcript_wise = JSON.parse('<%== @transcript_count && @transcript_count[:total_transcript_wise].present? ? @transcript_count[:total_transcript_wise].to_h.to_json : '{}' %>');
-
-            collectionResource.index_file_count = '<%= @resource_file.file_indexes.count > 0  ? @resource_file.file_indexes.count : 0  %>';
-            collectionResource.transcript_file_count = '<%= @resource_file.file_transcripts.count  > 0 ? @resource_file.file_transcripts.count : 0  %>';
             collectionResource.initializeDetail('<%= session[:session_video_text_all].present? ? session[:session_video_text_all].to_json.html_safe : '{}' %>', <%= @selected_index.present? ? @selected_index: 0 %>, <%= @selected_transcript.present? ? @selected_transcript : 0 %>, <%= params[:edit_description].present? ? params[:edit_description] : 0 %>, '<%= params[:embed] %>', <%= @resource_file.present? ? @resource_file.id : '0' %>, params);
         }, 500);
         playlist.start_time = '<%= start_time %>';
