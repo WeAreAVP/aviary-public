@@ -30,6 +30,31 @@ class CollectionResourcePresenter < BasePresenter
     end
   end
 
+  def selected_index_transcript
+    begin
+      @file_indexes = @resource_file.file_indexes.order_index
+    rescue StandardError => ex
+      puts ex.backtrace.join("\n")
+    end
+    begin
+      @file_transcripts = @resource_file.file_transcripts.order_transcript
+    rescue StandardError => ex
+      puts ex.backtrace.join("\n")
+    end
+    begin
+      @selected_index = @file_indexes.order_index.first.id if @selected_index.blank? || @selected_index.to_i <= 0
+    rescue StandardError => ex
+      @selected_index = 0
+      puts ex.backtrace.join("\n")
+    end
+    begin
+      @selected_transcript = @file_transcripts.order_transcript.first.id if @selected_transcript.blank? || @selected_transcript.to_i <= 0
+    rescue StandardError => ex
+      @selected_transcript = 0
+      puts ex.backtrace.join("\n")
+    end
+  end
+
   def generate_params_for_detail_page(resource_file, collection_resource, session, params)
     params[:collection_resource_id] = collection_resource.id if params[:collection_resource_id].present?
     session_video_text_all = if session.key?(:search_text) && session[:search_text].key?("search_text_#{collection_resource.id}")
