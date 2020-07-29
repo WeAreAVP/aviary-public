@@ -47,7 +47,6 @@ class CollectionResourcesController < ApplicationController
     collection_resource_presenter = CollectionResourcePresenter.new(@collection_resource, view_context)
     session[:session_video_text_all], @selected_transcript, @selected_index, @count_file_wise = collection_resource_presenter.generate_params_for_detail_page(@resource_file, @collection_resource, session, params)
     collection_resource_presenter.selected_index_transcript
-
   end
 
   def update_metadata
