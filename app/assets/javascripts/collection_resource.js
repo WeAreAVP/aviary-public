@@ -309,7 +309,7 @@ function CollectionResource() {
                 if ($('#player source').length > 1) {
                     meJsFeatures.push('quality');
                 }
-                player_widget = $('#player').mediaelementplayer({
+                selfCR.player_widget = player_widget = $('#player').mediaelementplayer({
                     features: meJsFeatures,
                     success: function (mediaElement, domObject) {
                         shareTimeUrl(mediaElement.currentTime, $('#share_link').val());
@@ -634,7 +634,7 @@ function CollectionResource() {
                             }
                         }
                     }
-                }, 1000);
+                }, 50);
             }
         }
     }
@@ -655,7 +655,7 @@ function CollectionResource() {
                     setTimeout(function () {
                         let pointToScroll = $('.' + type + '_time_start_' + parseInt(currentTime, 10));
                         selfCR.transcripts.scroll_to_point(type, '.' + type + '_time_start_' + parseInt(currentTime, 10));
-                    }, 500);
+                    }, 50);
 
                 } else {
                     if (typeof recorded_index[selected_point] == 'undefined') {
@@ -666,7 +666,7 @@ function CollectionResource() {
                     }
                     setTimeout(function () {
                         selfCR.indexes.scroll_to_point(type, '.' + type + '_time_start_' + parseInt(currentTime, 10));
-                    }, 500);
+                    }, 50);
                 }
             }
         } catch (e) {

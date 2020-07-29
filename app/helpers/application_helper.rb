@@ -172,7 +172,7 @@ module ApplicationHelper
   end
 
   def current_user_is_org_user?(organization)
-    current_user.present? && current_user.organization_users.active.where(organization_id: organization.id).present?
+    organization.present? && current_user.present? && current_user.organization_users.active.where(organization_id: organization.id).present?
   end
 
   def current_user_is_current_org_user?

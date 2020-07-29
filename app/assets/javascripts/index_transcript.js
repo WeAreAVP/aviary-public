@@ -27,7 +27,7 @@ function IndexTranscript() {
     this.recent_scroll_bottom = false;
     this.transcript_visible_pages = [];
     this.type = '';
-
+    var last_point_visited = '';
     let that = this;
     this.setup_prerequisites = function (type, selected_val, resource_obj, embed, from_playlist) {
         this.cuePointType = type;
@@ -456,10 +456,20 @@ function IndexTranscript() {
     };
 
     this.scroll_to_point = function (type, element) {
-        setTimeout(function () {
-            $('.' + type.toLowerCase() + '_point_container').mCustomScrollbar("scrollTo", element);
-        }, 2000);
-    }
+        let element_update = '.file_' + type + '_'  ;
+        if(type == 'index'){
+            element_update += this.selected_index;
+
+        }else{
+            element_update += this.selected_transcript;
+        }
+        element = element_update + ' ' + element;
+        if($(element).length > 0 && element != that.last_point_visited) {
+            type = type.toLowerCase();
+            that.last_point_visited = element;
+            $('.' + type + '_point_container').mCustomScrollbar("scrollTo", element, {scrollInertia: 200, timeout: 1});
+        }
+    };
 
 
     this.current_selected_total_page = function (type, selected, floor_flag) {
