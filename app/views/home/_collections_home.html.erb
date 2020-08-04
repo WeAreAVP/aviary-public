@@ -4,7 +4,7 @@
     <% featured_collections.each do |collection| %>
       <div class="item">
         <%= link_to collection_url(collection, host: Utilities::AviaryDomainHandler.subdomain_handler(collection.organization)) do %>
-          <div class="image" style="<%= url_image(collection.image.url(:small))%>; background-position: center;">
+          <div class="image" style="<%= url_image(collection.collection_card_image)%>; background-position: center;">
           </div>
 
           <div class="resource-detail-data">

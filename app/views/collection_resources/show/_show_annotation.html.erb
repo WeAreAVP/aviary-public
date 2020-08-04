@@ -17,7 +17,7 @@
           <% end %>
           <div class="video-main carousel slide" data-ride="carousel">
             <div class="carousel-inner">
-              <div class="carousel-item active">
+              <div class="carousel-item active" <%= browser.firefox? ? 'style="height: 360px !important;"'.html_safe : '' %> >
                 <% if @resource_file.present? %>
                   <% is_audio_only = @collection_resource.present? ? @collection_resource.collection.is_audio_only : false %>
                   <%= render partial: 'collection_resources/show/mediaplayer', locals: { single_file: @resource_file, is_audio_only: is_audio_only } %>

@@ -5,7 +5,7 @@
         <div class="box <%= 'featured' if collection.is_featured %>">
 
           <%= link_to collection_url(collection, host: Utilities::AviaryDomainHandler.subdomain_handler(collection.organization)) do %>
-            <div class="image" style="<%= url_image(collection.image.url(:small))%>; background-position: center;">
+            <div class="image" style="<%= url_image(collection.collection_card_image)%>; background-position: center;">
             </div>
           <% end %>
           <div class="resource-detail-data">
@@ -21,7 +21,7 @@
                 <% end %>
                 <span class="description_collection">
                     <%= strip_tags(collection.about) %></span>
-                <a data-toggle="modal" class='show_hide_description' data-type="Search Collection" data-id="description_<%= collection.id %>" data-collection-img='<%= url_image(collection.image.url(:small)) %>'
+                <a data-toggle="modal" class='show_hide_description' data-type="Search Collection" data-id="description_<%= collection.id %>" data-collection-img='<%= url_image(collection.collection_card_image) %>'
                    data-collection-title="<%= collection.title %>" data-org-logo="<%= collection.organization.logo_image.url(:medium) %>" data-collection-path="<%= collection_path(collection) %>" data-org-title="<%= collection.organization.name %>"
                    data-collection-search="<%= search_catalog_path({ f: { collection_id_is: [collection.id] }, indexes: [], keywords: [], op: [], resource_description: [], search_field: 'advanced', search_type: 'simple', title_text: '', transcript: [], type_of_search: ['simple'] }) %>">
                   <i class="fa fa-info-circle"></i></a>

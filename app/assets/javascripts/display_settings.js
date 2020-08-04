@@ -220,9 +220,11 @@ function DisplaySettings() {
         if ($(that).val() == 'banner_image') {
             $('.banner-resource-slider').addClass('d-none');
             $('.banner-image').removeClass('d-none');
+            $('.card_image').removeClass('d-none');
         } else {
             $('.banner-resource-slider').removeClass('d-none');
             $('.banner-image').addClass('d-none');
+            $('.card_image').addClass('d-none');
         }
     };
 
