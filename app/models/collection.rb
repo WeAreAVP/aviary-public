@@ -8,10 +8,11 @@ class Collection < ApplicationRecord
   validates_inclusion_of :is_public, :is_featured, in: [true, false], message: 'requires an answer'
   has_attached_file :image, styles: { small: '450x230>', processors: %i[thumbnail compression] }, default_url: ''
   has_attached_file :banner_title_image, styles: { small: '200x90>', processors: %i[thumbnail compression] }, validate_media_type: false, default_url: ''
+  has_attached_file :card_image, styles: { small: '200x90>', processors: %i[thumbnail compression] }, validate_media_type: false, default_url: ''
   validates_attachment_content_type :image, content_type: %r[\Aimage\/.*\z]
   has_attached_file :favicon, styles: { small: '40x40>', medium: '64x64>', processors: %i[thumbnail compression] }, validate_media_type: false, default_url: ''
   validates_attachment_content_type :favicon, content_type: %r[\Aimage\/(png|jpeg|jpg|x-icon|vnd.microsoft.icon)\z]
-
+  validates_attachment_content_type :card_image, content_type: %r[\Aimage\/(png|jpeg|jpg|x-icon|vnd.microsoft.icon)\z]
   enum banner_type: %i[banner_image featured_resources_slider]
   enum default_tab_selection: %i[resources about]
   attr_accessor :collection_values_solr
@@ -26,6 +27,10 @@ class Collection < ApplicationRecord
       field_types: %w[Collection CollectionResource],
       parent_entity: nil
     }
+  end
+
+  def collection_card_image
+    card_image.present? ? card_image.url(:small) : image.url(:small)
   end
 
   def update_default_values

@@ -213,7 +213,7 @@ class CollectionsController < ApplicationController
     params.require(:collection).permit(:title, :about, :image, :is_public, :is_featured, :click_through, :conditions_for_access, :automated_access_approval, :period_of_access,
                                        :time_period, :target_of_access, :access_request_approval_email, :accessible_details_to_email, :resource_link_to_approval_email, :display_banner,
                                        :global_ip_enabled, :global_ip_list, :subject, :from_name, :bcc_request_email, :is_audio_only, :disable_player, :banner_slider_resources,
-                                       :banner_type, :default_tab_selection, :enable_rss, :enable_resource_search, :search_resource_placeholder, :favicon, :enable_itc_autoscroll)
+                                       :banner_type, :default_tab_selection, :enable_rss, :enable_resource_search, :search_resource_placeholder, :favicon, :enable_itc_autoscroll, :card_image)
   end
 
   def permit_sort(value)

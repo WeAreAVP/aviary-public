@@ -6,13 +6,21 @@
       <%= c.error :banner_type %>
       <br>
     </div>
-
     <div class="form-group">
       <div class="form-check  mt-15px">
         <%= c.input :display_banner, input_html: { class: 'form-check-input' } %>
       </div>
     </div>
   </div>
+  <div class="col-md-6">
+    <div class="form-group ">
+      <label for="" class="col-form-label">Preferred Default Tab</label>
+      <%= c.select :default_tab_selection, Collection.default_tab_selections.map { |key, _| [key.humanize, key] }, {}, required: false, label: false, class: 'custom-placeholder banner_type-custom' %>
+      <%= c.error :default_tab_selection %>
+    </div>
+  </div>
+</div>
+<div class="row ">
   <div class="col-md-6 ">
     <div class="form-group banner-image d-none">
       <label for="" class="col-form-label">Banner Image*</label>
@@ -49,31 +57,29 @@
       <%= c.input :banner_slider_resources, as: :string, label: false, input_html: { class: ' form-control d-none' } %>
     </div>
   </div>
+  <div class="col-md-6 ">
+    <div class="form-group card_image d-none">
+      <label for="" class="col-form-label">Card Image*</label>
+      <div class="image-box">
+        <div class="holder">
+          <img id="card_image" src="<%= @collection.new_record? ? '#' : (image_url @collection.card_image) %>" alt="">
+        </div>
+      </div>
+      <div class="file-upload">
+        <div class="field-title">
+          <%= c.label @collection.new_record? ? 'Add Image' : 'Upload new image', for: 'collection_card_image' %>
+        </div>
+        <%= c.input :card_image, as: :file, error: false, label: false, input_html: { onchange: "readURL(this, 'card_image');", accept: 'image/*' } %>
+      </div>
+      <div class="text-holder bg_img_cls m-0 mt-5px w-100" style="display: block !important;">
+        Suggested Card Image size is <i>1200x300</i> or Aspect Ratio from <i>3:1</i> to <i>6:1</i>
+      </div>
+      <%= c.error :card_image %>
+      <br>
+    </div>
+  </div>
 </div>
 <div class="row">
-  <div class="col-md-6">
-    <div class="form-group ">
-      <label for="" class="col-form-label">Preferred Default Tab</label>
-      <%= c.select :default_tab_selection, Collection.default_tab_selections.map { |key, _| [key.humanize, key] }, {}, required: false, label: false, class: 'custom-placeholder banner_type-custom' %>
-      <%= c.error :default_tab_selection %>
-    </div>
-  </div>
-  <div class="col-md-6">
-    <div class="form-group">
-      <label for="" class="col-form-label"><strong><%= c.input_field :enable_resource_search, as: :boolean %>
-        Enable Search this Resource</strong></label>
-    </div>
-    <div class="form-group">
-      <small class="form-text">When "Search this Resource" is enabled for resources in this collection, you can
-        customize the help text that is displayed to users in the search box on the resource detail page. Please enter
-        the text you would like to have displayed for users here.</small>
-      <%= c.input :search_resource_placeholder, label: false, input_html: { class: 'form-control' } %>
-    </div>
-
-  </div>
-</div>
-
-<div class="row ">
   <div class="col-md-6">
     <div class="form-group">
       <label class="col-form-label"><strong><%= c.input_field :disable_player, as: :boolean %>
@@ -88,6 +94,18 @@
         Turn on Auto Scroll by default for Indexes and Transcripts in this collection</strong></label>
     </div>
   </div>
+  <div class="col-md-6">
+    <div class="form-group">
+      <label for="" class="col-form-label"><strong><%= c.input_field :enable_resource_search, as: :boolean %>
+        Enable Search this Resource</strong></label>
+    </div>
+    <div class="form-group">
+      <small class="form-text">When "Search this Resource" is enabled for resources in this collection, you can
+        customize the help text that is displayed to users in the search box on the resource detail page. Please enter
+        the text you would like to have displayed for users here.
+      </small>
+      <%= c.input :search_resource_placeholder, label: false, input_html: { class: 'form-control' } %>
+    </div>
 
+  </div>
 </div>
-

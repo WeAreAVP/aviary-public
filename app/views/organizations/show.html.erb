@@ -29,7 +29,7 @@
         <% if @public_collections.present? %>
           <% @public_collections.each do |collection| %>
             <%= link_to collection_path(collection) do %>
-              <div class="item wrap-text" style="background: url(<%= collection.image.url(:small) %>);">
+              <div class="item wrap-text" style="background: url(<%= collection.collection_card_image %>);">
                 <h4 class="reso-title"><%= collection.organization.name %></h4>
               </div>
               <div class="text">
