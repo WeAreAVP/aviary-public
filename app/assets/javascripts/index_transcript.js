@@ -456,15 +456,15 @@ function IndexTranscript() {
     };
 
     this.scroll_to_point = function (type, element) {
-        let element_update = '.file_' + type + '_'  ;
-        if(type == 'index'){
+        let element_update = '.file_' + type + '_';
+        if (type == 'index') {
             element_update += this.selected_index;
 
-        }else{
+        } else {
             element_update += this.selected_transcript;
         }
         element = element_update + ' ' + element;
-        if($(element).length > 0 && element != that.last_point_visited) {
+        if ($(element).length > 0 && element != that.last_point_visited) {
             type = type.toLowerCase();
             that.last_point_visited = element;
             $('.' + type + '_point_container').mCustomScrollbar("scrollTo", element, {scrollInertia: 200, timeout: 1});
@@ -575,13 +575,23 @@ function IndexTranscript() {
     };
     let activateUpdatePopup = function () {
         $(".text-danger").html("");
-        $('#' + that.cuePointType + '_update_btn').click(function () {
+        $('#' + that.cuePointType + '_update_btn').unbind('click').click(function () {
             current = $('#file_' + that.cuePointType + '_select');
             $('#new_file_' + that.cuePointType).attr('action', that.uploadUrl + '/' + current.val());
             $('#' + that.cuePointType + '_upload_title').html('Update "' + current.text() + '" ' + capitalize(that.cuePointType));
             $('#file_' + that.cuePointType + '_title').val(current.text());
             $('#file_' + that.cuePointType + '_language')[0].selectize.setValue($('.file_' + that.cuePointType + '_' + current.val()).data().language);
             $('#file_' + that.cuePointType + '_is_public')[0].selectize.setValue($('.file_' + that.cuePointType + '_' + current.val()).data().public.toString());
+            if (that.cuePointType == 'transcript') {
+                let current_transcript = $('.file_' + that.cuePointType + '_' + current.val());
+                if (current_transcript.data('webvtt')) {
+                    $('.is_caption_section').removeClass('d-none');
+                    $('#file_transcript_is_caption').prop('checked', current_transcript.data('cc'));
+                } else {
+                    $('#file_transcript_is_caption').prop('checked', false);
+                    $('.is_caption_section').addClass('d-none');
+                }
+            }
             $('.upload_' + that.cuePointType + '_btn').html('Update ' + capitalize(that.cuePointType));
             $('.upload_' + that.cuePointType + '_btn').unbind("click").bind("click", function () {
 
@@ -606,6 +616,10 @@ function IndexTranscript() {
             $('#file_' + that.cuePointType + '_language')[0].selectize.setValue('en');
             $('#file_' + that.cuePointType + '_is_public')[0].selectize.setValue('false');
             $('.upload_' + that.cuePointType + '_btn').html('Upload ' + capitalize(that.cuePointType));
+            if (that.cuePointType == 'transcript') {
+                $('.is_caption_section').addClass('d-none');
+                $('#file_transcript_is_caption').prop('checked', false);
+            }
             $('.upload_' + that.cuePointType + '_btn').unbind("click");
         });
     };
