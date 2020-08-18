@@ -3,149 +3,143 @@
     <main>
       <div class="text-headline jumbotron">
         <div class="heading-holder">
-          <div class="container">
-            <div class="row">
-              <div class="col-md-9"><h1>Organization Profile</h1></div>
-              <div class="col-md-3"><%= link_to 'View Organization Page', root_url(host: Utilities::AviaryDomainHandler.subdomain_handler(@organization)), class: 'btn btn-primary btn-xs pull-right' %></div>
-            </div>
+          <div class="row">
+            <div class="col-md-9"><h1>Organization Profile</h1></div>
+            <div class="col-md-3"><%= link_to 'View Organization Page', root_url(host: Utilities::AviaryDomainHandler.subdomain_handler(@organization)), class: 'btn btn-primary btn-xs pull-right' %></div>
           </div>
         </div>
       </div>
       <div class="organization-section">
-        <div class="container">
-          <div class="">
-            <%= simple_form_for @organization do |f| %>
-              <div class="row">
-                <div class="col-md-6">
-                  <div class="form-group ">
-                    <label for="" class="col-form-label">Preferred Default Tab</label>
-                    <%= f.select :default_tab_selection, Organization.default_tab_selections.map { |key, _| [key.humanize, key] }, {}, required: false, label: false, class: 'custom-placeholder banner_type-custom' %>
-                    <%= f.error :default_tab_selection %>
-                  </div>
-                </div>
-                <div class="col-md-6">
-                  <div class="form-group">
-                    <div class="form-check  mt-15px">
-                      <%= f.input :display_banner, input_html: { class: 'form-check-input' } %>
-                    </div>
-                  </div>
+        <%= simple_form_for @organization do |f| %>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group ">
+                <label for="" class="col-form-label">Preferred Default Tab</label>
+                <%= f.select :default_tab_selection, Organization.default_tab_selections.map { |key, _| [key.humanize, key] }, {}, required: false, label: false, class: 'custom-placeholder banner_type-custom' %>
+                <%= f.error :default_tab_selection %>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <div class="form-check  mt-15px">
+                  <%= f.input :display_banner, input_html: { class: 'form-check-input' } %>
                 </div>
               </div>
-              <div class="row">
-                <div class="col-md-6">
-                  <div class="form-group">
-                    <label for="" class="col-form-label">Preferred Banner Display</label>
-                    <%= f.select :banner_type, Organization.banner_types.map { |key, _| [key.humanize, key] }, {}, required: false, label: false, class: 'custom-placeholder banner_type-custom' %>
-                    <%= f.error :banner_type %>
-                    <br>
-                  </div>
-                </div>
-                <div class="col-md-6 ">
-                  <div class="form-group banner-image d-none">
-                    <label for="" class="col-form-label">Banner Image*</label>
-                    <div class="image-box">
-                      <div class="holder">
-                        <img id="banner" src="<%= @organization.new_record? ? '#' : (image_url @organization.banner_image) %>" alt="">
-                      </div>
-                    </div>
-                    <div class="file-upload">
-                      <%= f.label @organization.new_record? ? 'Add Image' : 'Upload new image', for: 'organization_banner_image' %>
-                      <%= f.input :banner_image, as: :file, error: false, label: false, input_html: { onchange: "readURL(this, 'banner');", accept: 'image/*' } %>
-                    </div>
-
-                    <div class="text-holder bg_img_cls m-0 mt-5px w-100" style="display: block !important;">
-                      Suggested Background Image size is <i>1200x300</i> or Aspect Ratio from <i>3:1</i> to <i>6:1</i>
-                    </div>
-
-                    <%= f.error :banner_image %>
-                    <br>
-                  </div>
-                  <div class="form-group banner-resource-slider d-none">
-                    <label for="" class="col-form-label">Featured Resources Slider</label>
-                    <input id="banner_slider_resources_info" placeholder='Title Text' class="form-control" data-url="<%= autocomplete_permission_groups_path(type: 'resource') %>"/>
-                    <%= f.error :banner_slider_resources %>
-                    <table id="organization_banner_slider_resources_table" class="table  table-striped  mt-20px">
-                      <thead>
-                      <th>ID</th>
-                      <th>Title</th>
-                      <th>Action</th>
-                      </thead>
-                      <tbody id="organization_banner_slider_resources_container"></tbody>
-                    </table>
-                    <br>
-                    <%= f.input :banner_slider_resources, as: :string, label: false, input_html: { class: ' form-control d-none' } %>
-                  </div>
-                </div>
-              </div>
-              <div class="row">
-
-                <div class="col-md-6 ">
-                  <div class="form-group">
-                    <label for="" class="col-form-label">Banner Title Text</label>
-                    <%= f.input :banner_title_text, label: false, placeholder: 'Title Text', input_html: { class: ' form-control ' } %>
-                    <small class="form-text text-muted mt-1">This text will be used as the title that is displayed above the search bar on your organization landing page. If you leave it blank, no title will be displayed.</small>
-                    <%= f.error :banner_title_text %>
-                  </div>
-
-                </div>
-                <div class="col-md-6">
-                  <div class="form-group">
-                    <label for="" class="col-form-label font-weight-bold">Banner Title Text Color</label>
-                    <%= f.input :title_font_color, label: false, placeholder: 'Color Picker', input_html: { class: ' form-control  color_picker' } %>
-                    <small class="form-text text-muted mt-1">This color is used for the Banner Title Text that is displayed above the search bar on your organization landing page.</small>
-                  </div>
-                </div>
-
-
-              </div>
-              <div class="row">
-                <div class="col-md-6">
-                  <div class="form-group">
-                    <label for="" class="col-form-label font-weight-bold">Banner Title Font Family</label>
-                    <%= f.select :title_font_family, options_for_select(Theme::FontHandler.for_select, @organization.title_font_family), {}, { class: " meta-type-select" } %>
-                    <small class="form-text text-muted mt-1">This font is used for the Banner Title Text that is displayed above the search bar on your organization landing page.</small>
-                  </div>
-                </div>
-                <div class="col-md-6">
-                  <div class="form-group">
-                    <label for="" class="col-form-label font-weight-bold">Banner Title Font Size</label>
-                    <%= f.select :title_font_size, Theme::FontHandler.font_sizes.map { |key, _| [key, key] }, {}, { class: "" } %>
-                    <small class="form-text text-muted mt-1">This font size is used for the Banner Title Text that is displayed above the search bar on your organization landing page.</small>
-                  </div>
-                </div>
-              </div>
-
-              <div class="row">
-                <div class="col-md-6">
-                  <div class="form-group">
-                    <label for="">Search Panel Background Color</label>
-                    <%= f.input :search_panel_bg_color, label: false, input_html: { class: 'form-control color_picker', placeholder: 'Font Color' }, :required => true %>
-                    <small class="form-text text-muted mt-1">This color will be used as the background color behind the search bar on the search resources page. It will also be used as the background color behind the search bar on your organization landing page and your collection landing page if you do not display a banner on those pages.</small>
-                  </div>
-                </div>
-                <div class="col-md-6">
-                  <div class="form-group">
-                    <label for="">Search Panel Font Color</label>
-                    <%= f.input :search_panel_font_color, label: false, input_html: { class: 'form-control color_picker', placeholder: 'Font Color' }, :required => true %>
-                    <small class="form-text text-muted mt-1">This color will be used as the color of the text that is displayed below the search bar on the search resources page.</small>
-                  </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-md-12 text-right">
-                  <%= f.submit class: 'btn btn-primary org-edit-form' %>
-                </div>
-              </div>
-            <% end %>
-            <script type="text/javascript">
-                var orgnization = new Organization();
-                $(function () {
-                    orgnization.init_org_display_settings();
-                });
-
-            </script>
+            </div>
           </div>
-        </div>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="" class="col-form-label">Preferred Banner Display</label>
+                <%= f.select :banner_type, Organization.banner_types.map { |key, _| [key.humanize, key] }, {}, required: false, label: false, class: 'custom-placeholder banner_type-custom' %>
+                <%= f.error :banner_type %>
+                <br>
+              </div>
+            </div>
+            <div class="col-md-6 ">
+              <div class="form-group banner-image d-none">
+                <label for="" class="col-form-label">Banner Image*</label>
+                <div class="image-box">
+                  <div class="holder">
+                    <img id="banner" src="<%= @organization.new_record? ? '#' : (image_url @organization.banner_image) %>" alt="">
+                  </div>
+                </div>
+                <div class="file-upload">
+                  <%= f.label @organization.new_record? ? 'Add Image' : 'Upload new image', for: 'organization_banner_image' %>
+                  <%= f.input :banner_image, as: :file, error: false, label: false, input_html: { onchange: "readURL(this, 'banner');", accept: 'image/*' } %>
+                </div>
+
+                <div class="text-holder bg_img_cls m-0 mt-5px w-100" style="display: block !important;">
+                  Suggested Background Image size is <i>1200x300</i> or Aspect Ratio from <i>3:1</i> to <i>6:1</i>
+                </div>
+
+                <%= f.error :banner_image %>
+                <br>
+              </div>
+              <div class="form-group banner-resource-slider d-none">
+                <label for="" class="col-form-label">Featured Resources Slider</label>
+                <input id="banner_slider_resources_info" placeholder='Title Text' class="form-control" data-url="<%= autocomplete_permission_groups_path(type: 'resource') %>"/>
+                <%= f.error :banner_slider_resources %>
+                <table id="organization_banner_slider_resources_table" class="table  table-striped  mt-20px">
+                  <thead>
+                  <th>ID</th>
+                  <th>Title</th>
+                  <th>Action</th>
+                  </thead>
+                  <tbody id="organization_banner_slider_resources_container"></tbody>
+                </table>
+                <br>
+                <%= f.input :banner_slider_resources, as: :string, label: false, input_html: { class: ' form-control d-none' } %>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+
+            <div class="col-md-6 ">
+              <div class="form-group">
+                <label for="" class="col-form-label">Banner Title Text</label>
+                <%= f.input :banner_title_text, label: false, placeholder: 'Title Text', input_html: { class: ' form-control ' } %>
+                <small class="form-text text-muted mt-1">This text will be used as the title that is displayed above the search bar on your organization landing page. If you leave it blank, no title will be displayed.</small>
+                <%= f.error :banner_title_text %>
+              </div>
+
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="" class="col-form-label font-weight-bold">Banner Title Text Color</label>
+                <%= f.input :title_font_color, label: false, placeholder: 'Color Picker', input_html: { class: ' form-control  color_picker' } %>
+                <small class="form-text text-muted mt-1">This color is used for the Banner Title Text that is displayed above the search bar on your organization landing page.</small>
+              </div>
+            </div>
+
+
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="" class="col-form-label font-weight-bold">Banner Title Font Family</label>
+                <%= f.select :title_font_family, options_for_select(Theme::FontHandler.for_select, @organization.title_font_family), {}, { class: " meta-type-select" } %>
+                <small class="form-text text-muted mt-1">This font is used for the Banner Title Text that is displayed above the search bar on your organization landing page.</small>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="" class="col-form-label font-weight-bold">Banner Title Font Size</label>
+                <%= f.select :title_font_size, Theme::FontHandler.font_sizes.map { |key, _| [key, key] }, {}, { class: "" } %>
+                <small class="form-text text-muted mt-1">This font size is used for the Banner Title Text that is displayed above the search bar on your organization landing page.</small>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="">Search Panel Background Color</label>
+                <%= f.input :search_panel_bg_color, label: false, input_html: { class: 'form-control color_picker', placeholder: 'Font Color' }, :required => true %>
+                <small class="form-text text-muted mt-1">This color will be used as the background color behind the search bar on the search resources page. It will also be used as the background color behind the search bar on your organization landing page and your collection landing page if you do not display a banner on those pages.</small>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="">Search Panel Font Color</label>
+                <%= f.input :search_panel_font_color, label: false, input_html: { class: 'form-control color_picker', placeholder: 'Font Color' }, :required => true %>
+                <small class="form-text text-muted mt-1">This color will be used as the color of the text that is displayed below the search bar on the search resources page.</small>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12 text-right">
+              <%= f.submit class: 'btn btn-primary org-edit-form' %>
+            </div>
+          </div>
+        <% end %>
+        <script type="text/javascript">
+            var orgnization = new Organization();
+            $(function () {
+                orgnization.init_org_display_settings();
+            });
+
+        </script>
       </div>
     </main>
   </div>

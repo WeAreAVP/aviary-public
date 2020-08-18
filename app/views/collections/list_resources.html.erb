@@ -14,11 +14,9 @@
         </div>
       </div>
       <div class="data-table">
-        <div class="container">
-          <%= content_tag :table, role: :datatable, class: ['table', 'table-striped', 'table-bordered'], id: 'collection_resource_datatable', data: { url: list_resources_collection_path(@collection, format: :json) } do %>
-            <%= render partial: 'collection_resources/listing_table', locals: {table_called_from: 'list_resource', columns_details: JSON.parse(current_organization.resource_table_column_detail), organization_id: current_organization.id } %>
-          <% end %>
-        </div>
+        <%= content_tag :table, role: :datatable, class: ['table', 'table-striped', 'table-bordered'], id: 'collection_resource_datatable', data: { url: list_resources_collection_path(@collection, format: :json) } do %>
+          <%= render partial: 'collection_resources/listing_table', locals: {table_called_from: 'list_resource', columns_details: JSON.parse(current_organization.resource_table_column_detail), organization_id: current_organization.id } %>
+        <% end %>
       </div>
     </main>
   </div>

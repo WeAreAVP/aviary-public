@@ -311,21 +311,18 @@
 }
 
 .search-detail-main .nav-tabs .nav-item a {
-    border: 1px solid #CCD7DD;
-    border-radius: 0;
     font-size: 12px;
-    color: #6c6c6c;
-    font-family: "Roboto";
-    font-weight: 500;
     padding: 0.8rem 0.5rem;
     position: relative;
+
+    @include tabsAll;
 }
 
 .search-detail-main .nav-item a span {
-    font-size: 18px;
-    position: relative;
-    top: 3px;
-    display: none;
+    font-weight: normal;
+    margin: 0;
+    font-size: 15px;
+    font-family: "Roboto";
 }
 
 .search-detail-main .nav-item a span.badge {
@@ -333,11 +330,7 @@
 }
 
 .search-detail-main .nav-item a strong {
-    font-weight: normal;
-    margin: 0;
-    font-size: 15px;
-    color: #003853;
-    font-family: "Roboto";
+    @include activeTab;
 }
 
 .drop_drag {

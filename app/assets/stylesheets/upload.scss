@@ -18,20 +18,19 @@
 }
 
 .upload-main .nav-tabs li a {
-    border: 1px solid #c4c4c4;
-    border-radius: 0;
+    border: $tabsBorder;
     font-size: 16px;
-    color: #6c6c6c;
     height: 46px;
-    font-family: "Roboto";
-    font-weight: 500;
     padding: 0.8rem 1rem;
+
+    @include tabsAll;
+    &:hover {
+        border-color: #d6dfe4 !important;
+    }
 }
 
 .upload-main .nav-tabs li a.active {
-    background: #3d62e6;
-    color: #fff;
-    border-color: #3d62e6;
+    @include activeTab;
 }
 
 .upload-main .tab-content {
