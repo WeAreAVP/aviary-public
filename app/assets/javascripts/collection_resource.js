@@ -590,13 +590,13 @@ function CollectionResource() {
                     final_link = shareLink;
                     break;
                 case 'embed_video_custom':
-                    final_link = '<iframe src="' + shareLink + '" height="400" width="1200" style="width: 100%;"></iframe>';
+                    final_link = '<iframe src="' + shareLink + '" height="400" width="1200" style="width: 100%;" allow="fullscreen"></iframe>';
                     break;
                 case 'embed_resource_custom':
-                    final_link = '<iframe src="' + shareLink + '" height="400" width="1200" style="width: 100%;"></iframe>';
+                    final_link = '<iframe src="' + shareLink + '" height="400" width="1200" style="width: 100%;" allow="fullscreen"></iframe>';
                     break;
                 case 'embed_resource_media_player':
-                    final_link = '<iframe src="' + shareLink + '" height="400" width="1200" style="width: 100%;"></iframe>';
+                    final_link = '<iframe src="' + shareLink + '" height="400" width="1200" style="width: 100%;" allow="fullscreen"></iframe>';
                     break;
                 case 'public_access_url_custom':
                     final_link = shareLink;
