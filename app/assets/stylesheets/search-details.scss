@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css?family=Roboto+Slab:400,700');
+@import './variables';
 
 .filter-holder .nav-tabs {
     border: none !important;
@@ -348,14 +349,8 @@
     font-weight: normal;
 }
 
-.search-detail-main .nav-item a.active,
-.search-detail-main .nav-item a.active strong {
-    background: #336075;
-    color: #fff;
-}
-
 .search-detail-main .nav-item a.active {
-    border: 1px solid #CCD7DD;
+    @include activeTab;
 }
 
 .search-detail-main .tab {

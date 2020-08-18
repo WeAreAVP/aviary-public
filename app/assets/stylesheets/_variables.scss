@@ -1,0 +1,29 @@
+$tabsColor: #336075;
+$tabsBorder: 1px solid #CCD7DD;
+$tabsTextColor: #003853;
+
+@mixin tabsColors {
+    border: $tabsBorder;
+}
+
+@mixin tabsText {
+    font-weight: 500;
+    font-family: "Roboto";
+    color: $tabsTextColor;
+}
+
+@mixin tabsGeneral {
+    border-radius: 0;
+}
+
+@mixin activeTab {
+    background: $tabsColor;
+    color: #fff;
+    border: $tabsBorder;
+}
+
+@mixin tabsAll {
+    @include tabsColors;
+    @include tabsText;
+    @include tabsGeneral;
+}

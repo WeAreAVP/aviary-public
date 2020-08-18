@@ -1,4 +1,4 @@
-/* orgainzation form styles */
+/* organization form styles */
 [src=''] {
     visibility: hidden;
 }
@@ -29,6 +29,10 @@
     margin: 0 auto;
     border-bottom: 1px solid rgba(0, 0, 0, 0.2);
     box-shadow: none;
+}
+
+#profile-form {
+    padding: 0;
 }
 
 .organization-section .form textarea {
