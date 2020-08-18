@@ -1,4 +1,4 @@
-<div data-media-url='<%= media_url_inner %>'  class="box player-item <%= can_access ? 'can-play' : 'locked' %> playlist-item <%= single_file.id == @resource_file.id ? 'playing' : 'not-playing' %> ">
+<div data-media-url='<%= media_url_inner %>' class="box player-item <%= can_access ? 'can-play' : 'locked' %> playlist-item <%= single_file.id == @resource_file.id ? 'playing' : 'not-playing' %> ">
   <div class="image">
     <% thumb_url = single_file.thumbnail.url %>
     <% unless thumb_url.present? %>
@@ -6,13 +6,13 @@
         <% thumb_url = presenter.media_type.include?('avalon') || presenter.media_type.include?('video') ? "https://#{ENV['S3_HOST_CDN']}/public/images/video-default.png" : "https://#{ENV['S3_HOST_CDN']}/public/images/audio-default.png" %>
       <% end %>
     <% end %>
-    <%= link_to image_tag(thumb_url), collection_collection_resource_details_path(single_file.collection_resource.collection, single_file.collection_resource, single_file, share: params[:share]) %>
+    <%= link_to image_tag(thumb_url), collection_collection_resource_details_path(single_file.collection_resource.collection, single_file.collection_resource, single_file, share: params[:share], embed: params[:embed]) %>
   </div>
   <div class="detail">
     <% unless can_access %>
       <div class="d-block" style="display: list-item;text-align: center;">
         <% if user_signed_in? %>
-          <%= link_to 'javascript:void(0);', style: 'bottom: 10px;', class: 'request-access-btn', data: {title: single_file.collection_resource.title, id: single_file.collection_resource.id, click_through: single_file.collection_resource.collection.click_through, conditions_for_access: single_file.collection_resource.collection.conditions_for_access} do %>
+          <%= link_to 'javascript:void(0);', style: 'bottom: 10px;', class: 'request-access-btn', data: { title: single_file.collection_resource.title, id: single_file.collection_resource.id, click_through: single_file.collection_resource.collection.click_through, conditions_for_access: single_file.collection_resource.collection.conditions_for_access } do %>
             <%= lock_image('h-20px car-lock-image') %>
           <% end %>
         <% else %>
