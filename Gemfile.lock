@@ -602,6 +602,7 @@ GEM
     selenium-webdriver (3.14.0)
       childprocess (~> 0.5)
       rubyzip (~> 1.2)
+    semantic_range (2.3.0)
     shoulda-matchers (3.1.2)
       activesupport (>= 4.0.0)
     sidekiq (5.2.2)
@@ -696,10 +697,11 @@ GEM
       activemodel (>= 5.0)
       bindex (>= 0.4.0)
       railties (>= 5.0)
-    webpacker (4.2.2)
-      activesupport (>= 4.2)
+    webpacker (5.2.1)
+      activesupport (>= 5.2)
       rack-proxy (>= 0.6.1)
-      railties (>= 4.2)
+      railties (>= 5.2)
+      semantic_range (>= 2.3.0)
     websocket-driver (0.7.1)
       websocket-extensions (>= 0.1.0)
     websocket-driver (0.7.1-java)
@@ -833,7 +835,7 @@ DEPENDENCIES
   uglifier (>= 1.3.0)
   video_info
   web-console (>= 3.3.0)
-  webpacker
+  webpacker (~> 5.x)
   webvtt-ruby
   with_model
   xray-rails

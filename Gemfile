@@ -186,7 +186,7 @@ gem 'meta-tags'
 
 # React Integration
 gem 'react_on_rails'
-gem 'webpacker'
+gem 'webpacker', '~> 5.x'
 gem 'mini_racer', platforms: :ruby
 
 gem "rubyzip", ">= 1.3.0"
