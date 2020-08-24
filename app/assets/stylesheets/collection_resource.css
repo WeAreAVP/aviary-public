@@ -181,6 +181,8 @@ h5.MsoNormal span {
 
 .resource-edit-breadcrumb.breadcrumb {
     padding: 10px 0;
-    margin: 0;
+    margin-left: 35px;
+    margin-top: 10px;
+    margin-bottom: 0;
     border-radius: 0;
 }
