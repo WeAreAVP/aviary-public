@@ -30,7 +30,13 @@ class CollectionResourceFile < ApplicationRecord
     string :resource_file_file_size, stored: true
     string :file_display_name, stored: true
 
-    date :resource_file_updated_at, stored: true
+    begin
+      time :resource_file_updated_at, stored: true
+      time :created_at, stored: true
+      time :updated_at, stored: true
+    rescue StandardError => ex
+      puts ex.backtrace.join("\n")
+    end
 
     string :document_type, stored: true do
       'collection_resource_file'
@@ -73,13 +79,14 @@ class CollectionResourceFile < ApplicationRecord
 
   def self.fields_values
     { 'id_is' => 'ID',
-      'resource_file_file_name_ss' => 'File name',
+      'resource_file_file_name_ss' => 'File Name',
       'access_ss' => 'Public',
-      'resource_file_content_type_ss' => 'Media type',
-      'resource_file_file_size_ss' => 'File size',
-      'resource_file_updated_at_ds' => 'Date added/updated',
-      'count_of_transcripts_ss' => 'Count of transcripts',
-      'count_of_indexes_ss' => 'Count of indexes',
+      'resource_file_content_type_ss' => 'Media Type',
+      'resource_file_file_size_ss' => 'File Size',
+      'updated_at_ds' => 'Date Updated',
+      'created_at_ds' => 'Date Added',
+      'count_of_transcripts_ss' => 'Count of Transcripts',
+      'count_of_indexes_ss' => 'Count of Indexes',
       'collection_resource_id_ss' => 'Linked Resource Id',
       'collection_resource_title_ss' => 'Linked Resource Title',
       'thumbnail_ss' => 'Thumbnail',
@@ -91,6 +98,10 @@ class CollectionResourceFile < ApplicationRecord
       'resource_detail_embed_html_ss' => 'Resource Detail Embed HTML',
       'target_domain_ss' => 'Target Domain',
       'duration_ss' => 'Duration' }
+  end
+
+  def self.date_time_format(date_time)
+    date_time.to_datetime.strftime('%m-%d-%Y %H:%M:%S')
   end
 
   def default_values
@@ -302,7 +313,7 @@ class CollectionResourceFile < ApplicationRecord
           next if value.blank?
           col_data << if value == 'resource_file_file_size_ss'
                         resource[value].present? ? ApplicationController.helpers.number_to_human_size(resource[value]) : ''
-                      elsif value == 'resource_file_updated_at_ds'
+                      elsif %w[created_at_ds updated_at_ds].include?(value)
                         resource[value].present? ? resource[value].to_date.strftime('%m-%d-%Y') : ''
                       elsif value == 'access_ss'
                         resource[value].titleize
