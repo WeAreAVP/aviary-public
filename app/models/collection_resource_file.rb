@@ -38,8 +38,6 @@ class CollectionResourceFile < ApplicationRecord
       puts ex.backtrace.join("\n")
     end
 
-    date :resource_file_updated_at, stored: true
-
     string :document_type, stored: true do
       'collection_resource_file'
     end
