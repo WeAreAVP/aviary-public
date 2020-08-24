@@ -53,3 +53,6 @@
     </div>
   </div>
 </footer>
+<% unless user_signed_in? && (can? :manage, current_organization) %>
+  <%= render partial: 'shared/accessibility_issue_button' %>
+<% end %>
