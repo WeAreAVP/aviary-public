@@ -425,44 +425,6 @@
   text-decoration: none;
 }
 
-#accessibility_button {
-  position: fixed;
-  bottom: 30px;
-  right: 30px;
-  background-color: #f05c1f;
-  z-index: 99;
-
-  &:hover {
-    opacity: 1 !important;
-  }
-
-  span {
-    max-width: 0;
-    -webkit-transition: max-width 1s;
-    transition: max-width 1s;
-    display: inline-block;
-    vertical-align: top;
-    white-space: nowrap;
-    overflow: hidden;
-
-    p {
-      padding: 0 10px;
-      text-align: left;
-    }
-  }
-
-  img {
-    margin: 0 4px;
-    width: 50px;
-    height: 50px;
-  }
-}
-
-#accessibility_button:hover span,
-#accessibility_button:focus span {
-  max-width: 25rem;
-}
-
 @media screen and (max-width: 1024px) {
   .home-featured-resources .item,
   .home-featured-collections .item,
