@@ -3084,7 +3084,7 @@ div.dataTables_wrapper div.dataTables_info {
     padding-right: 10px;
   }
   .dataTables_wrapper {
-    overflow: auto;
+    # overflow: auto;
   }
   .heading-holder {
     padding: 0;
@@ -7176,6 +7176,35 @@ Copyright (c) 2013 Daniel Eden
 .DTFC_ScrollWrapper table.dataTable {
   margin: 0 !important;
   border: none !important;
+}
+
+.DTFC_RightBodyWrapper td,
+.DTFC_RightHeadWrapper th {
+  border-left: 1px solid #d2d2d2 !important;
+}
+
+.DTFC_ScrollWrapper {
+  border: 1px solid #d2d2d2 !important;
+  border-bottom: 0 !important;
+  margin: 15px 0;
+  height: unset !important;
+
+  th {
+    border-top: 0 !important;
+  }
+
+  tbody td {
+    border-bottom: 1px solid #d2d2d2 !important;
+  }
+
+  .dataTables_scrollBody {
+    height: unset !important;
+  }
+}
+
+.dataTables_scrollHead thead tr th:nth-last-child(2),
+.dataTables_scrollBody tbody tr td:nth-last-child(2) {
+  border-right: none !important;
 }
 
 .DTFC_RightBodyLiner td,
