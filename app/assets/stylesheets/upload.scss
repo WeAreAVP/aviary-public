@@ -29,7 +29,7 @@
     }
 }
 
-.upload-main .nav-tabs li a.active {
+.upload-main .nav-tabs:not(.manage-media-main-tab) li a.active {
     @include activeTab;
 }
 
