@@ -46,7 +46,7 @@ class ResourceFilesDatatable < ApplicationDatatable
                             elsif value['value'] == 'resource_file_content_type_ss'
                               resource[value['value']].present? ? resource[value['value']] : ''
                             elsif value['value'] == 'thumbnail_ss'
-                              '<img src=' + resource[value['value']] + ' width= "50">'
+                              '<img src=' + resource[value['value']] + ' height= "20">'
                             elsif value['value'] == 'aviary_url_path_ss'
                               '<a href="' + collection_collection_resource_details_path(collection_resource.collection.id,
                                                                                         collection_resource.id, resource['id_is']) + '"class="btn-sm btn-default">File URL</a>'

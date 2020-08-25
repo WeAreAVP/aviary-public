@@ -81,8 +81,6 @@ function CollectionResourceTable() {
                 processing: true,
                 serverSide: true,
                 pageLength: 100,
-                scrollY: '400px',
-                fixedHeader: true,
                 scrollX: true,
                 scrollCollapse: false,
                 paging: true,
