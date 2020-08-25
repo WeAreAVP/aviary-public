@@ -319,10 +319,10 @@
 }
 
 .search-detail-main .nav-item a span {
-    font-weight: normal;
-    margin: 0;
-    font-size: 15px;
-    font-family: "Roboto";
+    font-size: 18px;
+    position: relative;
+    top: 3px;
+    display: none;
 }
 
 .search-detail-main .nav-item a span.badge {
@@ -330,7 +330,10 @@
 }
 
 .search-detail-main .nav-item a strong {
-    @include activeTab;
+    font-weight: normal;
+    margin: 0;
+    font-size: 15px;
+    font-family: "Roboto";
 }
 
 .drop_drag {

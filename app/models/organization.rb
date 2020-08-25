@@ -129,7 +129,7 @@ class Organization < ApplicationRecord
               '2' => { status: 'true', value: 'access_ss', sort_name: true },
               '3' => { status: 'true', value: 'resource_file_content_type_ss', sort_name: true },
               '4' => { status: 'true', value: 'resource_file_file_size_ss', sort_name: true },
-              '5' => { status: 'true', value: 'resource_file_updated_at_ds', sort_name: true },
+              '5' => { status: 'true', value: 'updated_at_ds', sort_name: true },
               '6' => { status: 'true', value: 'count_of_transcripts_ss', sort_name: true },
               '7' => { status: 'true', value: 'count_of_indexes_ss', sort_name: true },
               '8' => { status: 'true', value: 'collection_resource_id_ss', sort_name: true },
@@ -142,7 +142,8 @@ class Organization < ApplicationRecord
               '15' => { status: 'true', value: 'resource_detail_embed_html_ss', sort_name: false },
               '16' => { status: 'true', value: 'target_domain_ss', sort_name: true },
               '17' => { status: 'true', value: 'file_display_name_ss', sort_name: true },
-              '18' => { status: 'true', value: 'duration_ss', sort_name: true }
+              '18' => { status: 'true', value: 'duration_ss', sort_name: true },
+              '19' => { status: 'true', value: 'created_at_ds', sort_name: true }
             }
     }.to_json
 

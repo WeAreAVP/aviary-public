@@ -39,8 +39,8 @@ class ResourceFilesDatatable < ApplicationDatatable
                           begin
                             if value['value'] == 'resource_file_file_size_ss'
                               resource[value['value']].present? ? number_to_human_size(resource[value['value']]) : ''
-                            elsif value['value'] == 'resource_file_updated_at_ds'
-                              resource[value['value']].present? ? resource[value['value']].to_date.strftime('%m-%d-%Y') : ''
+                            elsif %w[created_at_ds updated_at_ds].include?(value['value'])
+                              resource[value['value']].present? ? CollectionResourceFile.date_time_format(resource[value['value']]) : ''
                             elsif value['value'] == 'access_ss'
                               resource[value['value']].titleize
                             elsif value['value'] == 'resource_file_content_type_ss'
