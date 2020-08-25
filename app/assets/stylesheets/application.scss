@@ -396,3 +396,45 @@ th.table-head-id {
 .delete_color {
     color: #dc3545;
 }
+
+#accessibility_button {
+    position: fixed;
+    bottom: 30px;
+    left: 30px;
+    color: #fff;
+    background-color: #f05c1f !important;
+    z-index: 99;
+    border-radius: 40px;
+    padding: 7px 19px;
+
+    &:hover {
+        opacity: 1 !important;
+    }
+
+    span {
+        max-width: 0;
+        -webkit-transition: max-width 1s;
+        transition: max-width 1s;
+        display: inline-block;
+        vertical-align: top;
+        white-space: nowrap;
+        overflow: hidden;
+
+        p {
+        padding: 0 5px;
+        text-align: left;
+        font-size: 12px;
+        }
+    }
+
+    img {
+        margin: -2px 1px;
+        width: 40px;
+        height: 40px;
+    }
+}
+
+#accessibility_button:hover span,
+#accessibility_button:focus span {
+    max-width: 25rem;
+}
