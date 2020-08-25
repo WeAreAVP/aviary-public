@@ -318,13 +318,6 @@
     @include tabsAll;
 }
 
-.search-detail-main .nav-item a strong {
-    font-weight: normal;
-    margin: 0;
-    font-size: 15px;
-    font-family: "Roboto";
-}
-
 .search-detail-main .nav-item a span {
     font-size: 18px;
     position: relative;
@@ -334,6 +327,13 @@
 
 .search-detail-main .nav-item a span.badge {
     display: inline-block;
+}
+
+.search-detail-main .nav-item a strong {
+    font-weight: normal;
+    margin: 0;
+    font-size: 15px;
+    font-family: "Roboto";
 }
 
 .drop_drag {
