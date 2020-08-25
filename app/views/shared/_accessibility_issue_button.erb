@@ -1,22 +1,38 @@
 <a target="_blank" href="<%= contact_us_url(subdomain: false) %>" class="btn btn-primary" id="accessibility_button" role="button" aria-label="Contact us about accessibility issues">
-  <div class="row">
-    <img src="<%= image_path 'icons/web_accessibility_icon.png' %>" alt="Accessibility icon">
-    <span class="my-auto">
-            <p>
-                Are there accessibility issues with this page?
-                <br>
-                Please click here to let us know and we will address them.
-            </p>
-        </span>
-  </div>
+    <div class="row">
+        <img src="<%= image_path 'icons/web_accessibility_icon.png' %>" alt="Accessibility icon">
+        <span class="my-auto">
+                <p>
+                    Are there accessibility issues with this page?
+                    <br>
+                    Please click here to let us know and we will address them.
+                </p>
+            </span>
+    </div>
 </a>
 <script type="text/javascript">
-    document.addEventListener("DOMContentLoaded", function (event) {
-        var button = document.getElementById("accessibility_button");
-        button.onkeydown = function (e) {
+    $("document").ready(function (event) {
+        var button = $("#accessibility_button");
+        button.keydown( function(e) {
             if (e.keyCode == 32) {
-                button.click();
+                e.target.click();
             }
-        }
+        })
+
+        var buttonHeight = button.outerHeight();
+        var buttonOffset = $(window).height() - button[0].getBoundingClientRect().bottom;
+
+        $(window).on("scroll resize load", function() {
+            var footer = $(".page-footer");
+    
+            var footerOffset = $(window).height() - footer[0].getBoundingClientRect().top;
+
+            if (footerOffset >= buttonOffset + buttonHeight/2) {
+                button.css({bottom: + footerOffset - buttonHeight/2 + 'px'})
+            } else {
+                button.css({bottom: buttonOffset + 'px'})
+            }
+        });
     });
+
 </script>
