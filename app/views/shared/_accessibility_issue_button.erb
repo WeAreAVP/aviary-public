@@ -11,28 +11,8 @@
     </div>
 </a>
 <script type="text/javascript">
-    $("document").ready(function (event) {
-        var button = $("#accessibility_button");
-        button.keydown( function(e) {
-            if (e.keyCode == 32) {
-                e.target.click();
-            }
-        })
-
-        var buttonHeight = button.outerHeight();
-        var buttonOffset = $(window).height() - button[0].getBoundingClientRect().bottom;
-
-        $(window).on("scroll resize load", function() {
-            var footer = $(".page-footer");
-    
-            var footerOffset = $(window).height() - footer[0].getBoundingClientRect().top;
-
-            if (footerOffset >= buttonOffset + buttonHeight/2) {
-                button.css({bottom: + footerOffset - buttonHeight/2 + 'px'})
-            } else {
-                button.css({bottom: buttonOffset + 'px'})
-            }
-        });
+    var accessibility = new Accessibility();
+    document.addEventListener("DOMContentLoaded", function (_event) {
+        accessibility.initialize();
     });
-
 </script>
