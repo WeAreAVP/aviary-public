@@ -399,7 +399,7 @@ function CollectionResource() {
 
     const time_scroll_mover = function (currentTime) {
         if ($('#index-tab').hasClass('active')) {
-            if ($("#index-auto-scroll").prop("checked")) {
+            if ($("#index-auto-scroll").prop("checked") && selfCR.selected_index > 0) {
                 let start_time = parseFloat(selfCR.index_time_wise_page[selfCR.selected_index][selfCR.indexes.index_page_number].start_time);
                 let end_time = parseFloat(selfCR.index_time_wise_page[selfCR.selected_index][selfCR.indexes.index_page_number].end_time);
                 if (currentTime >= start_time && currentTime <= end_time) {
@@ -417,7 +417,7 @@ function CollectionResource() {
 
             }
         } else if ($('#transcript-tab').hasClass('active')) {
-            if ($("#transcript-auto-scroll").prop("checked")) {
+            if ($("#transcript-auto-scroll").prop("checked") && selfCR.selected_transcript > 0) {
                 let start_time = parseFloat(selfCR.transcript_time_wise_page[selfCR.selected_transcript][selfCR.transcripts.transcript_page_number].start_time);
                 let end_time = parseFloat(selfCR.transcript_time_wise_page[selfCR.selected_transcript][selfCR.transcripts.transcript_page_number].end_time);
                 if (currentTime >= start_time && currentTime <= end_time) {
