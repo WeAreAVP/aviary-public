@@ -90,14 +90,14 @@
       </main>
     </div>
   </div>
-</div>
-<% unless params[:embed] == 'true' || params[:action] == 'embed_file' %>
-  <% if organization_layout? %>
-    <%= render 'shared/footer/organization_footer', cached: iscached? %>
-  <% else %>
-    <%= render 'shared/footer/application_footer', cached: iscached? %>
+  <% unless params[:embed] == 'true' || params[:action] == 'embed_file' %>
+    <% if organization_layout? %>
+      <%= render 'shared/footer/organization_footer', cached: iscached? %>
+    <% else %>
+      <%= render 'shared/footer/application_footer', cached: iscached? %>
+    <% end %>
   <% end %>
-<% end %>
+</div>
 <%= render 'shared/modal', cached: iscached? %>
 <%= render 'shared/messages', cached: iscached? %>
 <% show_popup_compatibility = compatibility_definition %>
