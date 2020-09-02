@@ -412,6 +412,14 @@ $(window).resize(function () {
     }
 
 });
+
+$(window).on('load', function() {
+    if ($(window).width() < 1000) {
+        $('#sidebar-main').addClass('main_collapsed').removeClass('not-collapsed');
+        $(".main-content").removeClass('open');
+    }
+});
+
 $(window).resize(function () {
 
     if ($(window).width() >= 992) {
