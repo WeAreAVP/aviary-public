@@ -442,3 +442,22 @@ th.table-head-id {
 #accessibility_button:focus span {
     max-width: 25rem;
 }
+
+#wrapper {
+    min-height: 100% !important;
+    display: -webkit-box !important;
+    display: -ms-flexbox !important;
+    display: flex !important;
+    -webkit-box-orient: vertical !important;
+    -webkit-box-direction: normal !important;
+    -ms-flex-direction: column !important;
+    flex-direction: column !important;
+}
+
+.inner-wrapper {
+    flex: 1 0 auto;
+}
+
+#footer {
+    flex-shrink: 0;
+}
