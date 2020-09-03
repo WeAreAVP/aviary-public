@@ -290,7 +290,7 @@
 
 .not-collapsed .main_sidebar {
     width: 240px;
-    height: 100%;
+    height: auto;
 }
 
 .main_sidebar .card-header button.collapsed:after {
@@ -464,6 +464,8 @@
     }
 
     .not-collapsed {
+        overflow-y: scroll;
+        position: fixed;
         top: 0;
         bottom: 0;
         left: 0;
