@@ -150,27 +150,27 @@ class Organization < ApplicationRecord
   def update_resource_search_column_fields(force_update = false, refresh_entry = false)
     return if resource_table_search_columns.present? && !force_update && !refresh_entry
     table_search_columns = {
-        '0' => { value: 'id_ss', status: 'true' },
-        '1' => { value: 'title_ss', status: 'true' },
-        '2' => { value: 'collection_title', status: 'true' },
-        '3' => { value: 'transcript', status: 'true' },
-        '4' => { value: 'index', status: 'true' },
-        '5' => { value: 'description_publisher_search_texts', status: 'true' },
-        '6' => { value: 'description_preferred_citation_search_texts', status: 'true' },
-        '7' => { value: 'description_language_search_texts', status: 'true' },
-        '8' => { value: 'description_identifier_search_texts', status: 'true' },
-        '9' => { value: 'description_source_search_texts', status: 'true' },
-        '11' => { value: 'description_rights_statement_search_texts', status: 'true' },
-        '12' => { value: 'description_agent_search_texts', status: 'true' },
-        '13' => { value: 'description_format_search_texts', status: 'true' },
-        '14' => { value: 'description_coverage_search_texts', status: 'true' },
-        '15' => { value: 'description_description_search_texts', status: 'true' },
-        '16' => { value: 'description_source_metadata_uri_search_texts', status: 'true' },
-        '17' => { value: 'description_relation_search_texts', status: 'true' },
-        '18' => { value: 'description_subject_search_texts', status: 'true' },
-        '19' => { value: 'description_keyword_search_texts', status: 'true' },
-        '20' => { value: 'description_type_search_texts', status: 'true' },
-        '21' => { value: 'custom_unique_identifier_texts', status: 'true' }
+      '0' => { value: 'id_ss', status: 'true' },
+      '1' => { value: 'title_ss', status: 'true' },
+      '2' => { value: 'collection_title', status: 'true' },
+      '3' => { value: 'transcript', status: 'true' },
+      '4' => { value: 'index', status: 'true' },
+      '5' => { value: 'description_publisher_search_texts', status: 'true' },
+      '6' => { value: 'description_preferred_citation_search_texts', status: 'true' },
+      '7' => { value: 'description_language_search_texts', status: 'true' },
+      '8' => { value: 'description_identifier_search_texts', status: 'true' },
+      '9' => { value: 'description_source_search_texts', status: 'true' },
+      '11' => { value: 'description_rights_statement_search_texts', status: 'true' },
+      '12' => { value: 'description_agent_search_texts', status: 'true' },
+      '13' => { value: 'description_format_search_texts', status: 'true' },
+      '14' => { value: 'description_coverage_search_texts', status: 'true' },
+      '15' => { value: 'description_description_search_texts', status: 'true' },
+      '16' => { value: 'description_source_metadata_uri_search_texts', status: 'true' },
+      '17' => { value: 'description_relation_search_texts', status: 'true' },
+      '18' => { value: 'description_subject_search_texts', status: 'true' },
+      '19' => { value: 'description_keyword_search_texts', status: 'true' },
+      '20' => { value: 'description_type_search_texts', status: 'true' },
+      '21' => { value: 'custom_unique_identifier_texts', status: 'true' }
     }
 
     columns_update = if resource_table_search_columns.blank? || refresh_entry
@@ -187,38 +187,38 @@ class Organization < ApplicationRecord
 
   def update_resource_files_fields
     display_columns_update = {
-        number_of_column_fixed: '0',
-        columns_status:
+      number_of_column_fixed: '0',
+      columns_status:
             {
-                '0' => { status: 'true', value: 'id_is', sort_name: true },
-                '1' => { status: 'true', value: 'resource_file_file_name_ss', sort_name: true },
-                '2' => { status: 'true', value: 'access_ss', sort_name: true },
-                '3' => { status: 'true', value: 'resource_file_content_type_ss', sort_name: true },
-                '4' => { status: 'true', value: 'resource_file_file_size_ss', sort_name: true },
-                '5' => { status: 'true', value: 'updated_at_ds', sort_name: true },
-                '6' => { status: 'true', value: 'count_of_transcripts_ss', sort_name: true },
-                '7' => { status: 'true', value: 'count_of_indexes_ss', sort_name: true },
-                '8' => { status: 'true', value: 'collection_resource_id_ss', sort_name: true },
-                '9' => { status: 'true', value: 'collection_resource_title_ss', sort_name: true },
-                '10' => { status: 'true', value: 'thumbnail_ss', sort_name: false },
-                '11' => { status: 'true', value: 'aviary_url_path_ss', sort_name: false },
-                '12' => { status: 'true', value: 'aviary_purl_ss', sort_name: false },
-                '13' => { status: 'true', value: 'player_embed_html_ss', sort_name: false },
-                '14' => { status: 'true', value: 'media_embed_url_ss', sort_name: false },
-                '15' => { status: 'true', value: 'resource_detail_embed_html_ss', sort_name: false },
-                '16' => { status: 'true', value: 'target_domain_ss', sort_name: true },
-                '17' => { status: 'true', value: 'file_display_name_ss', sort_name: true },
-                '18' => { status: 'true', value: 'duration_ss', sort_name: true },
-                '19' => { status: 'true', value: 'created_at_ds', sort_name: true }
+              '0' => { status: 'true', value: 'id_is', sort_name: true },
+              '1' => { status: 'true', value: 'resource_file_file_name_ss', sort_name: true },
+              '2' => { status: 'true', value: 'access_ss', sort_name: true },
+              '3' => { status: 'true', value: 'resource_file_content_type_ss', sort_name: true },
+              '4' => { status: 'true', value: 'resource_file_file_size_ss', sort_name: true },
+              '5' => { status: 'true', value: 'updated_at_ds', sort_name: true },
+              '6' => { status: 'true', value: 'count_of_transcripts_ss', sort_name: true },
+              '7' => { status: 'true', value: 'count_of_indexes_ss', sort_name: true },
+              '8' => { status: 'true', value: 'collection_resource_id_ss', sort_name: true },
+              '9' => { status: 'true', value: 'collection_resource_title_ss', sort_name: true },
+              '10' => { status: 'true', value: 'thumbnail_ss', sort_name: false },
+              '11' => { status: 'true', value: 'aviary_url_path_ss', sort_name: false },
+              '12' => { status: 'true', value: 'aviary_purl_ss', sort_name: false },
+              '13' => { status: 'true', value: 'player_embed_html_ss', sort_name: false },
+              '14' => { status: 'true', value: 'media_embed_url_ss', sort_name: false },
+              '15' => { status: 'true', value: 'resource_detail_embed_html_ss', sort_name: false },
+              '16' => { status: 'true', value: 'target_domain_ss', sort_name: true },
+              '17' => { status: 'true', value: 'file_display_name_ss', sort_name: true },
+              '18' => { status: 'true', value: 'duration_ss', sort_name: true },
+              '19' => { status: 'true', value: 'created_at_ds', sort_name: true }
             }
     }.to_json
 
     search_columns_update = {
-        '0' => { status: 'true', value: 'id_is' },
-        '1' => { status: 'true', value: 'resource_file_file_name_ss' },
-        '2' => { status: 'true', value: 'resource_file_content_type_ss' },
-        '3' => { status: 'true', value: 'collection_resource_title_ss' },
-        '4' => { status: 'true', value: 'target_domain_ss' }
+      '0' => { status: 'true', value: 'id_is' },
+      '1' => { status: 'true', value: 'resource_file_file_name_ss' },
+      '2' => { status: 'true', value: 'resource_file_content_type_ss' },
+      '3' => { status: 'true', value: 'collection_resource_title_ss' },
+      '4' => { status: 'true', value: 'target_domain_ss' }
     }.to_json
     update(resource_file_display_column: display_columns_update, resource_file_search_column: search_columns_update) if resource_file_display_column.blank?
   end
