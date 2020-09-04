@@ -10,7 +10,7 @@ class CollectionResource < ApplicationRecord
   validates :noid, uniqueness: { message: 'PURL already taken.' }
   validate :unique_custom_unique_identifier
   accepts_nested_attributes_for :collection_resource_files, reject_if: :all_blank, allow_destroy: true
-  attr_accessor :tab_resource_file, :sort_order, :file_url, :embed_code, :embed_type, :target_domain, :trans_points_solr, :index_points_solr, :description_values_solr, :collection_values_solr, :resource_file_id
+  attr_accessor :tab_resource_file, :sort_order, :file_url, :embed_code, :embed_type, :target_domain, :trans_points_solr, :index_points_solr, :description_values_solr, :collection_values_solr, :resource_file_id, :custom_description_solr
   scope :featured, -> { where(access: accesses[:access_public], is_featured: true) }
   scope :public_visible, -> { where(access: accesses[:access_public]) }
   enum access: %i[access_restricted access_public access_private]
