@@ -95,18 +95,18 @@ class CollectionResource < ApplicationRecord
     solr_mapper_index_point = [{ title: :index_point_title }, { synopsis: :index_point_synopsis }, { subjects: :index_point_subjects },
                                { keywords: :index_point_keywords }, { partial_script: :index_point_partial_script }]
     solr_mapper_definition = [
-      { 'title_search' => :description_title_search }, { 'publisher_search' => :description_publisher_search }, { 'rights_statement_search' => :description_rights_statement_search },
-      { 'source_search' => :description_source_search }, { 'agent_search' => :description_agent_search }, { 'date_search' => :description_date_search }, { 'Type' => :description_type },
-      { 'coverage_search' => :description_coverage_search }, { 'language_search' => :description_language_search }, { 'description_search' => :description_description_search },
-      { 'format_search' => :description_format_search }, { 'identifier_search' => :description_identifier_search }, { 'relation_search' => :description_relation_search },
-      { 'subject_search' => :description_subject_search }, { 'keyword_search' => :description_keyword_search }, { 'type_search' => :description_type_search },
-      { 'source_metadata_uri_search' => :description_source_metadata_uri_search }, { 'preferred_citation_search' => :description_preferred_citation_search },
-      { 'custom_field_values_search' => :description_custom_field_values_search }, { 'duration_search' => :description_duration },
-      { 'title' => :description_title }, { 'publisher' => :description_publisher }, { 'rights_statement' => :description_rights_statement }, { 'source' => :description_source },
-      { 'date' => :description_date }, { 'coverage' => :description_coverage }, { 'language' => :description_language }, { 'description' => :description_description },
-      { 'format' => :description_format }, { 'identifier' => :description_identifier }, { 'relation' => :description_relation }, { 'subject' => :description_subject },
-      { 'keyword' => :description_keyword }, { 'agent' => :description_agent }, { 'preferred_citation' => :description_preferred_citation }, { 'duration' => :description_duration },
-      { 'source_metadata_uri' => :description_source_metadata_uri }, { 'all_vocabs' => :description_vocabulary }
+        { 'title_search' => :description_title_search }, { 'publisher_search' => :description_publisher_search }, { 'rights_statement_search' => :description_rights_statement_search },
+        { 'source_search' => :description_source_search }, { 'agent_search' => :description_agent_search }, { 'date_search' => :description_date_search }, { 'Type' => :description_type },
+        { 'coverage_search' => :description_coverage_search }, { 'language_search' => :description_language_search }, { 'description_search' => :description_description_search },
+        { 'format_search' => :description_format_search }, { 'identifier_search' => :description_identifier_search }, { 'relation_search' => :description_relation_search },
+        { 'subject_search' => :description_subject_search }, { 'keyword_search' => :description_keyword_search }, { 'type_search' => :description_type_search },
+        { 'source_metadata_uri_search' => :description_source_metadata_uri_search }, { 'preferred_citation_search' => :description_preferred_citation_search },
+        { 'custom_field_values_search' => :description_custom_field_values_search }, { 'duration_search' => :description_duration },
+        { 'title' => :description_title }, { 'publisher' => :description_publisher }, { 'rights_statement' => :description_rights_statement }, { 'source' => :description_source },
+        { 'date' => :description_date }, { 'coverage' => :description_coverage }, { 'language' => :description_language }, { 'description' => :description_description },
+        { 'format' => :description_format }, { 'identifier' => :description_identifier }, { 'relation' => :description_relation }, { 'subject' => :description_subject },
+        { 'keyword' => :description_keyword }, { 'agent' => :description_agent }, { 'preferred_citation' => :description_preferred_citation }, { 'duration' => :description_duration },
+        { 'source_metadata_uri' => :description_source_metadata_uri }, { 'all_vocabs' => :description_vocabulary }
     ]
     integer :id, stored: true
     string :id, stored: true
@@ -436,6 +436,15 @@ class CollectionResource < ApplicationRecord
               alter_search_wildcard_string.sub! '_search_texts', '_search_sms'
               fq_filters_inner += " OR  #{straight_search_perp(q, alter_search_wildcard_string)} "
             end
+          when ->(search_key) { search_key.include?('custom_field_values_') }
+            alter_search = value['value'].clone
+            alter_search_new = alter_search.sub(/.*\K_sms/, '_texts') unless alter_search.include?('_lms') && alter_search.include?('_text')
+
+            fq_filters_inner += " OR  #{search_perp(q, alter_search)} "
+            fq_filters_inner += " OR  #{straight_search_perp(q, alter_search)} "
+
+            fq_filters_inner += " OR  #{search_perp(q, alter_search_new)} "
+            fq_filters_inner += " OR  #{straight_search_perp(q, alter_search_new)} "
           end
           counter += 1
         end
