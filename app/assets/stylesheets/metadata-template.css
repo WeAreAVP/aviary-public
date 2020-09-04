@@ -290,7 +290,7 @@
 
 .not-collapsed .main_sidebar {
     width: 240px;
-    height: auto;
+    height: 100%;
 }
 
 .main_sidebar .card-header button.collapsed:after {
