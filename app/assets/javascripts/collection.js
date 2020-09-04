@@ -25,6 +25,8 @@ function Collection() {
                 bInfo: true,
                 destroy: true,
                 bLengthChange: false,
+                scrollX: true,
+                scrollCollapse: false,
                 pagingType: 'simple_numbers',
                 'dom': "<'row'<'col-md-6'f><'col-md-6'p>>" +
                     "<'row'<'col-md-12'tr>>" +
