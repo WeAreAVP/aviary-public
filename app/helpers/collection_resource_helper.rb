@@ -8,6 +8,10 @@ module CollectionResourceHelper
       custom_value = 'Aviary Resource ID'
     elsif value == 'id_is'
       custom_value = 'Aviary Resource ID'
+    elsif value.include?('custom_field_values_')
+      custom_value = value.gsub('custom_field_values_', '')
+      custom_value = Aviary::SolrIndexer.remove_field_type_string(custom_value)
+      custom_value = custom_value.titleize.strip
     elsif %w(custom_unique_identifier_ss custom_unique_identifier_texts).include?(value)
       custom_value = 'Custom Unique Identifier'
     else
@@ -19,6 +23,18 @@ module CollectionResourceHelper
       custom_value = 'Source Metadata URI' if custom_value == 'Source Metadata Uri'
     end
     custom_value
+  end
+
+  def append_param_to_url(keywords, url, skip_keyword = false)
+    if keywords.present?
+      url += '?u=t' unless url.include?('?')
+      keywords.each do |single_keyword|
+        next if skip_keyword && skip_keyword == single_keyword
+        url += "&keywords[]=#{single_keyword}"
+      end
+    end
+    url = url.gsub('&&', '&')
+    url
   end
 
   def embeded_url(url, action, resource_file_id)
