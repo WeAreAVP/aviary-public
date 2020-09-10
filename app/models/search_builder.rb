@@ -93,7 +93,7 @@ class SearchBuilder < Blacklight::SearchBuilder
                               +search_string + '\"")) '
                             else
                               ' ((_query_:"{!complexphrase inOrder=true}title_text:\"' + exact_search.strip +
-                                  '\"" OR _query_:"{!complexphrase inOrder=true}title_text:\"' + search_string + '\"")) '
+                                '\"" OR _query_:"{!complexphrase inOrder=true}title_text:\"' + search_string + '\"")) '
                             end
     elsif single_param.keys.include?('resource_description')
       op_custom_global = (single_param['op'] == 'NOT' ? 'AND NOT' : single_param['op']) if single_param.key?('op')
@@ -113,10 +113,10 @@ class SearchBuilder < Blacklight::SearchBuilder
         single_param['resource_description'] = single_param['resource_description'].gsub %r{[\/\\|"&]}, ''
         query_string_mutate_simple = if single_param['op'] == 'NOT'
                                        ' ((_query_:"{!complexphrase inOrder=true}' + single_field.to_s + ':\"' +
-                                           exact_search.strip + '\"") AND NOT (_query_:"{!complexphrase inOrder=true}' + single_field.to_s + ':\"' + search_string + '\"")) '
+                                         exact_search.strip + '\"") AND NOT (_query_:"{!complexphrase inOrder=true}' + single_field.to_s + ':\"' + search_string + '\"")) '
                                      else
                                        ' ((_query_:"{!complexphrase inOrder=true}' + single_field.to_s + ':\"' +
-                                           exact_search.strip + '\"" OR _query_:"{!complexphrase inOrder=true}' + single_field.to_s + ':\"' + search_string + '\"")) '
+                                         exact_search.strip + '\"" OR _query_:"{!complexphrase inOrder=true}' + single_field.to_s + ':\"' + search_string + '\"")) '
                                      end
         query_string_mutate += op_custom + query_string_mutate_simple
       end
@@ -148,10 +148,10 @@ class SearchBuilder < Blacklight::SearchBuilder
       single_param['keywords'] = single_param['keywords'].gsub %r{[\/\\|"&]}, ''
       query_string_mutate = if single_param['op'] == 'NOT'
                               ' (_query_:"{!complexphrase inOrder=true}keywords:\"' +
-                                  exact_search.strip + '\"") AND NOT (_query_:"{!complexphrase inOrder=true}keywords:\"' + search_string + '\"") '
+                                exact_search.strip + '\"") AND NOT (_query_:"{!complexphrase inOrder=true}keywords:\"' + search_string + '\"") '
                             else
                               query_string_mutate = ' ((_query_:"{!complexphrase inOrder=true}keywords:\"' +
-                                  exact_search.strip + '\"" OR _query_:"{!complexphrase inOrder=true}keywords:\"' + search_string + '\"")) '
+                                                    exact_search.strip + '\"" OR _query_:"{!complexphrase inOrder=true}keywords:\"' + search_string + '\"")) '
                               fq_filters_inner = collection_title_manager(single_param['keywords'], search_string)
                               fq_filters_inner_organiztion = organization_title_manager(single_param['keywords'], search_string)
                               query_string_mutate += " OR (#{fq_filters_inner}) " unless fq_filters_inner.blank?
@@ -198,10 +198,10 @@ class SearchBuilder < Blacklight::SearchBuilder
     single_param[type] = single_param[type].gsub %r{[\/\\|"&]}, ''
     query_string_mutate_simple = if single_param['op'] == 'NOT'
                                    ' ((_query_:"{!complexphrase inOrder=true}' + single_field.to_s + ':\"' +
-                                       exact_search.strip + '\"") AND NOT  (_query_:"{!complexphrase inOrder=true}' + single_field.to_s + ':\"' + search_string + '\"")) '
+                                     exact_search.strip + '\"") AND NOT  (_query_:"{!complexphrase inOrder=true}' + single_field.to_s + ':\"' + search_string + '\"")) '
                                  else
                                    ' ((_query_:"{!complexphrase inOrder=true}' + single_field.to_s + ':\"' +
-                                       exact_search.strip + '\"" OR _query_:"{!complexphrase inOrder=true}' + single_field.to_s + ':\"' + search_string + '\"")) '
+                                     exact_search.strip + '\"" OR _query_:"{!complexphrase inOrder=true}' + single_field.to_s + ':\"' + search_string + '\"")) '
                                  end
     [op_custom + query_string_mutate_simple, first]
   end

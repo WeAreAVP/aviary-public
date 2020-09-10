@@ -103,7 +103,7 @@ class CatalogController < ApplicationController
     session[:searched_keywords] ||= {}
     unless params.key?('reset_facets')
       session[:searched_keywords] = {} if session[:searched_keywords].size <= 0 || (params.key?('update_advance_search') && params['update_advance_search'] == 'update_advance_search') ||
-          params['search_field'] != 'advanced' || (params['search_type'] == 'simple' && !params.key?('range'))
+                                          params['search_field'] != 'advanced' || (params['search_type'] == 'simple' && !params.key?('range'))
     end
     return if !params.key?('op') || params['search_field'] != 'advanced'
     params['op'].each_with_index do |single_operator, key|
@@ -154,48 +154,48 @@ class CatalogController < ApplicationController
     config.add_search_field('keywords') do |field|
       field.label = 'Any Field'
       field.solr_local_parameters = {
-          qf: 'keywords',
-          pf: 'keywords'
+        qf: 'keywords',
+        pf: 'keywords'
       }
     end
 
     config.add_search_field('title_text') do |field|
       field.label = 'Resource Name'
       field.solr_local_parameters = {
-          qf: 'title_text',
-          pf: 'title_text'
+        qf: 'title_text',
+        pf: 'title_text'
       }
     end
 
     config.add_search_field('resource_description') do |field|
       field.label = 'Resource Description'
       field.solr_local_parameters = {
-          qf: SearchBuilder.description_search_fields.join(' '),
-          pf: SearchBuilder.description_search_fields.join(' ')
+        qf: SearchBuilder.description_search_fields.join(' '),
+        pf: SearchBuilder.description_search_fields.join(' ')
       }
     end
 
     config.add_search_field('indexes') do |field|
       field.label = 'Indexes'
       field.solr_local_parameters = {
-          qf: SearchBuilder.index_search_fields.join(' '),
-          pf: SearchBuilder.index_search_fields.join(' ')
+        qf: SearchBuilder.index_search_fields.join(' '),
+        pf: SearchBuilder.index_search_fields.join(' ')
       }
     end
 
     config.add_search_field('transcript') do |field|
       field.label = 'Transcript'
       field.solr_local_parameters = {
-          qf: SearchBuilder.transcript_search_fields.join(' '),
-          pf: SearchBuilder.transcript_search_fields.join(' ')
+        qf: SearchBuilder.transcript_search_fields.join(' '),
+        pf: SearchBuilder.transcript_search_fields.join(' ')
       }
     end
 
     config.add_search_field('collection_title') do |field|
       field.label = 'Collection Title'
       field.solr_local_parameters = {
-          qf: 'collection_title',
-          pf: 'collection_title'
+        qf: 'collection_title',
+        pf: 'collection_title'
       }
     end
 

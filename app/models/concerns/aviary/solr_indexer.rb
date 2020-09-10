@@ -63,7 +63,6 @@ module Aviary::SolrIndexer
     field_name
   end
 
-
   def self.field_type_finder(type)
     type_field = '_sms'
     case type
