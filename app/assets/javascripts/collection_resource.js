@@ -241,7 +241,6 @@ function CollectionResource() {
         initCreateTranscription();
         selfCR.manageTabs(selfCR.edit_description);
         if (selfCR.search_text_val != '' && selfCR.search_text_val != 0) {
-            console.log(selfCR.search_text_val);
             $.each(selfCR.search_text_val, function (identifier, keyword) {
                 keyword = clearKeyWords(keyword);
                 selfCR.markerHandlerArrayDescription[identifier] = new MarkersHanlderDescription(identifier, keyword);
