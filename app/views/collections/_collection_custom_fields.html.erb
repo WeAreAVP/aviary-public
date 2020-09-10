@@ -14,7 +14,7 @@
                 <div class="col-md-6">
                   <div class="form-group">
                     <label for="">Field Name <sup>*</sup></label>
-                    <%= ff.text_field :label, class: "form-control", required: true, value: !meta_field.nil? ? meta_field.label : '' %>
+                    <%= ff.text_field :label, class: "form-control", required: true, maxlength: 32, value: !meta_field.nil? ? meta_field.label : '' %>
                   </div>
                 </div>
                 <div class="col-md-6">

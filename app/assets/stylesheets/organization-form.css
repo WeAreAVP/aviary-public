@@ -688,3 +688,17 @@
         padding: 5px;
     }
 }
+
+#sort_facet_fields_table {
+    display: inline-block;
+    width: 100%;
+    max-height: 650px;
+    overflow-y: scroll;
+}
+
+#sort_facet_fields_table .ui-sortable {
+    width: 100% !important;
+    display: inline-table !important;
+    position: relative;
+
+}

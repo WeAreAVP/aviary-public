@@ -71,6 +71,7 @@ Rails.application.routes.draw do
   resources :organizations, only: %i[index show update]
   get '/organization_profile', to: 'organizations#edit', as: :edit_organization
   get '/display_settings', to: 'organizations#display_settings', as: :display_settings_organization
+  match '/search_configuration', to: 'organizations#search_configuration', as: :search_configuration_organization, via: %i[get post]
   post '/set_layout', to: 'home#set_layout'
 
   resources :collection_resource_files do
@@ -102,7 +103,6 @@ Rails.application.routes.draw do
       get :update_progress_files
     end
     resources :collection_resources do
-      post '/search_text', to: 'collection_resources#search_text', as: 'search_text'
       get :add_resource_file
       post :save_resource_file
       put :update_file_name

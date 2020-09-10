@@ -32,13 +32,6 @@
           <% end %>
         </div>
         <div id="facet-panel-collapse" class="collapse panel-group show">
-          <% user_ip = request.ip %>
-          <% unless current_organization.present? %>
-            <% org_facet_manager = SearchPresenter.organization_facet_manager(current_organization, current_user, user_ip, params, has_facet_values?, session[:last_fq]) %>
-            <%= render partial: 'catalog/limited_facets', locals: { org_n_collection_facet_manager: org_facet_manager } %>
-          <% end %>
-          <% collection_facet_manager = SearchPresenter.collection_facet_manager(current_organization, current_user, user_ip, params, has_facet_values?, session[:last_fq]) %>
-          <%= render partial: 'catalog/limited_facets', locals: { org_n_collection_facet_manager: collection_facet_manager } %>
           <% if has_facet_values? %>
             <%= render_facet_partials %>
           <% end %>

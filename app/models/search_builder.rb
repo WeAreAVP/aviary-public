@@ -93,7 +93,7 @@ class SearchBuilder < Blacklight::SearchBuilder
                               +search_string + '\"")) '
                             else
                               ' ((_query_:"{!complexphrase inOrder=true}title_text:\"' + exact_search.strip +
-                                '\"" OR _query_:"{!complexphrase inOrder=true}title_text:\"' + search_string + '\"")) '
+                                  '\"" OR _query_:"{!complexphrase inOrder=true}title_text:\"' + search_string + '\"")) '
                             end
     elsif single_param.keys.include?('resource_description')
       op_custom_global = (single_param['op'] == 'NOT' ? 'AND NOT' : single_param['op']) if single_param.key?('op')
@@ -113,10 +113,10 @@ class SearchBuilder < Blacklight::SearchBuilder
         single_param['resource_description'] = single_param['resource_description'].gsub %r{[\/\\|"&]}, ''
         query_string_mutate_simple = if single_param['op'] == 'NOT'
                                        ' ((_query_:"{!complexphrase inOrder=true}' + single_field.to_s + ':\"' +
-                                         exact_search.strip + '\"") AND NOT (_query_:"{!complexphrase inOrder=true}' + single_field.to_s + ':\"' + search_string + '\"")) '
+                                           exact_search.strip + '\"") AND NOT (_query_:"{!complexphrase inOrder=true}' + single_field.to_s + ':\"' + search_string + '\"")) '
                                      else
                                        ' ((_query_:"{!complexphrase inOrder=true}' + single_field.to_s + ':\"' +
-                                         exact_search.strip + '\"" OR _query_:"{!complexphrase inOrder=true}' + single_field.to_s + ':\"' + search_string + '\"")) '
+                                           exact_search.strip + '\"" OR _query_:"{!complexphrase inOrder=true}' + single_field.to_s + ':\"' + search_string + '\"")) '
                                      end
         query_string_mutate += op_custom + query_string_mutate_simple
       end
@@ -148,10 +148,10 @@ class SearchBuilder < Blacklight::SearchBuilder
       single_param['keywords'] = single_param['keywords'].gsub %r{[\/\\|"&]}, ''
       query_string_mutate = if single_param['op'] == 'NOT'
                               ' (_query_:"{!complexphrase inOrder=true}keywords:\"' +
-                                exact_search.strip + '\"") AND NOT (_query_:"{!complexphrase inOrder=true}keywords:\"' + search_string + '\"") '
+                                  exact_search.strip + '\"") AND NOT (_query_:"{!complexphrase inOrder=true}keywords:\"' + search_string + '\"") '
                             else
                               query_string_mutate = ' ((_query_:"{!complexphrase inOrder=true}keywords:\"' +
-                                                    exact_search.strip + '\"" OR _query_:"{!complexphrase inOrder=true}keywords:\"' + search_string + '\"")) '
+                                  exact_search.strip + '\"" OR _query_:"{!complexphrase inOrder=true}keywords:\"' + search_string + '\"")) '
                               fq_filters_inner = collection_title_manager(single_param['keywords'], search_string)
                               fq_filters_inner_organiztion = organization_title_manager(single_param['keywords'], search_string)
                               query_string_mutate += " OR (#{fq_filters_inner}) " unless fq_filters_inner.blank?
@@ -198,15 +198,15 @@ class SearchBuilder < Blacklight::SearchBuilder
     single_param[type] = single_param[type].gsub %r{[\/\\|"&]}, ''
     query_string_mutate_simple = if single_param['op'] == 'NOT'
                                    ' ((_query_:"{!complexphrase inOrder=true}' + single_field.to_s + ':\"' +
-                                     exact_search.strip + '\"") AND NOT  (_query_:"{!complexphrase inOrder=true}' + single_field.to_s + ':\"' + search_string + '\"")) '
+                                       exact_search.strip + '\"") AND NOT  (_query_:"{!complexphrase inOrder=true}' + single_field.to_s + ':\"' + search_string + '\"")) '
                                  else
                                    ' ((_query_:"{!complexphrase inOrder=true}' + single_field.to_s + ':\"' +
-                                     exact_search.strip + '\"" OR _query_:"{!complexphrase inOrder=true}' + single_field.to_s + ':\"' + search_string + '\"")) '
+                                       exact_search.strip + '\"" OR _query_:"{!complexphrase inOrder=true}' + single_field.to_s + ':\"' + search_string + '\"")) '
                                  end
     [op_custom + query_string_mutate_simple, first]
   end
 
-  def remove_illegal_characters(query_str, type)
+  def self.remove_illegal_characters(query_str, type)
     query_str = if type == 'advance'
                   query_str.gsub %r{[\/\\()|'*:^~{}&]}, ''
                 else
@@ -221,17 +221,17 @@ class SearchBuilder < Blacklight::SearchBuilder
     session_solr.each do |key, single_param|
       unless key.blank?
         if single_param.keys.include?('title_text')
-          single_param['title_text'] = remove_illegal_characters(single_param['title_text'], 'advance')
+          single_param['title_text'] = SearchBuilder.remove_illegal_characters(single_param['title_text'], 'advance')
         elsif single_param.keys.include?('resource_description')
-          single_param['resource_description'] = remove_illegal_characters(single_param['resource_description'], 'advance')
+          single_param['resource_description'] = SearchBuilder.remove_illegal_characters(single_param['resource_description'], 'advance')
         elsif single_param.keys.include?('collection_title')
-          single_param['collection_title'] = remove_illegal_characters(single_param['collection_title'], 'advance')
+          single_param['collection_title'] = SearchBuilder.remove_illegal_characters(single_param['collection_title'], 'advance')
         elsif single_param.keys.include?('keywords')
-          single_param['keywords'] = remove_illegal_characters(single_param['keywords'], 'advance')
+          single_param['keywords'] = SearchBuilder.remove_illegal_characters(single_param['keywords'], 'advance')
         elsif single_param.keys.include?('indexes')
-          single_param['indexes'] = remove_illegal_characters(single_param['indexes'], 'advance')
+          single_param['indexes'] = SearchBuilder.remove_illegal_characters(single_param['indexes'], 'advance')
         elsif single_param.keys.include?('transcript')
-          single_param['transcript'] = remove_illegal_characters(single_param['transcript'], 'advance')
+          single_param['transcript'] = SearchBuilder.remove_illegal_characters(single_param['transcript'], 'advance')
         end
         solr_parameters, query_string = single_search_term_handler(single_param, solr_parameters, query_string, 'advance')
       end
@@ -254,7 +254,7 @@ class SearchBuilder < Blacklight::SearchBuilder
     elsif session_solr.present?
       query_string = ''
       term = session_solr[session_solr.keys.first]['keyword_searched'].dup
-      term = remove_illegal_characters(term, 'simple')
+      term = SearchBuilder.remove_illegal_characters(term, 'simple')
       all_terms = term.gsub(/OR/, '|||').gsub(/AND/, '|||').gsub(/NOT/, '|||').split('|||').map { |keyword| keyword.delete('(').delete(')').strip }
       filed_name = if session_solr[session_solr.keys.first].keys.include?('title_text')
                      'title_text'
@@ -290,10 +290,10 @@ class SearchBuilder < Blacklight::SearchBuilder
   end
 
   def self.description_search_fields
-    %i[description_title_search_texts description_publisher_search_texts description_rights_statement_search_texts description_source_search_texts
-       description_agent_search_texts description_date_search_texts description_coverage_search_texts description_language_search_texts description_description_search_texts
-       description_format_search_texts description_identifier_search_texts description_relation_search_texts description_subject_search_texts description_keyword_search_texts
-       description_type_search_texts description_preferred_citation_search_texts description_duration_citation_search_texts description_source_metadata_uri_search_texts custom_field_values_texts]
+    %i[ description_title_search_texts description_publisher_search_texts description_rights_statement_search_texts description_source_search_texts
+        description_agent_search_texts description_date_search_texts description_coverage_search_texts description_language_search_texts description_description_search_texts
+        description_format_search_texts description_identifier_search_texts description_relation_search_texts description_subject_search_texts description_keyword_search_texts
+        description_type_search_texts description_preferred_citation_search_texts description_duration_citation_search_texts description_source_metadata_uri_search_texts custom_field_values_texts]
   end
 
   def self.index_search_fields
@@ -312,8 +312,11 @@ class SearchBuilder < Blacklight::SearchBuilder
       if fq_single.include? 'description_duration_ls_single'
         solr_parameters[:fq].delete_at(index)
       end
-      if fq_single.include?('description_date_search_lms')
-        start_date = fq_single[/\[(.*?)\ TO/]
+      if fq_single.include?('description_date_search_lms') || (fq_single.include?('custom_field_values') && fq_single.include?('_lms'))
+        date_range_n_field = fq_single.split(':')
+        field = date_range_n_field[0]
+        date_range = date_range_n_field[1]
+        start_date = date_range[/\[(.*?)\ TO/]
         start_date['['] = ''
         start_date[' TO'] = ''
         start_date = start_date.split(' - ')
@@ -321,13 +324,13 @@ class SearchBuilder < Blacklight::SearchBuilder
         start_date = start_date.first
         start_date = start_date.to_time.to_i.to_s
         end_date = end_date.to_time.to_i.to_s
-        solr_parameters[:fq] << "description_date_search_lms: [#{start_date} TO #{end_date}]"
+        solr_parameters[:fq] << "#{field}: [#{start_date} TO #{end_date}]"
         solr_parameters[:fq].delete_at(index)
         break
       end
     end
-    # End Date Range setup
 
+    # End Date Range setup
     resultant_fields_manager(solr_parameters) unless request_is_xhr
     solr_parameters = SearchBuilder.default_fqs(current_organization, user_ip, current_user, solr_parameters)
     solr_parameters[:fq] << "organization_id_is:(#{current_params[:f][:organization_id_is].join(' OR ')})" if current_params[:f].present? && current_params[:f][:organization_id_is].present?
@@ -374,7 +377,7 @@ class SearchBuilder < Blacklight::SearchBuilder
       [description_search_fields, index_search_fields, transcript_search_fields].reduce([], :concat).each do |values|
         all_keywords.each do |query_string|
           query_string = query_string.delete('"').strip
-          query_string = remove_illegal_characters(query_string, 'advance')
+          query_string = SearchBuilder.remove_illegal_characters(query_string, 'advance')
           unless query_string.include?('*') || query_string.include?('(') || query_string.include?(')') || query_string.include?(',') || query_string.include?(',')
             if query_string.include? ' '
               query_string.split(' ').each do |single_query|

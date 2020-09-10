@@ -114,11 +114,11 @@ class PlaylistsController < ApplicationController
     @embed_params = {}
     @embed_params = embed_params(@embed_params)
     session[:count_presence] = { index: false, transcript: false, description: false }
-    session[:session_video_text_all] = session[:transcript_count] = session[:index_count] = session[:description_count] = {}
+    @session_video_text_all  = session[:transcript_count] = session[:index_count] = session[:description_count] = {}
     params[:collection_resource_id] = @collection_resource.id if !params[:collection_resource_id].present? && @collection_resource.present?
     return unless @collection_resource.present?
     collection_resource_presenter = CollectionResourcePresenter.new(@collection_resource, view_context)
-    session[:session_video_text_all], @selected_transcript, @selected_index, @count_file_wise = collection_resource_presenter.generate_params_for_detail_page(@resource_file, @collection_resource, session, params)
+    @session_video_text_all, @selected_transcript, @selected_index, @count_file_wise = collection_resource_presenter.generate_params_for_detail_page(@resource_file, @collection_resource, session, params)
     @dynamic_fields = @collection_resource.all_fields
     @file_indexes, @file_transcripts, @selected_index, @selected_transcript = collection_resource_presenter.selected_index_transcript(@resource_file, @selected_index, @selected_transcript)
   end

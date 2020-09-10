@@ -4,6 +4,7 @@
    input_label_range_begin = field_config[:input_label_range_begin] || t("blacklight.range_limit.range_begin", field_label: label)
    input_label_range_end = field_config[:input_label_range_end] || t("blacklight.range_limit.range_end", field_label: label)
    maxlength = field_config[:maxlength]
+   is_date_field = solr_field.end_with?('_lms')
 
 -%>
 
@@ -22,11 +23,11 @@
       </li>
     </ul>
   <% end %>
-  <% if solr_field == 'description_date_search_lms' %>
+  <% if is_date_field%>
     <small class="font-size-12px sub_note"> - Date format must be yyyy-mm-dd<br/> - To select a range, use space-hyphen-space " - " between two valid dates, e.g., 2019-05-10 - 2019-05-15.</small>
   <% end %>
   <% unless selected_missing_for_range_limit?(solr_field) %>
-    <%= form_tag add_facet_params_to_url(search_catalog_path, session[:search_facets]), :method => :get, class: [BlacklightRangeLimit.classes[:form] + (solr_field == 'description_date_search_lms' ? ' mr-4 ' : ''), "range_#{solr_field}"].join(' ') do %>
+    <%= form_tag add_facet_params_to_url(search_catalog_path, session[:search_facets]), :method => :get, class: [BlacklightRangeLimit.classes[:form] + (is_date_field ? ' mr-4 ' : ''), "range_#{solr_field}"].join(' ') do %>
       <input type='hidden' name='search_type' value='<%= params[:search_type] %>'/>
       <input type='hidden' name='search_field' value='advanced'/>
       <%== add_facet_params_to_form(session[:search_facets]) %>
@@ -41,12 +42,12 @@
       <span style="<%= solr_field == 'description_duration_ls' ? 'display: none;':'width:70% !important; margin-right: 10px ' %> ">
         <%= render_range_input(solr_field, :begin, input_label_range_begin, maxlength) %>
 
-        <% unless solr_field == 'description_date_search_lms' %>
+        <% unless is_date_field %>
           <span class="between">To</span>
           <%= render_range_input(solr_field, :end, input_label_range_end, maxlength) %>
         <% end %>
       </span>
-      <% unless solr_field == 'description_date_search_lms' %>
+      <% unless is_date_field %>
         <div class="hold date-duration">
           <div class="form-group">
             <label>H</label>
@@ -67,7 +68,7 @@
           </div>
         </div>
       <% end %>
-      <%= submit_tag t('blacklight.range_limit.submit_limit'), class: 'btn btn-primary range_button ' + (solr_field == 'description_date_search_lms' ? ' w-25 mb-1' : '') + (solr_field == 'description_duration_ls' ? 'w-100p mt-2 description_duration_ls_validator' : '') %>
+      <%= submit_tag t('blacklight.range_limit.submit_limit'), class: 'btn btn-primary range_button ' + (is_date_field ? ' w-25 mb-1' : '') + (solr_field == 'description_duration_ls' ? 'w-100p mt-2 description_duration_ls_validator' : '') %>
 
     <% end %>
   <% end %>
@@ -83,7 +84,7 @@
 
       <% if (min = range_results_endpoint(solr_field, :min)) &&
           (max = range_results_endpoint(solr_field, :max)) %>
-        <% unless solr_field == 'description_date_search_lms' %>
+        <% unless is_date_field %>
           <p class="range subsection <%= "slider_js" unless field_config[:slider_js] == false %>">
             Current results range from <span class="min"><%= range_results_endpoint(solr_field, :min) %></span> to
             <span class="max"><%= range_results_endpoint(solr_field, :max) %></span>

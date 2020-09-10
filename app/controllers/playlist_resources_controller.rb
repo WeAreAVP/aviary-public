@@ -2,7 +2,6 @@
 # Author::    Furqan Wasi  (mailto:furqan@weareavp.com)
 class PlaylistResourcesController < ApplicationController
   include PlaylistHelper
-  include Aviary::SearchManagement
   before_action :set_config
   before_action :set_playlist
   before_action :authenticate_user!, except: %I[search_text list_playlist_items]

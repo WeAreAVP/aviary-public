@@ -41,7 +41,31 @@ function CollectionResource() {
 
     selfCR.index_file_count = 0;
     selfCR.transcript_file_count = 0;
+    selfCR.auto_loading_inprogress = false;
 
+    const clearKeyWords = function (keyword) {
+        keyword = keyword.replace(/[\/\\()|'"*:^~`{}]/g, '');
+        keyword = keyword.replace(/]/g, '');
+        keyword = keyword.replace(/[[]/g, '');
+        keyword = keyword.replace(/[{}]/g, '');
+        return keyword;
+    }
+
+    const searchFieldBinding = function() {
+        document_level_binding_element("#search_text", 'keypress', function (e) {
+            if(e.which == 13) {
+                if ($(this).val().trim() != '') {
+                    let query = 'keywords[]=' + $(this).val().trim();
+                    let link = window.location.href;
+                    if(!link.includes('?')) {
+                        link += '?';
+                    }
+                    link = link + '&' + query;
+                    window.location = link;
+                }
+            }
+        });
+    }
 
     this.initializeDetail = function (search_text_val, selected_index, selected_transcript, edit_description, embed, resource_file_id, track_params) {
         selfCR.track_params = track_params;
@@ -217,6 +241,7 @@ function CollectionResource() {
         initCreateTranscription();
         selfCR.manageTabs(selfCR.edit_description);
         if (selfCR.search_text_val != '' && selfCR.search_text_val != 0) {
+            console.log(selfCR.search_text_val);
             $.each(selfCR.search_text_val, function (identifier, keyword) {
                 keyword = clearKeyWords(keyword);
                 selfCR.markerHandlerArrayDescription[identifier] = new MarkersHanlderDescription(identifier, keyword);
@@ -836,6 +861,7 @@ function CollectionResource() {
 
         $('.single_term_handler').addClass('d-none');
         $('.single_term_handler').removeClass('open');
+
         if (edit_description) {
             $('.edit_fields').click();
             window.history.replaceState({}, document.title, window.location.pathname);
@@ -888,9 +914,9 @@ function CollectionResource() {
 
 
             let append_params = '?';
-            $.each(selfCR.app_helper.getUrlParameter(window.location.href)[0], function (index, single_obejct) {
+            $.each(selfCR.app_helper.getUrlParamRepeatable(window.location.href)[0], function (index, single_obejct) {
                 if (typeof single_obejct != 'undefined') {
-                    append_params += index + '=' + single_obejct + '&';
+                    append_params += single_obejct + '&';
                 }
             });
 

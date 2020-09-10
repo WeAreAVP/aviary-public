@@ -136,6 +136,11 @@ jQuery(function () {
             }
         });
     });
+    document_level_binding_element('#custom_fields_field_label', 'keyup', function () {
+        if ($(this).val().length > 31) {
+            jsMessages('danger', 'Field Name cannot be greater then 32 characters')
+        }
+    }, true);
     $(document).on('click', '.edit-custom-field-button', function (e) {
         e.preventDefault();
         return $.ajax({

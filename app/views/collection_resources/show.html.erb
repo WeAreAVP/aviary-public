@@ -47,7 +47,7 @@
                 organization_id: '<%=@collection_resource.collection.organization_id %>',
                 user_type: '<%= role_type(current_user, current_organization) %>'
             };
-            collectionResource.initializeDetail('<%= session[:session_video_text_all].present? ? session[:session_video_text_all].to_json.html_safe : '{}' %>', <%= @selected_index.present? ? @selected_index: 0 %>, <%= @selected_transcript.present? ? @selected_transcript : 0 %>, <%= params[:edit_description].present? ? params[:edit_description] : 0 %>, '<%= params[:embed] %>', <%= @resource_file.present? ? @resource_file.id : '0' %>, params);
+            collectionResource.initializeDetail('<%= @session_video_text_all.present? ? @session_video_text_all.to_json.html_safe : '{}' %>', <%= @selected_index.present? ? @selected_index: 0 %>, <%= @selected_transcript.present? ? @selected_transcript : 0 %>, <%= params[:edit_description].present? ? params[:edit_description] : 0 %>, '<%= params[:embed] %>', <%= @resource_file.present? ? @resource_file.id : '0' %>, params);
         }, 500);
     });
     $(window).on('load', function () {

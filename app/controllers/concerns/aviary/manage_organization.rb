@@ -34,6 +34,15 @@ module Aviary::ManageOrganization
     end
   end
 
+  def search_configuration
+    if params['sort_info_search'].present? && request.post?
+      current_organization.update(search_facet_fields: params['sort_info_search'])
+      redirect_back(fallback_location: root_path)
+    end
+    @dynamic_fields = current_organization.search_facet_fields.present? ? JSON.parse(current_organization.search_facet_fields) : current_organization.all_org_fields
+    @organization = current_organization
+  end
+
   private
 
   def set_organization

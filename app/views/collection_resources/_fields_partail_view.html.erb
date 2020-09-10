@@ -7,7 +7,7 @@
       <% case single_field['field'].column_type.to_s %>
       <% when CustomFields::Field::TypeInformation::TOKEN.to_s %>
         <% single_value['value'].split(',').each do |single_token| %>
-          <span class="tag">  <%= single_token %> </span>
+          <span class="tag single_value_non_tombstone">  <%= single_token %> </span>
         <% end %>
       <% else %>
         <% if single_field['field'].label == 'language' %>

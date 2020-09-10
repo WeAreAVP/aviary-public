@@ -66,7 +66,7 @@ module Blacklight::SearchHelper
     builder.rows = (user_params[:per_page] || user_params[:rows]) if user_params[:per_page] || user_params[:rows]
 
     builder = yield(builder) if block_given?
-    begin
+    # begin
       response = repository.search(builder)
       session[:last_fq] = builder.to_h[:q]
       if response.grouped? && grouped_key_for_results
@@ -76,10 +76,10 @@ module Blacklight::SearchHelper
       else
         [response, response.documents]
       end
-    rescue StandardError => e
-      Rails.logger.error e
-      redirect_to search_catalog_url(q: '', search_field: 'all_fields', utf8: '✓'), flash: { error: t('invalid_search') }, error: t('invalid_search'), notice: t('invalid_search')
-    end
+    # rescue StandardError => e
+    #   Rails.logger.error e
+    #   redirect_to search_catalog_url(q: '', search_field: 'all_fields', utf8: '✓'), flash: { error: t('invalid_search') }, error: t('invalid_search'), notice: t('invalid_search')
+    # end
   end
 
   # retrieve a document, given the doc id

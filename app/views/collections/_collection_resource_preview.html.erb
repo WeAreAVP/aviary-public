@@ -83,7 +83,7 @@
                           <% case k['token'] %>
                           <% when CustomFields::Field::TypeInformation::TOKEN.to_s %>
                             <% k["token_value"].each do |single_token| %>
-                              <span class="tag">  <%= single_token %> </span>
+                              <span class="tag single_value_non_tombstone">  <%= single_token %> </span>
                             <% end %>
                           <% else %>
                             <% if h_k == 'language' %>

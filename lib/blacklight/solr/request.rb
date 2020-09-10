@@ -33,7 +33,7 @@ class Blacklight::Solr::Request < ActiveSupport::HashWithIndifferentAccess
         else
           flag_new = false
           self['fq'].each { |item|
-            next if skippers.any? { |s| item.include?(s) }
+            next if skippers.any? { |s| item.include?(s) } || item.to_s.end_with?('_lms')
             begin
               s = /.*}(.*\w)*:/.match(item)[1]
               flag_new = facet_field_name.include?(s) ? false : true
@@ -45,7 +45,7 @@ class Blacklight::Solr::Request < ActiveSupport::HashWithIndifferentAccess
             append_filters_if_exists(new_facet_selected, facet_field_name)
           else
             self['fq'].map! { |item|
-              if skippers.any? { |s| item.include?(s) }
+              if skippers.any? { |s| item.include?(s) } || item.to_s.end_with?('_lms')
                 return item
               end
               begin

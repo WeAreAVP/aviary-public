@@ -1,4 +1,4 @@
-<% if org_n_collection_facet_manager['facet_counts']['facet_fields'].keys.present? %>
+<% if org_n_collection_facet_manager.present? && org_n_collection_facet_manager['facet_counts']['facet_fields'].keys.present? %>
   <% org_n_collection_facet_manager['facet_counts']['facet_fields'].keys.each do |single_facets| %>
     <% display_facet = facet_by_field_name(single_facets) %>
     <% facet_field = facet_configuration_for_field(single_facets) %>

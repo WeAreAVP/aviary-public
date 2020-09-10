@@ -100,6 +100,18 @@
                      data-parent="#accordion" style="">
                   <div class="card-body">
                     <div id="accordion">
+                      <div class="card <%= disabled_organization_cls %>">
+                        <div class="card-header headingOne">
+                          <h5 class="mb-0">
+                            <button onclick="document.location.href='<%= search_configuration_organization_path %>'" class="btn btn-link  no_sub_colaps" data-toggle="collapse" aria-expanded="<%= ((params[:controller] == "organizations" && params[:action] == "search_configuration") ? 'active' : '') != '' ? 'true' : '' %>" aria-controls="collapse">
+                              <div class="nav-box">
+                                <span class="ico" data-toggle="tooltip" data-placement="right" title="Search Configuration"><i class="fa fa-filter search_configuration font-size-16px" style="<%= ((params[:controller] == "organizations" && params[:action] == "search_configuration") ? '': 'color: dimgray;') %>" ></i></span>
+                                <span class="title">Search Configuration</span>
+                              </div>
+                            </button>
+                          </h5>
+                        </div>
+                      </div>
                      <div class="card <%= disabled_organization_cls %>">
                         <div class="card-header headingOne">
                           <h5 class="mb-0">

@@ -38,7 +38,7 @@ class CollectionResourcePresenter < BasePresenter
       puts ex.backtrace.join("\n")
     end
     begin
-      file_transcripts = resource_file.file_transcripts.includes(%i[file_transcript_points annotation_set]).order_transcript
+      file_transcripts = resource_file.file_transcripts.includes(%i[file_transcript_points]).order_transcript
     rescue StandardError => ex
       file_transcripts = {}
       puts ex.backtrace.join("\n")
@@ -91,7 +91,7 @@ class CollectionResourcePresenter < BasePresenter
     [session_video_text_all, selected_transcript, selected_index, count_file_wise]
   end
 
-  def transcript_point_list(file_transcript, file_transcript_points, session_video_text_all, can_access_annotation)
+  def transcript_point_list(file_transcript, file_transcript_points, session_video_text_all)
     recorded = []
     recorded[file_transcript.id] ||= []
     listing_transcripts = {}
@@ -104,7 +104,7 @@ class CollectionResourcePresenter < BasePresenter
       present(transcript_point) do |presenter|
         transcript_time_start_single = !recorded[file_transcript.id].include?(transcript_point.start_time.to_i) ? "transcript_time_start_#{transcript_point.start_time.to_i}" : ''
         listing_transcripts[counter_listing] ||= ''
-        listing_transcripts[counter_listing] += presenter.show_transcript_point(transcript_time_start_single, can_access_annotation)
+        listing_transcripts[counter_listing] += presenter.show_transcript_point(transcript_time_start_single)
         transcript_time_wise = h.transcript_page_wise_time_range(transcript_time_wise, transcript_point, counter)
         transcript_count = h.count_occurrence(transcript_point, session_video_text_all, transcript_count, 'transcript', false, counter)
       end

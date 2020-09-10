@@ -20,7 +20,7 @@
       media_url_inner += "?1=1" unless media_url_inner.include?('?')
       media_url_inner += "&embed=#{params[:embed]}" if params[:embed].present?
       media_url_inner += "&media_player=#{params[:media_player]}" if params[:media_player].present?
-
+      media_url_inner = append_param_to_url(params[:keywords], media_url_inner)
     %>
     <%= render partial: 'collection_resources/show/single_card', locals: {single_file: single_file, index: index, media_url_inner: media_url_inner, can_access: can_access} %>
     </li>
