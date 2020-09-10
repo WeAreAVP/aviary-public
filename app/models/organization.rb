@@ -59,41 +59,97 @@ class Organization < ApplicationRecord
     self.title_font_size = '28px' if title_font_size.blank?
   end
 
-  def update_resource_column_fields
-    columns_update = { number_of_column_fixed: '0',
-                       columns_status:
-                           { '0' => { value: 'id_ss', status: 'true' },
-                             '1' => { value: 'title_ss', status: 'true' },
-                             '2' => { value: 'collection_title', status: 'false' },
-                             '3' => { value: 'resource_file_count_ss', status: 'false' },
-                             '4' => { value: 'transcripts_count_ss', status: 'false' },
-                             '5' => { value: 'indexes_count_ss', status: 'false' },
-                             '6' => { value: 'updated_at_ss', status: 'false' },
-                             '7' => { value: 'access_ss', status: 'false' },
-                             '8' => { value: 'description_publisher_sms', status: 'false' },
-                             '9' => { value: 'description_preferred_citation_ss', status: 'false' },
-                             '10' => { value: 'description_language_sms', status: 'false' },
-                             '11' => { value: 'description_identifier_sms', status: 'false' },
-                             '12' => { value: 'description_duration_ss', status: 'false' },
-                             '13' => { value: 'description_source_sms', status: 'false' },
-                             '14' => { value: 'description_date_sms', status: 'false' },
-                             '15' => { value: 'description_rights_statement_search_texts', status: 'false' },
-                             '16' => { value: 'description_agent_sms', status: 'false' },
-                             '17' => { value: 'description_coverage_sms', status: 'false' },
-                             '18' => { value: 'description_description_search_texts', status: 'false' },
-                             '19' => { value: 'description_format_sms', status: 'false' },
-                             '20' => { value: 'description_source_metadata_uri_ss', status: 'false' },
-                             '21' => { value: 'description_relation_sms', status: 'false' },
-                             '22' => { value: 'description_subject_sms', status: 'false' },
-                             '23' => { value: 'description_keyword_sms', status: 'false' },
-                             '24' => { value: 'description_type_sms', status: 'false' },
-                             '25' => { value: 'custom_unique_identifier_ss', status: 'false' } } }.to_json
-
-    update(resource_table_column_detail: columns_update) if resource_table_column_detail.blank?
+  def update_resource_column_fields(force_update = false, refresh_entry = false)
+    return if resource_table_column_detail.present? && !force_update && !refresh_entry
+    resource_table_column = { '0' => { value: 'id_ss', status: 'true' },
+                              '1' => { value: 'title_ss', status: 'true' },
+                              '2' => { value: 'collection_title', status: 'false' },
+                              '3' => { value: 'resource_file_count_ss', status: 'false' },
+                              '4' => { value: 'transcripts_count_ss', status: 'false' },
+                              '5' => { value: 'indexes_count_ss', status: 'false' },
+                              '6' => { value: 'updated_at_ss', status: 'false' },
+                              '7' => { value: 'access_ss', status: 'false' },
+                              '8' => { value: 'description_publisher_sms', status: 'false' },
+                              '9' => { value: 'description_preferred_citation_ss', status: 'false' },
+                              '10' => { value: 'description_language_sms', status: 'false' },
+                              '11' => { value: 'description_identifier_sms', status: 'false' },
+                              '12' => { value: 'description_duration_ss', status: 'false' },
+                              '13' => { value: 'description_source_sms', status: 'false' },
+                              '14' => { value: 'description_date_sms', status: 'false' },
+                              '15' => { value: 'description_rights_statement_search_texts', status: 'false' },
+                              '16' => { value: 'description_agent_sms', status: 'false' },
+                              '17' => { value: 'description_coverage_sms', status: 'false' },
+                              '18' => { value: 'description_description_search_texts', status: 'false' },
+                              '19' => { value: 'description_format_sms', status: 'false' },
+                              '20' => { value: 'description_source_metadata_uri_ss', status: 'false' },
+                              '21' => { value: 'description_relation_sms', status: 'false' },
+                              '22' => { value: 'description_subject_sms', status: 'false' },
+                              '23' => { value: 'description_keyword_sms', status: 'false' },
+                              '24' => { value: 'description_type_sms', status: 'false' },
+                              '25' => { value: 'custom_unique_identifier_ss', status: 'false' },
+                              '26' => { value: 'custom_unique_identifier_ss234', status: 'false' } }
+    fixed_number_of_column = '0'
+    if resource_table_column_detail.blank? || refresh_entry
+      columns_status = resource_table_column
+    else
+      json_response = JSON.parse(resource_table_column_detail)
+      fixed_number_of_column = 0
+      columns_status = json_response['columns_status']
+      total_columns = columns_status.count
+      columns_status = add_missing_column(total_columns, resource_table_column, columns_status.to_h)
+    end
+    total_columns = columns_status.count
+    columns_status = custom_fields_manager(columns_status, total_columns)
+    columns_update = { number_of_column_fixed: fixed_number_of_column, columns_status: columns_status }.to_json
+    update(resource_table_column_detail: columns_update)
   end
 
-  def update_resource_search_column_fields
-    columns_update = {
+  def custom_fields_manager(columns_status, total_columns)
+    return columns_status if Rails.env.test? || collections.blank?
+    collections.each do |single_field|
+      next unless single_field.all_fields['CollectionResource'].present?
+      single_field.all_fields['CollectionResource'].each do |single|
+        if single['field'].is_custom
+          type = Aviary::SolrIndexer.field_type_finder(single['field'].fetch_type)
+          type = '_sms' if single['field'].fetch_type == 'date'
+          custom_field_values = 'custom_field_values_' + single['field'].system_name + type
+          add_value = true
+          columns_status.each do |single_columns_status|
+            if [single_columns_status.second[:value], single_columns_status.second['value']].include? custom_field_values
+              add_value = false
+              break
+            end
+          end
+          columns_status[total_columns.to_s] = { value: custom_field_values, status: 'false' } if add_value
+          total_columns += 1
+        end
+      end
+    end
+    columns_status
+  end
+
+  def add_missing_column(total_columns, default_columns, added_columns)
+    new_columns = []
+    default_columns.each do |single_default_columns|
+      add_value = true
+      added_columns.each do |single_added_column|
+        if single_default_columns.second[:value] == single_added_column.second['value']
+          add_value = false
+          break
+        end
+      end
+      new_columns << { value: single_default_columns.second[:value], status: 'false' } if add_value
+    end
+    new_columns.each do |single_new_column|
+      added_columns[total_columns] = single_new_column
+      total_columns += 1
+    end
+    added_columns
+  end
+
+  def update_resource_search_column_fields(force_update = false, refresh_entry = false)
+    return if resource_table_search_columns.present? && !force_update && !refresh_entry
+    table_search_columns = {
       '0' => { value: 'id_ss', status: 'true' },
       '1' => { value: 'title_ss', status: 'true' },
       '2' => { value: 'collection_title', status: 'true' },
@@ -115,8 +171,18 @@ class Organization < ApplicationRecord
       '19' => { value: 'description_keyword_search_texts', status: 'true' },
       '20' => { value: 'description_type_search_texts', status: 'true' },
       '21' => { value: 'custom_unique_identifier_texts', status: 'true' }
-    }.to_json
-    update(resource_table_search_columns: columns_update) if resource_table_search_columns.blank?
+    }
+
+    columns_update = if resource_table_search_columns.blank? || refresh_entry
+                       table_search_columns
+                     else
+                       columns_update = JSON.parse(resource_table_search_columns)
+                       total_columns = columns_update.count
+                       add_missing_column(total_columns, table_search_columns, columns_update.to_h)
+                     end
+    total_columns = columns_update.count
+    columns_update = custom_fields_manager(columns_update, total_columns)
+    update(resource_table_search_columns: columns_update.to_json)
   end
 
   def update_resource_files_fields

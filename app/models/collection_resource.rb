@@ -10,7 +10,7 @@ class CollectionResource < ApplicationRecord
   validates :noid, uniqueness: { message: 'PURL already taken.' }
   validate :unique_custom_unique_identifier
   accepts_nested_attributes_for :collection_resource_files, reject_if: :all_blank, allow_destroy: true
-  attr_accessor :tab_resource_file, :sort_order, :file_url, :embed_code, :embed_type, :target_domain, :trans_points_solr, :index_points_solr, :description_values_solr, :collection_values_solr, :resource_file_id
+  attr_accessor :tab_resource_file, :sort_order, :file_url, :embed_code, :embed_type, :target_domain, :trans_points_solr, :index_points_solr, :description_values_solr, :collection_values_solr, :resource_file_id, :custom_description_solr
   scope :featured, -> { where(access: accesses[:access_public], is_featured: true) }
   scope :public_visible, -> { where(access: accesses[:access_public]) }
   enum access: %i[access_restricted access_public access_private]
@@ -436,6 +436,15 @@ class CollectionResource < ApplicationRecord
               alter_search_wildcard_string.sub! '_search_texts', '_search_sms'
               fq_filters_inner += " OR  #{straight_search_perp(q, alter_search_wildcard_string)} "
             end
+          when ->(search_key) { search_key.include?('custom_field_values_') }
+            alter_search = value['value'].clone
+            alter_search_new = alter_search.sub(/.*\K_sms/, '_texts') unless alter_search.include?('_lms') && alter_search.include?('_text')
+
+            fq_filters_inner += " OR  #{search_perp(q, alter_search)} "
+            fq_filters_inner += " OR  #{straight_search_perp(q, alter_search)} "
+
+            fq_filters_inner += " OR  #{search_perp(q, alter_search_new)} "
+            fq_filters_inner += " OR  #{straight_search_perp(q, alter_search_new)} "
           end
           counter += 1
         end
