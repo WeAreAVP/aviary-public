@@ -8,8 +8,5 @@ collectionResource.transcript_page_wise_count = JSON.parse('<%== @transcript_cou
 collectionResource.transcript_time_wise_page = JSON.parse('<%== @transcript_time_wise.present? ? @transcript_time_wise.to_h.to_json : '{}' %>');
 collectionResource.total_transcript_wise = JSON.parse('<%== @transcript_count && @transcript_count[:total_transcript_wise].present? ? @transcript_count[:total_transcript_wise].to_h.to_json : '{}' %>');
 
-collectionResource.annotation_hits_count = JSON.parse('<%== @annotation_count && @annotation_count[:hits].present? && false ? @annotation_count[:hits].to_h.to_json : '{}' %>');
-collectionResource.annotation_hits_ids = JSON.parse('<%== @annotation_count && @annotation_count[:annotation_ids].present? && false ? @annotation_count[:annotation_ids].to_h.to_json : '{}' %>');
-
 collectionResource.index_file_count = '<%= @resource_file.present? && @resource_file.file_indexes.count > 0  ? @resource_file.file_indexes.count : 0  %>';
 collectionResource.transcript_file_count = '<%= @resource_file.present? && @resource_file.file_transcripts.count  > 0 ? @resource_file.file_transcripts.count : 0  %>';
