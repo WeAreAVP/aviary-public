@@ -8,8 +8,6 @@ class Organization < ApplicationRecord
   has_many :billing_histories, dependent: :destroy
   has_many :collections, dependent: :destroy
   has_many :organization_users, dependent: :destroy
-  has_many :organization_emails, dependent: :destroy
-  has_one :theme, dependent: :destroy
   has_many :playlists, dependent: :destroy
   has_many :playlist_resources, dependent: :destroy
   validates :name, :address_line_1, :url,
@@ -29,7 +27,6 @@ class Organization < ApplicationRecord
   validates_attachment_content_type :favicon, content_type: %r[\Aimage\/(png|jpeg|jpg|x-icon|vnd.microsoft.icon)\z]
   validates_attachment_content_type :logo_image, :banner_image, content_type: %r[\Aimage\/(png|gif|jpeg|jpg)\z]
   accepts_nested_attributes_for :user
-  accepts_nested_attributes_for :organization_emails
   scope :active_orgs, -> { where(status: true, hide_on_home: false) }
   scope :active_storage, -> { where(status: true, storage_type: :wasabi_storage.to_s) }
   before_save :update_default_values
