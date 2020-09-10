@@ -24,22 +24,10 @@
             <% end %>
           </div>
         </div>
-        <% if @file_indexes.present? %>
-          <% @index_time_wise = {} %>
-          <% @index_count = {} %>
-          <% @file_indexes.each do |file_index| %>
-            <% if file_index.is_public || @collection_resource.can_view || @collection_resource.can_edit || (can? :edit, @collection_resource.collection.organization) %>
-              <% file_index.file_index_points.each_with_index do |index_point, counter| %>
-                <% @index_time_wise = index_page_wise_time_range(@index_time_wise, index_point, counter) %>
-                <% @index_count = count_occurrence(index_point, session[:session_video_text_all], @index_count, 'index', false, counter) %>
-              <% end %>
-            <% end %>
-          <% end %>
-        <% end %>
       <% end %>
     </div>
-    <% unless params[:from_playlist].to_s.to_boolean? %>
-      <% if ((can? :manage, @collection_resource) || @collection_resource.can_edit) && !params[:from_playlist].to_s.to_boolean? %>
+    <% unless from_playlist.to_s.to_boolean? %>
+      <% if ((can? :manage, @collection_resource) || @collection_resource.can_edit) && !from_playlist.to_s.to_boolean? %>
         <div class="dropdown">
           <button class="btn-icon dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             <i class="fa fa-ellipsis-v"></i>

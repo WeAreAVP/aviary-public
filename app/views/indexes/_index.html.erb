@@ -6,14 +6,32 @@
            file_index = @file_index
            recorded[file_index.id] ||= [] %>
         <div class="file_index file_index_<%= file_index.id %> pb-10px" data-language="<%= file_index.language %>" data-title="<%= file_index.title %>" data-public="<%= file_index.is_public %>">
-          <% if file_index.is_public || @collection_resource.can_view || @collection_resource.can_edit || (can? :edit, @collection_resource.collection.organization) %>
-            <% @file_index_points.each do |index_point| %>
+          <% if file_index.is_public || @collection_resource.can_view || @collection_resource.can_edit || (can? :edit, @collection_resource.collection.organization) || (can? :read, file_index) %>
+            <% @index_count = @index_time_wise = {} %>
+            <% @session_video_text_all = params['keywords'] %>
+            <% @file_index_points.each_with_index do |index_point, counter| %>
               <% present(index_point) do |presenter| %>
                 <% index_time_start = !recorded.include?(index_point.start_time.to_i) ? "index_time_start_#{index_point.start_time.to_i}" : '' %>
                 <%== presenter.single_index_point_hanlder(index_time_start) %>
+                <% @index_time_wise = index_page_wise_time_range(@index_time_wise, index_point, counter) %>
+                <% @index_count = count_occurrence(index_point, @session_video_text_all, @index_count, 'index', false, counter) %>
               <% end %>
               <% recorded[file_index.id] << index_point.start_time.to_i %>
             <% end %>
+
+            <% other_file_indexs = file_index.collection_resource_file.file_indexes.includes([:file_index_points]).where.not(id: file_index.id) %>
+            <% if other_file_indexs.present?
+                 other_file_indexs.each do |single_file_index|
+                   single_file_index.file_index_points.each_with_index do |index_point, counter|
+                     @index_time_wise = index_page_wise_time_range(@index_time_wise, index_point, counter)
+                     @index_count = count_occurrence(index_point, @session_video_text_all, @index_count, 'index', false, counter)
+                   end
+                 end
+               end
+            %>
+
+            <textarea class="index_time_wise d-none"><%== @index_time_wise.present? ? @index_time_wise.to_h.to_json : '{}' %></textarea>
+            <textarea class="index_count d-none"><%== @index_count.present? ? @index_count.to_h.to_json : '{}' %></textarea>
           <% else %>
             <div class="text-center  no-access">
               <% if user_signed_in? %>
@@ -24,6 +42,7 @@
                   organization
                   owner.</p>
               <% end %>
+              <%= access_request_link('', { organization_id: @collection_resource.collection.organization.id, title: @collection_resource.title, id: @collection_resource.id, click_through: @collection_resource.collection.click_through, conditions_for_access: @collection_resource.collection.conditions_for_access }) %>
             </div>
           <% end %>
         </div>

@@ -1,17 +1,29 @@
-<div class="search-result-bottom single_term_handler active <%= type %> open ">
+<div class="search-result-bottom single_term_handler active <%= type %> ">
   <div class="box">
     <strong class="title d-flex justify-content-between">
+      <% if params['controller'] == 'playlists'
+           param_link = {}
+           param_link[:playlist_id] = @playlist.id
+           param_link[:playlist_resource_id] = @playlist_resource_id.id if @playlist_resource_id.present?
+           param_link[:embed] = true if params[:embed].present?
+           param_link[:media_player] = true if params[:media_player].present?
+           param_link[:share] = params[:share] if params[:share].present?
+           media_url = playlist_show_url(param_link)
+         else
+           param_link = {collection_id: @collection.id, collection_resource_id: @collection_resource.id, collection_resource_file_id: @resource_file.id, share: params[:share]}
+           param_link[:embed] = true if params[:embed].present?
+           media_url = collection_collection_resource_details_url(param_link )
+           media_url = embeded_url(collection_resource_url(@collection_resource), 'media_player', @resource_file.id) if params[:media_player] == 'true'
+         end %>
       <a href="javascript:void(0)" onclick="$('.single_term_handler.<%= type %>').toggleClass('open');resourceSearchBar();" class=""><span><i class="fa fa-caret-down"></i> Results </span></a>
-      <% unless session[:session_video_text_all].blank? %>
-        <a class="clear clear_search_video_cus_all" data-identifire="all" data-url="<%= collection_collection_resource_search_text_path(collection_id: @collection.id, collection_resource_id: @collection_resource.id) %>">Clear all search terms <i class="material-icons">close</i></a>
+      <% unless @session_video_text_all.blank? %>
+        <a class="clear clear_search_video_cus_all" href="<%= media_url %>">Clear all search terms
+          <i class="material-icons">close</i></a>
       <% end %>
-
-
-
     </strong>
     <ul>
-      <% unless session[:session_video_text_all].blank?
-           session[:session_video_text_all].each do |index, single_keyword| %>
+      <% unless @session_video_text_all.blank?
+           @session_video_text_all.each do |index, single_keyword| %>
           <% unless single_keyword.blank? %>
             <% count_for_keyword = 0
                case type
@@ -32,18 +44,27 @@
                 <span><%== single_keyword %></span>
                 <div class="button_handle ">
                   <%= render partial: 'shared/over_layer_loader' %>
+                  <% class_raw = '_description' %>
+                  <% class_raw = '_other' unless type == 'description' %>
                   <% if count_for_keyword > 0 %>
-                    <button class='back_button <%= type %> <%= index %> cursor_not-allowed' data-search="prev" data-identifire="<%= index %>"><i class="fa fa-angle-left" aria-hidden="true"></i></button>
-                    <span class="badge badge-pill badge-danger <%= index %>"> <div class="current_location d-inline">0</div>/ <%= count_for_keyword %></span>
-                    <button class='next_button <%= type %> <%= index %> cursor_not-allowed' data-search="next" data-identifire="<%= index %>"><i class="fa fa-angle-right" aria-hidden="true"></i></button>
+                    <button class='back_button back_button<%=class_raw %> <%= type %> <%= index %> cursor_not-allowed' data-search="prev" data-identifire="<%= index %>">
+                      <i class="fa fa-angle-left" aria-hidden="true"></i></button>
+                    <span class="badge badge-pill badge-danger <%= index %>"> <div class="current_location d-inline">0</div>/<div class="<%=type %> total_count d-inline <%= index %>"><%= count_for_keyword %></div></span>
+                    <button class='next_button next_button<%=class_raw %> <%= type %> <%= index %> cursor_not-allowed' data-search="next" data-identifire="<%= index %>">
+                      <i class="fa fa-angle-right" aria-hidden="true"></i></button>
                   <% else %>
-                    <button class='back_button <%= type %> <%= index %> disabled'><i class="fa fa-angle-left" aria-hidden="true"></i> </button>
-                    <span class="badge badge-pill badge-danger <%= index %> disabled"> <div class="current_location d-inline">0</div></span>
-                    <button class='next_button <%= type %> <%= index %> disabled'><i class="fa fa-angle-right" aria-hidden="true"></i></button>
+                    <button class='back_button back_button<%=class_raw %> <%= type %> <%= index %>'  data-identifire="<%= index %>">
+                      <i class="fa fa-angle-left" aria-hidden="true"></i></button>
+                    <span class="badge badge-pill badge-danger <%= index %> disabled"> <div class="current_location d-inline">0</div>/<div class="<%=type %> total_count d-inline <%= index %>"><%= count_for_keyword %></div> </span>
+                    <button class='next_button next_button<%=class_raw %> <%= type %> <%= index %>'  data-identifire="<%= index %>">
+                      <i class="fa fa-angle-right" aria-hidden="true"></i></button>
                   <% end %>
                 </div>
               </div>
-              <button class='cancel_button <%= type %> <%= index %> cursor_not-allowed' class="cancel" data-identifire="<%= index %>" data-url="<%= collection_collection_resource_search_text_path(collection_id: @collection.id, collection_resource_id: @collection_resource.id) %>" data-type="<%= type %>" data-search="cancel"><i class="material-icons">close</i></button>
+              <% update_metadata_url = append_param_to_url(params[:keywords], media_url, single_keyword) %>
+
+              <button onclick='javascript:window.location="<%= update_metadata_url %>"' class='cancel_button cancel_button<%=class_raw %> <%= type %> <%= index %> cursor_not-allowed' class="cancel" data-search="cancel">
+                <i class="material-icons">close</i></button>
 
             </li>
           <% end %>

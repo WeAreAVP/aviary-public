@@ -40,7 +40,6 @@
 
     document.addEventListener("DOMContentLoaded", function () {
         setTimeout(function () {
-            collectionResource.events_tracker.views_track = JSON.parse('<%== session[:resource_tracking].present? ? session[:resource_tracking].clone.to_enum.to_h.to_json : '{}' %>');
             let params = {
                 target_id: '',
                 params: '<%=track_params %>',
@@ -49,6 +48,11 @@
                 user_type: '<%= role_type(current_user, current_organization) %>'
             };
             collectionResource.initializeDetail('<%= session[:session_video_text_all].present? ? session[:session_video_text_all].to_json.html_safe : '{}' %>', <%= @selected_index.present? ? @selected_index: 0 %>, <%= @selected_transcript.present? ? @selected_transcript : 0 %>, <%= params[:edit_description].present? ? params[:edit_description] : 0 %>, '<%= params[:embed] %>', <%= @resource_file.present? ? @resource_file.id : '0' %>, params);
+        }, 500);
+    });
+    $(window).on('load', function () {
+        setTimeout(function () {
+            collectionResource.events_tracker.views_track = JSON.parse('<%== session[:resource_tracking].present? ? session[:resource_tracking].clone.to_enum.to_h.to_json : '{}' %>');
             <% if params.key?(:collection_resource_id) %>
             collectionResource.events_tracker.track_hit('collection_resource', '<%= params[:collection_resource_id]%>');
             <% end %>
@@ -59,6 +63,6 @@
                 collectionResource.events_tracker.track_hit('collection_resource_file_play', '<%=  @resource_file.id %>');
             });
             <% end %>
-        }, 500);
+        }, 15000);
     });
 </script>

@@ -1,10 +1,10 @@
 # Collection Resources Controller
 class CollectionResourcesController < ApplicationController
   before_action :set_av_resource, except: %I[new show create embed_file]
-  before_action :authenticate_user!, except: %I[show search_text load_head_and_tombstone_template load_resource_details_template load_time_line_template embed_file show_search_counts load_index_template load_transcript_template]
+  before_action :authenticate_user!, except: %I[show search_text load_head_and_tombstone_template load_resource_details_template load_time_line_template embed_file show_search_counts load_index_template load_transcript_template file_wise_counts]
   before_action :check_resource_limit, only: %I[new create]
   before_action :check_if_playlist
-  load_and_authorize_resource except: %I[create search_text load_head_and_tombstone_template load_resource_details_template load_time_line_template embed_file show_search_counts load_index_template load_transcript_template]
+  load_and_authorize_resource except: %I[create search_text load_head_and_tombstone_template load_resource_details_template load_time_line_template embed_file show_search_counts load_index_template load_transcript_template file_wise_counts]
   include ApplicationHelper
   include Aviary::ResourceFileManagement
   include Aviary::SearchManagement
@@ -49,6 +49,21 @@ class CollectionResourcesController < ApplicationController
     @file_indexes, @file_transcripts, @selected_index, @selected_transcript = collection_resource_presenter.selected_index_transcript(@resource_file, @selected_index, @selected_transcript)
   end
 
+  def file_wise_counts
+    session_video_text_all = params[:search_text_val]
+    collection_resource = CollectionResource.find_by_id(params[:collection_resource_id])
+    count_file_wise = {}
+    if collection_resource.present? && session_video_text_all.present?
+      collection_resource_presenter = CollectionResourcePresenter.new(@collection_resource, view_context)
+      count_file_wise = collection_resource_presenter.file_wise_count(collection_resource, count_file_wise, session_video_text_all)
+    end
+    response = { count_file_wise: count_file_wise }
+    respond_to do |format|
+      format.html { render json: response }
+      format.json { render json: response }
+    end
+  end
+
   def update_metadata
     @collection_resource = CollectionResource.find(params[:collection_resource_id])
     respond_to do |format|
@@ -76,6 +91,7 @@ class CollectionResourcesController < ApplicationController
   end
 
   def load_index_template
+    render plain: '' unless request.xhr?
     @resource_file = params[:resource_file_id] ? CollectionResourceFile.find_by(id: params[:resource_file_id]) : @collection_resource.collection_resource_files.order_file.first
     authorize! :read, @collection_resource
     offset = params['page_number'].present? ? params['page_number'].to_i * Aviary::IndexTranscriptManager::POINTS_PER_PAGE : 0
@@ -87,6 +103,8 @@ class CollectionResourcesController < ApplicationController
   end
 
   def load_transcript_template
+    render plain: '' unless request.xhr?
+    @listing_transcripts = {}
     @resource_file = params[:resource_file_id] ? CollectionResourceFile.find_by(id: params[:resource_file_id]) : @collection_resource.collection_resource_files.order_file.first
     authorize! :read, @collection_resource
     offset = params['page_number'].present? ? params['page_number'].to_i * Aviary::IndexTranscriptManager::POINTS_PER_PAGE : 0
@@ -94,7 +112,16 @@ class CollectionResourcesController < ApplicationController
     offset = 0 if offset < 0 || @file_transcript.file_transcript_points.count <= Aviary::IndexTranscriptManager::POINTS_PER_PAGE
     @file_transcript_points = @file_transcript.file_transcript_points.limit(Aviary::IndexTranscriptManager::POINTS_PER_PAGE).offset(offset)
     @total_transcript_points = @file_transcript.file_transcript_points.count
-    render partial: 'transcripts/index', locals: { size: params[:tabs_size], xray: false }
+    @can_access_transcript = @file_transcript.is_public || @collection_resource.can_view || @collection_resource.can_edit || (can? :edit, @collection_resource.collection.organization) || (can? :read, @file_transcript)
+    collection_resource_presenter = CollectionResourcePresenter.new(@collection_resource, view_context)
+    @session_video_text_all = collection_resource_presenter.all_params_information(params)
+    @listing_transcripts, @transcript_count, @transcript_time_wise = collection_resource_presenter.transcript_point_list(@file_transcript, @file_transcript_points, @session_video_text_all)
+
+    body_response = view_context.render 'transcripts/index', locals: { size: params[:tabs_size], xray: false }
+
+    respond_to do |format|
+      format.json { render json: { body_response: body_response, listing_transcripts: @listing_transcripts } }
+    end
   end
 
   def load_resource_details_template

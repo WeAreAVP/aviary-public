@@ -1,20 +1,22 @@
 <% tabs_size = 12 %>
 <div class="info_tabs" data-template-url="<%= collection_collection_resource_load_resource_details_template_path(@collection, @collection_resource, @resource_file, share: params[:share]) %>" data-search-size="12" data-tabs-size="12">
-  <div class="info_tab_loader loader d-inline-block">
-    <div class="img">
-      <div class="hold">
-        <%= image_tag("https://#{ENV['S3_HOST_CDN']}/public/images/ajax-loader.gif") %>
-      </div>
-    </div>
-  </div>
+
   <% if params[:from_playlist].present? && params[:from_playlist].to_s.to_boolean? %>
     <style>
-      .drop_drag {
-        width: 100% !important;
-      }
+        .drop_drag {
+            width: 100% !important;
+        }
     </style>
   <% end %>
-  <span id="show_counts_tabs" data-url="<%= collection_collection_resource_show_search_counts_path(collection_id: @collection.id, collection_resource_id: @collection_resource.id, resource_file_id: @resource_file.id) %>"></span>
+  <% tab_params = {collection_id: @collection.id, collection_resource_id: @collection_resource.id} %>
+  <% tab_params[:resource_file_id] = @resource_file.id if @resource_file.present? %>
+
+  <span id="show_counts_tabs" data-url="<%= collection_collection_resource_show_search_counts_path(tab_params) %>"></span>
+  <% if @collection_resource.present? %>
+    <% collection_resource_params = {collection_id: @collection_resource.collection.id, collection_resource_id: @collection_resource.id} if @collection_resource.present? %>
+    <span id="file_wise_count" data-url="<%= collection_collection_resource_file_wise_counts_path(collection_resource_params) %>"></span>
+  <% end %>
+
   <% tab_width = 100 %>
   <% show_transcript_tab = show_index_tab = false %>
   <% if (@resource_file.present? && @resource_file.file_indexes.present?) || (can? :manage, @collection_resource) || @collection_resource.can_edit %>
@@ -80,7 +82,7 @@
   <div class="tab">
     <div class="tab-content" id="resourceTabContent">
       <div class="tab-pane fade show active contact-description-tab" id="description" role="tabpanel" aria-labelledby="contact-tab">
-
+        <%= add_loader('loader d-inline text-center mt-5') %>
       </div>
       <% if show_index_tab %>
         <div class="tab-pane fade index-tab" id="index" role="tabpanel" aria-labelledby="index-tab" data-template-url="<%= collection_collection_resource_load_index_template_path(@collection, @collection_resource, @resource_file, share: params[:share]) %>">
@@ -96,6 +98,7 @@
               <div class="index_point_container mCustomScrollbar" id="index_point_container">
                 <% if file_indexes.present? %>
                   <div class="index_point_inner_container ">
+                    <%= add_loader('loader loader_custom_index d-inline text-center mt-5') %>
 
                   </div>
                 <% else %>
@@ -131,7 +134,7 @@
               <div class="transcript_point_container">
                 <% if file_transcripts.present? %>
                   <div class="transcript_point_inner_container">
-
+                    <%= add_loader('loader loader_custom_transcript d-inline text-center mt-5') %>
                   </div>
                 <% else %>
                   <div class="row">
@@ -154,7 +157,7 @@
   </div>
 
   <% @description_count = {} %>
-  <% if @collection_resource.present? && @dynamic_fields.present? && @dynamic_fields['CollectionResource'].present?  %>
+  <% if @collection_resource.present? && @dynamic_fields.present? && @dynamic_fields['CollectionResource'].present? %>
     <% @dynamic_fields['CollectionResource'].each do |single_field| %>
       <% single_field['values'].each do |single_value| %>
         <% @description_count = count_occurrence(single_value, session[:session_video_text_all], @description_count, 'description') %>
@@ -176,8 +179,8 @@
   <% track_params = params.clone.except('controller').except('action').to_json %>
   <script type="text/javascript">
       setTimeout(function () {
-          <% unless session[:session_video_text_all].blank? %>
-          <% session[:session_video_text_all].each do |_, single_value| %>
+          <% unless @session_video_text_all.blank? %>
+          <% @session_video_text_all.each do |_, single_value| %>
           var param_tracking = {
               target_id: '',
               params: '<%=track_params %>',
@@ -197,7 +200,6 @@
           }
           <% end %>
           <% end %>
-      }, 500);
-
+      }, 10000);
   </script>
 </div>

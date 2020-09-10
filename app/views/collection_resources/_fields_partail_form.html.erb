@@ -4,7 +4,7 @@
     <% if single_field['field'].is_vocabulary %>
       <div class="col-md-6">
         <div class="form-group">
-          <%= select_tag "collection_resource[collection_resource_field_values][][vocabularies_id]", options_for_select(JSON.parse(single_field['field'].vocabulary), selected: single_value['vocab_value'].present? ? single_value['vocab_value'] : ''), { :class => "select_option #{type_for_view}", :include_blank => true } %>
+          <%= select_tag "collection_resource[collection_resource_field_values][][vocabularies_id]", options_for_select(JSON.parse(single_field['field'].vocabulary), selected: single_value['vocab_value'].present? ? single_value['vocab_value'] : ''), {:class => "select_option #{type_for_view}", :include_blank => true} %>
         </div>
       </div>
     <% else %>
@@ -24,12 +24,12 @@
             <% end %>
           </select>
         <% else %>
-          <%= render partial: 'collection_resources/fields_type_for_form', locals: { single_field: single_field, single_value: single_value, type_for_view: type_for_view } %>
+          <%= render partial: 'collection_resources/fields_type_for_form', locals: {single_field: single_field, single_value: single_value, type_for_view: type_for_view} %>
         <% end %>
         <%= hidden_field_tag("collection_resource[collection_resource_field_values][][collection_resource_field_id]", single_field['field'].id) %>
         <%= hidden_field_tag("collection_resource[collection_resource_field_values][][collection_resource_id]", @collection_resource.id) %>
-        </div>
-        <span class="badge badge-danger remove-field float-right mt-1 mb-1 "> Remove </span>
-        </div>
-        </div>
-        </div>
+      </div>
+      <span class="badge badge-danger remove-field float-right mt-1 mb-1 "> Remove </span>
+    </div>
+  </div>
+</div>

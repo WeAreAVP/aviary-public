@@ -70,6 +70,8 @@ class CollectionsController < ApplicationController
       @detail_page = false
       @data_hash = PreviewScript.new(@collection).data_hash(@collection_resource, @dynamic_fields)
     end
+    current_organization.update_resource_search_column_fields(true)
+    current_organization.update_resource_column_fields(true)
   end
 
   def update
@@ -261,19 +263,21 @@ class CollectionsController < ApplicationController
         puts e.backtrace.join("\n")
       end
       row = [resource['id_is'], '']
-      JSON.parse(resources.fourth.resource_table_column_detail)['columns_status'].each do |_, value|
-        if !value['status'].blank? && value['status'] == 'true'
-          row << if value['value'] == 'description_duration_ss'
-                   resource[value['value']].present? ? time_to_duration(resource[value['value']]) : '00:00:00'
-                 elsif value['value'] == 'collection_title'
-                   resources.third[resource['collection_id_is'].to_s]
-                 elsif value['value'] == 'access_ss'
-                   resource[value['value']].gsub('access_', '').titleize.strip
-                 elsif !resource[value['value']].blank?
-                   resource[value['value']].class == Array ? resource[value['value']].join(' | ') : resource[value['value']]
-                 else
-                   ''
-                 end
+      if resources.fourth.resource_table_column_detail
+        JSON.parse(resources.fourth.resource_table_column_detail)['columns_status'].each do |_, value|
+          if !value['status'].blank? && value['status'] == 'true'
+            row << if value['value'] == 'description_duration_ss'
+                     resource[value['value']].present? ? time_to_duration(resource[value['value']]) : '00:00:00'
+                   elsif value['value'] == 'collection_title'
+                     resources.third[resource['collection_id_is'].to_s]
+                   elsif value['value'] == 'access_ss'
+                     resource[value['value']].gsub('access_', '').titleize.strip
+                   elsif !resource[value['value']].blank?
+                     resource[value['value']].class == Array ? resource[value['value']].join(' | ') : resource[value['value']]
+                   else
+                     ''
+                   end
+          end
         end
       end
       row << purl
