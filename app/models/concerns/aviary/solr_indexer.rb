@@ -140,7 +140,26 @@ module Aviary::SolrIndexer
     end
   end
 
-  def date_handler(value)
+  def self.field_type_finder(type)
+    type_field = '_sms'
+    case type
+    when 'text', 'tokens', 'dropdown'
+      type_field = '_sms'
+    when 'date'
+      type_field = '_lms'
+    when 'editor'
+      type_field = '_texts'
+    end
+    type_field
+  end
+
+  def self.remove_field_type_string(value)
+    value = value.gsub('_sms', '')
+    value = value.gsub('_lms', '')
+    value.gsub('_texts', '')
+  end
+
+  def self.date_handler(value)
     begin
       value = value.blank? ? '' : value.strip
       case value.scan(/(?=#{'-'})/).count

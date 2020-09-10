@@ -4,8 +4,12 @@ module CollectionResourceHelper
     value = value.sub('_search', '')
     if value == 'title_ss'
       custom_value = 'Title'
-    elsif value == 'id_ss'
+    elsif value == 'id_is'
       custom_value = 'Aviary Resource ID'
+    elsif value.include?('custom_field_values_')
+      custom_value = value.gsub('custom_field_values_', '')
+      custom_value = Aviary::SolrIndexer.remove_field_type_string(custom_value)
+      custom_value = custom_value.titleize.strip
     elsif %w(custom_unique_identifier_ss custom_unique_identifier_texts).include?(value)
       custom_value = 'Custom Unique Identifier'
     elsif value.include?('custom_field_values_')

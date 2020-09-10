@@ -103,6 +103,7 @@ class Organization < ApplicationRecord
     update(resource_table_column_detail: columns_update)
   end
 
+
   def self.field_list_with_options
     {
       organization_id_is: { key: 'organization_id_is', label: 'Organization Name', single: false, helper_method: :render_organization_facet_value, tag: 'organization_id_is-tag', ex: 'organization_id_is-tag', type: 'integer' },
@@ -124,7 +125,6 @@ class Organization < ApplicationRecord
                                  range: { segments: false }, tag: 'description_duration_ls', ex: 'description_duration_ls-tag', type: 'date' }
     }
   end
-
   def custom_fields_manager(columns_status, total_columns)
     return columns_status if Rails.env.test? || collections.blank?
     collections.each do |single_field|
