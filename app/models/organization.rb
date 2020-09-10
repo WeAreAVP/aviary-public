@@ -86,7 +86,7 @@ class Organization < ApplicationRecord
                               '22' => { value: 'description_subject_sms', status: 'false' },
                               '23' => { value: 'description_keyword_sms', status: 'false' },
                               '24' => { value: 'description_type_sms', status: 'false' },
-                              '25' => { value: 'custom_unique_identifier_ss', status: 'false' },
+                              '25' => { value: 'custom_unique_identifier_ss', status: 'false' } }
     fixed_number_of_column = '0'
     if resource_table_column_detail.blank? || refresh_entry
       columns_status = resource_table_column
