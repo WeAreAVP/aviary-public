@@ -8,6 +8,8 @@ class Organization < ApplicationRecord
   has_many :billing_histories, dependent: :destroy
   has_many :collections, dependent: :destroy
   has_many :organization_users, dependent: :destroy
+  has_many :organization_emails, dependent: :destroy
+  has_one :theme, dependent: :destroy
   has_many :playlists, dependent: :destroy
   has_many :playlist_resources, dependent: :destroy
   validates :name, :address_line_1, :url,
@@ -27,6 +29,7 @@ class Organization < ApplicationRecord
   validates_attachment_content_type :favicon, content_type: %r[\Aimage\/(png|jpeg|jpg|x-icon|vnd.microsoft.icon)\z]
   validates_attachment_content_type :logo_image, :banner_image, content_type: %r[\Aimage\/(png|gif|jpeg|jpg)\z]
   accepts_nested_attributes_for :user
+  accepts_nested_attributes_for :organization_emails
   scope :active_orgs, -> { where(status: true, hide_on_home: false) }
   scope :active_storage, -> { where(status: true, storage_type: :wasabi_storage.to_s) }
   before_save :update_default_values
@@ -88,8 +91,8 @@ class Organization < ApplicationRecord
                               '24' => { value: 'description_type_sms', status: 'false' },
                               '25' => { value: 'custom_unique_identifier_ss', status: 'false' },
                               '26' => { value: 'custom_unique_identifier_ss234', status: 'false' } }
+    fixed_number_of_column = '0'
     if resource_table_column_detail.blank? || refresh_entry
-      fixed_number_of_column = '0'
       columns_status = resource_table_column
     else
       json_response = JSON.parse(resource_table_column_detail)
@@ -105,7 +108,7 @@ class Organization < ApplicationRecord
   end
 
   def custom_fields_manager(columns_status, total_columns)
-    return unless collections.present?
+    return columns_status if Rails.env.test? || collections.blank?
     collections.each do |single_field|
       next unless single_field.all_fields['CollectionResource'].present?
       single_field.all_fields['CollectionResource'].each do |single|

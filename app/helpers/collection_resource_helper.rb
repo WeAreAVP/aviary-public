@@ -25,6 +25,18 @@ module CollectionResourceHelper
     custom_value
   end
 
+  def append_param_to_url(keywords, url, skip_keyword = false)
+    if keywords.present?
+      url += '?u=t' unless url.include?('?')
+      keywords.each do |single_keyword|
+        next if skip_keyword && skip_keyword == single_keyword
+        url += "&keywords[]=#{single_keyword}"
+      end
+    end
+    url = url.gsub('&&', '&')
+    url
+  end
+
   def embeded_url(url, action, resource_file_id)
     origin = Addressable::URI.parse(url).origin
     iframe_url = if action == 'embed'
