@@ -56,6 +56,7 @@ module Aviary::SolrIndexer
 
   def description_values_fetch
     self.description_values_solr = {}
+    self.custom_description_solr = {}
     begin
       resource_values = all_fields
     rescue
@@ -66,12 +67,12 @@ module Aviary::SolrIndexer
       next if !res['values'].empty? && res['values'][0]['value'] == '' && res['values'][0]['vocab_value'] == ''
       field_name = res['field'].system_name
       if res['field'].is_custom
-        field_name = 'custom_field_values'
+        field_name = 'custom_field_values_' + field_name
       end
 
       unless description_values_solr.key?(field_name)
-        description_values_solr[field_name] = []
-        description_values_solr["#{field_name}_search"] = []
+        description_values_solr[field_name] = [] unless res['field'].is_custom
+        description_values_solr["#{field_name}_search"] = [] unless res['field'].is_custom
       end
 
       res['values'].each do |val|
@@ -86,7 +87,12 @@ module Aviary::SolrIndexer
             value_with_vocab = vocab.to_s + ' :: ' + value.to_s
           end
 
-          if res['field'].system_name == 'coverage'
+          if field_name.include?('custom_field_values') || res['field'].is_custom
+            custom_description_solr[field_name] ||= {}
+            custom_description_solr[field_name]['value'] ||= []
+            custom_description_solr[field_name]['type'] = res['field'].fetch_type
+            custom_description_solr[field_name]['value'] << value_with_vocab
+          elsif res['field'].system_name == 'coverage'
             # TODO: : Consider this condition if vocab.present? && vocab == 'spatial'
             description_values_solr["#{field_name}_search"] << value_with_vocab
           elsif res['field'].system_name == 'duration'
@@ -94,7 +100,7 @@ module Aviary::SolrIndexer
             description_values_solr["#{field_name}_search"] << value
           else
             description_values_solr["#{field_name}_search"] << if res['field'].system_name == 'date'
-                                                                 date_handler(value)
+                                                                 Aviary::SolrIndexer.date_handler(value)
                                                                else
                                                                  value_with_vocab
                                                                end
@@ -107,7 +113,26 @@ module Aviary::SolrIndexer
     end
   end
 
-  def date_handler(value)
+  def self.field_type_finder(type)
+    type_field = '_sms'
+    case type
+    when 'text', 'tokens', 'dropdown'
+      type_field = '_sms'
+    when 'date'
+      type_field = '_lms'
+    when 'editor'
+      type_field = '_texts'
+    end
+    type_field
+  end
+
+  def self.remove_field_type_string(value)
+    value = value.gsub('_sms', '')
+    value = value.gsub('_lms', '')
+    value.gsub('_texts', '')
+  end
+
+  def self.date_handler(value)
     begin
       value = value.blank? ? '' : value.strip
       case value.scan(/(?=#{'-'})/).count
