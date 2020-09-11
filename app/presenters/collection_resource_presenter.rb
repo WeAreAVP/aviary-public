@@ -32,13 +32,13 @@ class CollectionResourcePresenter < BasePresenter
 
   def selected_index_transcript(resource_file, selected_index, selected_transcript)
     begin
-      file_indexes = resource_file.file_indexes.order_index
+      file_indexes = resource_file.file_indexes.includes([:file_index_points]).order_index
     rescue StandardError => ex
       file_indexes = {}
       puts ex.backtrace.join("\n")
     end
     begin
-      file_transcripts = resource_file.file_transcripts.order_transcript
+      file_transcripts = resource_file.file_transcripts.includes(%i[file_transcript_points]).order_transcript
     rescue StandardError => ex
       file_transcripts = {}
       puts ex.backtrace.join("\n")
@@ -58,15 +58,23 @@ class CollectionResourcePresenter < BasePresenter
     [file_indexes, file_transcripts, selected_index, selected_transcript]
   end
 
+  def all_params_information(params)
+    session_video_text_all = {}
+    return session_video_text_all unless params['keywords'].present?
+    keywords = params['keywords'].class == ActionController::Parameters ? params['keywords'].to_enum.to_h.values : params['keywords']
+    keywords.map { |keyword| SearchBuilder.remove_illegal_characters(keyword, 'advance') } if keywords.present?
+    if keywords.present?
+      keywords.each do |single_quotes|
+        session_video_text_all[OpenSSL::Digest::SHA256.new.hexdigest(single_quotes)] = single_quotes
+      end
+    end
+    session_video_text_all
+  end
+
   def generate_params_for_detail_page(resource_file, collection_resource, session, params)
     params[:collection_resource_id] = collection_resource.id if params[:collection_resource_id].present?
-    session_video_text_all = if session.key?(:search_text) && session[:search_text].key?("search_text_#{collection_resource.id}")
-                               session[:search_text]["search_text_#{collection_resource.id}"]
-                             elsif session.key?(:searched_keywords) && !session[:searched_keywords].empty? && !session[:solr_params].blank?
-                               session[:search_text]["search_text_#{collection_resource.id}"] = AdvanceSearchHelper.advance_search_query_only(session[:searched_keywords], true, session['solr_params'], stopwords)
-                             else
-                               ''
-                             end
+    session_video_text_all = all_params_information(params)
+
     selected_transcript = {}
     selected_index = {}
     unless resource_file.nil?
@@ -80,20 +88,60 @@ class CollectionResourcePresenter < BasePresenter
     end
     session[:view_type] = params[:view_type] if params[:view_type].present? && %w(detail annotation).include?(params[:view_type])
     count_file_wise = {}
+    [session_video_text_all, selected_transcript, selected_index, count_file_wise]
+  end
+
+  def transcript_point_list(file_transcript, file_transcript_points, session_video_text_all)
+    recorded = []
+    recorded[file_transcript.id] ||= []
+    listing_transcripts = {}
+    transcript_count = {}
+    transcript_time_wise = {}
+    counter_listing = 0
+    global_counter_listing = 0
+
+    file_transcript_points.each_with_index do |transcript_point, counter|
+      present(transcript_point) do |presenter|
+        transcript_time_start_single = !recorded[file_transcript.id].include?(transcript_point.start_time.to_i) ? "transcript_time_start_#{transcript_point.start_time.to_i}" : ''
+        listing_transcripts[counter_listing] ||= ''
+        listing_transcripts[counter_listing] += presenter.show_transcript_point(transcript_time_start_single)
+        transcript_time_wise = h.transcript_page_wise_time_range(transcript_time_wise, transcript_point, counter)
+        transcript_count = h.count_occurrence(transcript_point, session_video_text_all, transcript_count, 'transcript', false, counter)
+      end
+      global_counter_listing += 1
+      if global_counter_listing > 110
+        counter_listing += 1
+        global_counter_listing = 0
+      end
+      recorded[file_transcript.id] << transcript_point.start_time.to_i
+    end
+
+    other_file_transcripts = file_transcript.collection_resource_file.file_transcripts.includes([:file_transcript_points]).where.not(id: file_transcript.id)
+    if other_file_transcripts.present?
+      other_file_transcripts.each do |single_file_transcript|
+        single_file_transcript.file_transcript_points.each_with_index do |transcript_point, counter|
+          transcript_time_wise = transcript_page_wise_time_range(transcript_time_wise, transcript_point, counter)
+          transcript_count = count_occurrence(transcript_point, session_video_text_all, transcript_count, 'transcript', false, counter)
+        end
+      end
+    end
+    [listing_transcripts, transcript_count, transcript_time_wise]
+  end
+
+  def file_wise_count(collection_resource, count_file_wise, session_video_text_all)
     collection_resource.collection_resource_files.includes(%i[file_indexes file_transcripts]).each do |single_file|
       count_file_wise[single_file.id] ||= {}
-      single_file.file_indexes.each do |single_index|
+      single_file.file_indexes.includes([:file_index_points]).each do |single_index|
         single_index.file_index_points.each do |index_point|
           count_file_wise = h.count_occurrence(index_point, session_video_text_all, count_file_wise, 'index', true)
         end
       end
-      single_file.file_transcripts.each do |single_transcripts|
+      single_file.file_transcripts.includes([:file_transcript_points]).each do |single_transcripts|
         single_transcripts.file_transcript_points.each do |transcript_point|
           count_file_wise = h.count_occurrence(transcript_point, session_video_text_all, count_file_wise, 'transcript', true)
         end
       end
     end
-
-    [session_video_text_all, selected_transcript, selected_index, count_file_wise]
+    count_file_wise
   end
 end

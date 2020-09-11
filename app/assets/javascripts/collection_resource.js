@@ -8,7 +8,8 @@ function CollectionResource() {
      */
     var file_access = true;
     var selfCR = this;
-    selfCR.markerHandlerArray = {};
+    selfCR.markerHandlerArrayDescription = {};
+    selfCR.markerHandlerIT = {};
     var recorded_transcript = [];
     var recorded_index = [];
     var previousTime = 0;
@@ -55,7 +56,43 @@ function CollectionResource() {
         selfCR.search_text_val = jQuery.parseJSON(search_text_val);
         initPlayer();
         initCopyLink();
+        searchFieldBinding();
+        fileWiseCountFunc();
+        if (selfCR.search_text_val != '' && selfCR.search_text_val != 0) {
+            $.each(selfCR.search_text_val, function (identifier, keyword) {
+                keyword = clearKeyWords(keyword);
+                selfCR.markerHandlerIT[identifier] = new MarkerHandlerIndexTranscript(identifier, keyword);
+                selfCR.markerHandlerIT[identifier].collection_resource = selfCR;
+                selfCR.markerHandlerIT[identifier].initialize();
+            });
+        }
 
+        selfCR.indexes = new IndexTranscript();
+        selfCR.indexes.setup_prerequisites('index', selfCR.selected_index, selfCR, selfCR.embed, selfCR.from_playlist);
+        selfCR.indexes.selected_index = selfCR.selected_index;
+        selfCR.indexes.selected_transcript = selfCR.selected_transcript;
+        selfCR.indexes.initialize(selfCR.selected_index);
+        if (parseInt(selfCR.index_file_count, 10) > 0) {
+            selfCR.indexes.first_time_index_call();
+        }
+
+        selfCR.transcripts = new IndexTranscript();
+        selfCR.transcripts.setup_prerequisites('transcript', selfCR.selected_transcript, selfCR, selfCR.embed, selfCR.from_playlist);
+        selfCR.transcripts.selected_index = selfCR.selected_index;
+        selfCR.transcripts.selected_transcript = selfCR.selected_transcript;
+        selfCR.transcripts.initialize(selfCR.selected_transcript);
+        if (parseInt(selfCR.transcript_file_count, 10) > 0) {
+            selfCR.transcripts.first_time_transcript_call();
+        }
+
+        // move Marker list to top related div after created marker occurrence using using later updated variable session[:count][:index_count]s, @description_count and session[:count][:transcript_count]s
+        $('.marker_list_hanlder_custom').html($('.marker_list_hanlder_custom_tmp').html());
+        $('.marker_list_hanlder_custom_tmp').html('');
+        let type_current = 'description';
+        if(window.location.pathname.substr(window.location.pathname.lastIndexOf('/') + 1) && !$.inArray(type_current, ['transcript', 'description', 'index']) <= 0){
+            type_current = window.location.pathname.substr(window.location.pathname.lastIndexOf('/') + 1);
+        }
+        show_marker_hanlders(type_current);
 
     };
 
@@ -85,24 +122,7 @@ function CollectionResource() {
     };
 
     this.show_counts_tabs = function (response) {
-        try {
 
-            if (response.transcript_count[selfCR.resource_file_id]['total-transcript']) {
-                $('.transcript_count_tab').text(response.transcript_count[selfCR.resource_file_id]['total-transcript']);
-                $('.transcript_count_tab').removeClass('d-none');
-            }
-        } catch (err) {
-
-        }
-
-        try {
-            if (response.index_count[selfCR.resource_file_id]['total-index']) {
-                $('.index_count_tab').text(response.index_count[selfCR.resource_file_id]['total-index']);
-                $('.index_count_tab').removeClass('d-none');
-            }
-        } catch (err) {
-
-        }
         try {
             if (response.description_count['total']) {
                 $('.description_count_tab').text(response.description_count['total']);
@@ -120,6 +140,35 @@ function CollectionResource() {
         selfCR.app_helper.classAction($('#show_counts_tabs').data('url'), data, 'JSON', 'GET', '', selfCR, false);
     };
 
+    this.fileWiseCount = function (response) {
+        try {
+            $.each(response['count_file_wise'], function (index, object){
+                let total_index = 0
+                let total_transcript = 0
+                if(parseInt(object['total-transcript'], 10)){
+                    total_transcript = parseInt(object['total-transcript'], 10)
+                }
+
+                if(parseInt(object['total-index'], 10)){
+                    total_index = parseInt(object['total-index'], 10)
+                }
+
+                $('.file_wise_count_' +index).text(total_transcript + total_index);
+                if((total_transcript + total_index) > 0)
+                    $('.file_wise_count_' +index).removeClass('d-none');
+            });
+        } catch (err) {
+
+        }
+    };
+
+    const fileWiseCountFunc = function () {
+        let data = {
+            action: 'fileWiseCount',
+            search_text_val: selfCR.search_text_val,
+        };
+        selfCR.app_helper.classAction($('#file_wise_count').data('url'), data, 'JSON', 'POST', '', selfCR, false);
+    };
 
     this.load_resource_details_template = function (response, container) {
         if (response.includes('view_edit_custom')) {
@@ -143,14 +192,13 @@ function CollectionResource() {
                     $('.edit_fields').click();
                 }
             }, 100);
+            setTimeout(function(){
+                resourceSearchBar();
+            }, 1000);
         }
     };
 
     const desc_trans_index_call_complete = function () {
-
-        // move Marker list to top related div after created marker occurrence using using later updated variable session[:count][:index_count]s, @description_count and session[:count][:transcript_count]s
-        $('.marker_list_hanlder_custom').html($('.marker_list_hanlder_custom_tmp').html());
-        $('.marker_list_hanlder_custom_tmp').html('');
 
         // move timeline bar to related div after creating bar and using later updated variable session[:count][:index_count]s
         $('.timeline-bar-parent-div').html($('.timeline-bar-parent-div-tmp').html());
@@ -164,36 +212,16 @@ function CollectionResource() {
 
         }
         $('.mCustomScrollbar_description').mCustomScrollbar();
-        selfCR.indexes = new IndexTranscript();
-        selfCR.indexes.setup_prerequisites('index', selfCR.selected_index, selfCR, selfCR.embed, selfCR.from_playlist);
-        selfCR.indexes.selected_index = selfCR.selected_index;
-        selfCR.indexes.selected_transcript = selfCR.selected_transcript;
-        selfCR.indexes.initialize(selfCR.selected_index);
-        if (parseInt(selfCR.index_file_count, 10) > 0) {
-            selfCR.indexes.first_time_index_call();
-        }
 
-        selfCR.transcripts = new IndexTranscript();
-        selfCR.transcripts.setup_prerequisites('transcript', selfCR.selected_transcript, selfCR, selfCR.embed, selfCR.from_playlist);
-        selfCR.transcripts.selected_index = selfCR.selected_index;
-        selfCR.transcripts.selected_transcript = selfCR.selected_transcript;
-        selfCR.transcripts.initialize(selfCR.selected_transcript);
-        if (parseInt(selfCR.transcript_file_count, 10) > 0) {
-            selfCR.transcripts.first_time_transcript_call();
-        }
-
-        selfCR.manageTabs(selfCR.edit_description);
         initEvents();
         initCreateTranscription();
+        selfCR.manageTabs(selfCR.edit_description);
         if (selfCR.search_text_val != '' && selfCR.search_text_val != 0) {
             $.each(selfCR.search_text_val, function (identifier, keyword) {
-                keyword = keyword.replace(/[\/\\()|'"*:^~`{}]/g, '');
-                keyword = keyword.replace(/]/g, '');
-                keyword = keyword.replace(/[[]/g, '');
-                keyword = keyword.replace(/[{}]/g, '');
-                selfCR.markerHandlerArray[identifier] = new MarkerHandler(identifier, keyword);
-                selfCR.markerHandlerArray[identifier].initialize();
-                selfCR.markerHandlerArray[identifier].collection_resource = selfCR;
+                keyword = clearKeyWords(keyword);
+                selfCR.markerHandlerArrayDescription[identifier] = new MarkersHanlderDescription(identifier, keyword);
+                selfCR.markerHandlerArrayDescription[identifier].initialize();
+                selfCR.markerHandlerArrayDescription[identifier].collection_resource = selfCR;
             });
         }
         $('.loader-details').remove();
@@ -793,6 +821,13 @@ function CollectionResource() {
         selfCR.indexes.index_scroll('index', active_transcript_index('index'));
     };
 
+    this.default_active_tab = function() {
+        let tabType = window.location.pathname.substr(window.location.pathname.lastIndexOf('/') + 1);
+        if(!$.inArray(tabType, ['transcript', 'description', 'index']) >= 0) {
+            $('#description-tab').click();
+        }
+    }
+
     this.manageTabs = function (edit_description) {
         let tabType = window.location.pathname.substr(window.location.pathname.lastIndexOf('/') + 1);
         if (collectionResource.from_playlist == true) {
@@ -815,8 +850,7 @@ function CollectionResource() {
         if (tabType == 'description') {
 
         }
-        $('.info_tab_loader').removeClass('d-inline-block');
-        $('.info_tab_loader').addClass('d-none');
+
         if (selfCR.search_text_val != '' && selfCR.search_text_val != 0) {
             $.each(selfCR.search_text_val, function (identifier, keyword) {
                 if (!selfCR.from_playlist) {
@@ -876,7 +910,11 @@ function CollectionResource() {
             }
             $('.search-result-bottom').removeClass('open');
             if (selfCR.search_text_val != '' && selfCR.search_text_val != 0) {
-                $.each(selfCR.markerHandlerArray, function (_index, object) {
+                $.each(selfCR.markerHandlerArrayDescription, function (_index, object) {
+                    object.currentIndex = 0;
+                    $('.current_location').text(object.currentIndex);
+                });
+                $.each(selfCR.markerHandlerIT, function (_index, object) {
                     object.currentIndex = 0;
                     $('.current_location').text(object.currentIndex);
                 });
@@ -906,6 +944,11 @@ function CollectionResource() {
         $('.single_term_handler').removeClass('open');
         $('.single_term_handler.' + tabType).removeClass('d-none');
         $('.single_term_handler.' + tabType).addClass('open');
+    };
+
+    this.show_marker_hanlders = function (tabType) {
+        show_marker_hanlders(tabType);
+
     };
 
     const initTimeline = function () {

@@ -159,9 +159,9 @@ class PlaylistsController < ApplicationController
     from_action = params['identifier']
     collection_resource_playlist_ids = collection_resource.playlist_resources.pluck(:playlist_id)
     playlists = if from_action == 'listing_resource_playlists'
-                  Playlist.where(id: collection_resource_playlist_ids)
+                  Playlist.where(id: collection_resource_playlist_ids).includes([:playlist_resources])
                 else
-                  organization.playlists
+                  organization.playlists.includes([:playlist_resources])
                 end
     render partial: 'add_to_playlist', locals: { playlists: playlists, organization: organization, collection_resource: collection_resource, from_action: from_action, collection_resource_playlist_ids: collection_resource_playlist_ids }
   rescue StandardError => e

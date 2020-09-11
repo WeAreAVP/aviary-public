@@ -22,8 +22,6 @@
     <% end %>
     <strong><%= (index.to_i + 1).to_s %></strong>
 
-    <% if @count_file_wise.present? && (@count_file_wise.key? (single_file.id)) && (@count_file_wise[single_file.id].fetch('total-index', 0) > 0 || @count_file_wise[single_file.id].fetch('total-transcript', 0) > 0) %>
-      <span class="count"><%= @count_file_wise[single_file.id].fetch('total-index', 0) + @count_file_wise[single_file.id].fetch('total-transcript', 0) %></span>
-    <% end %>
+    <span class="count file_wise_count file_wise_count_<%= single_file.id %> d-none"></span>
   </div>
 </div>

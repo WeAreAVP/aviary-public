@@ -410,6 +410,11 @@ class CollectionResource < ApplicationRecord
             end
           when 'id_ss', 'title_ss', 'id_is', 'title_text', 'custom_unique_identifier_texts', 'custom_unique_identifier_ss'
             fq_filters_inner += simple_field_search_handler(value, fq_filters_inner, counter, q)
+            if value['value'] == 'title_ss'
+              alter_search_new = 'title_text'
+              fq_filters_inner += " OR  #{search_perp(q, alter_search_new)} "
+              fq_filters_inner += " OR  #{straight_search_perp(q, alter_search_new)} "
+            end
           when 'description_agent_search_texts', 'description_coverage_search_texts', 'description_description_search_texts', 'description_identifier_search_texts', 'description_keyword_search_texts',
             'description_language_search_texts', 'description_preferred_citation_search_texts', 'description_publisher_search_texts', 'description_relation_search_texts', 'description_rights_statement_search_texts',
             'description_source_metadata_uri_search_texts', 'description_source_search_texts', 'description_subject_search_texts', 'description_title_search_texts', 'description_type_search_texts', 'description_format_search_texts'

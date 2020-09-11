@@ -9,7 +9,7 @@
 %>
 <% if file_indexes.present? %>
   <div class="bottom_layer timeline-player-bar">
-    <% file_indexes.each do |index| %>
+    <% file_indexes.includes([:file_index_points]).each do |index| %>
       <% index.file_index_points.each_with_index do |point, index_number| %>
         <% color = 'blue' %>
         <% color = 'light-orange' if !session[:index_count].blank? and session[:index_count]['individual']['index'].key? "id-#{point.id}" and session[:index_count]['individual']['index']["id-#{point.id}"] > 0 %>

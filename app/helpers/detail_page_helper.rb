@@ -17,6 +17,16 @@ module DetailPageHelper
     type_count
   end
 
+  def add_loader(extra_class)
+    image_link = "https://#{ENV['S3_HOST_CDN']}/public/images/ajax-loader.gif"
+    "<div class='#{extra_class}'>
+      <div class='img'>
+        <div class='hold'>#{image_tag(image_link)}
+        </div>
+      </div>
+    </div>".html_safe
+  end
+
   def count_transcript_occurrence(transcript_point, single_keyword, transcript_count, is_file_wise, counter)
     transcript_point_sum = count_em(transcript_point.text, single_keyword) + count_em(transcript_point.speaker, single_keyword)
     transcript_count[transcript_point.file_transcript.collection_resource_file_id] ||= {}

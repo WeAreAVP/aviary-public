@@ -1,15 +1,11 @@
 collectionResource.index_page_wise_count = JSON.parse('<%== @index_count && @index_count[:page_wise].present? ? @index_count[:page_wise][:index].to_h.to_json : '{}' %>');
-collectionResource.transcript_page_wise_count = JSON.parse('<%== @transcript_count && @transcript_count[:page_wise].present? ? @transcript_count[:page_wise][:transcript].to_h.to_json : '{}' %>');
-
 collectionResource.index_hits_count = JSON.parse('<%== @index_count && @index_count[:hits].present? ? @index_count[:hits].to_h.to_json : '{}' %>');
-collectionResource.transcript_hits_count = JSON.parse('<%== @transcript_count && @transcript_count[:hits].present? ? @transcript_count[:hits].to_h.to_json : '{}' %>');
-collectionResource.annotation_hits_count = JSON.parse('<%== @annotation_count && @annotation_count[:hits].present? ? @annotation_count[:hits].to_h.to_json : '{}' %>');
-collectionResource.annotation_hits_ids = JSON.parse('<%== @annotation_count && @annotation_count[:annotation_ids].present? ? @annotation_count[:annotation_ids].to_h.to_json : '{}' %>');
-
 collectionResource.index_time_wise_page = JSON.parse('<%== @index_time_wise.present? ? @index_time_wise.to_h.to_json : '{}' %>');
-collectionResource.transcript_time_wise_page = JSON.parse('<%== @transcript_time_wise.present? ? @transcript_time_wise.to_h.to_json : '{}' %>');
-
 collectionResource.total_index_wise = JSON.parse('<%== @index_count && @index_count[:total_index_wise].present? ? @index_count[:total_index_wise].to_h.to_json : '{}' %>');
+
+collectionResource.transcript_hits_count = JSON.parse('<%== @transcript_count && @transcript_count[:hits].present? ? @transcript_count[:hits].to_h.to_json : '{}' %>');
+collectionResource.transcript_page_wise_count = JSON.parse('<%== @transcript_count && @transcript_count[:page_wise].present? ? @transcript_count[:page_wise][:transcript].to_h.to_json : '{}' %>');
+collectionResource.transcript_time_wise_page = JSON.parse('<%== @transcript_time_wise.present? ? @transcript_time_wise.to_h.to_json : '{}' %>');
 collectionResource.total_transcript_wise = JSON.parse('<%== @transcript_count && @transcript_count[:total_transcript_wise].present? ? @transcript_count[:total_transcript_wise].to_h.to_json : '{}' %>');
 
 collectionResource.index_file_count = '<%= @resource_file.present? && @resource_file.file_indexes.count > 0  ? @resource_file.file_indexes.count : 0  %>';
