@@ -90,7 +90,6 @@ function CollectionResource() {
                 selfCR.markerHandlerIT[identifier].initialize();
             });
         }
-
         selfCR.indexes = new IndexTranscript();
         selfCR.indexes.setup_prerequisites('index', selfCR.selected_index, selfCR, selfCR.embed, selfCR.from_playlist);
         selfCR.indexes.selected_index = selfCR.selected_index;

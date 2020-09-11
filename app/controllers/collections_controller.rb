@@ -70,6 +70,8 @@ class CollectionsController < ApplicationController
       @detail_page = false
       @data_hash = PreviewScript.new(@collection).data_hash(@collection_resource, @dynamic_fields)
     end
+    current_organization.update_resource_search_column_fields(true)
+    current_organization.update_resource_column_fields(true)
   end
 
   def update

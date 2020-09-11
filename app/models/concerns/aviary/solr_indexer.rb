@@ -63,25 +63,6 @@ module Aviary::SolrIndexer
     field_name
   end
 
-  def self.field_type_finder(type)
-    type_field = '_sms'
-    case type
-    when 'text', 'tokens', 'dropdown'
-      type_field = '_sms'
-    when 'date'
-      type_field = '_lms'
-    when 'editor'
-      type_field = '_texts'
-    end
-    type_field
-  end
-
-  def self.remove_field_type_string(value)
-    value = value.gsub('_sms', '')
-    value = value.gsub('_lms', '')
-    value.gsub('_texts', '')
-  end
-
   def description_values_fetch
     self.description_values_solr = {}
     self.custom_description_solr = {}
@@ -115,6 +96,7 @@ module Aviary::SolrIndexer
             vocab = val['vocab_value']
             value_with_vocab = vocab.to_s + ' :: ' + value.to_s
           end
+
           if field_name.include?('custom_field_values') || res['field'].is_custom
             custom_description_solr[field_name] ||= {}
             custom_description_solr[field_name]['value'] ||= []
@@ -140,7 +122,26 @@ module Aviary::SolrIndexer
     end
   end
 
-  def date_handler(value)
+  def self.field_type_finder(type)
+    type_field = '_sms'
+    case type
+    when 'text', 'tokens', 'dropdown'
+      type_field = '_sms'
+    when 'date'
+      type_field = '_lms'
+    when 'editor'
+      type_field = '_texts'
+    end
+    type_field
+  end
+
+  def self.remove_field_type_string(value)
+    value = value.gsub('_sms', '')
+    value = value.gsub('_lms', '')
+    value.gsub('_texts', '')
+  end
+
+  def self.date_handler(value)
     begin
       value = value.blank? ? '' : value.strip
       case value.scan(/(?=#{'-'})/).count
