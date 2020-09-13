@@ -32,25 +32,18 @@
       <div class="search_details_bar col-md-12 pr-0">
         <% if @collection_resource.collection.enable_resource_search %>
           <div class="col-md-12">
-            <% search_path_common = if from_playlist.present? && from_playlist.to_s.to_boolean? && @resource_file.present?
-                                      playlist_playlist_resource_search_text_url(playlist_id: params[:playlist_id], playlist_resource_id:
-                                          params[:playlist_resource_id], collection_resource_id: @collection_resource.id, collection_resource_file_id: @resource_file.id)
-                                    else
-                                      collection_collection_resource_search_text_url(collection_id: @collection.id, collection_resource_id: @collection_resource.id)
-                                    end %>
-            <%= form_tag search_path_common, class: 'search-field seach_form_cus' do |form| %>
-              <div class="">
-                <div class="form-group">
-                  <span class="icon icon-magnifying-glass"></span>
-                  <%= text_field('search', 'text', class: 'form-control', value: @session_video_text, placeholder: "#{ @collection_resource.collection.search_resource_placeholder }") %>
-                  <%= hidden_field('', 'selected_index') %>
-                  <%= hidden_field('', 'selected_transcript') %>
-                  <%= hidden_field('', 'selected_file', value: @resource_file.present? ? @resource_file.id : '') if @resource_file.present? %>
-                </div>
+              <div class="search-field seach_form_cus">
+                  <div class="form-group">
+                    <span class="icon icon-magnifying-glass"></span>
+                    <%= text_field('search', 'text', class: 'form-control', value: @session_video_text, placeholder: "#{ @collection_resource.collection.search_resource_placeholder }") %>
+                    <%= hidden_field('', 'selected_index') %>
+                    <%= hidden_field('', 'selected_transcript') %>
+                    <%= hidden_field('', 'selected_file', value: @resource_file.present? ? @resource_file.id : '') if @resource_file.present? %>
+                  </div>
               </div>
-            <% end %>
 
-            <% unless session[:session_video_text_all].blank? %>
+
+            <% unless @session_video_text_all.blank? %>
               <div class="search-result-bottom active ">
                 <a href="javascript:void(0);" class="btn-search-result-nav "><span><i class="fa fa-bars"></i> Search Results </span></a>
                 <div class="marker_list_hanlder_custom">
@@ -89,7 +82,7 @@
           <% if (@resource_file.present? && @resource_file.file_indexes.present?) %>
             <% file_indexes = @resource_file.file_indexes.order_index %>
           <% end %>
-          <%= render partial: 'indexes/index_options', locals: {file_indexes: file_indexes} %>
+          <%= render partial: 'indexes/index_options', locals: { file_indexes: file_indexes, from_playlist: from_playlist } %>
 
           <div class="row">
             <div class="col-md-12">
@@ -124,7 +117,7 @@
           <% if (@resource_file.present? && @resource_file.file_transcripts.present?) %>
             <% file_transcripts = @resource_file.file_transcripts.order_transcript %>
           <% end %>
-          <%= render partial: 'transcripts/transcript_options', locals: {file_transcripts: file_transcripts} %>
+          <%= render partial: 'transcripts/transcript_options', locals: {file_transcripts: file_transcripts, from_playlist: from_playlist } %>
 
 
 
@@ -160,13 +153,13 @@
   <% if @collection_resource.present? && @dynamic_fields.present? && @dynamic_fields['CollectionResource'].present? %>
     <% @dynamic_fields['CollectionResource'].each do |single_field| %>
       <% single_field['values'].each do |single_value| %>
-        <% @description_count = count_occurrence(single_value, session[:session_video_text_all], @description_count, 'description') %>
+        <% @description_count = count_occurrence(single_value, @session_video_text_all, @description_count, 'description') %>
       <% end %>
     <% end %>
   <% end %>
   <% session[:description_count] = @description_count %>
   <div class="marker_list_hanlder_custom_tmp d-none">
-    <% unless session[:session_video_text_all].blank? %>
+    <% unless @session_video_text_all.blank? %>
       <%= render partial: 'collection_resources/show/marker_list_hanlder', locals: {type: 'description', count: session[:description_count]} %>
       <%= render partial: 'collection_resources/show/marker_list_hanlder', locals: {type: 'index', count: session[:index_count]} %>
       <%= render partial: 'collection_resources/show/marker_list_hanlder', locals: {type: 'transcript', count: session[:transcript_count]} %>

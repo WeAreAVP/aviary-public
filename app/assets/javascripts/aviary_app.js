@@ -232,6 +232,27 @@ function App() {
         }
         return [params, url_raw[0]];
     };
+    /**
+     *
+     * @param url
+     * @returns {[[], *|string]}
+     */
+    this.getUrlParamRepeatable = function (url){
+        var params = [];
+        var parser = document.createElement('a');
+        parser.href = url;
+        let url_raw = url.split('?');
+        var query = parser.search.substring(1);
+        var vars = query.split('&');
+
+        for (var i = 0; i < vars.length; i++) {
+            var pair = vars[i].split('=');
+            if (pair[0]) {
+                params.push(pair[0]+'='+decodeURIComponent(pair[1]));
+            }
+        }
+        return [params, url_raw[0]];
+    };
 
     /**
      *

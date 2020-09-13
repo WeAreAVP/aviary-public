@@ -1,0 +1,107 @@
+<div id="main_container" class="container-fluid">
+  <div class="main_contain">
+    <main>
+      <div class="text-headline jumbotron">
+        <div class="heading-holder table-head">
+          <div class="row">
+            <div class="col-md-6"><h1> Search Configuration </h1></div>
+            <div class="col-md-6"></div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <div id="wrapper">
+            <main id="main" role="main">
+              <div class="org-metadata" >
+                <div class="text-headline jumbotron">
+                  <h4>Facet Fields</h4>
+
+                  <p>In this configuration page, you can select which of which metadata fields appear as facets for your
+                    organization search page. You can also select in which order (from top to bottom on the page) they
+                    will appear for your users.</p>
+                  <p>Below you will see a comprehensive list of all metadata fields that exist across all of your
+                    organization’s collections. If you create custom metadata fields for individual collections, you
+                    will see them appear in the list below.
+                    You can drag-and-drop each field below in order to set the sequence of appearance.
+                    You can also toggle each field on or off in the Status column below to determine if a field will
+                    appear as a facet or not.</p>
+                  <p><strong>Note</strong>: Fields that are description fields, i.e., have WYSIWYG editors, will not
+                    appear in this list because they are not available for faceting.</p>
+
+
+                </div>
+                <div class="">
+                  <div class="row">
+                    <div class="col-md-6">
+                      <table class="table pb-0 mb-0">
+                      </table>
+                      <div class="holder custom_fields_container border-0">
+                        <table class="table table-striped table-bordered table-hover border-0" >
+                          <thead>
+                          <tr class="">
+                            <th class='pl-5 ' style="width: 33% !important;" ><h2>Field Name</h2></th>
+                            <th style="width: 33% !important; "><h2>Available in Collection</h2></th>
+                            <th style="width: 33% !important; "><h2>Status</h2></th>
+                          </tr>
+                          </thead>
+
+                        </table>
+                        <table class="table table-bordered table-hover border-0" id="sort_facet_fields_table" >
+                          <tbody>
+                          <%= form_tag search_configuration_organization_path, class: "sort-search-field-form" do %>
+                            <% @dynamic_fields.each do |_key, custom_field| %>
+                              <% custom_field_info = CustomFields::Field.where(system_name: custom_field['key']).try(:first) %>
+                              <% system_name = custom_field_info.present? ? custom_field_info.system_name : custom_field['key'] %>
+                              <% type = custom_field_info.present? ? CustomFields::Field::TypeInformation.fetch_type(custom_field_info.column_type).to_s : custom_field['type'] %>
+                              <% label = custom_field_info.present? ? custom_field_info.label.titleize : custom_field['label'].titleize %>
+                              <% is_default_field = custom_field['is_default_field'] %>
+                              <% collection = custom_field['collection'] %>
+                              <tr class="facet_field <%= system_name %>" data-facet-field="<%= system_name %>" data-facet-field-type="<%= type %>" data-label="<%= label %>" data-collection="<%= collection %>" data-is-default-field="<%= is_default_field %>">
+                                <td width="30%">
+                                  <i class="fa fa-bars handle" style="color: lightgrey;cursor: move;"></i><span style="margin-left: 10px;">
+                                  <% if is_default_field %>
+                                    <i class="fa fa-asterisk green font-size-8px" data-toggle="tooltip" title="This is a default field of collection." aria-hidden="true"></i>
+                                  <% end %>
+                                  <%= label %>
+                                </span>
+                                </td>
+                                <td width="30%">
+                                  <%= collection.present? ? collection.split(',').join('<br/>').html_safe : 'All' %>
+                                </td>
+                                <td width="30%">
+                                  <label class="toggle-switch">
+                                    <%= check_box_tag 'is_facetable', 'no', custom_field['status'].to_s.to_boolean?, class: "toggle-switch__input template-data-is-facetable template-data-field-is-facetable" %>
+                                    <span class="toggle-switch__slider"></span>
+                                  </label>
+                                </td>
+                              </tr>
+                            <% end %>
+                            <textarea class="d-none sort_info_search" name='sort_info_search'></textarea>
+                          <% end %>
+                          </tbody>
+                        </table>
+                      </div>
+
+                    </div>
+                    <div class="text-right mb-4 col-12">
+                      <button class="update-forms-btn btn btn-info mt-2 mr-2" href="javascript://">Update</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </main>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<script type="text/javascript">
+
+    var orgnization = new Organization();
+    $(function () {
+        orgnization.initFacetFields();
+    });
+</script>

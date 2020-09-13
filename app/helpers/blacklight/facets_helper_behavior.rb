@@ -2,7 +2,7 @@
 # FacetsHelperBehavior
 module Blacklight::FacetsHelperBehavior
   include Blacklight::Facet
-  
+
   ##
   # Check if any of the given fields have values
   #
@@ -12,7 +12,7 @@ module Blacklight::FacetsHelperBehavior
   def has_facet_values?(fields = facet_field_names, _options = {})
     facets_from_request(fields).any? { |display_facet| !display_facet.items.empty? && should_render_facet?(display_facet) }
   end
-  
+
   ##
   # Render a collection of facet fields.
   # @see #render_facet_limit
@@ -25,7 +25,21 @@ module Blacklight::FacetsHelperBehavior
       render_facet_limit(display_facet, options)
     end.compact, "\n")
   end
-  
+
+  def render_collection_org_facet(type)
+    user_ip = request.ip
+    if type == 'organization'
+      unless current_organization.present?
+        org_facet_manager = SearchPresenter.organization_facet_manager(current_organization, current_user, user_ip, params, has_facet_values?, session[:last_fq])
+        render partial: 'catalog/limited_facets', locals: {org_n_collection_facet_manager: org_facet_manager}
+      end
+    end
+    if type == 'collection'
+      collection_facet_manager = SearchPresenter.collection_facet_manager(current_organization, current_user, user_ip, params, has_facet_values?, session[:last_fq])
+      render partial: 'catalog/limited_facets', locals: {org_n_collection_facet_manager: collection_facet_manager}
+    end
+  end
+
   ##
   # Renders a single section for facet limit with a specified
   # solr field used for faceting. Can be over-ridden for custom
@@ -38,16 +52,21 @@ module Blacklight::FacetsHelperBehavior
   # @option options [Hash] :locals locals to pass to the partial
   # @return [String]
   def render_facet_limit(display_facet, options = {})
-    return unless should_render_facet?(display_facet) && !%w[organization_id_is collection_id_is].include?(display_facet.name)
-    options = options.dup
-    options[:partial] ||= facet_partial_name(display_facet)
-    options[:layout] ||= 'facet_layout' unless options.key?(:layout)
-    options[:locals] ||= {}
-    options[:locals][:field_name] ||= display_facet.name
-    options[:locals][:solr_field] ||= display_facet.name # deprecated
-    options[:locals][:facet_field] ||= facet_configuration_for_field(display_facet.name)
-    options[:locals][:display_facet] ||= display_facet
-    render(options)
+    return unless should_render_facet?(display_facet)
+    if %w[organization_id_is collection_id_is].include?(display_facet.name)
+      type = display_facet.name == 'organization_id_is' ? 'organization' : 'collection'
+      render_collection_org_facet(type)
+    else
+      options = options.dup
+      options[:partial] ||= facet_partial_name(display_facet)
+      options[:layout] ||= 'facet_layout' unless options.key?(:layout)
+      options[:locals] ||= {}
+      options[:locals][:field_name] ||= display_facet.name
+      options[:locals][:solr_field] ||= display_facet.name # deprecated
+      options[:locals][:facet_field] ||= facet_configuration_for_field(display_facet.name)
+      options[:locals][:display_facet] ||= display_facet
+      render(options)
+    end
   end
 
   ##
@@ -57,7 +76,7 @@ module Blacklight::FacetsHelperBehavior
   def render_facet_limit_list(paginator, facet_field, wrapping_element = :li)
     safe_join(paginator.items.map { |item| render_facet_item(facet_field, item) }.compact.map { |item| content_tag(wrapping_element, item) })
   end
-  
+
   ##
   # Renders a single facet item
   def render_facet_item(facet_field, item)
@@ -67,7 +86,7 @@ module Blacklight::FacetsHelperBehavior
       render_facet_value(facet_field, item)
     end
   end
-  
+
   ##
   # Determine if Blacklight should render the display_facet or not
   #
@@ -81,7 +100,7 @@ module Blacklight::FacetsHelperBehavior
     display = should_render_field?(facet_config, display_facet)
     display && display_facet.items.present?
   end
-  
+
   ##
   # Determine whether a facet should be rendered as collapsed or not.
   #   - if the facet is 'active', don't collapse
@@ -93,7 +112,7 @@ module Blacklight::FacetsHelperBehavior
   def should_collapse_facet?(facet_field)
     !facet_field_in_params?(facet_field.key) && facet_field.collapse
   end
-  
+
   ##
   # The name of the partial to use to render a facet field.
   # uses the value of the "partial" field if set in the facet configuration
@@ -107,7 +126,7 @@ module Blacklight::FacetsHelperBehavior
     name ||= 'facet_pivot' if config.pivot
     name ||= 'facet_limit'
   end
-  
+
   ##
   # Standard display of a facet value in a list. Used in both _facets sidebar
   # partial and catalog/facet expanded list. Will output facet value name as
@@ -122,25 +141,25 @@ module Blacklight::FacetsHelperBehavior
     path = path_for_facet(facet_field, item)
 
     "<input type='checkbox' class='checked-facets m-r ' data-linkremove='#{path}&update_facets=true'/>".html_safe + content_tag(:span, class: 'facet-label facet_value_custom') do
-        if ['access_restricted', 'access_public', 'access_private', 'public_resource_restricted_content'].include?(facet_display_value(facet_field, item)) 
-            case facet_display_value(facet_field, item).to_s
-              when 'access_restricted'
-                'Restricted Resource'
-              when 'access_public'
-                'Public Resource'
-              when 'access_private'
-                'Private Resource'
-              when 'public_resource_restricted_content'
-                'Public Resource w/ restricted content'
-              else
-                facet_display_value(facet_field, item).to_s.titleize
-            end 
-        else 
-          facet_display_value(facet_field, item).to_s
-        end 
+      if ['access_restricted', 'access_public', 'access_private', 'public_resource_restricted_content'].include?(facet_display_value(facet_field, item))
+        case facet_display_value(facet_field, item).to_s
+        when 'access_restricted'
+          'Restricted Resource'
+        when 'access_public'
+          'Public Resource'
+        when 'access_private'
+          'Private Resource'
+        when 'public_resource_restricted_content'
+          'Public Resource w/ restricted content'
+        else
+          facet_display_value(facet_field, item).to_s.titleize
+        end
+      else
+        facet_display_value(facet_field, item).to_s
+      end
     end + render_facet_count(item.hits)
   end
-  
+
   ##
   # Where should this facet link to?
   # @param [Blacklight::Solr::Response::Facets::FacetField] facet_field
@@ -154,7 +173,7 @@ module Blacklight::FacetsHelperBehavior
       search_action_path(search_state.add_facet_params_and_redirect(facet_field, item))
     end
   end
-  
+
   ##
   # Standard display of a SELECTED facet value (e.g. without a link and with a remove button)
   # @see #render_facet_value
@@ -163,7 +182,7 @@ module Blacklight::FacetsHelperBehavior
   def render_selected_facet_value(facet_field, item)
     remove_href = search_action_path(search_state.remove_facet_params(facet_field, item))
     "<input type='checkbox' checked='checked' class='checked-facets mr-3 ' data-linkremove='#{remove_href}'/>".html_safe + content_tag(:span, class: 'facet-label 2') do
-      
+
       content_tag(:span, facet_display_value(facet_field, item).to_s, class: 'selected facet_value_custom') +
           # remove link
           # link_to(remove_href, class: "remove") do
@@ -173,7 +192,7 @@ module Blacklight::FacetsHelperBehavior
           ''
     end + render_facet_count(item.hits, classes: ['selected'])
   end
-  
+
   ##
   # Renders a count value for facet limits. Can be over-ridden locally
   # to change style. And can be called by plugins to get consistent display.
@@ -186,7 +205,7 @@ module Blacklight::FacetsHelperBehavior
     classes = (options[:classes] || []) << 'facet-count'
     content_tag('span', t('blacklight.search.facets.count', number: number_with_delimiter(num)), class: classes)
   end
-  
+
   ##
   # Are any facet restrictions for a field in the query parameters?
   #
@@ -195,7 +214,7 @@ module Blacklight::FacetsHelperBehavior
   def facet_field_in_params?(field)
     !facet_params(field).blank?
   end
-  
+
   ##
   # Check if the query parameters have the given facet field with the
   # given value.
@@ -205,18 +224,18 @@ module Blacklight::FacetsHelperBehavior
   # @return [Boolean]
   def facet_in_params?(field, item)
     value = facet_value_for_facet_item(item)
-    
+
     (facet_params(field) || []).include? value
   end
-  
+
   ##
   # Get the values of the facet set in the blacklight query string
   def facet_params(field)
     config = facet_configuration_for_field(field)
-    
+
     params[:f][config.key] if params[:f]
   end
-  
+
   ##
   # Get the displayable version of a facet's value
   #
@@ -225,32 +244,32 @@ module Blacklight::FacetsHelperBehavior
   # @return [String]
   def facet_display_value(field, item)
     facet_config = facet_configuration_for_field(field)
-    
+
     value = if item.respond_to? :label
               item.label
             else
               facet_value_for_facet_item(item)
             end
-    
+
     if facet_config.helper_method
       send facet_config.helper_method, value
     elsif facet_config.query && facet_config.query[value]
       facet_config.query[value][:label]
     elsif facet_config.date
       localization_options = facet_config.date == true ? {} : facet_config.date
-      
+
       l(value.to_datetime, localization_options)
     else
       value
     end
   end
-  
+
   def facet_field_id(facet_field)
     "facet-#{facet_field.key.parameterize}"
   end
-  
+
   private
-  
+
   def facet_value_for_facet_item(item)
     if item.respond_to? :value
       item.value

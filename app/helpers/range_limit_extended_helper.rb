@@ -15,8 +15,8 @@ module RangeLimitExtendedHelper
     if hash['begin'] || hash['end']
       begin_value = hash['begin'].to_i
       end_value = hash['end'].to_i
-      begin_value = hash['begin'] if solr_field == 'description_date_search_lms'
-      return "<span class='single'>#{h(begin_value)}</span>".html_safe if begin_value == end_value || solr_field == 'description_date_search_lms'
+      begin_value = hash['begin'] if solr_field.end_with?('_lms')
+      return "<span class='single'>#{h(begin_value)}</span>".html_safe if begin_value == end_value || solr_field.end_with?('_lms')
       return "<span class='from'>#{h(begin_value)}</span> to <span class='to'>#{h(end_value)}</span>".html_safe unless solr_field == 'description_duration_ls'
       begin_hours = (begin_value / 60).floor
       begin_minutes = begin_value % 60
@@ -35,7 +35,7 @@ module RangeLimitExtendedHelper
     html = label_tag("range[#{solr_field}][#{type}]", input_label, class: 'sr-only') if input_label.present?
     html ||= ''.html_safe
     extra_class = ''
-    extra_class = ' text-center w-100p ' if solr_field == 'description_date_search_lms'
-    html + text_field_tag("range[#{solr_field}][#{type}]", default, maxlength: maxlength, class: "form-control range_#{type} #{extra_class}")
+    extra_class = ' text-center w-100p ' if solr_field.end_with?('_lms')
+    html + text_field_tag("range[#{solr_field}][#{type}]", default, maxlength: maxlength, class: "form-control search_range_picker_date range_#{type} #{extra_class}")
   end
 end

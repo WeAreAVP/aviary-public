@@ -17,4 +17,39 @@ function Organization() {
         display_settings.init_display_settings('organization');
     };
 
+    const updateSortInfo = function () {
+        let info = {};
+        $('tr.facet_field').each(function (index, _value) {
+            let status = $(this).find('.template-data-field-is-facetable').prop('checked')
+            info[index] = {
+                key: $(this).data('facet-field'),
+                label: $(this).data('label'),
+                status: status,
+                type: $(this).data('facet-field-type'),
+                is_default_field: $(this).data('is-default-field'),
+                collection: $(this).data('collection')
+            };
+        });
+        $('.sort_info_search').text(JSON.stringify(info));
+    }
+
+    this.initFacetFields = function () {
+        $('#sort_facet_fields_table tbody').sortable({
+            axis: "y",
+            containment: "parent",
+            cursor: "move",
+            items: "tr",
+            tolerance: "pointer",
+            stop: updateSortInfo,
+        });
+        document_level_binding_element('.template-data-is-facetable', 'change', function (e) {
+            updateSortInfo();
+        });
+        document_level_binding_element('.update-forms-btn', 'click', function (e) {
+            $('.sort-search-field-form').submit();
+        });
+        setTimeout(function () {
+            updateSortInfo();
+        }, 2000)
+    };
 }

@@ -32,7 +32,11 @@
     </div>
   </div>
   <div style="position: relative;">
-    <div class="info_tabs" data-template-url="<%= collection_collection_resource_load_resource_details_template_path(@collection, @collection_resource, @resource_file, share: params[:share]) %>" data-search-size="7" data-tabs-size="5">
+    <%
+      load_resource_details_url = collection_collection_resource_load_resource_details_template_url(@collection, @collection_resource, @resource_file, share: params[:share])
+      load_resource_details_url = append_param_to_url(params[:keywords], load_resource_details_url)
+    %>
+    <div class="info_tabs" data-template-url="<%= load_resource_details_url %>" data-search-size="7" data-tabs-size="5">
     </div>
     <div class="loader loader-details">
       <div class="img">

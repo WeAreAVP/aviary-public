@@ -7,7 +7,6 @@ class CollectionResourcesController < ApplicationController
   load_and_authorize_resource except: %I[create search_text load_head_and_tombstone_template load_resource_details_template load_time_line_template embed_file show_search_counts load_index_template load_transcript_template file_wise_counts]
   include ApplicationHelper
   include Aviary::ResourceFileManagement
-  include Aviary::SearchManagement
 
   def index
     authorize! :manage, current_organization
@@ -43,9 +42,9 @@ class CollectionResourcesController < ApplicationController
     @file_indexes = {}
     @file_transcripts = {}
     session[:count_presence] = { index: false, transcript: false, description: false }
-    session[:session_video_text_all] = session[:transcript_count] = session[:index_count] = session[:description_count] = {}
+    @session_video_text_all = session[:transcript_count] = session[:index_count] = session[:description_count] = {}
     collection_resource_presenter = CollectionResourcePresenter.new(@collection_resource, view_context)
-    session[:session_video_text_all], @selected_transcript, @selected_index, @count_file_wise = collection_resource_presenter.generate_params_for_detail_page(@resource_file, @collection_resource, session, params)
+    @session_video_text_all, @selected_transcript, @selected_index, @count_file_wise = collection_resource_presenter.generate_params_for_detail_page(@resource_file, @collection_resource, session, params)
     @file_indexes, @file_transcripts, @selected_index, @selected_transcript = collection_resource_presenter.selected_index_transcript(@resource_file, @selected_index, @selected_transcript)
   end
 

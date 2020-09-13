@@ -336,6 +336,27 @@ function init_tinymce_for_element(selector, custom_config) {
     return tinyMCE;
 }
 
+function selectizeInit(element){
+    return $(element).selectize({
+        openOnFocus: false,
+        onInitialize: function () {
+            var that = this;
+            this.$control.on("click", function () {
+                that.ignoreFocusOpen = true;
+                setTimeout(function () {
+                    that.ignoreFocusOpen = false;
+                }, 50);
+            });
+        },
+        onFocus: function () {
+            if (!this.ignoreFocusOpen) {
+                this.open();
+            }
+        }
+    });
+}
+
+
 document.addEventListener("DOMContentLoaded", function (event) {
     init_tinymce_for_element('.apply_tinymce_to_it');
 

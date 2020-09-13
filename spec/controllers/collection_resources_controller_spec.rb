@@ -89,13 +89,6 @@ RSpec.describe CollectionResourcesController, type: :controller do
     end
   end
 
-  describe "GET search_text" do
-    it "has a 200 status code" do
-      post :search_text, params: { "search" => { "text" => "asjkdfhasdf" }, "selected_index" => "1", "selected_transcript" => "", "selected_file" => "1", "collection_id" => "1", "collection_resource_id" => "1" }
-      expect(response.status).to eq(302)
-    end
-  end
-
   describe "Delete Destroy" do
     it "has a 302 status code" do
       delete :destroy, params: { id: collection_resource.id }

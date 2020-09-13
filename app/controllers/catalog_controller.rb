@@ -5,9 +5,41 @@ class CatalogController < ApplicationController
   include BlacklightAdvancedSearch::Controller
   include BlacklightRangeLimit::ControllerOverride
   include Blacklight::Catalog
-  before_action :mutiple_keyword_hanlder, :session_param_update, :update_facets
+  include ApplicationHelper
+  before_action :mutiple_keyword_handler, :session_param_update, :update_facets
 
   def update_facets
+    if current_organization.present? && current_organization.search_facet_fields.present? && JSON.parse(current_organization.search_facet_fields).present?
+      JSON.parse(current_organization.search_facet_fields).each do |_key, single_facet_field|
+        next unless single_facet_field['status'].to_s.to_boolean?
+        if single_facet_field['is_default_field'].to_s.to_boolean?
+          default_field_info = Organization.field_list_with_options[single_facet_field['key'].to_sym]
+          field_settings = default_field_info.slice(:label, :single, :helper_method, :tag, :ex, :partial, :range)
+          @blacklight_config.add_facet_field(default_field_info[:key].to_s, field_settings)
+        else
+          solr_search_management = SolrSearchManagement.new
+          solr_filed = Aviary::SolrIndexer.define_custom_field_system_name(single_facet_field['key'].to_s, single_facet_field['type'].to_s, true)
+          range_start = "['' TO *]"
+          range_start = '[0 TO *]' if single_facet_field['type'].to_s == 'date'
+          response = begin
+                       solr_search_management.select_query(q: '*:*', fq: ['document_type_ss:collection_resource', "#{solr_filed}:#{range_start}"])
+                     rescue StandardError => e
+                       puts e
+                       false
+                     end
+          field_info = { label: single_facet_field['label'], single: false }
+          if single_facet_field['type'].to_s == 'date'
+            field_info = { label: single_facet_field['label'], single: true, partial: 'blacklight_range_limit/range_limit_panel', range: { segments: false }, tag: "#{solr_filed}-tag", ex: "#{solr_filed}-tag" }
+          end
+
+          @blacklight_config.add_facet_field(solr_filed.to_s, field_info) if response.present? && response['response'].present? && response['response']['numFound'] > 0
+        end
+      end
+    else
+      Organization.field_list_with_options.each do |_index, single_field|
+        @blacklight_config.add_facet_field(single_field[:key].to_s, label: single_field[:label], single: single_field[:single], helper_method: single_field[:helper_method], tag: single_field[:tag], ex: single_field[:ex])
+      end
+    end
     flag_param_changed = false
     unless request.fullpath.include?('update_selected_playlist') || request.fullpath.include?('assign_to_playlist')
       facet_lists = %w[f keywords title_text resource_description indexes transcript collection_title op description_duration_ls description_date_search_lms]
@@ -65,7 +97,7 @@ class CatalogController < ApplicationController
     end
   end
 
-  def mutiple_keyword_hanlder
+  def mutiple_keyword_handler
     session[:searched_for_org] = current_organization.present?
     current_params_index_raw = ''
     session[:searched_keywords] ||= {}
@@ -118,21 +150,6 @@ class CatalogController < ApplicationController
     config.advanced_search[:form_solr_parameters] ||= {}
     config.http_method = :post
     config.default_per_page = 12
-    # Facets Field
-
-    config.add_facet_field 'organization_id_is', label: 'Organization Name', single: false, helper_method: :render_organization_facet_value, tag: 'organization_id_is-tag', ex: 'organization_id_is-tag'
-    config.add_facet_field 'collection_id_is', label: 'Collection Title', single: false, helper_method: :render_collection_facet_value, tag: 'collection_id_is-tag', ex: 'collection_id_is-tag'
-    config.add_facet_field 'description_date_search_lms', label: 'Date', partial: 'blacklight_range_limit/range_limit_panel', range: { segments: false }, tag: 'description_date_search_lms-tag', ex: 'description_date_search_lms-tag'
-    config.add_facet_field 'description_language_search_facet_sms', label: 'Resource Language', single: false
-    config.add_facet_field 'description_coverage_search_facet_sms', label: 'Location', single: false
-    config.add_facet_field 'has_transcript_ss', label: 'Has Transcript', single: false
-    config.add_facet_field 'has_index_ss', label: 'Has Index', single: false
-    config.add_facet_field 'description_format_search_facet_sms', label: 'Format', single: false
-    config.add_facet_field 'description_subject_search_facet_sms', label: 'Subject', single: false
-    config.add_facet_field 'description_type_search_facet_sms', label: 'Type', single: false
-    config.add_facet_field 'access_ss', label: 'Access', single: false
-    config.add_facet_field 'description_duration_ls', label: 'Duration', single: true, partial: 'blacklight_range_limit/range_limit_panel', range: { segments: false }, tag: 'description_duration_ls', ex: 'description_duration_ls-tag'
-
     # Search Fields Dropdown
     config.add_search_field('keywords') do |field|
       field.label = 'Any Field'

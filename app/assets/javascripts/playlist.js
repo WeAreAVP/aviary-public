@@ -272,7 +272,7 @@ function Playlist() {
                 tabtype: $(this).data('tabtype'),
                 action: 'update_selected_tab'
             };
-            selfPL.appHelper.classAction($(this).data('urltab'), data, 'JSON', 'POST', '', selfPL, false);
+            selfPL.appHelper.classAction($(this).data('urltab'), data, 'text', 'POST', '', selfPL, false);
         }, true);
     };
 
@@ -370,9 +370,11 @@ function Playlist() {
         if (selfPL.calls_inprogress == 0) {
             $('.loader-playlist_items').addClass('d-none');
         }
-        if ($('.playlist_resource_single').length == 0 && selfPL.calls_inprogress <= 0) {
-            $('#no_resource_found').show();
-        }
+        setTimeout(function(){
+            if ($('.playlist_resource_single').length == 0 && selfPL.calls_inprogress <= 0) {
+                $('#no_resource_found').show();
+            }
+        }, 1000);
 
 
     };

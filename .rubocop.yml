@@ -1522,7 +1522,7 @@ Metrics/AbcSize:
 Metrics/BlockLength:
   CountComments: false  # count full line comments?
   #TOOO:: had to increase it because of routes block size
-  Max: 300
+  Max: 350
   ExcludedMethods: []
 
 Metrics/BlockNesting:

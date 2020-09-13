@@ -54,6 +54,15 @@ module Aviary::SolrIndexer
     end
   end
 
+  def self.define_custom_field_system_name(system_name, type = nil, append_solr_type = false)
+    field_name = 'custom_field_values_' + system_name
+    if append_solr_type
+      type_field = Aviary::SolrIndexer.field_type_finder(type)
+      field_name = field_name.to_s + type_field
+    end
+    field_name
+  end
+
   def description_values_fetch
     self.description_values_solr = {}
     self.custom_description_solr = {}
@@ -66,8 +75,9 @@ module Aviary::SolrIndexer
     resource_values['CollectionResource'].each do |res|
       next if !res['values'].empty? && res['values'][0]['value'] == '' && res['values'][0]['vocab_value'] == ''
       field_name = res['field'].system_name
+
       if res['field'].is_custom
-        field_name = 'custom_field_values_' + field_name
+        field_name = Aviary::SolrIndexer.define_custom_field_system_name(field_name)
       end
 
       unless description_values_solr.key?(field_name)
@@ -93,7 +103,6 @@ module Aviary::SolrIndexer
             custom_description_solr[field_name]['type'] = res['field'].fetch_type
             custom_description_solr[field_name]['value'] << value_with_vocab
           elsif res['field'].system_name == 'coverage'
-            # TODO: : Consider this condition if vocab.present? && vocab == 'spatial'
             description_values_solr["#{field_name}_search"] << value_with_vocab
           elsif res['field'].system_name == 'duration'
             value = ((value.present? && !value.empty? ? value : '00:00:00').split(':').map(&:to_i).inject(0) { |a, b| a * 60 + b }.to_f / 60).round(2)
@@ -105,7 +114,7 @@ module Aviary::SolrIndexer
                                                                  value_with_vocab
                                                                end
           end
-          description_values_solr[field_name] << value_with_vocab
+
           description_values_solr['all_vocabs'] = [] unless description_values_solr['all_vocabs'].present?
           description_values_solr['all_vocabs'] << vocab if vocab.present? && !description_values_solr['all_vocabs'].include?(vocab)
         end

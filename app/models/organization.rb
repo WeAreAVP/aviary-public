@@ -31,7 +31,7 @@ class Organization < ApplicationRecord
   scope :active_storage, -> { where(status: true, storage_type: :wasabi_storage.to_s) }
   before_save :update_default_values
   before_create :create_bucket
-  after_save :update_solr, :update_resource_column_fields, :update_resource_search_column_fields, :update_resource_files_fields
+  after_save :update_solr, :update_resource_column_fields, :update_resource_search_column_fields, :update_resource_files_fields, :update_search_configuration
 
   searchable do
     integer :id, stored: true
@@ -273,6 +273,7 @@ class Organization < ApplicationRecord
   end
 
   def detect_search_facets_change
+    update_search_configuration(true) unless search_facet_fields.present?
     dynamic_fields = JSON.parse(search_facet_fields)
     remove_fields_list = []
     dynamic_fields.each do |key_outer, custom_field_managed|

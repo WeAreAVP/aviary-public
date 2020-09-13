@@ -247,7 +247,7 @@ function SearchPage() {
                 $('#' + $(this).data('id')).show();
             });
 
-            $('#range_description_date_search_lms_begin, #range_description_date_search_lms_end').daterangepicker({
+            $('.search_range_picker_date.range_begin, .search_range_picker_date.range_end').daterangepicker({
                 locale: {
                     format: 'YYYY-MM-DD',
                 }, ranges: {
