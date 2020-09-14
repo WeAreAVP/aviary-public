@@ -5,7 +5,7 @@
         <% if (can? :manage, @collection_resource) || @collection_resource.can_edit %>
           <% unless params[:from_playlist].to_s.to_boolean? %>
             <% if params['page_type'] == 'previous_page' %>
-              <span class="font-size-13px edit_by_information">Edited By <b class="font-weight-bold">&nbsp;<%= @file_transcript.user.full_name %></b> at <b class="font-weight-bold"><%= Time.at(@file_transcript.updated_at.to_f).utc.strftime('%b %d, %Y %H:%M:%S') %></b></span>
+              <div class="pt-10px font-size-13px edit_by_information">Edited By <b class="font-weight-bold">&nbsp;<%= @file_transcript.user.full_name %></b> at <b class="font-weight-bold"><%= Time.at(@file_transcript.updated_at.to_f).utc.strftime('%b %d, %Y %H:%M:%S') %></b></div>
               <% if !@file_transcript.is_edit && @file_transcript.timestamps.present? %>
                 <a class="edit_fields edit_transcript" href="javascript://"
                    data-url="<%= edit_transcript_url(@file_transcript, host: Utilities::AviaryDomainHandler.subdomain_handler(current_organization)) %>">

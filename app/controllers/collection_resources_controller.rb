@@ -93,10 +93,8 @@ class CollectionResourcesController < ApplicationController
     render plain: '' unless request.xhr?
     @resource_file = params[:resource_file_id] ? CollectionResourceFile.find_by(id: params[:resource_file_id]) : @collection_resource.collection_resource_files.order_file.first
     authorize! :read, @collection_resource
-    offset = params['page_number'].present? ? params['page_number'].to_i * Aviary::IndexTranscriptManager::POINTS_PER_PAGE : 0
-    offset = 0 if offset < 0
     @file_index = params['selected_index'].to_i > 0 ? FileIndex.find(params['selected_index']) : @resource_file.file_indexes.order_index.first
-    @file_index_points = @file_index.file_index_points.limit(Aviary::IndexTranscriptManager::POINTS_PER_PAGE).offset(offset)
+    @file_index_points = @file_index.file_index_points
     @total_index_points = @file_index.file_index_points.count
     render partial: 'indexes/index', locals: { size: params[:tabs_size] }
   end
@@ -106,10 +104,8 @@ class CollectionResourcesController < ApplicationController
     @listing_transcripts = {}
     @resource_file = params[:resource_file_id] ? CollectionResourceFile.find_by(id: params[:resource_file_id]) : @collection_resource.collection_resource_files.order_file.first
     authorize! :read, @collection_resource
-    offset = params['page_number'].present? ? params['page_number'].to_i * Aviary::IndexTranscriptManager::POINTS_PER_PAGE : 0
     @file_transcript = params['selected_transcript'].to_i > 0 ? FileTranscript.find(params['selected_transcript']) : @resource_file.file_transcripts.order_transcript.first
-    offset = 0 if offset < 0 || @file_transcript.file_transcript_points.count <= Aviary::IndexTranscriptManager::POINTS_PER_PAGE
-    @file_transcript_points = @file_transcript.file_transcript_points.limit(Aviary::IndexTranscriptManager::POINTS_PER_PAGE).offset(offset)
+    @file_transcript_points = @file_transcript.file_transcript_points
     @total_transcript_points = @file_transcript.file_transcript_points.count
     @can_access_transcript = @file_transcript.is_public || @collection_resource.can_view || @collection_resource.can_edit || (can? :edit, @collection_resource.collection.organization) || (can? :read, @file_transcript)
     collection_resource_presenter = CollectionResourcePresenter.new(@collection_resource, view_context)

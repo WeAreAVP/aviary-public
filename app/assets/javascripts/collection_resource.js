@@ -51,13 +51,13 @@ function CollectionResource() {
         return keyword;
     }
 
-    const searchFieldBinding = function() {
+    const searchFieldBinding = function () {
         document_level_binding_element("#search_text", 'keypress', function (e) {
-            if(e.which == 13) {
+            if (e.which == 13) {
                 if ($(this).val().trim() != '') {
                     let query = 'keywords[]=' + $(this).val().trim();
                     let link = window.location.href;
-                    if(!link.includes('?')) {
+                    if (!link.includes('?')) {
                         link += '?';
                     }
                     link = link + '&' + query;
@@ -112,7 +112,7 @@ function CollectionResource() {
         $('.marker_list_hanlder_custom').html($('.marker_list_hanlder_custom_tmp').html());
         $('.marker_list_hanlder_custom_tmp').html('');
         let type_current = 'description';
-        if(window.location.pathname.substr(window.location.pathname.lastIndexOf('/') + 1) && !$.inArray(type_current, ['transcript', 'description', 'index']) <= 0){
+        if (window.location.pathname.substr(window.location.pathname.lastIndexOf('/') + 1) && !$.inArray(type_current, ['transcript', 'description', 'index']) <= 0) {
             type_current = window.location.pathname.substr(window.location.pathname.lastIndexOf('/') + 1);
         }
         show_marker_hanlders(type_current);
@@ -165,20 +165,20 @@ function CollectionResource() {
 
     this.fileWiseCount = function (response) {
         try {
-            $.each(response['count_file_wise'], function (index, object){
+            $.each(response['count_file_wise'], function (index, object) {
                 let total_index = 0
                 let total_transcript = 0
-                if(parseInt(object['total-transcript'], 10)){
+                if (parseInt(object['total-transcript'], 10)) {
                     total_transcript = parseInt(object['total-transcript'], 10)
                 }
 
-                if(parseInt(object['total-index'], 10)){
+                if (parseInt(object['total-index'], 10)) {
                     total_index = parseInt(object['total-index'], 10)
                 }
 
-                $('.file_wise_count_' +index).text(total_transcript + total_index);
-                if((total_transcript + total_index) > 0)
-                    $('.file_wise_count_' +index).removeClass('d-none');
+                $('.file_wise_count_' + index).text(total_transcript + total_index);
+                if ((total_transcript + total_index) > 0)
+                    $('.file_wise_count_' + index).removeClass('d-none');
             });
         } catch (err) {
 
@@ -215,7 +215,7 @@ function CollectionResource() {
                     $('.edit_fields').click();
                 }
             }, 100);
-            setTimeout(function(){
+            setTimeout(function () {
                 resourceSearchBar();
             }, 1000);
         }
@@ -483,6 +483,8 @@ function CollectionResource() {
                         }
                     });
                 }
+            } else {
+                $('.transcript_time').removeClass('active');
             }
         }
     }
@@ -844,9 +846,9 @@ function CollectionResource() {
         selfCR.indexes.index_scroll('index', active_transcript_index('index'));
     };
 
-    this.default_active_tab = function() {
+    this.default_active_tab = function () {
         let tabType = window.location.pathname.substr(window.location.pathname.lastIndexOf('/') + 1);
-        if(!$.inArray(tabType, ['transcript', 'description', 'index']) >= 0) {
+        if (!$.inArray(tabType, ['transcript', 'description', 'index']) >= 0) {
             $('#description-tab').click();
         }
     }
@@ -887,7 +889,6 @@ function CollectionResource() {
                 }
             });
         }
-
 
 
         if (tabType == 'transcript') {

@@ -8,7 +8,7 @@
 #
 # Author::    Nouman Tayyab  (mailto:nouman@weareavp.com)
 module Aviary::IndexTranscriptManager
-  POINTS_PER_PAGE = 4000.to_f
+  POINTS_PER_PAGE = 7000.to_f
   # IndexManager Class for managing the index import of OHMS and WebVTT files
   class IndexManager
     include Dry::Transaction

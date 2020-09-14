@@ -1157,8 +1157,8 @@ dl.form {
     padding: 2px;
     border-radius: 13px;
     position: absolute;
-    right: 0;
-    top: 7px;
+    right: 12px;
+    top: 5px;
     z-index: 7;
     text-align: center;
     vertical-align: middle;
@@ -2522,19 +2522,6 @@ dl.form textarea.text {
 .add_resource_to_playlist_specific_disabled {
     color: lightgrey !important;
     cursor: not-allowed !important;
-}
-
-.index_point_inner_container {
-    margin-top: 35px !important;
-    overflow-x: hidden;
-    width: 98%;
-}
-
-
-.index_point_container,
-.transcript_point_container {
-    padding-top: 20px;
-    padding-bottom: 20px;
 }
 
 .overlay_custom {
