@@ -332,10 +332,10 @@ function IndexTranscript() {
                             that.collection_resource.auto_loading_inprogress = false;
                         },
                         onTotalScroll: function () {
-                            $("." + type + "_point_container").mCustomScrollbar("scrollTo", this.mcs.top + 20);
+                            $("." + type + "_point_container").mCustomScrollbar("scrollTo", this.mcs.top);
                         },
                         onTotalScrollBack: function () {
-                            $("." + type + "_point_container").mCustomScrollbar("scrollTo", 20);
+                            $("." + type + "_point_container").mCustomScrollbar("scrollTo", 0);
                         }
                     }
                 }
@@ -377,7 +377,7 @@ function IndexTranscript() {
 
         if (that.collection_resource.search_text_val != '' && that.collection_resource.search_text_val != 0) {
             try {
-                let response = searchRelatedObjects('index' )
+                let response = searchRelatedObjects('index')
                 that.collection_resource.index_infor = response.infor;
                 that.collection_resource.index_hits_count = response.hits_count;
                 that.collection_resource.index_page_wise_count = response.page_wise_count;
@@ -436,7 +436,13 @@ function IndexTranscript() {
             } else {
                 total_type_wise = that.collection_resource.total_type_wise = JSON.parse($('.' + type + '_count').val()).total_transcript_wise;
             }
-            return {total_type_wise: total_type_wise, time_wise_page: time_wise_page, page_wise_count: page_wise_count, hits_count: hits_count, infor: infor}
+            return {
+                total_type_wise: total_type_wise,
+                time_wise_page: time_wise_page,
+                page_wise_count: page_wise_count,
+                hits_count: hits_count,
+                infor: infor
+            }
         } catch (e) {
 
         }
@@ -517,7 +523,7 @@ function IndexTranscript() {
         $('.tab_loader_transcript').removeClass('d-inline-block');
         if (that.collection_resource.search_text_val != '' && that.collection_resource.search_text_val != 0) {
             try {
-                let response = searchRelatedObjects('transcript' );
+                let response = searchRelatedObjects('transcript');
                 that.collection_resource.transcript_infor = response.infor;
                 that.collection_resource.transcript_hits_count = response.hits_count;
                 that.collection_resource.transcript_page_wise_count = response.page_wise_count;
@@ -580,6 +586,11 @@ function IndexTranscript() {
         if ($(element).length > 0 && element != that.last_point_visited) {
             type = type.toLowerCase();
             that.last_point_visited = element;
+            if (type == 'transcript') {
+                $('.transcript_time').removeClass('active');
+                $(element).addClass('active');
+            }
+
             $('.' + type + '_point_container').mCustomScrollbar("scrollTo", element, {scrollInertia: 200, timeout: 1});
         }
     };
