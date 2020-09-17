@@ -13,13 +13,13 @@ class FileTranscriptPointPresenter < BasePresenter
   end
 
   def show_transcript_point(transcript_time_start_single)
-    "<div class='row pt-5px pb-5px transcript_time #{transcript_time_start_single}' id='transcript_timecode_#{id}' data-transcript_timecode='#{start_time.to_i}'>
-      <div class='col-md-2 text-center file_transcript_mark_custom timecode_section mr-2 ml-2'>
+    "<div class='d-flex pt-5px pb-5px transcript_time #{transcript_time_start_single}' id='transcript_timecode_#{id}' data-transcript_timecode='#{start_time.to_i}'>
+      <div class='text-center file_transcript_mark_custom timecode_section mr-2 ml-2'>
       <a class='play-timecode' href='javascript://' data-timecode='#{start_time}'>#{display_time.html_safe}</a>
       </div>
-      <div class='col-md-10 content_section'>
+      <div class='content_section'>
         <span class='file_transcript_mark_custom'>#{title_with_timecode}</span>
-         <div class='file_transcript_mark_custom'>#{speaker_with_text}</div>
+         <div class='file_transcript_mark_custom' data-point='#{id}' data-time='#{start_time}'>#{speaker_with_text}</div>
       </div>
     </div>"
   end
