@@ -180,7 +180,7 @@ function Playlist() {
                 if ($(this).data('type') == 'start') {
                     $("#slider-range").slider("values", 0, that.collection_resource.player_widget[0].currentTime);
                 } else {
-                    $("#slider-range").slider("values", 1, that.collection_resource.player_widget[0].currentTime);
+                    $("#slider-range").slider("values", 1, that.max);
                 }
                 let response_time = check_valid_start_end_time($("#slider-range").slider("values", 0), $("#slider-range").slider("values", 1));
                 $("#slider-range").slider("values", 0, response_time.start_time);
@@ -240,11 +240,16 @@ function Playlist() {
         document_level_binding_element('.playlist_edit_tabs', 'click', function () {
             let data = {
                 tabtype: $(this).data('tabtype'),
-                action: 'update_selected_tab'
+                action: 'updateSelectedTab'
             };
             selfPL.appHelper.classAction($(this).data('urltab'), data, 'text', 'POST', '', selfPL, false);
         }, true);
     };
+
+    this.updateSelectedTab = function(response) {
+        $('playlistrandom#continaer_custom').text(response);
+    }
+
 
     const edit_description_playlist = function () {
         document_level_binding_element('.edit_description_playlist', 'click', function () {

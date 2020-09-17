@@ -116,7 +116,6 @@ module DetailPageHelper
       end
     end
 
-    session[:count_presence][:index] = true if index_count[index_point.file_index.collection_resource_file_id][single_keyword] > 0 && !session[:count_presence][:index]
     index_count
   end
 

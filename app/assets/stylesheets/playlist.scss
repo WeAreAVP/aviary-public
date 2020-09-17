@@ -763,3 +763,8 @@
     padding-left: 15px;
   }
 }
+
+.playlists-show .mejs__time-current {
+  opacity: 0.5;
+  z-index: 9;
+}
