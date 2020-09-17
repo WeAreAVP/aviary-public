@@ -68,18 +68,17 @@
         <div class="title_description">
           <% if !@playlist_show.present? && !@playlist_show && (can? :manage, @playlist) %>
 
-            <span style="font-size: 15px;font-weight: 500;color: #000;text-decoration: none;line-height: 1.25;" data-bip-type="input" data-bip-attribute="title" data-bip-object="playlist_resource" data-bip-original-content="<%= pl_rsrc.name %>"
-                  data-bip-skip-blur="false" data-bip-url="<%= update_description_playlist_playlist_resource_path(playlist_id: pl_rsrc.playlist_id, id: pl_rsrc.id) %>" data-bip-value="<%= pl_rsrc.name %>"
-                  class="best_in_place" id="best_in_place_pl_resource_2_title" method="PUT">  <%= pl_rsrc.name %>
+<span style="font-size: 15px;font-weight: 500;color: #000;text-decoration: none;line-height: 1.25;" data-bip-type="input" data-bip-ok_button="title" data-bip-attribute="title" data-bip-activator="#button_id_<%=pl_rsrc.id %>" data-bip-object="playlist_resource" data-bip-original-content="<%= pl_rsrc.name %>"
+      data-bip-skip-blur="false" data-bip-url="<%= update_description_playlist_playlist_resource_path(playlist_id: pl_rsrc.playlist_id, id: pl_rsrc.id) %>" data-bip-value="<%= pl_rsrc.name %>"
+      class="best_in_place cursor-pointer" onclick="window.location='<%= playlist_link %>'" id="best_in_place_pl_resource_2_title_<%=pl_rsrc.id %>" method="PUT">  <%= pl_rsrc.name %>
             </span>
-            <i class="ml-1 mt-1 fa fa-pencil edit-description-resource"></i>
-
+            <i class="ml-1 mt-1 fa fa-pencil cursor-pointer edit-description-resource" data-toggle="tooltip" data-placement="top" title="Click to edit the title."  id="button_id_<%=pl_rsrc.id %>"></i>
           <% else %>
             <a href="<%= playlist_link %>" class='title <%= can_access ? 'can-play-resource' : ' ' %>'> <%= pl_rsrc.name %> </a>
           <% end %>
         </div>
         <div class="playlist_description_full playlist_resource_description float-left playlist_resource_description_<%= pl_rsrc.id %>">
-          <div class="less-description">
+          <div class="less-description d-inline">
             <%= pl_rsrc.description.strip_tags %>
           </div>
           <div class="d-none full-description">

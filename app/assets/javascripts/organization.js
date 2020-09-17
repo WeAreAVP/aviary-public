@@ -50,6 +50,7 @@ function Organization() {
         });
         setTimeout(function () {
             updateSortInfo();
-        }, 2000)
+        }, 2000);
+        initToolTip(false);
     };
 }

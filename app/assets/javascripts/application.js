@@ -336,6 +336,7 @@ function init_tinymce_for_element(selector, custom_config) {
     return tinyMCE;
 }
 
+
 function selectizeInit(element){
     return $(element).selectize({
         openOnFocus: false,
@@ -473,6 +474,13 @@ $(document).on('keyup', '.only_allow_number', function (event) {
     }
 });
 
+function initToolTip(element){
+    if (typeof element != 'undefined' && element)
+        $(element).tooltip();
+    else
+        $('[data-toggle="tooltip"]').tooltip();
+
+}
 
 $(function () {
     if ($('#sidebar-main').length == 0) {

@@ -114,7 +114,12 @@ module Aviary::SolrIndexer
                                                                  value_with_vocab
                                                                end
           end
-
+          begin
+            description_values_solr[field_name] ||= []
+            description_values_solr[field_name] << value_with_vocab
+          rescue StandardError => e
+            puts e
+          end
           description_values_solr['all_vocabs'] = [] unless description_values_solr['all_vocabs'].present?
           description_values_solr['all_vocabs'] << vocab if vocab.present? && !description_values_solr['all_vocabs'].include?(vocab)
         end

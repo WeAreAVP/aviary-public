@@ -96,7 +96,7 @@ class CollectionResource < ApplicationRecord
                                { keywords: :index_point_keywords }, { partial_script: :index_point_partial_script }]
     solr_mapper_definition = [
       { 'title_search' => :description_title_search }, { 'publisher_search' => :description_publisher_search }, { 'rights_statement_search' => :description_rights_statement_search },
-      { 'source_search' => :description_source_search }, { 'agent_search' => :description_agent_search }, { 'date_search' => :description_date_search }, { 'Type' => :description_type },
+      { 'source_search' => :description_source_search }, { 'agent_search' => :description_agent_search }, { 'date_search' => :description_date_search }, { 'type' => :description_type },
       { 'coverage_search' => :description_coverage_search }, { 'language_search' => :description_language_search }, { 'description_search' => :description_description_search },
       { 'format_search' => :description_format_search }, { 'identifier_search' => :description_identifier_search }, { 'relation_search' => :description_relation_search },
       { 'subject_search' => :description_subject_search }, { 'keyword_search' => :description_keyword_search }, { 'type_search' => :description_type_search },
