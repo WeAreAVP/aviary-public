@@ -50,6 +50,7 @@ class HomeController < ApplicationController
       else
         @featured_playlists = organization.playlists.public_playlists.order_feature_name
       end
+
     else
       @featured_playlists = Playlist.is_featured.sample(8)
     end

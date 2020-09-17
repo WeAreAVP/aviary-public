@@ -18,6 +18,7 @@ function Playlist() {
     this.time_range_regex = /^(\d{2}):(\d{2}):(\d{2})(\s)-(\s)(\d{2}):(\d{2}):(\d{2})$/;
     this.playlist_ajaxs = [];
     this.calls_inprogress = 0;
+    var playlist_ended = false;
 
     var that = this;
 
@@ -149,7 +150,6 @@ function Playlist() {
         edit_description_playlist();
         update_description_playlist();
         amount_slider_validation();
-        description_detail();
         update_selected_tab();
         init_tinymce_for_element('.description_text', {
             selector: '.description_text',
@@ -174,36 +174,6 @@ function Playlist() {
         $('.best_in_place').best_in_place();
     };
 
-    const description_detail = function () {
-        const showChar = 220;  // How many characters are shown by default
-        const ellipsestext = "...";
-        const moretext = "Show more";
-        const lesstext = "Show less";
-
-        $('.playlist_description_full').each(function () {
-            var content = $(this).html();
-            if (content.length > showChar) {
-                var c = content.substr(0, showChar);
-                var h = content.substr(showChar, content.length - showChar);
-                var html = c + '<span class="moreellipses">' + ellipsestext + '&nbsp;</span><span class="morecontent"><span>' + h + '</span>&nbsp;&nbsp;<a href="" class="morelink">' + moretext + '</a></span>';
-                $(this).html(html);
-            }
-        });
-
-        $(".morelink").click(function () {
-            if ($(this).hasClass("less")) {
-                $(this).removeClass("less");
-                $(this).html(moretext);
-            } else {
-                $(this).addClass("less");
-                $(this).html(lesstext);
-            }
-            $(this).parent().prev().toggle();
-            $(this).prev().toggle();
-            return false;
-        });
-
-    };
     this.clip_time_picker = function () {
         document_level_binding_element('.set_clip_end_time_custom, .set_clip_start_time_custom', 'click', function () {
             if (that.collection_resource && that.collection_resource.player_widget && that.collection_resource.player_widget.length > 0) {
@@ -306,26 +276,28 @@ function Playlist() {
     };
 
     const list_playlist_items = function (page_number) {
+        if (playlist_ended) {
+            return false;
+        }
         $('.loader-playlist_items').removeClass('d-none');
-        selfPL.calls_inprogress++;
         let data = {
             per_page: selfPL.number_items_per_page,
             page_number: page_number,
             view_type: selfPL.playlist_show,
-            query: $('#search_playlist_resource').val().trim().toLowerCase(),
+            query: typeof $('#search_playlist_resource').val() != 'undefined' ? $('#search_playlist_resource').val().trim().toLowerCase() : '',
             action: 'list_playlist_items_action'
         };
-        $.each(selfPL.playlist_ajaxs, function (index) {
-            this.abort();
-            delete selfPL.playlist_ajaxs[index];
-        });
         selfPL.playlist_ajaxs = [];
-        let object_ajax = selfPL.appHelper.classAction($('#playlist-list-contanier').data('url'), data, 'HTML', 'GET', '', selfPL, false);
-        selfPL.playlist_ajaxs.push(object_ajax);
+        if(selfPL.calls_inprogress <= 0){
+            selfPL.calls_inprogress++;
+            selfPL.appHelper.classAction($('#playlist-list-contanier').data('url'), data, 'HTML', 'GET', '', selfPL, false);
+        }
     };
 
     this.list_playlist_items_action = function (response, _container, requestData) {
-
+        if (!response.includes('playlist_resource_single')) {
+            playlist_ended = true
+        }
         $('#playlist-list-page-no').val(parseInt($('#playlist-list-page-no').val(), 10) + 1);
         $('#playlist-list-contanier').append(response);
         setTimeout(function () {
@@ -334,29 +306,43 @@ function Playlist() {
             if (selfPL.playlist_show == false || selfPL.playlist_show == 'false') {
                 init_sortable();
                 $('.best_in_place').best_in_place();
+                initToolTip(false);
                 $('#no_resource_found').hide();
                 $('#playlist_resources_count').text($('.playlist_resource_single:visible').length);
             }
-
             $('.playlist_resource_description').each(function () {
                 let content = $(this).children('.less-description').html();
-                let show_Char =120;
+                let show_Char = 120;
                 if (content.length > show_Char) {
+                    content = $(this).children('.less-description').html();
                     let c = content.substr(0, show_Char);
                     c = c.substr(0, c.lastIndexOf(" "));
-                    var html = c + '<span class="moreellipses">...&nbsp;</span>&nbsp;&nbsp;<span class="lessToMore">Show more</span>';
+                    let handlers = '<span class="lessToMore ml-1"><random class="style: text-decoration: none;">...</random>&nbsp; Show more</span>';
+                    var html = c;
                     $(this).children('.less-description').html(html);
-                    $(this).children('.full-description').append('<span class="moreToLess">Show less</span>')
+                    $(this).children('.less-description').after(handlers);
+                    $(this).children('.full-description').after('<span class="moreToLess d-none">Show less</span>');
                 }
             });
+
+            $('.lessToMore').unbind('click');
             $('.lessToMore').click(function () {
-                $(this).parent().addClass('d-none');
-                $(this).parent().next().removeClass('d-none');
+                $(this).addClass('d-none');
+                $(this).closest('.playlist_description_full').children('.less-description').addClass('d-none');
+
+                $(this).closest('.playlist_description_full').children('.full-description').removeClass('d-none');
+                $(this).closest('.playlist_description_full').children('.moreToLess').removeClass('d-none');
             });
+
+            $('.moreToLess').unbind('click');
             $('.moreToLess').click(function () {
-                $(this).parent().addClass('d-none');
-                $(this).parent().prev().removeClass('d-none');
+                $(this).addClass('d-none');
+                $(this).closest('.playlist_description_full').children('.full-description').addClass('d-none');
+
+                $(this).closest('.playlist_description_full').children('.less-description').removeClass('d-none');
+                $(this).closest('.playlist_description_full').children('.lessToMore').removeClass('d-none');
             });
+
             $(".title_description, .less-description, .full-description").unmark();
             $(".title_description, .less-description, .full-description").mark(requestData['query'].trim(), {
                 "element": "span",
@@ -366,11 +352,11 @@ function Playlist() {
             });
 
         }, 500);
-        selfPL.calls_inprogress--;
-        if (selfPL.calls_inprogress == 0) {
-            $('.loader-playlist_items').addClass('d-none');
-        }
-        setTimeout(function(){
+        setTimeout(function () {
+            selfPL.calls_inprogress = 0;
+        }, 1000);
+        $('.loader-playlist_items').addClass('d-none');
+        setTimeout(function () {
             if ($('.playlist_resource_single').length == 0 && selfPL.calls_inprogress <= 0) {
                 $('#no_resource_found').show();
             }
@@ -474,8 +460,14 @@ function Playlist() {
         toggle_item_playlist();
         update_time_range();
         $("#playlist-list-contanier").on('scroll', function () {
-            if ($(this).scrollTop() + $(this).innerHeight() >= $(this)[0].scrollHeight) {
-                list_playlist_items($('#playlist-list-page-no').val());
+            let scroll_obj = this
+            if ($(scroll_obj).scrollTop() + $(scroll_obj).innerHeight() >= $(scroll_obj)[0].scrollHeight) {
+                setTimeout(function(){
+                    if ($(scroll_obj).scrollTop() + $(scroll_obj).innerHeight() >= $(scroll_obj)[0].scrollHeight) {
+                        list_playlist_items($('#playlist-list-page-no').val());
+                    }
+                }, 500);
+
             }
         });
         // TODO:: sort field change feature playlist

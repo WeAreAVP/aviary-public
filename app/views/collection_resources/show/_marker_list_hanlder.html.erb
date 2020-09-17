@@ -10,7 +10,9 @@
            param_link[:share] = params[:share] if params[:share].present?
            media_url = playlist_show_url(param_link)
          else
-           param_link = {collection_id: @collection.id, collection_resource_id: @collection_resource.id, collection_resource_file_id: @resource_file.id, share: params[:share]}
+           param_link = {collection_id: @collection.id, share: params[:share]}
+           param_link[:collection_resource_id] = @collection_resource.id if @collection_resource.present?
+           param_link[:collection_resource_file_id] = @resource_file.id if @resource_file.present?
            param_link[:embed] = true if params[:embed].present?
            media_url = collection_collection_resource_details_url(param_link )
            media_url = embeded_url(collection_resource_url(@collection_resource), 'media_player', @resource_file.id) if params[:media_player] == 'true'
