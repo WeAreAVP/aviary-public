@@ -32,7 +32,7 @@ function Playlist() {
             that.collection_resource.setPeriodTimePeriod(start.format('MM-DD-YYYY'), end.format('MM-DD-YYYY'));
         });
         shareTabsPlaylist();
-
+        $('#playlist-list-page-no').val(0);
         list_playlist_items($('#playlist-list-page-no').val());
         searchPlaylistResource();
 
