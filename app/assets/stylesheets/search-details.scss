@@ -2540,3 +2540,13 @@ dl.form textarea.text {
 .loader-small.tab_loader_transcript {
     position: absolute;
 }
+
+.playlists-show .jw-cue.jw-reset {
+  color: #336075 !important;
+  background-color: #336075 !important;
+  width: 10px !important;
+}
+
+.playlists-show span.mejs__time-marker {
+  width: 10px !important;
+}

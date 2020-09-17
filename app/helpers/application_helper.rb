@@ -57,8 +57,10 @@ module ApplicationHelper
     results
   end
 
-  def time_to_duration(seconds)
-    Time.at(seconds.to_f).utc.strftime('%H:%M:%S')
+  def time_to_duration(seconds, mili_seconds = false)
+    format = '%H:%M:%S'
+    format = '%H:%M:%S.%L' if mili_seconds
+    Time.at(seconds.to_f).utc.strftime(format)
   rescue StandardError
     '00:00:00'
   end

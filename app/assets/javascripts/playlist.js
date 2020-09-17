@@ -240,11 +240,16 @@ function Playlist() {
         document_level_binding_element('.playlist_edit_tabs', 'click', function () {
             let data = {
                 tabtype: $(this).data('tabtype'),
-                action: 'update_selected_tab'
+                action: 'updateSelectedTab'
             };
             selfPL.appHelper.classAction($(this).data('urltab'), data, 'text', 'POST', '', selfPL, false);
         }, true);
     };
+
+    this.updateSelectedTab = function(response) {
+        $('playlistrandom#continaer_custom').text(response);
+    }
+
 
     const edit_description_playlist = function () {
         document_level_binding_element('.edit_description_playlist', 'click', function () {

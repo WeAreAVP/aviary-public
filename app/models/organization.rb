@@ -299,7 +299,7 @@ class Organization < ApplicationRecord
     return if Rails.env.test? || collections.blank?
     dynamic_fields = {}
     all_ready_added = {}
-    skip_fields = %w[format subject type location date language identifier relation source_metadata_uri coverage source publish agent keyword duration]
+    skip_fields = %w[format subject type location date language identifier relation source_metadata_uri coverage source publisher agent keyword duration title]
     counter = 0
     Organization.field_list_with_options.each do |_key, single_field_list|
       next if single_field_list[:key] == 'organization_id_is'

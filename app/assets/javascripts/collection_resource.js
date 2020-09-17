@@ -270,6 +270,21 @@ function CollectionResource() {
         }
     };
 
+    /**
+     *
+     * @param start_time
+     * @param start_from
+     * @returns {[]}
+     */
+    const fillBarWithMarkers = function (startTime, endTime) {
+        let listOgLocations = [];
+        for (let i = startTime; i <= endTime; i = i + 1) {
+            listOgLocations.push(i);
+        }
+        return listOgLocations;
+    };
+
+
     const initPlayer = function () {
         if (file_access) {
             if ($('#avalon_widget').length > 0) {
@@ -356,12 +371,19 @@ function CollectionResource() {
                     }
                 })
             } else {
-                meJsFeatures = ['playpause', 'current', 'progress', 'duration', 'volume', 'tracks', 'fullscreen', 'autoplay'];
+                meJsFeatures = ['playpause', 'current', 'progress', 'duration', 'volume', 'tracks', 'fullscreen', 'autoplay', 'markers'];
                 if ($('#player source').length > 1) {
                     meJsFeatures.push('quality');
                 }
+                let list = []
+                if (selfCR.clip_exists == 'true' || selfCR.clip_exists == true) {
+                    list = fillBarWithMarkers(selfCR.player_time, selfCR.end_time);
+                }
                 selfCR.player_widget = player_widget = $('#player').mediaelementplayer({
                     features: meJsFeatures,
+                    markers: list,
+                    markerWidth: 2,
+                    markerColor: '#336075',
                     success: function (mediaElement, domObject) {
                         shareTimeUrl(mediaElement.currentTime, $('#share_link').val());
                         mediaElement.addEventListener('timeupdate', function (e) {
