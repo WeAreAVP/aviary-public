@@ -10,6 +10,7 @@ function CollectionResource() {
     var selfCR = this;
     selfCR.markerHandlerArrayDescription = {};
     selfCR.markerHandlerIT = {};
+    selfCR.playerType = '';
     var recorded_transcript = [];
     var recorded_index = [];
     var previousTime = 0;
@@ -284,6 +285,10 @@ function CollectionResource() {
         return listOgLocations;
     };
 
+    const appendMarkersEmbed = function (current_time_marker) {
+        $('.mejs__time-total.mejs__time-slider').append('<span class="mejs__time-marker" style="left: ' + parseFloat((current_time_marker / collectionResource.max) * 100).toFixed(2) + '%;width: 10px; background: rgb(51, 96, 117) none repeat scroll 0% 0%;"></span>');
+    };
+
 
     const initPlayer = function () {
         if (file_access) {
@@ -375,10 +380,18 @@ function CollectionResource() {
                 if ($('#player source').length > 1) {
                     meJsFeatures.push('quality');
                 }
+
                 let list = []
                 if (selfCR.clip_exists == 'true' || selfCR.clip_exists == true) {
-                    list = fillBarWithMarkers(selfCR.player_time, selfCR.end_time);
+                        setTimeout(function () {
+                            appendMarkersEmbed(collectionResource.player_time);
+                            for (let startTimeVale = collectionResource.player_time; startTimeVale <= collectionResource.end_time; startTimeVale = startTimeVale + 1) {
+                                appendMarkersEmbed(startTimeVale);
+                            }
+                            appendMarkersEmbed(collectionResource.end_time);
+                        }, 3000);
                 }
+
                 selfCR.player_widget = player_widget = $('#player').mediaelementplayer({
                     features: meJsFeatures,
                     markers: list,

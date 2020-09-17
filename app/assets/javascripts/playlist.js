@@ -180,7 +180,7 @@ function Playlist() {
                 if ($(this).data('type') == 'start') {
                     $("#slider-range").slider("values", 0, that.collection_resource.player_widget[0].currentTime);
                 } else {
-                    $("#slider-range").slider("values", 1, that.collection_resource.player_widget[0].currentTime);
+                    $("#slider-range").slider("values", 1, that.max);
                 }
                 let response_time = check_valid_start_end_time($("#slider-range").slider("values", 0), $("#slider-range").slider("values", 1));
                 $("#slider-range").slider("values", 0, response_time.start_time);

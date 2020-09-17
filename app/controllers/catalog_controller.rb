@@ -6,7 +6,8 @@ class CatalogController < ApplicationController
   include BlacklightRangeLimit::ControllerOverride
   include Blacklight::Catalog
   include ApplicationHelper
-  before_action :mutiple_keyword_handler, :session_param_update, :update_facets
+  before_action :mutiple_keyword_handler, :session_param_update,
+  before_action :update_facets, except: %i[assign_to_playlist update_selected_playlist]
 
   def update_facets
     if current_organization.present? && current_organization.search_facet_fields.present? && JSON.parse(current_organization.search_facet_fields).present?

@@ -42,9 +42,9 @@ module CollectionResourceHelper
   def embeded_url(url, action, resource_file_id)
     origin = Addressable::URI.parse(url).origin
     iframe_url = if action == 'embed'
-                   origin + '/embed/media/' + resource_file_id.to_s
+                   origin + '/embed/media/' + (resource_file_id.present? ? resource_file_id.to_s : '')
                  elsif action == 'media_player'
-                   origin + '/embed/media/' + resource_file_id.to_s + '?embed=true&media_player=true'
+                   origin + '/embed/media/' + (resource_file_id.present? ? resource_file_id.to_s : '') + '?embed=true&media_player=true'
                  else
                    origin + request.env['PATH_INFO'] + '?embed=true'
                  end

@@ -315,6 +315,7 @@
     collectionResource.end_time = <%= params['pet'].present? ? params['pet'] : 0 %>;
     collectionResource.max = '<%= max %>';
     collectionResource.clip_exists = '<%= params['pst'].present? || params['pet'].present? %>';
+    collectionResource.playerType = '<%= @resource_file.present? && @resource_file.embed_type.present? ? @resource_file.embed_type : 'normal' %>';
     document.addEventListener("DOMContentLoaded", function (event) {
         setTimeout(function () {
             let params = {
