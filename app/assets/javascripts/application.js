@@ -36,6 +36,7 @@
 //= require aviary_app
 //= require resource_bulk_edit
 //= require jquery-ui
+//= require mediaelement-and-player.min
 //= require_tree .
 
 var isIE = /*@cc_on!@*/false || !!document.documentMode;
