@@ -44,7 +44,7 @@
       </ul>
       <ul class="navbar-nav navbar-right">
         <% if current_organization.present? %>
-          <% if current_organization.playlists.present? %>
+          <% if current_organization.playlists.present? && playlist_has_access_to(current_organization, current_user).count > 0%>
             <li class="nav-item <%= current_page?(org_playlist_path) || (current_page?(root_path) && current_organization.default_tab_selection == 'playlists') ? 'active' : '' %>">
               <a class="nav-link" href="<%= org_playlist_path %>">Playlists</a>
             </li>

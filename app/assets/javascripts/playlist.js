@@ -772,7 +772,7 @@ function Playlist() {
     };
     const tooltip_init = function () {
         setTimeout(function () {
-            $('[data-toggle="tooltip"]').tooltip();
+            initToolTip(false);
         }, 100);
     };
     /**
