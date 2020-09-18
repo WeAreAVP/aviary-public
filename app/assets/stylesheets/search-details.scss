@@ -1976,23 +1976,38 @@ dl.form textarea.text {
     top: 0;
     color: #fff;
     width: 100%;
-    padding: 20px 30px;
+    padding: 20px 30px 40px;
     opacity: 0;
     visibility: hidden;
-    -webkit-transition: all 0.3s linear;
-    -moz-transition: all 0.3s linear;
-    -o-transition: all 0.3s linear;
-    transition: all 0.3s linear;
+    -webkit-transition: all 0.05s linear;
+    -moz-transition: all 0.05s linear;
+    -o-transition: all 0.05s linear;
+    transition: all 0.05s linear;
+    transition-delay: 1.1s;
     background: linear-gradient(to top, transparent 0%, rgba(0, 0, 0, 0.63) 50%);
     font-size: 15px;
     z-index: 999;
-    text-shadow: 0 2px 5px #555;
 }
 
-.video-placeholder:hover .title {
+.video-placeholder.youtube .title {
+    transition-delay: 3s;
+}
+
+.video-placeholder.vimeo .title {
+    transition-delay: 0.13s;
+}
+
+.video-placeholder.embed .title {
+    padding: 20px 30px 50px;
+    background: linear-gradient(to top, transparent 0%, rgba(0, 0, 0, 1) 36%);
+}
+
+.video-placeholder:hover .title,
+.video-placeholder.hovered .title {
     opacity: 1;
     visibility: visible;
     z-index: 9;
+    transition-delay: 0.2s;
 }
 
 .video-placeholder .title strong {
@@ -2000,6 +2015,10 @@ dl.form textarea.text {
     overflow: hidden;
     text-overflow: ellipsis;
     display: block;
+}
+
+.mejs__controls:not([style*="display: none"]) {
+    background: linear-gradient(transparent, rgba(0, 0, 0, 0.63)) !important;
 }
 
 #form_edit_custom {

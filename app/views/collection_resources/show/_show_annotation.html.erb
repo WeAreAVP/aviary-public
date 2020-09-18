@@ -12,11 +12,11 @@
           <h1><%= @collection_resource.title %></h1>
         </div>
         <div class="video-detail-holder">
-          <% if permission_to_access_file?(@resource_file) %>
-            <%= render 'collection_resources/show/share_link' %>
-          <% end %>
           <div class="video-main carousel slide" data-ride="carousel">
             <div class="carousel-inner">
+              <% if permission_to_access_file?(@resource_file) %>
+                <%= render 'collection_resources/show/share_link' %>
+              <% end %>
               <div class="carousel-item active" <%= browser.firefox? ? 'style="height: 360px !important;"'.html_safe : '' %> >
                 <% if @resource_file.present? %>
                   <% is_audio_only = @collection_resource.present? ? @collection_resource.collection.is_audio_only : false %>

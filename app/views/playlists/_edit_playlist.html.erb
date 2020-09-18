@@ -4,16 +4,14 @@
     <div class="two-col two_col_custom">
       <div class="row">
         <div class="col-lg-12">
-
-
           <div class="video-detail-holder">
-            <% if @collection_resource.present? %>
-              <% if @playlist_show.present? && @playlist_show %>
-                <%= render partial: 'playlists/edit/share_playlist' %>
-              <% end %>
-            <% end %>
             <div class="video-main carousel slide" data-ride="carousel">
               <div class="carousel-inner">
+                <% if @collection_resource.present? %>
+                  <% if @playlist_show.present? && @playlist_show %>
+                    <%= render partial: 'playlists/edit/share_playlist' %>
+                  <% end %>
+                <% end %>
                 <div class="carousel-item active">
                   <% if @resource_file.present? %>
                     <% is_audio_only = @collection_resource.collection.is_audio_only || @playlist.is_audio_only %>

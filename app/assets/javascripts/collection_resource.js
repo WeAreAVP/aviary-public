@@ -398,6 +398,7 @@ function CollectionResource() {
                     markerWidth: 2,
                     markerColor: '#336075',
                     success: function (mediaElement, domObject) {
+                        $('.video-placeholder').addClass('hovered');
                         shareTimeUrl(mediaElement.currentTime, $('#share_link').val());
                         mediaElement.addEventListener('timeupdate', function (e) {
 
@@ -418,6 +419,25 @@ function CollectionResource() {
 
                             previousTime = mediaElement.currentTime;
                         }, false);
+
+                        let first_play = true;
+
+                        mediaElement.addEventListener('playing', function () {
+                            $('.video-placeholder').removeClass('hovered');
+                            if (first_play) {
+                                setTimeout(function () {
+                                    $('.video-placeholder').removeClass('youtube');
+                                    $('.video-placeholder').removeClass('vimeo');
+                                }, 3000);
+
+                                first_play = false;
+                            }
+                        });
+
+                        mediaElement.addEventListener('pause', function () {
+                            $('.video-placeholder').addClass('hovered');
+                        });
+
                         mediaElement.addEventListener('ended', function (e) {
                             // for new UI design
                             if ($('.listings_files.my-slide').nextAll() && $('.listings_files.my-slide').nextAll().length > 0) {
