@@ -31,4 +31,16 @@ class CollectionResourceFilePresenter < BasePresenter
     end
     tracks
   end
+
+  def embed_source
+    embed_source = ''
+    if @model.embed_code.present? && @model.embed_type
+      if @model.embed_content_type == 'video/youtube'
+        embed_source = 'embed youtube'
+      elsif @model.embed_content_type == 'video/vimeo'
+        embed_source = 'embed vimeo'
+      end
+    end
+    embed_source
+  end
 end

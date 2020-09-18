@@ -24,7 +24,7 @@
         </div>
       </div>
     <% elsif presenter.media_type.include? "video" %>
-      <div class="video-placeholder <% if presenter.media_type == 'video/vimeo'%>embed vimeo<% end %><% if presenter.media_type == 'video/youtube'%>embed youtube<% end %>">
+      <div class="video-placeholder <%= presenter.embed_source %>">
         <div class="video-hold">
           <video width='100%' height='360' id="player" poster="<%= presenter.thumbnail.url unless presenter.embed_code.present? %>">
             <source src="<%= presenter.media_url %>" type="<%= presenter.media_type %>" data-quality='Original '>

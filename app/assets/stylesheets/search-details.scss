@@ -1994,7 +1994,7 @@ dl.form textarea.text {
 }
 
 .video-placeholder.vimeo .title {
-    transition-delay: .13s;
+    transition-delay: 0.13s;
 }
 
 .video-placeholder.embed .title {
@@ -2002,7 +2002,8 @@ dl.form textarea.text {
     background: linear-gradient(to top, transparent 0%, rgba(0, 0, 0, 1) 36%);
 }
 
-.video-placeholder:hover .title, .video-placeholder.hovered .title {
+.video-placeholder:hover .title,
+.video-placeholder.hovered .title {
     opacity: 1;
     visibility: visible;
     z-index: 9;
