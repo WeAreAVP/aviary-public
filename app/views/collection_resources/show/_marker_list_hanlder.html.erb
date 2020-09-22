@@ -19,8 +19,7 @@
          end %>
       <a href="javascript:void(0)" onclick="$('.single_term_handler.<%= type %>').toggleClass('open');resourceSearchBar();" class=""><span><i class="fa fa-caret-down"></i> Results </span></a>
       <% unless @session_video_text_all.blank? %>
-        <a class="clear clear_search_video_cus_all" href="<%= media_url %>">Clear all search terms
-          <i class="material-icons">close</i></a>
+        <a class="clear clear_search_video_cus_all" href="<%= media_url.present? ? media_url : ''  %>">Clear all search terms<i class="material-icons">close</i></a>
       <% end %>
     </strong>
     <ul>

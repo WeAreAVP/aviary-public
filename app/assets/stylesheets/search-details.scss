@@ -2569,3 +2569,20 @@ dl.form textarea.text {
 .playlists-show span.mejs__time-marker {
   width: 10px !important;
 }
+
+.mejs__poster.mejs__layer {
+  background-size: contain !important;
+}
+
+.listings_files .player-item.playlist-item {
+  max-width: 120px;
+}
+#player_youtube_iframe {
+  height: 100% !important;
+}
+
+.mejs__container-fullscreen .mejs__overlay.mejs__layer,
+.mejs__container-fullscreen .mejs__overlay.mejs__layer.mejs__overlay-play,
+.mejs__container-fullscreen .mejs__poster.mejs__layer {
+  height: 100% !important;
+}

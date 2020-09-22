@@ -29,12 +29,9 @@ module Blacklight::FacetsHelperBehavior
   def render_collection_org_facet(type)
     user_ip = request.ip
     if type == 'organization'
-      unless current_organization.present?
-        org_facet_manager = SearchPresenter.organization_facet_manager(current_organization, current_user, user_ip, params, has_facet_values?, session[:last_fq])
-        render partial: 'catalog/limited_facets', locals: {org_n_collection_facet_manager: org_facet_manager}
-      end
-    end
-    if type == 'collection'
+      org_facet_manager = SearchPresenter.organization_facet_manager(current_organization, current_user, user_ip, params, has_facet_values?, session[:last_fq])
+      render partial: 'catalog/limited_facets', locals: {org_n_collection_facet_manager: org_facet_manager} if current_organization.blank?
+    elsif type == 'collection'
       collection_facet_manager = SearchPresenter.collection_facet_manager(current_organization, current_user, user_ip, params, has_facet_values?, session[:last_fq])
       render partial: 'catalog/limited_facets', locals: {org_n_collection_facet_manager: collection_facet_manager}
     end

@@ -383,6 +383,7 @@ function CollectionResource() {
 
                 let list = []
                 if (selfCR.clip_exists == 'true' || selfCR.clip_exists == true) {
+                    if (collectionResource.playerType != '' && collectionResource.playerType != 'normal') {
                         setTimeout(function () {
                             appendMarkersEmbed(collectionResource.player_time);
                             for (let startTimeVale = collectionResource.player_time; startTimeVale <= collectionResource.end_time; startTimeVale = startTimeVale + 1) {
@@ -390,6 +391,9 @@ function CollectionResource() {
                             }
                             appendMarkersEmbed(collectionResource.end_time);
                         }, 3000);
+                    } else {
+                        list = fillBarWithMarkers(selfCR.player_time, selfCR.end_time);
+                    }
                 }
 
                 selfCR.player_widget = player_widget = $('#player').mediaelementplayer({
@@ -471,18 +475,13 @@ function CollectionResource() {
             }
         }
         $('.carousel-wrap').removeClass('d-none');
-
-        $(".carousel-wrap .mediacarousel").jCarouselLite({
-            btnNext: ".next",
-            btnPrev: ".prev",
-            visible: 4,
-            mouseWheel: (parseInt($('.carousel-wrap').data('filescount'), 10) > 3),
-            circular: false,
-            autoWidth: true,
-            responsive: true,
+        $(window).resize(function () {
+            initCarousel(howManySlidesWidthWise());
+            update_player_width();
         });
+        initCarousel(howManySlidesWidthWise());
 
-        if (parseInt($('.carousel-wrap').data('filescount'), 10) <= 4)
+        if (parseInt($('.carousel-wrap').data('filescount'), 10) <= howManySlidesWidthWise())
             $('.prev, .next').hide();
 
         scroll_mousewheel_playlist();
@@ -491,17 +490,63 @@ function CollectionResource() {
             if (parseInt($('.media.carousel-wrap').data('sortorder'), 10))
                 sortorder = parseInt($('.media.carousel-wrap').data('sortorder'), 10);
 
-            if (parseInt($('.carousel-wrap').data('filescount'), 10) > 3)
+            if (parseInt($('.carousel-wrap').data('filescount'), 10) > howManySlidesWidthWise())
                 selected_carosal(sortorder);
             scroll_mousewheel_playlist();
 
-        }, 100);
+        }, 1000);
         $(".video-side-list span").click(function () {
             $(".carousel-indicators").toggle();
         });
 
     };
 
+    const update_player_width = function () {
+        if (typeof $('.video-placeholder video')[0] == 'undefined' && typeof $('.video-placeholder audio')[0] == 'undefined')
+            return false;
+        let height = 420;
+        if ($('.video-placeholder .audio').length > 0) {
+            height = $('.video-placeholder .audio').width() / 1.7;
+        } else {
+            height = $('.video-hold').width() / 1.7;
+            if ($('#player_vimeo_iframe').length > 0 &&  height > 360)
+                height = ($('.video-hold').width() / 1.7) - 90;
+        }
+        $('.video-placeholder .mejs__audio').css('height', height + 'px');
+        $('.video-placeholder video, .video-placeholder audio')[0].player.setPlayerSize('100%', height);
+        $('.video-placeholder video, .video-placeholder audio').attr('height', height);
+        if ($('#player_vimeo_iframe').length > 0)
+            $('#player_vimeo_iframe').attr('height', '110%');
+    };
+
+    const howManySlidesWidthWise = function () {
+        if ($(window).width() < 500) {
+            return 3;
+        } else if ($(window).width() >= 500 && $(window).width() <= 1024) {
+            return 4;
+        } else if ($(window).width() > 1024 && $(window).width() < 1440) {
+            return 5;
+        } else if ($(window).width() > 1440 && $(window).width() <= 1680) {
+            return 6;
+        } else if ($(window).width() > 1680 && $(window).width() <= 2100) {
+            return 7;
+        } else if ($(window).width() > 2100) {
+            return 8;
+        }
+    };
+
+    const initCarousel = function (numberOfSlides) {
+        $(".carousel-wrap .mediacarousel").trigger('endCarousel');
+        $(".carousel-wrap .mediacarousel").jCarouselLite({
+            btnNext: ".next",
+            btnPrev: ".prev",
+            visible: numberOfSlides,
+            mouseWheel: (parseInt($('.carousel-wrap').data('filescount'), 10) > (howManySlidesWidthWise() - 1)),
+            circular: false,
+            autoWidth: true,
+            responsive: true,
+        });
+    };
 
     const time_scroll_mover = function (currentTime) {
         if ($('#index-tab').hasClass('active')) {

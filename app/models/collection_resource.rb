@@ -349,7 +349,7 @@ class CollectionResource < ApplicationRecord
   end
 
   def self.fetch_collections(export_and_current_organization, solr)
-    collections_raw = solr.get 'select', params: { q: '*:*', fq: ['document_type_ss:collection', 'status_ss:active', "organization_id_is:#{export_and_current_organization[:current_organization].id}"], fl: %w[id_is title_ss] }
+    collections_raw = solr.get 'select', params: { q: '*:*',  start: 0, rows: 1000, fq: ['document_type_ss:collection', 'status_ss:active', "organization_id_is:#{export_and_current_organization[:current_organization].id}"], fl: %w[id_is title_ss] }
     collections = {}
     collections_raw['response']['docs'].each do |single_collection|
       collections[single_collection['id_is'].to_s] = single_collection['title_ss']

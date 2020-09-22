@@ -105,6 +105,7 @@ module Aviary::SolrIndexer
           elsif res['field'].system_name == 'coverage'
             description_values_solr["#{field_name}_search"] << value_with_vocab
           elsif res['field'].system_name == 'duration'
+            description_values_solr[field_name] << value
             value = ((value.present? && !value.empty? ? value : '00:00:00').split(':').map(&:to_i).inject(0) { |a, b| a * 60 + b }.to_f / 60).round(2)
             description_values_solr["#{field_name}_search"] << value
           else
@@ -114,12 +115,11 @@ module Aviary::SolrIndexer
                                                                  value_with_vocab
                                                                end
           end
-          begin
-            description_values_solr[field_name] ||= []
-            description_values_solr[field_name] << value_with_vocab
-          rescue StandardError => e
-            puts e
-          end
+          description_values_solr[field_name] ||= []
+          description_values_solr[field_name] << unless res['field'].system_name == 'duration'
+                                                   description_values_solr[field_name] << value_with_vocab
+                                                 end
+
           description_values_solr['all_vocabs'] = [] unless description_values_solr['all_vocabs'].present?
           description_values_solr['all_vocabs'] << vocab if vocab.present? && !description_values_solr['all_vocabs'].include?(vocab)
         end
