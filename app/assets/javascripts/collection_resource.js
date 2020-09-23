@@ -476,9 +476,12 @@ function CollectionResource() {
             }
         }
         $('.carousel-wrap').removeClass('d-none');
+        updatePlayerWidth();
         $(window).resize(function () {
-            initCarousel(howManySlidesWidthWise());
-            update_player_width();
+            setTimeout(function () {
+                initCarousel(howManySlidesWidthWise());
+                updatePlayerWidth();
+            }, 200);
         });
         initCarousel(howManySlidesWidthWise());
 
@@ -502,7 +505,7 @@ function CollectionResource() {
 
     };
 
-    const update_player_width = function () {
+    const updatePlayerWidth = function () {
         if (typeof $('.video-placeholder video')[0] == 'undefined' && typeof $('.video-placeholder audio')[0] == 'undefined')
             return false;
         let height = 420;
