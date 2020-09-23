@@ -56,7 +56,8 @@ function CollectionResource() {
         document_level_binding_element("#search_text", 'keypress', function (e) {
             if (e.which == 13) {
                 if ($(this).val().trim() != '') {
-                    let query = 'keywords[]=' + $(this).val().trim();
+                    let keyword = clearKeyWords($(this).val().trim());
+                    let query = 'keywords[]=' + keyword;
                     let link = window.location.href;
                     if (!link.includes('?')) {
                         link += '?';

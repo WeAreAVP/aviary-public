@@ -77,7 +77,7 @@ class CollectionResourcesController < ApplicationController
           end
         end
         @collection_resource.batch_update_values(updated_field_values.values, true)
-        @collection_resource.reindex_collection_resource
+        # @collection_resource.reindex_collection_resource
         @collection_resource.update(updated_at: Time.now)
         @msg = t('description_metadata_updated')
       else

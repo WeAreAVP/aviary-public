@@ -94,7 +94,7 @@ module Aviary::SolrIndexer
           value_with_vocab = value
           if res['field'].is_vocabulary
             vocab = val['vocab_value']
-            value_with_vocab = vocab.to_s + ' :: ' + value.to_s
+            value_with_vocab = vocab.to_s.present? ? vocab.to_s + ' :: ' + value.to_s : value.to_s
           end
 
           if field_name.include?('custom_field_values') || res['field'].is_custom
