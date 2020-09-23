@@ -90,7 +90,7 @@ class CollectionResource < ApplicationRecord
     end
   end
 
-  searchable auto_index: Rails.env.production? do
+  searchable do
     solr_mapper_transcript_point = [{ text: :transcript_point_text }, { speaker: :transcript_point_speaker }, { title: :index_point_title }]
     solr_mapper_index_point = [{ title: :index_point_title }, { synopsis: :index_point_synopsis }, { subjects: :index_point_subjects },
                                { keywords: :index_point_keywords }, { partial_script: :index_point_partial_script }]
