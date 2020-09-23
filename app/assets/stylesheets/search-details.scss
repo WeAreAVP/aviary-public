@@ -2577,12 +2577,13 @@ dl.form textarea.text {
 .listings_files .player-item.playlist-item {
   max-width: 120px;
 }
-#player_youtube_iframe {
-  height: 100% !important;
-}
 
 .mejs__container-fullscreen .mejs__overlay.mejs__layer,
 .mejs__container-fullscreen .mejs__overlay.mejs__layer.mejs__overlay-play,
 .mejs__container-fullscreen .mejs__poster.mejs__layer {
+  height: 100% !important;
+}
+
+#player_youtube_iframe {
   height: 100% !important;
 }
