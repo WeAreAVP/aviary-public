@@ -96,7 +96,6 @@ module Aviary::SolrIndexer
             vocab = val['vocab_value']
             value_with_vocab = vocab.to_s.present? ? vocab.to_s + ' :: ' + value.to_s : value.to_s
           end
-
           if field_name.include?('custom_field_values') || res['field'].is_custom
             custom_description_solr[field_name] ||= {}
             custom_description_solr[field_name]['value'] ||= []
@@ -114,11 +113,16 @@ module Aviary::SolrIndexer
                                                                else
                                                                  value_with_vocab
                                                                end
+
           end
-          description_values_solr[field_name] ||= []
-          description_values_solr[field_name] << unless res['field'].system_name == 'duration'
-                                                   description_values_solr[field_name] << value_with_vocab
-                                                 end
+          begin
+            description_values_solr[field_name] ||= []
+            description_values_solr[field_name] << unless res['field'].system_name == 'duration'
+                                                     value_with_vocab
+                                                   end
+          rescue StandardError => e
+            puts e
+          end
 
           description_values_solr['all_vocabs'] = [] unless description_values_solr['all_vocabs'].present?
           description_values_solr['all_vocabs'] << vocab if vocab.present? && !description_values_solr['all_vocabs'].include?(vocab)
