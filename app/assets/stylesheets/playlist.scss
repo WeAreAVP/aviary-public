@@ -764,7 +764,22 @@
   }
 }
 
+.playlists-new .heading-holder .col-md-12 h1 {
+  margin-bottom: 20px !important;
+}
+
+.playlist_added {
+  font-size: 15px !important;
+  top: 0 !important;
+  padding-left: 2px !important;
+}
+
 .playlists-show .mejs__time-current {
+  opacity: 0.5;
+  z-index: 9;
+}
+
+.playlists-show .jw-progress.jw-reset {
   opacity: 0.5;
   z-index: 9;
 }
