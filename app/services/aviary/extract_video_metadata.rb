@@ -202,14 +202,16 @@ module Aviary::ExtractVideoMetadata
         title_node = doc.search("//meta[@itemprop='name']")
         thumbnail_node = doc.search("//meta[@itemprop='image']")
         duration_node = doc.search("//meta[@itemprop='duration']")
+        media_type_node = doc.search("//div[@itemscope='itemscope']")
         title = title_node[0].attributes['content'].value if title_node.present?
         thumbnail = thumbnail_node[0].attributes['content'].value if thumbnail_node.present?
         duration = duration_node[0].attributes['content'].value.to_f if duration_node.present?
+        media_type = media_type_node[0].attributes['itemprop'].value if media_type_node.present?
         metadata['url'] = video_url
         metadata['duration'] = duration
         metadata['title'] = title
         metadata['thumbnail'] = thumbnail
-        metadata['content_type'] = 'avalon'
+        metadata['content_type'] = "#{media_type}/avalon"
         metadata
       rescue StandardError
         return false

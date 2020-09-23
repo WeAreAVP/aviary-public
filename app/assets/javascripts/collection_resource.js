@@ -43,7 +43,7 @@ function CollectionResource() {
     selfCR.index_file_count = 0;
     selfCR.transcript_file_count = 0;
     selfCR.auto_loading_inprogress = false;
-
+    var resizeAllowed = true;
     const clearKeyWords = function (keyword) {
         keyword = keyword.replace(/[\/\\()|'"*:^~`{}]/g, '');
         keyword = keyword.replace(/]/g, '');
@@ -476,11 +476,11 @@ function CollectionResource() {
             }
         }
         $('.carousel-wrap').removeClass('d-none');
-        updatePlayerWidth();
+        updatePlayerSize();
         $(window).resize(function () {
             setTimeout(function () {
                 initCarousel(howManySlidesWidthWise());
-                updatePlayerWidth();
+                updatePlayerSize();
             }, 200);
         });
         initCarousel(howManySlidesWidthWise());
@@ -505,16 +505,23 @@ function CollectionResource() {
 
     };
 
-    const updatePlayerWidth = function () {
-        if (typeof $('.video-placeholder video')[0] == 'undefined' && typeof $('.video-placeholder audio')[0] == 'undefined')
-            return false;
+    const updatePlayerSize = function () {
+        let heightPercentage = 1.7;
         let height = 420;
+        if (typeof $('.video-placeholder video')[0] == 'undefined' && typeof $('.video-placeholder audio')[0] == 'undefined')
+            if (($('#avalon_widget').hasClass('audio_widget') || $('#avalon_widget').hasClass('video_widget')) && !$('#avalon_widget').hasClass('audio-player') && resizeAllowed) {
+                height = $('#avalon_widget').width() / heightPercentage;
+                $('#avalon_widget').css('height', height + 'px');
+                resizeAllowed = false;
+            }
+            return false;
+
         if ($('.video-placeholder .audio').length > 0) {
-            height = $('.video-placeholder .audio').width() / 1.7;
+            height = $('.video-placeholder .audio').width() / heightPercentage;
         } else {
-            height = $('.video-hold').width() / 1.7;
+            height = $('.video-hold').width() / heightPercentage;
             if ($('#player_vimeo_iframe').length > 0 &&  height > 360)
-                height = ($('.video-hold').width() / 1.7) - 90;
+                height = ($('.video-hold').width() / heightPercentage) - 90;
         }
         $('.video-placeholder .mejs__audio').css('height', height + 'px');
         $('.video-placeholder video, .video-placeholder audio')[0].player.setPlayerSize('100%', height);

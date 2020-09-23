@@ -43,4 +43,10 @@ class CollectionResourceFilePresenter < BasePresenter
     end
     embed_source
   end
+
+  def avalon_cls(is_audio_player)
+    return 'video_widget' if media_type.include? 'video'
+    return 'audio_widget audio-player' if is_audio_player
+    'audio_widget'
+  end
 end

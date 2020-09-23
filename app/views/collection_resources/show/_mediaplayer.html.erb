@@ -4,11 +4,13 @@
     <% if presenter.media_type.include? "avalon" %>
       <div class="video-placeholder">
         <div class="video-hold">
-          <iframe id="avalon_widget" data-domain="<%= presenter.target_domain %>" src="<%= presenter.media_url %>" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+          <iframe id="avalon_widget" class="<%= presenter.avalon_cls(is_audio_only) %>" data-domain="<%= presenter.target_domain %>" src="<%= presenter.media_url %>" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
         </div>
-        <div class="title">
-          <strong><%= single_file.file_display_name %></strong>
-        </div>
+        <% unless is_audio_only %>
+          <div class="title">
+            <strong><%= single_file.file_display_name %></strong>
+          </div>
+        <% end %>
       </div>
     <% elsif presenter.media_type == 'video/other' || presenter.embed_type == 0 %>
       <div class="video-placeholder">
@@ -110,7 +112,11 @@
     }
 
     #avalon_widget {
-        height: 360px;
+      height: 360px;
+    }
+
+    #avalon_widget.audio-player {
+      height: 40px;
     }
 
     .audio.audio-player .mejs__container {
