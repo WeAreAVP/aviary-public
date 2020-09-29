@@ -12,7 +12,7 @@ class CatalogController < ApplicationController
   def update_facets
     if current_organization.present? && current_organization.search_facet_fields.present? && JSON.parse(current_organization.search_facet_fields).present?
       JSON.parse(current_organization.search_facet_fields).each do |_key, single_facet_field|
-        next unless single_facet_field['status'].to_s.to_boolean?
+        next if !single_facet_field['status'].to_s.to_boolean? || single_facet_field['type'] == 'editor'
         if single_facet_field['is_default_field'].to_s.to_boolean?
           default_field_info = Organization.field_list_with_options[single_facet_field['key'].to_sym]
           field_settings = default_field_info.slice(:label, :single, :helper_method, :tag, :ex, :partial, :range)
