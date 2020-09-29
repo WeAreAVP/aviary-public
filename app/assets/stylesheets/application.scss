@@ -177,6 +177,14 @@
     font-weight: normal;
 }
 
+#resourceTabContent #description ul {
+    list-style: disc;
+}
+
+#resourceTabContent #description ol {
+    list-style: decimal;
+}
+
 .badge-secondary {
     border: 2px solid #e6e6e6;
     color: #383838;
