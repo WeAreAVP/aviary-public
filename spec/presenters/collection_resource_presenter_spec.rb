@@ -7,6 +7,7 @@ RSpec.describe CollectionResourcePresenter, type: :Presenter do
   let(:template) { ActionController::Base.new.view_context }
   let(:presenter) { CollectionResourcePresenter.new(collection_resource_file.collection_resource, template) }
   before do
+    allow(presenter).to receive(:list_resources_collection_path).and_return(true)
     allow(presenter).to receive(:collection_collection_resource_path).and_return(true)
     allow(presenter).to receive(:collection_collection_resource_add_resource_file_path).and_return(true)
     allow(presenter).to receive(:edit_collection_collection_resource_path).and_return(true)
