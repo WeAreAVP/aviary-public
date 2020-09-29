@@ -1,7 +1,7 @@
 # CollectionResourcePresenter
 # Author::  Furqan Wasi(mailto:furqan@weareavp.com)
 class CollectionResourcePresenter < BasePresenter
-  delegate :collection_collection_resource_path, :collection_collection_resource_add_resource_file_path, :edit_collection_collection_resource_path, :add_breadcrumb, to: :h
+  delegate :list_resources_collection_path, :collection_collection_resource_path, :collection_collection_resource_add_resource_file_path, :edit_collection_collection_resource_path, :add_breadcrumb, to: :h
   include ApplicationHelper
   include DetailPageHelper
 
@@ -11,19 +11,23 @@ class CollectionResourcePresenter < BasePresenter
 
   def breadcrumb_manager(type, collection_resource, collection)
     active_link = 'class="active" href="javascript:void(0);"'
+    collection_link = "<a href='#{list_resources_collection_path(collection)}'>Collection</a>".html_safe
     resource_link = "<a href='#{collection_collection_resource_path(collection, collection_resource)}'>Resource Detail</a>".html_safe
     manage_file_link = "<a href='#{collection_collection_resource_add_resource_file_path(collection, collection_resource)}'>Manage Media Files</a>".html_safe
     edit_link = "<a href='#{edit_collection_collection_resource_path(collection, collection_resource)}'>General Settings</a>".html_safe
     case type
     when 'edit'
+      add_breadcrumb collection_link
       add_breadcrumb "<a #{active_link}>General Settings</a>".html_safe
       add_breadcrumb manage_file_link
       add_breadcrumb resource_link
     when 'show'
+      add_breadcrumb collection_link
       add_breadcrumb edit_link
       add_breadcrumb manage_file_link
       add_breadcrumb "<a #{active_link}'>Resource Detail</a>".html_safe
     when 'manage_file'
+      add_breadcrumb collection_link
       add_breadcrumb edit_link
       add_breadcrumb "<a #{active_link}>Manage Media Files</a>".html_safe
       add_breadcrumb resource_link

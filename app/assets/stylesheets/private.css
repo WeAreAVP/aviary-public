@@ -11,6 +11,12 @@
     font-weight: bold;
 }
 
+.top-video-part h1 a {
+    font-size: 85%;
+    font-weight: normal;
+    margin-top: 5px;
+}
+
 #back-to-search-btn {
     font-size: 14px;
     font-weight: bold;

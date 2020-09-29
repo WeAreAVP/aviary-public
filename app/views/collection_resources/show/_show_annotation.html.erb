@@ -9,7 +9,9 @@
       <div class="col-lg-12 p-0">
         <div class="top-video-part d-flex justify-content-between align-items-center">
           <%= render partial: 'collection_resources/back_to_search' %>
-          <h1><%= @collection_resource.title %></h1>
+          <h1><%= @collection_resource.title %>
+            <a href="<%= collection_url(@collection_resource.collection, host: Utilities::AviaryDomainHandler.subdomain_handler(@collection_resource.collection.organization)) %>" class="d-block text-muted"><%= @collection_resource.collection.title %></a>
+          </h1>
         </div>
         <div class="video-detail-holder">
           <div class="video-main carousel slide" data-ride="carousel">
