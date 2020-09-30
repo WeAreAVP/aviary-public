@@ -273,7 +273,6 @@ class Organization < ApplicationRecord
   end
 
   def detect_search_facets_change
-    update_search_configuration(true) unless search_facet_fields.present?
     dynamic_fields = JSON.parse(search_facet_fields)
     remove_fields_list = []
     dynamic_fields.each do |key_outer, custom_field_managed|
@@ -289,6 +288,18 @@ class Organization < ApplicationRecord
     counter = 0
     updated_dynamic_fields = {}
     dynamic_fields.each do |_key, custom_field_managed|
+      collection_ids = []
+      unless custom_field_managed['is_default_field']
+        collections.each do |collection_fields|
+          collection_fields.all_fields['CollectionResource'].each do |single_field|
+            if CustomFields::Field::TypeInformation.fetch_type(single_field['field'].column_type).to_s != 'editor' && custom_field_managed['key'] == single_field['field'].system_name
+              collection_ids << collection_fields.id
+            end
+          end
+        end
+      end
+
+      custom_field_managed['collection'] = collection_ids.uniq.join(',')
       updated_dynamic_fields[counter.to_s] = custom_field_managed
       counter += 1
     end
@@ -296,7 +307,6 @@ class Organization < ApplicationRecord
   end
 
   def all_org_fields
-    return if Rails.env.test? || collections.blank?
     dynamic_fields = {}
     all_ready_added = {}
     skip_fields = %w[format subject type location date language identifier relation source_metadata_uri coverage source publisher agent keyword duration title]
@@ -308,7 +318,7 @@ class Organization < ApplicationRecord
       dynamic_fields[counter] = { 'key' => sys_name, 'label' => single_field_list[:label], 'type' => type, 'status' => true, 'is_default_field' => true }
       counter += 1
     end
-
+    return if Rails.env.test? || collections.blank?
     collections.each do |collection_fields|
       collection_fields.all_fields['CollectionResource'].each do |single_field|
         type = CustomFields::Field::TypeInformation.fetch_type(single_field['field'].column_type).to_s
