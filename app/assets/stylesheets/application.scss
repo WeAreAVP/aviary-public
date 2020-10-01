@@ -185,6 +185,12 @@
     list-style: decimal;
 }
 
+#resourceTabContent #description ul,
+#resourceTabContent #description ol {
+    padding-left: 20px;
+    margin-bottom: 0;
+}
+
 .badge-secondary {
     border: 2px solid #e6e6e6;
     color: #383838;
