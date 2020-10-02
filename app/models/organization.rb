@@ -245,7 +245,7 @@ class Organization < ApplicationRecord
   end
 
   def update_search_configuration(force_update = false)
-    if search_facet_fields.present? && JSON.parse(search_facet_fields).present? && force_update
+    if search_facet_fields.present? && force_update
       dynamic_fields = JSON.parse(search_facet_fields)
       total_fields = dynamic_fields.count
       new_fields = []
@@ -318,7 +318,7 @@ class Organization < ApplicationRecord
       dynamic_fields[counter] = { 'key' => sys_name, 'label' => single_field_list[:label], 'type' => type, 'status' => true, 'is_default_field' => true }
       counter += 1
     end
-    return if Rails.env.test? || collections.blank?
+    return dynamic_fields if Rails.env.test? || collections.blank?
     collections.each do |collection_fields|
       collection_fields.all_fields['CollectionResource'].each do |single_field|
         type = CustomFields::Field::TypeInformation.fetch_type(single_field['field'].column_type).to_s
