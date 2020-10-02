@@ -245,7 +245,7 @@ class Organization < ApplicationRecord
   end
 
   def update_search_configuration(force_update = false)
-    if search_facet_fields.present? && force_update
+    if search_facet_fields.present? && JSON.parse(search_facet_fields).present? && force_update
       dynamic_fields = JSON.parse(search_facet_fields)
       total_fields = dynamic_fields.count
       new_fields = []
