@@ -136,7 +136,6 @@ class CollectionsController < ApplicationController
       params['custom_fields_field']['dropdown_options'] = params['custom_fields_field']['dropdown_options'].split(',')
     end
     @collection.create_update_dynamic(params['custom_fields_field'], id)
-    update_field_settings
     redirect_back(fallback_location: edit_collection_path(@collection))
   end
 
@@ -159,7 +158,6 @@ class CollectionsController < ApplicationController
   def delete_custom_meta_fields
     @collection = this_collection
     @collection.delete_dynamic(params[:meta_field_id])
-    update_field_settings
     flash[:notice] = 'Custom field deleted successfully.'
     redirect_back(fallback_location: edit_collection_path(@collection))
   end
@@ -228,13 +226,6 @@ class CollectionsController < ApplicationController
 
   def this_collection
     current_organization.collections.find_by_id(params[:id]) if params[:id]
-  end
-
-  def update_field_settings
-    current_organization.update_resource_search_column_fields(true)
-    current_organization.update_resource_column_fields(true)
-    current_organization.update_search_configuration(true)
-    current_organization.detect_search_facets_change
   end
 
   def to_csv(collection_ids, _request)

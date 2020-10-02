@@ -421,4 +421,11 @@ class Organization < ApplicationRecord
                               .where('organizations.id = ? ', id).first
     count.present? ? count.total : 0
   end
+
+  def update_field_settings
+    update_resource_search_column_fields(true)
+    update_resource_column_fields(true)
+    update_search_configuration(true)
+    detect_search_facets_change
+  end
 end

@@ -41,6 +41,12 @@ module CustomFields
   class Settings < ActiveRecord::Base
     belongs_to :customizable, polymorphic: true
     self.table_name = 'field_settings'
+    after_save :propagate_fields_org_wide
+    after_destroy :propagate_fields_org_wide
+
+    def propagate_fields_org_wide
+      customizable.organization.update_field_settings if customizable_type == 'Collection'
+    end
   end
 
   # Values

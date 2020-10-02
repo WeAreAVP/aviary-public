@@ -66,7 +66,7 @@ class CollectionResourcePresenter < BasePresenter
     session_video_text_all = {}
     return session_video_text_all unless params['keywords'].present?
     keywords = params['keywords'].class == ActionController::Parameters ? params['keywords'].to_enum.to_h.values : params['keywords']
-    keywords.map { |keyword| SearchBuilder.remove_illegal_characters(keyword, 'advance') } if keywords.present?
+    keywords = keywords.map { |keyword| SearchBuilder.remove_illegal_characters(keyword, 'advance').delete('"') } if keywords.present?
     if keywords.present?
       keywords.each do |single_quotes|
         session_video_text_all[OpenSSL::Digest::SHA256.new.hexdigest(single_quotes)] = single_quotes
