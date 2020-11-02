@@ -249,7 +249,6 @@ class CollectionsController < ApplicationController
 
     if new_collection.persisted?
       fields = JSON.parse(CustomFields::Settings.where(customizable_type: 'Collection', customizable_id: clone_collection.id).first.settings)
-
       unless fields.blank?
         settings = {}
         settings['Collection'] = fields['Collection']
