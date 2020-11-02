@@ -51,6 +51,14 @@ function Collection() {
 
     const bindEvents = function () {
 
+        document_level_binding_element('#collection_is_cloning_collection', 'change', function () {
+            if ($(this).prop('checked')) {
+                $('#collection_dd_custom').removeClass('d-none');
+            } else {
+                $('#collection_dd_custom').addClass('d-none');
+            }
+        });
+
         init_tinymce_for_element('.single_row_default_feild .apply_froala_editor');
         if ($('.remove_badge_default_value_collection').length > 0) {
             $('.remove_badge_default_value_collection').on('click', function () {

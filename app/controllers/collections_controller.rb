@@ -50,10 +50,16 @@ class CollectionsController < ApplicationController
   end
 
   def create
-    @collection = current_organization.collections.create(collection_params)
-    if @collection.save
+    @collection = if params[:is_cloning_collection] == 'on' && params[:clone_collection].present?
+                    clone_collection(params[:clone_collection], collection_params)
+                  else
+                    current_organization.collections.create(collection_params)
+
+                  end
+    if @collection.present? && @collection.save
       redirect_to collections_path, notice: t('collection_created')
     else
+      flash.now[:notice] = t('error_update')
       render 'new'
     end
   end
@@ -226,6 +232,53 @@ class CollectionsController < ApplicationController
 
   def this_collection
     current_organization.collections.find_by_id(params[:id]) if params[:id]
+  end
+
+  def clone_collection(clone_collection_id, collection_params)
+    clone_collection = Collection.find(clone_collection_id)
+    new_collection = clone_collection.dup
+    new_collection.title = collection_params[:title]
+    new_collection.about = collection_params[:about]
+    new_collection.is_public = collection_params[:is_public]
+    new_collection.is_featured = collection_params[:is_featured]
+    new_collection.image = collection_params[:image]
+    new_collection.favicon = collection_params[:favicon]
+    new_collection.collection_resources_count = 0
+    new_collection.card_image = clone_collection.card_image
+    new_collection.save
+
+    if new_collection.persisted?
+      template = OrganizationTemplate.where(template_type: 'access_request_approval_email').where('model_id like ?', "%-#{clone_collection.id}-%").try(:first)
+      unless template.blank?
+        new_template = template.dup
+        new_template.model_id = "-#{new_collection.id}-"
+        new_template.content = new_template.content.gsub(clone_collection.title, new_collection.title)
+        new_template.save
+      end
+
+      fields = JSON.parse(CustomFields::Settings.where(customizable_type: 'Collection', customizable_id: clone_collection.id).first.settings)
+      unless fields.blank?
+        settings = {}
+        settings['Collection'] = fields['Collection']
+        settings['CollectionResource'] = []
+        collection_resource_settings = fields['CollectionResource']
+        unless collection_resource_settings.blank?
+          collection_resource_settings.each do |single_settings|
+            if CustomFields::Field.find(single_settings['field_id']).is_custom
+              new_record = CustomFields::Field.find(single_settings['field_id']).dup
+              new_record.save(validate: false)
+              settings['CollectionResource'] << { 'is_visible' => single_settings['is_visible'], 'is_tombstone' => single_settings['is_tombstone'], 'field_id' => new_record.id }
+            else
+              settings['CollectionResource'] << single_settings
+            end
+          end
+        end
+        CustomFields::Settings.create(customizable_id: new_collection.id, customizable_type: 'Collection', settings: settings.to_json) if settings.present?
+      end
+      new_collection
+    else
+      false
+    end
   end
 
   def to_csv(collection_ids, _request)
