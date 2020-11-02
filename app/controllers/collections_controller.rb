@@ -248,14 +248,6 @@ class CollectionsController < ApplicationController
     new_collection.save
 
     if new_collection.persisted?
-      template = OrganizationTemplate.where(template_type: 'access_request_approval_email').where('model_id like ?', "%-#{clone_collection.id}-%").try(:first)
-      unless template.blank?
-        new_template = template.dup
-        new_template.model_id = "-#{new_collection.id}-"
-        new_template.content = new_template.content.gsub(clone_collection.title, new_collection.title)
-        new_template.save
-      end
-
       fields = JSON.parse(CustomFields::Settings.where(customizable_type: 'Collection', customizable_id: clone_collection.id).first.settings)
 
       unless fields.blank?
