@@ -177,12 +177,12 @@ form.range_limit .hold {
     overflow: hidden;
 }
 
-.pageinate-holder {
+.paginate-holder {
     border-radius: 4px;
     text-align: right;
 }
 
-.pageinate-holder .pagination {
+.paginate-holder .pagination {
     display: inline-block;
 }
 
@@ -342,11 +342,11 @@ form.range_limit .hold {
     border-color: transparent #ebebeb transparent transparent;
 }
 
-.pageinate-holder .pagination span:last-child {
+.paginate-holder .pagination span:last-child {
     border: none;
 }
 
-.pageinate-holder .pagination .current {
+.paginate-holder .pagination .current {
     background-color: #3d62e6;
     border-color: #3d62e6;
     color: #fff;
@@ -1362,4 +1362,28 @@ form.range_limit .hold input:nth-child(2) {
     margin-left: 21px;
     width: 270px;
     margin-top: 3px;
+}
+
+.paginate-holder .page.current {
+    background-color: #fff !important;
+    border: 2px solid #666 !important;
+    color: #666 !important;
+    padding: 5px 4px !important;
+    cursor: pointer;
+}
+
+.paginate-holder .page.current:hover {
+    background-color: #666 !important;
+    color: #fff !important;
+}
+
+.paginate-holder .page {
+    border-radius: 30px;
+    vertical-align: center;
+    text-align: center;
+}
+
+.paginate-holder .page:hover {
+    background: #e6e6e6 !important;
+    text-decoration: none;
 }
