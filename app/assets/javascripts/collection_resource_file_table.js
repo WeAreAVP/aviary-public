@@ -92,7 +92,10 @@ function CollectionResourceFileTable() {
                 columnDefs: [
                     {orderable: false, targets: -1}, {orderable: false, targets: 0}
                 ],
-                ajax: dataTableElement.data('url'),
+                ajax: {
+                    url: dataTableElement.data('url'),
+                    type: 'POST'
+                },
                 drawCallback: function (settings) {
                     initDeletePopup();
                     setTimeout(function () {

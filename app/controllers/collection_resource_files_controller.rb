@@ -2,6 +2,7 @@
 class CollectionResourceFilesController < ApplicationController
   before_action :authenticate_user!
   def index
+    authorize! :manage, current_organization
     session[:resource_file_list_bulk_edit] = []
     respond_to do |format|
       format.html

@@ -12,6 +12,7 @@ class OrganizationsController < ApplicationController
   end
 
   def update_resource_column_sort
+    authorize! :manage, current_organization
     respond_to do |format|
       format.html
       if current_organization.update(resource_table_column_detail: { number_of_column_fixed: params[:number_of_column_fixed], columns_status: params[:columns_status] }.to_json, resource_table_search_columns: params[:columns_search_status].to_json)
@@ -23,6 +24,7 @@ class OrganizationsController < ApplicationController
   end
 
   def update_resource_file_column
+    authorize! :manage, current_organization
     respond_to do |format|
       format.html
       if current_organization.update(resource_file_display_column: { number_of_column_fixed: params[:number_of_column_fixed], columns_status: params[:columns_status] }.to_json, resource_file_search_column: params[:columns_search_status].to_json)

@@ -8,6 +8,7 @@ class PlaylistsController < ApplicationController
   load_and_authorize_resource except: %I[listing_for_add_to_playlist]
 
   def index
+    authorize! :manage, current_organization
     @playlists = current_organization.playlists
   end
 

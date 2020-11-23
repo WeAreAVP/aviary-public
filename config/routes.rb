@@ -76,6 +76,7 @@ Rails.application.routes.draw do
 
   resources :collection_resource_files do
     collection do
+      post :data_table, to: 'collection_resource_files#index'
       post :bulk_resource_file_edit
       get :export_resource_file
       get :bulk_resource_list
@@ -91,6 +92,7 @@ Rails.application.routes.draw do
       post :update_sort_fields
       get :delete_custom_meta_fields
       get :list_resources
+      post :list_resources
       get 'collection_resources/new', to: 'collection_resources#new'
       post :import, to: 'collections#import'
     end
@@ -167,7 +169,7 @@ Rails.application.routes.draw do
   patch 'transcripts/sort/:resource_file_id', to: 'transcripts#sort', as: 'transcript_sort'
   delete 'transcripts/delete/:id', to: 'transcripts#destroy', as: 'transcript_delete'
   get 'transcripts/export/:type(/:id)', to: 'transcripts#export', as: 'transcript_export'
-
+  post :data_table, to: 'collection_resources#index'
   get '/confirm_organization_invite/:token', to: 'organizations#confirm_invite', as: :org_confirm_invite
 
   get 'r/:noid', to: 'home#noid', as: :noid

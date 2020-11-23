@@ -69,7 +69,7 @@ function CollectionResourceTable() {
 
         let resource_table_column_detail = JSON.parse(that.resource_table_column_detail);
         let dataTableElement = $('#collection_resource_datatable');
-        let ajax_url = dataTableElement.data('url') + '?called_from=' + called_from;
+        let ajax_url = dataTableElement.data('url');
         let sorters = [
             {orderable: false, targets: -1}, {orderable: false, targets: 0}
         ];
@@ -102,7 +102,14 @@ function CollectionResourceTable() {
                     zeroRecords: 'No Resource found.',
                 },
                 columnDefs: sorters,
-                ajax: ajax_url,
+                ajax: {
+                    url: ajax_url,
+                    type: 'POST',
+                    data: function (d) {
+                        d.called_from = called_from;
+
+                    }
+                },
                 drawCallback: function (settings) {
                     if (called_from == 'playlist_add_resource' && typeof caller != 'undefined') {
                         caller.handler_resource_playlist();

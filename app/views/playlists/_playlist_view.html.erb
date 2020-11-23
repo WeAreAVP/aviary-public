@@ -252,7 +252,7 @@
       <div class="modal-body">
         <div class="data-table">
           <div class="container-fluid">
-            <%= content_tag :table, role: :datatable, class: ['table', 'table-striped'], id: 'collection_resource_datatable', data: { url: collection_resources_path(format: :json) } do %>
+            <%= content_tag :table, role: :datatable, class: ['table', 'table-striped'], id: 'collection_resource_datatable', data: { url: data_table_collection_resources_path(format: :json) } do %>
               <%= render partial: 'collection_resources/listing_table', locals: { table_called_from: 'permission_group', columns_details: {}, organization_id: current_organization.id } %>
             <% end %>
           </div>

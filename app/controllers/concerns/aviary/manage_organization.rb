@@ -10,11 +10,16 @@ module Aviary::ManageOrganization
     @organization = Organization.new
   end
 
-  def edit; end
+  def edit
+    authorize! :manage, current_organization unless admin_signed_in?
+  end
 
-  def display_settings; end
+  def display_settings
+    authorize! :manage, current_organization
+  end
 
   def update
+    authorize! :manage, current_organization unless admin_signed_in?
     if @organization.update(org_params)
       respond_to do |format|
         flash[:notice] = 'Organization updated successfully.'
@@ -35,6 +40,7 @@ module Aviary::ManageOrganization
   end
 
   def search_configuration
+    authorize! :manage, current_organization
     if params['sort_info_search'].present? && request.post?
       current_organization.update(search_facet_fields: params['sort_info_search'])
       redirect_back(fallback_location: root_path)
