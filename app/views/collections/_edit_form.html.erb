@@ -12,6 +12,7 @@
     <div class="form-group">
       <div class="field-title">
         <label for="">Collection Favicon</label>
+        <%= render partial: 'shared/remove_image_button', locals: {model_obj: @collection, target_type: 'favicon'} %>
       </div>
       <div class="image-box">
         <div class="holder">

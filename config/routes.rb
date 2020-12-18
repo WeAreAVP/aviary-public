@@ -161,7 +161,12 @@ Rails.application.routes.draw do
   end
 
   get '/embed/media/:resource_file_id', to: 'collection_resources#embed_file', as: 'embed_file'
-  resources :collection_resources, except: %i[edit update]
+  resources :collection_resources, except: %i[edit update] do
+    collection do
+      post :data_table, to: 'collection_resources#index'
+    end
+  end
+
   post 'indexes/upload/:resource_file_id(/:file_index_id)', to: 'indexes#create', as: 'upload_index'
   patch 'indexes/sort/:resource_file_id', to: 'indexes#sort', as: 'index_sort'
   delete 'indexes/delete/:id', to: 'indexes#destroy', as: 'delete_file_index'
@@ -171,9 +176,8 @@ Rails.application.routes.draw do
   get 'transcripts/export/:type(/:id)', to: 'transcripts#export', as: 'transcript_export'
   post :data_table, to: 'collection_resources#index'
   get '/confirm_organization_invite/:token', to: 'organizations#confirm_invite', as: :org_confirm_invite
-
-  get 'r/:noid', to: 'home#noid', as: :noid
   get 'remove_image/:target_type/target_id/:target_id/target_attr/:target_attr', to: 'home#remove_image_for_assets', as: :remove_image_target_wise
+  get 'r/:noid', to: 'home#noid', as: :noid
   get 'p/:encoded_id', to: 'home#playlist_share', as: :playlist_short
   get 'encrypted_info/(:text_to_be_encrypted)', to: 'home#encrypted_info', as: :encrypted_info
   get 'c/embed/:custom_unique_identifier/(:sequential_number_of_media_file)/(:seconds_to_start_time)', to: 'home#resource_unique_identifier', as: :resource_unique_identifier_embed, format: false, constraints: { custom_unique_identifier: /.+/ }

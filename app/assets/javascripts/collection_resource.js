@@ -680,7 +680,7 @@ function CollectionResource() {
                 checkAndCreateUrl();
             }, 500);
         });
-
+        timePickerShare();
         $('.start_time_checkbox, .end_time_checkbox').click(function () {
             checkAndCreateUrl();
 
