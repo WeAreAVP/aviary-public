@@ -121,6 +121,32 @@ function secondsToHuman(d) {
         return '';
 }
 
+function scrollTo(container, element) {
+    $(container).mCustomScrollbar("scrollTo", element, {scrollInertia: 10, timeout: 1});
+}
+
+function removeImageCustom() {
+    let appHandler = new App();
+    document_level_binding_element('.remove_image_custom', 'click', function () {
+        $('#general_modal_close_cust_success').attr('href', $(this).data('url'));
+        $('#general_modal_close_cust_success').removeClass('d-none');
+        appHandler.show_modal_message('Confirmation', '<strong>Are you sure you want to remove this image?</strong>', 'danger', null);
+    });
+}
+
+function timePickerShare() {
+    document_level_binding_element('#start_time_share, #end_time_share', 'blur', function () {
+        let time = $(this).val();
+        if (typeof time != 'undefined' && time != '') {
+            let seconds = humanToSeconds(time);
+            if (!isNaN(seconds)) {
+                $(this).val(secondsToHuman(seconds));
+            }
+        }
+    });
+}
+
+
 /**
  *
  * @param d float

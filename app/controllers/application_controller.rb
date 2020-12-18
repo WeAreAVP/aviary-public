@@ -34,13 +34,34 @@ class ApplicationController < ActionController::Base
   end
 
   def encrypted_info
-    response = if current_user_is_org_owner_or_admin?
-                 crypt = ActiveSupport::MessageEncryptor.new(Rails.application.secrets.secret_key_base[0..31], Rails.application.secrets.secret_key_base)
-                 crypt.encrypt_and_sign(params[:text_to_be_encrypted])
+    response = if current_user_is_org_user?(current_organization)
+                 collection_resource_id = params['collection_resource_id']
+                 if params['type'] == 'ever_green_url'
+                   existing_resource = PublicAccessUrl.where(collection_resource_id: collection_resource_id, access_type: 'ever_green_url')
+                   existing_resource.delete_all if existing_resource.present?
+                 end
+                 information = { start_time: params['start_time_status'].to_s.to_boolean? ? params['start_time'] : nil, end_time: params['end_time_status'].to_s.to_boolean? ? params['end_time'] : nil,
+                                 start_time_status: params['start_time_status'], end_time_status: params['end_time_status'] }
+
+                 object = { access_type: params['type'], status: true, collection_resource_id: collection_resource_id, url: '' }
+                 object[:duration] = params['type'] == 'ever_green_url' ? 'Ongoing' : params['duration']
+                 object[:information] = params['type'] == 'ever_green_url' ? nil : information.to_json
+                 encrypted_string = EnDecryptor.encrypt(public_access_url.id.to_s + '--' + random_string).strip
+                 param_noid = { noid: CollectionResource.find(collection_resource_id).noid, host: Utilities::AviaryDomainHandler.subdomain_handler(current_organization), access: encrypted_string }
+                 param_noid[:t] = human_to_seconds(information[:start_time]) if information[:start_time].present?
+                 param_noid[:e] = human_to_seconds(information[:end_time]) if information[:end_time].present?
+                 param_noid[:auto_play] = 'true' if params[:auto_play].present? && params[:auto_play].to_s.to_boolean?
+                 url = noid_url(param_noid)
+                 url
                else
                  ''
                end
-    render json: { encrypted_data: response }
+    render json: { encrypted_data: CGI.unescape(response) }
+  end
+
+  def remove_image_for_assets
+    remove_image(eval(params['target_type'].capitalize).find_by_id(params['target_id']), params['target_attr']) if params['target_type'].present? && params['target_id'].present? && params['target_attr'].present?
+    redirect_back(fallback_location: root_path)
   end
 
   def search_param_handler
@@ -108,6 +129,19 @@ class ApplicationController < ActionController::Base
 
   def storable_location?
     request.get? && is_navigational_format? && !devise_controller? && !request.xhr?
+  end
+
+  def remove_image(model_object, attribute)
+    # @param [Object]  model_object
+    # @param [Object]  attribute
+    # @return [Object]
+
+    val = if Organization.first.class.name == 'Organization' && attribute == 'banner_image'
+            open("#{Rails.root}/public/aviary_default_banner.png")
+          elsif Organization.first.class.name == 'Collection' && attribute == 'image'
+            open("#{Rails.root}/public/aviary_default_collection.png")
+          end
+    model_object.update_attributes(attribute.to_s => val)
   end
 
   def store_user_location!

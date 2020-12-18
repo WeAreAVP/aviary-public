@@ -44,6 +44,9 @@
 </main>
 <script type="text/javascript">
     var collectionResource = new CollectionResource();
+    collectionResource.player_time = <%= params['t'].present? ? params['t'] : 0 %>;
+    collectionResource.end_time = <%= params['e'].present? ? params['e'] : 0 %>;
+    collectionResource.auto_play = <%= params['auto_play'].present? ? params['auto_play'].to_s.to_boolean? : 0 %>;
     document.addEventListener("DOMContentLoaded", function (event) {
         setTimeout(function () {
             collectionResource.player_time = <%= params['t'].present? ? params['t'] : 0 %>;

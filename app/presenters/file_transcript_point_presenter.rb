@@ -24,7 +24,7 @@ class FileTranscriptPointPresenter < BasePresenter
     </div>"
   end
 
-  def speaker_with_text
+  def speaker_with_text(session_video_text_all = nil)
     font_regex = %r{<font.*?>(.+?)<\/font>}
     if @model.speaker.blank?
       reg_ex = /([A-Z0-9.\' ]+: )/
@@ -33,9 +33,37 @@ class FileTranscriptPointPresenter < BasePresenter
       text = text.gsub(/\r\n|\r|\n/, '<br>')
       text = text.gsub(/(<br>)\1/, '<breaktag>').gsub('<br>', ' ')
       text = text.gsub('<breaktag>', '<br><br>').strip
-      text.gsub(font_regex, '\1')
+      text = text.gsub(font_regex, '\1')
     else
-      format('<a class="play-timecode" href="javascript://" data-timecode="%s">%s:</a> %s', @model.start_time, @model.speaker, @model.text.strip.gsub(font_regex, '\1'))
+      text = format('<a class="play-timecode" href="javascript://" data-timecode="%s">%s:</a> %s', @model.start_time, @model.speaker, @model.text.strip.gsub(font_regex, '\1'))
     end
+    replacement, text = prep_string_for_markers(text)
+
+    if session_video_text_all.present?
+      session_video_text_all.each do |key_keyword, single_keyword|
+        text = text.gsub(/(#{single_keyword})/i, '<span data-markjs="true" class="highlight-marker mark ' + key_keyword + '">' + single_keyword + '</span>')
+      end
+    end
+
+    if replacement.present?
+      replacement.each do |key, single_replacement|
+        text = text.gsub(/(#{key})/i, single_replacement)
+      end
+    end
+
+    text
+  end
+
+  def prep_string_for_markers(text)
+    replacement = {}
+    if text.present? && text.scan(/<[^>]*>/).present?
+      text.scan(/<[^>]*>/).uniq.each do |single_tag_string|
+        random_string_code = random_string(25)
+        random_string_code = " --#{random_string_code}-- "
+        replacement[random_string_code] = single_tag_string
+        text = text.gsub(/(#{single_tag_string})/i, random_string_code)
+      end
+    end
+    [replacement, text]
   end
 end

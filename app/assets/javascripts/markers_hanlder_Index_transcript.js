@@ -45,12 +45,6 @@ function MarkerHandlerIndexTranscript(identifier, keyword) {
 
     this.initMarkerIndexTranscript = function (type) {
         if (selfMHIT.search_keyword != '' && selfMHIT.search_keyword !== 'undefined') {
-            $(".file_" + type + "_mark_custom").mark(selfMHIT.search_keyword, {
-                "element": "span",
-                "className": "highlight-marker mark " + selfMHIT.identifier,
-                "caseSensitive": false,
-                "separateWordSearch": false
-            });
             $('.file_' + type + '_mark_custom .highlight-marker').unbind('click').bind('click', function () {
                 $(this).parents('div.content_section').prev('div.timecode_section').children('a').trigger('click');
             });
@@ -233,7 +227,7 @@ function MarkerHandlerIndexTranscript(identifier, keyword) {
                 selfMHIT.collection_resource.current_marker_index = $($current).closest('.' + selfMHIT.tab_type.toLowerCase() + '_time').attr('id');
                 $($current).addClass(selfMHIT.currentClass);
                 try {
-                    $('.' + selfMHIT.tab_type.toLowerCase() + '_point_container').mCustomScrollbar("scrollTo", '.current', {scrollInertia: 200, timeout: 1});
+                    scrollTo('.' + selfMHIT.tab_type.toLowerCase() + '_point_container', '.current');
                 } catch (e) {
                     e;
                 }

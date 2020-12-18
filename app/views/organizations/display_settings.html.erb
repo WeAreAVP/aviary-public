@@ -4,7 +4,7 @@
       <div class="text-headline jumbotron">
         <div class="heading-holder">
           <div class="row">
-            <div class="col-md-9"><h1>Organization Profile</h1></div>
+            <div class="col-md-9"><h2>Organization Display Settings</h2></div>
             <div class="col-md-3"><%= link_to 'View Organization Page', root_url(host: Utilities::AviaryDomainHandler.subdomain_handler(@organization)), class: 'btn btn-primary btn-xs pull-right' %></div>
           </div>
         </div>
@@ -38,7 +38,8 @@
             </div>
             <div class="col-md-6 ">
               <div class="form-group banner-image d-none">
-                <label for="" class="col-form-label">Banner Image*</label>
+                <label for="" class="col-form-label">Banner Image</label>
+                <%= render partial: 'shared/remove_image_button', locals: {model_obj: @organization, target_type: 'banner_image'} %>
                 <div class="image-box">
                   <div class="holder">
                     <img id="banner" src="<%= @organization.new_record? ? '#' : (image_url @organization.banner_image) %>" alt="">

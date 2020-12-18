@@ -173,6 +173,7 @@ Rails.application.routes.draw do
   get '/confirm_organization_invite/:token', to: 'organizations#confirm_invite', as: :org_confirm_invite
 
   get 'r/:noid', to: 'home#noid', as: :noid
+  get 'remove_image/:target_type/target_id/:target_id/target_attr/:target_attr', to: 'home#remove_image_for_assets', as: :remove_image_target_wise
   get 'p/:encoded_id', to: 'home#playlist_share', as: :playlist_short
   get 'encrypted_info/(:text_to_be_encrypted)', to: 'home#encrypted_info', as: :encrypted_info
   get 'c/embed/:custom_unique_identifier/(:sequential_number_of_media_file)/(:seconds_to_start_time)', to: 'home#resource_unique_identifier', as: :resource_unique_identifier_embed, format: false, constraints: { custom_unique_identifier: /.+/ }

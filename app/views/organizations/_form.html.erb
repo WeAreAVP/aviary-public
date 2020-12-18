@@ -3,6 +3,7 @@
     <div class="col-md-6">
       <div class="form-group">
         <label for="" class="col-form-label">Logo*</label>
+        <%= render partial: 'shared/remove_image_button', locals: {model_obj: @organization, target_type: 'logo_image'} %>
         <div class="image-box">
           <div class="holder">
             <img id="logo" src="<%= @organization.new_record? ? '#' : (image_url @organization.logo_image) %>" alt="">
@@ -19,6 +20,7 @@
     <div class="col-md-6">
       <div class="form-group">
         <label for="" class="col-form-label">Favicon</label>
+        <%= render partial: 'shared/remove_image_button', locals: {model_obj: @organization, target_type: 'favicon'} %>
         <div class="image-box">
           <div class="holder">
             <%= image_tag(@organization.favicon.url, id: 'favicon', alt: 'favicon') %>

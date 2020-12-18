@@ -2,20 +2,20 @@
   <div class="col-md-6">
     <div class="form-group">
       <label for="" class="col-form-label">Preferred Banner Display</label>
-      <%= c.select :banner_type, Collection.banner_types.map { |key, _| [key.humanize, key] }, {}, required: false, label: false, class: 'custom-placeholder banner_type-custom' %>
+      <%= c.select :banner_type, Collection.banner_types.map {|key, _| [key.humanize, key]}, {}, required: false, label: false, class: 'custom-placeholder banner_type-custom' %>
       <%= c.error :banner_type %>
       <br>
     </div>
     <div class="form-group">
       <div class="form-check  mt-15px">
-        <%= c.input :display_banner, input_html: { class: 'form-check-input' } %>
+        <%= c.input :display_banner, input_html: {class: 'form-check-input'} %>
       </div>
     </div>
   </div>
   <div class="col-md-6">
     <div class="form-group ">
       <label for="" class="col-form-label">Preferred Default Tab</label>
-      <%= c.select :default_tab_selection, Collection.default_tab_selections.map { |key, _| [key.humanize, key] }, {}, required: false, label: false, class: 'custom-placeholder banner_type-custom' %>
+      <%= c.select :default_tab_selection, Collection.default_tab_selections.map {|key, _| [key.humanize, key]}, {}, required: false, label: false, class: 'custom-placeholder banner_type-custom' %>
       <%= c.error :default_tab_selection %>
     </div>
   </div>
@@ -23,7 +23,8 @@
 <div class="row ">
   <div class="col-md-6 ">
     <div class="form-group banner-image d-none">
-      <label for="" class="col-form-label">Banner Image*</label>
+      <label for="" class="col-form-label">Banner Image</label>
+      <%= render partial: 'shared/remove_image_button', locals: {model_obj: @collection, target_type: 'image'} %>
       <div class="image-box">
         <div class="holder">
           <img id="banner" src="<%= @collection.new_record? ? '#' : (image_url @collection.image) %>" alt="">
@@ -33,7 +34,7 @@
         <div class="field-title">
           <%= c.label @collection.new_record? ? 'Add Image' : 'Upload new image', for: 'collection_image' %>
         </div>
-        <%= c.input :image, as: :file, error: false, label: false, input_html: { onchange: "readURL(this, 'banner');", accept: 'image/*' } %>
+        <%= c.input :image, as: :file, error: false, label: false, input_html: {onchange: "readURL(this, 'banner');", accept: 'image/*'} %>
       </div>
       <div class="text-holder bg_img_cls m-0 mt-5px w-100" style="display: block !important;">
         Suggested Background Image size is <i>1200x300</i> or Aspect Ratio from <i>3:1</i> to <i>6:1</i>
@@ -54,12 +55,13 @@
         <tbody id="collection_banner_slider_resources_container"></tbody>
       </table>
       <br>
-      <%= c.input :banner_slider_resources, as: :string, label: false, input_html: { class: ' form-control d-none' } %>
+      <%= c.input :banner_slider_resources, as: :string, label: false, input_html: {class: ' form-control d-none'} %>
     </div>
   </div>
   <div class="col-md-6 ">
     <div class="form-group card_image d-none">
-      <label for="" class="col-form-label">Card Image*</label>
+      <label for="" class="col-form-label">Card Image</label>
+      <%= render partial: 'shared/remove_image_button', locals: {model_obj: @collection, target_type: 'card_image'} %>
       <div class="image-box">
         <div class="holder">
           <img id="card_image" src="<%= @collection.new_record? ? '#' : (image_url @collection.card_image) %>" alt="">
@@ -69,10 +71,10 @@
         <div class="field-title">
           <%= c.label @collection.new_record? ? 'Add Image' : 'Upload new image', for: 'collection_card_image' %>
         </div>
-        <%= c.input :card_image, as: :file, error: false, label: false, input_html: { onchange: "readURL(this, 'card_image');", accept: 'image/*' } %>
+        <%= c.input :card_image, as: :file, error: false, label: false, input_html: {onchange: "readURL(this, 'card_image');", accept: 'image/*'} %>
       </div>
       <div class="text-holder bg_img_cls m-0 mt-5px w-100" style="display: block !important;">
-        Suggested Card Image size is <i>1200x300</i> or Aspect Ratio from <i>3:1</i> to <i>6:1</i>
+        Suggested Card Image size is <i>450x230</i> or Aspect Ratio from <i>2:1</i></i>
       </div>
       <%= c.error :card_image %>
       <br>
@@ -104,7 +106,7 @@
         customize the help text that is displayed to users in the search box on the resource detail page. Please enter
         the text you would like to have displayed for users here.
       </small>
-      <%= c.input :search_resource_placeholder, label: false, input_html: { class: 'form-control' } %>
+      <%= c.input :search_resource_placeholder, label: false, input_html: {class: 'form-control'} %>
     </div>
 
   </div>
