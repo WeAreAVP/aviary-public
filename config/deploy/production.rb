@@ -1,6 +1,6 @@
 # configuration to deploy the application on the staging server
 set :stage, :production
-set :branch, 'AVIARY-2186_time_auto_play_url'
+set :branch, 'master'
 
 set :server_name, 'public.aviaryplatform.com'
 set :full_app_name, "#{fetch(:application)}_#{fetch(:stage)}"
