@@ -100,11 +100,6 @@ module ApplicationHelper
     yield(presenter) if block_given?
   end
 
-  def random_number
-    random = Time.now.to_i
-    random.to_s + rand(10_000).to_s
-  end
-
   # Languages array iso-639-1
   def iso_639_1_languages
     languages_array = languages_array_simple
