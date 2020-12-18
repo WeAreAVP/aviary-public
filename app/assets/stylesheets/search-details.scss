@@ -2587,3 +2587,8 @@ dl.form textarea.text {
 #player_youtube_iframe {
   height: 100% !important;
 }
+
+.collection_resources .modal-backdrop.fade.show {
+  opacity: 0 !important;
+  position: inherit !important;
+}

@@ -111,10 +111,11 @@ class HomeController < ApplicationController
   def noid
     collection_resource = CollectionResource.find_by_noid!(params[:noid])
     session[:share] = params[:share] if params[:share].present?
+    session[:access] = params[:access] if params[:access].present?
     if params[:media].present?
-      redirect_to collection_collection_resource_details_path(collection_resource.collection, collection_resource, params[:media], t: params[:t], share: params[:share])
+      redirect_to collection_collection_resource_details_path(collection_resource.collection, collection_resource, params[:media], t: params[:t], auto_play: params[:auto_play], e: params[:e], share: params[:share], access: params[:access])
     else
-      redirect_to collection_collection_resource_path(collection_resource.collection, collection_resource, t: params[:t], share: params[:share])
+      redirect_to collection_collection_resource_path(collection_resource.collection, collection_resource, t: params[:t], auto_play: params[:auto_play], e: params[:e], share: params[:share], access: params[:access])
     end
   rescue StandardError
     flash[:notice] = 'No Collection Resource found.'

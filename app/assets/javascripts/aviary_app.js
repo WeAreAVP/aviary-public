@@ -141,6 +141,10 @@ function App() {
      */
     this.removeParam = function(key, sourceURL) {
         var rtn = sourceURL.split("?")[0],
+
+
+
+
             param,
             params_arr = [],
             queryString = (sourceURL.indexOf("?") !== -1) ? sourceURL.split("?")[1] : "";
@@ -176,6 +180,8 @@ function App() {
     this.show_modal_message = function (heading, message, type, script) {
         if (type == 'danger') {
             message = '<span class="text-danger"> ' + message + ' </span>';
+        } else if (type == 'info') {
+            message = '<span > ' + message + ' </span>';
         } else {
             message = '<span class="text-success"> ' + message + '</span>';
         }
@@ -189,6 +195,7 @@ function App() {
         $('#general_modal_message_cust').modal('show');
 
     };
+
 
     /**
      * A utility function to find all URLs - FTP, HTTP(S) and Email - in a text string

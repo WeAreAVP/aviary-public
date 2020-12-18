@@ -9,6 +9,7 @@
 function Organization() {
 
     this.orgFormPageBinding = function () {
+        removeImageCustom();
         init_tinymce_for_element('#organization_description');
     };
 

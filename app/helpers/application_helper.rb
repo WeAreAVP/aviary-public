@@ -38,6 +38,24 @@ module ApplicationHelper
     array.include?(request.path) ? 'active' : ''
   end
 
+  def iframe_responsive_design
+    common_style = 'style="position:absolute;top:0;left:0;width:100%;height:100%;"'
+    outer_div_style = 'style="padding: 100% 0 0 0;position: relative;height: 100%;width: 100%;"'
+
+    [outer_div_style, common_style]
+  end
+
+  def random_number
+    random = Time.now.to_i
+    random.to_s + rand(10_000).to_s
+  end
+
+  def random_string(max_length = nil)
+    max_length = 5 unless max_length.present?
+    o = [('a'..'z'), ('A'..'Z')].map(&:to_a).flatten
+    (0...max_length).map { o[rand(o.length)] }.join
+  end
+
   def clean_uri(query)
     query.to_s.gsub(%r{[/?!*'();:@&=+\]\[$,/?%# ]}, '')
   rescue StandardError
@@ -80,11 +98,6 @@ module ApplicationHelper
     klass = presenter_class || "#{model.class}Presenter".constantize
     presenter = klass.new(model, self)
     yield(presenter) if block_given?
-  end
-
-  def random_number
-    random = Time.now.to_i
-    random.to_s + rand(10_000).to_s
   end
 
   # Languages array iso-639-1
