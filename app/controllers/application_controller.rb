@@ -36,16 +36,9 @@ class ApplicationController < ActionController::Base
   def encrypted_info
     response = if current_user_is_org_user?(current_organization)
                  collection_resource_id = params['collection_resource_id']
-                 if params['type'] == 'ever_green_url'
-                   existing_resource = PublicAccessUrl.where(collection_resource_id: collection_resource_id, access_type: 'ever_green_url')
-                   existing_resource.delete_all if existing_resource.present?
-                 end
                  information = { start_time: params['start_time_status'].to_s.to_boolean? ? params['start_time'] : nil, end_time: params['end_time_status'].to_s.to_boolean? ? params['end_time'] : nil,
                                  start_time_status: params['start_time_status'], end_time_status: params['end_time_status'] }
 
-                 object = { access_type: params['type'], status: true, collection_resource_id: collection_resource_id, url: '' }
-                 object[:duration] = params['type'] == 'ever_green_url' ? 'Ongoing' : params['duration']
-                 object[:information] = params['type'] == 'ever_green_url' ? nil : information.to_json
                  encrypted_string = EnDecryptor.encrypt(public_access_url.id.to_s + '--' + random_string).strip
                  param_noid = { noid: CollectionResource.find(collection_resource_id).noid, host: Utilities::AviaryDomainHandler.subdomain_handler(current_organization), access: encrypted_string }
                  param_noid[:t] = human_to_seconds(information[:start_time]) if information[:start_time].present?
