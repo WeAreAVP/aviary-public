@@ -53,10 +53,87 @@ class Organization < ApplicationRecord
     end
   end
 
-  def update_default_values
-    self.default_tab_selection = 2 if default_tab_selection.blank?
-    self.title_font_color = '#ffffff' if title_font_color.blank?
-    self.title_font_size = '28px' if title_font_size.blank?
+  def update_resource_column_fields(force_update = false, refresh_entry = false)
+    return if resource_table_column_detail.present? && !force_update && !refresh_entry
+    resource_table_column = { '0' => { value: 'id_ss', status: 'true' },
+                              '1' => { value: 'title_ss', status: 'true' },
+                              '2' => { value: 'collection_title', status: 'false' },
+                              '3' => { value: 'resource_file_count_ss', status: 'false' },
+                              '4' => { value: 'transcripts_count_ss', status: 'false' },
+                              '5' => { value: 'indexes_count_ss', status: 'false' },
+                              '6' => { value: 'updated_at_ss', status: 'false' },
+                              '7' => { value: 'access_ss', status: 'false' },
+                              '8' => { value: 'description_publisher_sms', status: 'false' },
+                              '9' => { value: 'description_preferred_citation_ss', status: 'false' },
+                              '10' => { value: 'description_language_sms', status: 'false' },
+                              '11' => { value: 'description_identifier_sms', status: 'false' },
+                              '12' => { value: 'description_duration_ss', status: 'false' },
+                              '13' => { value: 'description_source_sms', status: 'false' },
+                              '14' => { value: 'description_date_sms', status: 'false' },
+                              '15' => { value: 'description_rights_statement_search_texts', status: 'false' },
+                              '16' => { value: 'description_agent_sms', status: 'false' },
+                              '17' => { value: 'description_coverage_sms', status: 'false' },
+                              '18' => { value: 'description_description_search_texts', status: 'false' },
+                              '19' => { value: 'description_format_sms', status: 'false' },
+                              '20' => { value: 'description_source_metadata_uri_ss', status: 'false' },
+                              '21' => { value: 'description_relation_sms', status: 'false' },
+                              '22' => { value: 'description_subject_sms', status: 'false' },
+                              '23' => { value: 'description_keyword_sms', status: 'false' },
+                              '24' => { value: 'description_type_sms', status: 'false' },
+                              '25' => { value: 'custom_unique_identifier_ss', status: 'false' } }
+    fixed_number_of_column = '0'
+    if resource_table_column_detail.blank? || refresh_entry
+      columns_status = resource_table_column
+    else
+      json_response = JSON.parse(resource_table_column_detail)
+
+      fixed_number_of_column = 0
+      columns_status = json_response['columns_status']
+      total_columns = columns_status.count
+      columns_status = add_missing_column(total_columns, resource_table_column, columns_status.to_h)
+    end
+    total_columns = columns_status.count
+    columns_status, list_of_all_fields = custom_fields_manager(columns_status, total_columns)
+    columns_status = remove_extra_fields(columns_status, list_of_all_fields)
+    columns_update = { number_of_column_fixed: fixed_number_of_column, columns_status: columns_status }.to_json
+    update(resource_table_column_detail: columns_update)
+  end
+
+  def remove_extra_fields(columns_status, list_of_all_fields)
+    columns_status.each do |single_column|
+      value = if single_column.second['value'].present?
+                single_column.second['value']
+              elsif single_column.second[:value].present?
+                single_column.second[:value]
+              end
+      if value.present? && value.include?('custom_field_values') && !list_of_all_fields.include?(value)
+        columns_status = columns_status.except(single_column.first)
+      end
+    end
+    columns_status
+  end
+
+  def self.field_list_with_options
+    {
+        organization_id_is: { key: 'organization_id_is', label: 'Organization Name', single: false, helper_method: :render_organization_facet_value, tag: 'organization_id_is-tag', ex: 'organization_id_is-tag', type: 'integer' },
+        collection_id_is: { key: 'collection_id_is', label: 'Collection Title', single: false, helper_method: :render_collection_facet_value, tag: 'collection_id_is-tag', ex: 'collection_id_is-tag', type: 'integer' },
+        description_date_search_lms: { key: 'description_date_search_lms', label: 'Date', partial: 'blacklight_range_limit/range_limit_panel', range: { segments: false },
+                                       tag: 'description_date_search_lms-tag', ex: 'description_date_search_lms-tag', type: 'date' },
+        description_language_search_facet_sms: { key: 'description_language_search_facet_sms', label: 'Resource Language', single: false, type: 'text' },
+        description_source_search_facet_sms: { key: 'description_source_search_facet_sms', label: 'Source', single: false, type: 'text' },
+        description_coverage_search_facet_sms: { key: 'description_coverage_search_facet_sms', label: 'Location', single: false, type: 'text' },
+        has_transcript_ss: { key: 'has_transcript_ss', label: 'Has Transcript', single: false, type: 'text' },
+        has_index_ss: { key: 'has_index_ss', label: 'Has Index', single: false, type: 'text' },
+        description_format_search_facet_sms: { key: 'description_format_search_facet_sms', label: 'Format', single: false, type: 'text' },
+        description_publisher_search_facet_sms: { key: 'description_publisher_search_facet_sms', label: 'Publisher', single: false, type: 'text' },
+        description_agent_search_facet_sms: { key: 'description_agent_search_facet_sms', label: 'Agent', single: false, type: 'text' },
+        description_keyword_search_facet_sms: { key: 'description_keyword_search_facet_sms', label: 'Keyword', single: false, type: 'text' },
+        description_subject_search_facet_sms: { key: 'description_subject_search_facet_sms', label: 'Subject', single: false, type: 'text' },
+        description_type_search_facet_sms: { key: 'description_type_search_facet_sms', label: 'Type', single: false, type: 'text' },
+        access_ss: { key: 'access_ss', label: 'Access', single: false, type: 'text' },
+        description_duration_ls: { key: 'description_duration_ls', label: 'Duration', single: true, partial: 'blacklight_range_limit/range_limit_panel',
+                                   range: { segments: false }, tag: 'description_duration_ls', ex: 'description_duration_ls-tag', type: 'date' }
+    }
   end
 
   def custom_fields_manager(columns_status, total_columns)
@@ -304,6 +381,7 @@ class Organization < ApplicationRecord
     end
     dynamic_fields
   end
+
 
   def update_solr
     Sunspot.index self
