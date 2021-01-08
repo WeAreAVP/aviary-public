@@ -1,8 +1,8 @@
 # Collections Controller
 class CollectionsController < ApplicationController
-  before_action :set_collection, only: %I[edit update show destroy]
+  before_action :set_collection, only: %I[edit update destroy]
   before_action :authenticate_user!, except: :show
-  load_and_authorize_resource
+  load_and_authorize_resource except: :show
   include Aviary::BulkOperation
   include CollectionResourceHelper
 
