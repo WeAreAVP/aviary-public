@@ -21,6 +21,7 @@ class CollectionResourcesController < ApplicationController
   end
 
   def show
+    organization = current_organization
     id = params[:collection_resource_id].present? ? params[:collection_resource_id] : params[:id]
     @collection_resource = CollectionResource.includes(:collection).joins(:collection).where(id: id).where(collections: { organization_id: organization.id, id: params[:collection_id] }).first
 
