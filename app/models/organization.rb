@@ -59,74 +59,9 @@ class Organization < ApplicationRecord
     self.title_font_size = '28px' if title_font_size.blank?
   end
 
-  def update_resource_column_fields(force_update = false, refresh_entry = false)
-    return if resource_table_column_detail.present? && !force_update && !refresh_entry
-    resource_table_column = { '0' => { value: 'id_ss', status: 'true' },
-                              '1' => { value: 'title_ss', status: 'true' },
-                              '2' => { value: 'collection_title', status: 'false' },
-                              '3' => { value: 'resource_file_count_ss', status: 'false' },
-                              '4' => { value: 'transcripts_count_ss', status: 'false' },
-                              '5' => { value: 'indexes_count_ss', status: 'false' },
-                              '6' => { value: 'updated_at_ss', status: 'false' },
-                              '7' => { value: 'access_ss', status: 'false' },
-                              '8' => { value: 'description_publisher_sms', status: 'false' },
-                              '9' => { value: 'description_preferred_citation_ss', status: 'false' },
-                              '10' => { value: 'description_language_sms', status: 'false' },
-                              '11' => { value: 'description_identifier_sms', status: 'false' },
-                              '12' => { value: 'description_duration_ss', status: 'false' },
-                              '13' => { value: 'description_source_sms', status: 'false' },
-                              '14' => { value: 'description_date_sms', status: 'false' },
-                              '15' => { value: 'description_rights_statement_search_texts', status: 'false' },
-                              '16' => { value: 'description_agent_sms', status: 'false' },
-                              '17' => { value: 'description_coverage_sms', status: 'false' },
-                              '18' => { value: 'description_description_search_texts', status: 'false' },
-                              '19' => { value: 'description_format_sms', status: 'false' },
-                              '20' => { value: 'description_source_metadata_uri_ss', status: 'false' },
-                              '21' => { value: 'description_relation_sms', status: 'false' },
-                              '22' => { value: 'description_subject_sms', status: 'false' },
-                              '23' => { value: 'description_keyword_sms', status: 'false' },
-                              '24' => { value: 'description_type_sms', status: 'false' },
-                              '25' => { value: 'custom_unique_identifier_ss', status: 'false' } }
-    fixed_number_of_column = '0'
-    if resource_table_column_detail.blank? || refresh_entry
-      columns_status = resource_table_column
-    else
-      json_response = JSON.parse(resource_table_column_detail)
-      fixed_number_of_column = 0
-      columns_status = json_response['columns_status']
-      total_columns = columns_status.count
-      columns_status = add_missing_column(total_columns, resource_table_column, columns_status.to_h)
-    end
-    total_columns = columns_status.count
-    columns_status = custom_fields_manager(columns_status, total_columns)
-    columns_update = { number_of_column_fixed: fixed_number_of_column, columns_status: columns_status }.to_json
-    update(resource_table_column_detail: columns_update)
-  end
-
-  def self.field_list_with_options
-    {
-      organization_id_is: { key: 'organization_id_is', label: 'Organization Name', single: false, helper_method: :render_organization_facet_value, tag: 'organization_id_is-tag', ex: 'organization_id_is-tag', type: 'integer' },
-      collection_id_is: { key: 'collection_id_is', label: 'Collection Title', single: false, helper_method: :render_collection_facet_value, tag: 'collection_id_is-tag', ex: 'collection_id_is-tag', type: 'integer' },
-      description_date_search_lms: { key: 'description_date_search_lms', label: 'Date', partial: 'blacklight_range_limit/range_limit_panel', range: { segments: false },
-                                     tag: 'description_date_search_lms-tag', ex: 'description_date_search_lms-tag', type: 'date' },
-      description_language_search_facet_sms: { key: 'description_language_search_facet_sms', label: 'Resource Language', single: false, type: 'text' },
-      description_coverage_search_facet_sms: { key: 'description_coverage_search_facet_sms', label: 'Location', single: false, type: 'text' },
-      has_transcript_ss: { key: 'has_transcript_ss', label: 'Has Transcript', single: false, type: 'text' },
-      has_index_ss: { key: 'has_index_ss', label: 'Has Index', single: false, type: 'text' },
-      description_format_search_facet_sms: { key: 'description_format_search_facet_sms', label: 'Format', single: false, type: 'text' },
-      description_publisher_search_facet_sms: { key: 'description_publisher_search_facet_sms', label: 'Publisher', single: false, type: 'text' },
-      description_agent_search_facet_sms: { key: 'description_agent_search_facet_sms', label: 'Agent', single: false, type: 'text' },
-      description_keyword_search_facet_sms: { key: 'description_keyword_search_facet_sms', label: 'Keyword', single: false, type: 'text' },
-      description_subject_search_facet_sms: { key: 'description_subject_search_facet_sms', label: 'Subject', single: false, type: 'text' },
-      description_type_search_facet_sms: { key: 'description_type_search_facet_sms', label: 'Type', single: false, type: 'text' },
-      access_ss: { key: 'access_ss', label: 'Access', single: false, type: 'text' },
-      description_duration_ls: { key: 'description_duration_ls', label: 'Duration', single: true, partial: 'blacklight_range_limit/range_limit_panel',
-                                 range: { segments: false }, tag: 'description_duration_ls', ex: 'description_duration_ls-tag', type: 'date' }
-    }
-  end
-
   def custom_fields_manager(columns_status, total_columns)
     return columns_status if Rails.env.test? || collections.blank?
+    list_of_all_fields = []
     collections.each do |single_field|
       next unless single_field.all_fields['CollectionResource'].present?
       single_field.all_fields['CollectionResource'].each do |single|
@@ -141,12 +76,13 @@ class Organization < ApplicationRecord
               break
             end
           end
+          list_of_all_fields << custom_field_values
           columns_status[total_columns.to_s] = { value: custom_field_values, status: 'false' } if add_value
           total_columns += 1
         end
       end
     end
-    columns_status
+    [columns_status, list_of_all_fields]
   end
 
   def add_missing_column(total_columns, default_columns, added_columns)
@@ -171,27 +107,27 @@ class Organization < ApplicationRecord
   def update_resource_search_column_fields(force_update = false, refresh_entry = false)
     return if resource_table_search_columns.present? && !force_update && !refresh_entry
     table_search_columns = {
-      '0' => { value: 'id_ss', status: 'true' },
-      '1' => { value: 'title_ss', status: 'true' },
-      '2' => { value: 'collection_title', status: 'true' },
-      '3' => { value: 'transcript', status: 'true' },
-      '4' => { value: 'index', status: 'true' },
-      '5' => { value: 'description_publisher_search_texts', status: 'true' },
-      '6' => { value: 'description_preferred_citation_search_texts', status: 'true' },
-      '7' => { value: 'description_language_search_texts', status: 'true' },
-      '8' => { value: 'description_identifier_search_texts', status: 'true' },
-      '9' => { value: 'description_source_search_texts', status: 'true' },
-      '11' => { value: 'description_rights_statement_search_texts', status: 'true' },
-      '12' => { value: 'description_agent_search_texts', status: 'true' },
-      '13' => { value: 'description_format_search_texts', status: 'true' },
-      '14' => { value: 'description_coverage_search_texts', status: 'true' },
-      '15' => { value: 'description_description_search_texts', status: 'true' },
-      '16' => { value: 'description_source_metadata_uri_search_texts', status: 'true' },
-      '17' => { value: 'description_relation_search_texts', status: 'true' },
-      '18' => { value: 'description_subject_search_texts', status: 'true' },
-      '19' => { value: 'description_keyword_search_texts', status: 'true' },
-      '20' => { value: 'description_type_search_texts', status: 'true' },
-      '21' => { value: 'custom_unique_identifier_texts', status: 'true' }
+        '0' => { value: 'id_ss', status: 'true' },
+        '1' => { value: 'title_ss', status: 'true' },
+        '2' => { value: 'collection_title', status: 'true' },
+        '3' => { value: 'transcript', status: 'true' },
+        '4' => { value: 'index', status: 'true' },
+        '5' => { value: 'description_publisher_search_texts', status: 'true' },
+        '6' => { value: 'description_preferred_citation_search_texts', status: 'true' },
+        '7' => { value: 'description_language_search_texts', status: 'true' },
+        '8' => { value: 'description_identifier_search_texts', status: 'true' },
+        '9' => { value: 'description_source_search_texts', status: 'true' },
+        '11' => { value: 'description_rights_statement_search_texts', status: 'true' },
+        '12' => { value: 'description_agent_search_texts', status: 'true' },
+        '13' => { value: 'description_format_search_texts', status: 'true' },
+        '14' => { value: 'description_coverage_search_texts', status: 'true' },
+        '15' => { value: 'description_description_search_texts', status: 'true' },
+        '16' => { value: 'description_source_metadata_uri_search_texts', status: 'true' },
+        '17' => { value: 'description_relation_search_texts', status: 'true' },
+        '18' => { value: 'description_subject_search_texts', status: 'true' },
+        '19' => { value: 'description_keyword_search_texts', status: 'true' },
+        '20' => { value: 'description_type_search_texts', status: 'true' },
+        '21' => { value: 'custom_unique_identifier_texts', status: 'true' }
     }
 
     columns_update = if resource_table_search_columns.blank? || refresh_entry
@@ -202,44 +138,73 @@ class Organization < ApplicationRecord
                        add_missing_column(total_columns, table_search_columns, columns_update.to_h)
                      end
     total_columns = columns_update.count
-    columns_update = custom_fields_manager(columns_update, total_columns)
+    columns_update, list_of_all_fields = custom_fields_manager(columns_update, total_columns)
+    columns_update = remove_extra_fields(columns_update, list_of_all_fields)
     update(resource_table_search_columns: columns_update.to_json)
   end
 
   def update_resource_files_fields
     display_columns_update = {
-      number_of_column_fixed: '0',
-      columns_status:
+        number_of_column_fixed: '0',
+        columns_status:
             {
-              '0' => { status: 'true', value: 'id_is', sort_name: true },
-              '1' => { status: 'true', value: 'resource_file_file_name_ss', sort_name: true },
-              '2' => { status: 'true', value: 'access_ss', sort_name: true },
-              '3' => { status: 'true', value: 'resource_file_content_type_ss', sort_name: true },
-              '4' => { status: 'true', value: 'resource_file_file_size_ss', sort_name: true },
-              '5' => { status: 'true', value: 'updated_at_ds', sort_name: true },
-              '6' => { status: 'true', value: 'count_of_transcripts_ss', sort_name: true },
-              '7' => { status: 'true', value: 'count_of_indexes_ss', sort_name: true },
-              '8' => { status: 'true', value: 'collection_resource_id_ss', sort_name: true },
-              '9' => { status: 'true', value: 'collection_resource_title_ss', sort_name: true },
-              '10' => { status: 'true', value: 'thumbnail_ss', sort_name: false },
-              '11' => { status: 'true', value: 'aviary_url_path_ss', sort_name: false },
-              '12' => { status: 'true', value: 'aviary_purl_ss', sort_name: false },
-              '13' => { status: 'true', value: 'player_embed_html_ss', sort_name: false },
-              '14' => { status: 'true', value: 'media_embed_url_ss', sort_name: false },
-              '15' => { status: 'true', value: 'resource_detail_embed_html_ss', sort_name: false },
-              '16' => { status: 'true', value: 'target_domain_ss', sort_name: true },
-              '17' => { status: 'true', value: 'file_display_name_ss', sort_name: true },
-              '18' => { status: 'true', value: 'duration_ss', sort_name: true },
-              '19' => { status: 'true', value: 'created_at_ds', sort_name: true }
+                '0' => { status: 'true', value: 'id_is', sort_name: true },
+                '1' => { status: 'true', value: 'resource_file_file_name_ss', sort_name: true },
+                '2' => { status: 'true', value: 'access_ss', sort_name: true },
+                '3' => { status: 'true', value: 'resource_file_content_type_ss', sort_name: true },
+                '4' => { status: 'true', value: 'resource_file_file_size_ss', sort_name: true },
+                '5' => { status: 'true', value: 'updated_at_ds', sort_name: true },
+                '6' => { status: 'true', value: 'count_of_transcripts_ss', sort_name: true },
+                '7' => { status: 'true', value: 'count_of_indexes_ss', sort_name: true },
+                '8' => { status: 'true', value: 'collection_resource_id_ss', sort_name: true },
+                '9' => { status: 'true', value: 'collection_resource_title_ss', sort_name: true },
+                '10' => { status: 'true', value: 'thumbnail_ss', sort_name: false },
+                '11' => { status: 'true', value: 'aviary_url_path_ss', sort_name: false },
+                '12' => { status: 'true', value: 'aviary_purl_ss', sort_name: false },
+                '13' => { status: 'true', value: 'player_embed_html_ss', sort_name: false },
+                '14' => { status: 'true', value: 'media_embed_url_ss', sort_name: false },
+                '15' => { status: 'true', value: 'resource_detail_embed_html_ss', sort_name: false },
+                '16' => { status: 'true', value: 'target_domain_ss', sort_name: true },
+                '17' => { status: 'true', value: 'file_display_name_ss', sort_name: true },
+                '18' => { status: 'true', value: 'duration_ss', sort_name: true },
+                '19' => { status: 'true', value: 'created_at_ds', sort_name: true },
+                '20' => { status: 'true', value: 'description_publisher_sms', sort_name: true },
+                '21' => { status: 'true', value: 'description_source_sms', sort_name: true },
+                '22' => { status: 'true', value: 'description_coverage_sms', sort_name: true },
+                '23' => { status: 'true', value: 'description_language_sms', sort_name: true },
+                '24' => { status: 'true', value: 'description_format_sms', sort_name: true },
+                '25' => { status: 'true', value: 'description_identifier_sms', sort_name: true },
+                '26' => { status: 'true', value: 'description_relation_sms', sort_name: true },
+                '27' => { status: 'true', value: 'description_subject_sms', sort_name: true },
+                '28' => { status: 'true', value: 'description_keyword_sms', sort_name: true },
+                '29' => { status: 'true', value: 'description_agent_sms', sort_name: true },
+                '30' => { status: 'true', value: 'description_preferred_citation_sms', sort_name: true },
+                '31' => { status: 'true', value: 'description_source_metadata_uri_sms', sort_name: true },
+                '32' => { status: 'true', value: 'description_rights_statement_texts', sort_name: true },
+                '33' => { status: 'true', value: 'description_description_texts', sort_name: true }
             }
     }.to_json
 
     search_columns_update = {
-      '0' => { status: 'true', value: 'id_is' },
-      '1' => { status: 'true', value: 'resource_file_file_name_ss' },
-      '2' => { status: 'true', value: 'resource_file_content_type_ss' },
-      '3' => { status: 'true', value: 'collection_resource_title_ss' },
-      '4' => { status: 'true', value: 'target_domain_ss' }
+        '0' => { status: 'true', value: 'id_is' },
+        '1' => { status: 'true', value: 'resource_file_file_name_ss' },
+        '2' => { status: 'true', value: 'resource_file_content_type_ss' },
+        '3' => { status: 'true', value: 'collection_resource_title_ss' },
+        '4' => { status: 'true', value: 'target_domain_ss' },
+        '5' => { status: 'true', value: 'description_publisher_sms', sort_name: true },
+        '6' => { status: 'true', value: 'description_source_sms', sort_name: true },
+        '7' => { status: 'true', value: 'description_coverage_sms', sort_name: true },
+        '8' => { status: 'true', value: 'description_language_sms', sort_name: true },
+        '9' => { status: 'true', value: 'description_format_sms', sort_name: true },
+        '10' => { status: 'true', value: 'description_identifier_sms', sort_name: true },
+        '11' => { status: 'true', value: 'description_relation_sms', sort_name: true },
+        '12' => { status: 'true', value: 'description_subject_sms', sort_name: true },
+        '13' => { status: 'true', value: 'description_keyword_sms', sort_name: true },
+        '14' => { status: 'true', value: 'description_agent_sms', sort_name: true },
+        '15' => { status: 'true', value: 'description_preferred_citation_sms', sort_name: true },
+        '16' => { status: 'true', value: 'description_source_metadata_uri_sms', sort_name: true },
+        '17' => { status: 'true', value: 'description_rights_statement_texts', sort_name: true },
+        '18' => { status: 'true', value: 'description_description_texts', sort_name: true }
     }.to_json
     update(resource_file_display_column: display_columns_update, resource_file_search_column: search_columns_update) if resource_file_display_column.blank?
   end
