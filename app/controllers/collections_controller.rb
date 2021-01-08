@@ -168,6 +168,9 @@ class CollectionsController < ApplicationController
                                      .includes(collection_resource_files: [:file_transcripts])
                                      .where(file_transcripts: { is_edit: true })
       @collection.status = Collection.statuses[:deleted]
+      Rails.logger.error '########################################'
+      @collection.organization.update_field_settings
+      Rails.logger.error '########################################'
       if locked_transcript.present?
         flash[:error] = 'A transcript that is part of this collection is in the process of being edited by another user. You cannot delete this collection until the transcript is unlocked.'
       elsif @collection.save

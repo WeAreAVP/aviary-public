@@ -245,7 +245,7 @@ class Organization < ApplicationRecord
   end
 
   def update_search_configuration(force_update = false)
-    if search_facet_fields.present? && force_update
+    if search_facet_fields.present? && JSON.parse(search_facet_fields).present? && force_update
       dynamic_fields = JSON.parse(search_facet_fields)
       total_fields = dynamic_fields.count
       new_fields = []
@@ -324,15 +324,15 @@ class Organization < ApplicationRecord
         type = CustomFields::Field::TypeInformation.fetch_type(single_field['field'].column_type).to_s
         sys_name = single_field['field'].system_name
         if type != 'editor' && !skip_fields.include?(sys_name)
-          collection_title = ''
-          collection_title = collection_fields.title if single_field['field'].is_custom
+          collection_id = ''
+          collection_id = collection_fields.id.to_s if single_field['field'].is_custom
 
           if all_ready_added[sys_name].blank?
-            dynamic_fields[counter] = { 'key' => sys_name, 'label' => single_field['field'].label, 'type' => type, 'status' => false, 'is_default_field' => false, 'collection' => collection_title }
+            dynamic_fields[counter] = { 'key' => sys_name, 'label' => single_field['field'].label, 'type' => type, 'status' => false, 'is_default_field' => false, 'collection' => collection_id }
             all_ready_added[sys_name] = counter
             counter += 1
-          elsif collection_title.present?
-            dynamic_fields[all_ready_added[sys_name]]['collection'] += ' , ' + collection_title
+          elsif collection_id.present?
+            dynamic_fields[all_ready_added[sys_name]]['collection'] += ' , ' + collection_id
           end
         end
       end
