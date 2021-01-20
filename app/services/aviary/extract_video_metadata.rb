@@ -114,8 +114,8 @@ module Aviary::ExtractVideoMetadata
           valid_metadata = nil
           single_line_string.each do |line|
             next if line.blank?
-            clean_line = line.gsub('var config =', '').delete(';')
             begin
+              clean_line = line.split('var config =')[1].split(';')[0]
               ruby_hash = JSON.parse(clean_line)
               valid_metadata = ruby_hash
               break
@@ -124,6 +124,7 @@ module Aviary::ExtractVideoMetadata
             end
           end
           if valid_metadata.present?
+            metadata['title'] = valid_metadata['video']['title']
             metadata['duration'] = valid_metadata['video']['duration']
             metadata['thumbnail'] = valid_metadata['video']['thumbs']['640']
           end

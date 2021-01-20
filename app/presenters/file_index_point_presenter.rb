@@ -30,8 +30,8 @@ class FileIndexPointPresenter < BasePresenter
     '<div><span class="point_title">Keywords: </span>' + concat_keywords + '</div>'
   end
 
-  def single_index_point_hanlder(index_time_start)
-    "<div class='row pt-20px index_time index_custom_identifier #{index_time_start}' id='index_timecode_#{id}' data-id='#{id}' data-index_timecode='#{start_time.to_i} '>
+  def single_index_point_hanlder(index_time_start, session_video_text_all)
+    text = "<div class='row pt-20px index_time index_custom_identifier #{index_time_start}' id='index_timecode_#{id}' data-id='#{id}' data-index_timecode='#{start_time.to_i} '>
     <div class='col-md-2 text-center timecode_section'>
       <a class='play-timecode' href='javascript://' data-timecode='#{start_time}'>#{display_time}</a>
     </div>
@@ -47,6 +47,12 @@ class FileIndexPointPresenter < BasePresenter
       <div class='pt-10px'>#{display_hyperlink}</div>
     </div>
   </div>"
+    if session_video_text_all.present?
+      session_video_text_all.each do |key_keyword, single_keyword|
+        text = text.gsub(/(#{single_keyword})/i, '<span data-markjs="true" class="highlight-marker mark ' + key_keyword + '">' + single_keyword + '</span>')
+      end
+    end
+    text
   end
 
   def gps

@@ -1,7 +1,23 @@
-<div class="time-share">
+<div class="time-share mb-3 mt-1 pt-2">
+
+  <%
+    information = if @public_access_url.present? && @public_access_url.information.present?
+                    JSON.parse(@public_access_url.information)
+                  end
+
+  %>
   <div class="custom-checkbox">
-    <input id="st-check" type="checkbox" name="start_time_checkbox" class="start_time_checkbox">
-    <label for="st-check">Start at</label>
+    <input id="st-check" type="checkbox" name="start_time_checkbox" class="start_time_checkbox" <%= information.present? && information['start_time_status'].to_s.to_boolean? ? 'checked' : '' %>>
+    <label for="st-check">Start at</label> <input type="text" id="start_time_share" name="start_time" class="video-start-time" placeholder="00:00"  <%= information.present? && information['start_time_status'].to_s.to_boolean? ? "value=#{information['start_time']}" : 'disabled="disabled"' %> />
   </div>
-  <input type="text" id="start_time_share" name="start_time" class="video-start-time" placeholder="00:00" disabled="disabled">
+
+  <div class="custom-checkbox ml-3">
+    <input id="et-check" type="checkbox" name="end_time_checkbox" class="end_time_checkbox" <%= information.present? && information['end_time_status'].to_s.to_boolean? ? 'checked' : '' %>>
+    <label for="et-check">End at</label> <input type="text" id="end_time_share" name="end_time" class="video-end-time" placeholder="00:00"  <%= information.present? && information['end_time_status'].to_s.to_boolean? ? "value=#{information['end_time']}" : 'disabled="disabled"' %> />
+  </div>
+
+  <div class="custom-checkbox ml-4">
+    <input type="checkbox" id="auto_play_video" class="auto_play_video float-left" />
+    <label for="auto_play_video" class="label float-left"> Auto Play </label>
+  </div>
 </div>

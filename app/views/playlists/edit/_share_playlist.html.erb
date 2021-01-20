@@ -44,7 +44,7 @@
           </div>
           <div class="tab-pane fade" id="embed" role="tabpanel" aria-labelledby="embed-tab">
             <div class="content">
-              <div class="shareLink">
+                <div class="shareLink">
                 <textarea readonly class="form-control mb-3 share_value" id="embed_resource_media_player" placeholder="Embed Playlist"><iframe src="<%= playlist_show_url(@playlist_resource.playlist, collection_resource_file_id: @resource_file.id, playlist_resource_id: @playlist_resource.id, embed: true, media_player: true) %>" height="800" width="1200" style="width: 100%;"></iframe></textarea>
                 <button class="btn btn-default btn-block copy-link" data-clipboard-action="copy" data-clipboard-target="#embed_resource_media_player" data-original-title="" title="">Copy</button>
               </div>

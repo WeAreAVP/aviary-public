@@ -150,7 +150,7 @@ function MarkersHanlderDescription(identifier, keyword) {
             selfMH.$results[selfMH.tab_type].removeClass(selfMH.currentClass);
             $($current).addClass(selfMH.currentClass);
             try {
-                $('.mCustomScrollbar').mCustomScrollbar("scrollTo", '.current', {scrollInertia: 200, timeout: 1});
+                $('.mCustomScrollbar').mCustomScrollbar("scrollTo", '.current', {scrollInertia: 0, timeout: 1});
 
             } catch (e) {
 

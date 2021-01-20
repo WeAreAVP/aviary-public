@@ -591,7 +591,7 @@ function IndexTranscript() {
                 $(element).addClass('active');
             }
 
-            $('.' + type + '_point_container').mCustomScrollbar("scrollTo", element, {scrollInertia: 200, timeout: 1});
+            scrollTo('.' + type + '_point_container', element);
         }
     };
 

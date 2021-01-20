@@ -332,10 +332,10 @@ class CollectionResourceFile < ApplicationRecord
                       elsif value == 'media_embed_url_ss'
                         "#{base_url}/embed/media/#{resource['id_is']}"
                       elsif value == 'player_embed_html_ss'
-                        "<iframe src='#{base_url}/embed/media/#{resource['id_is']}' height='400' width='600'></iframe>"
+                        "<iframe src='#{base_url}/embed/media/#{resource['id_is']}' ></iframe>"
                       elsif value == 'resource_detail_embed_html_ss'
                         link = "#{base_url}/collections/#{collection_resource.collection.id}/collection_resources/#{resource['collection_resource_id_ss']}/file/#{resource['id_is']}?embed=true"
-                        "<iframe src='#{link}' height='400' width='1200' style='width: 100%'></iframe>"
+                        "<iframe src='#{link}'></iframe>"
                       else
                         resource[value].present? ? resource[value] : ''
                       end

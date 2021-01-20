@@ -13,7 +13,7 @@
         <div class="col-md-12">
           <div id="wrapper">
             <main id="main" role="main">
-              <div class="org-metadata" >
+              <div class="org-metadata">
                 <div class="text-headline jumbotron">
                   <h4>Facet Fields</h4>
 
@@ -37,21 +37,21 @@
                       <table class="table pb-0 mb-0">
                       </table>
                       <div class="holder custom_fields_container border-0">
-                        <table class="table table-striped table-bordered table-hover border-0" >
+                        <table class="table table-striped table-bordered table-hover border-0">
                           <thead>
                           <tr class="">
-                            <th class='pl-5 ' style="width: 33% !important;" ><h2>Field Name</h2></th>
+                            <th class='pl-5 ' style="width: 33% !important;"><h2>Field Name</h2></th>
                             <th style="width: 33% !important; "><h2>Available in Collection</h2></th>
                             <th style="width: 33% !important; "><h2>Status</h2></th>
                           </tr>
                           </thead>
 
                         </table>
-                        <table class="table table-bordered table-hover border-0" id="sort_facet_fields_table" >
+                        <table class="table table-bordered table-hover border-0" id="sort_facet_fields_table">
                           <tbody>
                           <%= form_tag search_configuration_organization_path, class: "sort-search-field-form" do %>
                             <% @dynamic_fields.each do |_key, custom_field| %>
-                              <% next if custom_field['type'] == 'editor'%>
+                              <% next if custom_field['type'] == 'editor' %>
                               <% custom_field_info = CustomFields::Field.where(system_name: custom_field['key']).where.not(column_type: 6).try(:first) %>
                               <% system_name = custom_field_info.present? ? custom_field_info.system_name : custom_field['key'] %>
                               <% type = custom_field_info.present? ? CustomFields::Field::TypeInformation.fetch_type(custom_field_info.column_type).to_s : custom_field['type'] %>
@@ -69,7 +69,15 @@
                                 </td>
                                 <td width="30%">
                                   <% collection = Collection.where(id: collection.to_s.split(',')).pluck(:title) if Collection.where(id: collection.to_s.split(',')).present? %>
-                                  <%= collection.present? ? collection.join('<br/>').html_safe : 'All' %>
+                                  <%= if collection.present?
+                                        if collection.class == Array
+                                          collection.join('<br/>').html_safe
+                                        else
+                                          collection
+                                        end
+                                      else
+                                        'All'
+                                      end %>
                                 </td>
                                 <td width="30%">
                                   <label class="toggle-switch">

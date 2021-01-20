@@ -66,6 +66,7 @@ class CollectionResourcePresenter < BasePresenter
     session_video_text_all = {}
     return session_video_text_all unless params['keywords'].present?
     keywords = params['keywords'].class == ActionController::Parameters ? params['keywords'].to_enum.to_h.values : params['keywords']
+    keywords = keywords.sort_by(&:length).reverse
     keywords = keywords.map { |keyword| SearchBuilder.remove_illegal_characters(keyword, 'advance').delete('"') } if keywords.present?
     if keywords.present?
       keywords.each do |single_quotes|
@@ -108,7 +109,7 @@ class CollectionResourcePresenter < BasePresenter
       present(transcript_point) do |presenter|
         transcript_time_start_single = !recorded[file_transcript.id].include?(transcript_point.start_time.to_i) ? "transcript_time_start_#{transcript_point.start_time.to_i}" : ''
         listing_transcripts[counter_listing] ||= ''
-        listing_transcripts[counter_listing] += presenter.show_transcript_point(transcript_time_start_single)
+        listing_transcripts[counter_listing] += presenter.show_transcript_point(transcript_time_start_single, session_video_text_all)
         transcript_time_wise = h.transcript_page_wise_time_range(transcript_time_wise, transcript_point, counter)
         transcript_count = h.count_occurrence(transcript_point, session_video_text_all, transcript_count, 'transcript', false, counter)
       end

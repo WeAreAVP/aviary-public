@@ -21,6 +21,7 @@ function CollectionResource() {
     selfCR.resource_file_id = 0;
     selfCR.player_widget = null;
     selfCR.track_params = null;
+    selfCR.auto_play = null;
     selfCR.has_loaded = false;
     selfCR.player_time = 0;
     selfCR.events_tracker = {};
@@ -452,8 +453,11 @@ function CollectionResource() {
                             }
                         }, false);
                         if (window.location.href.indexOf('auto_play') > 0) {
+                            let playPromise = undefined;
                             mediaElement.play();
-
+                            if (selfCR.auto_play != false) {
+                                mediaElement.play();
+                            }
                             // generalizing the solution to replace state of History API; by preserving query parameters other than auto_play
                             var location = window.location.href;
                             location = location.replace('auto_play=true', '');
@@ -676,22 +680,40 @@ function CollectionResource() {
                 checkAndCreateUrl();
             }, 500);
         });
-
-        $('.start_time_checkbox').click(function () {
+        timePickerShare();
+        $('.start_time_checkbox, .end_time_checkbox').click(function () {
             checkAndCreateUrl();
-            if ($(this).prop("checked") === true) {
-                if ($('#start_time_share').val() == '')
-                    $('#start_time_share').val(secondsToHuman(currentTime));
-                $('.video-start-time').removeAttr('disabled');
 
+            if ($(this).hasClass('start_time_checkbox')) {
+                if ($(this).prop("checked") === true) {
+                    if ($('#start_time_share').val() == '')
+                        $('#start_time_share').val(secondsToHuman(currentTime));
+                    $('.video-start-time').removeAttr('disabled');
+                } else {
+                    $('.video-start-time').attr('disabled', 'disabled');
+                    $('#share_link').val();
+                }
             } else {
-                $('.video-start-time').attr('disabled', 'disabled');
-                $('#share_link').val();
+                if ($(this).prop("checked") === true) {
+                    if ($('#end_time_share').val() == '')
+                        $('#end_time_share').val(secondsToHuman(currentTime));
+                    $('.video-end-time').removeAttr('disabled');
+
+                } else {
+                    $('.video-end-time').attr('disabled', 'disabled');
+                    $('#share_link').val();
+                }
             }
         });
-        $('.video-start-time').keyup(function () {
-            checkAndCreateUrl();
 
+        document_level_binding_element('#auto_play_video', 'click', function () {
+            checkAndCreateUrl();
+        });
+
+        $('.video-start-time, .video-end-time').keyup(function () {
+            if ($('.share_tabs.active.show').data('tabname') != 'public_access_url_custom') {
+                checkAndCreateUrl();
+            }
         });
     };
 
@@ -710,18 +732,29 @@ function CollectionResource() {
         if (typeof urls != "undefined" && urls.length > 0) {
             url = urls[0];
 
-            let time = $('#start_time_share').val();
-            let seconds = humanToSeconds(time);
+            let startTime = $('#start_time_share').val();
+            let startSeconds = humanToSeconds(startTime);
             let createURL = true;
 
-            if (!isNaN(time)) {
-                $('#start_time_share').val(secondsToHuman(time));
-            } else if (isNaN(seconds)) {
+            if (!isNaN(startTime)) {
+                $('#start_time_share').val(secondsToHuman(startSeconds));
+            } else if (isNaN(startSeconds)) {
                 $('#start_time_share').val('00:00:00');
                 createURL = false;
             }
 
-            let shareTime = humanToSeconds($('#start_time_share').val());
+            let endTime = $('#start_time_share').val();
+            let endSeconds = humanToSeconds(endTime);
+
+            if (!isNaN(endTime)) {
+                $('#end_time_share').val(secondsToHuman(endTime));
+                createURL = true
+            } else if (isNaN(endSeconds)) {
+                $('#end_time_share').val('00:00:00');
+            }
+
+            let shareTimeStart = humanToSeconds($('#start_time_share').val());
+            let shareTimeEnd = humanToSeconds($('#end_time_share').val());
             let url_raw = selfCR.app_helper.getUrlParameter(url);
             let only_url = url_raw[1];
             let get_params = url_raw[0];
@@ -737,39 +770,62 @@ function CollectionResource() {
                     counter++;
                 }
             });
+
             if (all_params != '' && $('.start_time_checkbox').prop("checked") === true) {
                 all_params = all_params + '&'
             }
 
             let final_link = '';
             let shareLink = '';
-            if (createURL && shareTime > 0 && $('.start_time_checkbox').prop("checked") === true) {
-                shareLink = only_url + '?' + all_params + 'media=' + selfCR.resource_file_id + '&t=' + shareTime;
+            if (createURL && shareTimeStart > 0 && $('.start_time_checkbox').prop("checked") === true) {
+                shareLink = only_url + '?' + all_params + 'media=' + selfCR.resource_file_id + '&t=' + shareTimeStart;
             } else {
                 shareLink = only_url + '?' + all_params;
             }
 
+            if (createURL && shareTimeEnd > 0 && $('.end_time_checkbox').prop("checked") === true) {
+                if (!shareLink.includes('media=')) {
+                    shareLink = only_url + '?' + all_params + 'media=' + selfCR.resource_file_id
+                }
+                shareLink = shareLink + '&e=' + shareTimeEnd;
+            }
+
+            shareLink = shareLink.replace('&auto_play=false', '');
+            shareLink = shareLink.replace('auto_play=false', '');
+            shareLink = shareLink.replace('&auto_play=true', '');
+            shareLink = shareLink.replace('auto_play=true', '');
+            shareLink = shareLink.replace('?&', '?');
+
+            if ($('.auto_play_video').prop('checked')) {
+                shareLink += '&auto_play=true';
+            }
+
+            let commonStyle = 'style="position:absolute;top:0;left:0;width:100%;height:100%;"';
+            let outerDivStyle = 'style="padding: 100% 0 0 0;position: relative;height: 100%;width: 100%;"';
             switch (active_tab) {
                 case 'share_link_custom':
                     final_link = shareLink;
                     break;
                 case 'embed_video_custom':
-                    final_link = '<iframe src="' + shareLink + '" height="400" width="1200" style="width: 100%;" allow="fullscreen"></iframe>';
+                    final_link = '<div '+ outerDivStyle + ' ><iframe ' + commonStyle + ' src="' + shareLink + '" allow="fullscreen"></iframe></div>';
                     break;
                 case 'embed_resource_custom':
-                    final_link = '<iframe src="' + shareLink + '" height="400" width="1200" style="width: 100%;" allow="fullscreen"></iframe>';
+                    final_link = '<div '+ outerDivStyle + ' ><iframe ' + commonStyle + ' src="' + shareLink + '"  allow="fullscreen"></iframe></div>';
                     break;
                 case 'embed_resource_media_player':
-                    final_link = '<iframe src="' + shareLink + '" height="400" width="1200" style="width: 100%;" allow="fullscreen"></iframe>';
+                    final_link = '<div '+ outerDivStyle + ' ><iframe ' + commonStyle + ' src="' + shareLink + '"  allow="fullscreen"></iframe></div>';
                     break;
                 case 'public_access_url_custom':
                     final_link = shareLink;
                     break;
             }
-            if ($('.' + active_tab + ' .share_value').prop('tagName').toLowerCase() == 'textarea') {
-                $('.' + active_tab + ' .share_value').text(final_link);
-            } else {
-                $('.' + active_tab + ' .share_value').val(final_link);
+
+            if (active_tab != 'public_access_url_custom') {
+                if ($('.' + active_tab + ' .share_value').prop('tagName').toLowerCase() == 'textarea') {
+                    $('.' + active_tab + ' .share_value').text(final_link);
+                } else {
+                    $('.' + active_tab + ' .share_value').val(final_link);
+                }
             }
         }
     };

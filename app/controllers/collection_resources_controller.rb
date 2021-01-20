@@ -21,8 +21,10 @@ class CollectionResourcesController < ApplicationController
   end
 
   def show
+    organization = current_organization
     id = params[:collection_resource_id].present? ? params[:collection_resource_id] : params[:id]
-    @collection_resource = CollectionResource.joins(:collection).where(id: id).where(collections: { organization_id: current_organization.id }).first
+    @collection_resource = CollectionResource.includes(:collection).joins(:collection).where(id: id).where(collections: { organization_id: organization.id, id: params[:collection_id] }).first
+
     unless @collection_resource.present?
       flash[:error] = 'Resource not found'
       return redirect_to root_path

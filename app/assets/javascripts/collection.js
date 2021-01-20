@@ -58,7 +58,7 @@ function Collection() {
                 $('#collection_dd_custom').addClass('d-none');
             }
         });
-
+        removeImageCustom();
         init_tinymce_for_element('.single_row_default_feild .apply_froala_editor');
         if ($('.remove_badge_default_value_collection').length > 0) {
             $('.remove_badge_default_value_collection').on('click', function () {

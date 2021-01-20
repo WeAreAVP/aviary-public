@@ -80,6 +80,7 @@ function DisplaySettings() {
     }
 
     this.init_display_settings = function (triggered_from) {
+        removeImageCustom();
         let banner_type = $('#' + triggered_from + '_banner_type');
         let banner_title_type = $('#' + triggered_from + '_banner_title_type');
 
