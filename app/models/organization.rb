@@ -230,7 +230,8 @@ class Organization < ApplicationRecord
               '16' => { status: 'true', value: 'target_domain_ss', sort_name: true },
               '17' => { status: 'true', value: 'file_display_name_ss', sort_name: true },
               '18' => { status: 'true', value: 'duration_ss', sort_name: true },
-              '19' => { status: 'true', value: 'created_at_ds', sort_name: true }
+              '19' => { status: 'true', value: 'created_at_ds', sort_name: true },
+              '20' => { status: 'true', value: 'collection_title_text', sort_name: true }
             }
     }.to_json
 
@@ -239,7 +240,8 @@ class Organization < ApplicationRecord
       '1' => { status: 'true', value: 'resource_file_file_name_ss' },
       '2' => { status: 'true', value: 'resource_file_content_type_ss' },
       '3' => { status: 'true', value: 'collection_resource_title_ss' },
-      '4' => { status: 'true', value: 'target_domain_ss' }
+      '4' => { status: 'true', value: 'target_domain_ss' },
+      '5' => { status: 'true', value: 'collection_title_text', sort_name: true }
     }.to_json
     update(resource_file_display_column: display_columns_update, resource_file_search_column: search_columns_update) if resource_file_display_column.blank?
   end

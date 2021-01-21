@@ -28,6 +28,11 @@ class CollectionResourceFilesController < ApplicationController
     end
   end
 
+  def media_thumbnail_remove
+    @resource_file = CollectionResourceFile.find_by_id(params[:collection_resource_file_id]) if params[:collection_resource_file_id].present?
+    render partial: 'collection_resource_files/thumbnail_remove'
+  end
+
   def export_resource_file
     limit_resource_ids = session[:resource_file_list_bulk_edit].present? ? "id_is:(#{session[:resource_file_list_bulk_edit].join(' OR ')})" : ''
     resources_csv = CollectionResourceFile.to_csv(current_organization, request.base_url, limit_resource_ids, params)

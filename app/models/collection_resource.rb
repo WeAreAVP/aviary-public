@@ -400,14 +400,7 @@ class CollectionResource < ApplicationRecord
             end
           when 'collection_title'
             # if limit is organization then let it go but if limit is collection_is then change it to id_is to only get that specific collection
-            collection_limiter = limit_condition.clone
-            collection_limiter.sub! 'collection_id_is', 'id_is'
-            collection_title_condition = search_perp(q, 'title_ss')
-            collections_raw = solr.get 'select', params: { q: '*:*', fq: ['document_type_ss:collection', 'status_ss:active', collection_limiter, collection_title_condition], fl: %w[id_is title_ss] }
-            collections_raw['response']['docs'].each do |single_collection|
-              fq_filters_inner = fq_filters_inner + (counter != 0 ? ' OR ' : ' ') + " collection_id_is:#{single_collection['id_is']} "
-              counter += 1
-            end
+            fq_filters_inner, counter = CollectionResource.search_collection_column(limit_condition, solr, q, counter, fq_filters_inner)
           when 'id_ss', 'title_ss', 'id_is', 'title_text', 'custom_unique_identifier_texts', 'custom_unique_identifier_ss'
             fq_filters_inner += simple_field_search_handler(value, fq_filters_inner, counter, q)
             if value['value'] == 'title_ss'
@@ -559,4 +552,17 @@ class CollectionResource < ApplicationRecord
     query += " OFFSET #{offset}" if offset.present?
     CollectionResource.find_by_sql(query)
   end
+
+  def self.search_collection_column(limit_condition, solr, query, counter, fq_filters_inner)
+    collection_limiter = limit_condition.clone
+    collection_limiter.sub! 'collection_id_is', 'id_is'
+    collection_title_condition = CollectionResource.search_perp(query, 'collection_title_text')
+    collections_raw = solr.get 'select', params: { q: '*:*', fq: ['document_type_ss:collection', 'status_ss:active', collection_limiter, collection_title_condition], fl: %w[id_is title_ss] }
+    collections_raw['response']['docs'].each do |single_collection|
+      fq_filters_inner = fq_filters_inner + (counter != 0 ? ' OR ' : ' ') + "collection_id_is: #{single_collection['id_is']}"
+      counter += 1
+    end
+    [fq_filters_inner, counter]
+  end
+
 end
