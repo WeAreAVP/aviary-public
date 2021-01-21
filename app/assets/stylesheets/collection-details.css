@@ -207,7 +207,7 @@
     -ms-text-overflow: ellipsis;
     text-overflow: ellipsis;
     overflow: hidden;
-    white-space: nowrap;
+    white-space: normal;
 }
 
 .resource-detail-data .details .title:hover {
