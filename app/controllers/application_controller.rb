@@ -53,7 +53,7 @@ class ApplicationController < ActionController::Base
   end
 
   def remove_image_for_assets
-    remove_image(eval(params['target_type'].capitalize).find_by_id(params['target_id']), params['target_attr']) if params['target_type'].present? && params['target_id'].present? && params['target_attr'].present?
+    remove_image(eval(params['target_type']).find_by_id(params['target_id']), params['target_attr']) if params['target_type'].present? && params['target_id'].present? && params['target_attr'].present?
     redirect_back(fallback_location: root_path)
   end
 

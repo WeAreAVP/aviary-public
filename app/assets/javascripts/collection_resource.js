@@ -715,6 +715,15 @@ function CollectionResource() {
                 checkAndCreateUrl();
             }
         });
+        document_level_binding_element('.share_tabs', 'click', function () {
+            $('.start_time_checkbox').prop('checked',false);
+            $('.video-start-time').val('');
+            $('.video-start-time').attr('disabled', 'disabled');
+            $('.end_time_checkbox').prop('checked',false);
+            $('.video-end-time').val('');
+            $('.video-end-time').attr('disabled', 'disabled');
+            $('.auto_play_video').prop('checked',false);
+        });
     };
 
     let checkAndCreateUrl = function () {
