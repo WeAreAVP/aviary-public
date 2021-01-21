@@ -404,6 +404,11 @@
     color: #555;
 }
 
+/* Fixes "Austin City Limits Playback" logo getting distorted on smaller windows */
+.org-about-panel img {
+    height: auto;
+}
+
 #resources_home a {
     text-decoration: none;
 }
