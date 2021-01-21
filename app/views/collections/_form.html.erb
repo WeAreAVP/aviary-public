@@ -82,8 +82,22 @@
       </div>
     </div>
   </div>
- 
+
   <% if  @collection.new_record? %>
+    <div class="row pb-3 mt-3">
+      <div class="col-md-12">
+        <div class="form-group">
+          <div class="field-title">
+            <input type='checkbox' class="boolean optional d-inline-block mr-1" name='is_cloning_collection' id='collection_is_cloning_collection' />
+            <label for="collection_public" class="string optional d-inline-block">Clone from existing collection?</label>
+            <small class="form-text"> By enabling this option, you can select an existing collection of yours that will be used to pre-configure the metadata fields and access policies for this new collection. Select a collection below to proceed. </small>
+          </div>
+          <div id='collection_dd_custom' class="d-none mb-5 pb-5">
+            <%= select_tag('clone_collection', options_from_collection_for_select(current_organization.collections, 'id', 'title'), prompt: "Select a Collection.",) %>
+          </div>
+        </div>
+      </div>
+    </div>
     <div class="row">
       <div class="col-md-12 text-right">
         <%= c.submit 'Save', class: 'btn btn-primary' %>
