@@ -306,15 +306,14 @@ class CollectionResourceFile < ApplicationRecord
                               (1..response.size).each do |_i|
                                 sort += ')'
                               end
-                              sort.present? ? "#{sort} #{sort_direction}" : "collection_id_is #{sort_direction}"
+                              sort.present? ? "collection_id_is #{sort_direction}" : "collection_id_is #{sort_direction}"
                             else
                               query_params[:sort] = "collection_id_is #{sort_direction}"
                             end
     elsif sort_column.present? && sort_direction.present?
       query_params[:sort] = "#{sort_column} #{sort_direction}"
     end
-
-    query_params[:sort] = "#{sort_column} #{sort_direction}" if sort_column.present? && sort_direction.present?
+    
     if export_and_current_organization[:export]
       query_params[:start] = 0
       query_params[:rows] = 100_000_000
@@ -329,6 +328,7 @@ class CollectionResourceFile < ApplicationRecord
       response = { 'response' => { 'docs' => {} } }
     end
     count = total_response['response']['numFound'].to_i
+    binding.pry
     [response['response']['docs'], count, nil, export_and_current_organization[:current_organization]]
   end
 
