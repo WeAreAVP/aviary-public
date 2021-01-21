@@ -313,7 +313,7 @@ class CollectionResourceFile < ApplicationRecord
     elsif sort_column.present? && sort_direction.present?
       query_params[:sort] = "#{sort_column} #{sort_direction}"
     end
-    
+
     if export_and_current_organization[:export]
       query_params[:start] = 0
       query_params[:rows] = 100_000_000
@@ -328,7 +328,6 @@ class CollectionResourceFile < ApplicationRecord
       response = { 'response' => { 'docs' => {} } }
     end
     count = total_response['response']['numFound'].to_i
-    binding.pry
     [response['response']['docs'], count, nil, export_and_current_organization[:current_organization]]
   end
 
