@@ -1,7 +1,9 @@
 <div class="row ">
   <div class="col-md-6">
     <div class="form-group">
-      <label for="" class="col-form-label">Preferred Banner Display</label>
+      <div class="field-title">
+        <label for="" class="col-form-label">Preferred Banner Display</label>
+      </div>
       <%= c.select :banner_type, Collection.banner_types.map {|key, _| [key.humanize, key]}, {}, required: false, label: false, class: 'custom-placeholder banner_type-custom' %>
       <%= c.error :banner_type %>
       <br>
@@ -14,16 +16,20 @@
   </div>
   <div class="col-md-6">
     <div class="form-group ">
-      <label for="" class="col-form-label">Preferred Default Tab</label>
+      <div class="field-title">
+        <label for="" class="col-form-label">Preferred Default Tab</label>
+      </div>
       <%= c.select :default_tab_selection, Collection.default_tab_selections.map {|key, _| [key.humanize, key]}, {}, required: false, label: false, class: 'custom-placeholder banner_type-custom' %>
       <%= c.error :default_tab_selection %>
     </div>
   </div>
 </div>
 <div class="row ">
-  <div class="col-md-6 ">
+  <div class="col-md-6">
     <div class="form-group banner-image d-none">
-      <label for="" class="col-form-label">Banner Image</label>
+      <div class="field-title">
+        <label for="" class="col-form-label">Banner Image</label>
+      </div>
       <%= render partial: 'shared/remove_image_button', locals: {model_obj: @collection, target_type: 'image'} %>
       <div class="image-box">
         <div class="holder">
@@ -43,7 +49,7 @@
       <br>
     </div>
     <div class="form-group banner-resource-slider d-none">
-      <label for="" class="col-form-label">Featured Resources Slider</label>
+      <label for="">Featured Resources Slider</label>
       <input id="banner_slider_resources_info" placeholder='Title Text' class="form-control" data-url="<%= autocomplete_permission_groups_path(type: 'resource', target_id: @collection.id, called_from: 'collection_page') %>"/>
       <%= c.error :banner_slider_resources %>
       <table id="collection_banner_slider_resources_table" class="table  table-striped  mt-20px">
@@ -60,7 +66,9 @@
   </div>
   <div class="col-md-6 ">
     <div class="form-group card_image d-none">
-      <label for="" class="col-form-label">Card Image</label>
+      <div class="field-title">
+        <label for="">Card Image</label>
+      </div>
       <%= render partial: 'shared/remove_image_button', locals: {model_obj: @collection, target_type: 'card_image'} %>
       <div class="image-box">
         <div class="holder">
@@ -84,28 +92,31 @@
 <div class="row">
   <div class="col-md-6">
     <div class="form-group">
-      <label class="col-form-label"><strong><%= c.input_field :disable_player, as: :boolean %>
+      <div class="field-title">
+        <label><strong><%= c.input_field :disable_player, as: :boolean %>
         Disable Player and Resource Embed Options </strong></label>
+      </div>
     </div>
     <div class="form-group">
-      <label class="col-form-label"><strong><%= c.input_field :is_audio_only, as: :boolean %>
+      <div class="field-title">
+        <label class="col-form-label"><strong><%= c.input_field :is_audio_only, as: :boolean %>
         Render Media Player as Audio Player for Audio Files </strong></label>
+      </div>
     </div>
     <div class="form-group">
-      <label for="" class="col-form-label"><strong><%= c.input_field :enable_itc_autoscroll, as: :boolean %>
-        Turn on Auto Scroll by default for Indexes and Transcripts in this collection</strong></label>
+      <div class="field-title">
+        <label for="" class="col-form-label"><strong><%= c.input_field :enable_itc_autoscroll, as: :boolean %>
+          Turn on Auto Scroll by default for Indexes and Transcripts in this collection</strong></label>
+      </div>
     </div>
   </div>
   <div class="col-md-6">
     <div class="form-group">
-      <label for="" class="col-form-label"><strong><%= c.input_field :enable_resource_search, as: :boolean %>
-        Enable Search this Resource</strong></label>
-    </div>
-    <div class="form-group">
-      <small class="form-text">When "Search this Resource" is enabled for resources in this collection, you can
-        customize the help text that is displayed to users in the search box on the resource detail page. Please enter
-        the text you would like to have displayed for users here.
-      </small>
+      <div class="field-title">
+        <label for=""><strong><%= c.input_field :enable_resource_search, as: :boolean %> Enable Search this Resource</strong>
+          <i class="fa fa-question-circle tooltip-test" data-toggle="tooltip" data-placement="right" title="When &quot;Search this Resource&quot; is enabled for resources in this collection, you can customize the help text that is displayed to users in the search box on the resource detail page. Please enter the text you would like to have displayed for users here."></i>
+        </label>
+      </div>
       <%= c.input :search_resource_placeholder, label: false, input_html: {class: 'form-control'} %>
     </div>
 

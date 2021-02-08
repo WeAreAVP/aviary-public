@@ -1,7 +1,7 @@
 <%= simple_form_for @collection, :url => @collection.new_record? ? collections_path : collection_path, html: { novalidate: true } do |c| %>
   <div class="row">
     <div class="col-md-6">
-      <div class="form-group">
+      <div class="form-group banner-image">
         <div class="field-title">
           <label for="">Collection Banner</label>
         </div>
@@ -19,7 +19,7 @@
       </div>
     </div>
       <div class="col-md-6">
-        <div class="form-group">
+        <div class="form-group favicon-image">
           <div class="field-title">
             <label for="">Collection Favicon</label>
           </div>
@@ -41,8 +41,9 @@
     <div class="col-md-12">
       <div class="form-group">
         <div class="field-title">
-          <label for="collection_title">Collection Name</label>
-          <small class="form-text">What is your collection's name?</small>
+          <label for="collection_title">Collection Name
+            <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="What is your collection's name?"></i>
+          </label>
         </div>
         <%= c.input :title, label: false, input_html: { class: 'form-control collection-title-field' } %>
       </div>
@@ -53,10 +54,9 @@
     <div class="col-md-12">
       <div class="form-group">
         <div class="field-title">
-          <label for="collection_about">About Your Collection</label>
-          <small class="form-text">Tell users about your collection. This will appear in
-            "About this Collection" on your collection page.
-          </small>
+          <label for="collection_about">About Your Collection
+            <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="Tell users about your collection. This will appear in &quot;About this Collection&quot; on your collection page."></i>
+          </label>
         </div>
         <%= c.input :about, label: false, input_html: { class: 'form-control' } %>
       </div>
@@ -82,7 +82,7 @@
       </div>
     </div>
   </div>
- 
+
   <% if  @collection.new_record? %>
     <div class="row">
       <div class="col-md-12 text-right">
