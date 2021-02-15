@@ -992,9 +992,6 @@ footer .nav {
 }
 
 @media screen and (max-width: 767px) {
-  #header {
-    height: 160px;
-  }
   .visual-homepage .text {
     margin-bottom: 30px;
     margin-left: 0px;
@@ -1878,7 +1875,7 @@ footer .nav {
   }
   #header .navbar-brand {
     max-width: 115px;
-    margin: 10px 0 0;
+    margin: 5px;
   }
   #header .btn-info {
     min-width: 75px;

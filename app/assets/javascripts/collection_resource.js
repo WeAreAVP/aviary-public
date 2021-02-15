@@ -800,20 +800,20 @@ function CollectionResource() {
                 shareLink += '&auto_play=true';
             }
 
-            let commonStyle = 'style="position:absolute;top:0;left:0;width:100%;height:100%;"';
-            let outerDivStyle = 'style="padding: 100% 0 0 0;position: relative;height: 100%;width: 100%;"';
+            let commonStyle = 'style="position:absolute;top:0;left:0;bottom: 0;right: 0;width:100%;height:100%;"';
+
             switch (active_tab) {
                 case 'share_link_custom':
                     final_link = shareLink;
                     break;
                 case 'embed_video_custom':
-                    final_link = '<div '+ outerDivStyle + ' ><iframe ' + commonStyle + ' src="' + shareLink + '" allow="fullscreen"></iframe></div>';
+                    final_link = '<div style="padding: 56.25% 0 0 0;position:relative;overflow: hidden;width: 100%;"><iframe ' + commonStyle + ' src="' + shareLink + '" allow="fullscreen" frameborder="0"></iframe></div>';
                     break;
                 case 'embed_resource_custom':
-                    final_link = '<div '+ outerDivStyle + ' ><iframe ' + commonStyle + ' src="' + shareLink + '"  allow="fullscreen"></iframe></div>';
+                    final_link = '<div style="padding:100% 0 0 0;position:relative;overflow: hidden;width: 100%;"><iframe ' + commonStyle + ' src="' + shareLink + '"  allow="fullscreen" frameborder="0"></iframe></div>';
                     break;
                 case 'embed_resource_media_player':
-                    final_link = '<div '+ outerDivStyle + ' ><iframe ' + commonStyle + ' src="' + shareLink + '"  allow="fullscreen"></iframe></div>';
+                    final_link = '<div style="padding:75% 0 0 0;position:relative;overflow: hidden;width: 100%;"><iframe ' + commonStyle + ' src="' + shareLink + '"  allow="fullscreen" frameborder="0"></iframe></div>';
                     break;
                 case 'public_access_url_custom':
                     final_link = shareLink;

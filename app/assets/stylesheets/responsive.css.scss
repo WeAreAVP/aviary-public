@@ -103,8 +103,34 @@
     margin-right: 0;
     width: 300px;
   }
+  #header .navbar-brand img {
+    max-width: 400px;
+  }
   #header .navbar-light .nav-item {
     padding: 0 20px;
+  }
+  #header .navbar-expand-lg .navbar-collapse {
+    display: -webkit-box !important;
+    display: -ms-flexbox !important;
+    display: flex !important;
+    -ms-flex-preferred-size: auto;
+    flex-basis: auto;
+  }
+  #header .mr-auto-custom-header-nav {
+    background: transparent;
+    margin-bottom: 20px;
+  }
+  #header .navbar-nav {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: inherit;
+    padding-left: 0;
+    margin-bottom: 0;
+    list-style: none;
   }
   .search-details .details .img-holder {
     float: none;
@@ -225,12 +251,42 @@
     height: auto;
     display: block;
   }
+
+  #sub_nav .navbar-nav .nav-item {
+    padding-right: 0px;
+  }
+
+  #sub_nav .container-fluid {
+    padding-left: 2px;
+  }
+
+  .simple-search-btn {
+    padding: 7px 20px;
+    height: 40px;
+    border: none;
+    background: #852CFB;
+    color: #fff;
+    font-weight: 600;
+    margin-top: 6px;
+    border-radius: 6px;
+    width: 100%;
+  }
+}
+
+ /* Changes breakpoint for sub nav wrapping to 800px */
+@media screen and (min-width: 800px) {
+  #header .navbar .navbar-nav {
+      width: unset !important;
+  }
 }
 
 @media screen and (max-width: 767px) {
   #header .navbar-brand {
+    width: 100% !important;
     margin-right: 0;
-    width: 200px;
+  }
+  #header .bg-light {
+    height: auto !important;
   }
   .search-details .details > li, .search-details .details.list-view li {
     width: 50%;
@@ -265,10 +321,6 @@
   }
   .sort-hold .form-group {
     float: right;
-  }
-  #header .navbar-brand {
-    margin-right: 0;
-    width: 200px;
   }
 
   .headline-panel h2 {
@@ -363,6 +415,9 @@
   #homepage-footer .social {
     margin-top: 20px;
   }
+  .simple-search-btn {
+    display: block;
+  }
   #footer {
     text-align: center;
   }
@@ -406,5 +461,17 @@
   }
   #homepage-header .btn-default {
     font-size: 14px !important;
+  }
+  #navbarTogglerDemo03 .nav-item:first-child {
+    padding-left: 0 !important;
+  }
+  #content .org-visual {
+    margin-bottom: 35px;
+  }
+}
+
+@media screen and (max-width: 420px) {
+  #header .navbar-brand img {
+    max-width: 300px !important;
   }
 }
