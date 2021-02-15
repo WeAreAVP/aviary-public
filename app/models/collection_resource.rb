@@ -564,5 +564,4 @@ class CollectionResource < ApplicationRecord
     end
     [fq_filters_inner, counter]
   end
-
 end
