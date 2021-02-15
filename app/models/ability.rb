@@ -29,9 +29,9 @@ class Ability
         end
       end
     end
-    if request.GET['share'].present?
+    if request.GET['share'].present? || request.GET['access'].present?
       begin
-        if Utilities::PublicShareUtilities.should_have_public_access(request.GET['share'], request.path)
+        if Utilities::PublicShareUtilities.should_have_public_access(request.GET['share'], request.path) || Utilities::PublicShareUtilities.public_access_handler(request.GET['access'], request.path)
           can :read, CollectionResource do |collection_resource|
             collection_resource.can_view = true
             true

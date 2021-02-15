@@ -62,6 +62,22 @@ module ApplicationHelper
     ''
   end
 
+  def human_to_seconds(time)
+    a = time.split(':')
+    (a[0].to_i * 60 * 60) + (a[1].to_i * 60) + a[2].to_i
+  rescue StandardError
+    0
+  end
+
+  def random_string
+    o = [('a'..'z'), ('A'..'Z')].map(&:to_a).flatten
+    (0...5).map { o[rand(o.length)] }.join
+  end
+
+  def date_time_format(date_time)
+    date_time.to_datetime.strftime('%m-%d-%Y %H:%M:%S')
+  end
+
   # states array for CA and US + None
   def available_states
     none = { none: 'None' }

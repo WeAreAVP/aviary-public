@@ -20,6 +20,7 @@
           param_link[:embed] = true if params[:embed].present?
           param_link[:media_player] = true if params[:media_player].present?
           param_link[:share] = params[:share] if params[:share].present?
+          param_link[:access] = params[:access] if params[:access].present?
           playlist_link = (pl_rsrc == @playlist_resource) ? 'javascript:void(0)' : playlist_show_path(param_link) %>
       <% end %>
 

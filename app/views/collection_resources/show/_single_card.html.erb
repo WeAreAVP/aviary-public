@@ -6,7 +6,7 @@
         <% thumb_url = presenter.media_type.include?('avalon') || presenter.media_type.include?('video') ? "https://#{ENV['S3_HOST_CDN']}/public/images/video-default.png" : "https://#{ENV['S3_HOST_CDN']}/public/images/audio-default.png" %>
       <% end %>
     <% end %>
-    <%= link_to image_tag(thumb_url), collection_collection_resource_details_path(single_file.collection_resource.collection, single_file.collection_resource, single_file, share: params[:share], embed: params[:embed]) %>
+    <%= link_to image_tag(thumb_url), collection_collection_resource_details_path(single_file.collection_resource.collection, single_file.collection_resource, single_file, share: params[:share], embed: params[:embed], access: params[:access], ) %>
   </div>
   <div class="detail">
     <% unless can_access %>
