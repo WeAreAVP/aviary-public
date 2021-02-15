@@ -504,11 +504,10 @@ a:hover,
 }
 
 #header .navbar-brand {
+  width: fit-content !important;
+  max-width: fit-content !important;
   margin-top: 0;
-}
-
-#header .navbar-brand {
-  margin: 5px 0 5px 20px;
+  margin: 5px 0 10px 20px;
   padding: 0;
 }
 
@@ -578,8 +577,8 @@ a:hover,
 }
 
 #header .navbar-brand img {
-  width: 215px;
-  height: auto;
+  width: auto;
+  height: 100%;
   display: block;
   max-height: 50px;
   object-fit: contain;
@@ -609,6 +608,17 @@ a:hover,
 
 #header .nav-item.active .nav-link {
   color: #cb6151;
+}
+
+/* Overrides Bootstrap margins to move header links to far right */
+#header #navbarTogglerDemo03 .mr-auto {
+  margin-left: auto !important;
+  margin-right: unset !important;
+}
+
+/* Hides hamburger for navbar toggles when screen is small */
+.navbar-toggler {
+  display: none;
 }
 
 .text-headline {
@@ -678,6 +688,7 @@ a:hover,
 
 /* sub nav styles */
 #sub_nav {
+  margin: 0 !important;
   position: relative;
   height: 40px;
   border-right: 0;
@@ -2969,15 +2980,12 @@ ul {
 }
 
 @media screen and (max-width: 720px) {
-  #sub_nav .navbar-nav .nav-item .nav-link strong {
+  #sub_nav .navbar-nav .nav-item .dropdown-toggle strong {
     display: none;
   }
 }
 
 @media screen and (max-width: 480px) {
-  #sub_nav .navbar-nav .nav-item .nav-link strong {
-    display: none;
-  }
   #sub_nav>.container-fluid {
     padding: 0 5px;
   }

@@ -39,8 +39,8 @@ module ApplicationHelper
   end
 
   def iframe_responsive_design
-    common_style = 'style="position:absolute;top:0;left:0;width:100%;height:100%;"'
-    outer_div_style = 'style="padding: 100% 0 0 0;position: relative;height: 100%;width: 100%;"'
+    common_style = 'style="position:absolute;top:0;left:0;bottom: 0;right: 0;width:100%;height:100%;"'
+    outer_div_style = 'style="padding: 100% 0 0 0;position: relative;overflow: hidden;width: 100%;"'
 
     [outer_div_style, common_style]
   end

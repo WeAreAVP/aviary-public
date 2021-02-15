@@ -109,10 +109,6 @@
         width: 300px;
     }
 
-    #header .navbar-light .nav-item {
-        padding: 0 20px;
-    }
-
     .search-details .details .img-holder {
         float: none;
         width: 100%;
@@ -123,8 +119,7 @@
     }
 
     .mr-auto-custom-header-nav {
-        background: #fbfbfb;
-        margin-bottom: 20px;
+        margin-top: 0 !important;
     }
 
     .search-details .details > li,
@@ -333,6 +328,10 @@
 
     .user_sub_nav {
         margin: 10px 0 0 !important;
+    }
+
+    .org-home-search .search-nav {
+        width: 80%;
     }
 }
 
@@ -552,12 +551,6 @@
         font-size: 20px !important;
     }
 
-    #header .navbar-brand {
-        max-width: 75px !important;
-        margin-top: 15px !important;
-        margin-bottom: 15px;
-    }
-
     #header .nav-right a {
         font-size: 12px !important;
     }
@@ -644,7 +637,7 @@
 
     #header .navbar-brand {
         max-width: 115px;
-        margin: 10px 0 0;
+        margin-top: 0 !important;
     }
 
     #header .btn-info {
@@ -656,5 +649,17 @@
 
     #header .btn-default {
         font-size: 14px !important;
+    }
+
+    .org-home-search .search-nav {
+        width: 95%;
+    }
+
+    .non-search-page .toggle-virtual-keyboard {
+        position: unset;
+        width: 100%;
+        text-align: center;
+        margin-top: 0;
+        margin-bottom: 5px;
     }
 }
