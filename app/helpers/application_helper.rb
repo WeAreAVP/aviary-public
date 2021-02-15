@@ -69,11 +69,6 @@ module ApplicationHelper
     0
   end
 
-  def random_string
-    o = [('a'..'z'), ('A'..'Z')].map(&:to_a).flatten
-    (0...5).map { o[rand(o.length)] }.join
-  end
-
   def date_time_format(date_time)
     date_time.to_datetime.strftime('%m-%d-%Y %H:%M:%S')
   end
