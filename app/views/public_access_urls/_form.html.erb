@@ -1,0 +1,3 @@
+<%= form_for @public_access_url, url: public_access_urls_update_url, method: 'post' do |form| %>
+  <%= render partial: 'public_access_urls/public_access_form', locals: {collection_resource: @public_access_url.collection_resource, type: @type} %>
+<% end %>
