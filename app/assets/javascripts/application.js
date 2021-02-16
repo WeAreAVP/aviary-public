@@ -37,6 +37,7 @@
 //= require resource_bulk_edit
 //= require jquery-ui
 //= require mediaelement-and-player.min
+//= require video
 //= require_tree .
 
 var isIE = /*@cc_on!@*/false || !!document.documentMode;

@@ -16,7 +16,7 @@ RSpec.describe CollectionResourceFile, type: :model do
       expect(collection_resource_file.valid?).to be(true)
     end
     it "has 3 different player types" do
-      expect(CollectionResourceFile::PlayerType.for_select.count).to eq 5
+      expect(CollectionResourceFile::PlayerType.for_select.count).to eq 4
     end
     it "has 3 different player types" do
       expect(CollectionResourceFile.embed_type_name(1)).to eq ('Youtube')

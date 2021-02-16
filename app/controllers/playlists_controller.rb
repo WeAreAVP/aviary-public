@@ -170,6 +170,18 @@ class PlaylistsController < ApplicationController
     format.json { render json: t('error_update'), status: :unprocessable_entity }
   end
 
+  def load_chapters
+    respond_to :vtt
+    start_time = params[:st].to_f
+    points = "WEBVTT\n\n"
+    counter = 1
+    while start_time < params[:et].to_f
+      points += "Chapter #{counter}\n#{time_to_duration(start_time, true)} --> #{time_to_duration(start_time, true)}\n#{time_to_duration(start_time)} to #{time_to_duration(params[:et])}\n\n"
+      start_time += 0.1
+      counter += 1
+    end
+    render plain: points
+  end
   private
 
   def time_prams(params)

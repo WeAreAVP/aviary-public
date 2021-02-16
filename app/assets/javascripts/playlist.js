@@ -152,6 +152,7 @@ function Playlist() {
         that.bind_slider();
         edit_description_playlist();
         update_description_playlist();
+        setAndValidateSlider();
         amount_slider_validation();
         update_selected_tab();
         init_tinymce_for_element('.description_text', {
@@ -169,13 +170,57 @@ function Playlist() {
             }, 200);
         });
 
-        that.clip_time_picker();
+        playerTimeToPicker();
         if (!that.playlist_show) {
             let collection = new Collection();
             collection.bindRSSFeed();
         }
         $('.best_in_place').best_in_place();
     };
+
+    const playerTimeToPicker = function () {
+        document_level_binding_element('.set_clip_end_time_custom, .set_clip_start_time_custom', 'click', function () {
+            if ($(this).data('type') === 'start') {
+                $("#slider-range").slider('values', 0, player_widget.currentTime());
+            } else {
+                $("#slider-range").slider("values", 1, player_widget.currentTime());
+            }
+            let response = isValidStartAndEndTime($("#slider-range").slider("values", 0), $("#slider-range").slider("values", 1));
+            $("#slider-range").slider("values", 0, response.startTime);
+            $("#slider-range").slider("values", 1, response.endTime);
+            updateRangePickerValue(response.startTime, response.endTime);
+        }, true);
+
+    };
+
+
+    /**
+     *
+     * @param start_time
+     * @param end_time
+     * @returns {{start_time: number, end_time: number}}
+     */
+    const isValidStartAndEndTime = function (startTime, endTime) {
+        if (startTime > that.max || startTime > endTime) {
+            startTime = 0;
+            jsMessages('danger', 'Start time cannot be greater than end time.');
+        }
+
+        if (startTime < 0)
+            startTime = 0;
+
+        if (endTime < startTime) {
+            endTime = that.max;
+            jsMessages('danger', 'End time cannot be less than start time.');
+        }
+
+        if (endTime > that.max) {
+            endTime = that.max;
+        }
+
+        return {startTime: startTime, endTime: endTime}
+    };
+
 
     this.clip_time_picker = function () {
         document_level_binding_element('.set_clip_end_time_custom, .set_clip_start_time_custom', 'click', function () {
@@ -188,7 +233,7 @@ function Playlist() {
                 let response_time = check_valid_start_end_time($("#slider-range").slider("values", 0), $("#slider-range").slider("values", 1));
                 $("#slider-range").slider("values", 0, response_time.start_time);
                 $("#slider-range").slider("values", 1, response_time.end_time);
-                update_range_values(response_time.start_time, response_time.end_time);
+                updateRangePickerValue(response_time.start_time, response_time.end_time);
             }
         }, true);
 
@@ -231,7 +276,7 @@ function Playlist() {
                 let response_time = check_valid_start_end_time(start_time, end_time);
                 start_time = response_time.start_time;
                 end_time = response_time.end_time;
-                update_range_values(start_time, end_time);
+                updateRangePickerValue(start_time, end_time);
                 $("#slider-range").slider("values", 0, start_time);
                 $("#slider-range").slider("values", 1, end_time);
                 $(this).attr('style', 'border: 1px solid rgba(0, 0, 0, 0.1);');
@@ -396,10 +441,10 @@ function Playlist() {
             max: that.max,
             values: [that.start_time, that.end_time],
             slide: function (event, ui) {
-                update_range_values(ui.values[0], ui.values[1]);
+                updateRangePickerValue(ui.values[0], ui.values[1]);
             }
         });
-        update_range_values($("#slider-range").slider("values", 0), $("#slider-range").slider("values", 1));
+        updateRangePickerValue($("#slider-range").slider("values", 0), $("#slider-range").slider("values", 1));
     };
 
     const initDataTable = function () {
@@ -430,7 +475,7 @@ function Playlist() {
         }
     };
 
-    const update_range_values = function (start, end) {
+    const updateRangePickerValue = function (start, end) {
         let time_range = range_time_manager(start, end);
         $("#amount").val("" + time_range.start.hours + ':' + time_range.start.minutes + ":" + time_range.start.seconds + " - " + time_range.end.hours + ':' + time_range.end.minutes + ":" + time_range.end.seconds);
     };
