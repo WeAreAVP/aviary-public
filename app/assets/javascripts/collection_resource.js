@@ -311,6 +311,7 @@ function CollectionResource() {
                 playbackRates: [0.5, 1, 1.5, 2],
                 aspectRatio: '16:9',
                 responsive: true,
+                pictureInPictureToggle: true,
                 techOrder: ['chromecast', 'html5', 'youtube', 'vimeo'],
                 youtube: {autohide: 1},
                 plugins: {

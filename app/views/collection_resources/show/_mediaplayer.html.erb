@@ -2,7 +2,7 @@
   <% can_access = permission_to_access_file?(single_file) %>
   <% if can_access %>
     <% if presenter.media_type.include?("video") || presenter.embed_type == 0 %>
-      <div id="player_section" class="player-section video-placeholder <%= presenter.embed_source %>" data-3d="<%= presenter.is_3d %>" data-h265="<%= presenter.player_type == :jwplayer.to_s %>" data-transcoded_url="<%= presenter.transcode_url %>">
+      <div id="player_section" class="player-section video-placeholder <%= presenter.embed_source %>" data-3d="<%= presenter.is_3d %>" data-h265="<%= presenter.player_type == :jwplayer.to_s %>" data-transcoded_url="">
         <div class="video-hold" oncontextmenu="return false;">
           <video id="player" class="video-js" controls playsinline preload="auto" <%= presenter.cross_origin_attr %>  style="width: 100%;" data-cast-title="<%= single_file.file_display_name %>" poster="<%= presenter.video_poster %>">
             <%== presenter.video_source_tag %>

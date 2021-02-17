@@ -153,7 +153,6 @@ function Playlist() {
         edit_description_playlist();
         update_description_playlist();
         setAndValidateSlider();
-        amount_slider_validation();
         update_selected_tab();
         init_tinymce_for_element('.description_text', {
             selector: '.description_text',
@@ -177,23 +176,6 @@ function Playlist() {
         }
         $('.best_in_place').best_in_place();
     };
-
-    const playerTimeToPicker = function () {
-        document_level_binding_element('.set_clip_end_time_custom, .set_clip_start_time_custom', 'click', function () {
-            if ($(this).data('type') === 'start') {
-                $("#slider-range").slider('values', 0, player_widget.currentTime());
-            } else {
-                $("#slider-range").slider("values", 1, player_widget.currentTime());
-            }
-            let response = isValidStartAndEndTime($("#slider-range").slider("values", 0), $("#slider-range").slider("values", 1));
-            $("#slider-range").slider("values", 0, response.startTime);
-            $("#slider-range").slider("values", 1, response.endTime);
-            updateRangePickerValue(response.startTime, response.endTime);
-        }, true);
-
-    };
-
-
     /**
      *
      * @param start_time
@@ -222,19 +204,17 @@ function Playlist() {
     };
 
 
-    this.clip_time_picker = function () {
+    const playerTimeToPicker = function () {
         document_level_binding_element('.set_clip_end_time_custom, .set_clip_start_time_custom', 'click', function () {
-            if (that.collection_resource && that.collection_resource.player_widget && that.collection_resource.player_widget.length > 0) {
-                if ($(this).data('type') == 'start') {
-                    $("#slider-range").slider("values", 0, that.collection_resource.player_widget[0].currentTime);
-                } else {
-                    $("#slider-range").slider("values", 1, that.max);
-                }
-                let response_time = check_valid_start_end_time($("#slider-range").slider("values", 0), $("#slider-range").slider("values", 1));
-                $("#slider-range").slider("values", 0, response_time.start_time);
-                $("#slider-range").slider("values", 1, response_time.end_time);
-                updateRangePickerValue(response_time.start_time, response_time.end_time);
+            if ($(this).data('type') === 'start') {
+                $("#slider-range").slider('values', 0, player_widget.currentTime());
+            } else {
+                $("#slider-range").slider("values", 1, player_widget.currentTime());
             }
+            let response = isValidStartAndEndTime($("#slider-range").slider("values", 0), $("#slider-range").slider("values", 1));
+            $("#slider-range").slider("values", 0, response.startTime);
+            $("#slider-range").slider("values", 1, response.endTime);
+            updateRangePickerValue(response.startTime, response.endTime);
         }, true);
 
     };
@@ -265,20 +245,20 @@ function Playlist() {
         return {start_time: start_time, end_time: end_time}
     };
 
-    const amount_slider_validation = function () {
+    const setAndValidateSlider = function () {
         document_level_binding_element('.amount-slider', 'keyup', function () {
             if (!$(this).val().match(that.time_range_regex)) {
                 $(this).attr('style', 'border: 1.3px solid red;');
             } else {
-                let time_range = $(this).val().split('-');
-                let start_time = humanToSeconds(time_range[0]);
-                let end_time = humanToSeconds(time_range[1]);
-                let response_time = check_valid_start_end_time(start_time, end_time);
-                start_time = response_time.start_time;
-                end_time = response_time.end_time;
-                updateRangePickerValue(start_time, end_time);
-                $("#slider-range").slider("values", 0, start_time);
-                $("#slider-range").slider("values", 1, end_time);
+                let timeRange = $(this).val().split('-');
+                let startTime = humanToSeconds(timeRange[0]);
+                let endTime = humanToSeconds(timeRange[1]);
+                let response_time = isValidStartAndEndTime(startTime, endTime);
+                startTime = response_time.startTime;
+                endTime = response_time.endTime;
+                updateRangePickerValue(startTime, endTime);
+                $("#slider-range").slider("values", 0, startTime);
+                $("#slider-range").slider("values", 1, endTime);
                 $(this).attr('style', 'border: 1px solid rgba(0, 0, 0, 0.1);');
             }
         }, true);

@@ -307,6 +307,15 @@
     var playlist = new Playlist();
     var collectionResource = new CollectionResource();
     collectionResource.file_access = <%= can_access %>;
+    let params = {
+        target_id: '',
+        params: '<%=track_params %>',
+        ip: '<%=request.remote_ip %>',
+        organization_id: '<%=@collection_resource.collection.organization_id %>',
+        user_type: '<%= role_type(current_user, current_organization) %>'
+    };
+    var events_tracker = new EventsTracker(params);
+    collectionResource.events_tracker = events_tracker;
     collectionResource.player_time = <%=  if @playlist_show.present? && @playlist_show
                                            params['pst'].present? ? params['pst'] : 0.1
                                           else
