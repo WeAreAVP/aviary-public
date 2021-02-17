@@ -182,6 +182,7 @@ class PlaylistsController < ApplicationController
     end
     render plain: points
   end
+
   private
 
   def time_prams(params)
