@@ -22,9 +22,7 @@ class CollectionResourceFile < ApplicationRecord
   before_update :set_total_time_enabled
   after_find :check_downloadable
 
-  def partial_change?
-    partial.nil?
-  end
+  def partial_change?;end
 
   searchable do
     integer :id, stored: true
