@@ -86,3 +86,5 @@ en:
   request_access_success: 'Your permission request has been successfully submitted. An organization administrator will contact you shortly.'
   request_access_duplicate: 'Please check your email to see if the organization has approved or denied your request.'
   allowed_permission_group: 'You have already submitted an access request for a resource in this collection. Once you have been approved to access a resource in this collection, you will gain access to the entire collection. Please check your email to see if the organization has approved or denied your request.'
+  status_successfully_updated: 'Status Successfully Updated.'
+  delete_success: 'information Successfully Deleted.'
