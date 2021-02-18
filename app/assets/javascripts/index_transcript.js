@@ -769,8 +769,8 @@ function IndexTranscript() {
                 player_widget.seek(currentTime);
                 player_widget.play();
             } else {
-                player.setCurrentTime(currentTime);
-                player.play();
+                player_widget.currentTime(currentTime);
+                player_widget.play();
             }
         }, true)
     };

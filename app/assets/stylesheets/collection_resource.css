@@ -99,6 +99,10 @@
     line-height: 1.5;
 }
 
+.file_index .no-access {
+    margin-left: 8px;
+}
+
 .service_type_cls {
     text-transform: capitalize;
 }
@@ -185,4 +189,29 @@ h5.MsoNormal span {
     margin-top: 10px;
     margin-bottom: 0;
     border-radius: 0;
+}
+
+.audio-player .video-js.vjs-audio .vjs-big-play-button {
+    display: none;
+}
+
+/* Audio: Make the controlbar visible by default */
+.audio-player .video-js.vjs-audio .vjs-control-bar {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+}
+
+/* Make player height minimum to the controls height so when we hide video/poster area the controls are displayed correctly. */
+.audio-player .video-js.vjs-audio {
+    min-height: 3em;
+}
+
+.player-section {
+    visibility: hidden;
+}
+
+.audio-player {
+    margin-top: 21px;
 }

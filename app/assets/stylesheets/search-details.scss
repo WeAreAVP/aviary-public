@@ -613,7 +613,12 @@
     right: 0;
     background: #dbdbdb;
     width: 1px;
-    z-index: 222;
+    z-index: 1;
+}
+
+.resources-details .two-col .col-lg-7:first-child:after,
+.resources-details .one-col .col-lg-7:first-child:after {
+  z-index: 1 !important;
 }
 
 .one-col .col-lg-7:first-child:after {
