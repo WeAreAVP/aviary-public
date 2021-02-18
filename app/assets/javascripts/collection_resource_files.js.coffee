@@ -60,7 +60,7 @@ $ ->
 
 	$(document).on 'click', '.bluk-edit-resource-file-btn', (e) ->
   	if $('input.resources_file_selections:checked').length <= 0
-	    jsMessages 'danger', 'Please select resources file before doing bulk operations.'
+	    jsMessages 'danger', 'Please select Media file(s) before doing bulk operations.'
 	  else
 	    $('.bulk-edit-resource-file-modal').modal()
 
