@@ -25,7 +25,7 @@
                 <i class="fa fa-pencil edit_title"></i>
               </div>
               <div class="remove_video">
-                <a href="javascript://" class="btn btn-default manage-media manage-media-thumbnail text-white" data-url="<%= collection_collection_resource_update_thumbnail_path(collection, @collection_resource, collection_resource_file_id: file.id) %>" data-file-id="<%= file.id %>" data-sort="<%= file.sort_order %>" data-file-status="<%= file.access %>" data-file-downloadable="<%= file.is_downloadable %>" data-file-download_enabled_for="<%= file.download_enabled_for %>"  data-file-downloadable_till="<%= file.downloadable_duration %>">
+                <a href="javascript://" class="btn btn-default manage-media manage-media-thumbnail text-white" data-url="<%= collection_collection_resource_update_thumbnail_path(collection, @collection_resource, collection_resource_file_id: file.id) %>" data-remove-url="<%= collection_resource_file_media_thumbnail_remove_path(file.id) %>" data-file-id="<%= file.id %>" data-file-id="<%= file.id %>" data-sort="<%= file.sort_order %>" data-file-status="<%= file.access %>" data-file-downloadable="<%= file.is_downloadable %>" data-file-download_enabled_for="<%= file.download_enabled_for %>"  data-file-downloadable_till="<%= file.downloadable_duration %>">
                   Manage Media </a>
                 <%= link_to collection_collection_resource_delete_resource_file_path(@collection, @collection_resource, file), class: "btn btn-outline-danger delete-resource-file", style: "float: right;" do %>
                   Remove
@@ -67,6 +67,8 @@
                 <div class="col-12 mb-20px">
                   <h5 class="file-up-one-heading">Select Thumbnail files to upload from your local
                     environment.</h5>
+                  <div id="show-thumbnail-image" class="show-thumbnail-image-container">
+                  </div>
                   <%= f.file_field :thumbnail, accept: '.jpeg,.png,.jpg', multiple: false, class: '', data: { url: '' } %>
                   <div class="mt-20px">Supported formats for thumbnail are: png, jpg, jpeg</div>
                 </div>
