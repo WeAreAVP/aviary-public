@@ -373,9 +373,12 @@ function CollectionResource() {
                     // pause this video and jump to next
                     this.pause();
                     $('#player_section').find('.vjs-play-control').addClass('vjs-ended');
-                    $('#player_section').find('.vjs-play-control').click(function(){
+                    $('.carousel-inner').addClass('play_replay_option');
+                    $('.vjs-play-control, .carousel-inner.play_replay_option').click(function () {
                         player_widget.currentTime(selfCR.player_time);
                         player_widget.play();
+                        $('.carousel-inner').removeClass('play_replay_option');
+
                     });
                     if (collectionResource.playlist_info.playlist_view_type == 'true') {
                         if ($('.listings_files.my-slide').nextAll() && $('.listings_files.my-slide').nextAll().length > 0) {
@@ -755,7 +758,7 @@ function CollectionResource() {
             let all_params = '';
             let counter = 0;
             $.each(get_params, function (key, value) {
-                if (key.toString() != 't' && key.toString() != 'media') {
+                if (key.toString() != 't' && key.toString() != 'media' && key != 'e') {
                     if (counter != 0) {
                         all_params = all_params + '&';
                     }

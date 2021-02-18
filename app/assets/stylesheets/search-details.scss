@@ -1378,6 +1378,39 @@ dl.form textarea.text {
     margin-right: 15px;
 }
 
+.play_replay_option {
+  position: relative;
+}
+
+.play_replay_option:after{
+  position: absolute;
+  content: "";
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 3%;
+  cursor: pointer;
+  transition: 0.1s all ease;
+  background: url('https://www.pngkey.com/png/full/224-2243527_video-not-supported-replay-icon-white-png.png') no-repeat;
+  background-size: 60px;
+  background-position: center;
+  z-index: 3;
+}
+.play_replay_option:hover:after {
+  background-size: 70px;
+  transition: 0.1s all ease;
+}
+.play_replay_option:before{
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: -1px;
+  bottom: 3%;
+  background: linear-gradient(to bottom,transparent 0%, rgba(0,0,0,0.78) 50%,transparent 100%);
+  z-index: 2;
+}
+
 .preview-video video {
     width: 100%;
 }

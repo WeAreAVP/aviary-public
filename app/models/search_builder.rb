@@ -66,6 +66,10 @@ class SearchBuilder < Blacklight::SearchBuilder
     term
   end
 
+  def term_divider(term)
+    term.split(' ')
+  end
+
   def values_auto_wildcard_search(search_keyword, search_string)
     exact_search = search_keyword
     exact_search = handle_wild_search(exact_search)
@@ -281,9 +285,19 @@ class SearchBuilder < Blacklight::SearchBuilder
           operator = 'AND' if position_of_and.present? && position_of_and > position_of_or
           operator = 'NOT' if position_of_not.present? && position_of_not > position_of_and
         end
-        single_param = { 'type_of_search' => 'wildcard', 'op' => operator }
-        single_param[filed_name] = single_term
-        solr_parameters, query_string = single_search_term_handler(single_param, solr_parameters, query_string, 'simple') if single_term.present?
+
+        if !single_term.include?('"') && single_term.include?(' ')
+          more_term = term_divider(single_term)
+          more_term.each do |single_terms|
+            single_param = { 'type_of_search' => 'wildcard', 'op' => query_string.present? ? 'AND' : '' }
+            single_param[filed_name] = single_terms
+            solr_parameters, query_string = single_search_term_handler(single_param, solr_parameters, query_string, 'simple') if single_terms.present?
+          end
+        else
+          single_param = { 'type_of_search' => 'wildcard', 'op' => operator }
+          single_param[filed_name] = single_term
+          solr_parameters, query_string = single_search_term_handler(single_param, solr_parameters, query_string, 'simple') if single_term.present?
+        end
       end
       solr_parameters['q'] += ' ( ' + query_string + ' ) ' if query_string.present?
     end

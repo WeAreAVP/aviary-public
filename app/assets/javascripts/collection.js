@@ -11,7 +11,7 @@ function Collection() {
         initDataTable();
         bindEvents();
         manageTabs();
-        init_tinymce_for_element('#collection_about');
+        init_tinymce_for_element('.collection_about_text', fullBodyTinyMceOptionsLimited('.collection_about_text', 300));
 
         let display_settings = new DisplaySettings();
         display_settings.init_display_settings('collection');

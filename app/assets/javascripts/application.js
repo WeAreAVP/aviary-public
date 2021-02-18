@@ -640,6 +640,18 @@ function dateTimePicker(objectCaller, element, drops) {
 
 }
 
+function fullBodyTinyMceOptionsLimited(selector, height) {
+    return {
+        selector: selector,
+        height: height,
+        plugins: 'paste link charmap hr anchor wordcount code lists advlist',
+        toolbar: "undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | forecolor backcolor",
+        branding: false,
+        extended_valid_elements: 'style',
+        valid_children: '+body[style]'
+    }
+}
+
 function startTimeCheckbox(update_url, currentTime) {
     $('.start_time_checkbox').click(function () {
         if (update_url)

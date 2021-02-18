@@ -10,7 +10,7 @@ function Organization() {
 
     this.orgFormPageBinding = function () {
         removeImageCustom();
-        init_tinymce_for_element('#organization_description');
+        init_tinymce_for_element('.about-organization-text', fullBodyTinyMceOptionsLimited('.about-organization-text', 300));
     };
 
     this.init_org_display_settings = function () {
