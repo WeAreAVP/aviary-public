@@ -16,11 +16,13 @@ class CollectionResourceFile < ApplicationRecord
   validate :generate_thumbnail
   scope :order_file, -> { order('sort_order ASC') }
   after_create :update_storage
-  after_save :update_duration, :update_object_permissions, :reindex_collection_resource
+  after_save :update_duration, :update_object_permissions, :reindex_collection_resource, if: :partial_change?
   after_destroy :update_duration, :reindex_collection_resource
   before_save :default_values
   before_update :set_total_time_enabled
   after_find :check_downloadable
+
+  def partial_change?; end
 
   searchable do
     integer :id, stored: true
@@ -186,7 +188,7 @@ class CollectionResourceFile < ApplicationRecord
     AVALON = 4
     SOUNDCLOUD = 8
     OTHER = 0
-    NAMES = { OTHER => 'Local Media Server', AVALON => 'Avalon', SOUNDCLOUD => 'SoundCloud', VIMEO => 'Vimeo', YOUTUBE => 'Youtube' }.freeze
+    NAMES = { OTHER => 'Local Media Server', AVALON => 'Avalon', VIMEO => 'Vimeo', YOUTUBE => 'Youtube' }.freeze
     NAME_HUMANIZE = { OTHER => 'Local Media server', AVALON => 'Avalon', SOUNDCLOUD => 'Soundcloud', VIMEO => 'Vimeo', YOUTUBE => 'Youtube' }.freeze
 
     def self.for_select
