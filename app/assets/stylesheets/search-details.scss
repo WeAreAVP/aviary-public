@@ -1395,11 +1395,19 @@ dl.form textarea.text {
   background-size: 60px;
   background-position: center;
   z-index: 3;
+  -moz-transform: scaleX(-1);
+  -o-transform: scaleX(-1);
+  -webkit-transform: scaleX(-1);
+  transform: scaleX(-1);
+  filter: FlipH;
+  -ms-filter: "FlipH";
 }
+
 .play_replay_option:hover:after {
   background-size: 70px;
   transition: 0.1s all ease;
 }
+
 .play_replay_option:before{
   content: '';
   position: absolute;
