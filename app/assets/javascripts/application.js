@@ -591,7 +591,9 @@ $(function () {
         });
     }
     resourceSearchBar();
+    linkToExternalTab();
 });
+
 
 function dateTimePicker(objectCaller, element, drops) {
     $(element).daterangepicker({
@@ -637,3 +639,17 @@ function startTimeCheckbox(update_url, currentTime) {
         }
     });
 }
+
+function isUrlValid(value) {
+    return /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)$/i.test(value);
+}
+
+const linkToExternalTab = function () {
+    $(document).on("click", 'a', function () {
+        let a = new RegExp('/' + window.location.host + '/');
+        if (!a.test(this.href) && isUrlValid(this.href) && !this.href.includes('aviaryplatform.com')) {
+            $(this).attr('target', '_blank');
+        }
+    });
+};
+

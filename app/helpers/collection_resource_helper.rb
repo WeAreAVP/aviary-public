@@ -6,6 +6,8 @@ module CollectionResourceHelper
       custom_value = 'Title'
     elsif value == 'id_ss'
       custom_value = 'Aviary Resource ID'
+    elsif value == 'resource_file_count_ss'
+      custom_value = 'Media File Count'
     elsif value.include?('custom_field_values_')
       custom_value = value.gsub('custom_field_values_', '')
       custom_value = Aviary::SolrIndexer.remove_field_type_string(custom_value)

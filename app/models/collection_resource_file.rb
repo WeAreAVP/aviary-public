@@ -54,6 +54,10 @@ class CollectionResourceFile < ApplicationRecord
       collection_resource.id
     end
 
+    integer :collection_id, stored: true do
+      collection_resource.collection.id
+    end
+
     integer :organization_id, multiple: false, stored: true do
       collection_resource.collection.organization_id
     end
@@ -97,7 +101,8 @@ class CollectionResourceFile < ApplicationRecord
       'player_embed_html_ss' => 'Player Embed HTML',
       'resource_detail_embed_html_ss' => 'Resource Detail Embed HTML',
       'target_domain_ss' => 'Target Domain',
-      'duration_ss' => 'Duration' }
+      'duration_ss' => 'Duration',
+      'collection_title_text' => 'Collection Title' }
   end
 
   def self.date_time_format(date_time)
@@ -247,6 +252,7 @@ class CollectionResourceFile < ApplicationRecord
   def self.fetch_file_list(page, per_page, sort_column, sort_direction, params, limit_condition, export_and_current_organization = { export: false, current_organization: false })
     q = params[:search][:value] if params.present? && params.key?(:search) && params[:search].key?(:value)
     solr_url = CollectionResource.solr_path
+    solr = CollectionResource.solr_connect
     select_url = "#{solr_url}/select"
     solr_q_condition = '*:*'
     complex_phrase_def_type = false
@@ -259,6 +265,9 @@ class CollectionResourceFile < ApplicationRecord
           unless value['value'].to_s == 'id_is' && q.to_i <= 0
             fq_filters_inner = fq_filters_inner + (counter != 0 ? ' OR ' : ' ') + " #{CollectionResource.search_perp(q, value['value'].to_s)} "
             counter += 1
+            if value['value'].to_s == 'collection_title_text'
+              fq_filters_inner, counter = CollectionResource.search_collection_column(limit_condition, solr, q, counter, fq_filters_inner)
+            end
           end
         end
       end
@@ -282,6 +291,29 @@ class CollectionResourceFile < ApplicationRecord
     rescue StandardError
       total_response = { 'response' => { 'numFound' => 0 } }
     end
+    if sort_column.to_s == 'collection_title_text'
+
+      collections_raw = solr.get 'select', params: { q: '*:*', fq: ['document_type_ss:collection', 'status_ss:active', limit_condition], fl: %w[id_is], sort: 'title_ss desc' }
+      response = collections_raw['response'].present? && collections_raw['response']['docs'].present? ? collections_raw['response']['docs'] : nil
+      query_params[:sort] = if response.present? && !response.size.zero?
+                              sort = ''
+                              total = response.size
+                              response.each do |testing|
+                                sort += "if(eq(collection_id_is,#{testing['id_is']}), #{total} ,"
+                                total -= 1
+                              end
+                              sort += '0'
+                              (1..response.size).each do |_i|
+                                sort += ')'
+                              end
+                              sort.present? ? "#{sort} #{sort_direction}" : "collection_id_is #{sort_direction}"
+                            else
+                              query_params[:sort] = "collection_id_is #{sort_direction}"
+                            end
+    elsif sort_column.present? && sort_direction.present?
+      query_params[:sort] = "#{sort_column} #{sort_direction}"
+    end
+
     query_params[:sort] = "#{sort_column} #{sort_direction}" if sort_column.present? && sort_direction.present?
     if export_and_current_organization[:export]
       query_params[:start] = 0
