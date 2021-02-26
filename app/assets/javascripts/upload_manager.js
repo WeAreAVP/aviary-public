@@ -19,6 +19,7 @@ function UploadManager(app_helper) {
     selfUM = this;
     selfUM.app_helper = app_helper;
     selfUM.media_player = null;
+    var that = this;
 
     /**
      *
@@ -127,6 +128,7 @@ function UploadManager(app_helper) {
             $(".best_in_place_resoruce_file").best_in_place();
 
             $('.manage-media-thumbnail').on('click', function () {
+                removeImageCustom();
                 $("#downloadable_duration").addClass("d-none");
                 $('.single-file-upload-form-thumbnail').attr('action', $(this).data('url'));
                 var file_status = $(this).data('file-status');
@@ -140,6 +142,7 @@ function UploadManager(app_helper) {
                 $('.resource-file-sort-order').val($(this).data('sort'));
                 selectize.setValue(file_status, false);
                 downloadable.setValue(is_downloadable.toString(), false);
+                loadImageThumbnail(this);
                 $('.manage-media-modal').modal();
                 intialize_datepicker(is_downloadable, download_enabled_for, downloadable_till);
                 changeDownloadable();
@@ -148,6 +151,10 @@ function UploadManager(app_helper) {
                 $('#other-info-holder').html($('#other-info').html());
                 binding_embed_local('.manage-media-modal ');
             });
+        });
+
+        $(".manage-media-modal-close-button").on("click", function(){
+            $('#show-thumbnail-image').empty();
         });
 
         $('.manage-media-thumbnail').on('click', function () {
@@ -165,6 +172,18 @@ function UploadManager(app_helper) {
         });
     };
 
+    const loadImageThumbnail = function (obj) {
+        let data = {
+            action: 'loadImageThumbnail'
+        };
+        app_helper.classAction($('.manage-media-thumbnail').data('removeUrl'), data, 'html', 'GET', '', that , true);
+    };
+
+    this.loadImageThumbnail = function (response) {
+        if(typeof response != 'undefined' && response != '' && response){
+            $('#show-thumbnail-image').append(response);
+        }
+    };
 
     const binding_embed_local = function (class_opt) {
         setTimeout(function () {
@@ -267,6 +286,14 @@ function UploadManager(app_helper) {
         } else if ($(class_opt + '#collection_resource_embed_type').val() == 0) {
             $(class_opt + '#other-info-holder').html($('#other-info').html());
             $('.field_embed_code').html($('.field_embed_code_parent_input').html());
+        }
+    };
+
+    this.handlecallback = function (response, container, requestData) {
+        try {
+            eval('this.' + requestData.action + '(response,container,requestData)');
+        } catch (err) {
+            console.log(err);
         }
     };
 }

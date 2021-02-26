@@ -97,6 +97,8 @@ class ResourcesListingDatatable < ApplicationDatatable
       resource[value['value']].to_date
     elsif value['value'] == 'access_ss'
       resource[value['value']].titleize
+    elsif value['value'] == 'collection_title_text'
+      collection_resource.collection.title
     else
       check_valid_array(resource[value['value']], value['value'])
     end
