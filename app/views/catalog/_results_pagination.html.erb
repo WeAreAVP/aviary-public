@@ -8,7 +8,7 @@
   <% end %>
   <% if !@response.blank? and show_pagination? and @response.total_pages > 1 %>
     <div class="mr-2 mt-2 mb-2">
-      <div class="pageinate-holder">
+      <div class="paginate-holder">
         <div class="pagination">
           <%= paginate @response %>
         </div>
