@@ -2025,3 +2025,11 @@ footer .nav {
 .collection-details .img-fluid {
   min-height: 30px !important;
 }
+
+.non-search-page .search_information_link {
+  position: absolute;
+  top: 3px;
+  right: 5px;
+  z-index: 22;
+  font-size: 14px;
+}

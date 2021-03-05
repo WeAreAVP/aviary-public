@@ -19,7 +19,8 @@
 
     <div class="buttons-search">
       <a class='advanced-search-btn' href="<%= search_action_url %>?utf8=✓&search_field=advanced&update_advance_search=update_advance_search&search_type=advance">Advanced
-        Search</a>
+        Search</a> <%= render partial: 'shared/search_info', locals: {from: 'search_page', classes: 'float-right ml-3 mt-3px '} %>
+
     </div>
   <% end %>
 <% end %>

@@ -514,6 +514,11 @@ function initToolTip(element){
 }
 
 $(function () {
+    setTimeout(function () {
+        $('[data-toggle="tooltip"]').tooltip();
+    }, 1000);
+
+
     if ($('#sidebar-main').length == 0) {
         $(".main-content").removeClass('open');
     }

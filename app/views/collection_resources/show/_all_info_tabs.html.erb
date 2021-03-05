@@ -39,6 +39,8 @@
                   <%= hidden_field('', 'selected_index') %>
                   <%= hidden_field('', 'selected_transcript') %>
                   <%= hidden_field('', 'selected_file', value: @resource_file.present? ? @resource_file.id : '') if @resource_file.present? %>
+                  <%= render partial: 'shared/search_info', locals: { from: 'search_page', classes: 'float-right ml-3 mt-3px ' } %>
+
                 </div>
             </div>
 

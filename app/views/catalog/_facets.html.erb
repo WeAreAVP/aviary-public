@@ -62,6 +62,7 @@
     </div>
   </div>
 </div>
+<%= render partial: 'shared/search_info', locals: {from: 'search_page', classes: 'float-right ml-3 mt-3px '} %>
 <a class="btn-adv simple_option_search float-right text-white font-size-13px <%= params[:search_type] == 'advance' ? '' : 'd-none' %>" data-type="simple" href="javascript:void(0)">
   Simple Search </a>
 <a class="btn-adv advance_option_search <%= params[:search_type] == 'advance' ? 'd-none' : '' %> float-right text-white font-size-13px" data-type="advance" href="javascript:void(0)">Advanced

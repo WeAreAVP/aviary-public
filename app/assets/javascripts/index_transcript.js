@@ -98,9 +98,6 @@ function IndexTranscript() {
         $('#file_' + that.cuePointType + '_select').next().find('div.selectize-input > input').prop('disabled', 'disabled');
         activatePoints(this.call_type);
         activatePlayTimecode();
-        disableBodyScrollIndexTrancript();
-
-
     };
 
     this.handlecallback = function (response, container, requestData) {
@@ -872,16 +869,6 @@ function IndexTranscript() {
             }
         }).disableSelection();
         data = $('#sortable_' + that.cuePointType).sortable('toArray');
-    };
-
-
-    let disableBodyScrollIndexTrancript = function () {
-        $(".file_transcript, .file_index").hover(function () {
-            $('body').css('overflow', 'hidden');
-        }, function () {
-            $('body').css('overflow', 'inherit');
-        });
-
     };
 
     let updateOrder = function () {
