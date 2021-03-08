@@ -36,15 +36,36 @@ class ApplicationController < ActionController::Base
   def encrypted_info
     response = if current_user_is_org_user?(current_organization)
                  collection_resource_id = params['collection_resource_id']
+                 update_access_url_id = params['update_access_url_id']
+                 if params['type'] == 'ever_green_url'
+                   existing_resource = PublicAccessUrl.where(collection_resource_id: collection_resource_id, access_type: 'ever_green_url')
+                   if existing_resource.present?
+                     update_access_url_id = existing_resource.first.id
+                     existing_resource.where.not(id: update_access_url_id).delete_all
+                   end
+                 end
                  information = { start_time: params['start_time_status'].to_s.to_boolean? ? params['start_time'] : nil, end_time: params['end_time_status'].to_s.to_boolean? ? params['end_time'] : nil,
                                  start_time_status: params['start_time_status'], end_time_status: params['end_time_status'] }
+                 public_access_url = update_access_url_id.present? ? PublicAccessUrl.find_by_id(update_access_url_id) : nil
 
+                 object = { access_type: params['type'], status: true, collection_resource_id: collection_resource_id, url: '' }
+                 object[:duration] = params['type'] == 'ever_green_url' ? 'Ongoing' : params['duration']
+                 object[:information] = params['type'] == 'ever_green_url' ? nil : information.to_json
+                 public_access_url = if public_access_url.present?
+                                       public_access_url.update(object)
+                                       public_access_url
+                                     else
+                                       PublicAccessUrl.create(object)
+                                     end
                  encrypted_string = EnDecryptor.encrypt(public_access_url.id.to_s + '--' + random_string).strip
                  param_noid = { noid: CollectionResource.find(collection_resource_id).noid, host: Utilities::AviaryDomainHandler.subdomain_handler(current_organization), access: encrypted_string }
-                 param_noid[:t] = human_to_seconds(information[:start_time]) if information[:start_time].present?
-                 param_noid[:e] = human_to_seconds(information[:end_time]) if information[:end_time].present?
-                 param_noid[:auto_play] = 'true' if params[:auto_play].present? && params[:auto_play].to_s.to_boolean?
+                 unless params['type'] == 'ever_green_url'
+                   param_noid[:t] = human_to_seconds(information[:start_time]) if information[:start_time].present?
+                   param_noid[:e] = human_to_seconds(information[:end_time]) if information[:end_time].present?
+                   param_noid[:auto_play] = 'true' if params[:auto_play].present? && params[:auto_play].to_s.to_boolean? == true
+                 end
                  url = noid_url(param_noid)
+                 public_access_url.update(url: url)
                  url
                else
                  ''

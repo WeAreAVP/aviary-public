@@ -44,6 +44,7 @@ function CollectionResource() {
     selfCR.index_file_count = 0;
     selfCR.transcript_file_count = 0;
     selfCR.auto_loading_inprogress = false;
+    var publicAccessUrl = {};
     var resizeAllowed = true;
     const clearKeyWords = function (keyword) {
         keyword = keyword.replace(/[\/\\()|'"*:^~`{}]/g, '');
@@ -71,6 +72,7 @@ function CollectionResource() {
     }
 
     this.initializeDetail = function (search_text_val, selected_index, selected_transcript, edit_description, embed, resource_file_id, track_params) {
+        publicAccessUrl = new PublicAccessUrl();
         selfCR.track_params = track_params;
         selfCR.resource_file_id = resource_file_id;
         selfCR.app_helper = new App();
@@ -119,7 +121,27 @@ function CollectionResource() {
             type_current = window.location.pathname.substr(window.location.pathname.lastIndexOf('/') + 1);
         }
         show_marker_hanlders(type_current);
+        document_level_binding_element('#transliteration_detail_page', 'change', function () {
+            let url = window.location.href.replaceAll('&tranlit=t', '');
+            url = url.replaceAll('tranlit=t', '');
+            url = url.replaceAll('&tranlit=f', '');
+            url = url.replaceAll('&tranlit=f', '');
+            url = url.replaceAll('tranlit=f', '');
+            if ($(this).prop('checked')) {
+                if (window.location.href.includes('?')) {
+                    window.location.href = url + '&tranlit=t';
+                } else {
+                    window.location.href = url + '?tranlit=t';
+                }
+            } else {
+                if (window.location.href.includes('?')) {
+                    window.location.href = url + '&tranlit=f';
+                } else {
+                    window.location.href = url + '?tranlit=f';
+                }
 
+            }
+        });
     };
 
     const detailsPageBinding = function () {
@@ -669,17 +691,6 @@ function CollectionResource() {
     };
 
     let shareTimeUrl = function (currentTime, url) {
-
-        $('.share_tabs').on('mouseup', function () {
-            let active_tab = $(this).data('tabname');
-
-            setTimeout(function () {
-                if (active_tab == 'public_access_url_custom') {
-                    selfCR.setPeriodTimePeriod($('#public_access_time_period').data('daterangepicker').startDate.format('MM-DD-YYYY'), $('#public_access_time_period').data('daterangepicker').endDate.format('MM-DD-YYYY'));
-                }
-                checkAndCreateUrl();
-            }, 500);
-        });
         timePickerShare();
         $('.start_time_checkbox, .end_time_checkbox').click(function () {
             checkAndCreateUrl();
@@ -706,6 +717,38 @@ function CollectionResource() {
             }
         });
 
+        $('.video-start-time').keyup(function () {
+            if($('.share_tabs.active.show').data('tabname') != 'public_access_url_custom'){
+                checkAndCreateUrl();
+            }
+        });
+
+        document_level_binding_element('.generate-link', 'click', function () {
+            let outter = this;
+            $(this).addClass('anchor-disable-custom');
+            setTimeout(function () {
+                $(outter).removeClass('anchor-disable-custom');
+            }, 1500);
+            setTimeout(function () {
+                let response = publicAccessUrl.geDateRange();
+                let startDate = response.startDate;
+                let endDate = response.endDate;
+                publicAccessUrl.setPeriodTimePeriod(startDate, endDate, $(outter).data('type'));
+                checkAndCreateUrl();
+            }, 500);
+        });
+
+        publicAccessUrl.greenLinkBinding();
+        document_level_binding_element('.public_access_url_toggle', 'click', function () {
+            $('.public_access_tab').addClass('d-none');
+            if ($(this).data('tab') == 'limited_access_url') {
+                $('.limited_access_url').removeClass('d-none');
+                $('.time-share').removeClass('d-none');
+            } else {
+                $('.evergreen_url').removeClass('d-none');
+                $('.time-share').addClass('d-none');
+            }
+        });
         document_level_binding_element('#auto_play_video', 'click', function () {
             checkAndCreateUrl();
         });
@@ -1204,28 +1247,7 @@ function CollectionResource() {
             setTooltip(e.trigger, 'Failed!');
             hideTooltip(e.trigger);
         });
-
-        $('#public_access_time_period').daterangepicker({
-            locale: {format: 'MM-DD-YYYY'}
-        }, function (start, end, label) {
-            selfCR.setPeriodTimePeriod(start.format('MM-DD-YYYY'), end.format('MM-DD-YYYY'));
-        });
-
-    };
-
-    this.setPeriodTimePeriod = function (start, end) {
-        let data = {
-            action: 'encrypted_info',
-            text_to_be_encrypted: start + ' ' + end + ' ' + $('#public_access_time_period').data('resoruceid')
-        };
-        selfCR.app_helper.classAction($('#public_access_time_period').data('url'), data, 'JSON', 'GET', '', selfCR, true);
-    };
-
-    this.encrypted_info = function (response) {
-        let new_url = selfCR.app_helper.removeParam('share', $('#public_access_url').text());
-        new_url = new_url.replace("?", "");
-        let text = new_url + '?share=' + response.encrypted_data;
-        $('#public_access_url').text(text);
+        dateTimePicker({}, '#public_access_time_period', 'up');
     };
 
     this.rss_metadata = function (classname) {

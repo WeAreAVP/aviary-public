@@ -27,6 +27,9 @@ function Playlist() {
         initDataTable();
         bindEvents();
         $('#public_access_time_period').daterangepicker({
+            timePicker: true,
+            timePicker24Hour: true,
+            drops: 'up',
             locale: {format: 'MM-DD-YYYY'}
         }, function (start, end) {
             that.collection_resource.setPeriodTimePeriod(start.format('MM-DD-YYYY'), end.format('MM-DD-YYYY'));

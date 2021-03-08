@@ -96,7 +96,7 @@
                     </button>
                   </h5>
                 </div>
-                <div id="organization_subnav" class="collapse <%= (["organizations"].include?(params[:controller]) || ["themes"].include?(params[:controller])) ? 'show' : '' %>" aria-labelledby="headingOne"
+                <div id="organization_subnav" class="collapse <%= (["organizations", 'public_access_urls'].include?(params[:controller]) || ["themes"].include?(params[:controller])) ? 'show' : '' %>" aria-labelledby="headingOne"
                      data-parent="#accordion" style="">
                   <div class="card-body">
                     <div id="accordion">
@@ -120,6 +120,15 @@
                                 <span class="ico" data-toggle="tooltip" data-placement="right" title="Display Settings"><%= image_tag 'icons/display.png' %></span>
                                 <span class="title">Display Settings</span>
                               </div>
+                            </button>
+                          </h5>
+                        </div>
+                      </div>
+                      <div class="card <%= disabled_organization_cls %>">
+                        <div class="card-header headingOne">
+                          <h5 class="mb-0">
+                            <button onclick="document.location.href='<%= public_access_urls_path %>'" class="btn btn-link  no_sub_colaps" data-toggle="collapse" aria-expanded="<%= params[:controller] == 'public_access_urls' ? 'true' : '' %>" aria-controls="collapse">
+                              Public Access URLs
                             </button>
                           </h5>
                         </div>

@@ -117,15 +117,7 @@
               </div>
               <div class="tab-pane fade public_access_url_custom" id="public_access" role="tabpanel" aria-labelledby="public_access_url-tab">
                 <div class="content">
-                  <div class="public_access">
-                    <textarea readonly class="form-control mb-3 share_value" id="public_access_url" placeholder="Public Access Url"><%= noid_url(noid: @collection_resource.noid, host: Utilities::AviaryDomainHandler.subdomain_handler(current_organization)) %></textarea>
-                    <label class='label font-weight-bold mb-1usel-wrap .mediacarousel").jCarouse'> Access
-                      Duration:</label>
-                    <input type='hidden' id='public_access_base_url' value='<%= noid_url(noid: @collection_resource.noid, host: Utilities::AviaryDomainHandler.subdomain_handler(current_organization)) %>'/>
-                    <input type='text' data-url='<%= encrypted_info_url %>' data-resoruceid=<%= @collection_resource.id %> id='public_access_time_period' name='public_access_time_period' class='form-control'/>
-                    <button class="btn btn-default btn-block copy-link" data-clipboard-action="copy" data-clipboard-target="#public_access_url" data-original-title="" title="">Copy
-                    </button>
-                  </div>
+                  <%= render partial: 'public_access_urls/public_access_form', locals: {collection_resource: @collection_resource, type: 'both'} %>
                 </div>
               </div>
               <%= render 'collection_resources/show/share_media_time' %>

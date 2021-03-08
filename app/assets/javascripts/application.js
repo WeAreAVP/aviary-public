@@ -594,6 +594,52 @@ $(function () {
     linkToExternalTab();
 });
 
+
+function dateTimePicker(objectCaller, element, drops) {
+    $(element).daterangepicker({
+        timePicker: true,
+        drops: drops,
+        opens: 'right',
+        showDropdowns: true,
+        minDate: moment().subtract(7, 'days'),
+        maxDate: moment().add(10, 'Y'),
+        minYear: parseInt(moment().year(), 10),
+        maxYear: parseInt(moment().add(10, 'Y').year(), 10),
+        alwaysShowCalendars: true,
+        timePicker24Hour: true,
+        locale: {
+            format: 'MM-DD-YYYY HH:mm'
+        },
+        ranges: {
+            'This Week': [moment(), moment().endOf("week")],
+            'One Week From Now': [moment(), moment().add(7, 'days')],
+            'Next Week': [moment().add(1, 'week').startOf('week'), moment().add(1, 'week').endOf('week')],
+            'This Month': [moment().startOf('month'), moment().endOf('month')],
+            'One Month From Now': [moment(), moment().add(1, 'M')],
+            'Next Month': [moment().add(1, 'M').startOf('month'), moment().add(1, 'M').endOf('month')],
+            'This Year': [moment(), moment().endOf("year")],
+            'One Year From Now': [moment(), moment().add(1, 'Y')],
+        }
+    });
+
+}
+
+function startTimeCheckbox(update_url, currentTime) {
+    $('.start_time_checkbox').click(function () {
+        if (update_url)
+            checkAndCreateUrl();
+        if ($(this).prop("checked") === true) {
+            if ($('#start_time_share').val() == '')
+                $('#start_time_share').val(secondsToHuman(currentTime));
+            $('.video-start-time').removeAttr('disabled');
+
+        } else {
+            $('.video-start-time').attr('disabled', 'disabled');
+            $('#share_link').val();
+        }
+    });
+}
+
 function isUrlValid(value) {
     return /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)$/i.test(value);
 }
@@ -606,3 +652,4 @@ const linkToExternalTab = function () {
         }
     });
 };
+

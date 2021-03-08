@@ -7,6 +7,7 @@ class CollectionResource < ApplicationRecord
   has_many :playlist_resources, dependent: :destroy
   has_many :playlist_items, dependent: :destroy
   has_many :collection_resource_files, dependent: :destroy
+  has_many :public_access_urls
   validates :noid, uniqueness: { message: 'PURL already taken.' }
   validate :unique_custom_unique_identifier
   accepts_nested_attributes_for :collection_resource_files, reject_if: :all_blank, allow_destroy: true
