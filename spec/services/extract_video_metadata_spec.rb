@@ -20,13 +20,7 @@ RSpec.describe Aviary::ExtractVideoMetadata, type: :service do
   #    expect(subject.size).to eq(5)
   #  end
   #end
-  context 'check the Extract Video Metadata Service and Soundcloud Class' do
-    subject { Aviary::ExtractVideoMetadata::VideoEmbed.new(CollectionResourceFile.embed_type_name(collection_resource_file_soundcloud.embed_type), collection_resource_file_soundcloud.embed_code).metadata }
-    it 'should successfully process the soundcloud embed and return its metadata' do
-      expect(subject).to be_truthy
-      expect(subject.size).to eq(5)
-    end
-  end
+
   context 'check the Extract Video Metadata Service and Avalon Class' do
     subject { Aviary::ExtractVideoMetadata::VideoEmbed.new(CollectionResourceFile.embed_type_name(collection_resource_file_avalon.embed_type), collection_resource_file_avalon.embed_code).metadata }
     it 'should successfully process the avalon embed and return its metadata' do

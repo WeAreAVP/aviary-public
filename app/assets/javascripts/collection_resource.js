@@ -250,9 +250,9 @@ function CollectionResource() {
 
         // move timeline bar to related div after creating bar and using later updated variable session[:count][:index_count]s
         $('.timeline-bar-parent-div').html($('.timeline-bar-parent-div-tmp').html());
-        $('.timeline-bar-parent-div-tmp').html('');
+        $('.timeline-bar-parent-div-tmp').remove();
         initTimeline();
-
+        $('[data-toggle="tooltip"]').tooltip();
         if (selfCR.from_playlist) {
             $('#view_edit_custom').attr('style', 'height:' + ($('.two_col_custom').height()) + 'px!important;max-height:550px!important;');
         } else {
@@ -295,219 +295,154 @@ function CollectionResource() {
         }
     };
 
-    /**
-     *
-     * @param start_time
-     * @param start_from
-     * @returns {[]}
-     */
-    const fillBarWithMarkers = function (startTime, endTime) {
-        let listOgLocations = [];
-        for (let i = startTime; i <= endTime; i = i + 1) {
-            listOgLocations.push(i);
-        }
-        return listOgLocations;
-    };
-
-    const appendMarkersEmbed = function (current_time_marker) {
-        $('.mejs__time-total.mejs__time-slider').append('<span class="mejs__time-marker" style="left: ' + parseFloat((current_time_marker / collectionResource.max) * 100).toFixed(2) + '%;width: 10px; background: rgb(51, 96, 117) none repeat scroll 0% 0%;"></span>');
-    };
-
-
     const initPlayer = function () {
-        if (file_access) {
-            if ($('#avalon_widget').length > 0) {
-                var offsetTime = 0;
-                var target_domain = $('#avalon_widget').data().domain;
-                player_widget = function (c, params) {
-                    var f = $('#avalon_widget');
-                    var command = params || {};
-                    command['command'] = c;
-                    f.prop('contentWindow').postMessage(command, target_domain);
-
-                };
-
-                window.addEventListener('message', function (event) {
-                    selfCR.currentTime = event.data.currentTime;
-                    time_scroll_mover(event.data.currentTime);
-                    var command = event.data.command;
-                    if (command == 'currentTime')
-                        offsetTime = event.data.currentTime;
-                    previousTime = event.data.currentTime;
-                });
-
-                setInterval(function () {
-                    player_widget('get_offset');
-                }, 500);
-                if (selfCR.player_time > 0) {
-                    player_widget('set_offset', {'offset': currentTime});
-                    player_widget('play');
+        if (file_access && $('#player').length > 0) {
+            let firstPlay = true;
+            if ($('#player_section').data('h265')) {
+                const video = document.createElement('video');
+                let h265 = video.canPlayType('video/mp4; codecs="hvc1"');
+                if (!h265 && $('#player_section').data('transcoded_url') != '') {
+                    $('#player source').attr('src', $('#player_section').data('transcoded_url'));
+                    $('#player')[0].load();
                 }
-
-            } else if ($('#360_player').length > 0) {
-                player_widget = jwplayer('360_player').setup({
-                    playlist: [{
-                        file: $('#360_player').data('url'),
-                        tracks: $('#360_player').data('tracks'),
-                        mediaid: 'AgqYcfAT',
-                        stereomode: 'monoscopic',
-                        image: $('#360_player').data('poster'),
-                        autostart: window.location.href.indexOf('auto_play') > 0
-                    }]
-                });
-                player_widget.on('error', function (_event) {
-                    let confirm = window.confirm("Media file source not found or expired. Reload the page? Or contact organization admin.");
-                    if (confirm == true) {
-                        window.location.reload();
-                    }
-                });
-                player_widget.on('complete', function (_event) {
-                    if ($('.listings_files.my-slide').nextAll() && $('.listings_files.my-slide').nextAll().length > 0) {
-                        play_next_file();
-                    } else if ($('.box.now-playing.playlist_resource_single').nextAll() && $('.box.now-playing.playlist_resource_single').nextAll().length > 0) {
-                        play_next_resource();
-                    }
-                });
-                player_widget.on('time', function (event) {
-                    selfCR.currentTime = event.currentTime;
-                    // when end_time is elapsed, pause this video and jump to next
-                    time_scroll_mover(event.currentTime);
-
-                    if (selfCR.end_time != NaN && selfCR.end_time != undefined && event.currentTime >= selfCR.end_time && selfCR.end_time > 0) {
-                        // pause this video and jump to next
-                        player_widget.pause();
-                        if (collectionResource.playlist_info.playlist_view_type == 'true') {
-                            if ($('.listings_files.my-slide').nextAll() && $('.listings_files.my-slide').nextAll().length > 0) {
-                                play_next_file();
-                            } else if ($('.box.now-playing.playlist_resource_single').nextAll() && $('.box.now-playing.playlist_resource_single').nextAll().length > 0) {
-                                play_next_resource();
-                            }
-                        }
-                    }
-
-                    previousTime = event.currentTime;
-                });
-                player_widget.on('ready', function () {
-                    shareTimeUrl(player_widget.getCurrentTime(), $('#share_link').val());
-                    if (window.location.href.indexOf('auto_play') > 0) {
-                        let location = window.location.href;
-                        location = location.replace('auto_play=true', '').replace('?&', '?').replace('&&', '&');
-                        window.history.replaceState({}, 'auto_play=true', location);
-                        player_widget.seek(0).play();
-                    }
-                    if (selfCR.player_time > 0) {
-                        player_widget.seek(selfCR.player_time).play();
-                    }
-                })
-            } else {
-                meJsFeatures = ['playpause', 'current', 'progress', 'duration', 'volume', 'tracks', 'fullscreen', 'autoplay', 'markers'];
-                if ($('#player source').length > 1) {
-                    meJsFeatures.push('quality');
-                }
-
-                let list = []
-                if (selfCR.clip_exists == 'true' || selfCR.clip_exists == true) {
-                    if (collectionResource.playerType != '' && collectionResource.playerType != 'normal') {
-                        setTimeout(function () {
-                            appendMarkersEmbed(collectionResource.player_time);
-                            for (let startTimeVale = collectionResource.player_time; startTimeVale <= collectionResource.end_time; startTimeVale = startTimeVale + 1) {
-                                appendMarkersEmbed(startTimeVale);
-                            }
-                            appendMarkersEmbed(collectionResource.end_time);
-                        }, 3000);
-                    } else {
-                        list = fillBarWithMarkers(selfCR.player_time, selfCR.end_time);
-                    }
-                }
-
-                selfCR.player_widget = player_widget = $('#player').mediaelementplayer({
-                    features: meJsFeatures,
-                    markers: list,
-                    markerWidth: 2,
-                    markerColor: '#336075',
-                    success: function (mediaElement, domObject) {
-                        $('.video-placeholder').addClass('hovered');
-                        shareTimeUrl(mediaElement.currentTime, $('#share_link').val());
-                        mediaElement.addEventListener('timeupdate', function (e) {
-
-                            time_scroll_mover(mediaElement.currentTime);
-                            selfCR.currentTime = mediaElement.currentTime;
-                            // when end_time is elapsed, pause this video and jump to next
-                            if (selfCR.end_time != NaN && selfCR.end_time != undefined && mediaElement.currentTime >= selfCR.end_time && selfCR.end_time > 0) {
-                                // pause this video and jump to next
-                                mediaElement.pause();
-                                if (collectionResource.playlist_info.playlist_view_type == 'true') {
-                                    if ($('.listings_files.my-slide').nextAll() && $('.listings_files.my-slide').nextAll().length > 0) {
-                                        play_next_file();
-                                    } else if ($('.box.now-playing.playlist_resource_single').nextAll() && $('.box.now-playing.playlist_resource_single').nextAll().length > 0) {
-                                        play_next_resource();
-                                    }
-                                }
-                            }
-
-                            previousTime = mediaElement.currentTime;
-                        }, false);
-
-                        let first_play = true;
-
-                        mediaElement.addEventListener('playing', function () {
-                            $('.video-placeholder').removeClass('hovered');
-                            if (first_play) {
-                                setTimeout(function () {
-                                    $('.video-placeholder').removeClass('youtube');
-                                    $('.video-placeholder').removeClass('vimeo');
-                                }, 3000);
-
-                                first_play = false;
-                            }
-                        });
-
-                        mediaElement.addEventListener('pause', function () {
-                            $('.video-placeholder').addClass('hovered');
-                        });
-
-                        mediaElement.addEventListener('ended', function (e) {
-                            // for new UI design
-                            if ($('.listings_files.my-slide').nextAll() && $('.listings_files.my-slide').nextAll().length > 0) {
-                                play_next_file();
-                            } else if ($('.box.now-playing.playlist_resource_single').nextAll() && $('.box.now-playing.playlist_resource_single').nextAll().length > 0) {
-                                play_next_resource();
-                            }
-                        }, false);
-                        if (window.location.href.indexOf('auto_play') > 0) {
-                            let playPromise = undefined;
-                            mediaElement.play();
-                            if (selfCR.auto_play != false) {
-                                mediaElement.play();
-                            }
-                            // generalizing the solution to replace state of History API; by preserving query parameters other than auto_play
-                            var location = window.location.href;
-                            location = location.replace('auto_play=true', '');
-                            location = location.replace('?&', '?');
-                            location = location.replace('&&', '&');
-
-                            window.history.replaceState({}, 'auto_play=true', location);
-                        }
-                        if (selfCR.player_time > 0)
-                            autoPlay(mediaElement);
-
+            }
+            let videoJsOptions = {
+                fluid: true,
+                playbackRates: [0.5, 1, 1.5, 2],
+                aspectRatio: '16:9',
+                responsive: true,
+                pictureInPictureToggle: true,
+                techOrder: ['chromecast', 'html5', 'youtube', 'vimeo'],
+                youtube: {autohide: 1},
+                plugins: {
+                    airplayButton: {},
+                    constantTimeupdate: {
+                        interval: 1000,
+                        roundFn: Math.round
                     },
-                    error: function (_error) {
-                        let confirm = window.confirm("Media file source not found or expired. Reload the page? Or contact organization admin.");
-                        if (confirm == true) {
+                    chromecast: {
+                        metadata: {
+                            title: 'Chromecast'
+                        }
+                    }
+                }
+            };
+
+            if ($('#player_section').hasClass('audio')) {
+                if ($('#player_section').hasClass('audio-player'))
+                    videoJsOptions.aspectRatio = '1:0';
+                videoJsOptions.controlBar = {
+                    "fullscreenToggle": false,
+                    'pictureInPictureToggle': false
+                };
+            } else if ($('#player_section').hasClass('embed')) {
+                videoJsOptions.controlBar = {
+                    'pictureInPictureToggle': false
+                };
+                if (window.location.href.indexOf('auto_play') > 0 || selfCR.player_time > 0) {
+                    videoJsOptions.vimeo = {autoplay: 1};
+                }
+            }
+
+
+            selfCR.player_widget = player_widget = videojs('player', videoJsOptions, function onPlayerReady() {
+                $('.video-placeholder').addClass('hovered');
+                $('#player_section').removeClass('player-section');
+                shareTimeUrl(this.currentTime(), $('#share_link').val());
+                if (window.location.href.indexOf('auto_play') > 0 || selfCR.player_time > 0) {
+                    autoPlay(player_widget);
+                    var location = window.location.href;
+                    location = location.replace('auto_play=true', '').replace('?&', '?').replace('&&', '&');
+                    window.history.replaceState({}, 'auto_play=true', location);
+                }
+            });
+
+            if ($('#player_section').data('3d')) {
+                player_widget.mediainfo = player_widget.mediainfo || {};
+                player_widget.mediainfo.projection = '360';
+                var vr = window.vr = player_widget.vr({projection: 'AUTO'});
+            }
+
+
+            player_widget.on('constant-timeupdate', function (e) {
+                let currentTime = this.currentTime();
+                time_scroll_mover(currentTime);
+                selfCR.currentTime = currentTime;
+                // when end_time is elapsed, pause this video and jump to next
+                if (selfCR.end_time != NaN && selfCR.end_time != undefined && currentTime >= selfCR.end_time && selfCR.end_time > 0) {
+                    // pause this video and jump to next
+                    this.pause();
+                    $('#player_section').find('.vjs-play-control').addClass('vjs-ended');
+                    $('#player_section').find('.vjs-play-control').click(function(){
+                        player_widget.currentTime(selfCR.player_time);
+                        player_widget.play();
+                    });
+                    if (collectionResource.playlist_info.playlist_view_type == 'true') {
+                        if ($('.listings_files.my-slide').nextAll() && $('.listings_files.my-slide').nextAll().length > 0) {
+                            play_next_file();
+                        } else if ($('.box.now-playing.playlist_resource_single').nextAll() && $('.box.now-playing.playlist_resource_single').nextAll().length > 0) {
+                            play_next_resource();
+                        }
+                    }
+                }
+                previousTime = currentTime;
+
+
+            });
+
+
+            player_widget.on('playing', function (e) {
+                $('.video-placeholder').removeClass('hovered');
+                if (firstPlay) {
+                    if (selfCR.player_time > 0) {
+                        player_widget.currentTime(selfCR.player_time);
+                    } else if (playerSpecificTimePlay > 0) {
+                        player_widget.currentTime(playerSpecificTimePlay);
+                    }
+                    showPlayerMarkers(this);
+                    setTimeout(function () {
+                        $('.video-placeholder').removeClass('youtube');
+                    }, 3000);
+
+                    firstPlay = false;
+                }
+                selfCR.events_tracker.track_hit('collection_resource_file_play', selfCR.resource_file_id);
+            });
+            player_widget.on('pause', function (e) {
+                $('.video-placeholder').addClass('hovered');
+            });
+            player_widget.on('ended', function (e) {
+                // for new UI design
+                if ($('.listings_files.my-slide').nextAll() && $('.listings_files.my-slide').nextAll().length > 0) {
+                    play_next_file();
+                } else if ($('.box.now-playing.playlist_resource_single').nextAll() && $('.box.now-playing.playlist_resource_single').nextAll().length > 0) {
+                    play_next_resource();
+                }
+            });
+            player_widget.on("loadedmetadata", function () {
+                showPlayerMarkers(this);
+            });
+
+            player_widget.on('error', function (error) {
+                $('#player_section').removeClass('player-section');
+                error = this.error();
+                if (error.code != 1) {
+                    if (error.code == 4) {
+                        window.alert('The file for this resource is not compatible with this browser. Please try to access the resource in a different browser');
+                    } else {
+                        let confirm = window.confirm("The link for this media file has expired. Please reload the page to renew access.");
+                        if (confirm) {
                             window.location.reload();
                         }
                     }
-                });
-            }
+                }
+            });
         }
         $('.carousel-wrap').removeClass('d-none');
-        updatePlayerSize();
         $(window).resize(function () {
             setTimeout(function () {
                 initCarousel(howManySlidesWidthWise());
-                updatePlayerSize();
-            }, 200);
+            }, 200)
         });
         initCarousel(howManySlidesWidthWise());
 
@@ -521,7 +456,7 @@ function CollectionResource() {
                 sortorder = parseInt($('.media.carousel-wrap').data('sortorder'), 10);
 
             if (parseInt($('.carousel-wrap').data('filescount'), 10) > howManySlidesWidthWise())
-                selected_carosal(sortorder);
+                moveCarouselTo(sortorder);
             scroll_mousewheel_playlist();
 
         }, 1000);
@@ -530,6 +465,29 @@ function CollectionResource() {
         });
 
     };
+
+    const showPlayerMarkers = function (player) {
+        var myPlayer = player,
+            videoDuration,
+            playheadWell = document.getElementsByClassName(
+                "vjs-progress-control vjs-control"
+            )[0];
+        if (selfCR.clip_exists === 'true' || selfCR.clip_exists === true) {
+            $('.vjs-marker').remove();
+            videoDuration = Math.ceil(myPlayer.duration());
+            var elem = document.createElement("div");
+            var start = Math.ceil(collectionResource.player_time);
+            var end = Math.ceil(collectionResource.end_time);
+            if (videoDuration == 0)
+                videoDuration = Math.ceil(collectionResource.max);
+            elem.className = "vjs-marker";
+            elem.style.left = start / videoDuration * 100 + "%";
+            elem.style.width = ((end / videoDuration * 100) - (start / videoDuration * 100)) + '%';
+            playheadWell.appendChild(elem);
+
+        }
+    };
+
 
     const updatePlayerSize = function () {
         let heightPercentage = 1.7;
@@ -588,38 +546,11 @@ function CollectionResource() {
     const time_scroll_mover = function (currentTime) {
         if ($('#index-tab').hasClass('active')) {
             if ($("#index-auto-scroll").prop("checked") && selfCR.selected_index > 0) {
-                let start_time = parseFloat(selfCR.index_time_wise_page[selfCR.selected_index][selfCR.indexes.index_page_number].start_time);
-                let end_time = parseFloat(selfCR.index_time_wise_page[selfCR.selected_index][selfCR.indexes.index_page_number].end_time);
-                if (currentTime >= start_time && currentTime <= end_time) {
-                    selfCR.init_scoll('index', currentTime);
-                } else {
-                    $.each(selfCR.index_time_wise_page[selfCR.selected_index], function (index, time_wise) {
-                        if (currentTime >= time_wise.start_time && currentTime <= time_wise.end_time) {
-                            if (selfCR.indexes.index_page_number != time_wise.current_page) {
-                                selfCR.indexes.specific_page_load('timeline', time_wise.current_page, true);
-                                return false;
-                            }
-                        }
-                    });
-                }
-
+                selfCR.init_scoll('index', currentTime);
             }
         } else if ($('#transcript-tab').hasClass('active')) {
             if ($("#transcript-auto-scroll").prop("checked") && selfCR.selected_transcript > 0) {
-                let start_time = parseFloat(selfCR.transcript_time_wise_page[selfCR.selected_transcript][selfCR.transcripts.transcript_page_number].start_time);
-                let end_time = parseFloat(selfCR.transcript_time_wise_page[selfCR.selected_transcript][selfCR.transcripts.transcript_page_number].end_time);
-                if (currentTime >= start_time && currentTime <= end_time) {
-                    selfCR.init_scoll('transcript', currentTime);
-                } else {
-                    $.each(selfCR.transcript_time_wise_page[selfCR.selected_transcript], function (index, time_wise) {
-                        if (currentTime >= time_wise.start_time && currentTime <= time_wise.end_time) {
-                            if (selfCR.transcripts.transcript_page_number != time_wise.current_page) {
-                                selfCR.transcripts.specific_page_load_transcript('timeline', time_wise.current_page);
-                                return false;
-                            }
-                        }
-                    });
-                }
+                selfCR.init_scoll('transcript', currentTime);
             } else {
                 $('.transcript_time').removeClass('active');
             }
@@ -639,11 +570,16 @@ function CollectionResource() {
     const play_next_file = function () {
         $.each($('.listings_files.my-slide').nextAll(), function () {
             if ($(this).hasClass('list_can_access') && !$(this).hasClass('my-slide')) {
-                window.location = $(this).find('.playlist-item.can-play').data('media-url');
+                window.location = $(this).find('.playlist-item.can-play').data('media-url') + '?auto_play=true';
                 return false;
             }
         });
     };
+
+    let moveCarouselTo = function (numberOfMoves) {
+        $(".carousel-wrap .mediacarousel").trigger('go', numberOfMoves - 1);
+    };
+
 
     let scroll_mousewheel_playlist = function () {
         $('.carousel-wrap').unbind('mousewheel DOMMouseScroll');
@@ -675,19 +611,33 @@ function CollectionResource() {
 
     };
 
-    let autoPlay = function (mediaElement) {
+    let autoPlay = function (_aviaryPlayer) {
         if (selfCR.player_time > 0) {
-            mediaElement.setCurrentTime(selfCR.player_time);
+            setTimeout(function () {
+                player_widget.currentTime(selfCR.player_time);
+            }, 1000);
         }
 
-        // mediaElement.setMuted(true);
-        // document.addEventListener('click', function () {
-        //     player.setMuted(false);
-        // });
+        setTimeout(function () {
+            let playPromise = undefined;
+            if (selfCR.auto_play != false) {
+                playPromise = player_widget.play();
+            }
 
-        mediaElement.setAttribute('autoplay', 'true');
-        $('.mejs__play').click();
-        mediaElement.play();
+            if (playPromise !== undefined) {
+                playPromise.then(function () {
+                    // Automatic playback started. No need to do anything.
+                }).catch(function (_error) {
+                    document.addEventListener('click', function () {
+                        player_widget.muted(false);
+                    });
+                    player_widget.muted(true);
+                    if (selfCR.auto_play != false) {
+                        player_widget.play();
+                    }
+                });
+            }
+        }, 2000);
     };
 
     let shareTimeUrl = function (currentTime, url) {

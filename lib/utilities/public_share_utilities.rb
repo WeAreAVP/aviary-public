@@ -8,9 +8,14 @@ module Utilities
 
     def self.should_have_public_access(share_code, url)
       crypt = ActiveSupport::MessageEncryptor.new(Rails.application.secrets.secret_key_base[0..31], Rails.application.secrets.secret_key_base)
-      date_range = crypt.decrypt_and_verify(share_code).split(' ')
-      current_date = Time.now.beginning_of_day.to_i
-      url.split('/').include?(date_range[2]) && current_date.to_i >= Date.strptime(date_range[0], '%m-%d-%Y').to_time.to_i && current_date <= Date.strptime(date_range[1], '%m-%d-%Y').to_time.to_i
+      params = crypt.decrypt_and_verify(share_code).split('||')
+      params = crypt.decrypt_and_verify(share_code).split(' ') if params.size == 1
+      start_date = params[0]
+      end_date = params[1]
+      resource_id = params[2]
+      url.split('/').include?(resource_id) && Time.strptime(end_date, '%m-%d-%Y %k:%M') >= Time.now && Time.strptime(start_date, '%m-%d-%Y %k:%M') <= Time.now
+    rescue ArgumentError
+      url.split('/').include?(resource_id) && Date.strptime(end_date, '%m-%d-%Y') >= Time.now.to_date && Date.strptime(start_date, '%m-%d-%Y') <= Time.now.to_date
     rescue StandardError => ex
       puts ex
       false

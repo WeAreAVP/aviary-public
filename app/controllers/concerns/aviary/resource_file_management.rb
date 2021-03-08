@@ -86,7 +86,7 @@ module Aviary::ResourceFileManagement
         embed_name = CollectionResourceFile.embed_type_name(param_collection_resource[:embed_type].to_i)
         video_metadata = Aviary::ExtractVideoMetadata::VideoEmbed.new(embed_name, param_collection_resource[:embed_code], param_collection_resource).metadata
         return flash[:danger] = t('resource_file_error') unless video_metadata
-        thumbnail = video_metadata['thumbnail'].present? ? open(video_metadata['thumbnail'], allow_redirections: :all) : ''
+        thumbnail = video_metadata['thumbnail'].present? ? open(video_metadata['thumbnail'], allow_redirections: :all, ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE) : ''
 
         embed_code_hash = { embed_code: video_metadata['url'], embed_type: param_collection_resource[:embed_type], target_domain: param_collection_resource[:target_domain],
                             resource_file_file_name: video_metadata['title'], embed_content_type: video_metadata['content_type'], thumbnail: thumbnail, duration: video_metadata['duration'] }

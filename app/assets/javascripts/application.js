@@ -37,11 +37,15 @@
 //= require resource_bulk_edit
 //= require jquery-ui
 //= require mediaelement-and-player.min
+//= require video
+//= require cast_sender
 //= require_tree .
 
 var isIE = /*@cc_on!@*/false || !!document.documentMode;
 var player_widget = null;
+var playerSpecificTimePlay = 0;
 var activeCollapsedLayout = false;
+var reloadTime = 2 * 60 * 1000; // action * second * millisecond
 Object.size = function (obj) {
     var size = 0, key;
     for (key in obj) {
@@ -594,7 +598,6 @@ $(function () {
     linkToExternalTab();
 });
 
-
 function dateTimePicker(objectCaller, element, drops) {
     $(element).daterangepicker({
         timePicker: true,
@@ -652,4 +655,3 @@ const linkToExternalTab = function () {
         }
     });
 };
-

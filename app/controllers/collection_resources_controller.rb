@@ -206,7 +206,7 @@ class CollectionResourcesController < ApplicationController
 
   def resource_file_sort
     params[:resource_file_sort].each do |key, value|
-      CollectionResourceFile.find_by_id(key).update(sort_order: value)
+      CollectionResourceFile.find_by_id(key).update(sort_order: value, partial: true)
     end
     render json: [errors: []]
   end
