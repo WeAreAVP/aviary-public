@@ -33,7 +33,7 @@
 </head>
 <body class="<%= "#{params[:controller]} #{params[:action]} #{params[:controller]}-#{params[:action]}" %>">
 <span class='d-none' id="record_tracking_path" href="<%== record_tracking_path %>"> </span>
-<% if (browser.ie? || browser.opera? || browser.safari?) && cookies[:alert_bypass].blank? %>
+<% if !modern_browser?(browser)  && cookies[:alert_bypass].blank? %>
   <div class="alert alert-light browser-update" role="alert">
     <span>Aviary works best with the latest versions of Google Chrome and Firefox. </span>
   </div>
@@ -100,8 +100,8 @@
 </div>
 <%= render 'shared/modal', cached: iscached? %>
 <%= render 'shared/messages', cached: iscached? %>
-<% show_popup_compatibility = compatibility_definition %>
-<% if show_popup_compatibility && cookies[:update_pop_bypass].blank? %>
+
+<% if !modern_browser?(browser)  && cookies[:update_pop_bypass].blank? %>
   <style>
     body {
       overflow-y: hidden !important;

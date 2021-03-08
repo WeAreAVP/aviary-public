@@ -176,22 +176,6 @@ module ApplicationHelper
     100 * current / allowed
   end
 
-  def compatibility_definition
-    show_popup_compatibility = false
-    if browser.chrome? && browser.version.to_i < 49
-      show_popup_compatibility = true
-    elsif browser.firefox? && browser.version.to_i < 48
-      show_popup_compatibility = true
-    elsif browser.ie? && browser.version.to_i < 11
-      show_popup_compatibility = true
-    elsif browser.opera? && browser.version.to_i < 36
-      show_popup_compatibility = true
-    elsif browser.safari? && browser.version.to_i < 6
-      show_popup_compatibility = true
-    end
-    show_popup_compatibility
-  end
-
   def current_user_is_org_owner_or_admin?
     org_users = current_user.organization_users.active.where(organization_id: current_organization.id) if current_user.present?
     org_users.present? && Role.org_owner_and_admin_id.include?(org_users.first.role_id)

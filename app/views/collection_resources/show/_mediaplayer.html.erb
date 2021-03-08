@@ -4,7 +4,7 @@
     <% if presenter.media_type.include?("video") || presenter.embed_type == 0 %>
       <div id="player_section" class="player-section video-placeholder <%= presenter.embed_source %>" data-3d="<%= presenter.is_3d %>" data-h265="<%= presenter.player_type == :jwplayer.to_s %>" data-transcoded_url="">
         <div class="video-hold" oncontextmenu="return false;">
-          <video id="player" class="video-js" controls playsinline preload="auto" <%= presenter.cross_origin_attr %>  style="width: 100%;" data-cast-title="<%= single_file.file_display_name %>" poster="<%= presenter.video_poster %>">
+          <video id="player" class="video-js" crossorigin="anonymous" controls playsinline preload="auto" <%= presenter.cross_origin_attr %>  style="width: 100%;" data-cast-title="<%= single_file.file_display_name %>" poster="<%= presenter.video_poster %>">
             <%== presenter.video_source_tag %>
             <%== presenter.tracks %>
           </video>
@@ -16,7 +16,7 @@
     <% else %>
       <div class="player-section video-placeholder audio <%= 'audio-player' if is_audio_only %>" id="player_section" oncontextmenu="return false;">
         <div class="audio">
-          <audio id="player" class="video-js" controls playsinline preload="auto" poster="<%= presenter.audio_poster(is_audio_only) %>">
+          <audio id="player" class="video-js" crossorigin="anonymous" controls playsinline preload="auto" poster="<%= presenter.audio_poster(is_audio_only) %>">
             <%== presenter.audio_source_tag %>
             <%== presenter.tracks unless is_audio_only %>
           </audio>
