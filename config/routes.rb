@@ -86,6 +86,7 @@ Rails.application.routes.draw do
       get :export_resource_file
       get :bulk_resource_list
     end
+    get :media_thumbnail_remove
   end
   resources :collections do
     member do
