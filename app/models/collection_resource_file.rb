@@ -209,6 +209,35 @@ class CollectionResourceFile < ApplicationRecord
     PlayerType.name(embed_type)
   end
 
+  def thumbnail_image
+    if thumbnail.present?
+      thumbnail.url(:small)
+    elsif embed_type.to_s.include?('video') || resource_file_content_type.to_s.include?('video')
+      "https://#{ENV['S3_HOST_CDN']}/public/images/video-default.png"
+    else
+      "https://#{ENV['S3_HOST_CDN']}/public/images/audio-default.png"
+    end
+  end
+
+  def media_direct_url(expiry = 2)
+    if embed_code.present? && embed_type
+      embed_code
+    else
+      expiry = duration.to_f * expiry
+      resource_file.expiring_url(expiry.ceil)
+    end
+  end
+
+  def media_content_type
+    if embed_code.present? && embed_type
+      embed_content_type
+    else
+      content_type = resource_file_content_type
+      content_type = 'video/mp4' if resource_file_content_type == 'video/quicktime'
+      content_type
+    end
+  end
+
   def set_bucket
     collection_resource.collection.organization.bucket_name
   rescue StandardError => ex

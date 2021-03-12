@@ -195,4 +195,5 @@ Rails.application.routes.draw do
 
   get '/api/resource_files_tobe_sync', to: 'api#resource_files_tobe_sync', as: :resource_files_tobe_sync
   post '/api/update_archive_id', to: 'api#update_archive_id', as: :update_archive_id
+  get '/iiif/:noid/manifest', to: 'iiif#manifest', defaults: { format: 'json' }, as: :iiif_manifest
 end
