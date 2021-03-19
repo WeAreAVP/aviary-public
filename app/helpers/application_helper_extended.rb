@@ -44,6 +44,6 @@ module ApplicationHelperExtended
       browser.edge?('>= 15'),
       browser.opera?('>= 50'),
       browser.facebook? && browser.safari_webapp_mode? && browser.webkit_full_version.to_i >= 602
-    ].any?
+    ].any? || browser.device.mobile?
   end
 end
