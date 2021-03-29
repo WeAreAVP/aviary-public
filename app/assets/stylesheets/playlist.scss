@@ -3,8 +3,8 @@
   #slider-range {
     position: relative;
     width: 80%;
-
   }
+
   .manage_resource_list {
     padding: 6px;
     margin-top: 15px;
@@ -144,6 +144,7 @@
     border: 1px solid #e0e0e0;
     border-radius: 4px;
   }
+
   .playlist-list .box.not-playing {
     padding: 25px 25px 15px;
     border: 1px solid #e0e0e0;
@@ -579,10 +580,6 @@
     position: absolute;
   }
 
-  .title_description {
-    width: 80%;
-  }
-
   .playlist_operations_actions {
     color: lightgray;
     position: -webkit-sticky !important;
@@ -699,6 +696,7 @@
   }
 
   .title_description {
+    width: 80%;
     &:hover {
       .edit-description-resource {
         opacity: 1;
@@ -726,6 +724,7 @@
     color: #111;
     border-radius: 4px 0 0 4px !important;
   }
+
   .set_clip_end_time_custom {
     width: 17%;
     font-size: 14px;

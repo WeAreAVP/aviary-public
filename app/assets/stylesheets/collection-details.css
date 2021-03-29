@@ -331,6 +331,7 @@
     padding: 4px 12px 4px 20px;
     border-radius: 4px;
 }
+
 .reso-title time:before {
     content: "";
     position: absolute;
