@@ -21,12 +21,12 @@ RSpec.describe DetailPageHelper, type: :helper do
     end
 
     it 'validate count_occurrence' do
-      tester = helper.count_occurrence(file_transcript_point, { "1f545a6d49bd6dc815ddd731d0c2a2ad" => "dora", "25b1902406e1629d19f07bba8b2f0cf0" => "salo" }, { 15 => {} }, 'transcript', false)
+      tester, _tester1 = helper.count_occurrence(file_transcript_point, { "1f545a6d49bd6dc815ddd731d0c2a2ad" => "dora", "25b1902406e1629d19f07bba8b2f0cf0" => "salo" }, { 15 => {} }, 'transcript', false)
       expect(tester).to be_a_kind_of(Hash)
     end
 
     it 'validate count_occurrence' do
-      tester = helper.count_occurrence(file_transcript_point, { "1f545a6d49bd6dc815ddd731d0c2a2ad" => "dora", "25b1902406e1629d19f07bba8b2f0cf0" => "salo" }, { 15 => {} }, 'transcript', true)
+      tester, _tester1 = helper.count_occurrence(file_transcript_point, { "1f545a6d49bd6dc815ddd731d0c2a2ad" => "dora", "25b1902406e1629d19f07bba8b2f0cf0" => "salo" }, { 15 => {} }, 'transcript', true)
       expect(tester).to be_a_kind_of(Hash)
     end
   end
