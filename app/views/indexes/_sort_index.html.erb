@@ -10,9 +10,9 @@
       <div class="modal-body">
 
         <% if (@resource_file.present? && @resource_file.file_indexes.present?) %>
-          <div class="pb-20px">Drag and drop indexes to reorder. The first index on the list will show by default in the index tab when user plays back this file.</div>
+          <div class="pb-20px font-size-14px">Drag and drop indexes to reorder. The first index on the list will show by default in the index tab when user plays back this file.</div>
           <div class="pb-10px">
-            <b class="font-weight-bold">Existing Indexes for this file:</b>
+            <b class="font-weight-bold font-size-14px">Existing Indexes for this file:</b>
           </div>
           <ul id="sortable_index">
             <% @resource_file.file_indexes.order_index.each do |file_index| %>
@@ -22,7 +22,7 @@
           </ul>
         <% end %>
 
-        <a href="javascript://" class="btn btn-info sort_index_btn float-right" data-url="<%= index_sort_path(@resource_file.id) %>">Save Sequence</a>
+        <a href="javascript://" class="btn btn-primary sort_index_btn float-right" data-url="<%= index_sort_path(@resource_file.id) %>">Save Sequence</a>
       </div>
     </div>
   </div>

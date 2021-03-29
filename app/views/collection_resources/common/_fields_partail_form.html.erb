@@ -1,0 +1,38 @@
+<div class="col-12 parent_of_each_row">
+  <div class="row">
+    <% if single_field.is_vocabulary == true || single_field.is_vocabulary == 1 %>
+      <div class="col-md-6">
+        <div class="form--group">
+          <%= select_tag "collection_resource[collection_resource_field_values][][vocabularies_id]",
+                         options_for_select(single_field.vocabulary.present? ? JSON.parse(single_field.vocabulary) : [], selected: single_value.present? && single_value['vocab_value'].present? ? single_value['vocab_value'] : ''),
+                         {:class => "select_option #{type_for_view}", :include_blank => true} %>
+        </div>
+      </div>
+    <% else %>
+      <%= hidden_field_tag("collection_resource[collection_resource_field_values][][vocabularies_id]", '') %>
+    <% end %>
+    <% class_length = single_field.is_vocabulary == true || single_field.is_vocabulary == 1 ? 'col-md-6' : 'col-md-12'
+       class_length = single_field.column_type == 6 ? 'col-md-12' : class_length %>
+    <div class="<%= class_length %> ">
+      <div class="form-group">
+        <% if single_field.label == 'language' %>
+          <select name="collection_resource[collection_resource_field_values][][value]" id="collection_resource_collection_resource_field_values__value_" tabindex="-1" class="selectized">
+            <option value="">Select Language</option>
+            <% languages_array_simple[0].each_with_index do |value, index| %>
+              <option value="<%= value.first %>"> <%= value.second %></option>
+            <% end %>
+          </select>
+        <% else %>
+          <%= render partial: 'collection_resources/common/fields_type_for_form', locals: {single_field: single_field, single_value: single_value, type_for_view: type_for_view} %>
+        <% end %>
+        <% if from == 'resource_metadata' %>
+          <%= hidden_field_tag("collection_resource[collection_resource_field_values][][collection_resource_field_id]", single_field.id) %>
+        <% else %>
+          <%= hidden_field_tag("collection_resource[collection_resource_field_values][][collection_resource_field_id]", single_field.system_name) %>
+        <% end %>
+        <%= hidden_field_tag("collection_resource[collection_resource_field_values][][collection_resource_id]", @collection_resource.id) %>
+      </div>
+      <span class="badge badge-danger remove-field float-right mt-1 mb-1 "> Remove </span>
+    </div>
+  </div>
+</div>

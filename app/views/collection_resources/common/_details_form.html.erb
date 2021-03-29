@@ -1,0 +1,52 @@
+<div class="edit_form" id="edit_form">
+  <div class="title-head p-3 border-bottom">
+    <h2 class="h4 m-0">Edit Form</h2>
+  </div>
+  <div class="p-3">
+    <% if from == 'resource_metadata' %>
+    <div class="info">
+      <% if can? :manage, @collection_resource %>
+        <div class="text-holder"><span class="text-info font-weight-bold">Note!</span> Only visible fields can be
+          edited. To make a field visible in the Resource Description, go to “Collections” and click on the “Edit” button for the Collection this Resource belongs to.
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+
+  <div>
+    <% if from == 'resource_metadata' %>
+      <% update_metadata_url = collection_collection_resource_update_metadata_url(@collection_resource.collection, @collection_resource) %>
+      <% update_metadata_url = append_param_to_url(params[:keywords], update_metadata_url) %>
+    <% else %>
+      <% update_metadata_url = collection_resource_file_update_description_url(@collection_resource_file) %>
+    <% end %>
+
+    <%= simple_form_for @collection_resource, :url => update_metadata_url, html: {novalidate: true} do |form| %>
+      <section class="form-common" style="display: block">
+        <%= hidden_field_tag "resource_file_id", @resource_file.try(&:id) %>
+        <% dynamic_fields['CollectionResource'].each do |single_field| %>
+          <% if from == 'resource_metadata' %>
+            <% next if single_field['field'].label == 'Title' %>
+            <%= render partial: 'collection_resources/common/field_values_description', locals: {settings: single_field['settings'], field: single_field['field'], values: single_field['values'], from: from} %>
+          <% else %>
+            <% next if single_field.label == 'Title' || single_field.source_type == 'Collection' || single_field.system_name.to_s == 'duration' %>
+            <%= render partial: 'collection_resources/common/field_values_description', locals: {settings: nil, field: single_field, values: all_info[single_field.system_name], from: from} %>
+          <% end %>
+
+        <% end %>
+      </section>
+    <% end %>
+  </div>
+  </div>
+  
+  <div class="p-3 border-top">
+    <div class="button-holder text-right">
+      <% if from == 'resource_metadata' %>
+        <button class="btn btn-primary saveDesriptionCus mr-3" onclick="$('.form_edit_custom_resource .edit_collection_resource').submit()">Save</button>
+      <% else %>
+        <button class="btn btn-primary saveDesriptionCus mr-3" onclick="$('.form_edit_custom_media_file .edit_collection_resource').submit()">Save</button>
+      <% end %>
+      <button id="modal-close" class="btn btn-light">Close</button>
+    </div>
+  </div>
+</div>

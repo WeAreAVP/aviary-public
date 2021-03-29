@@ -1,4 +1,5 @@
 @import 'datatables/dataTables.bootstrap4';
+@import 'webfonts';
 
 // optional remove '//=' to enable
 
@@ -18,22 +19,67 @@ div.dataTables_wrapper div.dataTables_filter {
   text-align: initial;
 }
 
+.dataTables_length {
+  display: inline-block;
+  vertical-align: inherit;
+  margin: 15px 0;
+  border: 1px solid #dfe4ea !important;
+  padding: 0 0 0 10px;
+  border-radius: 4px;
+}
+#billing_history_table_length select {
+  font-size: 12px;
+  height: 30px !important;
+}
+
+div.dataTables_wrapper div.dataTables_length select {
+  width: 60px;
+}
+
+.dataTables_length .selectize-input {
+  min-height: inherit;
+  padding: 5px 0px 5px 5px !important;
+  font-size: 12px;
+  width: 50px;
+  line-height: 1;
+}
+
 table.dataTable {
   margin-top: 0px !important;
   margin-bottom: 0px !important;
   border-collapse: collapse !important;
 }
 
-.data-table .dataTables_length {
-  padding: 0 0 20px;
+.dataTables_wrapper {
+  border: 1px solid #dfe4ea;
+  border-radius: 0 0 6px 6px;
+}
+
+.dataTable tbody tr:nth-of-type(odd) {
+  background: rgb(249, 250, 251) !important;
+}
+
+.dataTables_wrapper .row:first-child {
+  margin: 0;
+  background: #fff;
+  border-bottom: none;
+}
+.dataTables_wrapper .row:last-child {
+  border-top: 1px solid #dfe4ea;
+}
+.dataTables_wrapper .row:last-child .dataTables_paginate {
+  margin: 20px 0 !important;
 }
 
 .data-table .dataTables_length .form-control {
-  margin: 0 10px;
+  margin: 0;
+  padding: 0;
+  height: auto;
+  border: none;
 }
 
-.data-table .dataTables_filter {
-  padding: 10px 0 0;
+.dataTables_filter {
+  padding: 15px 0;
 }
 
 .data-table .dataTables_filter .form-control {
@@ -46,44 +92,51 @@ table.dataTable {
 }
 
 div.dataTables_wrapper div.dataTables_info {
-  font-size: 14px;
-  padding-top: 10px !important;
+  font-size: 12px;
+  padding: 12px 10px !important;
   white-space: normal;
+  display: inline-block;
 }
 
-.data-table .dataTables_filter label {
-  font-size: 12px;
+.dataTables_filter label {
+  font-size: 14px;
   font-weight: bold;
 }
 
 .data-table table {
   width: 100% !important;
-  border: 1px solid #ccc !important;
-  border-top: none !important;
+  border: none;
 }
 
 .data-table thead {
-  background: #f2f2f2;
-  color: #676767;
-  font-family: "Roboto";
+  background: #f1f3f6;
+  color: #656565;
+  font-family: var(--aviary-title-font);
 }
 
 .data-table thead th {
-  border-bottom: 1px solid #007bff !important;
-  padding: 15px 10px;
+  border: none;
+  border-top: 0 solid #dfe4ea;
+  border-bottom: 1px solid #dfe4ea;
+  border-bottom-color: #dfe4ea !important;
+  padding: 15px;
   font-weight: 600;
-  background: #ecf0f1;
-  color: #222;
+  background: #fff;
+  color: #000;
   font-size: 14px;
 }
 
 .data-table tbody td {
-  padding: 10px !important;
-  font-family: "Roboto";
+  padding: 15px !important;
+  font-family: var(--aviary-font-family);
   font-size: 14px;
   line-height: 26px;
   vertical-align: middle;
-  background: #fff;
+  border: none;
+}
+
+.data-table tbody tr:hover td {
+  background: #edf0f4;
 }
 
 .data-table .btn-sm {
@@ -91,10 +144,36 @@ div.dataTables_wrapper div.dataTables_info {
   white-space: nowrap;
 }
 
-.data-table .btn-primary {
-  color: #fff;
-  background: #f05c1f !important;
-  border-color: #f05c1f !important;
+// .data-table .btn-default {
+//   color: #269af2;
+//   background: rgba(38, 154, 242, 0.05) !important;
+//   border: none !important;
+// }
+
+// .data-table .btn-success {
+//   color: #28a745;
+//   background: rgba(40, 167, 69, 0.05) !important;
+//   border: none !important;
+// }
+
+// .data-table .btn-danger {
+//   color: #cb6151;
+//   background: rgba(203, 97, 81, 0.05) !important;
+//   border: none !important;
+// }
+
+// .data-table .btn-primary {
+//   color: #204f92;
+//   background: rgba(240, 92, 31, 0.05) !important;
+//   border: none !important;
+// }
+.dataTables_scrollBody th,
+.collections-datatable .dataTables_scrollBody th {
+  border: none !important;
+}
+
+.table-bordered thead td, .table-bordered thead th {
+  border-bottom-width: 1px !important;
 }
 
 .data-table .btn-sm {
@@ -174,4 +253,22 @@ div.dataTables_wrapper div.dataTables_info {
   content: "\e90b";
   position: absolute;
   font-size: 20px;
+}
+
+.table thead th {
+  border-bottom: 2px solid #dee2e6 !important;
+}
+
+#collection_resource_datatable thead th {
+  border-bottom: 0px solid #dee2e6 !important
+}
+.DTFC_RightBodyLiner thead th {
+  border-bottom: 0px solid #dee2e6 !important
+}
+#playlist_data_table_wrapper thead th {
+  border-bottom: 1px solid #dee2e6 !important
+}
+.dataTables_scrollBody thead th,
+.collections-datatable .dataTables_scrollBody th {
+  border: none !important;
 }

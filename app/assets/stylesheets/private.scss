@@ -1,7 +1,7 @@
 
 .top-video-part {
     position: relative;
-    padding: 15px 0 15px;
+    padding: 15px 0 20px;
 }
 
 .top-video-part h1 {
@@ -76,7 +76,6 @@
 }
 
 .video-detail-holder {
-    position: relative;
     transition: all 0.2s linear;
     z-index: 2;
 }
@@ -95,20 +94,55 @@
     background: linear-gradient(to left, rgba(0, 0, 0, 0.2) 0%, transparent);
 }
 
+.play_replay_option:hover .shareHolder,
 .carousel-inner:hover .shareHolder {
     opacity: 1;
     visibility: visible;
     transition-delay: 0.2s;
 }
 
-.shareHolder button:hover,
-.shareHolder button:active {
-    background: transparent !important;
+.shareHolder.audioPlayer {
+    position: relative;
+    visibility: visible;
+    background: transparent;
+    padding: 0 10px 0 0;
+    text-align: right;
+}
+
+.shareHolder.audioPlayer button {
+    color: #000 !important;
+    text-align: right;
+}
+
+.shareHolder.audioPlayer button:hover {
+    color: #000 !important;
+    opacity: 0.7;
+}
+
+.shareHolder.audioPlayer button:focus {
+    outline-style: none;
+    box-shadow: none;
+    border-color: transparent;
+}
+
+.shareHolder.audioPlayer button i {
+    margin-right: 0;
+    margin-left: 10px;
 }
 
 .shareHolder .share-btn i {
     top: 4px;
     font-size: 20px;
+}
+
+.shareHolder .icon-manifest {
+    background: image-url(iiif) no-repeat;
+    background-size: 17px;
+    font-size: none;
+    display: inline-block;
+    vertical-align: middle;
+    width: 17px;
+    height: 17px;
 }
 
 .shareHolder .playlist-btn i {
@@ -127,20 +161,29 @@
     background: transparent;
 }
 
-.shareHolder button {
+.shareHolder button,
+.shareHolder a {
     background: transparent !important;
     color: #fff !important;
     border: none;
     padding: 0 !important;
     font-weight: 500;
     text-align: left;
-    margin: 5px 0;
+    margin: 10px 0;
 }
 
+.shareHolder a:hover,
+.shareHolder a:active
+.shareHolder button:hover,
+.shareHolder button:active {
+    background: transparent !important;
+}
+
+.shareHolder a i
 .shareHolder button i {
-    font-size: 20px;
+    font-size: 16px;
     position: relative;
-    top: 5px;
+    top: 0;
     width: 20px;
     height: 20px;
     margin-right: 5px;
@@ -148,6 +191,14 @@
 
 .shareHolder button:hover {
     color: #ddd !important;
+}
+.shareHolder a:hover {
+    color: #fff !important;
+    opacity: 0.5;
+    text-decoration: none;
+}
+.shareHolder a:hover i {
+    opacity: 0.7;
 }
 
 .shareHolder .dropdown-menu {
@@ -216,7 +267,6 @@
 }
 
 .time-share {
-    margin-top: -120px;
     padding: 0 40px;
 }
 
@@ -232,22 +282,22 @@
 }
 
 .time-share .custom-checkbox label:before {
-    width: 21px;
-    height: 21px;
+    width: 18px;
+    height: 18px;
     content: "";
     position: absolute;
-    top: 0;
+    top: 2px;
     left: 0;
     background: #fff;
     border-radius: 4px;
-    border: 1px solid #ddd;
+    border: 2px solid #336074;
 }
 
 .time-share .custom-checkbox label:after {
-    top: 6px;
-    left: 5px;
+    top: 7px;
+    left: 4px;
     width: 11px;
-    height: 5px;
+    height: 6px;
 }
 
 .shareModal .modal-body {
@@ -255,25 +305,16 @@
 }
 
 .shareModal .content {
-    padding: 40px;
+    padding: 20px;
     margin: 0 !important;
-    background: #f7f7f7;
+    background: #fff;
 }
 
 .shareModal .nav-tabs {
     border-bottom: 1px solid rgba(0, 0, 0, 0.2);
-    justify-content: center;
+    justify-content: flex-start;
     padding-top: 10px;
-}
-
-.shareModal .content .btn-default {
-    background: rgb(221, 221, 221) !important;
-    color: #000;
-    border: none;
-    padding: 8px;
-    margin-top: 60px;
-    font-size: 16px;
-    font-weight: normal;
+    padding-left: 20px;
 }
 
 .shareModal .nav-item {
@@ -283,7 +324,6 @@
 .shareModal .nav-link {
     font-size: 14px !important;
     color: #888 !important;
-    margin: 0 15px !important;
     border-radius: 0 !important;
     border: none !important;
     height: auto !important;
@@ -300,7 +340,7 @@
 
 .shareModal .nav-link.active {
     border: none !important;
-    border-bottom: 3px solid #f26822 !important;
+    border-bottom: 3px solid #000 !important;
     border-radius: 0 !important;
     color: #333 !important;
     font-weight: bold !important;

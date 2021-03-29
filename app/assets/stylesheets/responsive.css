@@ -8,9 +8,6 @@
 }
 
 @media screen and (max-width: 1300px) {
-    #header .navbar-light .nav-item {
-        padding-right: 20px;
-    }
 
     #header .navbar-brand {
         max-width: 155px;
@@ -57,7 +54,6 @@
 
     #header .navbar-light .nav-item {
         font-size: 14px;
-        padding-right: 15px;
     }
 
     #header .navbar-brand {
@@ -207,11 +203,6 @@
         width: 100% !important;
     }
 
-    #header .nav-right {
-        top: 15px;
-        margin-top: -6px;
-    }
-
     .search-nav .form-group {
         width: 100%;
         padding: 0;
@@ -261,7 +252,7 @@
     }
 
     .terms-page .head {
-        background: #f05d1f;
+        background: #204f92;
         padding: 50px 10px 90px;
         margin: 0 0 0px;
     }
@@ -593,21 +584,22 @@
         padding: 30px 15px 0;
     }
 
-    #header .search-nav {
-        position: absolute;
-        width: 100%;
-        top: 90px;
-        left: 0;
-        z-index: 99;
-    }
-
     #header .nav-right {
         margin-top: 0;
     }
-
-    #sub_nav {
-        margin-top: 90px;
+    .non-search-page .toggle-virtual-keyboard { display: none;}
+    .search-nav {
+        margin: 10px;
     }
+    #sub_nav .dropdown-menu {
+        position: absolute;
+        left: -15px;
+        right: -15px;
+        border-radius: 0;
+        margin-top: -1px;
+    }
+    #header .navbar-brand { margin: 0;}
+    #header .navbar-brand img { max-height: 30px;}
 }
 
 @media screen and (max-width: 600px) {

@@ -4,7 +4,11 @@
     <input type="checkbox" class="checkbox index-trance-checkbox" id="transcript-auto-scroll" <%= checked %>/>
     <label for="transcript-auto-scroll">Auto Scroll with Media</label>
   </div>
+  <div class="custom-checkbox custom-checkbox mr-3 transcript_enable_annotation_section d-none">
 
+    <input type="checkbox" class="checkbox" id="transcript_enable_annotation" checked="checked"/>
+    <label for="transcript_enable_annotation">Show Annotation</label>
+  </div>
 </div>
 <div class="grey-box">
   <div class="d-flex align-items-center">
@@ -17,13 +21,16 @@
 
             <% html = '' %>
             <% if file_transcripts.present? %>
-              <span class="label transcripts_label">Transcripts</span>
-              <select id="file_transcript_select" class="select_type_transcript">
-                <% file_transcripts.each do |file_transcript| %>
-                  <option value="<%= file_transcript.id %>"><%= file_transcript.title %></option>
-                  <% html += "<input id='total_transcript_points_#{file_transcript.id}' type='hidden' value='#{file_transcript.file_transcript_points.count / Aviary::IndexTranscriptManager::POINTS_PER_PAGE}'/>" %>
-                <% end %>
-              </select>
+              <div class="form-group mb-0">
+                <div class="field-title"><label><span class="label transcripts_label">Transcripts</span></label></div>
+                <select id="file_transcript_select" class="select_type_transcript">
+                  <% file_transcripts.each do |file_transcript| %>
+                    <option value="<%= file_transcript.id %>"><%= file_transcript.title %></option>
+                    <% html += "<input id='total_transcript_points_#{file_transcript.id}' type='hidden' value='#{file_transcript.file_transcript_points.count / Aviary::IndexTranscriptManager::POINTS_PER_PAGE}'/>" %>
+
+                  <% end %>
+                </select>
+              </div>
             <% end %>
             <%= html.html_safe %>
           </div>
@@ -36,35 +43,42 @@
           <i class="fa fa-ellipsis-v"></i>
         </button>
         <ul class="dropdown-menu dropdown-menu-right custom-right-dropdown" aria-labelledby="dropdownMenuButton">
+
           <% if ((can? :manage, @collection_resource) || @collection_resource.can_edit) && !from_playlist.to_s.to_boolean? %>
             <% if @resource_file.present? %>
               <li>
-                <a href="javascript:void(0);" data-toggle="modal" data-target="#transcript_upload" class="dropdown-item"><i class="fa fa-plus-circle" aria-hidden="true"></i>
-                  Upload another transcript</a></li>
-              <li>
-              <li>
-                <div class="dropdown-divider"></div>
+                <a href="javascript:void(0);" data-toggle="modal" data-target="#transcript_upload" class="dropdown-item upload_popup_index_transcript_supplemental"><i class="fa fa-plus-circle" aria-hidden="true"></i>
+                  Upload another transcript</a>
               </li>
-              <% if (can? :manage, @collection_resource) || @collection_resource.can_view %>
-                <a href="javascript:void(0);" data-toggle="modal" data-target="#transcript_sort_popup" class="dropdown-item" id="sort_transcript"><i class="material-icons custom-transcript-icon">menu</i>
-                  Manage transcripts</a>
-              <% end %>
-              </li>
+
               <% if @resource_file.file_transcripts.present? %>
+                <li>
+                  <div class="dropdown-divider"></div>
+                </li>
+                <li>
+                  <a href="javascript:void(0);" data-toggle="modal" data-target="#transcript_sort_popup" class="dropdown-item" id="sort_transcript"><i class="material-icons custom-transcript-icon">menu</i>
+                    Manage transcripts</a>
+                </li>
+                <li>
+                  <div class="dropdown-divider"></div>
+                </li>
                 <li>
                   <a href="javascript:void(0);" data-toggle="modal" id="transcript_update_btn" data-target="#transcript_upload" class="dropdown-item"><i class="fa fa-refresh" aria-hidden="true"></i>
                     Update this transcript
-                  </a></li>
+                  </a>
+                </li>
                 <li>
                   <a href="javascript:void(0);" data-url="/transcripts/delete/" id="delete_transcript" class="dropdown-item"><i class="material-icons custom-delete-icon">delete</i>
                     Delete this transcript</a>
-                <li>
+                </li>
+
               <% end %>
-              <div class="dropdown-divider"></div>
-              </li>
+
+
             <% end %>
           <% end %>
           <% if @resource_file.present? && @resource_file.file_transcripts.present? && !from_playlist.to_s.to_boolean? %>
+            <div class="dropdown-divider"></div>
             <li class="dropdown-submenu">
               <a class="dropdown-item dropdown-toggle"><i class="fa fa-download" aria-hidden="true"></i>
                 Download
@@ -81,7 +95,9 @@
                 <li>
                   <a class="dropdown-item json_export" href="javascript://;" data-url="<%= transcript_export_path('json') %>">
                     Export to Json</a></li>
-
+                <li>
+                  <a class="dropdown-item textanno_export" href="javascript://;" data-url="<%= transcript_export_path('txtanno') %>">Export to Text with <br/>Annotations</a></li>
+                <li>
               </ul>
             </li>
           <% end %>

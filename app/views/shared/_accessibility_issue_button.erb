@@ -1,17 +1,18 @@
-<a target="_blank" href="<%= contact_us_url(subdomain: false) %>" class="btn btn-primary" id="accessibility_button" role="button" aria-label="Contact us about accessibility issues">
-    <div class="row">
-        <img src="<%= image_path 'icons/web_accessibility_icon.png' %>" alt="Accessibility icon">
-        <span class="my-auto">
-                <p>
-                    Accessibility issues with this page?
-                    <br>
-                    Please click here to let us know.
-                </p>
-            </span>
-    </div>
+<a target="_blank" href="<%= contact_us_url(subdomain: false, host: ENV['APP_HOST']) %>" class="btn btn-primary" id="accessibility_button" role="button" aria-label="Contact us about accessibility issues">
+  <div class="row">
+    <img src="<%= image_path 'icons/web_accessibility_icon.png' %>" alt="Accessibility icon">
+    <span class="my-auto">
+            <p>
+                Accessibility issues with this page?
+                <br>
+                Please click here to let us know.
+            </p>
+        </span>
+  </div>
 </a>
 <script type="text/javascript">
     var accessibility = new Accessibility();
+    let appHelperObjAccessibility = new App();
     document.addEventListener("DOMContentLoaded", function (_event) {
         accessibility.initialize();
     });

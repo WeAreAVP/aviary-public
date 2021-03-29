@@ -11,6 +11,7 @@ function PublicAccessUrl() {
     let that = this;
 
     this.initialize = function () {
+
         appHelper.serverSideDatatable('#public_access_urls_table', that, $('#public_access_urls').data('url'));
         document_level_binding_element('#start_time_share, #end_time_share', 'keyup', function () {
             let time = $(this).val();

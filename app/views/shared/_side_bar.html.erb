@@ -1,5 +1,6 @@
 <% unless admin_signed_in? %>
   <% if current_user.organization_users.active.present? && current_organization.present? %>
+    <% organization_users = current_user.organization_users.where(organization_id: current_organization.id).try(:first) %>
     <% disabled_organization_cls = current_organization.status ? '' : 'd-none' %>
     <div id="sidebar-main" class="<%= session[:layout] %>">
       <div id="accordion" class="main_sidebar">
@@ -29,7 +30,7 @@
                 <h5 class="mb-0">
                   <button class="btn btn-link collapsed no_sub_colaps assetsNavCus" onclick="document.location.href='<%= collection_resources_path %>'" aria-expanded="<%= ((request.path).include?("collection_resources") ? 'active' : '') != '' ? 'true' : '' %>" aria-controls="collapseTwo">
                     <div class="nav-box">
-                      <span class="ico" data-toggle="tooltip" data-placement="right" title="Resources"><%= image_tag 'icons/resource-icon.svg' %></span>
+                      <span class="ico" data-toggle="tooltip" data-placement="right" title="Resources"><%= image_tag 'icons/resource-icon.png' %></span>
                       <span class="title">
                         Resources
                       </span>
@@ -57,7 +58,7 @@
                 <h5 class="mb-0">
                   <button class="btn btn-link collapsed no_sub_colaps assetsNavCus" onclick="document.location.href='<%= playlists_path %>'" aria-expanded="<%= ((request.path).include?("playlists") ? 'active' : '') != '' ? 'true' : '' %>" aria-controls="collapseTwo">
                     <div class="nav-box">
-                      <span class="ico" data-toggle="tooltip" data-placement="right" title="Playlists"><%= image_tag image_path('playlist_icon.png'), style: 'padding-top: 3px;' %></span>
+                      <span class="ico" data-toggle="tooltip" data-placement="right" title="Playlists"><%= image_tag image_path('icons/playlist.png'), style: 'padding-top: 3px;' %></span>
                       <span class="title">
                         Playlists
                       </span>
@@ -67,9 +68,7 @@
               </div>
             </div>
 
-
-            <% if current_user.current_org_owner_admin(current_organization).present? %>
-
+            <% if current_user.current_org_owner_admin(current_organization).present?  %>
               <div class="card <%= disabled_organization_cls %>">
                 <div class="card-header" id="headingOne">
                   <h5 class="mb-0">
@@ -84,11 +83,14 @@
                   </h5>
                 </div>
               </div>
+            <% end %>
+
+            <% if current_user.current_org_owner_admin(current_organization).present?  %>
 
               <div class="card <%= disabled_organization_cls %>">
                 <div class="card-header" id="organization">
                   <h5 class="mb-0">
-                    <button class="btn btn-link <%= (["organizations"].include?(params[:controller])) ? '' : 'collapsed' %>" data-toggle="collapse" data-target="#organization_subnav" aria-expanded="<%= (["organizations"].include?(params[:controller])) ? 'true' : '' %>" aria-controls="organization">
+                    <button class="btn btn-link <%= (params[:flock_id].blank? && ["organizations"].include?(params[:controller])) ? '' : 'collapsed' %>" data-toggle="collapse" data-target="#organization_subnav" aria-expanded="<%= (params[:flock_id].blank? && ["organizations"].include?(params[:controller])) ? 'true' : '' %>" aria-controls="organization">
                       <div class="nav-box">
                         <span class="ico" data-toggle="tooltip" data-placement="right" title="Organization"><%= image_tag 'icons/profile.png' %></span>
                         <span class="title">Organization</span>
@@ -96,61 +98,65 @@
                     </button>
                   </h5>
                 </div>
-                <div id="organization_subnav" class="collapse <%= (["organizations", 'public_access_urls'].include?(params[:controller]) || ["themes"].include?(params[:controller])) ? 'show' : '' %>" aria-labelledby="headingOne"
+                <div id="organization_subnav" class="collapse <%= (["organizations"].include?(params[:controller]) && params[:flock_id].blank? || (["themes"].include?(params[:controller]) && params[:flock_id].blank? )) ? 'show' : '' %>" aria-labelledby="headingOne"
                      data-parent="#accordion" style="">
                   <div class="card-body">
                     <div id="accordion">
-                      <div class="card <%= disabled_organization_cls %>">
-                        <div class="card-header headingOne">
-                          <h5 class="mb-0">
-                            <button onclick="document.location.href='<%= search_configuration_organization_path %>'" class="btn btn-link  no_sub_colaps" data-toggle="collapse" aria-expanded="<%= ((params[:controller] == "organizations" && params[:action] == "search_configuration") ? 'active' : '') != '' ? 'true' : '' %>" aria-controls="collapse">
-                              <div class="nav-box">
-                                <span class="ico" data-toggle="tooltip" data-placement="right" title="Search Configuration"><i class="fa fa-filter search_configuration font-size-16px" style="<%= ((params[:controller] == "organizations" && params[:action] == "search_configuration") ? '': 'color: dimgray;') %>" ></i></span>
-                                <span class="title">Search Configuration</span>
-                              </div>
-                            </button>
-                          </h5>
+
+                        <div class="card <%= disabled_organization_cls %>">
+                          <div class="card-header headingOne">
+                            <h5 class="mb-0">
+                              <button onclick="document.location.href='<%= search_configuration_organization_path %>'" class="btn btn-link  no_sub_colaps" data-toggle="collapse" aria-expanded="<%= ((params[:controller] == "organizations" && params[:action] == "search_configuration" && params[:flock_id].blank?) ? 'active' : '') != '' ? 'true' : '' %>" aria-controls="collapse">
+                                <div class="nav-box">
+                                  <span class="ico" data-toggle="tooltip" data-placement="right" title="Search Configuration"><i class="fa fa-filter search_configuration font-size-16px" style="<%= ((params[:controller] == "organizations" && params[:action] == "search_configuration") ? '' : 'color: dimgray;') %>"></i></span>
+                                  <span class="title">Search Configuration</span>
+                                </div>
+                              </button>
+                            </h5>
+                          </div>
                         </div>
-                      </div>
-                     <div class="card <%= disabled_organization_cls %>">
-                        <div class="card-header headingOne">
-                          <h5 class="mb-0">
-                            <button onclick="document.location.href='<%= display_settings_organization_path %>'" class="btn btn-link  no_sub_colaps" data-toggle="collapse" aria-expanded="<%= ((params[:controller] == "organizations" && params[:action] == "display_settings") ? 'active' : '') != '' ? 'true' : '' %>" aria-controls="collapse">
-                              <div class="nav-box">
-                                <span class="ico" data-toggle="tooltip" data-placement="right" title="Display Settings"><%= image_tag 'icons/display.png' %></span>
-                                <span class="title">Display Settings</span>
-                              </div>
-                            </button>
-                          </h5>
+
+
+                        <div class="card <%= disabled_organization_cls %>">
+                          <div class="card-header headingOne">
+                            <h5 class="mb-0">
+                              <button onclick="document.location.href='<%= display_settings_organization_path %>'" class="btn btn-link  no_sub_colaps" data-toggle="collapse" aria-expanded="<%= ((params[:flock_id].blank? && params[:controller] == "organizations" && params[:action] == "display_settings") ? 'active' : '') != '' ? 'true' : '' %>" aria-controls="collapse">
+                                <div class="nav-box">
+                                  <span class="ico" data-toggle="tooltip" data-placement="right" title="Display Settings"><%= image_tag 'icons/display.png' %></span>
+                                  <span class="title">Display Settings</span>
+                                </div>
+                              </button>
+                            </h5>
+                          </div>
                         </div>
-                      </div>
+
                       <div class="card <%= disabled_organization_cls %>">
                         <div class="card-header headingOne">
                           <h5 class="mb-0">
                             <button onclick="document.location.href='<%= public_access_urls_path %>'" class="btn btn-link  no_sub_colaps" data-toggle="collapse" aria-expanded="<%= params[:controller] == 'public_access_urls' ? 'true' : '' %>" aria-controls="collapse">
-                              <i class="fa fa-globe" aria-hidden="true"></i> Public Access URLs
+                              Public Access URLs
                             </button>
                           </h5>
                         </div>
                       </div>
-                      <div class="card <%= disabled_organization_cls %>">
-                        <div class="card-header headingOne">
-                          <h5 class="mb-0">
-                            <button onclick="document.location.href='<%= edit_organization_path %>'" class="btn btn-link  no_sub_colaps" data-toggle="collapse" aria-expanded="<%= ((params[:controller] == "organizations" && params[:action] == "edit") ? 'active' : '') != '' ? 'true' : '' %>" aria-controls="collapse">
-                              <div class="nav-box">
-                                <span class="ico" data-toggle="tooltip" data-placement="right" title="Profile"><%= image_tag 'icons/profile_settings.png' %></span>
-                                <span class="title">Profile</span>
-                              </div>
-                            </button>
-                          </h5>
+                        <div class="card <%= disabled_organization_cls %>">
+                          <div class="card-header headingOne">
+                            <h5 class="mb-0">
+                              <button onclick="document.location.href='<%= edit_organization_path %>'" class="btn btn-link  no_sub_colaps" data-toggle="collapse" aria-expanded="<%= ((params[:controller] == "organizations" && params[:flock_id].blank? && params[:action] == "edit") ? 'active' : '') != '' ? 'true' : '' %>" aria-controls="collapse">
+                                <div class="nav-box">
+                                  <span class="ico" data-toggle="tooltip" data-placement="right" title="Profile"><%= image_tag 'icons/profile_settings.png' %></span>
+                                  <span class="title">Profile</span>
+                                </div>
+                              </button>
+                            </h5>
+                          </div>
                         </div>
-                      </div>
+
 
                     </div>
                   </div>
                 </div>
               </div>
-
             <% end %>
 
           </div>
@@ -162,10 +168,16 @@
                 <p><%= number_with_delimiter(current_organization.resource_count) %>
                   <span>&nbsp;of <%= number_with_delimiter(current_organization.subscription.plan.max_resources) %>
                     used</span></p>
+
               </div>
               <div class="progress">
                 <div class="progress-bar" role="progressbar" style="width:<%= resource_percent(current_organization.resource_count,current_organization.subscription.plan.max_resources) %>%" aria-valuenow="<%= resource_percent(current_organization.resource_count, current_organization.subscription.plan.max_resources) %>" aria-valuemin="0" aria-valuemax="100"></div>
               </div>
+              <% if current_organization.resource_count >= current_organization.subscription.plan.max_resources %>
+                <p class="text-danger"><i class="fa fa-check-circle text-danger" aria-hidden="true"></i>
+                  Organization
+                  resource limit reached.</p>
+              <% end %>
             </div>
           <% end %>
           <div class="sidebar-logo">

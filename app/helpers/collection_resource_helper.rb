@@ -6,21 +6,21 @@ module CollectionResourceHelper
       custom_value = 'Title'
     elsif value == 'id_ss'
       custom_value = 'Aviary Resource ID'
+    elsif value == 'id_is'
+      custom_value = 'Aviary Resource ID'
     elsif value == 'resource_file_count_ss'
       custom_value = 'Media File Count'
+    elsif value == 'supplemental_file_count_ss'
+      custom_value = 'Supplemental File Count'
     elsif value.include?('custom_field_values_')
       custom_value = value.gsub('custom_field_values_', '')
       custom_value = Aviary::SolrIndexer.remove_field_type_string(custom_value)
       custom_value = custom_value.titleize.strip
     elsif %w(custom_unique_identifier_ss custom_unique_identifier_texts).include?(value)
       custom_value = 'Custom Unique Identifier'
-    elsif value.include?('custom_field_values_')
-      custom_value = value.gsub('custom_field_values_', '')
-      custom_value = Aviary::SolrIndexer.remove_field_type_string(custom_value)
-      custom_value = custom_value.titleize.strip
     else
       custom_value = value.to_s.split('_')
-      custom_value[0] = '' unless %w(id_ss title_ss collection_title resource_file_count_ss transcripts_count_ss indexes_count_ss updated_at_ss access_ss).include? value
+      custom_value[0] = '' unless %w(id_ss title_ss collection_title supplemental_file_count_ss resource_file_count_ss transcripts_count_ss indexes_count_ss updated_at_ss access_ss).include? value
       custom_value[custom_value.size - 1] = ''
       custom_value = custom_value.join(' ').titleize.strip
       custom_value = 'Public' if custom_value == 'Access'
@@ -38,6 +38,7 @@ module CollectionResourceHelper
       end
     end
     url = url.gsub('&&', '&')
+    url = url.delete('"')
     url
   end
 

@@ -1,40 +1,48 @@
 <% if !(@total_transcript_points <= Aviary::IndexTranscriptManager::POINTS_PER_PAGE && (params['page_type'] == 'next_page' || params['page_type'] == 'current_page')) %>
   <div class="row <%= params['page_type'] %>_type <%= params['page_number'] %>">
     <div class="col-md-12">
-      <div class="file_transcript file_transcript_<%= @file_transcript.id %> pb-10px pl-15px" data-cc="<%= @file_transcript.is_caption %>" data-language="<%= @file_transcript.language %>" data-title="<%= @file_transcript.title %>" data-public="<%= @file_transcript.is_public %>" data-webvtt="<%= @file_transcript.associated_file_content_type.include?('vtt') %>" data-json="<%= @file_transcript.timestamps.present? %>" data-access="<%= @can_access_transcript %>" data-edit="<%= @file_transcript.is_edit %>" >
+      <div class="file_transcript file_transcript_<%= @file_transcript.id %> pb-10px pl-15px" data-cc="<%= @file_transcript.is_caption %>" data-language="<%= @file_transcript.language %>" data-title="<%= @file_transcript.title %>" data-public="<%= @file_transcript.is_public %>" data-webvtt="<%= @file_transcript.associated_file_content_type.include?('vtt') %>" data-json="<%= @file_transcript.timestamps.present? %>" data-access="<%= @can_access_transcript %>" data-edit="<%= @file_transcript.is_edit %>" data-description="<%= @file_transcript.description %>">
         <% if (can? :manage, @collection_resource) || @collection_resource.can_edit %>
           <% unless params[:from_playlist].to_s.to_boolean? %>
             <% if params['page_type'] == 'previous_page' %>
-              <div class="pt-10px font-size-13px edit_by_information">Edited By <b class="font-weight-bold">&nbsp;<%= @file_transcript.user.full_name %></b> at <b class="font-weight-bold"><%= Time.at(@file_transcript.updated_at.to_f).utc.strftime('%b %d, %Y %H:%M:%S') %></b></div>
+              <div class="pt-10px font-size-13px edit_by_information">Edited By:
+                <b class="font-weight-bold">&nbsp;<%= @file_transcript.user.full_name %></b> at
+                <b class="font-weight-bold"><%= Time.at(@file_transcript.updated_at.to_f).utc.strftime('%b %d, %Y %H:%M:%S') %></b>
+              </div>
+              <% if @file_transcript.description.present? %>
+                <div class="pt-10px font-size-13px edit_by_information">
+                  <b class="">Note: </b><span class="font-weight-bold"><%= @file_transcript.description %></span>
+                </div>
+              <% end %>
+              <hr/>
               <% if !@file_transcript.is_edit && @file_transcript.timestamps.present? %>
-                <a class="edit_fields edit_transcript" href="javascript://"
-                   data-url="<%= edit_transcript_url(@file_transcript, host: Utilities::AviaryDomainHandler.subdomain_handler(current_organization)) %>">
-                  <i class="fa fa-pencil"></i>
-                </a>
+                <% json_timestamp = valid_json?(@file_transcript.timestamps.gsub('=>', ':')) %>
+                <% unless json_timestamp['title'].present? %>
+                  <a class="edit_fields edit_transcript" href="javascript://"
+                     data-url="<%= edit_transcript_url(@file_transcript, host: Utilities::AviaryDomainHandler.subdomain_handler(current_organization)) %>">
+                     <span class="icon-Edit">
+                      <img src="<%= image_path 'icons/edit-icon.png' %>">
+                    </span>
+                  </a>
+                <% end %>
               <% elsif @file_transcript.is_edit && (@file_transcript.locked_by == current_user.id) %>
                 <a href="javascript://" class="btn-sm btn-success finish_editing" data-url="<%= edit_transcript_url(@file_transcript, host: Utilities::AviaryDomainHandler.subdomain_handler(current_organization)) %>">Finish
                   Editing</a>
               <% end %>
             <% end %>
-
           <% end %>
         <% end %>
         <% if @can_access_transcript %>
           <div class="transcript_html_information">
-
           </div>
           <textarea class="transcript_time_wise d-none"><%== @transcript_time_wise.present? ? @transcript_time_wise.to_h.to_json : '{}' %></textarea>
           <textarea class="transcript_count d-none"><%== @transcript_count.present? ? @transcript_count.to_h.to_json : '{}' %></textarea>
         <% else %>
           <div class="text-center no-access">
-            <% if user_signed_in? %>
-              <p class="mb-20px">You don't have access to this transcript, please request access from the organization
-                owner.</p>
-            <% else %>
-              <p class="mb-20px">You don't have access to this transcript, please login to request access from the
-                organization
-                owner.</p>
-            <% end %>
+            <span class="ico"><img src="https://<%= ENV['S3_HOST_CDN'] %>/public/lock-black.svg" alt=""></span>
+
+            <div class="access_request_text_custom">You don't have access.</div>
+
           </div>
         <% end %>
       </div>

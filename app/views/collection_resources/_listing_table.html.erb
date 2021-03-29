@@ -1,6 +1,11 @@
 <thead>
 <tr>
-  <% if table_called_from == 'permission_group' %>
+  <% if table_called_from == 'permission_group' || table_called_from == 'archiveSpacePreview' %>
+    <% if table_called_from == 'archiveSpacePreview' %>
+      <th>
+        <input type="checkbox" class="select_all_checkbox_resources" data-url="<%= bulk_resource_list_collections_path %>"/>
+      </th>
+    <% end %>
     <% resource_table_column_detail = CollectionResource.permission_group_columns.to_json %>
     <% JSON.parse(resource_table_column_detail)['columns_status'].each do |_, value| %>
       <% if !value['status'].blank? && value['status'] == 'true' %>
@@ -25,6 +30,7 @@
     <% end %>
   <% end %>
   <th>Action</th>
+
 </tr>
 </thead>
 <tbody>

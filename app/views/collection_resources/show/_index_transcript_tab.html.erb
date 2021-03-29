@@ -1,7 +1,7 @@
-<li class="nav-item" style="width:<%= tab_width %>%">
+<li class="nav-item <%= 'd-none' if tab_width == 100 %>" style="width:<%= tab_width %>%">
 
-  <a class="nav-link" id="<%= type %>-tab" data-tab="<%= type %>" data-toggle="tab" href="#<%= type %>" role="tab" aria-controls="<%= type %>"><span class="icon-<%= type.capitalize %>"></span>
-    <% if (@file_indexes.count > 0 && type == 'index') || (@file_transcripts.count > 0 && type == 'transcript') %>
+  <a class="nav-link <%= active_tab %>" id="<%= type %>-tab" data-tab="<%= type %>" data-toggle="tab" href="#<%= type %>" role="tab" aria-controls="<%= type %>"><span class="icon-<%= type.capitalize %>"></span>
+    <% if (type == 'index') || (type == 'transcript') %>
       <div class="loader-small d-inline-block float-left tab_loader_<%= type %> <%= type != 'index' ? 'd-done' : '' %>">
         <div class="img">
           <div class="hold">

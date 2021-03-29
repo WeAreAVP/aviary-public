@@ -3,7 +3,7 @@
     <div class="form-group">
       <div class="field-title">
         <label for="collection_title">Collection Name
-          <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="What is your collection's name?"></i>
+          <button type="button" class="info-btn" data-content="What is your collection's name?"></button>
         </label>
       </div>
       <%= c.input :title, label: false, input_html: { class: 'form-control collection-title-field' } %>
@@ -13,31 +13,32 @@
     <div class="form-group">
       <div class="field-title">
         <label for="">Collection Favicon</label>
-        <%= render partial: 'shared/remove_image_button', locals: {model_obj: @collection, target_type: 'favicon'} %>
+        <%= render partial: 'shared/remove_image_button', locals: { model_obj: @collection, target_type: 'favicon' } %>
       </div>
       <div class="image-box">
         <div class="holder">
           <img id="favicon" src="<%= @collection.new_record? ? '#' : (image_url @collection.favicon) %>" alt="">
+          <div class="file-upload">
+            <%= c.label @collection.new_record? ? 'Add Favicon' : 'Upload new favicon', for: 'collection_favicon' %>
+            <%= c.input :favicon, as: :file, error: false, label: false, input_html: { onchange: "readURL(this, 'favicon');", accept: 'image/*' } %>
+          </div>
         </div>
       </div>
-      <div class="file-upload">
-        <%= c.label @collection.new_record? ? 'Add Favicon' : 'Upload new favicon', for: 'collection_favicon' %>
-        <%= c.input :favicon, as: :file, error: false, label: false, input_html: { onchange: "readURL(this, 'favicon');", accept: 'image/*' } %>
-      </div>
+
       <%= c.error :image %>
-      <br>
     </div>
   </div>
 </div>
+
 <div class="row">
   <div class="col-md-12">
     <div class="form-group">
       <div class="field-title">
         <label for="collection_about">About Your Collection
-          <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" title="Tell users about your collection. This will appear in &quot;About this Collection&quot; on your collection page."></i>
+          <button type="button" class="info-btn" data-content="Tell users about your collection. This will appear in About this Collection on your collection page."></button>
         </label>
       </div>
-      <%= c.input :about, label: false, input_html: { class: 'form-control' } %>
+      <%= c.input :about, label: false, input_html: { class: 'form-control collection_about_text' } %>
     </div>
   </div>
 </div>
@@ -71,5 +72,27 @@
     var collection = new Collection();
     document.addEventListener("DOMContentLoaded", function (event) {
         collection.initialize();
+    });
+
+    $(function (e) {
+        e.preventDefault;
+
+        $('.info-btn').popover({
+            html: true,
+            trigger: "click",
+            placement: "top"
+        });
+
+        $(document).on('click', function (e) {
+            $('.info-btn').each(function () {
+                if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0) {
+                    $(this).popover('hide');
+                }
+            });
+        });
+
+        $(document).ready(function () {
+            $('.form-check label').append('<span class="icon-check"></span>')
+        })
     });
 </script>

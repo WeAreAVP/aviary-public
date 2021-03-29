@@ -1,7 +1,7 @@
 <% if featured_playlists.present? %>
   <div class="home-featured-collections playlist_home_cont row">
     <% featured_playlists.includes([:organization]).each do |playlist| %>
-      <div class="col-md-3">
+      <div class="col-md-4">
         <div class="box <%= 'featured' if playlist.is_featured %>">
           <a href="<%= playlist_show_path(playlist) %>">
             <div class="image" style="background-size:cover;background-image: url(<%= playlist.thumbnail.url(:small) %>); background-position: center;">
@@ -19,11 +19,11 @@
                   <span class="title"><%= playlist.name %></span>
                 <% end %>
                 <span class="description_collection">
-                    <%= strip_tags(playlist.description).truncate(60, omission: '...', :separator => ' ') %></span>
-                <a data-toggle="modal" class='show_hide_description' data-type="View Playlist" data-id="description_<%= playlist.id %>" data-collection-img='<%= url_image(playlist.thumbnail.url(:small)) %>'
+                    <%= strip_tags(playlist.description).to_s.truncate(60, omission: '...', :separator => ' ') %></span>
+                <a data-toggle="modal" class='show_hide_description info-btn' data-type="View Playlist" data-id="description_<%= playlist.id %>" data-collection-img='<%= url_image(playlist.thumbnail.url(:small)) %>'
                    data-collection-title="<%= playlist.name %>" data-org-logo="<%= playlist.organization.logo_image.url(:medium) %>" data-collection-path="<%= playlist_show_path(playlist) %>" data-org-title="<%= playlist.organization.name %>"
                    data-collection-search="<%= playlist_show_path(playlist) %>">
-                  <i class="fa fa-info-circle"></i></a>
+                </a>
                 <div class="description description_<%= playlist.id %> d-none">
                   <ul>
                     <li><strong>Description</strong>

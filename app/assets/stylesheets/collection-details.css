@@ -153,7 +153,6 @@
 
 .resource-detail-data {
     padding: 20px 0;
-    background: #fff;
 }
 
 .resource-detail-data .main-hold {
@@ -200,7 +199,7 @@
 
 .resource-detail-data .details .title {
     width: 100%;
-    font-weight: 500;
+    font-weight: 700;
     font-size: 16px;
     display: inline-block;
     margin-bottom: 1px;
@@ -250,9 +249,11 @@
     background-repeat: no-repeat;
     -webkit-background-size: cover;
     background-size: cover;
-    height: 150px;
+    min-height: 230px;
     background-color: #f5f4f3;
     position: relative;
+    border-radius: 8px;
+    overflow: hidden;
 }
 
 .tab-content .all-resources .image,
@@ -322,12 +323,24 @@
 
 .reso-title time {
     position: absolute;
-    right: 0;
-    bottom: 0;
+    right: 10px;
+    bottom: 10px;
     background: #111;
     font-weight: normal;
     font-size: 12px;
-    padding: 6px 12px;
+    padding: 4px 12px 4px 20px;
+    border-radius: 4px;
+}
+.reso-title time:before {
+    content: "";
+    position: absolute;
+    width: 12px;
+    height: 10px;
+    top: 6px;
+    left: 8px;
+    border-style: solid;
+    border-width: 5px 0 5px 6px;
+    border-color: transparent transparent transparent #ffffff;
 }
 
 .wrap-text ul li span.title {
@@ -590,4 +603,9 @@
         transform: translate(-50%, -50%);
         -webkit-transform: translate(-50%, -50%);
     }
+}
+
+.heading-holder .collection_edit_title {
+    vertical-align: middle;
+    text-decoration: none;
 }

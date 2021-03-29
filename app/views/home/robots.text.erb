@@ -4,10 +4,13 @@
                 else
                   root_url + 'sitemap.xml'
                 end %>
-User-Agent: *
-Allow: /
-Sitemap: <%= "#{site_url}" %>
+  User-Agent: *
+  Allow: /
+  Disallow: /catalog
+  Disallow: /catalog*
+  Disallow: /transcripts/export/*
+  Sitemap: <%= "#{site_url}" %>
 <% else %>
-User-Agent: *
-Disallow: /
+  User-Agent: *
+  Disallow: /
 <% end %>

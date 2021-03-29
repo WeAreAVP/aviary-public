@@ -3,6 +3,7 @@
 <%= form_tag add_facet_params_to_url(search_catalog_path, session[:search_facets]), :class => 'advanced form-horizontal', :method => :get do %>
   <input type='hidden' name='update_advance_search' value='update_advance_search'/>
   <input type='hidden' name='search_type' value='advance'/>
+  <input type='hidden' name='transliteration_status'  class="transliteration_status" value='false'/>
   <%== add_facet_params_to_form(session[:search_facets]) %>
   <div class="input-criteria">
 
@@ -14,7 +15,7 @@
           <div class="bottom-panel-adv">
             <div class="row">
               <div class="col-md-6 text-left">
-                <a href="javascript:void(0);" class="btn btn-add add_new_search_row_handler "><i class="fa fa-plus  Z"></i>
+                <a href="javascript:void(0);" class="btn btn-outline-light add_new_search_row_handler ">
                   Add new criteria</a>
               </div>
               <div class="col-md-6">
@@ -38,10 +39,10 @@
 </div>
 
 <style>
-  .query-criteria-heading .selectize-control {
-    margin-left: 5px !important;
-    margin-top: 5px !important;
-  }
+    .query-criteria-heading .selectize-control {
+        margin-left: 5px !important;
+        margin-top: 5px !important;
+    }
 </style>
 
 <script>

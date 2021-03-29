@@ -2,226 +2,239 @@
    embed_params[:embed] = params[:embed].present?
    embed_params[:media_player] = params[:media_player].present?
 %>
-<div id="main_container" class="container-fluid edit-playlist">
-  <div class="main_contain playlist-holder" style="padding: 0px;">
-    <div class='row'>
-      <!-- Playlist Player -->
-      <div class='col-md-7' style="padding: 0px;border-right: 1px solid gainsboro;">
-        <div class="col-12">
-          <div class="p-2">
-            <h1 class="playlist_title"> <%= title @playlist.name %> </h1>
-            <div class="playlist_description_main">
-              <div class="playlist_description_full">
-                <%= Sanitize.fragment(@playlist.description, :elements => ['p', 'br']) %>
+<div id="main_container" class="edit-playlist">
+  <div class="playlist-holder">
+    <div class="search-detail-main container-fluid">
+      <div class="two-col two_col_custom">
+        <div class='row'>
+          <!-- Playlist Player -->
+          <div class='col-lg-7 pr-0'>
+            <div class="col-lg-12 p-0">
+              <div class="top-video-part mt-4">
+                <h1 class="playlist_title"> <%= title @playlist.name %> </h1>
+                <div class="playlist_description_main">
+                  <div class="playlist_description_full">
+                    <%= Sanitize.fragment(@playlist.description, :elements => ['p', 'br']) %>
+                  </div>
+                </div>
               </div>
+            </div>
+            <div class="resources-details">
+              <%= render partial: 'playlists/edit_playlist' %>
             </div>
           </div>
-        </div>
-        <div class="resources-details">
-          <%= render partial: 'playlists/edit_playlist' %>
-        </div>
-      </div>
-      <%
-        active_tab = session[:playlist_active_tab] if session[:playlist_active_tab].present?
-        active_tab = if @playlist_show.present?
-                       if active_tab.present?
-                         active_tab.include?('edit_playlist') ? 'show_playlist' : active_tab
-                       else
-                         'show_playlist'
-                       end
-                     else
-                       active_tab.present? ? active_tab : 'show_playlist'
-                     end
-      %>
-      <!-- Playlist Right Sidebar -->
-      <div class='col-md-5 pl-0'>
-        <% if !@playlist_show.present? && !@playlist_show && (can? :manage, @playlist) %>
-          <button id="manage_resource_list" class="btn btn-sm btn-primary manage_resource_list mb-2 d-block ml-2">
-            <i class="fa fa-plus" aria-hidden="true"></i> Add Resources
-          </button>
-        <% end %>
-        <ul class="nav nav-tabs" role="tablist">
-          <li class="nav-item">
-            <a class="nav-link <%= active_tab.include?('show_playlist') ? 'active show' : '' %> playlist_edit_tabs" id="resource-list-tab" data-tabtype="show_playlist" data-urltab="<%= update_selected_tab_playlist_url(@playlist, type: 'both') %>" data-toggle="tab" href="#resource-list-container">
-              <% if @playlist_show.present? && @playlist_show %>
-                <i class="fa fa-th-list" aria-hidden="true"></i> Playlist
-              <% else %>
-                <i class="fa fa-pencil-square-o" aria-hidden="true"></i> Edit Playlist
-              <% end %>
-              (<span id="playlist_resources_count"><%= @playlist.playlist_resources.count %></span>)</a>
-          </li>
-          <% if @playlist.playlist_resources.present? %>
-              <li class="nav-item">
-              <a class="nav-link playlist_edit_tabs <%= (active_tab.include? 'show_metadata') ? 'active show' : '' %>" id="metadata-list-tab" data-tabtype="show_metadata" data-toggle="tab" data-tab_type="" data-urltab="<%= update_selected_tab_playlist_url(@playlist, type: 'show') %>" href="#metadata-container">
-                <i class="fa fa-info-circle" aria-hidden="true"></i> Now Playing Info </a>
-            </li>
-          <% end %>
-          <% if @playlist_show.present? && @playlist_show %>
-            <% if current_user_is_org_user?(current_organization) %>
-              <li class="nav-item">
-                <a class="nav-link playlist_edit_tabs" href="<%= playlist_edit_path(@playlist) %>"><i class="fa fa-pencil-square-o" aria-hidden="true"></i>
-                  Edit Playlist</a>
-              </li>
-            <% end %>
-          <% elsif current_user_is_org_user?(current_organization) %>
-            <li class="nav-item">
-              <a class="nav-link playlist_edit_tabs <%= (active_tab.include? 'edit_playlist') ? 'active show' : '' %>" id="edit-playlist-tab" data-toggle="tab" data-tabtype="edit_playlist" data-urltab="<%= update_selected_tab_playlist_url(@playlist, type: 'edit') %>" href="#edit-playlist-container"><i class="fa fa-info" aria-hidden="true"></i>
-                Playlist Info</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="<%= playlist_show_path({playlist_id: @playlist}) %>">
-                <i class="fa fa-th-list" aria-hidden="true"></i> View Playlist </a>
-            </li>
-          <% end %>
-        </ul>
 
-        <div class='tab-content'>
-          <div class="loadingCus text-center" style="display: none;">…</div>
-          <div id='resource-list-container' class='float-left w-100 tab-pane fade in <%= (active_tab.include? 'show_playlist') ? 'active show' : '' %>' data-url="<%= sort_playlist_playlist_resources_path(@playlist) %>">
-            <div class="grey-box ml-0">
-              <div class="playlist_duration">
-                <strong>Playlist Duration: </strong>
-                <span class="single_value"> <%= time_to_duration(@playlist.duration) %></span>
-              </div>
-            </div>
-            <div class="grey-box playlist_operations_actions ml-0">
-              <input type="text" id="search_playlist_resource" placeholder="Search within playlist" class="form-control mb-1 mt-1"/>
-            </div>
+          <%
+            active_tab = session[:playlist_active_tab] if session[:playlist_active_tab].present?
+            active_tab = if @playlist_show.present?
+                           if active_tab.present?
+                             active_tab.include?('edit_playlist') ? 'show_playlist' : active_tab
+                           else
+                             'show_playlist'
+                           end
+                         else
+                           active_tab.present? ? active_tab : 'show_playlist'
+                         end
+          %>
+          <!-- Playlist Right Sidebar -->
+          <div class='col-md-5 pl-0 playlist-detail-main mt-4'>
             <% if !@playlist_show.present? && !@playlist_show && (can? :manage, @playlist) %>
-              <div class="grey-box ml-0">
-                <a href="javascript:void(0);" class="select_all_playlist_resources btn-custom-small"><i class="fa fa-plus" aria-hidden="true"></i>
-                  Select All</a>
-                <a href="javascript:void(0);" class="btn-custom-small" data-url="<%= bulk_delete_playlist_playlist_resources_path(@playlist) %>" data-fetch_resource_list="<%= fetch_resource_list_playlists_path %>" id="bulk_delete_playlist_resources">
-                  <i class="fa fa-trash-o" aria-hidden="true"></i> Bulk Delete</a>
-                <a href="javascript:void(0);" style="display: none;" class="deselect_all_playlist_resources ">
-                  <i class="fa fa-minus" aria-hidden="true"></i> Deselect
-                  All</a>
-              </div>
+              <button id="manage_resource_list" class="btn btn-sm btn-primary manage_resource_list d-block">
+                <i class="fa fa-plus" aria-hidden="true"></i> Add Resources
+              </button>
             <% end %>
-            <input type="hidden" id="playlist-list-page-no" value="0"/>
-            <%
-              param = {}
-              param[:playlist_id] = @playlist.id
-              param[:playlist_resource_id] = @playlist_resource.id if @playlist_resource.present?
-              param[:embed] = true if params[:embed].present?
-              param[:media_player] = true if params[:media_player].present?
-            %>
-
-            <div id='playlist-list-contanier' class="playlist-list float-left w-100" data-url="<%= list_playlist_items_playlist_playlist_resources_path(param) %>">
-
-            </div>
-            <div class="loader-playlist_items text-center d-none" style="top: 10%;">
-              <%= image_tag("https://#{ENV['S3_HOST_CDN']}/public/images/ajax-loader.gif", { style: 'height: 30px;width: 30px;' }) %>
-            </div>
-            <h1 id="no_resource_found" class="text-center font-size-21px mt-3" style="display: none !important;">
-              No Resource Found!</h1>
-
-          </div>
-          <div id='edit-playlist-container' class="playlist-section tab-pane fade <%= (active_tab.include? 'edit_playlist') ? 'active show' : '' %>" style='padding: 25px 25px 0px 15px;'>
-            <% if (can? :manage, @playlist) && @playlist_show.blank? %>
-              <%= simple_form_for @playlist, :url => @playlist.new_record? ? playlists_path : playlist_path(@playlist), html: { novalidate: true } do |pl| %>
-                <div class="row">
-                  <div class="col-sm-4" style='padding: 0px 5px;'>
-                    <div class="form-group" style='margin-bottom: 0px;'>
-                      <div class="image-box" style='position: relative;'>
-                        <div class="holder">
-                          <img id="banner" src="<%= @playlist.new_record? ? '#' : (image_url @playlist.thumbnail) %>" alt="">
-                        </div>
-                        <div class="file-upload" style='position: absolute;left: 0px;bottom: 0px;background:rgba(0,0,0, 0.5);width: 100%;'>
-                          <%= pl.label @playlist.new_record? ? 'Add' : 'Change', for: 'playlist_thumbnail', style: 'background: none;border: none;padding: 0px 15px;color:#fff;font-weight: normal;font-size: 10px;' %>
-                          <%= pl.input :thumbnail, as: :file, error: false, label: false, input_html: { onchange: "readURL(this, 'banner');", accept: 'image/*' } %>
-                        </div>
-                      </div>
-                      <%= pl.error :thumbnail %>
-                      <br>
-                    </div>
-                  </div>
-                  <div class='col-sm-8' style='padding: 0px 5px;'>
-                    <%= pl.input :name, label: false, input_html: { class: 'form-control playlist-name-field' } %>
-                  </div>
-                </div>
-
-                <div class="row">
-                  <div class="col-md-12 no-padding" style='margin-left: 5px;'>
-                    <div class="form-group">
-                      <%= pl.input :description, label: false, input_html: { class: 'form-control' } %>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="row">
-                  <div class="col-md-6">
-                    <div class="form-group">
-                      <div class="field-title">
-                        <%= pl.label 'Public ?', for: 'playlist_access' %>
-                      </div>
-                      <%= pl.select :access, [['Yes', 'access_public'], ['No', 'access_private']], required: true, label: false, class: 'custom-placeholder' %>
-                    </div>
-                  </div>
-
-                  <div class="col-md-6">
-                    <div class="form-group">
-                      <div class="field-title">
-                        <%= pl.label 'Featured ?', for: 'pl._featured' %>
-                      </div>
-                      <%= pl.select :is_featured, [['Yes', true], ['No', false]], { prompt: 'Receive emails' }, required: true, label: false, class: 'custom-placeholder' %>
-                    </div>
-                  </div>
-                </div>
-
-                <div class='row border-bottom mb-4'>
-                  <div class='col-md-12'>
-                    <div class='form-group'>
-                      <label class="col-form-label"><%= pl.input_field :is_audio_only, as: :boolean %>
-                        Render as Audio Player </label>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="row">
-                  <div class="col-md-12 text-right">
-                    <%= pl.submit @playlist.new_record? ? 'Save' : 'Update', class: 'btn btn-primary' %>
-                  </div>
-                </div>
+            <ul class="nav nav-tabs" role="tablist">
+              <li class="nav-item">
+                <a class="nav-link <%= active_tab.include?('show_playlist') ? 'active show' : '' %> playlist_edit_tabs" id="resource-list-tab" data-tabtype="show_playlist" data-urltab="<%= update_selected_tab_playlist_url(@playlist, type: 'both') %>" data-toggle="tab" href="#resource-list-container">
+                  <% if @playlist_show.present? && @playlist_show %>
+                    Playlist
+                  <% else %>
+                    Edit Playlist
+                  <% end %>
+                  (<span id="playlist_resources_count"><%= @playlist.playlist_resources.count %></span>)</a>
+              </li>
+              <% if @playlist.playlist_resources.present? %>
+                <li class="nav-item">
+                  <a class="nav-link playlist_edit_tabs <%= (active_tab.include? 'show_metadata') ? 'active show' : '' %>" id="metadata-list-tab" data-tabtype="show_metadata" data-toggle="tab" data-tab_type="" data-urltab="<%= update_selected_tab_playlist_url(@playlist, type: 'show') %>" href="#metadata-container">
+                    Now Playing Info </a>
+                </li>
               <% end %>
-            <% end %>
-            <br>
-          </div>
-          <div id='metadata-container' class="metadata-section search-detail-main tab-pane fade <%= (active_tab.include? 'show_metadata') ? 'active show' : '' %>">
-            <div style="position: relative;" class="<%= @inside_playlist ? '' : '' %> video-detail-container resources_info_holder">
-              <% if @collection_resource.present? %>
-                <div class="grey-box">
-                  <div class="title_resource_playlist">
-                    <strong>Resource Title:</strong> <%= @collection_resource.title %>
-                    <a target="_blank" href="<%= collection_collection_resource_path(@collection_resource.collection_id, @collection_resource.id) %>"><i class="fa fa-external-link"></i></a>
+              <% if @playlist_show.present? && @playlist_show %>
+                <% if current_user_is_org_user?(current_organization) %>
+                  <li class="nav-item">
+                    <a class="nav-link playlist_edit_tabs" href="<%= playlist_edit_path(@playlist) %>">
+                      Edit Playlist</a>
+                  </li>
+                <% end %>
+              <% elsif current_user_is_org_user?(current_organization) %>
+                <li class="nav-item">
+                  <a class="nav-link playlist_edit_tabs <%= (active_tab.include? 'edit_playlist') ? 'active show' : '' %>" id="edit-playlist-tab" data-toggle="tab" data-tabtype="edit_playlist" data-urltab="<%= update_selected_tab_playlist_url(@playlist, type: 'edit') %>" href="#edit-playlist-container">
+                    Playlist Info</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="<%= playlist_show_path({playlist_id: @playlist}) %>">
+                    View Playlist </a>
+                </li>
+              <% end %>
+            </ul>
+
+            <div class='tab-content'>
+              <div class="loadingCus text-center" style="display: none;">…</div>
+              <div id='resource-list-container' class='float-left w-100 tab-pane fade in <%= (active_tab.include? 'show_playlist') ? 'active show' : '' %>' data-url="<%= sort_playlist_playlist_resources_path(@playlist) %>">
+                <div class="grey-box ml-0">
+                  <div class="playlist_duration">
+                    <strong>Playlist Duration: </strong>
+                    <span class="single_value"> <%= time_to_duration(@playlist.duration) %></span>
                   </div>
                 </div>
-                <%= render partial: 'collection_resources/show/all_info_tabs', locals: {from_playlist: true} %>
-              <% end %>
-              <div class="loader loader-details playlist-custom">
-                <div class="img">
-                  <div class="hold">
-                    <%= image_tag("https://#{ENV['S3_HOST_CDN']}/public/images/ajax-loader.gif") %>
+                <div class="grey-box playlist_operations_actions ml-0">
+                  <input type="text" id="search_playlist_resource" placeholder="Search within playlist" class="form-control mb-1 mt-1"/>
+                </div>
+                <% if !@playlist_show.present? && !@playlist_show && (can? :manage, @playlist) %>
+                  <div class="grey-box ml-0">
+                    <a href="javascript:void(0);" class="select_all_playlist_resources btn-custom-small"><i class="fa fa-plus" aria-hidden="true"></i>
+                      Select All</a>
+                    <a href="javascript:void(0);" class="btn-custom-small" data-url="<%= bulk_delete_playlist_playlist_resources_path(@playlist) %>" data-fetch_resource_list="<%= fetch_resource_list_playlists_path %>" id="bulk_delete_playlist_resources">
+                      <i class="fa fa-trash-o" aria-hidden="true"></i> Bulk Delete</a>
+                    <a href="javascript:void(0);" style="display: none;" class="deselect_all_playlist_resources btn-custom-small">
+                      <i class="fa fa-minus" aria-hidden="true"></i> Deselect
+                      All</a>
+                  </div>
+                <% end %>
+                <input type="hidden" id="playlist-list-page-no" value="0"/>
+                <%
+                  param = {}
+                  param[:playlist_id] = @playlist.id
+                  param[:playlist_resource_id] = @playlist_resource.id if @playlist_resource.present?
+                  param[:embed] = true if params[:embed].present?
+                  param[:media_player] = true if params[:media_player].present?
+                %>
+
+                <div class="m-3">
+                  <div id='playlist-list-contanier' class="playlist-list" data-url="<%= list_playlist_items_playlist_playlist_resources_path(param) %>">
+
+                  </div>
+                </div>
+                <div class="loader-playlist_items text-center d-none" style="top: 10%;">
+                  <%= image_tag("https://#{ENV['S3_HOST_CDN']}/public/images/ajax-loader.gif", {style: 'height: 30px;width: 30px;'}) %>
+                </div>
+                <h1 id="no_resource_found" class="text-center font-size-21px mt-3" style="display: none !important;">
+                  No Resource Found!</h1>
+
+              </div>
+              <div id='edit-playlist-container' class="playlist-section tab-pane fade <%= (active_tab.include? 'edit_playlist') ? 'active show' : '' %>" style='padding: 10px 25px 0px 15px;'>
+                <% if (can? :manage, @playlist) && @playlist_show.blank? %>
+                  <%= simple_form_for @playlist, :url => @playlist.new_record? ? playlists_path : playlist_path(@playlist), html: {novalidate: true} do |pl| %>
+                    <div class="row">
+                      <div class="col-sm-4">
+                        <div class="form-group mt-3 pt-2">
+                          <div class="image-box custom-image-box" style='position: relative;'>
+                            <div class="holder">
+                              <img id="banner" src="<%= @playlist.new_record? ? '#' : (image_url @playlist.thumbnail) %>" alt="">
+                            </div>
+                            <div class="file-upload custom_file_upload" style='position: absolute;bottom: 7px;right: 0px;border-radius: 4px;opacity: 0;visibility: hidden;'>
+                              <%= pl.label @playlist.new_record? ? 'Add' : 'Change', for: 'playlist_thumbnail', style: 'border: none;padding: 2px 5px !important;color:#fff;font-weight: normal;font-size: 10px;background: #204f92 !important;' %>
+                              <%= pl.input :thumbnail, as: :file, error: false, label: false, input_html: {onchange: "readURL(this, 'banner');", accept: 'image/*'} %>
+                            </div>
+                          </div>
+                          <%= pl.error :thumbnail %>
+                        </div>
+                      </div>
+                      <div class='col-sm-8 custom_form'>
+                        <div class="form-group">
+                          <div class="field-title"><label>Playlist Name</label></div>
+                          <%= pl.input :name, label: false, input_html: {class: 'form-control playlist-name-field'} %>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="row">
+                      <div class="col-md-12 custom-playlist-description">
+                        <div class="form-group">
+                          <div class="field-title"><label>Playlist Description</label></div>
+                          <%= pl.input :description, label: false, input_html: {class: 'form-control'} %>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <div class="field-title">
+                            <%= pl.label 'Public ?', for: 'playlist_access' %>
+                          </div>
+                          <%= pl.select :access, [['Yes', 'access_public'], ['No', 'access_private']], required: true, label: false, class: 'custom-placeholder' %>
+                        </div>
+                      </div>
+
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <div class="field-title">
+                            <%= pl.label 'Featured ?', for: 'pl._featured' %>
+                          </div>
+                          <%= pl.select :is_featured, [['Yes', true], ['No', false]], {prompt: 'Receive emails'}, required: true, label: false, class: 'custom-placeholder' %>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class='row border-bottom mb-4'>
+                      <div class='col-md-12'>
+                        <div class='render form-check my-2 mb-4'>
+                          <%= pl.input_field :is_audio_only, as: :boolean %>
+                        </div>
+                      </div>
+                    </div>
+
+
+
+                    <div class="row">
+                      <div class="col-md-12 text-right">
+                        <%= pl.submit @playlist.new_record? ? 'Save' : 'Update', class: 'btn btn-primary' %>
+                      </div>
+                    </div>
+                  <% end %>
+                <% end %>
+                <br>
+              </div>
+              <div id='metadata-container' class="metadata-section px-0 search-detail-main tab-pane fade <%= (active_tab.include? 'show_metadata') ? 'active show' : '' %>">
+                <div style="position: relative; margin-top: 15px;" class="<%= @inside_playlist ? '' : '' %> video-detail-container resources_info_holder">
+                  <% if @collection_resource.present? %>
+                    <div class="grey-box w-100 m-0" style="margin-bottom: -15px !important;">
+                      <div class="title_resource_playlist">
+                        <strong>Resource Title:</strong> <%= @collection_resource.title %>
+                        <a target="_blank" href="<%= collection_collection_resource_path(@collection_resource.collection_id, @collection_resource.id) %>"><i class="fa fa-external-link"></i></a>
+                      </div>
+                    </div>
+                    <%= render partial: 'collection_resources/show/all_info_tabs', locals: {from_playlist: true} %>
+                  <% end %>
+                  <div class="loader loader-details playlist-custom">
+                    <div class="img">
+                      <div class="hold">
+                        <%= image_tag("https://#{ENV['S3_HOST_CDN']}/public/images/ajax-loader.gif") %>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-        <div class="loader loader-playlist-panel d-none">
-          <div class="img">
-            <div class="hold">
-              <%= image_tag("https://#{ENV['S3_HOST_CDN']}/public/images/ajax-loader.gif") %>
+            <div class="loader loader-playlist-panel d-none">
+              <div class="img">
+                <div class="hold">
+                  <%= image_tag("https://#{ENV['S3_HOST_CDN']}/public/images/ajax-loader.gif") %>
+                </div>
+              </div>
             </div>
           </div>
+
         </div>
       </div>
     </div>
+
   </div>
 </div>
 
 <div class="shareModal modal fade show" id="edit_playlist_resource_description_modal_center" tabindex="-1" role="dialog" aria-labelledby="edit_playlist_resource_description">
-  <div class="modal-dialog modal-md  modal-dialog-centered" role="document">
+  <div class="modal-dialog modal-xl  modal-dialog-centered" role="document">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title h5">Edit Description </h5>
@@ -252,14 +265,14 @@
       <div class="modal-body">
         <div class="data-table">
           <div class="container-fluid">
-            <%= content_tag :table, role: :datatable, class: ['table', 'table-striped'], id: 'collection_resource_datatable', data: { url: data_table_collection_resources_path(format: :json) } do %>
-              <%= render partial: 'collection_resources/listing_table', locals: { table_called_from: 'permission_group', columns_details: {}, organization_id: current_organization.id } %>
+            <%= content_tag :table, role: :datatable, class: ['table', 'table-striped'], id: 'collection_resource_datatable', data: {url: data_table_collection_resources_path(format: :json)} do %>
+              <%= render partial: 'collection_resources/listing_table', locals: {table_called_from: 'permission_group', columns_details: {}, organization_id: current_organization.id} %>
             <% end %>
           </div>
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-light" data-dismiss="modal">Cancel</button>
       </div>
     </div>
   </div>
@@ -275,7 +288,7 @@
       <div class="modal-body">
         <h1 class="font-size-16px text-center mb-2 p-2 "> Are you sure you want to remove
           <span id="number_of_resource">0</span> resources from the playlist? </h1>
-        <table class="table table-striped review_resources table-sm " style="width: 100%;">
+        <table class="table table-hover review_resources table-sm " style="width: 100%;">
           <thead>
           <tr>
             <td class="font-weight-bold"> ID</td>
@@ -294,28 +307,21 @@
     </div>
   </div>
 </div>
+
 <input type='hidden' id="playlist_id_current" value="<%= @playlist.id %>"/>
 <% if @resource_file.present? %>
   <% start_time = @playlist_resource.present? && @playlist_resource.playlist_items.where(collection_resource_file_id: @resource_file.id).present? && @playlist_resource.playlist_items.where(collection_resource_file_id: @resource_file.id).first.start_time.present? ? @playlist_resource.playlist_items.where(collection_resource_file_id: @resource_file.id).first.start_time.to_f : 0.0 %>
   <% duration = @resource_file.duration.to_f.present? ? @resource_file.duration.to_f : 0.0 %>
   <% end_time = @playlist_resource.present? && @playlist_resource.playlist_items.where(collection_resource_file_id: @resource_file.id).present? && @playlist_resource.playlist_items.where(collection_resource_file_id: @resource_file.id).first.end_time.present? ? @playlist_resource.playlist_items.where(collection_resource_file_id: @resource_file.id).first.end_time.to_f : @resource_file.duration.to_f %>
   <% max = duration %>
+
 <% end %>
-<% track_params = params.clone.except('controller').except('action').to_json %>
+<% track_params = tracker_params(params) %>
 <% can_access = permission_to_access_file?(@resource_file) %>
 <script type="text/javascript">
     var playlist = new Playlist();
     var collectionResource = new CollectionResource();
     collectionResource.file_access = <%= can_access %>;
-    let params = {
-        target_id: '',
-        params: '<%=track_params %>',
-        ip: '<%=request.remote_ip %>',
-        organization_id: '<%=@collection_resource.collection.organization_id %>',
-        user_type: '<%= role_type(current_user, current_organization) %>'
-    };
-    var events_tracker = new EventsTracker(params);
-    collectionResource.events_tracker = events_tracker;
     collectionResource.player_time = <%=  if @playlist_show.present? && @playlist_show
                                            params['pst'].present? ? params['pst'] : 0.1
                                           else
@@ -344,7 +350,6 @@
                 playlist_view_type: '<%= @playlist_show %>'
             };
             <%= render partial: 'collection_resources/show/js_params_show' %>
-
             collectionResource.initializeDetail('<%= @session_video_text_all.present? ? @session_video_text_all.to_json.html_safe : '{}' %>', <%= @selected_index.present? ? @selected_index: 0 %>, <%= @selected_transcript.present? ? @selected_transcript : 0 %>, <%= params[:edit_description].present? ? params[:edit_description] : 0 %>, '<%= params[:embed] %>', <%= @resource_file.present? ? @resource_file.id : '0' %>, params);
         }, 500);
         playlist.start_time = '<%= start_time %>';
@@ -362,5 +367,12 @@
                 collection_resource_table.outSourceDataTable('playlist_add_resource', playlist);
             }, 100);
         });
+    });
+    $(function(e) {
+        e.preventDefault;
+
+        $(document).ready(function(){
+            $('.render.form-check label').append('Render as Audio Player<span class="icon-check"></span>');
+        })
     });
 </script>

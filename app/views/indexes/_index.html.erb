@@ -1,12 +1,15 @@
 <% if !(@total_index_points <= Aviary::IndexTranscriptManager::POINTS_PER_PAGE && (params['page_type'] == 'next_page' || params['page_type'] == 'current_page')) %>
   <div class="row <%= params['page_type'] %>_type <%= params['page_number'] %>">
     <div class="col-md-12">
+
       <% if @file_index.present?
            recorded = []
            file_index = @file_index
            recorded[file_index.id] ||= [] %>
-        <div class="file_index file_index_<%= file_index.id %> pb-10px" data-language="<%= file_index.language %>" data-title="<%= file_index.title %>" data-public="<%= file_index.is_public %>">
-          <% if file_index.is_public || @collection_resource.can_view || @collection_resource.can_edit || (can? :edit, @collection_resource.collection.organization) || (can? :read, file_index) %>
+
+        <% if file_index.is_public || @collection_resource.can_view || @collection_resource.can_edit || (can? :edit, @collection_resource.collection.organization) || (can? :read, file_index) %>
+          <div class="pt-10px font-size-13px <%= file_index.description.present? ? '' : 'd-none' %>"><b>Note:</b> <span class="font-weight-bold"><%= file_index.description %></span><hr/></div>
+          <div class="file_index file_index_<%= file_index.id %> pb-10px" data-language="<%= file_index.language %>" data-title="<%= file_index.title %>" data-public="<%= file_index.is_public %>" data-description="<%= file_index.description %>">
             <% @index_count = @index_time_wise = {} %>
             <% @session_video_text_all = params['keywords'] %>
             <% @file_index_points.each_with_index do |index_point, counter| %>
@@ -32,18 +35,14 @@
 
             <textarea class="index_time_wise d-none"><%== @index_time_wise.present? ? @index_time_wise.to_h.to_json : '{}' %></textarea>
             <textarea class="index_count d-none"><%== @index_count.present? ? @index_count.to_h.to_json : '{}' %></textarea>
-          <% else %>
-            <div class="text-center  no-access">
-              <% if user_signed_in? %>
-                <p class="mb-20px">You don't have access to this index, please request access from the organization
-                  owner.</p>
-              <% else %>
-                <p class="mb-20px">You don't have access to this index, please login to request access from the
-                  organization
-                  owner.</p>
-              <% end %>
-            </div>
-          <% end %>
+        <% else %>
+          <div class="text-center  no-access">
+            <span class="ico"><img src="https://<%= ENV['S3_HOST_CDN'] %>/public/lock-black.svg" alt=""></span>
+
+            <div class="access_request_text_custom">You don't have access.</div>
+
+          </div>
+        <% end %>
         </div>
       <% end %>
     </div>

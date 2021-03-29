@@ -1,5 +1,5 @@
 <div class="modal fade manage-modal" id="AddTeamMemberModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-lg modal-dialog" role="document">
+  <div class="modal-md modal-dialog" role="document" style="max-width: 800px;">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title h5" id="exampleModalLabel">Manage Team</h5>
@@ -10,43 +10,40 @@
       <div class="modal-body">
         <div class="manage">
           <div class="add">
-            <div class="row">
-              <div class="col-lg-12 data-table" data-member_row="<%= add_member_row_path %>">
-                <div class="loader loader-details d-none" id="loader" style="position: relative ! important; background: none ! important;">
-                  <div class="img">
-                    <div class="hold">
-                      <%= image_tag("https://#{ENV['S3_HOST_CDN']}/public/images/ajax-loader.gif") %>
-                    </div>
+            <div class="data-table" data-member_row="<%= add_member_row_path %>">
+              <div class="loader loader-details d-none" id="loader" style="position: relative ! important; background: none ! important;">
+                <div class="img">
+                  <div class="hold">
+                    <%= image_tag("https://#{ENV['S3_HOST_CDN']}/public/images/ajax-loader.gif") %>
                   </div>
                 </div>
-                <%= form_tag user_add_new_member_path(current_user), class: "add-team-member-form" do %>
-                  <div class="row first_row">
-                    <div class="col-sm-5">
+              </div>
+              <%= form_tag user_add_new_member_path(current_user), class: "add-team-member-form" do %>
+                <div class="first_row custom_form">
+                  <div class="d-flex px-3 pb-0">
+                    <div class="form-group m-0">
+                      <div class="field-title"><label>Email Address</label></div>
                       <%= text_field_tag :search_team_members, params[:search], name: 'user[][search]', type: 'email', class: 'form-control', placeholder: 'Email Address' %>
                     </div>
-                    <div class="col-sm-5">
-                      <div class="">
-                        <%=
-                          select_tag "user[][user_role]", options_from_collection_for_select(@roles, 'id', 'name') %>
-                      </div>
+                    <div class="form-group m-0">
+                      <div class="field-title"><label>Role</label></div>
+                      <%= select_tag "user[][user_role]", options_from_collection_for_select(@roles, 'id', 'name') %>
                     </div>
-
                   </div>
 
-                <% end %>
-                <div class="row">
-                  <div class="col-sm-2">
-                    <button type="button" class="btn btn-primary" id="add_member_row">Add</button>
-                  </div>
                 </div>
+
+              <% end %>
+              <div class="px-4 mb-4">
+                <button type="button" class="btn btn-light add-member" id="add_member_row">Add</button>
               </div>
             </div>
           </div>
         </div>
       </div>
       <div class="modal-footer">
-        <%= submit_tag "Send Invite", class: "btn btn-info", id: "addingOrgUserRoleCus" %>
-        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+        <%= submit_tag "Send Invite", class: "btn btn-primary", id: "addingOrgUserRoleCus" %>
+        <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
       </div>
     </div>
   </div>

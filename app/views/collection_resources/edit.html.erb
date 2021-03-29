@@ -1,28 +1,35 @@
+<div class="resource-edit-breadcrumb breadcrumb">
+  <%= render_breadcrumbs %>
+</div>
 <div id="main_container" class="container-fluid">
-  <div class="breadcrumb">
-    <%= render_breadcrumbs %>
-  </div>
+
   <div class="main_contain">
     <main>
-      <div class="heading-holder table-head">
+      <div class="heading-holder table-head mt-2">
         <div class="row">
-          <div class="col-md-6"><h1> Edit Resource </h1></div>
-          <div class="col-md-6"></div>
+          <div class="col-md-12">
+            <div class="d-flex align-items-center">
+              <a id="back-to-search-btn" class="collection_resource_edit_title" href="<%= collection_resources_path() %>">
+                <span class="fa fa-angle-left "></span> <small class="mx-3">Back to <strong><%= @collection_resource.present? ? @collection_resource.title : '' %></strong></small>
+              </a>
+              <h1 class="h3 text-left m-0"> Edit Resource</h1>
+            </div>
+          </div>
         </div>
       </div>
       <%= form_for([@collection, @collection_resource]) do |f| %>
-        <div class="data-table ">
+        <div class="data-table custom_form">
           <div class="details">
             <div class="row">
               <div class="col-md-6">
                 <div class="form-group">
-                  <label for="admin_user_roles">Collection</label>
+                  <div class="field-title"><label for="admin_user_roles">Collection</label></div>
                   <%= f.collection_select :collection_id, @collections, :id, :title, { selected: @collection.id }, {} %>
                 </div>
               </div>
               <div class="col-md-6">
                 <div class="form-group">
-                  <label for="">Display Title</label>
+                  <div class="field-title"><label for="">Display Title</label></div>
                   <%= f.text_field :title, class: 'form-control', required: true %>
                 </div>
               </div>
@@ -30,22 +37,21 @@
             <div class="row">
               <div class="col-md-6">
                 <div class="form-group">
-                  <%= f.label 'Featured ?', for: 'collection_resource_featured' %>
+                  <div class="field-title"><%= f.label 'Featured ?', for: 'collection_resource_featured' %></div>
                   <%= f.select :is_featured, [['Yes', true], ['No', false]], {}, required: false, label: false, class: 'custom-placeholder' %>
                 </div>
               </div>
               <div class="col-md-6">
                 <div class="form-group">
-                  <%= f.label 'Status', for: 'collection_resource_public' %>
+                  <div class="field-title"><%= f.label 'Status', for: 'collection_resource_public' %></div>
                   <%= f.select :access, CollectionResource.accesses.map { |key, _| [key.split('_').second.humanize, key] }, {}, required: false, label: false, class: 'custom-placeholder' %>
                 </div>
               </div>
             </div>
-
             <div class="row">
               <div class="col-md-12 text-right">
                 <button class="btn btn-primary ml-2 saveBtnCus">Save</button>
-                <%= link_to "Next", collection_collection_resource_add_resource_file_path(@collection, @collection_resource), class: "btn btn-primary ml-2" %>
+                <%= link_to "Next", collection_collection_resource_add_resource_file_path(@collection, @collection_resource), class: "btn btn-outline-primary ml-2" %>
               </div>
             </div>
           </div>
@@ -59,5 +65,26 @@
     var collection_resource = new CollectionResource();
     document.addEventListener("DOMContentLoaded", function () {
         collection_resource.rss_metadata("collection_resource");
+    });
+    $(function(e) {
+        e.preventDefault;
+
+        $('.info-btn').popover({
+            html: true,
+            trigger: "click",
+            placement: "top"
+        });
+
+        $(document).on('click', function(e) {
+            $('.info-btn').each(function() {
+                if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0) {
+                    $(this).popover('hide');
+                }
+            });
+        });
+
+        $(document).ready(function(){
+            $('.form-check label').append('<span class="icon-check"></span>')
+        })
     });
 </script>

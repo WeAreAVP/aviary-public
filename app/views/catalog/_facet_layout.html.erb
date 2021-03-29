@@ -9,7 +9,9 @@
     </div>
     <div id="<%= facet_field_id(facet_field) %>" class="panel-collapse facet-content <%= should_collapse_facet?(facet_field) ? 'collapse' : 'in' %>">
       <% unless %w[has_transcript_ss has_index_ss access_ss description_duration_ls description_date_search_lms].include?(facet_field.key) || facet_field.key.end_with?('_lms') %>
-        <input type="text" placeholder="Search..." class="form-control input search_facet search_facet_<%= facet_field_id(facet_field) %> h-30px" data-target="<%= facet_field.key %>"/>
+        <div class="bg-light py-2">
+          <input type="text" placeholder="Search..." class="form-control input search_facet search_facet_<%= facet_field_id(facet_field) %>" data-target="<%= facet_field.key %>"/>
+        </div>
       <% end %>
       <div class="panel-body">
         <%= yield %>

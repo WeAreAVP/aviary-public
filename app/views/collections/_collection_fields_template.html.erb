@@ -1,45 +1,43 @@
 <div class="collection_dynamic_details" id="<%= collection_field_sort['field'].system_name %>">
-  <div class="row title mb-1">
-    <div>
-      <i style="cursor: crosshair;" class="handle float-left collection-metadata-sorting"></i><span class="description-title float-left font-weight-bold"><%= collection_field_sort['field'].label.titleize %>
-      </span></div>
-    <label class="badge badge-info ml-1 add_badge_default_value" data-type="<%= collection_field_sort['field'].fetch_type.to_s %>" data-col_id="<%= collection_field_sort['field'].id %>" href="javascript:void(0)">
+  <div class="d-flex justify-content-between">
+    <span class="description-title float-left font-weight-bold"><%= collection_field_sort['field'].label.titleize %>
+    </span>
+    <label class="badge badge-info add_badge_default_value" data-type="<%= collection_field_sort['field'].fetch_type.to_s %>" data-col_id="<%= collection_field_sort['field'].id %>" href="javascript:void(0)">
       Add More
     </label>
   </div>
   <% collection_field_sort['values'].each do |single_value| %>
-  <% if single_value['value'] != '' %>
-    <div class="row mb-1 single_row_default_feild">
-      <div class="w-100">
-        <% if collection_field_sort['field'].fetch_type == 'editor' %>
-          <textarea name="collection[collection_field_values_attributes][][value]" class="form-control apply_froala_editor tinymce"><%== single_value['value'] %></textarea>
-        <% else %>
-          <input type="<%= collection_field_sort['field'].fetch_type %>" name="collection[collection_field_values_attributes][][value]" value="<%= single_value['value'] %>" class="form-control"/>
-        <% end %>
+    <% if single_value['value'] != '' %>
+      <div class="single_row_default_feild">
+        <div class="w-100 px-3">
+          <% if collection_field_sort['field'].fetch_type == 'editor' %>
+            <textarea name="collection[collection_field_values_attributes][][value]" class="form-control apply_froala_editor tinymce"><%== single_value['value'] %></textarea>
+          <% else %>
+            <input type="<%= collection_field_sort['field'].fetch_type %>" name="collection[collection_field_values_attributes][][value]" value="<%= single_value['value'] %>" class="form-control"/>
+          <% end %>
+        </div>
+        <input type="hidden" name="collection[collection_field_values_attributes][][collection_field_id]" class="destroy_element" value="<%= collection_field_sort['field'].id %>"/>
+        <label class="remove_badge_default_value_collection"></label>
       </div>
-      <input type="hidden" name="collection[collection_field_values_attributes][][collection_field_id]" class="destroy_element" value="<%= collection_field_sort['field'].id %>"/>
-      <label class="badge badge-danger float-right remove_badge_default_value_collection">Remove</label>
-    </div>
-  <% end %>
+    <% end %>
   <% end %>
 </div>
-
 <div class="single_row_default_value_sample_field">
-  <div class="row mb-1  single_row_default_feild " style="display: none;">
-    <div class="w-100">
+  <div class="single_row_default_feild " style="display: none;">
+    <div class="w-100 px-3">
       <input id="" name="collection[collection_field_values_attributes][][value]" value="" class="form-control elm_val_cust_default_field" PLACEHOLDER="Enter Value" type="text">
     </div>
     <input name="collection[collection_field_values_attributes][][collection_field_id]" class="destroy_element" value="" type="hidden">
-    <label class="badge badge-danger float-right remove_badge_default_value_collection">Remove</label>
+    <label class="remove_badge_default_value_collection"></label>
   </div>
 </div>
 
 <div class="single_row_default_value_sample_editor">
-  <div class="row mb-1  single_row_default_feild " style="display: none;">
-    <div class="w-100">
+  <div class="single_row_default_feild " style="display: none;">
+    <div class="w-100 px-3">
       <textarea name="collection[collection_field_values_attributes][][value]" PLACEHOLDER="Enter Value" class="form-control add_wanted_class"></textarea>
     </div>
     <input name="collection[collection_field_values_attributes][][collection_field_id]" class="destroy_element" value="" type="hidden">
-    <label class="badge badge-danger float-right remove_badge_default_value_collection">Remove</label>
+    <label class="remove_badge_default_value_collection"></label>
   </div>
 </div>

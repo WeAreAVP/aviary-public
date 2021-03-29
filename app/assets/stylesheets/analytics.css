@@ -1,10 +1,10 @@
 .analytics .box {
     border-radius: 6px;
     background: #fff;
-    padding: 20px;
-    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+    border: 1px solid #ddd;
+    padding: 0px;
+    overflow: hidden;
 }
-
 .analytics .box .inner {
     height: 24%;
     font-size: 14px;
@@ -15,6 +15,7 @@
 
 .analytics .box .inner:first-child {
     margin-top: 30px;
+    margin-bottom: -20px;
 }
 
 .analytics .box .inner #chartC,
@@ -44,14 +45,6 @@
     position: relative;
 }
 
-.analytics .box .date-range {
-    display: flex;
-    justify-content: flex-end;
-    width: 45%;
-    position: absolute;
-    right: 20px;
-    top: 8px;
-}
 
 .analytics .box .date-range span {
     font-size: 14px;
@@ -60,27 +53,18 @@
     padding: 12px 15px;
 }
 
-.analytics .box .date-range .form-control {
-    border: none;
-    height: 35px;
-    border-radius: 4px !important;
-}
-
-.analytics .box .date-range .form-group + .form-group {
-    margin-left: 30px;
-}
-
 .analytics .box .date-range .form-group:last-child {
     position: relative;
 }
 
 .analytics .head .btn-primary {
     display: inline-block;
-    height: 35px;
-    padding: 8px 15px;
+    height: 40px;
+    padding: 9px 30px;
     text-transform: capitalize;
     margin-left: 10px;
     line-height: normal;
+    margin-top: 3px !important;
 }
 
 .analytics .head .btn-primary:hover {
@@ -111,24 +95,47 @@
     display: -o-flex;
     display: flex;
     justify-content: space-between;
-    margin: 0 -20px 15px;
-    padding: 10px 20px;
-    height: 60px;
-    overflow: inherit;
+    padding: 0px 20px 15px;
+    background: #f9fafb;
+    border: 1px solid #ddd;
+    border-left: none;
+    border-right: none;
+    height: auto !important;
+    overflow: unset;
     position: relative;
 }
+.analytics .head .selectize-input.full,
+.analytics .head .field-title,
+.analytics .head .form-control {
+    background: #f9fafb !important;
+}
+.analytics .head .custom-control-label {
+    font-size: 14px;
+}
+.analytics .head .date-range,
+.analytics .head .form-group {
+    flex: 1;
+    padding: 0 10px;
+}
+.analytics .head .form-group:first-child { padding-left: 0;}
 
+.analytics .all_statistics_classes .head {
+    height: auto !important;
+}
 .analytics .box .checks {
     margin-top: 8px;
     margin-right: 10px;
 }
 
 .analytics .most-pop-res .box .checks {
-    margin-top: 10px;
+    margin-top: 40px;
 }
 
 .analytics .most-pop-res .date-range {
     margin-top: 5px;
+    order: 2;
+    display: flex;
+    align-items: center;
 }
 
 .analytics .box .checks > div {
@@ -161,6 +168,7 @@
 
 .analytics .table-hold {
     margin: 0;
+    padding: 20px;
 }
 
 .analytics .box table th {
@@ -170,9 +178,10 @@
 }
 
 .analytics .box h2 {
-    font-size: 18px;
+    font-size: 22px;
     font-weight: 500;
     margin-top: 5px;
+    font-family: var(--aviary-title-font);
 }
 
 .analytics .box > h2 {
@@ -207,36 +216,40 @@
 }
 
 .analytics .small-box .box {
-    background: #f9f9f9;
-    padding: 45px 20px 0;
+    background: #fff;
 }
 
 .analytics .small-box .box > div {
-    margin: 0 -20px;
     background: #fff;
-    padding: 10px 20px;
+    padding: 10px 10px 10px 40px;
     -webkit-border-radius: 0 0 6px 6px;
     -moz-border-radius: 0 0 6px 6px;
     border-radius: 0 0 6px 6px;
 }
 
 .analytics .small-box .sb-title {
-    font-size: 18px;
+    font-size: 16px;
     font-weight: bold;
     color: #000;
-    margin-bottom: 3px;
+    margin-bottom: 0;
 }
 
 .analytics .small-box .sb-title-small {
     font-size: 14px;
-    color: #6d6d6d;
+    color: #204f92;
+    font-family: var(--aviary-title-font)
 }
 
 .analytics .small-box img {
     position: absolute;
-    top: 12px;
-    right: 30px;
-    width: 20px;
+    top: 15px;
+    left: 30px;
+    width: 15px;
     height: auto;
     display: block;
+    opacity: 9;
+}
+
+.collection_filter_statistics_class .item {
+    margin-right: 10px;
 }

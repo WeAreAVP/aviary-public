@@ -205,6 +205,7 @@ function AdvanceSearchHandler() {
             let html = new_element.html();
             html = html.replace(/add_wanted_info/g, identifier);
             html = html.replace(/add_wanted_class/g, 'identifier_' + identifier);
+            html = html.replace(/add_wanted_keyword_class/g, 'identifier_' + identifier);
             html = html.replace(/clone_able/g, 'actual');
 
             $('#lines_search_bar').append(html);
@@ -213,6 +214,9 @@ function AdvanceSearchHandler() {
             }
             if (allow_operator == false) {
                 $('.' + parent_class + '  .operator_term').remove();
+            }
+            if( allow_remove == false && allow_operator == false ){
+                $('.' + parent_class + ' .adjustable_area_advance_search').removeClass('col-md-6').addClass('col-md-8');
             }
             bind_advance_search_listing();
             setTimeout(function () {

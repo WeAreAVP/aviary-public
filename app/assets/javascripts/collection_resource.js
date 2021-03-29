@@ -20,8 +20,8 @@ function CollectionResource() {
     selfCR.search_text_val = 0;
     selfCR.resource_file_id = 0;
     selfCR.player_widget = null;
-    selfCR.track_params = null;
     selfCR.auto_play = null;
+    selfCR.track_params = null;
     selfCR.has_loaded = false;
     selfCR.player_time = 0;
     selfCR.events_tracker = {};
@@ -38,39 +38,16 @@ function CollectionResource() {
     selfCR.transcript_time_wise_page = {};
     selfCR.index_time_wise_page = {};
 
+
     selfCR.total_transcript_wise = {};
     selfCR.total_index_wise = {};
 
     selfCR.index_file_count = 0;
     selfCR.transcript_file_count = 0;
     selfCR.auto_loading_inprogress = false;
-    var publicAccessUrl = {};
+    let publicAccessUrl = {};
+
     var resizeAllowed = true;
-    const clearKeyWords = function (keyword) {
-        keyword = keyword.replace(/[\/\\()|'"*:^~`{}]/g, '');
-        keyword = keyword.replace(/]/g, '');
-        keyword = keyword.replace(/[[]/g, '');
-        keyword = keyword.replace(/[{}]/g, '');
-        return keyword;
-    }
-
-    const searchFieldBinding = function () {
-        document_level_binding_element("#search_text", 'keypress', function (e) {
-            if (e.which == 13) {
-                if ($(this).val().trim() != '') {
-                    let keyword = clearKeyWords($(this).val().trim());
-                    let query = 'keywords[]=' + keyword;
-                    let link = window.location.href;
-                    if (!link.includes('?')) {
-                        link += '?';
-                    }
-                    link = link + '&' + query;
-                    window.location = link;
-                }
-            }
-        });
-    }
-
     this.initializeDetail = function (search_text_val, selected_index, selected_transcript, edit_description, embed, resource_file_id, track_params) {
         publicAccessUrl = new PublicAccessUrl();
         selfCR.track_params = track_params;
@@ -81,10 +58,12 @@ function CollectionResource() {
         load_resource_details(embed);
         selfCR.selected_index = selected_index;
         selfCR.selected_transcript = selected_transcript;
-        $('.index-trance-checkbox').prop('checked', false);
+
         selfCR.search_text_val = jQuery.parseJSON(search_text_val);
         initPlayer();
         initCopyLink();
+
+
         searchFieldBinding();
         fileWiseCountFunc();
         if (selfCR.search_text_val != '' && selfCR.search_text_val != 0) {
@@ -95,6 +74,7 @@ function CollectionResource() {
                 selfCR.markerHandlerIT[identifier].initialize();
             });
         }
+
         selfCR.indexes = new IndexTranscript();
         selfCR.indexes.setup_prerequisites('index', selfCR.selected_index, selfCR, selfCR.embed, selfCR.from_playlist);
         selfCR.indexes.selected_index = selfCR.selected_index;
@@ -102,6 +82,8 @@ function CollectionResource() {
         selfCR.indexes.initialize(selfCR.selected_index);
         if (parseInt(selfCR.index_file_count, 10) > 0) {
             selfCR.indexes.first_time_index_call();
+        } else {
+            $('.tab_loader_index').addClass('d-none').removeClass('d-inline-block');
         }
 
         selfCR.transcripts = new IndexTranscript();
@@ -111,6 +93,8 @@ function CollectionResource() {
         selfCR.transcripts.initialize(selfCR.selected_transcript);
         if (parseInt(selfCR.transcript_file_count, 10) > 0) {
             selfCR.transcripts.first_time_transcript_call();
+        } else {
+            $('.tab_loader_transcript').addClass('d-none').removeClass('d-inline-block');
         }
 
         // move Marker list to top related div after created marker occurrence using using later updated variable session[:count][:index_count]s, @description_count and session[:count][:transcript_count]s
@@ -121,30 +105,35 @@ function CollectionResource() {
             type_current = window.location.pathname.substr(window.location.pathname.lastIndexOf('/') + 1);
         }
         show_marker_hanlders(type_current);
-        document_level_binding_element('#transliteration_detail_page', 'change', function () {
-            let url = window.location.href.replaceAll('&tranlit=t', '');
-            url = url.replaceAll('tranlit=t', '');
-            url = url.replaceAll('&tranlit=f', '');
-            url = url.replaceAll('&tranlit=f', '');
-            url = url.replaceAll('tranlit=f', '');
-            if ($(this).prop('checked')) {
-                if (window.location.href.includes('?')) {
-                    window.location.href = url + '&tranlit=t';
-                } else {
-                    window.location.href = url + '?tranlit=t';
-                }
-            } else {
-                if (window.location.href.includes('?')) {
-                    window.location.href = url + '&tranlit=f';
-                } else {
-                    window.location.href = url + '?tranlit=f';
+        if (window.location.search.includes('embed=true')) {
+            childLength = $('.resourceContantSection').children().length;
+            if (childLength == 0) {
+                $('.resource_right_section').remove();
+                $('.resource_left_section').removeClass('col-lg-7').addClass('col-lg-12');
+            }
+        }
+
+
+    };
+
+
+    const searchFieldBinding = function () {
+
+        document_level_binding_element("#search_text", 'keypress', function (e) {
+
+                if (e.which == 13) {
+                    if ($(this).val().trim() != '') {
+                        let keyword = clearKeyWords($(this).val().trim());
+                        addKeywordToUrl(keyword);
+                    }
                 }
 
-            }
         });
     };
 
+
     const detailsPageBinding = function () {
+
         bindingElement('#collection_resource_custom_unique_identifier', 'keyup', function () {
             let element_that = this;
             setTimeout(function () {
@@ -170,15 +159,25 @@ function CollectionResource() {
     };
 
     this.show_counts_tabs = function (response) {
-
         try {
             if (response.description_count['total']) {
-                $('.description_count_tab').text(response.description_count['total']);
+                let currentDescriptionCount = 0;
+                $('.description_count_tab').text(currentDescriptionCount + response.description_count['total']);
                 $('.description_count_tab').removeClass('d-none');
             }
         } catch (err) {
 
         }
+
+        try {
+            if (response.description_count['resource_metadata']) {
+                $('.resource_metadata_count_tab').text(response.description_count['resource_metadata']);
+                $('.resource_metadata_count_tab').removeClass('d-none');
+            }
+        } catch (err) {
+
+        }
+
     };
 
     const show_counts_tabs = function () {
@@ -187,6 +186,7 @@ function CollectionResource() {
         };
         selfCR.app_helper.classAction($('#show_counts_tabs').data('url'), data, 'JSON', 'GET', '', selfCR, false);
     };
+
 
     this.fileWiseCount = function (response) {
         try {
@@ -200,14 +200,44 @@ function CollectionResource() {
                 if (parseInt(object['total-index'], 10)) {
                     total_index = parseInt(object['total-index'], 10)
                 }
-
-                $('.file_wise_count_' + index).text(total_transcript + total_index);
-                if ((total_transcript + total_index) > 0)
+                if ((total_transcript + total_index) > 0) {
+                    $('.file_wise_count_' + index).text(total_transcript + total_index);
                     $('.file_wise_count_' + index).removeClass('d-none');
+                }
             });
         } catch (err) {
 
         }
+
+        setTimeout(function () {
+            if (response['counts_media_metadata']) {
+                $.each(response['counts_media_metadata'], function (index, object) {
+                    try {
+                        if (parseInt(object['total'], 10) > 0) {
+
+                            let currentTotal = 0;
+                            if ($('.file_wise_count_' + index).length > 0 && parseInt($('.file_wise_count_' + index).text(), 10) > 0) {
+                                currentTotal = parseInt($('.file_wise_count_' + index).text(), 10);
+                            }
+                            let total = parseInt(object['total'], 10);
+                            if (total > 0) {
+                                $('.file_wise_count_' + index).text(total + currentTotal);
+                                $('.file_wise_count_' + index).removeClass('d-none');
+                            }
+                        }
+                    } catch (err) {
+                    }
+                });
+            }
+        }, 1000);
+
+        setTimeout(function () {
+            if (response['counts_media_metadata'] && response['counts_media_metadata'].hasOwnProperty(selfCR.resource_file_id) && response['counts_media_metadata'][selfCR.resource_file_id]['total'] > 0) {
+                $('.media_metadata_count_tab').text(response['counts_media_metadata'][selfCR.resource_file_id]['total']);
+                $('.media_metadata_count_tab').removeClass('d-none');
+            }
+
+        }, 1000);
     };
 
     const fileWiseCountFunc = function () {
@@ -218,32 +248,35 @@ function CollectionResource() {
         selfCR.app_helper.classAction($('#file_wise_count').data('url'), data, 'JSON', 'POST', '', selfCR, false);
     };
 
-    this.load_resource_details_template = function (response, container) {
-        if (response.includes('view_edit_custom')) {
-            $('.contact-description-tab').html(response);
-            setTimeout(function () {
-                desc_trans_index_call_complete();
-                init_tinymce_for_element('.edit_collection_resource textarea.value_holder');
-                show_counts_tabs();
-                $('.edit_collection_resource .select_option.value_holder').selectize();
-                /* Edit resource form */
-                $('.edit_fields').click(function () {
-                    $('body').css('overflow', 'hidden');
-                    $('#form_edit_custom').addClass('open');
-                });
 
-                $('#form_edit_custom #modal-close').click(function () {
-                    $('body').css('overflow', 'inherit');
-                    $('#form_edit_custom').removeClass('open');
-                });
-                if (selfCR.edit_description == true || selfCR.edit_description == 'true') {
-                    $('.edit_fields').click();
-                }
-            }, 100);
-            setTimeout(function () {
-                resourceSearchBar();
-            }, 1000);
+    this.load_resource_details_template = function (response, container) {
+        if (response) {
+            response = response.replace(/\s*(>|<)\s*/g, "$1");
+            if (response.includes('view_edit_custom')) {
+                $('.contact-description-tab').html(response);
+                setTimeout(function () {
+                    desc_trans_index_call_complete();
+                    init_tinymce_for_element('.edit_collection_resource textarea.value_holder');
+                    show_counts_tabs();
+
+                    $('.edit_collection_resource .select_option.value_holder').selectize();
+                    /* Edit resource form */
+                    $('.edit_fields').click(function () {
+                        $('body').css('overflow', 'hidden');
+                        $('#form_edit_custom').addClass('open');
+                    });
+                    let resourcePageCommon = new ResourcePageCommon();
+                    resourcePageCommon.initialize('.form_edit_custom_resource');
+                    if (selfCR.edit_description == true || selfCR.edit_description == 'true') {
+                        $('.edit_fields').click();
+                    }
+                }, 100);
+                setTimeout(function () {
+                    resourceSearchBar();
+                }, 1000);
+            }
         }
+
     };
 
     const desc_trans_index_call_complete = function () {
@@ -253,13 +286,12 @@ function CollectionResource() {
         $('.timeline-bar-parent-div-tmp').remove();
         initTimeline();
         $('[data-toggle="tooltip"]').tooltip();
-        if (selfCR.from_playlist) {
-            $('#view_edit_custom').attr('style', 'height:' + ($('.two_col_custom').height()) + 'px!important;max-height:550px!important;');
-        } else {
-            $('#view_edit_custom').attr('style', 'height:' + ($('.two_col_custom').height()) + 'px!important;max-height:550px!important;');
+        $('#view_edit_custom').attr('style', 'height:' + ($('.two_col_custom').height()) + 'px!important;max-height:700px !important;');
+        $('#view_edit_media_metadata_custom').attr('style', 'height:' + ($('.two_col_custom').height()) + 'px!important;max-height:700px !important;');
 
-        }
         $('.mCustomScrollbar_description').mCustomScrollbar();
+        $('#view_edit_media_metadata_custom').mCustomScrollbar();
+
 
         initEvents();
         initCreateTranscription();
@@ -272,6 +304,7 @@ function CollectionResource() {
                 selfCR.markerHandlerArrayDescription[identifier].collection_resource = selfCR;
             });
         }
+
         $('.loader-details').remove();
     };
 
@@ -311,7 +344,6 @@ function CollectionResource() {
                 playbackRates: [0.5, 1, 1.5, 2],
                 aspectRatio: '16:9',
                 responsive: true,
-                pictureInPictureToggle: true,
                 techOrder: ['chromecast', 'html5', 'youtube', 'vimeo'],
                 youtube: {autohide: 1},
                 plugins: {
@@ -373,9 +405,12 @@ function CollectionResource() {
                     // pause this video and jump to next
                     this.pause();
                     $('#player_section').find('.vjs-play-control').addClass('vjs-ended');
-                    $('#player_section').find('.vjs-play-control').click(function(){
+                    $('.carousel-inner').addClass('play_replay_option');
+                    $('.vjs-play-control, .carousel-inner.play_replay_option').click(function () {
                         player_widget.currentTime(selfCR.player_time);
                         player_widget.play();
+                        $('.carousel-inner').removeClass('play_replay_option');
+
                     });
                     if (collectionResource.playlist_info.playlist_view_type == 'true') {
                         if ($('.listings_files.my-slide').nextAll() && $('.listings_files.my-slide').nextAll().length > 0) {
@@ -465,7 +500,6 @@ function CollectionResource() {
         });
 
     };
-
     const showPlayerMarkers = function (player) {
         var myPlayer = player,
             videoDuration,
@@ -488,38 +522,12 @@ function CollectionResource() {
         }
     };
 
-
-    const updatePlayerSize = function () {
-        let heightPercentage = 1.7;
-        let height = 420;
-        if (typeof $('.video-placeholder video')[0] == 'undefined' && typeof $('.video-placeholder audio')[0] == 'undefined')
-            if (($('#avalon_widget').hasClass('audio_widget') || $('#avalon_widget').hasClass('video_widget')) && !$('#avalon_widget').hasClass('audio-player') && resizeAllowed) {
-                height = $('#avalon_widget').width() / heightPercentage;
-                $('#avalon_widget').css('height', height + 'px');
-                resizeAllowed = false;
-            }
-            return false;
-
-        if ($('.video-placeholder .audio').length > 0) {
-            height = $('.video-placeholder .audio').width() / heightPercentage;
-        } else {
-            height = $('.video-hold').width() / heightPercentage;
-            if ($('#player_vimeo_iframe').length > 0 &&  height > 360)
-                height = ($('.video-hold').width() / heightPercentage) - 90;
-        }
-        $('.video-placeholder .mejs__audio').css('height', height + 'px');
-        $('.video-placeholder video, .video-placeholder audio')[0].player.setPlayerSize('100%', height);
-        $('.video-placeholder video, .video-placeholder audio').attr('height', height);
-        if ($('#player_vimeo_iframe').length > 0)
-            $('#player_vimeo_iframe').attr('height', '110%');
-    };
-
     const howManySlidesWidthWise = function () {
         if ($(window).width() < 500) {
             return 3;
         } else if ($(window).width() >= 500 && $(window).width() <= 1024) {
             return 4;
-        } else if ($(window).width() > 1024 && $(window).width() < 1440) {
+        } else if ($(window).width() > 1024 && $(window).width() <= 1440) {
             return 5;
         } else if ($(window).width() > 1440 && $(window).width() <= 1680) {
             return 6;
@@ -528,7 +536,7 @@ function CollectionResource() {
         } else if ($(window).width() > 2100) {
             return 8;
         }
-    };
+    }
 
     const initCarousel = function (numberOfSlides) {
         $(".carousel-wrap .mediacarousel").trigger('endCarousel');
@@ -541,7 +549,7 @@ function CollectionResource() {
             autoWidth: true,
             responsive: true,
         });
-    };
+    }
 
     const time_scroll_mover = function (currentTime) {
         if ($('#index-tab').hasClass('active')) {
@@ -555,7 +563,7 @@ function CollectionResource() {
                 $('.transcript_time').removeClass('active');
             }
         }
-    }
+    };
 
     const play_next_resource = function () {
         $.each($('.box.now-playing.playlist_resource_single').nextAll(), function () {
@@ -570,16 +578,18 @@ function CollectionResource() {
     const play_next_file = function () {
         $.each($('.listings_files.my-slide').nextAll(), function () {
             if ($(this).hasClass('list_can_access') && !$(this).hasClass('my-slide')) {
-                window.location = $(this).find('.playlist-item.can-play').data('media-url') + '?auto_play=true';
+                let pattern = new RegExp(/\?.+=.*/g);
+                let nextUrl = $(this).find('.playlist-item.can-play').data('media-url');
+                if (pattern.test(nextUrl)) {
+                    nextUrl += '&auto_play=true';
+                } else {
+                    nextUrl += '?auto_play=true';
+                }
+                window.location = nextUrl;
                 return false;
             }
         });
     };
-
-    let moveCarouselTo = function (numberOfMoves) {
-        $(".carousel-wrap .mediacarousel").trigger('go', numberOfMoves - 1);
-    };
-
 
     let scroll_mousewheel_playlist = function () {
         $('.carousel-wrap').unbind('mousewheel DOMMouseScroll');
@@ -597,18 +607,8 @@ function CollectionResource() {
         });
     };
 
-    let selected_carosal = function (number_of_movies) {
-        var counter = 1;
-        var interval = setInterval(function () {
-            if (counter < number_of_movies) {
-                $('.next').click();
-                counter++;
-            } else {
-                clearInterval(interval);
-                counter++;
-            }
-        }, 300);
-
+    let moveCarouselTo = function (numberOfMoves) {
+        $(".carousel-wrap .mediacarousel").trigger('go', numberOfMoves - 1);
     };
 
     let autoPlay = function (_aviaryPlayer) {
@@ -667,8 +667,12 @@ function CollectionResource() {
             }
         });
 
-        $('.video-start-time').keyup(function () {
-            if($('.share_tabs.active.show').data('tabname') != 'public_access_url_custom'){
+        document_level_binding_element('#auto_play_video', 'click', function () {
+            checkAndCreateUrl();
+        });
+
+        $('.video-start-time, .video-end-time').keyup(function () {
+            if ($('.share_tabs.active.show').data('tabname') != 'public_access_url_custom') {
                 checkAndCreateUrl();
             }
         });
@@ -687,8 +691,12 @@ function CollectionResource() {
                 checkAndCreateUrl();
             }, 500);
         });
+        try {
+            publicAccessUrl.greenLinkBinding();
+        } catch (e) {
 
-        publicAccessUrl.greenLinkBinding();
+        }
+
         document_level_binding_element('.public_access_url_toggle', 'click', function () {
             $('.public_access_tab').addClass('d-none');
             if ($(this).data('tab') == 'limited_access_url') {
@@ -699,14 +707,15 @@ function CollectionResource() {
                 $('.time-share').addClass('d-none');
             }
         });
-        document_level_binding_element('#auto_play_video', 'click', function () {
-            checkAndCreateUrl();
-        });
 
-        $('.video-start-time, .video-end-time').keyup(function () {
-            if ($('.share_tabs.active.show').data('tabname') != 'public_access_url_custom') {
-                checkAndCreateUrl();
-            }
+        document_level_binding_element('.share_tabs', 'click', function () {
+            $('.start_time_checkbox').prop('checked', false);
+            $('.video-start-time').val('');
+            $('.video-start-time').attr('disabled', 'disabled');
+            $('.end_time_checkbox').prop('checked', false);
+            $('.video-end-time').val('');
+            $('.video-end-time').attr('disabled', 'disabled');
+            $('.auto_play_video').prop('checked', false);
         });
     };
 
@@ -754,8 +763,9 @@ function CollectionResource() {
             params = 0;
             let all_params = '';
             let counter = 0;
+
             $.each(get_params, function (key, value) {
-                if (key.toString() != 't' && key.toString() != 'media') {
+                if (key.toString() != 't' && key.toString() != 'media' && key != 'e') {
                     if (counter != 0) {
                         all_params = all_params + '&';
                     }
@@ -775,14 +785,12 @@ function CollectionResource() {
             } else {
                 shareLink = only_url + '?' + all_params;
             }
-
             if (createURL && shareTimeEnd > 0 && $('.end_time_checkbox').prop("checked") === true) {
                 if (!shareLink.includes('media=')) {
                     shareLink = only_url + '?' + all_params + 'media=' + selfCR.resource_file_id
                 }
                 shareLink = shareLink + '&e=' + shareTimeEnd;
             }
-
             shareLink = shareLink.replace('&auto_play=false', '');
             shareLink = shareLink.replace('auto_play=false', '');
             shareLink = shareLink.replace('&auto_play=true', '');
@@ -794,13 +802,12 @@ function CollectionResource() {
             }
 
             let commonStyle = 'style="position:absolute;top:0;left:0;bottom: 0;right: 0;width:100%;height:100%;"';
-
             switch (active_tab) {
                 case 'share_link_custom':
                     final_link = shareLink;
                     break;
                 case 'embed_video_custom':
-                    final_link = '<div style="padding: 56.25% 0 0 0;position:relative;overflow: hidden;width: 100%;"><iframe ' + commonStyle + ' src="' + shareLink + '" allow="fullscreen" frameborder="0"></iframe></div>';
+                    final_link = '<div style="padding:56.25% 0 0 0;position:relative;overflow: hidden;width: 100%;"><iframe ' + commonStyle + ' src="' + shareLink + '" allow="fullscreen" frameborder="0"></iframe></div>';
                     break;
                 case 'embed_resource_custom':
                     final_link = '<div style="padding:100% 0 0 0;position:relative;overflow: hidden;width: 100%;"><iframe ' + commonStyle + ' src="' + shareLink + '"  allow="fullscreen" frameborder="0"></iframe></div>';
@@ -866,8 +873,10 @@ function CollectionResource() {
                         recorded_transcript[selected_point].push(parseInt(currentTime, 10));
                     }
                     setTimeout(function () {
-                        let pointToScroll = $('.' + type + '_time_start_' + parseInt(currentTime, 10));
+                        let element_update = '.file_transcript_' + selfCR.selected_transcript;
+                        let pointToScroll = $(element_update + ' .' + type + '_time_start_' + parseInt(currentTime, 10));
                         selfCR.transcripts.scroll_to_point(type, '.' + type + '_time_start_' + parseInt(currentTime, 10));
+
                     }, 50);
 
                 } else {
@@ -893,19 +902,6 @@ function CollectionResource() {
     });
 
     const initEvents = function () {
-        $('.edit_collection_resource').on('submit', function (e) {
-            $('.form-control.date.value_holder').each(function (index, value) {
-                var regExFull = /^\d{4}-\d{2}-\d{2}$/;
-                var regExYm = /^\d{4}-\d{2}$/;
-                var regExy = /^\d{4}$/;
-                value_string = $.trim($(value).val());
-                if (!value_string.match(regExFull) && !value_string.match(regExYm) && !value_string.match(regExy)) {
-                    jsMessages('danger', 'One ore more date(s) given are invalid. Allowed date formats are ( yyyy-mm-dd or yyyy-mm or yyyy)');
-                    e.preventDefault();
-                }
-            });
-        });
-
         $('.addmore-row').each(function (index, element) {
             if ($(element).data().is_repeatable == false && $(element).parent('dt').next().find('.remove-field').length > 1) {
                 $(element).hide();
@@ -920,48 +916,12 @@ function CollectionResource() {
             $('.custom-modal-normal').hide();
         });
 
-
-        $('.addmore-row').click(function (event) {
-            if ($(this).data().is_repeatable == false) {
-                $(this).hide();
-            }
-            var new_html = $(this).parents('.current-parent').find('.row_clone').html();
-            let identifier = Math.random().toString(36).substring(2, 15);
-            if ($(this).data('type') == 'editor') {
-                new_html = new_html.replace('add_wanted_class', ' apply_froala_editor tinymce apply_froala_editor_' + identifier);
-            }
-
-            let unique_identifier = 'select_option_new_added' + identifier;
-            if (new_html.includes("select_option")) {
-                new_html = new_html.replace('select_option', ' select_option_new_added ' + unique_identifier);
-            }
-
-            $(this).parents('.current-parent').find('.single_row_dynamic_form').append(new_html);
-            $('.remove-field').click(function (event) {
-                $(this).parents('.current-parent').find('.addmore-row').show();
-                $(this).parents('.parent_of_each_row').remove();
-            });
-            $('.tokenMaker').tagsinput({
-                tagClass: 'big'
-            });
-            $('.bootstrap-tagsinput input').attr('style', 'width: 200px;');
-
-            if ($(this).data('type') == 'editor') {
-                init_tinymce_for_element('.apply_froala_editor_' + identifier);
-            }
-            setTimeout(function () {
-                $('.' + unique_identifier).selectize();
-            }, 50);
-        });
         $.each($('.row_clone').find('select.cloner'), function (single_index, single_element) {
             if (single_element.selectize) {
                 single_element.selectize.destroy();
             }
         });
-        $('.remove-field').click(function (event) {
-            $(this).parents('.current-parent').find('.addmore-row').show();
-            $(this).parents('.parent_of_each_row').remove();
-        });
+
         setTimeout(function () {
             $('.tokenMaker').tagsinput({
                 tagClass: 'big'
@@ -1005,20 +965,17 @@ function CollectionResource() {
     const index_scroll = function () {
         selfCR.indexes.index_scroll('index', active_transcript_index('index'));
     };
-
     this.default_active_tab = function () {
         let tabType = window.location.pathname.substr(window.location.pathname.lastIndexOf('/') + 1);
         if (!$.inArray(tabType, ['transcript', 'description', 'index']) >= 0) {
             $('#description-tab').click();
         }
     }
-
     this.manageTabs = function (edit_description) {
         let tabType = window.location.pathname.substr(window.location.pathname.lastIndexOf('/') + 1);
         if (collectionResource.from_playlist == true) {
             tabType = $('#resourceTab .nav-link.active.show').data('tab');
         }
-
         $('.single_term_handler').addClass('d-none');
         $('.single_term_handler').removeClass('open');
 
@@ -1031,11 +988,9 @@ function CollectionResource() {
         } else if (tabType == 'index') {
             $('#index-tab').click();
         }
+
         if ($.inArray(tabType, ['transcript', 'description', 'index']) < 0)
             tabType = 'description';
-        if (tabType == 'description') {
-
-        }
 
         if (selfCR.search_text_val != '' && selfCR.search_text_val != 0) {
             $.each(selfCR.search_text_val, function (identifier, keyword) {
@@ -1050,7 +1005,6 @@ function CollectionResource() {
             });
         }
 
-
         if (tabType == 'transcript') {
             transcript_scroll();
         } else if (tabType == 'index') {
@@ -1061,8 +1015,10 @@ function CollectionResource() {
 
         $('#resourceTab a').unbind('click');
         $('#resourceTab a').click(function () {
+
             let tabType = window.location.pathname.substr(window.location.pathname.lastIndexOf('/') + 1);
             let currentTab = $(this).data().tab;
+
             try {
                 if (!$(this).hasClass('active')) {
                     selfCR.events_tracker.track_tab_hits(currentTab);
@@ -1070,7 +1026,6 @@ function CollectionResource() {
             } catch (e) {
                 e;
             }
-
 
             let append_params = '?';
             $.each(selfCR.app_helper.getUrlParamRepeatable(window.location.href)[0], function (index, single_obejct) {
@@ -1138,7 +1093,6 @@ function CollectionResource() {
 
     const initTimeline = function () {
         document_level_binding_element('.timeline-point', 'click', function () {
-            $('#index-auto-scroll').prop("checked", false);
             let data = $(this).data();
             $('.timeline-point.dark-orange').addClass('light-orange');
             $('.timeline-point.dark-orange').removeClass('dark-orange');
@@ -1148,7 +1102,6 @@ function CollectionResource() {
             } else {
                 selfCR.indexes.to_index_transcript_point(data);
             }
-
         });
     };
 
@@ -1199,6 +1152,7 @@ function CollectionResource() {
         });
         dateTimePicker({}, '#public_access_time_period', 'up');
     };
+
 
     this.rss_metadata = function (classname) {
 
@@ -1252,6 +1206,7 @@ function CollectionResource() {
                                     $('#' + id).remove();
                                 }
                                 loading = true;
+
                             },
                             beforeSend: function () {
                                 jsloader('#' + id);

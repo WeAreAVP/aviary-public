@@ -2,18 +2,31 @@
     @author Nouman Tayyab <nouman@weareavp.com>
 */
 .page-link {
-    color: #3d62e6;
+    color: #269af2;
 }
 
+.page-item .page-link {
+    background-color: #eee !important;
+    border: 1px solid #979da5 !important;
+    color: #6e7684 !important;
+    width: 20px;
+    height: 20px;
+    padding: 0;
+}
 .page-item.active .page-link {
     background-color: #fff !important;
-    border: 2px solid #666 !important;
-    color: #666 !important;
-    padding: 5px 4px !important;
+    border: 1px solid #000 !important;
+    color: #000 !important;
+    width: 20px;
+    height: 20px;
+    padding: 1px;
+    font-size: 12px;
+    line-height: 17px;
 }
 
 .page-item.active .page-link:hover {
-    background-color: #666 !important;
+    border-color: #204f92;
+    background-color: #204f92 !important;
     color: #fff !important;
 }
 
@@ -68,8 +81,7 @@
 }
 
 .manage-media-thumbnail {
-    margin-right: 80px !important;
-    border-radius: 0px !important;
+    margin-right: 10px !important;
 }
 
 #collection_resource_datatable th:after {
@@ -144,7 +156,12 @@ h5.MsoNormal span {
 
 .selectize-dropdown-content .badge-danger,
 .selectize-input .badge-danger {
-    background-color: #e26f2f;
+    background-color: #204f92;
+    padding: 2px 5px;
+    font-size: 12px;
+    position: relative;
+    left: 0px;
+    top: -1px;
 }
 
 .finish_editing {
@@ -191,6 +208,33 @@ h5.MsoNormal span {
     border-radius: 0;
 }
 
+.indexes_label,
+.transcripts_label {
+    font-size: 14px;
+    color: #00324B;
+    display: block;
+    margin-bottom: 0;
+}
+
+.file {
+    position: relative;
+    background: linear-gradient(to right, lightblue 50%, transparent 50%);
+    background-size: 200% 100%;
+    background-position: right bottom;
+    transition: all 1s ease;
+    margin-bottom: 10px;
+    padding: 5px;
+}
+
+.file .message {
+    text-align: right;
+}
+
+.import_csv_note {
+    list-style: disc;
+    margin: 0 20px;
+}
+
 .audio-player .video-js.vjs-audio .vjs-big-play-button {
     display: none;
 }
@@ -214,4 +258,9 @@ h5.MsoNormal span {
 
 .audio-player {
     margin-top: 21px;
+}
+
+.heading-holder .collection_resource_edit_title {
+    vertical-align: middle;
+    text-decoration: none;
 }

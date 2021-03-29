@@ -9,7 +9,7 @@
         </select>
       </div>
     </div>
-    <div class="col-md-3">
+    <div class="col-md-2">
       <div class="form-group">
         <select class="type_of_field_selector">
           <%- search_fields_for_advanced_search.each do |key, field_def| -%>
@@ -26,14 +26,14 @@
         <option value="simple"> Exact </option>
       </select>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-6 adjustable_area_advance_search">
       <div class="form-group">
         <input type="text" class="form-control search_field_selector <%= @view_type == 'clone_able' ? 'add_wanted_class' : '' %>" data_identifier="<%= (@view_type == 'clone_able' ? 'add_wanted_info' : '') %>"/>
-      </div>
-    </div>
-    <div class="col-md-1 remove_div_term">
-      <div class="form-group">
-        <a href="javascript://" class="btn remove_current_line <%= @view_type == 'clone_able' ? 'add_wanted_class' : '' %>" data_identifier="<%= (@view_type == 'clone_able' ? 'add_wanted_info' : '') %>"><i class="fa fa-times"></i></a>
+        <div class="remove_div_term">
+          <div class="form-group">
+            <a href="javascript://" class="btn remove_current_line <%= @view_type == 'clone_able' ? 'add_wanted_class' : '' %>" data_identifier="<%= (@view_type == 'clone_able' ? 'add_wanted_info' : '') %>"></a>
+          </div>
+        </div>
       </div>
     </div>
   </div>

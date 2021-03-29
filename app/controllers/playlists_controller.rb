@@ -9,7 +9,10 @@ class PlaylistsController < ApplicationController
 
   def index
     authorize! :manage, current_organization
-    @playlists = current_organization.playlists
+    respond_to do |format|
+      format.html
+      format.json { render json: PlaylistsDatatable.new(view_context, current_organization) }
+    end
   end
 
   def export

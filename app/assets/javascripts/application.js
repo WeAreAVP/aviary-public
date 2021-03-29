@@ -46,6 +46,8 @@ var player_widget = null;
 var playerSpecificTimePlay = 0;
 var activeCollapsedLayout = false;
 var reloadTime = 2 * 60 * 1000; // action * second * millisecond
+var lengthMenuValues = [[10, 25, 50, 100], [10, 25, 50, 100]];   // datatable row length values
+var pageLength = 25;
 Object.size = function (obj) {
     var size = 0, key;
     for (key in obj) {
@@ -369,7 +371,7 @@ function init_tinymce_for_element(selector, custom_config) {
 
 
 function selectizeInit(element){
-    return $(element).selectize({
+    return $(element).not('.dataTables_length select').selectize({
         openOnFocus: false,
         onInitialize: function () {
             var that = this;
@@ -444,7 +446,7 @@ function mobileLayoutEvents() {
 
 
 $(document).on('turbolinks:load', function () {
-    $('select').selectize();
+    $('select').not('.dataTables_length select').selectize();
     $(".transcript-dl").mCustomScrollbar();
 
 
@@ -514,14 +516,41 @@ function initToolTip(element){
 }
 
 $(function () {
+
     if ($('#sidebar-main').length == 0) {
         $(".main-content").removeClass('open');
     }
-    $('.search-nav .form-control').focus(function () {
+    $('.search-nav .form-control').click(function () {
         $('.buttons-search').show();
+        $(this).addClass("advanced-search-on");
+        $('.keyboard_virtual_custom').addClass('mt-30px');
+        $('.keyboard_virtual_custom').removeClass('mt-1');
     });
+
+    $(document).click(function (e) {
+        if (!$(e.target).hasClass('form-control')) {
+            $(".search-nav .form-control").removeClass("advanced-search-on");
+            $('.buttons-search').hide();
+        }
+    })
+
+
     $('.search-nav .form-control').blur(function () {
-        setTimeout("$('.buttons-search').hide();", 500);
+        setTimeout(function () {
+            let flagHide = true;
+            if ($('#transliteration').length > 0 && $('#transliteration').prop('checked')) {
+                flagHide = false;
+            }
+
+            if (flagHide) {
+                setTimeout(function () {
+                    $('.keyboard_virtual_custom').addClass('mt-1');
+                    $('.keyboard_virtual_custom').removeClass('mt-30px');
+                }, 500);
+            }
+
+        }, 500);
+
     });
 
 
@@ -548,7 +577,7 @@ $(function () {
     $('#signupmodal').on('shown.bs.modal', function () {
         $('#password_help').tooltip();
     });
-    $('select').selectize();
+    $('select').not('.dataTables_length select').selectize();
     $('.sign_up_link').click(function (e) {
         $('#signinmodal').modal('hide');
         $('#access_denied_popup').modal('hide');

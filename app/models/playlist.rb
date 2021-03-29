@@ -40,4 +40,30 @@ class Playlist < ApplicationRecord
       end
     end
   end
+
+  def self.fetch_list(page, per_page, query, organization_id, export = false)
+    playlists = Playlist.joins(%i[organization]) if organization_id.present?
+    playlists = playlists.where('playlists.organization_id = ? ', organization_id)
+    if query.present?
+      query = query.downcase.strip
+      # featured status search
+      status = true if 'yes'.include? query
+      status = false if 'no'.include? query
+      # public status search
+      access_public_status = 1 if 'yes'.include? query
+      access_public_status = 0 if 'no'.include? query
+      query_string_name = 'playlists.name LIKE (?)'
+      query_string_playlist_resources_count = query.is_i? ? 'playlists.playlist_resources_count = ? ' : ' "' + Time.now.to_i .to_s + '" = ? '
+      query_string_organizations = 'organizations.id =?'
+      playlists = if status.nil? && access_public_status.nil?
+                    playlists.where("(#{query_string_name} OR #{query_string_playlist_resources_count}) AND #{query_string_organizations}", "%#{query}%", query, organization_id)
+                  else
+                    playlists.where("(#{query_string_name} OR #{query_string_playlist_resources_count} OR playlists.is_featured =? OR playlists.access = ?) AND #{query_string_organizations}", "%#{query}%",
+                                    query, status, access_public_status, organization_id)
+                  end
+    end
+    count = playlists.size
+    playlists = playlists.limit(per_page).offset((page - 1) * per_page) unless export
+    [playlists, count]
+  end
 end

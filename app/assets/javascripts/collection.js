@@ -20,26 +20,35 @@ function Collection() {
         let dataTableElement = $('#collection_data_table');
         if (dataTableElement.length > 0) {
             this.dataTableObj = dataTableElement.DataTable({
+                searchDelay: 800,
                 responsive: true,
-                pageLength: 100,
+                processing: true,
+                serverSide: true,
+                pageLength: pageLength,
+                paging: true,
                 bInfo: true,
                 destroy: true,
-                bLengthChange: false,
                 scrollX: true,
                 scrollCollapse: false,
                 pagingType: 'simple_numbers',
-                'dom': "<'row'<'col-md-6'f><'col-md-6'p>>" +
+                'dom': "<'row'<'col-md-6 d-flex'f><'col-md-6'p>>" +
                     "<'row'<'col-md-12'tr>>" +
-                    "<'row'<'col-md-5'i><'col-md-7'p>>",
+                    "<'row'<'col-md-6'li><'col-md-6'p>>",
+                bLengthChange: true,
+                lengthMenu: lengthMenuValues,
                 language: {
                     info: 'Showing _START_ - _END_ of _TOTAL_',
                     infoFiltered: '',
                     zeroRecords: 'No Collection found.',
+                    lengthMenu: " _MENU_ "
                 },
                 columnDefs: [
                     {orderable: false, targets: -1}
                 ],
-                initComplete: function (settings) {
+                ajax: $("#collection_data_table").data("url"),
+                "initComplete": function() {
+                },
+                drawCallback: function (settings) {
                     initDeletePopup();
                     if (settings.aoData.length > 0) {
                         $('.export_btn').toggleClass('d-none');

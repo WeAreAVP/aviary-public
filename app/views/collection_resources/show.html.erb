@@ -15,15 +15,24 @@
   <% if (can? :manage, @collection_resource) || @collection_resource.can_edit %>
     <%= render 'indexes/upload_index' %>
     <%= render 'indexes/sort_index' %>
+
     <%= render 'transcripts/upload_transcript' %>
-    <%= render 'transcripts/sort_transcript' %>
+    <%= render 'transcripts/sort_transcript', title: 'Transcript', id: 'transcript_sort_popup', show_body: (@resource_file.present? && @resource_file.file_transcripts.present?), content_separator: 'transcript', url: transcript_sort_path(@resource_file.id) %>
+
+
+
+
+
   <% end %>
+
 <% end %>
-<% track_params = params.clone.except('controller').except('action').to_json %>
+<% track_params = tracker_params(params) %>
+
 <% can_access = permission_to_access_file?(@resource_file) %>
 <div id="dynamic_section"></div>
 <script type="text/javascript">
     var collectionResource = new CollectionResource();
+
     collectionResource.player_time = <%= params['t'].present? ? params['t'] : 0 %>;
     collectionResource.end_time = <%= params['e'].present? ? params['e'] : 0 %>;
     collectionResource.auto_play = <%= params['auto_play'].present? ? params['auto_play'].to_s.to_boolean? : 0 %>;
@@ -38,9 +47,7 @@
     var events_tracker = new EventsTracker(params);
     collectionResource.events_tracker = events_tracker;
     collectionResource.file_access = <%= can_access %>;
-
     <%= render partial: 'collection_resources/show/js_params_show' %>
-
     document.addEventListener("DOMContentLoaded", function () {
         setTimeout(function () {
             let params = {
@@ -51,6 +58,7 @@
                 user_type: '<%= role_type(current_user, current_organization) %>'
             };
             collectionResource.initializeDetail('<%= @session_video_text_all.present? ? @session_video_text_all.to_json.html_safe : '{}' %>', <%= @selected_index.present? ? @selected_index: 0 %>, <%= @selected_transcript.present? ? @selected_transcript : 0 %>, <%= params[:edit_description].present? ? params[:edit_description] : 0 %>, '<%= params[:embed] %>', <%= @resource_file.present? ? @resource_file.id : '0' %>, params);
+
         }, 500);
     });
     $(window).on('load', function () {
@@ -62,10 +70,8 @@
 
             <% if @resource_file.present? %>
             collectionResource.events_tracker.track_hit('collection_resource_file', '<%=  @resource_file.id %>');
-            $('#player').bind('playing', function () {
-                collectionResource.events_tracker.track_hit('collection_resource_file_play', '<%=  @resource_file.id %>');
-            });
             <% end %>
         }, 15000);
+
     });
 </script>

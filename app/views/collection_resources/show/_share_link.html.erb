@@ -1,42 +1,56 @@
 <% unless @resource_file.nil? %>
+  <% is_audio_only = false %>
+  <% present(@resource_file) do |presenter| %>
+    <% is_audio_only = @collection_resource.collection.is_audio_only if @collection_resource.present? && presenter.media_type.include?('audio') %>
+  <% end %>
+
   <% unless params[:embed] == 'true' %>
-    <div class="shareHolder">
-      <div class="btn-group">
-        <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          <i class="fa fa-ellipsis-v"></i>
-        </button>
-        <div class="dropdown-menu dropdown-menu-right">
-          <% can_access = permission_to_access_file?(@resource_file) %>
-          <% if can_access %>
-            <% if @resource_file.is_downloadable && @resource_file.embed_type.nil? && @resource_file.resource_file_file_name.present? %>
-              <form method="get" class="dropdown-item" action="<%= download_media_path(@resource_file.id) %>">
-                <button href="" class="btn" title="Download">
-                  <i class="material-icons">get_app</i> Download
-                </button>
-              </form>
-            <% end %>
-          <% end %>
-          <button type="button" class="dropdown-item btn share-btn" data-toggle="modal" data-target="#exampleModalCenter">
-            <i class="material-icons">reply</i> Share
+    <% share_btn_cls = is_audio_only ? '' : 'dropdown-item' %>
+    <div class="shareHolder <%= is_audio_only ? 'audioPlayer' : '' %>">
+      <% unless is_audio_only %>
+        <div class="btn-group">
+          <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="fa fa-ellipsis-v"></i>
           </button>
-          <% if current_user_is_current_org_user? %>
-            <input type="hidden" id="type_of_playlist_view" value="add_to_playlist_view">
-            <button type="button" class="dropdown-item btn playlist-btn" data-toggle="modal" data-target="#playlistModalCenter">
-              <i class="material-icons">playlist_add</i> Playlist
+          <div class="dropdown-menu dropdown-menu-right">
+      <% end %>
+
+      <% can_access = permission_to_access_file?(@resource_file) %>
+      <% if can_access %>
+        <% if @resource_file.is_downloadable && @resource_file.embed_type.nil? && @resource_file.resource_file_file_name.present? %>
+          <form method="get" class="<%= share_btn_cls %>" action="<%= download_media_path(@resource_file.id) %>">
+            <button href="" class="btn" title="Download">
+              <i class="material-icons">get_app</i> Download
             </button>
-          <% elsif @collection_resource.playlist_resources.present? %>
-            <input type="hidden" id="type_of_playlist_view" value="only_playlist_view">
-            <button type="button" class="badge font-weight-bold" data-toggle="modal" data-target="#resourcePlaylistModel">
-              Playlist
-            </button>
-          <% end %>
+          </form>
+        <% end %>
+      <% end %>
+      <button type="button" class="<%= share_btn_cls %> btn share-btn" data-toggle="modal" data-target="#exampleModalCenter">
+        <i class="material-icons">reply</i> Share
+      </button>
+      <% if current_user_is_current_org_user? %>
+        <input type="hidden" id="type_of_playlist_view" value="add_to_playlist_view">
+        <button type="button" class="<%= share_btn_cls %> btn playlist-btn" data-toggle="modal" data-target="#playlistModalCenter">
+          <i class="material-icons">playlist_add</i> Playlist
+        </button>
+      <% elsif @collection_resource.playlist_resources.present? %>
+        <input type="hidden" id="type_of_playlist_view" value="only_playlist_view">
+        <button type="button" class="<%= share_btn_cls %> btn playlist-btn" data-toggle="modal" data-target="#resourcePlaylistModel">
+          <i class="fa fa-th-list playlist_added"></i> Playlist
+        </button>
+      <% end %>
+      <% unless is_audio_only %>
+        <a href="<%= iiif_manifest_url(@collection_resource.noid) %>" target="_blank">
+          <i class="icon-manifest"></i> Manifest
+        </a>
         </div>
-      </div>
+        </div>
+      <% end %>
     </div>
 
     <!-- Modal -->
     <div class="shareModal modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-      <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+      <div class="modal-dialog modal-xl " role="document">
         <div class="modal-content">
           <div class="modal-body">
             <ul class="nav nav-tabs" id="myTab" role="tablist">
@@ -61,7 +75,7 @@
                   </a>
                 </li>
               <% end %>
-              <% if current_user_is_org_owner_or_admin? %>
+              <% if current_user_is_org_user?(current_organization) %>
                 <li class="nav-item">
                   <a class="nav-link share_tabs" id="public_access_url-tab" data-toggle="tab" data-tabname="public_access_url_custom" href="#public_access" role="tab" aria-controls="public_access" aria-selected="false">Public
                     Access URL</a>
@@ -69,55 +83,60 @@
               <% end %>
             </ul>
             <% outer_div_style, common_style = iframe_responsive_design %>
-            <div class="tab-content" id="myTabContent">
+            <div class="tab-content custom_form" id="myTabContent">
               <div class="tab-pane fade show active share_link_custom" id="home" role="tabpanel" aria-labelledby="home-tab">
                 <div class="content">
-                  <div class="shareLink">
-                    <input title="Resource Share URL" readonly id="share_link" type="text" class="form-control share_value" value="<%= noid_url(noid: @collection_resource.noid, host: Utilities::AviaryDomainHandler.subdomain_handler(@collection_resource.collection.organization)) %>"/>
-                    <button class="btn btn-default btn-block copy-link" data-clipboard-action="copy" data-clipboard-target="#share_link">Copy
+                  <div class="shareLink form-group">
+                    <div class="field-title"><label>Share Link</label></div>
+                    <input title="Resource Share URL" readonly id="share_link" type="text" class="form-control share_value mb-3" value="<%= noid_url(noid: @collection_resource.noid, host: Utilities::AviaryDomainHandler.subdomain_handler(@collection_resource.collection.organization)) %>"/>
+                    <button class="btn btn-primary btn-block copy-link" data-clipboard-action="copy" data-clipboard-target="#share_link">Copy
                     </button>
                   </div>
                 </div>
               </div>
               <div class="tab-pane fade embed_video_custom" id="profile" role="tabpanel" aria-labelledby="profile-tab">
                 <div class="content">
-                  <div class="embedLink ">
+                  <div class="embedLink form-group">
+                    <div class="field-title"><label>Embed Media File Link</label></div>
                     <textarea readonly class="form-control mb-3 share_value" id="embed_file_url" placeholder="Embed Video"><div style="padding:56.25% 0 0 0;position:relative;overflow: hidden;width: 100%;"> <iframe <%= common_style %> src="<%= embeded_url(embed_file_url(@collection_resource), 'embed', @resource_file.id) %>" frameborder="0"></iframe></div></textarea>
                     <% unless @resource_file.access == 'yes' %>
                       <span class="text-info">This media file is currently private. Accessibility via embed links will be limited to users signed into Aviary as registered users who also have been granted access to the resource.</span>
                     <% end %>
-                    <button class="btn btn-default btn-block copy-link" data-clipboard-action="copy" data-clipboard-target="#embed_file_url" data-original-title="" title="">Copy
+                    <button class="btn btn-primary btn-block copy-link" data-clipboard-action="copy" data-clipboard-target="#embed_file_url" data-original-title="" title="">Copy
                     </button>
                   </div>
                 </div>
               </div>
+
               <div class="tab-pane fade embed_resource_custom" id="contact" role="tabpanel" aria-labelledby="contact-tab">
                 <div class="content">
-                  <div class="embedLink">
-                    <textarea readonly class="form-control mb-3 share_value" id="embed_resource_media_player" placeholder="Embed Resource Media Player"><div style="padding: 75% 0 0 0;position: relative;;overflow: hidden;width: 100%;"> <iframe  <%= common_style %>  src="<%= embeded_url(collection_resource_url(@collection_resource), 'media_player', @resource_file.id) %>" frameborder="0"></iframe></div></textarea>
+                  <div class="embedLink form-group">
+                    <div class="field-title"><label>Embed Resource URL Link</label></div>
+                    <textarea readonly class="form-control mb-3 share_value" id="embed_resource_url" placeholder="Embed Resource"><div <%= outer_div_style %> ><iframe  <%= common_style %> src="<%= embeded_url(collection_resource_url(@collection_resource), nil, @resource_file.id) %>" frameborder="0" allow="fullscreen"></iframe></div></textarea>
                     <% unless @collection_resource.access == :access_public.to_s && @collection_resource.collection.is_public %>
                       <span class="text-info">This resource is currently private. Accessibility via embed links will be limited to users signed into Aviary as registered users who also have been granted access to the resource.</span>
                     <% end %>
-                    <button class="btn btn-default btn-block copy-link" data-clipboard-action="copy" data-clipboard-target="#embed_resource_url" data-original-title="" title="">Copy
+                    <button class="btn btn-primary btn-block copy-link" data-clipboard-action="copy" data-clipboard-target="#embed_resource_url" data-original-title="" title="">Copy
                     </button>
                   </div>
                 </div>
               </div>
               <div class="tab-pane fade embed_resource_media_player" id="media_player" role="tabpanel" aria-labelledby="media_player-tab">
                 <div class="content">
-                  <div class="embedLink">
-                    <textarea readonly class="form-control mb-3 share_value" id="embed_resource_media_player" placeholder="Embed Resource Media Player"><div <%= outer_div_style %>> <iframe  <%= common_style %>  src="<%= embeded_url(collection_resource_url(@collection_resource), 'media_player', @resource_file.id) %>"></iframe></div></textarea>
+                  <div class="embedLink form-group">
+                    <div class="field-title"><label>Embed Resource Media Player Link</label></div>
+                    <textarea readonly class="form-control mb-3 share_value" id="embed_resource_media_player" placeholder="Embed Resource Media Player"><div style="padding: 75% 0 0 0;position: relative;;overflow: hidden;width: 100%;"> <iframe  <%= common_style %>  src="<%= embeded_url(collection_resource_url(@collection_resource), 'media_player', @resource_file.id) %>" frameborder="0"></iframe></div></textarea>
                     <% unless @collection_resource.access == :access_public.to_s && @collection_resource.collection.is_public %>
                       <span class="text-info">This resource is currently private. Accessibility via embed links will be limited to users signed into Aviary as registered users who also have been granted access to the resource.</span>
                     <% end %>
-                    <button class="btn btn-default btn-block copy-link" data-clipboard-action="copy" data-clipboard-target="#embed_resource_media_player" data-original-title="" title="">Copy
+                    <button class="btn btn-primary btn-block copy-link" data-clipboard-action="copy" data-clipboard-target="#embed_resource_media_player" data-original-title="" title="">Copy
                     </button>
                   </div>
                 </div>
               </div>
               <div class="tab-pane fade public_access_url_custom" id="public_access" role="tabpanel" aria-labelledby="public_access_url-tab">
                 <div class="content">
-                  <%= render partial: 'public_access_urls/public_access_form', locals: {collection_resource: @collection_resource, type: 'both'} %>
+                  <%= render partial: 'public_access_urls/public_access_form', locals: { collection_resource: @collection_resource, type: 'both' } %>
                 </div>
               </div>
               <%= render 'collection_resources/show/share_media_time' %>
@@ -126,7 +145,6 @@
         </div>
       </div>
     </div>
-
     <div class="resource_playlists_container" data-url="<%= listing_for_add_to_playlist_path %>" data-listonly="true" data-organizationid="<%= @collection_resource.collection.organization.id %>" data-resourceid="<%= @collection_resource.id %>">
       <div class="shareModal modal fade" id="resourcePlaylistModel" tabindex="-1" role="dialog" aria-labelledby="resourcePlaylistModelCenterTitle" aria-hidden="true">
         <div class="modal-dialog modal-md  modal-dialog-centered" role="document">

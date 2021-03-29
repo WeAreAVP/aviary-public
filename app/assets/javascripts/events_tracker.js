@@ -65,7 +65,7 @@ function EventsTracker(track_params) {
         let target_id = target_id_raw.toString();
         let current_params = that.track_params;
         current_params.target_id = target_id;
-        if ($.inArray(target_id, that.views_track[type]) == -1 || this.rules_tracking_log[type]['can_repeat'] == true || by_pass_and_record == true) {
+        if (typeof type != 'undefined' && ($.inArray(target_id, that.views_track[type]) == -1 || this.rules_tracking_log[type]['can_repeat'] == true || by_pass_and_record == true)) {
             ahoy.track(type, current_params);
             if (typeof that.views_track[type] == 'undefined')
                 that.views_track[type] = [];

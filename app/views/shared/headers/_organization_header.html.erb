@@ -1,21 +1,3 @@
-<% unless current_theme.nil? %>
-  <style>
-    .parentLink {
-    <%= header_font_family %>;
-    <%= header_font_color %>;
-    }
-
-    .parentLink:before {
-    <%= header_font_color_before %>
-    }
-
-    #header {
-    <%= header_bg_style %>
-    }
-
-    <%== fetch_custom_css %>
-  </style>
-<% end %>
 <header id="header">
   <div class="container-fluid">
     <nav class="navbar navbar-expand-sm navbar-light bg-light">
@@ -61,4 +43,3 @@
   <%= render 'shared/user_registration_popup' %>
   <%= render 'shared/forgot_password' %>
 <% end %>
-

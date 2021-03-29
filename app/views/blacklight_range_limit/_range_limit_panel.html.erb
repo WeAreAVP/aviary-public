@@ -83,7 +83,7 @@
       <% end %>
 
       <% if (min = range_results_endpoint(solr_field, :min)) &&
-          (max = range_results_endpoint(solr_field, :max)) %>
+        (max = range_results_endpoint(solr_field, :max)) %>
         <% unless is_date_field %>
           <p class="range subsection <%= "slider_js" unless field_config[:slider_js] == false %>">
             Current results range from <span class="min"><%= range_results_endpoint(solr_field, :min) %></span> to

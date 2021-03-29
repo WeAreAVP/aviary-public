@@ -142,8 +142,8 @@
   .search-details .details > li,
   .search-details .details.list-view li {
     width: 50%;
+    background-color: transparent;
   }
-
   .search-details .details .text-holder .list b {
     float: left;
   }
@@ -273,10 +273,10 @@
   }
 }
 
- /* Changes breakpoint for sub nav wrapping to 800px */
+/* Changes breakpoint for sub nav wrapping to 800px */
 @media screen and (min-width: 800px) {
   #header .navbar .navbar-nav {
-      width: unset !important;
+    width: unset !important;
   }
 }
 
@@ -462,9 +462,11 @@
   #homepage-header .btn-default {
     font-size: 14px !important;
   }
+
   #navbarTogglerDemo03 .nav-item:first-child {
     padding-left: 0 !important;
   }
+
   #content .org-visual {
     margin-bottom: 35px;
   }

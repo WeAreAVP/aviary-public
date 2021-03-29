@@ -7,14 +7,14 @@
             <div class="col-md-6"><h1>Playlists</h1></div>
             <div class="col-md-6">
               <%= link_to 'Add Playlist', new_playlist_path, class: 'btn btn-primary btn-xs pull-right' %>
-              <%= link_to 'Export to CSV', playlist_export_path, class: 'btn btn-primary btn-xs pull-right mr-1' %>
+              <%= link_to 'Export to CSV', playlist_export_path, class: 'btn btn-outline-primary btn-xs pull-right mr-2' %>
             </div>
           </div>
         </div>
       </div>
-      <div class="data-table">
+      <div class="data-table playlists-datatable">
         <div>
-          <table class="table table-striped table-bordered" id="playlist_data_table">
+          <%= content_tag :table, role: :datatable, class: ["table", "table-striped", 'table-bordered'], id: 'playlist_data_table', data: { url: playlists_path(format: :json)} do %>
             <thead>
             <tr>
               <th>Name</th>
@@ -25,23 +25,8 @@
             </tr>
             </thead>
             <tbody>
-            <% if @playlists.present?
-                 @playlists.each do |list| %>
-                <tr>
-                  <td><%= list.name %></td>
-                  <td><%= list.playlist_resources_count %></td>
-                  <td><%= list.is_featured? ? 'Yes' : 'No' %></td>
-                  <td><%= list.public? ? 'Yes' : 'No' %></td>
-                  <td>
-                    &nbsp;<%= link_to 'View', playlist_show_path(list), class: 'btn-sm btn-default' %>
-                    &nbsp;<%= link_to 'Edit', playlist_edit_path(list), class: 'btn-sm btn-success' %>&nbsp;
-                    <%= link_to 'Delete', 'javascript://', class: 'btn-sm btn-danger playlist_delete', data: { url: playlist_path(list), name: list.name } %>&nbsp;
-                  </td>
-                </tr>
-              <% end %>
-            <% end %>
             </tbody>
-          </table>
+          <% end %>
         </div>
       </div>
     </main>

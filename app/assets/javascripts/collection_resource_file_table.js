@@ -68,7 +68,7 @@ function CollectionResourceFileTable() {
                 responsive: true,
                 processing: true,
                 serverSide: true,
-                pageLength: 100,
+                pageLength: pageLength,
                 scrollX: true,
                 scrollCollapse: false,
                 paging: true,
@@ -79,14 +79,16 @@ function CollectionResourceFileTable() {
                 destroy: true,
                 bInfo: true,
                 pagingType: 'simple_numbers',
-                'dom': "<'row'<'col-md-6'f><'col-md-6'p>>" +
+                'dom': "<'row'<'col-md-6 d-flex'f><'col-md-6'p>>" +
                     "<'row'<'col-md-12'tr>>" +
-                    "<'row'<'col-md-5'i><'col-md-7'p>>",
-                bLengthChange: false,
+                    "<'row'<'col-md-6'li><'col-md-6'p>>",
+                bLengthChange: true,
+                lengthMenu: lengthMenuValues,
                 language: {
                     info: 'Showing _START_ - _END_ of _TOTAL_',
                     infoFiltered: '',
                     zeroRecords: 'No Resource found.',
+                    lengthMenu: " _MENU_ "
                 },
                 order: [[ 1, 'asc' ]],
                 columnDefs: [

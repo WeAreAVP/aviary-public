@@ -40,7 +40,7 @@
                   <%= render partial: 'shared/over_layer_loader' %>
                   <% class_raw = '_description' %>
                   <% class_raw = '_other' unless type == 'description' %>
-                  <% if count_for_keyword > 0 && type == 'description'%>
+                  <% if count_for_keyword > 0  && type == 'description'%>
                     <button class='back_button back_button<%=class_raw %> <%= type %> <%= index %> cursor_not-allowed' data-search="prev" data-identifire="<%= index %>">
                       <i class="fa fa-angle-left" aria-hidden="true"></i></button>
                     <span class="badge badge-pill badge-danger <%= index %>"> <div class="current_location d-inline">0</div>/<div class="<%=type %> total_count d-inline <%= index %>"><%= count_for_keyword %></div></span>

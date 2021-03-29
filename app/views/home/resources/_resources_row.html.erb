@@ -1,0 +1,40 @@
+<% file = resource.collection_resource_files.order_file.first %>
+<% can_access = (can? :read, resource) || resource.can_view || resource.can_edit || (can? :edit, resource.collection.organization) %>
+<% resource_url = collection_collection_resource_details_url(resource.collection, resource, host: Utilities::AviaryDomainHandler.subdomain_handler(resource.collection.organization)) %>
+<div class="single_resource_card col-lg-4 col-md-6 col-sm-6 col-xs-12">
+  <% unless can_access %>
+    <% resource_url = 'javascript://' %>
+    <div class="access_hold feat-reso-locked">
+      <div class="holder">
+        <div class="box">
+          <span class="ico"><img src="https://<%= ENV['S3_HOST_CDN'] %>/public/lock.png" alt=""></span>
+
+
+          <div class="access_request_text_custom text-white">You don't have access.</div>
+
+        </div>
+      </div>
+    </div>
+  <% end %>
+  <div class="box <%= 'featured' if featured %>">
+    <%= link_to resource_url, target: "_blank" do %>
+      <div class="image" style="background: url(<%= file.present? && file.thumbnail_image.present? ? file.thumbnail_image : '' %>); background-size:cover;background-position: center;min-height: 120px;">
+      </div>
+
+      <div class="collection-details">
+        <h4 class="reso-title"><%= resource.title %></h4>
+        <time><%= !resource.custom_field_value('duration').blank? ? time_to_duration(resource.custom_field_value('duration').first['value']) : '00:00:00' %></time>
+      </div>
+
+      <div class="collection-bottom-details">
+        <div class="img-hold">
+          <%= image_tag(resource.collection.organization.favicon.present? ? resource.collection.organization.favicon(:small) : resource.collection.organization.logo_image(:medium), alt: resource.collection.organization.name) %>
+        </div>
+        <div class="text-hold">
+          <div class="collection-name"><%= resource.collection.title %></div>
+          <div class="organization-name"><%= resource.collection.organization.name %></div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
