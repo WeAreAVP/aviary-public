@@ -184,15 +184,6 @@
         padding: 20px !important;
     }
 
-    .col-md-9.search-main {
-        max-width: 100% !important;
-        flex: none !important;
-        padding-top: 20px;
-    }
-
-    .headline-panel h2 {
-        font-size: 30px;
-    }
 
     .headline-panel .pagination {
         padding: 0;
@@ -352,6 +343,7 @@
 
     .headline-panel h2 {
         text-align: center;
+        font-size: 22px;
     }
 
     .sort-hold {
@@ -369,10 +361,6 @@
         display: block;
         float: none;
         text-align: center;
-    }
-
-    .headline-panel h2 {
-        font-size: 22px;
     }
 
     .search-refine {
@@ -394,6 +382,7 @@
 
     .headline-panel h2 {
         text-align: center;
+        font-size: 22px;
     }
 
     .sort-hold {
@@ -413,9 +402,6 @@
         text-align: center;
     }
 
-    .headline-panel h2 {
-        font-size: 22px;
-    }
 
     .search-refine {
         font-size: 16px;
