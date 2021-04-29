@@ -1,10 +1,10 @@
 <% if featured_resources.present? %>
   <% from_lazy_load = false unless from_lazy_load.present? %>
   <% unless from_lazy_load %>
-    <div class="home-featured-resources row">
+    <div class="home-featured-resources row" id="landing-main">
   <% end %>
   <% featured_resources.each do |collection_resource| %>
-    <%= render partial: 'home/home_single_resource_view', locals: { collection_resource: collection_resource } %>
+    <%= render partial: 'home/resources/resources_row', locals: { resource: collection_resource, featured: collection_resource.is_featured } %>
   <% end %>
   <% unless from_lazy_load %>
     </div>
@@ -14,20 +14,20 @@
 <% if collection_wise_resources.present? %>
   <div class="collection_wise_resources">
     <% collection_wise_resources.each do |collection_resource| %>
-     <% if collection_resource.collection_resources.size > 0 %>
-      <div id="collection_resource<%= collection_resource[:id] %>" data-id="<%= collection_resource[:id] %>" data-path="<%= get_collectionwise_resources_path(collection_resource[:id]) %>">
-        <% if collection_resource[:resources].present? %>
-          <div class="head"><h3>
-            <a href="<%= collection_path(collection_resource[:id]) %>" style="color: #333;" target="_blank"><%= collection_resource[:title] %></a>
-          </h3></div>
-          <div class="row">
-            <% collection_resource[:resources].each do |collection_resource| %>
-              <%= render partial: 'home/home_single_resource_view', locals: { collection_resource: collection_resource } %>
-            <% end %>
-          </div>
-        <% end %>
-      </div>
-    <% end %>
+      <% if collection_resource.collection_resources.size > 0 %>
+        <div id="collection_resource<%= collection_resource[:id] %>" data-id="<%= collection_resource[:id] %>" data-path="<%= get_collectionwise_resources_path(collection_resource[:id]) %>">
+          <% if collection_resource[:resources].present? %>
+            <div class="head"><h3>
+              <a href="<%= collection_path(collection_resource[:id]) %>" style="color: #333;" target="_blank"><%= collection_resource[:title] %></a>
+            </h3></div>
+            <div class="row">
+              <% collection_resource[:resources].each do |collection_resource| %>
+                <%= render partial: 'home/resources/resources_row', locals: { resource: collection_resource, featured: collection_resource.is_featured } %>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
     <% end %>
   </div>
 <% end %>

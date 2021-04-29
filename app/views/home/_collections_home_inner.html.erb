@@ -1,7 +1,7 @@
 <% if featured_collections.present? %>
   <div class="home-featured-collections row">
     <% featured_collections.includes([:organization]).each do |collection| %>
-      <div class="col-md-3">
+      <div class="col-lg-4 col-md-6 col-sm-6 col-xs-12">
         <div class="box <%= 'featured' if collection.is_featured %>">
 
           <%= link_to collection_url(collection, host: Utilities::AviaryDomainHandler.subdomain_handler(collection.organization)) do %>
@@ -21,10 +21,10 @@
                 <% end %>
                 <span class="description_collection">
                     <%= strip_tags(collection.about) %></span>
-                <a data-toggle="modal" class='show_hide_description' data-type="Search Collection" data-id="description_<%= collection.id %>" data-collection-img='<%= url_image(collection.collection_card_image) %>'
+                <a data-toggle="modal" class='show_hide_description info-btn' data-type="Search Collection" data-id="description_<%= collection.id %>" data-collection-img='<%= url_image(collection.collection_card_image) %>'
                    data-collection-title="<%= collection.title %>" data-org-logo="<%= collection.organization.logo_image.url(:medium) %>" data-collection-path="<%= collection_path(collection) %>" data-org-title="<%= collection.organization.name %>"
                    data-collection-search="<%= search_catalog_path({ f: { collection_id_is: [collection.id] }, indexes: [], keywords: [], op: [], resource_description: [], search_field: 'advanced', search_type: 'simple', title_text: '', transcript: [], type_of_search: ['simple'] }) %>">
-                  <i class="fa fa-info-circle"></i></a>
+                </a>
 
                 <div class="description description_<%= collection.id %> d-none">
                   <ul>

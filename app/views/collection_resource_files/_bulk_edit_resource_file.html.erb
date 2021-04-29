@@ -9,7 +9,7 @@
       <div class="modal-body">
         <h1 class="alert-danger font-size-21px text-center mb-20px p-2 "> Are you sure you want to
           <span id="confirm_msg_pop_bulk">apply changes to the media files listed below</span>? </h1>
-        <table class="table table-striped review_resources_file_bulk table-sm " style="width: 100%;">
+        <table class="table table-hover review_resources_file_bulk table-sm " style="width: 100%;">
           <thead>
           <tr>
             <td class="font-weight-bold"> ID</td>
@@ -18,7 +18,7 @@
           </tr>
           </thead>
           <tbody class="bulk-edit-review-content-resource-file">
-            
+
           </tbody>
         </table>
         <input id="token" name="token" type="hidden" value="" />
@@ -59,7 +59,7 @@
               <div class="bulk_delete_content operation_content d-none">
                 <h1 class="font-size-18px text-left"> Delete selected resources</h1>
               </div>
-              
+
               <div class="change_status_content operation_content">
                 <h1 class="font-size-18px text-left"> Change the access status of <span id="typeofchildaction"></span>
                   of selected media files </h1>
@@ -81,16 +81,16 @@
                 </select>
                 <br/>
                 <div id="downloadable_duration" class="">
-                <label class="font-weight-bold text-left d-block mb-1">(Optional) Set a duration to assign to the downloadable status</label>
-                <select name="download_enabled_for" class="change_download_enabled_for">
-                  <option value=""></option>
-                  <option value="hour">Hours</option>
-                  <option value="day">Days</option>
-                  <option value="date">Date</option>
-                </select>
-                <input type="text" class="set_downloadable_duration form-control" name="downloadable_duration">
-                <br/>
-                <small class="form-text text-muted">Enable download media file for hours/days or until a specified date.</small>
+                  <label class="font-weight-bold text-left d-block mb-1">(Optional) Set a duration to assign to the downloadable status</label>
+                  <select name="download_enabled_for" class="change_download_enabled_for">
+                    <option value=""></option>
+                    <option value="hour">Hours</option>
+                    <option value="day">Days</option>
+                    <option value="date">Date</option>
+                  </select>
+                  <input type="text" class="set_downloadable_duration form-control" name="downloadable_duration">
+                  <br/>
+                  <small class="form-text text-muted">Enable download media file for hours/days or until a specified date.</small>
                 </div>
               </div>
             </div>

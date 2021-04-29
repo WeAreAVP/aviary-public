@@ -1,5 +1,5 @@
 <%= simple_form_for @playlist, :url => @playlist.new_record? ? playlists_path : playlist_path(@playlist), html: { novalidate: true } do |pl| %>
-  <div class="row">
+  <div class="row display-images border-0 py-0 px-3 my-0">
     <div class="col-md-6">
       <div class="form-group">
         <div class="field-title">
@@ -9,10 +9,10 @@
           <div class="holder">
             <img id="banner" src="<%= @playlist.new_record? ? '#' : (image_url @playlist.thumbnail) %>" alt="">
           </div>
-        </div>
-        <div class="file-upload">
-          <%= pl.label @playlist.new_record? ? 'Add Image' : 'Upload new image', for: 'playlist_thumbnail', style: 'width: 100%;' %>
-          <%= pl.input :thumbnail, as: :file, error: false, label: false, input_html: { onchange: "readURL(this, 'banner');", accept: 'image/*' } %>
+          <div class="file-upload">
+            <%= pl.label @playlist.new_record? ? 'Add Image' : 'Upload new image', for: 'playlist_thumbnail' %>
+            <%= pl.input :thumbnail, as: :file, error: false, label: false, input_html: { onchange: "readURL(this, 'banner');", accept: 'image/*' } %>
+          </div>
         </div>
         <%= pl.error :thumbnail %>
       </div>
@@ -20,11 +20,10 @@
   </div>
 
   <div class='row'>
-    <div class="col-md-12">
+    <div class="col-md-6">
       <div class="form-group">
         <div class="field-title">
-          <label for="playlist-name">Playlist Name</label>
-          <small class="form-text">What is your playlist's name?</small>
+          <label for="playlist-name">Playlist Name <button type="button" class="info-btn" data-content="What is your playlist's name?"></button></label>
         </div>
         <%= pl.input :name, label: false, input_html: { class: 'form-control playlist-name-field' } %>
       </div>
@@ -35,9 +34,7 @@
     <div class="col-md-12">
       <div class="form-group">
         <div class="field-title">
-          <label for="playlist_about">About Your Playlist</label>
-          <small class="form-text">Tell users about your playlist.
-          </small>
+          <label for="playlist_about">About Your Playlist <button type="button" class="info-btn" data-content="Tell users about your playlist."></button></label>
         </div>
         <%= pl.input :description, label: false, input_html: { class: 'form-control' } %>
       </div>
@@ -66,13 +63,12 @@
 
   <div class='row'>
     <div class='col-md-6'>
-      <div class='form-group'>
-        <label class="col-form-label"><strong><%= pl.input_field :is_audio_only, as: :boolean %>
-        Render Media Player as Audio Player for Audio Files </strong></label>
+      <div class='form-check'>
+        <%= pl.input :is_audio_only, as: :boolean, label: "Render Media Player as Audio Player for Audio Files" %>
       </div>
     </div>
   </div>
- 
+
   <div class="row">
     <div class="col-md-12 text-right">
       <%= pl.submit @playlist.new_record? ? 'Save' : 'Update', class: 'btn btn-primary' %>
@@ -84,5 +80,26 @@
     var playlist = new Playlist();
     document.addEventListener("DOMContentLoaded", function (event) {
         playlist.initialize();
+    });
+    $(function(e) {
+        e.preventDefault;
+
+        $('.info-btn').popover({
+            html: true,
+            trigger: "click",
+            placement: "top"
+        });
+
+        $(document).on('click', function(e) {
+            $('.info-btn').each(function() {
+                if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0) {
+                    $(this).popover('hide');
+                }
+            });
+        });
+
+        $(document).ready(function(){
+            $('.form-check label').append('<span class="icon-check"></span>')
+        })
     });
 </script>

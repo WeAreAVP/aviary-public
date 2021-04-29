@@ -1,29 +1,31 @@
+$themeColor: #204f92;
 $tabsColor: #336075;
 $tabsBorder: 1px solid #CCD7DD;
 $tabsTextColor: #003853;
 
 @mixin tabsColors {
-    border: $tabsBorder;
+  border: $tabsBorder;
 }
 
 @mixin tabsText {
-    font-weight: 500;
-    font-family: "Roboto";
-    color: $tabsTextColor;
+  font-weight: 500;
+  font-family: "Roboto";
+  color: $tabsTextColor;
 }
 
 @mixin tabsGeneral {
-    border-radius: 0;
+  border-radius: 0;
 }
 
 @mixin activeTab {
-    background: $tabsColor;
-    color: #fff;
-    border: $tabsBorder;
+  background: #fff;
+  color: #000;
+  border: none;
+  border-bottom: 2px solid #000;
 }
 
 @mixin tabsAll {
-    @include tabsColors;
-    @include tabsText;
-    @include tabsGeneral;
+  @include tabsColors;
+  @include tabsText;
+  @include tabsGeneral;
 }

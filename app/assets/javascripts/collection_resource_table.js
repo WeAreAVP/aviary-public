@@ -21,7 +21,6 @@ function CollectionResourceTable() {
         that.resource_table_column_detail = resource_table_column_detail;
         that.resource_list_bulk_edit = resource_list_bulk_edit;
         that.resource_bulk_edit = new ResourceBulkEdit(that.resource_list_bulk_edit);
-
         initDataTable();
         $('.manage-resource-columns-btn').on('click', function () {
             $('#manage_resource_columns_modal').modal();
@@ -49,7 +48,56 @@ function CollectionResourceTable() {
         $('.check_all_fields, .uncheck_all_fields').on('click', function () {
             $('.' + $(this).data('search-field')).prop('checked', $(this).data('search-status'));
         });
+        importCsvFile();
+    };
+    const importCsvFile = function () {
+        $('#import_csv_file').fileupload({
+            url: $('#import_csv_file').data('url'),
+            type: 'POST',
+            dataType: 'json',
+            autoUpload: false,
+            add: function (e, data) {
 
+                $.each(data.files, function (index, file) {
+                    if (file.type != 'text/csv' && file.type != 'application/vnd.ms-excel') {
+                        jsMessages('danger', 'Only CSV file allowed.');
+                        return false;
+                    } else {
+                        $("#import_file_name").html("Selected File: " + file.name + "<br/>");
+                        $('.import-csv-file-section').hide();
+                        $('.import_csv_note').hide();
+                        $('.import-file-confirmation').show();
+                        $('#import_csv_btn').text('Yes');
+                        $('.close-import-popup').removeAttr('data-dismiss').text('No');
+                        $('#import_csv_btn').unbind("click").bind("click", function () {
+                            $(this).prop("disabled", true);
+                            data.submit();
+                            $(this).html("Processing...");
+                        });
+                    }
+                });
+
+            },
+            progressall: function (e, data) {
+                var progress = parseInt(data.loaded / data.total * 100, 10);
+                $('#progress .progress-bar').css(
+                    "width",
+                    progress + "%"
+                );
+            },
+            done: function (e, data) {
+                let response = data.response().result;
+                if (response.error) {
+                    jsMessages('danger', result.message);
+                    $('#import_csv_btn').prop("disabled", false);
+                    $('#import_csv_btn').html("Import");
+                } else {
+                    jsMessages('success', 'CSV imported successfully.');
+                    setTimeout('window.location.reload();', 5000);
+                }
+
+            }
+        });
     };
     this.handlecallback = function (response, container, requestData) {
         try {
@@ -58,29 +106,37 @@ function CollectionResourceTable() {
             console.log(err);
         }
     };
-    this.outSourceDataTable = function (called_from, caller) {
-        initDataTable(called_from, caller);
+    this.outSourceDataTable = function (called_from, caller, additionalData, tableName = 'collection_resource_datatable') {
+        initDataTable(called_from, caller, additionalData, tableName);
     };
-    const initDataTable = function (called_from, caller) {
+
+    const initDataTable = function (called_from, caller, additionalData, tableName) {
         if (!called_from && typeof called_from == 'undefined') {
             called_from = '';
+        }
+        if (!additionalData && typeof additionalData == 'undefined') {
+            additionalData = {};
+        }
+
+        if (!tableName && typeof tableName == 'undefined') {
+            tableName = 'collection_resource_datatable';
         }
         let rightColumns = 1;
 
         let resource_table_column_detail = JSON.parse(that.resource_table_column_detail);
-        let dataTableElement = $('#collection_resource_datatable');
+        let dataTableElement = $('#' + tableName);
+
         let ajax_url = dataTableElement.data('url');
         let sorters = [
             {orderable: false, targets: -1}, {orderable: false, targets: 0}
         ];
-
 
         if (dataTableElement.length > 0) {
             that.dataTableObj = dataTableElement.DataTable({
                 responsive: true,
                 processing: true,
                 serverSide: true,
-                pageLength: 100,
+                pageLength: pageLength,
                 scrollX: true,
                 scrollCollapse: false,
                 paging: true,
@@ -88,18 +144,20 @@ function CollectionResourceTable() {
                     leftColumns: resource_table_column_detail.number_of_column_fixed > 0 ? parseInt(resource_table_column_detail.number_of_column_fixed, 10) + 1 : 0,
                     rightColumns: rightColumns
                 },
-                order: [[ 1, 'asc' ]],
+                order: [[1, 'asc']],
                 destroy: true,
                 bInfo: true,
                 pagingType: 'simple_numbers',
-                'dom': "<'row'<'col-md-6'f><'col-md-6'p>>" +
+                'dom': "<'row'<'col-md-6 d-flex resource-table-length-menu'f><'col-md-6'p>>" +
                     "<'row'<'col-md-12'tr>>" +
-                    "<'row'<'col-md-5'i><'col-md-7'p>>",
-                bLengthChange: false,
+                    "<'row'<'col-md-6'li><'col-md-6'p>>",
+                bLengthChange: true,
+                lengthMenu: lengthMenuValues,
                 language: {
                     info: 'Showing _START_ - _END_ of _TOTAL_',
                     infoFiltered: '',
                     zeroRecords: 'No Resource found.',
+                    lengthMenu: " _MENU_ "
                 },
                 columnDefs: sorters,
                 ajax: {
@@ -107,15 +165,16 @@ function CollectionResourceTable() {
                     type: 'POST',
                     data: function (d) {
                         d.called_from = called_from;
-
+                        d.additionalData = additionalData;
                     }
                 },
                 drawCallback: function (settings) {
+
+
                     if (called_from == 'playlist_add_resource' && typeof caller != 'undefined') {
                         caller.handler_resource_playlist();
                     } else {
                         initDeletePopup();
-
                         setTimeout(function () {
                             if (typeof that.resource_bulk_edit != "undefined") {
                                 that.resource_bulk_edit.re_init_bulk();
@@ -129,7 +188,10 @@ function CollectionResourceTable() {
                                 value = value.replace(/[{}]/g, '');
                                 $(this).val(value);
                             });
+                            $('.add_to_resource_group').unbind('click');
+                            $('.add_to_resource_group').on('click', function () {
 
+                            });
 
                         }, 500);
                     }

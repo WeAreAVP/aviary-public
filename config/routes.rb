@@ -73,7 +73,12 @@ Rails.application.routes.draw do
   get '/display_settings', to: 'organizations#display_settings', as: :display_settings_organization
   match '/search_configuration', to: 'organizations#search_configuration', as: :search_configuration_organization, via: %i[get post]
   post '/set_layout', to: 'home#set_layout'
-
+  scope :public_access_urls do
+    match 'index', to: 'public_access_urls#index', as: 'public_access_urls', via: %i[get post]
+    match 'update_info', to: 'public_access_urls#update_info', as: 'public_access_urls_update_info', via: %i[get post]
+    get 'edit/:id', to: 'public_access_urls#edit', as: 'public_access_urls_edit'
+    post 'update/:id', to: 'public_access_urls#update', as: 'public_access_urls_update'
+  end
   resources :collection_resource_files do
     collection do
       post :data_table, to: 'collection_resource_files#index'
@@ -190,4 +195,5 @@ Rails.application.routes.draw do
 
   get '/api/resource_files_tobe_sync', to: 'api#resource_files_tobe_sync', as: :resource_files_tobe_sync
   post '/api/update_archive_id', to: 'api#update_archive_id', as: :update_archive_id
+  get '/iiif/:noid/manifest', to: 'iiif#manifest', defaults: { format: 'json' }, as: :iiif_manifest
 end

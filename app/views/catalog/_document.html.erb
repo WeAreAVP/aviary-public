@@ -1,4 +1,5 @@
 <% collection_resource = collection_resource(document['id_is']) %>
+
 <%
   if collection_resource.present? %>
   <% can_access = (can? :read, collection_resource) || collection_resource.can_view || collection_resource.can_edit || (can? :edit, collection_resource.collection.organization) %>
@@ -7,7 +8,7 @@
      collection = document_collection.present? ? document_collection.second : nil
   %>
   <li class="<%= can_access ? '' : 'locked' %>">
-    <% if current_organization.present? && current_user_is_org_user?(document_organization) %>
+    <% if current_user_is_org_user?(document_organization)  %>
       <input type="checkbox" class="bulk_add_to_playlist" data-id="<%= collection_resource.id %>" <%= session['search_playlist_id'].present? && session['search_playlist_id'].include?(collection_resource.id.to_s) ? 'checked="true"' : '' %>/>
     <% end %>
 
@@ -70,8 +71,7 @@
         <% end %>
         <%= render partial: 'catalog/found_in', locals: {document_current: document} %>
         <% if current_user_is_org_user?(document_organization) %>
-          <button type="button" class="add_to_playlist_search_page ml-1 text-primary" data-toggle="modal" data-target="#playlistModalCenter" data-url="<%= listing_for_add_to_playlist_path %>" data-organizationid="<%= document_organization.id %>" data-resourceid="<%= collection_resource.id %>">
-            <%= image_tag image_path('playlist_add_white.png') %> Add to playlist
+          <button type="button" class="btn btn-primary add_to_playlist_search_page" data-toggle="modal" data-target="#playlistModalCenter" data-url="<%= listing_for_add_to_playlist_path %>" data-organizationid="<%= document_organization.id %>" data-resourceid="<%= collection_resource.id %>"> Add to playlist
           </button>
         <% end %>
       </div>

@@ -27,6 +27,9 @@ function Playlist() {
         initDataTable();
         bindEvents();
         $('#public_access_time_period').daterangepicker({
+            timePicker: true,
+            timePicker24Hour: true,
+            drops: 'up',
             locale: {format: 'MM-DD-YYYY'}
         }, function (start, end) {
             that.collection_resource.setPeriodTimePeriod(start.format('MM-DD-YYYY'), end.format('MM-DD-YYYY'));
@@ -149,8 +152,8 @@ function Playlist() {
         that.bind_slider();
         edit_description_playlist();
         update_description_playlist();
-        amount_slider_validation();
-        update_selected_tab();
+        setAndValidateSlider();
+        
         init_tinymce_for_element('.description_text', {
             selector: '.description_text',
             height: $('.description_text').attr('height'),
@@ -166,27 +169,52 @@ function Playlist() {
             }, 200);
         });
 
-        that.clip_time_picker();
+        playerTimeToPicker();
         if (!that.playlist_show) {
             let collection = new Collection();
             collection.bindRSSFeed();
         }
         $('.best_in_place').best_in_place();
     };
+    /**
+     *
+     * @param start_time
+     * @param end_time
+     * @returns {{start_time: number, end_time: number}}
+     */
+    const isValidStartAndEndTime = function (startTime, endTime) {
+        if (startTime > that.max || startTime > endTime) {
+            startTime = 0;
+            jsMessages('danger', 'Start time cannot be greater than end time.');
+        }
 
-    this.clip_time_picker = function () {
+        if (startTime < 0)
+            startTime = 0;
+
+        if (endTime < startTime) {
+            endTime = that.max;
+            jsMessages('danger', 'End time cannot be less than start time.');
+        }
+
+        if (endTime > that.max) {
+            endTime = that.max;
+        }
+
+        return {startTime: startTime, endTime: endTime}
+    };
+
+
+    const playerTimeToPicker = function () {
         document_level_binding_element('.set_clip_end_time_custom, .set_clip_start_time_custom', 'click', function () {
-            if (that.collection_resource && that.collection_resource.player_widget && that.collection_resource.player_widget.length > 0) {
-                if ($(this).data('type') == 'start') {
-                    $("#slider-range").slider("values", 0, that.collection_resource.player_widget[0].currentTime);
-                } else {
-                    $("#slider-range").slider("values", 1, that.max);
-                }
-                let response_time = check_valid_start_end_time($("#slider-range").slider("values", 0), $("#slider-range").slider("values", 1));
-                $("#slider-range").slider("values", 0, response_time.start_time);
-                $("#slider-range").slider("values", 1, response_time.end_time);
-                update_range_values(response_time.start_time, response_time.end_time);
+            if ($(this).data('type') === 'start') {
+                $("#slider-range").slider('values', 0, player_widget.currentTime());
+            } else {
+                $("#slider-range").slider("values", 1, player_widget.currentTime());
             }
+            let response = isValidStartAndEndTime($("#slider-range").slider("values", 0), $("#slider-range").slider("values", 1));
+            $("#slider-range").slider("values", 0, response.startTime);
+            $("#slider-range").slider("values", 1, response.endTime);
+            updateRangePickerValue(response.startTime, response.endTime);
         }, true);
 
     };
@@ -217,39 +245,24 @@ function Playlist() {
         return {start_time: start_time, end_time: end_time}
     };
 
-    const amount_slider_validation = function () {
+    const setAndValidateSlider = function () {
         document_level_binding_element('.amount-slider', 'keyup', function () {
             if (!$(this).val().match(that.time_range_regex)) {
                 $(this).attr('style', 'border: 1.3px solid red;');
             } else {
-                let time_range = $(this).val().split('-');
-                let start_time = humanToSeconds(time_range[0]);
-                let end_time = humanToSeconds(time_range[1]);
-                let response_time = check_valid_start_end_time(start_time, end_time);
-                start_time = response_time.start_time;
-                end_time = response_time.end_time;
-                update_range_values(start_time, end_time);
-                $("#slider-range").slider("values", 0, start_time);
-                $("#slider-range").slider("values", 1, end_time);
+                let timeRange = $(this).val().split('-');
+                let startTime = humanToSeconds(timeRange[0]);
+                let endTime = humanToSeconds(timeRange[1]);
+                let response_time = isValidStartAndEndTime(startTime, endTime);
+                startTime = response_time.startTime;
+                endTime = response_time.endTime;
+                updateRangePickerValue(startTime, endTime);
+                $("#slider-range").slider("values", 0, startTime);
+                $("#slider-range").slider("values", 1, endTime);
                 $(this).attr('style', 'border: 1px solid rgba(0, 0, 0, 0.1);');
             }
         }, true);
     };
-
-    const update_selected_tab = function () {
-        document_level_binding_element('.playlist_edit_tabs', 'click', function () {
-            let data = {
-                tabtype: $(this).data('tabtype'),
-                action: 'updateSelectedTab'
-            };
-            selfPL.appHelper.classAction($(this).data('urltab'), data, 'text', 'POST', '', selfPL, false);
-        }, true);
-    };
-
-    this.updateSelectedTab = function(response) {
-        $('playlistrandom#continaer_custom').text(response);
-    }
-
 
     const edit_description_playlist = function () {
         document_level_binding_element('.edit_description_playlist', 'click', function () {
@@ -313,7 +326,6 @@ function Playlist() {
                 $('.best_in_place').best_in_place();
                 initToolTip(false);
                 $('#no_resource_found').hide();
-                $('#playlist_resources_count').text($('.playlist_resource_single:visible').length);
             }
             $('.playlist_resource_description').each(function () {
                 let content = $(this).children('.less-description').html();
@@ -393,41 +405,52 @@ function Playlist() {
             max: that.max,
             values: [that.start_time, that.end_time],
             slide: function (event, ui) {
-                update_range_values(ui.values[0], ui.values[1]);
+                updateRangePickerValue(ui.values[0], ui.values[1]);
             }
         });
-        update_range_values($("#slider-range").slider("values", 0), $("#slider-range").slider("values", 1));
+        updateRangePickerValue($("#slider-range").slider("values", 0), $("#slider-range").slider("values", 1));
     };
 
     const initDataTable = function () {
         let dataTableElement = $('#playlist_data_table');
         if (dataTableElement.length > 0) {
             this.dataTableObj = dataTableElement.DataTable({
+                searchDelay: 800,
                 responsive: true,
-                pageLength: 100,
+                processing: true,
+                serverSide: true,
+                pageLength: pageLength,
+                paging: true,
                 bInfo: true,
                 destroy: true,
-                bLengthChange: false,
+                scrollX: true,
+                scrollCollapse: false,
                 pagingType: 'simple_numbers',
-                'dom': "<'row'<'col-md-6'f><'col-md-6'p>>" +
+                'dom': "<'row'<'col-md-6 d-flex'f><'col-md-6'p>>" +
                     "<'row'<'col-md-12'tr>>" +
-                    "<'row'<'col-md-5'i><'col-md-7'p>>",
+                    "<'row'<'col-md-5'li><'col-md-7'p>>",
+                bLengthChange: true,
+                lengthMenu: lengthMenuValues,
                 language: {
                     info: 'Showing _START_ - _END_ of _TOTAL_',
                     infoFiltered: '',
                     zeroRecords: 'No Playlist found.',
+                    lengthMenu: " _MENU_ "
                 },
                 columnDefs: [
                     {orderable: false, targets: -1}
                 ],
-                initComplete: function (settings) {
+                ajax: $("#playlist_data_table").data("url"),
+                "initComplete": function() {
+                },
+                drawCallback: function (settings) {
                     initDeletePopup();
                 }
             });
         }
     };
 
-    const update_range_values = function (start, end) {
+    const updateRangePickerValue = function (start, end) {
         let time_range = range_time_manager(start, end);
         $("#amount").val("" + time_range.start.hours + ':' + time_range.start.minutes + ":" + time_range.start.seconds + " - " + time_range.end.hours + ':' + time_range.end.minutes + ":" + time_range.end.seconds);
     };

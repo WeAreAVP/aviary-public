@@ -5,24 +5,22 @@
     <label for="index-auto-scroll">Auto Scroll with Media</label>
   </div>
 </div>
-<div class="grey-box">
+<div class="grey-box custom_form">
   <div class="d-flex align-items-center">
     <div class="drop_drag <%= !(can? :manage, @collection_resource) and !@collection_resource.can_edit ? 'w-100' : '' %>">
       <% if (@resource_file.present? && @resource_file.file_indexes.present?) %>
-        <div class="select-index-drop">
-          <span class="label indexes_label">Indexes</span>
-          <div class="col-md-12 p-0">
-            <% if file_indexes.present? %>
-              <select id="file_index_select" class="select_type_transcript">
-                <% html = '' %>
-                <% file_indexes.each do |file_index| %>
-                  <option value="<%= file_index.id %>"><%= file_index.title %></option>
-                  <% html += "<input id='total_index_points_#{file_index.id}' type='hidden' value='#{file_index.file_index_points.count / Aviary::IndexTranscriptManager::POINTS_PER_PAGE}'/>" %>
-                <% end %>
-              </select>
-              <%= html.html_safe %>
-            <% end %>
-          </div>
+        <div class="select-index-drop form-group">
+          <span class="label indexes_label field-title">Indexes</span>
+          <% if file_indexes.present? %>
+            <select id="file_index_select" class="select_type_transcript">
+              <% html = '' %>
+              <% file_indexes.each do |file_index| %>
+                <option value="<%= file_index.id %>"><%= file_index.title %></option>
+                <% html += "<input id='total_index_points_#{file_index.id}' type='hidden' value='#{file_index.file_index_points.count / Aviary::IndexTranscriptManager::POINTS_PER_PAGE}'/>" %>
+              <% end %>
+            </select>
+            <%= html.html_safe %>
+          <% end %>
         </div>
       <% end %>
     </div>
@@ -35,7 +33,7 @@
           <div class="dropdown-menu dropdown-menu-right custom-right-dropdown" aria-labelledby="dropdownMenuButton">
 
             <% if @resource_file.present? %>
-              <a href="javascript:void(0);" data-toggle="modal" data-target="#index_upload" class="dropdown-item" title="Add"><i class="fa fa-plus-circle" aria-hidden="true"></i>
+              <a href="javascript:void(0);" data-toggle="modal" data-target="#index_upload" class="dropdown-item upload_popup_index_transcript_supplemental" title="Add"><i class="fa fa-plus-circle" aria-hidden="true"></i>
                 Upload another index</a>
               <% if @resource_file.file_indexes.present? %>
                 <div class="dropdown-divider"></div>
@@ -47,7 +45,9 @@
                 <a href="javascript:void(0);" data-url="/indexes/delete/" id="delete_index" class="dropdown-item" title="Delete"><i class="material-icons custom-delete-icon">delete</i>
                   Delete this index
                 </a>
-
+                <a href="javascript:void(0);" data-url="/indexes/export/" id="export_index" class="dropdown-item" title="Export"><i class="fa fa-download"> </i>
+                  Export this index
+                </a>
               <% end %>
             <% end %>
 

@@ -8,7 +8,10 @@ class CollectionsController < ApplicationController
 
   def index
     authorize! :manage, current_organization
-    @collections = current_organization.collections
+    respond_to do |format|
+      format.html
+      format.json { render json: CollectionsDatatable.new(view_context, current_organization) }
+    end
   end
 
   def show

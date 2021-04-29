@@ -1,18 +1,19 @@
 <ul class="nav nav-tabs" id="addResourceFilesTab" role="tablist">
 
   <li class="nav-item">
-    <a class="nav-link active" id="embed_code_tab" data-toggle="tab" href="#embed_code<%= tab %>" role="tab" aria-controls="embed_code" aria-selected="false">Embed
+    <a class="nav-link active show" id="embed_code_tab" data-toggle="tab" href="#embed_code<%= tab %>" role="tab" aria-controls="embed_code" aria-selected="false">Embed
       Code
     </a>
   </li>
 </ul>
 <div class="tab-content" id="addResourceFilesContent">
-  <div class="tab-pane fade show active" id="embed_code<%= tab %>" role="tabpanel" aria-labelledby="embed_code_tab">
-    <%= form_for @collection_resource, url: collection_collection_resource_save_resource_file_path(collection, @collection_resource), method: :post, html: {class: ""} do |f| %>
-      <div class="text-holder mb-3">
-        <div>
-          It is possible to embed or stream files from Avalon, SoundCloud, Vimeo, YouTube, or a local media server. Select the "Embed Type" and provide the necessary embed code below. For local media server streaming, please provide a direct URL to the media file.
-        </div>
+  <div class="tab-pane fade active show" id="embed_code<%= tab %>" role="tabpanel" aria-labelledby="embed_code_tab">
+    <%= form_for @collection_resource, url: collection_collection_resource_save_resource_file_path(collection, @collection_resource), method: :post, html: { class: "" } do |f| %>
+      <div class="text-headline jumbotron my-3">
+        <h3>Embed Code</h3>
+        <p>It is possible to embed or stream files from Avalon, SoundCloud, Vimeo, YouTube, or a local media server.
+          Select the "Embed Type" and provide the necessary embed code below. For local media server streaming, please
+          provide a direct URL to the media file.</p>
       </div>
       <div class="row">
         <div class="col-md-6">
@@ -37,14 +38,14 @@
       </div>
       <div class="row">
         <div class="col-md-12">
-            <div class="form-group">
-              <div class="field-title">
-                <label>Embed <span id="embed_code_text">Code</span>:</label>
-              </div>
-              <span class="field_embed_code input-group">
+          <div class="form-group">
+            <div class="field-title">
+              <label>Embed <span id="embed_code_text">Code</span>:</label>
+            </div>
+            <span class="field_embed_code input-group">
 
               </span>
-            </div>
+          </div>
         </div>
       </div>
       <div id="other-info-holder" class="row">
@@ -52,10 +53,10 @@
       <%= f.hidden_field :resource_file_id, class: 'resource-file-id' %>
       <%= f.hidden_field :sort_order, class: 'resource-file-sort-order' %>
       <div class="form-group row">
-        <div class="col-md-12">
+        <div class="col-md-12 mt-4">
           <div class="bottom">
-            <button type="button" class="btn btn-secondary closeuploadandcontinue float-right <%= close_class %>" data-dismiss="modal">Close</button>
-            <button class="btn btn-info upload-and-continue float-right mr-2 2"><%= button_title %></button>
+            <button type="button" class="btn btn-light closeuploadandcontinue float-right <%= close_class %>" data-dismiss="modal">Close</button>
+            <button class="btn btn-primary upload-and-continue float-right mr-2 2"><%= button_title %></button>
           </div>
         </div>
       </div>
@@ -64,12 +65,14 @@
       <textarea class="form-control" rows="3" required="required" name="collection_resource[embed_code]" id="collection_resource_embed_code_text"></textarea>
     </span>
     <span class="field_embed_code_parent_input d-none">
-      <input type="text" class="form-control mr-2" name="collection_resource[embed_code]" id="collection_resource_embed_code">
-      <a class="btn btn-primary check_embed_button check_embed_buttons ml-1 mr-1"> Check embed Link </a>
-      <a class="btn btn-primary check_embed_clear check_embed_buttons ml-1"> Clear </a>
+      <input type="text" class="form-control" name="collection_resource[embed_code]" id="collection_resource_embed_code">
+      <div class="input-group-append align-items-stretch" id="button-addon4">
+        <a class="btn btn-outline-primary d-flex align-items-center check_embed_button check_embed_buttons"> Check embed Link </a>
+        <a class="btn btn-outline-primary d-flex align-items-center check_embed_clear check_embed_buttons"> Clear </a>
+      </div>
     </span>
     <div id="other-info" style="display: none;">
-      <div class="col-md-12">
+      <div class="col-md-6">
         <div class="form-group">
           <div class="field-title">
             <label>Title</label>
@@ -77,7 +80,7 @@
           <input type="text" class="form-control" name="collection_resource[title]">
         </div>
       </div>
-      <div class="col-md-12">
+      <div class="col-md-6">
         <div class="form-group">
           <div class="field-title">
             <label>Duration<span class="red">*</span></label>

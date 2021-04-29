@@ -1,25 +1,4 @@
-<% unless current_theme.nil? %>
-  <style>
-    #footer {
-    <%= footer_font_family %>;
-    <%= footer_font_color %>;
-    <%= footer_bg_color %>;
-    }
-
-    #logoCst h3, #logoCst span {
-    <%= footer_title_font %>;
-    <%= footer_title_color %>;
-    }
-
-    #footer_menu li a {
-    <%= footer_menu_font_family %>;
-    <%= footer_menu_font_color %>;
-    }
-
-    <%== fetch_custom_css %>
-  </style>
-<% end %>
-<footer id="footer">
+<footer id="footer" class="footer_section">
   <div class="container">
     <div class="row">
       <div class="col-lg-8">

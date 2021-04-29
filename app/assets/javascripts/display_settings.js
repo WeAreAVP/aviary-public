@@ -22,15 +22,15 @@ function DisplaySettings() {
     this.resources_home_notfeatured = function (response) {
         $('#resources_home-notfeatured .home-featured-resources').append(response.partial);
         setTimeout(function () {
-            if (response.partial.includes("resource-detail-data")) {
+            if (response.partial.includes("single_resource_card")) {
                 let childnumber = 1;
                 if (that.page_number > 1) {
-                    childnumber = (that.page_number - 1) * 8
+                    childnumber = (that.page_number - 1) * 6
                 }
-                if ($('.home-featured-resources .col-3:nth-last-child(' + childnumber + ')').offset()) {
-                    $('html, body').animate({
-                        scrollTop: ($('.home-featured-resources .col-3:nth-last-child(' + childnumber + ')').offset().top - 370)
-                    }, 500);
+                if ($('.home-featured-resources .col-lg-4:nth-last-child(' + childnumber + ')').offset()) {
+                    // $('html, body').animate({
+                    //     scrollTop: ($('.home-featured-resources .col-lg-4:nth-last-child(' + childnumber + ')').offset().top - 370)
+                    // }, 500);
                 }
                 setTimeout(function () {
                     that.load_resource_again = true;
@@ -238,5 +238,4 @@ function DisplaySettings() {
             $('.banner-title-image').addClass('d-none');
         }
     };
-
 }

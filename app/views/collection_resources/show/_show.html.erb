@@ -20,20 +20,20 @@
       </div>
       <% unless @resource_file.nil? %>
         <%= render layout: 'collection_resources/show/media_carousel' do %>
-            <%= render partial: 'collection_resources/show/resource_listing' %>
+          <%= render partial: 'collection_resources/show/resource_listing' %>
         <% end %>
       <% end %>
       <%= render 'collection_resources/show/share_link' %>
     </div>
 
     <div class="<%= @inside_playlist ? 'col-lg-12' : 'col-lg-5' %> video-detail-container">
-      <div class="video-detail" id="heading_and_tombstone" data-template-url="<%= collection_collection_resource_load_head_and_tombstone_template_path(@collection, @collection_resource, share: params[:share]) %>">
+      <div class="video-detail" id="heading_and_tombstone" data-template-url="<%= collection_collection_resource_load_head_and_tombstone_template_path(@collection, @collection_resource, share: params[:share], access: params[:access]) %>">
       </div>
     </div>
   </div>
   <div style="position: relative;">
     <%
-      load_resource_details_url = collection_collection_resource_load_resource_details_template_url(@collection, @collection_resource, @resource_file, share: params[:share])
+      load_resource_details_url = collection_collection_resource_load_resource_details_template_url(@collection, @collection_resource, @resource_file, share: params[:share], access: params[:access])
       load_resource_details_url = append_param_to_url(params[:keywords], load_resource_details_url)
     %>
     <div class="info_tabs" data-template-url="<%= load_resource_details_url %>" data-search-size="7" data-tabs-size="5">

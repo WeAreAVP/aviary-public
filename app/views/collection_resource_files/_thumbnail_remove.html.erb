@@ -1,9 +1,11 @@
 <%= render partial: 'shared/remove_image_button', locals: {model_obj: @resource_file, target_type: 'thumbnail'} %>
-<br/><br/>
-<% thumbnail = if @resource_file.thumbnail_file_name
+<%
+
+  thumbnail = if @resource_file.thumbnail_file_name && @resource_file.thumbnail.present?
                 @resource_file.thumbnail
               else
-                @resource_file.try(:media_type).present? && (@resource_file.media_type.include?('avalon') || @resource_file.media_type.include?('video')) ? "https://#{ENV['S3_HOST_CDN']}/public/images/video-default.png" : "https://#{ENV['S3_HOST_CDN']}/public/images/audio-default.png"
+                present(@resource_file) do |presenter|
+                  presenter.media_type.include?('avalon') || presenter.media_type.include?('video') ? "https://#{ENV['S3_HOST_CDN']}/public/images/video-default.png" : "https://#{ENV['S3_HOST_CDN']}/public/images/audio-default.png"
+                end
               end %>
-<img src="<%= thumbnail %>" width="100%" class="mb-2">
-<hr/>
+<img src="<%= thumbnail %>" width="100%">

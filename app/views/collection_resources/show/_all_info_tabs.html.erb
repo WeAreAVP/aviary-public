@@ -1,84 +1,122 @@
 <% tabs_size = 12 %>
-<div class="info_tabs" data-template-url="<%= collection_collection_resource_load_resource_details_template_path(@collection, @collection_resource, @resource_file, share: params[:share]) %>" data-search-size="12" data-tabs-size="12">
-
-  <% if params[:from_playlist].present? && params[:from_playlist].to_s.to_boolean? %>
+<div class="info_tabs" data-template-url="<%= collection_collection_resource_load_resource_details_template_path(@collection, @collection_resource, @resource_file, share: params[:share], access: params[:access]) %>" data-search-size="12" data-tabs-size="12">
+  <% if from_playlist.present? && from_playlist.to_s.to_boolean? %>
     <style>
         .drop_drag {
             width: 100% !important;
         }
     </style>
   <% end %>
-  <% tab_params = {collection_id: @collection.id, collection_resource_id: @collection_resource.id} %>
+  <% tab_params = { collection_id: @collection.id, collection_resource_id: @collection_resource.id } %>
   <% tab_params[:resource_file_id] = @resource_file.id if @resource_file.present? %>
+  <% tab_params[:access] = params[:access] if params[:access] %>
 
   <span id="show_counts_tabs" data-url="<%= collection_collection_resource_show_search_counts_path(tab_params) %>"></span>
   <% if @collection_resource.present? %>
-    <% collection_resource_params = {collection_id: @collection_resource.collection.id, collection_resource_id: @collection_resource.id} if @collection_resource.present? %>
+    <% collection_resource_params = { collection_id: @collection_resource.collection.id, collection_resource_id: @collection_resource.id, access: params[:access] } if @collection_resource.present? %>
     <span id="file_wise_count" data-url="<%= collection_collection_resource_file_wise_counts_path(collection_resource_params) %>"></span>
   <% end %>
 
-  <% tab_width = 100 %>
-  <% show_transcript_tab = show_index_tab = false %>
-  <% if (@resource_file.present? && @resource_file.file_indexes.present?) || (can? :manage, @collection_resource) || @collection_resource.can_edit %>
-    <% tab_width = 50 %>
+  <% show_transcript_tab = show_index_tab  = false %>
+  <% total_tabs = 0 %>
+  <% if params[:embed] == 'true' && params[:tabs].present? %>
+    <% show_description_embed = show_index_embed = show_transcript_embed  = false %>
+    <% description_tab_active = index_tab_active = transcript_tab_active  = nil %>
+    <% if params[:tabs].include?('d') %>
+      <% show_description_embed = true %>
+      <% description_tab_active = 'active show' %>
+      <% total_tabs += 1 %>
+    <% end %>
+    <% if params[:tabs].include?('i') %>
+      <% show_index_embed = true %>
+      <% index_tab_active = 'active show' unless description_tab_active %>
+    <% end %>
+    <% if params[:tabs].include?('t') %>
+      <% show_transcript_embed = true %>
+      <% transcript_tab_active = 'active show' unless index_tab_active || description_tab_active %>
+    <% end %>
+
+  <% else %>
+    <% show_description_embed = show_index_embed = show_transcript_embed  = true %>
+    <% description_tab_active = 'active show' %>
+    <% total_tabs = 1 %>
+  <% end %>
+
+  <% if (@resource_file.present? && @resource_file.file_indexes.present? && show_index_embed) || (can? :manage, @collection_resource) || @collection_resource.can_edit %>
+    <% total_tabs += 1 %>
     <% show_index_tab = true %>
   <% end %>
-  <% if (@resource_file.present? && @resource_file.file_transcripts.present?) || (can? :manage, @collection_resource) || @collection_resource.can_edit %>
-    <% tab_width = tab_width == 50 ? 33.3 : 50 %>
+  <% if (@resource_file.present? && @resource_file.file_transcripts.present? && show_transcript_embed) || (can? :manage, @collection_resource) || @collection_resource.can_edit %>
+    <% total_tabs += 1 %>
     <% show_transcript_tab = true %>
   <% end %>
+
+
+  <% tab_width = total_tabs > 0 ? 100 / total_tabs : 100 %>
   <div class="row">
-    <% unless params[:embed] == 'true' %>
-      <div class="search_details_bar col-md-12 pr-0">
-        <% if @collection_resource.collection.enable_resource_search %>
-          <div class="col-md-12">
-              <div class="search-field seach_form_cus">
-                  <div class="form-group">
-                    <span class="icon icon-magnifying-glass"></span>
-                    <%= text_field('search', 'text', class: 'form-control', value: @session_video_text, placeholder: "#{ @collection_resource.collection.search_resource_placeholder }") %>
-                    <%= hidden_field('', 'selected_index') %>
-                    <%= hidden_field('', 'selected_transcript') %>
-                    <%= hidden_field('', 'selected_file', value: @resource_file.present? ? @resource_file.id : '') if @resource_file.present? %>
-                  </div>
-              </div>
+    <div class="search_details_bar col-md-12 pr-0 pt-4">
+      <% if @collection_resource.collection.enable_resource_search %>
+        <div class="col-md-12">
+          <div class="search-field seach_form_cus mt-0 ">
+            <div class="form-group">
+              <span class="icon icon-magnifying-glass "></span>
+              <%= text_field('search', 'text', class: 'form-control float-left', value: @session_video_text, placeholder: "#{ @collection_resource.collection.search_resource_placeholder }") %>
+              <%= hidden_field('', 'selected_index') %>
+              <%= hidden_field('', 'selected_transcript') %>
+              <%= hidden_field('', 'selected_file', value: @resource_file.present? ? @resource_file.id : '') if @resource_file.present? %>
 
+              <%= render partial: 'shared/search_info', locals: { from: 'details_page', classes: 'float-right ml-3 mt-3px ' } %>
+            </div>
 
-            <% unless @session_video_text_all.blank? %>
-              <div class="search-result-bottom active ">
-                <a href="javascript:void(0);" class="btn-search-result-nav "><span><i class="fa fa-bars"></i> Search Results </span></a>
-                <div class="marker_list_hanlder_custom">
-                </div>
-              </div>
-            <% end %>
           </div>
-        <% end %>
-      </div>
-    <% end %>
+
+          <% unless @session_video_text_all.blank? %>
+            <div class="search-result-bottom active ">
+              <a href="javascript:void(0);" class="btn-search-result-nav "><span><i class="fa fa-bars"></i> Search Results </span></a>
+              <input type='hidden' id='clicked_identifier'>
+              <input type='hidden' id='identifier_movement'>
+              <div class="marker_list_hanlder_custom">
+              </div>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+
     <div class="col-md-<%= tabs_size %>">
       <ul class="nav nav-tabs" id="resourceTab" role="tablist">
-        <li class="nav-item <%= 'd-none' if tab_width == 100 %>" style="width:<%= tab_width %>%">
-          <a class="nav-link active" id="description-tab" data-tab="description" data-toggle="tab" href="#description" role="tab" aria-controls="description"><span class="icon-Metadata"></span>
-            <strong>Description</strong>
-            <span class="badge badge-pill badge-danger description_count_tab font-size-9px d-none">&nbsp;</span>
-          </a>
-        </li>
+        <% if show_description_embed %>
+          <li class="nav-item <%= 'd-none' if tab_width == 100 %>">
+            <a class="nav-link <%= description_tab_active %>" id="description-tab" data-tab="description" data-toggle="tab" href="#description" role="tab" aria-controls="description">
+              <strong>Description</strong>
+              <span class="badge badge-pill badge-danger description_count_tab font-size-9px d-none">&nbsp;</span>
+            </a>
+          </li>
+        <% end %>
         <% if show_index_tab %>
-          <%= render partial: 'collection_resources/show/index_transcript_tab', locals: {type: 'index', tab_width: tab_width} %>
+          <%= render partial: 'collection_resources/show/index_transcript_tab', locals: { type: 'index', tab_width: tab_width, active_tab: index_tab_active } %>
         <% end %>
         <% if show_transcript_tab %>
-          <%= render partial: 'collection_resources/show/index_transcript_tab', locals: {type: 'transcript', tab_width: tab_width} %>
+          <%= render partial: 'collection_resources/show/index_transcript_tab', locals: { type: 'transcript', tab_width: tab_width, active_tab: transcript_tab_active } %>
         <% end %>
+
       </ul>
     </div>
   </div>
 
   <div class="tab">
-    <div class="tab-content" id="resourceTabContent">
-      <div class="tab-pane fade show active contact-description-tab" id="description" role="tabpanel" aria-labelledby="contact-tab">
-        <%= add_loader('loader d-inline text-center mt-5') %>
-      </div>
+    <div class="tab-content">
+      <% if show_description_embed %>
+        <div class="resourceContantSection tab-pane fade <%= description_tab_active %> description_tab_custom" id="description" role="tabpanel" aria-labelledby="contact-tab">
+          <div class="tab-content">
+            <div class="tab-pane fade contact-description-tab active show" id="resourceTabContent" role="tabpanel" aria-labelledby="contact-tab">
+              <%= add_loader('loader d-inline text-center mt-5') %>
+            </div>
+          </div>
+        </div>
+      <% end %>
       <% if show_index_tab %>
-        <div class="tab-pane fade index-tab" id="index" role="tabpanel" aria-labelledby="index-tab" data-template-url="<%= collection_collection_resource_load_index_template_path(@collection, @collection_resource, @resource_file, share: params[:share]) %>">
+        <div class="resourceContantSection tab-pane fade <%= index_tab_active %> index-tab" id="index" role="tabpanel" aria-labelledby="index-tab" data-template-url="<%= @resource_file.present? && @collection.present? && @collection_resource.present? ? collection_collection_resource_load_index_template_path(@collection, @collection_resource, @resource_file, share: params[:share], access: params[:access]) : '' %>">
           <% if (@resource_file.present? && @resource_file.file_indexes.present?) %>
             <% file_indexes = @resource_file.file_indexes.order_index %>
           <% end %>
@@ -92,7 +130,6 @@
                 <% if file_indexes.present? %>
                   <div class="index_point_inner_container ">
                     <%= add_loader('loader loader_custom_index d-inline text-center mt-5') %>
-
                   </div>
                 <% else %>
                   <div class="row">
@@ -113,18 +150,15 @@
       <% end %>
 
       <% if show_transcript_tab %>
-        <div class="tab-pane fade transcript-tab" id="transcript" role="tabpanel" aria-labelledby="transcript-tab" data-template-url="<%= collection_collection_resource_load_transcript_template_path(@collection, @collection_resource, @resource_file, share: params[:share]) %>">
+        <div class="resourceContantSection tab-pane fade <%= transcript_tab_active %> transcript-tab" id="transcript" role="tabpanel" aria-labelledby="transcript-tab" data-template-url="<%= collection_collection_resource_load_transcript_template_path(@collection, @collection_resource, @resource_file, share: params[:share], access: params[:access]) %>">
           <% if (@resource_file.present? && @resource_file.file_transcripts.present?) %>
             <% file_transcripts = @resource_file.file_transcripts.order_transcript %>
           <% end %>
-          <%= render partial: 'transcripts/transcript_options', locals: {file_transcripts: file_transcripts, from_playlist: from_playlist } %>
-
-
-
+          <%= render partial: 'transcripts/transcript_options', locals: { file_transcripts: file_transcripts, from_playlist: from_playlist } %>
 
           <div class="row">
             <div class="col-md-12">
-              <div class="transcript_point_container">
+              <div class="transcript_point_container enable_annotation">
                 <% if file_transcripts.present? %>
                   <div class="transcript_point_inner_container">
                     <%= add_loader('loader loader_custom_transcript d-inline text-center mt-5') %>
@@ -146,30 +180,32 @@
         </div>
       <% end %>
 
+
     </div>
   </div>
-
   <% @description_count = {} %>
   <% if @collection_resource.present? && @dynamic_fields.present? && @dynamic_fields['CollectionResource'].present? %>
     <% @dynamic_fields['CollectionResource'].each do |single_field| %>
       <% single_field['values'].each do |single_value| %>
-        <% @description_count = count_occurrence(single_value, @session_video_text_all, @description_count, 'description') %>
+        <% @description_count = count_occurrence(single_value, @session_video_text_all, @description_count, 'description', false, nil, nil, nil, 'resource_metadata') %>
       <% end %>
     <% end %>
   <% end %>
+
+
   <% session[:description_count] = @description_count %>
   <div class="marker_list_hanlder_custom_tmp d-none">
     <% unless @session_video_text_all.blank? %>
-      <%= render partial: 'collection_resources/show/marker_list_hanlder', locals: {type: 'description', count: session[:description_count]} %>
-      <%= render partial: 'collection_resources/show/marker_list_hanlder', locals: {type: 'index', count: session[:index_count]} %>
-      <%= render partial: 'collection_resources/show/marker_list_hanlder', locals: {type: 'transcript', count: session[:transcript_count]} %>
+      <%= render partial: 'collection_resources/show/marker_list_hanlder', locals: { type: 'description', count: session[:description_count] } %>
+      <%= render partial: 'collection_resources/show/marker_list_hanlder', locals: { type: 'index', count: session[:index_count] } %>
+      <%= render partial: 'collection_resources/show/marker_list_hanlder', locals: { type: 'transcript', count: session[:transcript_count] } %>
     <% end %>
   </div>
 
   <div class="timeline-bar-parent-div-tmp d-none">
     <%= render 'collection_resources/show/file_timeline' %>
   </div>
-  <% track_params = params.clone.except('controller').except('action').to_json %>
+  <% track_params = tracker_params(params) %>
   <script type="text/javascript">
       setTimeout(function () {
           <% unless @session_video_text_all.blank? %>

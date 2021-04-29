@@ -1,9 +1,32 @@
-<header id="header" class="aviary-header">
+<header id="header" class="<%= current_organization ? 'organization-header' : 'aviary-header' %>">
   <div class="container-fluid">
     <nav class="navbar navbar-expand-sm navbar-light">
       <%= link_to image_tag("homepage/main-logo.png"), root_path, class: 'navbar-brand' %>
+      <div class="search-nav search1cus">
 
+      </div>
+      <div class="mobile-nav ml-auto">
+        <span class="icon-magnifying-glass"></span>
+        <span class="navbar-toggler-icon"></span>
+      </div>
+      <div class="nav-right pull-right text-right ml-auto">
+        <ul>
+          <li class="nav-item dropdown">
+            <a class="nav-link" href="<%= search_catalog_path({ indexes: [], keywords: [], op: [], resource_description: [], search_field: 'advanced', search_type: 'simple', title_text: '', transcript: [], type_of_search: ['simple'] }) %>" aria-haspopup="true" aria-expanded="false">
+              Discover
+            </a>
+
+          </li>
+
+
+        </ul>
+      </div>
     </nav>
   </div>
   <%= render 'shared/sub_nav' %>
 </header>
+<% unless user_signed_in? %>
+  <%= render 'shared/user_login_popup' %>
+  <%= render 'shared/user_registration_popup' %>
+  <%= render 'shared/forgot_password' %>
+<% end %>

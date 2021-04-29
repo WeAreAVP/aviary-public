@@ -1,22 +1,22 @@
-<div class="w-100 time-picket-slider mt-1">
+<div class="w-100 time-picket-slider mt-3">
 
   <div>
 
     <div class="w-100" style="margin: 0 auto;background: #ffffff;height: 35px;display: flex;">
-      <button class="btn btn-primary btn-sm float-left set_clip_start_time_custom" data-type="start"> Set
+      <button class="btn btn-outline-dark rounded btn-sm float-left set_clip_start_time_custom" data-type="start"> Set
         Start
       </button>
       <div id="slider-range" class="ml-4 mb-1 float-left playlist-slider-range"></div>
-      <button class="btn btn-primary btn-sm float-right set_clip_end_time_custom" data-type="end">Set
+      <button class="btn btn-outline-dark rounded btn-sm float-right set_clip_end_time_custom" data-type="end">Set
         End
       </button>
     </div>
   </div>
   <div class="">
-    <div class="text-center d-inline-block w-100 py-2">
+    <div class="text-center d-inline-block w-100 py-2 border my-3 rounded">
       <label for="amount" class="time_range_label ">Time range:</label>
       <input type="text" id="amount" class="amount-slider">
-      <button class="btn btn-primary update_time_range">Add Clip</button>
+      <button class="btn update_time_range">Add Clip</button>
       <div class="d-inline-block " style="margin-bottom: -10px;">
         <%= render partial: 'shared/container_loader', locals: {loader_id: 'time_range_loader', loader_class: 'time_range_loader'} %>
       </div>

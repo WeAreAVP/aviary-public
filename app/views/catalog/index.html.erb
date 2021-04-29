@@ -26,14 +26,14 @@
 
       <div id="facets" class="facets sidenav">
         <div class="reset">
-          <span class="pl-10px pt-1 float-left">FILTER</span>
-          <%= link_to search_catalog_url(q: '', search_field: 'advanced', search_type: params[:search_type], utf8: '✓', reset_facets: 'true'), :class => "btn-reset-filters", :id => "startOverLink" do %>
-            <i class="fa fa-times"></i> <%= t('blacklight.search.start_over') %>
+          <span>Filter</span>
+          <%= link_to search_catalog_url(q: '', search_field: 'advanced', search_type: params[:search_type], utf8: '✓', reset_facets: 'true'), :class => "btn-reset-filters btn-outline-dark btn", :id => "startOverLink" do %>
+            <%= t('blacklight.search.start_over') %>
           <% end %>
         </div>
         <div id="facet-panel-collapse" class="collapse panel-group show">
           <% if has_facet_values? %>
-            <%= render_facet_partials %>
+            <%= render_facet_partials.html_safe %>
           <% end %>
         </div>
       </div>
@@ -52,13 +52,11 @@
           </div>
         </div>
         <div class="row">
-          <div class="col-md-12 text-right add_bulk_playlist_actions mb-1">
+          <div class="col-md-12 text-right add_bulk_playlist_actions">
             <% if current_organization.present? && current_user_is_org_user?(current_organization) %>
               <span id="select_all" class="playlist_actions" data-type="select"> Select All</span>
-              <span class="separator_action">|</span>
               <span id="deselect_all" class="playlist_actions" data-type="deselect"> Deselect All</span>
-              <span class="separator_action add_to_playlist_sep ">|</span>
-              <a href="javascript:void(0)" id="add_to_playlist" class="badge badge-secondary font-size-12px playlist_actions" data-url="<%= fetch_bulk_edit_resource_list_collections_path %>">
+              <a href="javascript:void(0)" id="add_to_playlist" class="btn btn-light playlist_actions ml-2" data-url="<%= fetch_bulk_edit_resource_list_collections_path %>">
                 Add Selected Resource to Playlist
                 (<span id="number_of_selected_resources" class="grey"><%= session['search_playlist_id'].present? ? session['search_playlist_id'].size : 0 %></span>)</a>
             <% end %>
@@ -93,7 +91,7 @@
         </select>
 
         <h1 class="font-size-16px text-center mb-2 p-2 mt-3 font-weight-bold"> Selected Resources </h1>
-        <table class="table table-striped review_resources table-sm " style="width: 100%;">
+        <table class="table table-hover review_resources table-sm " style="width: 100%;">
           <thead>
           <tr>
             <td class="font-weight-bold"> ID</td>
@@ -115,39 +113,9 @@
 
 <script>
     let search_obj = new SearchPage();
-    let params = {
-        target_id: '',
-        params: '<%=track_params %>',
-        ip: '<%=request.remote_ip %>',
-        organization_id: '<%= current_organization.present? ? current_organization.id : '' %>',
-        result_count: '<%= @document_list.count %>',
-        user_type: '<%= role_type(current_user, current_organization) %>'
-    };
-    let events_tracker = new EventsTracker(params);
+
     $(function () {
         search_obj.initialize();
-        setTimeout(function () {
-            <% session[:searched_keywords].each do |_, value| %>
-            <% unless value['op'] == 'NOT' %>
-            <% if value['keywords'].present? && (value['keywords'].include?('AND') || value['keywords'].include?('OR') || value['keywords'].include?('NOT'))
-                all_terms = tracking_term_separator(value)
-                all_terms.each do |value_single| %>
-            if (events_tracker.check_keyword_already_tracked('search_page', '<%=value_single %>')) {
-                events_tracker.track_params.search_keyword = '<%= value_single %>';
-                events_tracker.track_hit('search_page', '');
-            }
-            <% end %>
-            <%  else %>
-            <% keyword = value['keywords'].present? ? value['keywords'] : value['keyword_searched']  %>
-            if (events_tracker.check_keyword_already_tracked('search_page', '<%=keyword %>')) {
-                events_tracker.track_params.search_keyword = '<%= keyword %>';
-                events_tracker.track_hit('search_page', '');
-            }
-            <%  end %>
-            <% end %>
-            <% end %>
-        }, 500);
+
     });
 </script>
-
-`

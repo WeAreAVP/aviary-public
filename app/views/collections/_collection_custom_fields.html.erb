@@ -2,52 +2,62 @@
   <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h4 class="h4">Add Custom Field</h4>
+        <h4 class="h4 mb-0">Add Custom Field</h4>
       </div>
       <%= form_for meta_field, url: create_custom_fields_collection_path(collection), method: :post, html: { id: "custom_fields_form" } do |ff| %>
-        <div class="modal-body">
+        <div class="modal-body custom_form">
 
           <%= hidden_field_tag "meta_field_id", meta_field.try(&:id) %>
           <div class="container">
             <div class="row mt-2">
               <%#= f.fields_for meta_field do |ff| %>
-                <div class="col-md-6">
-                  <div class="form-group">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <div class="field-title">
                     <label for="">Field Name <sup>*</sup></label>
-                    <%= ff.text_field :label, class: "form-control", required: true, maxlength: 32, value: !meta_field.nil? ? meta_field.label : '' %>
                   </div>
+                  <%= ff.text_field :label, class: "form-control", required: true, maxlength: 32 , value: !meta_field.nil? ? meta_field.label : '' %>
                 </div>
-                <div class="col-md-6">
-                  <div class="form-group">
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <div class="field-title">
                     <label for="">Field Type <sup>*</sup></label>
-                    <%= ff.select :column_type, options_for_select(CustomFields::Field::TypeInformation.for_select, meta_field.column_type), {}, { class: "form-control meta-type-select field_type_manager" } %>
                   </div>
+                  <%= ff.select :column_type, options_for_select(CustomFields::Field::TypeInformation.for_select, meta_field.column_type), {}, { class: "form-control meta-type-select field_type_manager" } %>
                 </div>
+              </div>
 
-                <div class="col-md-6">
-                  <div class="form-group">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <div class="field-title">
                     <label for="">Help Text</label>
-                    <%= ff.text_field :help_text, class: "form-control", value: meta_field.help_text %>
                   </div>
+                  <%= ff.text_field :help_text, class: "form-control", value: meta_field.help_text %>
                 </div>
+              </div>
 
-                <%= ff.hidden_field :is_vocabulary, value: 0 %>
-                <%= ff.hidden_field :is_custom, value: 1 %>
-                <%= ff.hidden_field :source_type, value: source_type %>
-                <%= ff.hidden_field :system_name, value: '' %>
+              <%= ff.hidden_field :is_vocabulary, value: 0 %>
+              <%= ff.hidden_field :is_custom, value: 1 %>
+              <%= ff.hidden_field :source_type, value: source_type %>
+              <%= ff.hidden_field :system_name, value: '' %>
 
             </div>
             <div class="row">
               <div class="col-md-6 meta-custom-vocabulary-div">
-                  <div class="form-group">
+                <div class="form-group">
+                  <div class="field-title">
                     <label for="">Custom Vocabulary</label>
-                    <% vocab = meta_field.vocabulary.present? ? JSON.parse(meta_field.vocabulary).join(',') : '' %>
-                    <%= ff.text_area :vocabulary, value: vocab, class: "form-control meta-custom-vocabulary", rows: 5 %>
                   </div>
+                  <% vocab = meta_field.vocabulary.present? ? JSON.parse(meta_field.vocabulary).join(',') : '' %>
+                  <%= ff.text_area :vocabulary, value: vocab, class: "form-control meta-custom-vocabulary", rows: 5 %>
+                </div>
               </div>
               <div class="col-md-6 meta-options-div">
                 <div class="form-group">
-                  <label for="">Dropdown Options<sup>*</sup></label>
+                  <div class="field-title">
+                    <label for="">Dropdown Options<sup>*</sup></label>
+                  </div>
                   <% options = meta_field.dropdown_options.present? ? JSON.parse(meta_field.dropdown_options).join(',') : '' %>
                   <%= ff.text_area :dropdown_options, value: options, class: "form-control meta-custom-options", required: true, rows: 5 %>
                 </div>
@@ -75,8 +85,8 @@
 
         </div>
         <div class="modal-footer">
-          <button type="submit" class="btn btn-primary add-custom-fields">Save changes</button>
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-default add-custom-fields">Save changes</button>
+          <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
         </div>
       <% end %>
     </div>

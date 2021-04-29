@@ -37,11 +37,17 @@
 //= require resource_bulk_edit
 //= require jquery-ui
 //= require mediaelement-and-player.min
+//= require video
+//= require cast_sender
 //= require_tree .
 
 var isIE = /*@cc_on!@*/false || !!document.documentMode;
 var player_widget = null;
+var playerSpecificTimePlay = 0;
 var activeCollapsedLayout = false;
+var reloadTime = 2 * 60 * 1000; // action * second * millisecond
+var lengthMenuValues = [[10, 25, 50, 100], [10, 25, 50, 100]];   // datatable row length values
+var pageLength = 25;
 Object.size = function (obj) {
     var size = 0, key;
     for (key in obj) {
@@ -365,7 +371,7 @@ function init_tinymce_for_element(selector, custom_config) {
 
 
 function selectizeInit(element){
-    return $(element).selectize({
+    return $(element).not('.dataTables_length select').selectize({
         openOnFocus: false,
         onInitialize: function () {
             var that = this;
@@ -440,7 +446,7 @@ function mobileLayoutEvents() {
 
 
 $(document).on('turbolinks:load', function () {
-    $('select').selectize();
+    $('select').not('.dataTables_length select').selectize();
     $(".transcript-dl").mCustomScrollbar();
 
 
@@ -510,14 +516,41 @@ function initToolTip(element){
 }
 
 $(function () {
+
     if ($('#sidebar-main').length == 0) {
         $(".main-content").removeClass('open');
     }
-    $('.search-nav .form-control').focus(function () {
+    $('.search-nav .form-control').click(function () {
         $('.buttons-search').show();
+        $(this).addClass("advanced-search-on");
+        $('.keyboard_virtual_custom').addClass('mt-30px');
+        $('.keyboard_virtual_custom').removeClass('mt-1');
     });
+
+    $(document).click(function (e) {
+        if (!$(e.target).hasClass('form-control')) {
+            $(".search-nav .form-control").removeClass("advanced-search-on");
+            $('.buttons-search').hide();
+        }
+    })
+
+
     $('.search-nav .form-control').blur(function () {
-        setTimeout("$('.buttons-search').hide();", 500);
+        setTimeout(function () {
+            let flagHide = true;
+            if ($('#transliteration').length > 0 && $('#transliteration').prop('checked')) {
+                flagHide = false;
+            }
+
+            if (flagHide) {
+                setTimeout(function () {
+                    $('.keyboard_virtual_custom').addClass('mt-1');
+                    $('.keyboard_virtual_custom').removeClass('mt-30px');
+                }, 500);
+            }
+
+        }, 500);
+
     });
 
 
@@ -544,7 +577,7 @@ $(function () {
     $('#signupmodal').on('shown.bs.modal', function () {
         $('#password_help').tooltip();
     });
-    $('select').selectize();
+    $('select').not('.dataTables_length select').selectize();
     $('.sign_up_link').click(function (e) {
         $('#signinmodal').modal('hide');
         $('#access_denied_popup').modal('hide');
@@ -594,6 +627,108 @@ $(function () {
     linkToExternalTab();
 });
 
+function dateTimePicker(objectCaller, element, drops) {
+    $(element).daterangepicker({
+        timePicker: true,
+        drops: drops,
+        opens: 'right',
+        showDropdowns: true,
+        minDate: moment().subtract(7, 'days'),
+        maxDate: moment().add(10, 'Y'),
+        minYear: parseInt(moment().year(), 10),
+        maxYear: parseInt(moment().add(10, 'Y').year(), 10),
+        alwaysShowCalendars: true,
+        timePicker24Hour: true,
+        locale: {
+            format: 'MM-DD-YYYY HH:mm'
+        },
+        ranges: {
+            'This Week': [moment(), moment().endOf("week")],
+            'One Week From Now': [moment(), moment().add(7, 'days')],
+            'Next Week': [moment().add(1, 'week').startOf('week'), moment().add(1, 'week').endOf('week')],
+            'This Month': [moment().startOf('month'), moment().endOf('month')],
+            'One Month From Now': [moment(), moment().add(1, 'M')],
+            'Next Month': [moment().add(1, 'M').startOf('month'), moment().add(1, 'M').endOf('month')],
+            'This Year': [moment(), moment().endOf("year")],
+            'One Year From Now': [moment(), moment().add(1, 'Y')],
+        }
+    });
+
+}
+
+const clearKeyWords = function (keyword) {
+    keyword = keyword.replace(/[\/\\()|'"*:^~`{}]/g, '');
+    keyword = keyword.replace(/]/g, '');
+    keyword = keyword.replace(/[[]/g, '');
+    keyword = keyword.replace(/[{}]/g, '');
+    return keyword;
+}
+
+function startTimeCheckbox(update_url, currentTime) {
+    $('.start_time_checkbox').click(function () {
+        if (update_url)
+            checkAndCreateUrl();
+        if ($(this).prop("checked") === true) {
+            if ($('#start_time_share').val() == '')
+                $('#start_time_share').val(secondsToHuman(currentTime));
+            $('.video-start-time').removeAttr('disabled');
+
+        } else {
+            $('.video-start-time').attr('disabled', 'disabled');
+            $('#share_link').val();
+        }
+    });
+}
+
+const getSearchKeywordsAsString = function () {
+    let keywords = $('.search_field_selector_single').val();
+    if (typeof keywords == 'undefined') {
+        keywords = $('.search_field_selector_main').val();
+    }
+
+    if ($('.advance_option_search').hasClass('d-none')) {
+        keywords = '';
+        $.each($('.search_field_selector'), function (index, obj) {
+            keywords += $(obj).val() + ' ';
+            if (!$($('select.op_selector')[index]).hasClass('add_wanted_class') && typeof $($('select.op_selector')[index]).val() != 'undefined') {
+                keywords += $($('select.op_selector')[index]).val() + ' ';
+            }
+        });
+    }
+    return keywords;
+}
+
+function removeImageCustom() {
+    let appHandler = new App();
+    document_level_binding_element('.remove_image_custom', 'click', function () {
+        $('#general_modal_close_cust_success').attr('href', $(this).data('url'));
+        $('#general_modal_close_cust_success').removeClass('d-none');
+        appHandler.show_modal_message('Confirmation', '<strong>Are you sure you want to remove this image?</strong>', 'danger', null);
+    });
+}
+
+function timePickerShare() {
+    document_level_binding_element('#start_time_share, #end_time_share', 'blur', function () {
+        let time = $(this).val();
+        if (typeof time != 'undefined' && time != '') {
+            let seconds = humanToSeconds(time);
+            if (!isNaN(seconds)) {
+                $(this).val(secondsToHuman(seconds));
+            }
+        }
+    });
+}
+
+const addKeywordToUrl = function (keyword) {
+    let query = 'keywords[]=' + keyword;
+    let link = window.location.href;
+    if (!link.includes('?')) {
+        link += '?';
+    }
+    link = link + '&' + query;
+    window.location = link;
+}
+
 function isUrlValid(value) {
     return /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)$/i.test(value);
 }
@@ -605,4 +740,4 @@ const linkToExternalTab = function () {
             $(this).attr('target', '_blank');
         }
     });
-};
+}

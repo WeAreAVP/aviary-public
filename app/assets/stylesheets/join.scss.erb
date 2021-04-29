@@ -2,11 +2,9 @@
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
 // Imports
-//@import url('https://fonts.googleapis.com/css?family=Roboto:300,400,500,700');
 
 // Variables
-$main-font: 'Roboto', sans-serif;
-$primary-color: #57e2b2;
+$primary-color: #204f92;
 $light-gray: #f8f8f8;
 $main-font-color: #808080;
 $main-font-weight: 300;
@@ -84,27 +82,21 @@ $main-font-weight: 300;
   }
 
   .head {
-    background: #f05d1f;
+    background: #003853;
     padding: 50px 20px 95px;
     color: #f3f3f3;
     font-size: 17px;
     line-height: 1.4;
     position: relative;
     font-weight: 100;
-    background-image: url(https://<%= ENV['S3_HOST_CDN'] %>/public/orange-bg.png);
     text-align: center;
-    background-repeat: no-repeat;
-    background-position: 0 300%;
-    background-size: 100%;
-    background-attachment: fixed;
 
     h1 {
       font-size: 40px;
-      font-weight: bold;
       text-align: center;
       color: #fff;
       position: relative;
-      font-family: "Roboto";
+      font-family: 'Gilroy-Bold', sans-serif;
       padding-bottom: 15px;
       margin-bottom: 15px;
 
@@ -128,11 +120,10 @@ $main-font-weight: 300;
 
     .btn {
       padding: 15px 20px;
-      background: #fff !important;
-      color: #f05c1f;
+      background: transparent;
+      color: #fff !important;
       font-size: 16px;
-      border: none !important;
-      box-shadow: 0 2px 20px rgba(142, 142, 142, 0.5);
+      border: 1px solid !important;
     }
 
     @media screen and (max-width: 992px) {
@@ -172,7 +163,7 @@ $main-font-weight: 300;
     width: 60px;
     height: 35px;
     border-radius: 100px;
-    background-color: #b63a07;
+    background-color: #001823;
     overflow: hidden;
     box-shadow: inset 0 0 2px 1px rgba(0, 0, 0, 0.05);
   }
@@ -224,15 +215,16 @@ $main-font-weight: 300;
   h1 {
     font-size: 20px;
     font-weight: bold;
-    color: #111;
-    margin: 0 0 15px;
+    color: #000;
+    margin: 0 0 20px;
+    font-family: var(--aviary-title-font);
   }
 
   ul {
-    margin: 0 0px 0 30px;
+    margin: 0 0px 40px 40px;
 
     li {
-      font-size: 15px;
+      font-size: 14px;
       line-height: 1.6;
       margin: 0 0 15px;
       position: relative;
@@ -240,9 +232,9 @@ $main-font-weight: 300;
       &:before {
         content: '';
         position: absolute;
-        top: 2px;
+        top: 4px;
         left: -30px;
-        background: image-url("right-arrow.png");
+        background: image-url("right-arrow");
         background-size: 20px;
         width: 20px;
         height: 20px;
@@ -265,6 +257,7 @@ $main-font-weight: 300;
     border: 1px solid #ced4da;
     background: #fff;
     position: relative;
+    border-radius: 4px;
 
     &:after {
       content: "";
@@ -308,9 +301,9 @@ $main-font-weight: 300;
 .sub_note {
   padding: 10px;
   margin: 0px 0 10px;
-  background: #f9f9f9;
+  background: #f2fbff;
   display: flex;
-  color: #949292;
+  color: #464646;
   font-size: 14px;
 }
 
@@ -393,7 +386,7 @@ $main-font-weight: 300;
   margin-top: 20px;
   background: #ffffff;
   border: 1px solid #eee;
-  border-left: 5px solid #f8610f;
+  border-left: 5px solid #204f92;
 
   @media (max-width: 780px) {
     text-align: center;
@@ -458,16 +451,11 @@ $main-font-weight: 300;
   }
 
   .btn-primary {
-    background: #333;
-    color: #fff;
     border: none;
     margin: 24px 0;
-    padding: 10px 25px;
   }
 
   .view-detail {
-    color: #f8610f;
-    font-weight: 500;
     margin-top: 5px;
     display: inline-block;
   }
@@ -673,12 +661,23 @@ $main-font-weight: 300;
 
 }
 
+.compare-heading-color {
+  color: #204f92;
+  margin-bottom: 3px;
+  font-size: 17px;
+  font-family: var(--aviary-title-font);
+}
+
 .compare-heading {
   font-weight: bold !important;
-  padding: 20px !important;
-  color: #f7911d;
+  padding: .75rem !important;
   text-transform: uppercase;
 
+}
+
+.extra_pricing .box {
+  padding-bottom: 16px;
+  margin-bottom: -3px;
 }
 
 .comparison tbody tr:nth-child(odd) {
@@ -796,6 +795,9 @@ $main-font-weight: 300;
   .price-info {
     border-top: 0 !important;
 
+  }
+  .account_info_content .main {
+    width: 35% !important;
   }
 
 }
@@ -917,20 +919,26 @@ $main-font-weight: 300;
   }
 }
 
+#price_plan {
+  padding: 20px;
+  border: 1px solid #ddd;
+  margin: 0;
+  border-radius: 4px;
+}
+
 .account_info_content {
   display: block;
-  padding: 0 15px;
-
-  .col-md-6 {
-    padding-left: 0;
-  }
+  padding: 0;
+  font-size: 14px;
 
   .main {
     display: inline-block;
     vertical-align: top;
-    width: 30%;
-    font-weight: bold;
-    background: #f8f8f8;
+    width: 20%;
+    font-size: 14px;
+    font-family: var(--aviary-title-font);
+    font-weight: normal;
+    background: #f9fafb;
     border: 1px solid #f8f8f8;
     padding: 15px;
     margin-top: -1px;
@@ -948,18 +956,45 @@ $main-font-weight: 300;
 
 .billing_info_content {
   .box {
-    background: #f3f3f3;
-    padding: 30px;
+    background: #f9fafb;
+    padding: 70px 30px 20px;
     border-radius: 10px;
-    height: 100px;
     position: relative;
+    border: 1px solid #dee2e6;
+    width: 30%;
+    display: inline-block;
+    vertical-align: top;
+
+    @media screen and (max-width: 992px) {
+      width: 50%;
+    }
+    @media screen and (max-width: 767px) {
+      width: 100%;
+      margin: 0 0 20px !important;
+    }
 
     img {
+      width: 50px;
+      height: auto;
+      position: absolute;
+      right: 10px;
+      bottom: 10px;
+    }
+
+    strong {
+      font-family: var(--aviary-title-font);
+      font-size: 18px;
+    }
+
+    .btn-holder {
       position: absolute;
       top: 10px;
       right: 10px;
-      width: 50px;
-      height: auto;
+    }
+
+    .h5 {
+      font-size: 18px;
+      font-family: var(--aviary-title-font);
     }
 
     .bottom {
@@ -976,8 +1011,34 @@ $main-font-weight: 300;
   }
 }
 
-#billing_history_table_wrapper{
-  .col-md-12 {
-    padding-left: 0;
-  }
+.price-class-lite {
+  background-color: rgba(32, 79, 146, 0.08);
+}
+
+.price-class-plus {
+  background-color: rgba(145, 175, 209, 0.4);
+}
+
+.price-class-adv {
+  background-color: rgb(69, 117, 172);
+  color: #fff;
+}
+
+.pricing-aviary-custom-support td {
+  vertical-align: middle;
+}
+
+.pricing-aviary-custom-support td:first-child {
+  text-align: left;
+}
+
+.pricing-aviary-custom-support .compare-heading {
+  font-size: 16px;
+  font-family: var(--aviary-title-font);
+  text-transform: capitalize;
+}
+
+.extra_pricing-contact_us {
+  margin-top: -21px;
+  margin-right: -23px;
 }

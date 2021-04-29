@@ -1,4 +1,4 @@
-<%= render partial: 'layouts/loading_skeleton', locals: { count: 2 } %>
+<%= render partial: 'layouts/loading_skeleton', locals: { count: 3 } %>
 <main id="main" role="main">
   <div class="details main-collection-page">
     <%= render partial: 'home/home_banner', locals: { banner_type: @collection.banner_type, banner_image: @collection.image, banner_slider_resources: @collection.banner_slider_resources,
@@ -50,20 +50,12 @@
 <% track_params = params.clone.except('controller').except('action').to_json %>
 
 <script type="text/javascript">
-    let params = {
-        target_id: '',
-        params: '<%=track_params %>',
-        ip: '<%=request.remote_ip %>',
-        organization_id: '<%= current_organization.present? ? current_organization.id : '' %>',
-        user_type: '<%= role_type(current_user, current_organization) %>'
-    };
+
     var display_settings = new DisplaySettings();
-    let events_tracker = new EventsTracker(params);
+
     $(function () {
         display_settings.continues_loading();
         display_settings.toggleCollectionSection();
-        setTimeout(function () {
-            events_tracker.track_hit('collection', '<%= params[:id]%>');
-        }, 500);
+
     });
 </script>

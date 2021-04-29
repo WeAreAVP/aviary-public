@@ -16,7 +16,7 @@
   </div>
 <% end %>
 
-<div class="flipcard mb-5px
+<div class="flipcard mb-3
   <%= params[:search_type] == 'advance' ? 'flipped' : '' %>">
   <div class="flipcard-wrap">
     <div class="card card-front <%= params[:search_type] == 'advance' ? 'd-none' : '' %>">
@@ -26,16 +26,20 @@
             <input type='hidden' name='update_advance_search' value='update_advance_search'/>
             <input type='hidden' name='search_type' value='simple'/>
             <input type='hidden' name='search_field' value='advanced'/>
+            <input type='hidden' name='transliteration_status' class="transliteration_status" value='false'/>
             <input type='hidden' name='commit' value='Search'/>
             <%== add_facet_params_to_form(session[:search_facets]) %>
 
             <% if search_fields.length > 1 %>
               <label for="search_field" class="sr-only"><%= t('blacklight.search.form.search_field.label') %></label>
 
-              <%= select_tag(:type_of_field_selector_single, options_for_select(search_fields, h(params[:search_field])), title: t('blacklight.search.form.search_field.title'), id: "type_of_field_selector_single", class: "type_of_field_selector_single") %>
+              <%= select_tag(:type_of_field_selector_single, options_for_select(search_fields, h(params[:search_field])), title: t('blacklight.search.form.search_field.title'), id: "type_of_field_selector_single", class: "type_of_field_selector_single mt-2") %>
             <% elsif search_fields.length == 1 %>
             <% end %>
-            <input type="text" class="form-control search_field_selector_single form-control w-100" data_identifier="" value="<%= AdvanceSearchHelper::advance_search_query_only(session[:searched_keywords], false, session['solr_params'], stopwords) %>">
+            <input type="text" class="form-control search_field_selector_single form-control w-100 mt-2" data_identifier="" placeholder="Search Aviary" value="<%= AdvanceSearchHelper::advance_search_query_only(session[:searched_keywords], false, session['solr_params'], stopwords) %>">
+
+
+
             <%- search_fields_for_advanced_search.each do |key, _| -%>
               <%= hidden_field_tag "#{key}[]", label_tag_default_for(key), :id => '', :class => " form-control #{key  }_single hidden_advance_search_single search_field_selector_hidden_single " + (@view_type == '' ? '' : ''), :data_identifier => (@view_type == '' ? '' : '') %>
             <%- end -%>
@@ -44,7 +48,7 @@
             <input type="hidden" name="type_of_field_selector[]" value="simple" class="form-control type_of_field_selector add_wanted_class d-none">
             <% if current_page?(controller: 'catalog') %>
 
-              <button type="submit" class="simple-search-btn" id="search"> Search
+              <button type="submit" class="btn btn-primary btn-block mt-3 simple-search-btn" id="search"> Search
               </button>
             <% end %>
 
@@ -61,13 +65,19 @@
       </div>
     </div>
   </div>
+
 </div>
-<a class="btn-adv simple_option_search float-right text-white font-size-13px <%= params[:search_type] == 'advance' ? '' : 'd-none' %>" data-type="simple" href="javascript:void(0)">
+<%= render partial: 'shared/search_info', locals: {from: 'search_page', classes: 'float-right ml-2 '} %>
+<a class="btn-adv simple_option_search float-right text-white font-size-13px ml-2 <%= params[:search_type] == 'advance' ? '' : 'd-none' %>" data-type="simple" href="javascript:void(0)">
   Simple Search </a>
 <a class="btn-adv advance_option_search <%= params[:search_type] == 'advance' ? 'd-none' : '' %> float-right text-white font-size-13px" data-type="advance" href="javascript:void(0)">Advanced
   Search </a>
-<span class="simple_start_over  <%= params[:search_type] == 'advance' ? 'd-none' : '' %> float-right text-white mr-5px" style="margin-top: -4px;"> | </span>
-<a class="btn-adv bold font-weight-bold simple_start_over <%= params[:search_type] == 'advance' ? 'd-none' : '' %> float-right text-white font-size-13px mr-5px" href="<%= add_facet_params_to_url(search_catalog_url(q: '', search_field: 'all_fields', utf8: '✓'), session[:search_facets]) %>">Clear Search Terms </a>
-<span class="simple_start_over  <%= params[:search_type] == 'advance' ? 'd-none' : '' %> float-right text-white mr-5px" style="margin-top: -4px;"> | </span>
-<a class='btn-adv theme_font_color float-right text-white font-size-13px font-weight-bold ml-10px mr-10px' href="<%= search_catalog_url(q: '', search_field: 'all_fields', utf8: '✓') %>"> Start Over </a>
+<span class="simple_start_over  <%= params[:search_type] == 'advance' ? 'd-none' : '' %> float-right" style="margin-top: -4px;"></span>
+<a class="btn-adv bold font-weight-bold simple_start_over <%= params[:search_type] == 'advance' ? 'd-none' : '' %> float-right text-white font-size-13px mx-2" href="<%= add_facet_params_to_url(search_catalog_url(q: '', search_field: 'all_fields', utf8: '✓'), session[:search_facets]) %>">Clear
+  Search Terms </a>
+<span class="simple_start_over  <%= params[:search_type] == 'advance' ? 'd-none' : '' %> float-right" style="margin-top: -4px;"> </span>
+<a class='btn-adv theme_font_color float-right text-white font-size-13px font-weight-bold' href="<%= search_catalog_url(q: '', search_field: 'all_fields', utf8: '✓') %>">
+  Start Over </a>
+
+
 <div class="clearfix"></div>

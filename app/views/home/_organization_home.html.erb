@@ -63,22 +63,7 @@
     </div>
   </div>
 </div>
-<% track_params = params.clone.except('controller').except('action').to_json %>
 <script type="text/javascript">
-
-    let params = {
-        target_id: '',
-        params: '<%=track_params %>',
-        ip: '<%=request.remote_ip %>',
-        organization_id: '<%= current_organization.present? ? current_organization.id : '' %>',
-        user_type: '<%= role_type(current_user, current_organization) %>'
-    };
-    let events_tracker = new EventsTracker(params);
-    $(function () {
-        setTimeout(function () {
-            events_tracker.track_hit('organization', '<%= current_organization.id %>');
-        }, 500);
-    });
     let colelction_resources = new CollectionResource();
     let homePage = new HomePage();
     document.addEventListener("DOMContentLoaded", function (event) {

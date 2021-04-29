@@ -23,7 +23,7 @@
         <%= hidden_field_tag "collection_template_field_sort[#{customfield['field'].id}][field_id]", customfield['field'].id, class: "sort-order-field", data: { field_name: customfield['field'].system_name} %>
 
         <td>
-          <i class="fa fa-bars handle" style="color: lightgrey;"></i><span style="margin-left: 10px;"><%= customfield['field'].label.titleize %>
+          <i class="fa fa-ellipsis-v drag-icon handle"></i><span style="margin-left: 10px;"><%= customfield['field'].label.titleize %>
           </span>
         </td>
 
@@ -32,7 +32,7 @@
             <%= link_to new_edit_custom_field_collection_path(@collection), class: "btn btn-outline-primary edit-custom-field-button edit-custom-field-button-spec collection-custom-field-icon", data: {id: customfield['field'].id, method_type: "edit"} do %>
               <i class="fa fa-pencil"></i>
             <% end %>
-            <%= link_to delete_custom_meta_fields_collection_path(@collection, meta_field_id: customfield['field'].id), class: "btn btn-outline-danger collection-custom-field-icon" do %>
+            <%= link_to 'javascript:void(0);', class: "btn btn-outline-danger delete-custom-field-button collection-custom-field-icon", data: { url: delete_custom_meta_fields_collection_path(@collection, meta_field_id: customfield['field'].id)} do %>
               <i class="fa fa-trash"></i>
             <% end %>
           <% end %>

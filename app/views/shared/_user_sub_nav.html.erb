@@ -6,45 +6,15 @@
           <% if current_organization.present? %>
             <% if (can? :manage, current_organization) %>
               <li>
-                <a href="javascript://" class="menu" id="menu-bar" data-url="<%= set_layout_path %>" data-layout="<%= session[:layout] %>"><i class="fa fa-bars"></i></a>
+                <a href="javascript://" class="menu" id="menu-bar" data-url="<%= set_layout_path %>" data-layout="<%= session[:layout] %>"><i class="fa fa-bars"><%= image_tag 'https://img.icons8.com/android/344/menu.png' %></i></a>
               </li>
             <% end %>
-
           <% end %>
-          <% if current_user.organization_users.active.present? %>
-            <li class="nav-item dropdown pr-2">
-              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <span class="icon-My-Organization"></span>
-                <strong><%= current_organization.present? && (can? :manage, current_organization) ? current_organization.name.truncate(25, omission: '...') : 'My Organization' %></strong>
-              </a>
-              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-
-                <% current_user.organization_users.active.each do |organization_user| %>
-                  <% home_url = organization_user.organization.status ? collections_url(host: Utilities::AviaryDomainHandler.subdomain_handler(organization_user.organization)) : account_organization_url(host: Utilities::AviaryDomainHandler.subdomain_handler(organization_user.organization)) %>
-                  <%= link_to organization_user.organization.name.truncate(55, omission: '...'), home_url, class: "dropdown-item" %>
-                <% end %>
-              </div>
-            </li>
-          <% end %>
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              <span class="icon-User"></span> <strong><%= current_user.full_name %></strong>
-            </a>
-            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-              <%= link_to "Profile", profile_path, class: "dropdown-item #{'active' if request.path.include?("profile_settings")}" %>
-              <%= link_to 'Logout', destroy_user_session_path, method: :delete, class: 'dropdown-item' %>
-
-            </div>
-          </li>
-        <% else %>
-          <li class="nav-item">
-            <a href="javascript://" class="nav-link" type="submit" data-toggle="modal" data-target="#signinmodal"><strong>Login</strong></a>
-          </li>
         <% end %>
-      </ul>
-      <ul class="navbar-nav navbar-right">
         <% if current_organization.present? %>
-          <% if current_organization.playlists.public_playlists.present? || current_user_is_current_org_user? %>
+
+
+          <% if current_organization.playlists.present? %>
             <li class="nav-item <%= current_page?(org_playlist_path) || (current_page?(root_path) && current_organization.default_tab_selection == 'playlists') ? 'active' : '' %>">
               <a class="nav-link" href="<%= org_playlist_path %>">Playlists</a>
             </li>
@@ -58,12 +28,48 @@
           <li class="nav-item <%= current_page?(org_aboutus_path) || (current_page?(root_path) && current_organization.default_tab_selection == 'about') ? 'active' : '' %>">
             <a class="nav-link" href="<%= org_aboutus_path %>">About</a>
           </li>
+
+
         <% end %>
-        <li class="nav-item">
-          <%= link_to root_url(host: ENV['APP_HOST']), class: 'nav-link pb-0' do %>
-            <%= image_tag 'homepage/main-logo.png', :class => "img_preview_cus_small" %>
+
+      </ul>
+      <ul class="navbar-nav navbar-right mr-3">
+        <% if user_signed_in? %>
+          <% if current_organization.present? %>
           <% end %>
-        </li>
+          <% if current_user.organization_users.active.present? %>
+            <li class="nav-item dropdown pr-2">
+              <a class="nav-link dropdown-toggle" href="javascript://" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="icon-My-Organization"><%= image_tag 'icons/profile.png' %></span>
+                <strong><%= current_organization.present? && (can? :manage, current_organization) ? current_organization.name.truncate(25, omission: '...') : 'My Organization' %></strong>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <% current_user.organization_users.active.each do |organization_user| %>
+                  <% home_url = organization_user.organization.status ? collections_url(host: Utilities::AviaryDomainHandler.subdomain_handler(organization_user.organization)) : account_organization_url(host: Utilities::AviaryDomainHandler.subdomain_handler(organization_user.organization)) %>
+                  <%= link_to organization_user.organization.name.truncate(55, omission: '...'), home_url, class: "dropdown-item" %>
+                <% end %>
+              </div>
+            </li>
+          <% end %>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="javascript://" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <span class="icon-User"><%= image_tag 'icons/account.png' %></span>
+              <strong><%= current_user.full_name %></strong>
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <%= link_to "Profile", profile_path, class: "dropdown-item #{'active' if request.path.include?("profile_settings")}" %>
+              <%= link_to 'Logout', destroy_user_session_path, method: :delete, class: 'dropdown-item' %>
+            </div>
+          </li>
+        <% else %>
+          <li class="nav-item">
+            <% unless current_organization.present? %>
+              <a href="javascript://" class="btn btn-outline-primary mr-2" data-toggle="modal" data-target="#signupmodal"><strong>Join
+                Now</strong></a>
+            <% end %>
+            <a href="javascript://" class="btn btn-primary" data-toggle="modal" data-target="#signinmodal"><strong>Login</strong></a>
+          </li>
+        <% end %>
       </ul>
     </nav>
     <%#= render 'shared/resource_layout_nav' %>

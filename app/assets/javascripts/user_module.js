@@ -70,14 +70,15 @@ function User(app_helpers) {
             responsive: true,
             processing: true,
             serverSide: true,
-            pageLength: 100,
+            pageLength: pageLength,
             destroy: true,
             bInfo: true,
+            bLengthChange: true,
+            lengthMenu: lengthMenuValues,
             pagingType: 'simple_numbers',
-            'dom': "<'row'<'col-md-6'f><'col-md-6'p>>" +
+            'dom': "<'row'<'col-md-6 d-flex'f><'col-md-6'p>>" +
                 "<'row'<'col-md-12'tr>>" +
-                "<'row'<'col-md-5'i><'col-md-7'p>>",
-            bLengthChange: false,
+                "<'row'<'col-md-6'li><'col-md-6'p>>",
             columnDefs: [
                 {orderable: false, targets: -1}
             ],
@@ -85,8 +86,11 @@ function User(app_helpers) {
                 info: 'Showing _START_ - _END_ of _TOTAL_',
                 infoFiltered: '',
                 zeroRecords: 'No User found.',
+                lengthMenu: " _MENU_ "
             },
             ajax: $("#listUserDatatable").data("url"),
+            "initComplete": function (settings, json) {
+            },
             drawCallback: function (settings) {
                 $(".toggle-switch__input").bind("click", function () {
                     var details = $(this).data();
@@ -116,7 +120,8 @@ function User(app_helpers) {
                     $("#remove_organization_user").modal('show');
                     return $(".remove-organization-user-btn").attr("href", $(this).attr('href'));
                 });
-                $("select").selectize();
+                $(".user_org_role").selectize();
+
             }
         });
         document.addEventListener("turbolinks:before-cache", function () {

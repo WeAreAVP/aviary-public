@@ -1,5 +1,5 @@
 <%= simple_form_for @collection, :url => @collection.new_record? ? collections_path : collection_path, html: { novalidate: true } do |c| %>
-  <div class="row">
+  <div class="row org-collection-form">
     <div class="col-md-6">
       <div class="form-group banner-image">
         <div class="field-title">
@@ -18,23 +18,23 @@
         <br>
       </div>
     </div>
-      <div class="col-md-6">
-        <div class="form-group favicon-image">
-          <div class="field-title">
-            <label for="">Collection Favicon</label>
-          </div>
-          <div class="image-box">
-            <div class="holder">
-              <img id="favicon" src="<%= @collection.new_record? ? '#' : (image_url @collection.favicon) %>" alt="">
-            </div>
-          </div>
-          <div class="file-upload">
-            <%= c.label @collection.new_record? ? 'Add Favicon' : 'Upload new favicon', for: 'collection_favicon' %>
-            <%= c.input :favicon, as: :file, error: false, label: false, input_html: { onchange: "readURL(this, 'favicon');", accept: 'image/*' } %>
-          </div>
-          <%= c.error :image %>
-          <br>
+    <div class="col-md-6">
+      <div class="form-group favicon-image">
+        <div class="field-title">
+          <label for="">Collection Favicon</label>
         </div>
+        <div class="image-box">
+          <div class="holder">
+            <img id="favicon" src="<%= @collection.new_record? ? '#' : (image_url @collection.favicon) %>" alt="">
+          </div>
+        </div>
+        <div class="file-upload">
+          <%= c.label @collection.new_record? ? 'Add Favicon' : 'Upload new favicon', for: 'collection_favicon' %>
+          <%= c.input :favicon, as: :file, error: false, label: false, input_html: { onchange: "readURL(this, 'favicon');", accept: 'image/*' } %>
+        </div>
+        <%= c.error :image %>
+        <br>
+      </div>
     </div>
   </div>
   <div class="row">
@@ -42,7 +42,7 @@
       <div class="form-group">
         <div class="field-title">
           <label for="collection_title">Collection Name
-            <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="What is your collection's name?"></i>
+            <button type="button" class="info-btn" data-content="What is your collection's name?"></button>
           </label>
         </div>
         <%= c.input :title, label: false, input_html: { class: 'form-control collection-title-field' } %>
@@ -54,8 +54,7 @@
     <div class="col-md-12">
       <div class="form-group">
         <div class="field-title">
-          <label for="collection_about">About Your Collection
-            <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" data-html="true" title="Tell users about your collection. This will appear in &quot;About this Collection&quot; on your collection page."></i>
+          <label for="collection_about">About Your Collection <button type="button" class="info-btn" data-content="Tell users about your collection. This will appear in &quot;About this Collection&quot; on your collection page."></button>
           </label>
         </div>
         <%= c.input :about, label: false, input_html: { class: 'form-control' } %>
@@ -82,17 +81,17 @@
       </div>
     </div>
   </div>
-
   <% if  @collection.new_record? %>
     <div class="row pb-3 mt-3">
       <div class="col-md-12">
-        <div class="form-group">
-          <div class="field-title">
-            <input type='checkbox' class="boolean optional d-inline-block mr-1" name='is_cloning_collection' id='collection_is_cloning_collection' />
-            <label for="collection_public" class="string optional d-inline-block">Clone from existing collection?</label>
-            <small class="form-text"> By enabling this option, you can select an existing collection of yours that will be used to pre-configure the metadata fields and access policies for this new collection. Select a collection below to proceed. </small>
-          </div>
-          <div id='collection_dd_custom' class="d-none mb-5 pb-5">
+        <div class="form-check">
+          <label class="string optional d-inline-block">
+            <input type='checkbox' class="boolean optional" name='is_cloning_collection' id='collection_is_cloning_collection' />
+            Clone from existing collection? <span class="icon-check"></span>
+          </label>
+          <button type="button" class="info-btn" data-content="By enabling this option, you can select an existing collection of yours that will be used to pre-configure the metadata fields and access policies for this new collection. Select a collection below to proceed."></button>
+          <div id='collection_dd_custom' class="d-none mb-1 mt-3 form-group">
+            <div class="field-title"><label class="p-0">Choose Collection</label></div>
             <%= select_tag('clone_collection', options_from_collection_for_select(current_organization.collections, 'id', 'title'), prompt: "Select a Collection.",) %>
           </div>
         </div>
@@ -110,5 +109,23 @@
     var collection = new Collection();
     document.addEventListener("DOMContentLoaded", function (event) {
         collection.initialize();
+    });
+    $(function(e) {
+        e.preventDefault;
+
+        $('.info-btn').popover({
+            html: true,
+            trigger: "click",
+            placement: "top"
+        });
+
+        $(document).on('click', function(e) {
+            $('.info-btn').each(function() {
+                if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0) {
+                    $(this).popover('hide');
+                }
+            });
+        });
+
     });
 </script>

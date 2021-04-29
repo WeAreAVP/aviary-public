@@ -1,75 +1,97 @@
 <!-- Footer -->
-<footer class="page-footer">
-  <div class="social-icon-section">
-    <div class="container">
-      <!-- Grid row-->
-      <div class="row py-4 d-flex align-items-center">
-        <div class="col-md-6 col-lg-5 text-center text-md-left mb-4 mb-md-0">
-          <h6 class="mb-0"><div class="ico"><img src="<%= image_url 'gullhead.png' %>"></div> Connect with us on social networks!</h6>
-        </div>
-        <div class="col-md-6 col-lg-7 text-center text-md-right">
-          <a href="https://www.facebook.com/WeAreAVP/" target="_blank">
-            <i class="fa fa-facebook"></i>
-          </a>
-          <a href="https://twitter.com/weareavp" target="_blank">
-            <i class="fa fa-twitter"></i>
-          </a>
-          <a href="https://www.linkedin.com/company/weareavp/" target="_blank">
-            <i class="fa fa-linkedin"></i>
-          </a>
-        </div>
-      </div>
-      <!-- Grid row-->
-    </div>
-  </div>
-
+<footer class="page-footer footer_section">
   <!-- Footer Links -->
-  <div class="container text-center text-md-left mt-5">
 
-    <div class="row mt-3">      
-      <div class="col-md-8 col-lg-8 mb-4">
+  <div class="container text-center text-md-left">
+
+    <div class="row mt-3">
+      <div class="col-md-12 col-lg-8 d-flex">
         <div class="img-holder">
           <%= link_to image_tag("homepage/main-logo-footer.png"), root_path, class: 'navbar-brand' %>
         </div>
-      </div>
-      <div class="col-md-4 col-lg-4">
         <div class="nav">
-          <strong class="mb-3 d-block">COMPANY</strong>
-            <div class="row">
-              <div class="col-md-6">
-                <p>
-                  <%= link_to "About", about_path %>
-                </p>
-                <p>
-                  <%= link_to "Features", features_path %>
-                </p>
+          <div class="row">
+            <div class="col-md-3">
+              <strong>About</strong>
 
+              <p>
+                <%= link_to "Features", features_path %>
+              </p>
+              <p>
+                <%= link_to "Pricing", pricing_path %>
+              </p>
+              <p>
+                <%= link_to "About", about_path %>
+              </p>
+
+            </div>
+            <div class="col-md-3">
+              <strong>Support</strong>
+              <p>
+                <%= link_to "Contact Us", contact_us_path %>
+              </p>
+              <p>
+                <%= link_to "Support", support_path %>
+              </p>
+            </div>
+            <div class="col-md-3">
+              <strong>Find us on...</strong>
+              <div class="d-flex">
                 <p>
-                  <%= link_to "Contact Us", contact_us_path %>
+                  <a class="font-size-18px m-0 pr-2" href="https://www.facebook.com/WeAreAVP/" target="_blank">
+                    <i class="fa fa-facebook-official"></i>
+                  </a>
                 </p>
-              </div>
-              <div class="col-md-6">
                 <p>
-                  <%= link_to "Support", support_path %>
+                  <a class="font-size-18px m-0 px-2" href="https://twitter.com/weareavp" target="_blank">
+                    <i class="fa fa-twitter"></i>
+                  </a>
                 </p>
                 <p>
-                  <%= link_to "Terms of Service", terms_of_service_path %>
-                </p>
-                <p>
-                  <%= link_to "Privacy Policy", privacy_policy_path %>
+                  <a class="font-size-18px m-0 px-2" href="https://www.linkedin.com/company/weareavp/" target="_blank">
+                    <i class="fa fa-linkedin"></i>
+                  </a>
                 </p>
               </div>
             </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-12 col-lg-4">
+        <div class="get-subscription custom_form">
+          <div class="title">
+            Get Updates
+          </div>
+          <p>Subscribe for updates and special announcements.</p>
+          <form>
+            <div class="d-flex align-items-center mt-2">
+              <div class="form-group p-0">
+                <div class="field-title"><label class="text-white">Email</label></div>
+                <input type="email" class="form-control">
+              </div>
+              <input type="submit" class="btn btn-warning p-3 mt-2 ml-4" value="Sign Up">
+            </div>
+          </form>
         </div>
       </div>
     </div>
   </div>
-  <div class="footer-copyright text-center py-2">&copy; 2019 Copyright
-    <a href="<%= root_path %>"> Aviary</a>
+  <div class="footer-bottom p-3 mt-4">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-6">
+          <div class="footer-copyright">&copy; 2021
+            <a href="<%= root_path %>"> Aviary</a>. All Rights Reserved.
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="d-flex justify-content-end">
+            <p><a href="<%= terms_of_service_path %>" class="mb-0 mr-4" target="_blank">Terms of Service</a></p>
+            <p><a href="<%= privacy_policy_path %>" class="mb-0" target="_blank">Privacy Policy</a></p>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
-  <div class="avp-logo">
-    <a href="https://www.weareavp.com" target="_blank"><img src="<%= image_url 'homepage/avplogo.png' %>" alt=""></a>
-  </div>
-  <!-- Copyright -->
 
 </footer>

@@ -1,18 +1,21 @@
-<div class="organization-section">
+<div class="organization-section custom_form">
   <%= simple_form_for @file_index, url: upload_index_path(@resource_file.id), method: :post do |form| %>
     <div class="row">
       <div class="col-md-12">
+        <div id="progress_index" class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="background-color: #ffffff;">
+          <div class="progress-bar progress-bar-success" style="width:0%;"></div>
+        </div>
         <div class="form-group">
-          <div id="progress_index" class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="background-color: #ffffff;">
-            <div class="progress-bar progress-bar-success" style="width:0%;"></div>
+          <div class="field-title">
+            <label for="associated_file">Select an index to associate to this file.</label>
           </div>
-          <label class="pb-10px" for="associated_file">Select an index to associate to this file. Allowed
-            formats: OHMS XML and
-            WebVTT.</label>
-          <span class="btn btn-primary fileinput-button">Select File
+          <span class="form-control fileinput-button">Select File
             <%= form.file_field :associated_file, as: :file, error: false, label: false, class: 'form-control' %>
               </span>
-          <small id="file_name_index" class="text-muted">
+          <small class="text-muted font-size-12px pt-2">Allowed
+            formats: OHMS XML and
+            WebVTT.</small>
+          <small id="file_name_index" class="text-muted border d-block text-center p-2 mt-3">
             No file selected.
           </small>
           <div class="associated_file text-danger"></div>
@@ -22,27 +25,35 @@
     <div class="row">
       <div class="col-md-12">
         <div class="form-group">
-          <label for="title" class="pb-5px"><b>Assign a Title to this index.</b> Title will be used to differentiate
-            multiple indexes
-            for a single file.</label>
+          <div class="field-title"><label for="title">Assign a Title to this index.</label></div>
           <%= form.text_field :title, label: false, class: 'form-control' %>
+          <div class="title text-danger"></div>
+        </div>
+        <small class="text-muted font-size-12px pt-2">Title will be used to differentiate
+          multiple indexes
+          for a single file.</small>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <div class="form-group">
+          <div class="field-title"><label for="title">Description</label></div>
+          <%= form.text_area :description, :class => "form-control" %>
           <div class="title text-danger"></div>
         </div>
       </div>
     </div>
     <div class="row">
-      <div class="col-md-8">
+      <div class="col-md-6">
         <div class="form-group">
-          <%= form.label :language, 'Index Language', class: 'pb-5px' %>
+          <div class="field-title"><%= form.label :language, 'Index Language' %></div>
           <%= form.select :language, iso_639_1_languages, required: true, label: false, selected: 'en', class: 'custom-placeholder' %>
           <div class="language text-danger"></div>
         </div>
       </div>
-    </div>
-    <div class="row">
-      <div class="col-md-8">
+      <div class="col-md-6">
         <div class="form-group">
-          <%= form.label 'Public?', for: 'file_index_public', class: 'pb-5px' %>
+          <div class="field-title"><%= form.label 'Public?', for: 'file_index_public'%></div>
           <%= form.select :is_public, [['Yes', true], ['No', false]], required: true, label: false, class: 'custom-placeholder' %>
           <div class="is_public text-danger"></div>
         </div>
@@ -53,6 +64,6 @@
         <p class="text-success" id="index_upload_success"></p>
       </div>
     </div>
-    <a href="javascript://" class="btn btn-info upload_index_btn float-right">Upload Index</a>
+    <a href="javascript://" class="btn btn-primary upload_index_btn float-right">Upload Index</a>
   <% end %>
 </div>

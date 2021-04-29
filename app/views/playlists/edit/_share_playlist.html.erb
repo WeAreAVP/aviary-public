@@ -32,33 +32,40 @@
             </li>
           <% end %>
         </ul>
-        <div class="tab-content" id="myTabContent">
+        <div class="tab-content custom_form" id="myTabContent">
           <div class="tab-pane fade show active" id="sharelink" role="tabpanel" aria-labelledby="sharelink-tab">
             <div class="content">
-              <div class="shareLink">
+              <div class="shareLink form-group">
+                <div class="field-title"><label>Share Link</label></div>
                 <input title="Resource Share URL" readonly id="share_link" type="text" class="form-control share_value" value="<%= playlist_short_url(Base64.urlsafe_encode64('share' + @playlist_resource.playlist.id.to_s), host: Utilities::AviaryDomainHandler.subdomain_handler(@playlist_resource.playlist.organization)) %>"/>
-                <button class="btn btn-default btn-block copy-link" data-clipboard-action="copy" data-clipboard-target="#share_link">Copy
+                <button class="btn btn-primary btn-block copy-link mt-3" data-clipboard-action="copy" data-clipboard-target="#share_link">Copy
                 </button>
               </div>
             </div>
           </div>
           <div class="tab-pane fade" id="embed" role="tabpanel" aria-labelledby="embed-tab">
             <div class="content">
-                <div class="shareLink">
-                <textarea readonly class="form-control mb-3 share_value" id="embed_resource_media_player" placeholder="Embed Playlist"><iframe src="<%= playlist_show_url(@playlist_resource.playlist, collection_resource_file_id: @resource_file.id, playlist_resource_id: @playlist_resource.id, embed: true, media_player: true) %>" height="800" width="1200" style="width: 100%;"></iframe></textarea>
-                <button class="btn btn-default btn-block copy-link" data-clipboard-action="copy" data-clipboard-target="#embed_resource_media_player" data-original-title="" title="">Copy</button>
+              <div class="shareLink form-group">
+                <% outer_div_style, common_style = iframe_responsive_design %>
+
+                <div class="field-title"><label>Embed Playlist Link</label></div>
+                <textarea readonly class="form-control share_value" id="embed_resource_media_player" placeholder="Embed Playlist"><div <%= outer_div_style %> ><iframe  <%= common_style %> src="<%= playlist_show_url(@playlist_resource.playlist, collection_resource_file_id: @resource_file.id, playlist_resource_id: @playlist_resource.id, embed: true, media_player: true) %>" ></iframe></div></textarea>
+                <button class="btn btn-primary btn-block copy-link mt-3" data-clipboard-action="copy" data-clipboard-target="#embed_resource_media_player" data-original-title="" title="">Copy</button>
               </div>
             </div>
           </div>
           <div class="tab-pane fade" id="public_access_url_tab" role="tabpanel" aria-labelledby="public_access_url-tab">
             <div class="content">
-              <div class="shareLink">
+              <div class="shareLink form-group">
+                <div class="field-title"><label>Embed Super View URL</label></div>
                 <textarea readonly class="form-control mb-3 share_value" id="public_access_url" placeholder="Super View URL"><%= playlist_short_url(Base64.urlsafe_encode64('share' + @playlist_resource.playlist.id.to_s), host: Utilities::AviaryDomainHandler.subdomain_handler(@playlist_resource.playlist.organization)) %></textarea>
-                <label class='label font-weight-bold mb-1usel-wrap .mediacarousel").jCarouse'> Access Duration:</label>
+              </div>
+              <div class="form-group">
+                <div class="field-title"><label class='mb-1usel-wrap .mediacarousel").jCarouse'> Access Duration:</label></div>
                 <input type='hidden' id='public_access_base_url' value='<%= playlist_short_url(Base64.urlsafe_encode64('share' + @playlist_resource.playlist.id.to_s), host: Utilities::AviaryDomainHandler.subdomain_handler(@playlist_resource.playlist.organization)) %>'/>
                 <input type='text' data-url='<%= encrypted_info_url %>' data-resoruceid="<%= @playlist_resource.playlist.id %>" id='public_access_time_period' name='public_access_time_period' class='form-control'/>
-                <button class="btn btn-default btn-block copy-link" data-clipboard-action="copy" data-clipboard-target="#public_access_url" data-original-title="" title="">Copy</button>
               </div>
+              <button class="btn btn-primary btn-block copy-link" data-clipboard-action="copy" data-clipboard-target="#public_access_url" data-original-title="" title="">Copy</button>
             </div>
           </div>
         </div>

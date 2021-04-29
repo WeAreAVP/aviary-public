@@ -5,9 +5,9 @@
   <%= hidden_field_tag(:search_field, blacklight_config.advanced_search[:url_key]) %>
 </div>
 
-<div class="submit-buttons pull-right mr-15px">
+<div class="submit-buttons pull-right">
   <%= link_to t('blacklight_advanced_search.form.start_over'),
               add_facet_params_to_url(search_catalog_url(q: '', search_field: 'all_fields', utf8: '✓'), session[:search_facets]),
-              :class => "btn btn-primary advanced-search-start-over" %>
+              :class => "btn btn-outline-light advanced-search-start-over" %>
   <%= submit_tag t('blacklight_advanced_search.form.search_btn'), :class => 'btn btn-primary advanced-search-submit', :id => "advanced-search-submit" %>
 </div>

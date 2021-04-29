@@ -62,6 +62,17 @@ module ApplicationHelper
     ''
   end
 
+  def human_to_seconds(time)
+    a = time.split(':')
+    (a[0].to_i * 60 * 60) + (a[1].to_i * 60) + a[2].to_i
+  rescue StandardError
+    0
+  end
+
+  def date_time_format(date_time)
+    date_time.to_datetime.strftime('%m-%d-%Y %H:%M:%S')
+  end
+
   # states array for CA and US + None
   def available_states
     none = { none: 'None' }
@@ -165,22 +176,6 @@ module ApplicationHelper
     100 * current / allowed
   end
 
-  def compatibility_definition
-    show_popup_compatibility = false
-    if browser.chrome? && browser.version.to_i < 49
-      show_popup_compatibility = true
-    elsif browser.firefox? && browser.version.to_i < 48
-      show_popup_compatibility = true
-    elsif browser.ie? && browser.version.to_i < 11
-      show_popup_compatibility = true
-    elsif browser.opera? && browser.version.to_i < 36
-      show_popup_compatibility = true
-    elsif browser.safari? && browser.version.to_i < 6
-      show_popup_compatibility = true
-    end
-    show_popup_compatibility
-  end
-
   def current_user_is_org_owner_or_admin?
     org_users = current_user.organization_users.active.where(organization_id: current_organization.id) if current_user.present?
     org_users.present? && Role.org_owner_and_admin_id.include?(org_users.first.role_id)
@@ -219,5 +214,51 @@ module ApplicationHelper
 
   def nunncenter_ohms_xsd
     'http://weareavp.com/nunncenter/ohms/ohms.xsd'
+  end
+
+  def tracker_params(params, remove_extra_param = false)
+    raw_params = params.clone
+    raw_params = raw_params.except('controller').except('action')
+    if remove_extra_param.present?
+      remove_extra_param.each do |single_params|
+        raw_params.delete(single_params) if raw_params[single_params].present?
+        raw_params.delete(single_params.to_s) if raw_params[single_params.to_s].present?
+      end
+    end
+    raw_params.to_json
+  end
+
+  def check_valid_array(value, attribute)
+    value_current = 'none'
+    return value_current unless value.present?
+    value_current = if value.class == Array
+                      raw_values = []
+                      value.each do |single_value|
+                        begin
+                          raw_values << if single_value.class == Array && single_value.include?(' :: ')
+                                          custom_value = single_value.split(' :: ')
+                                          "#{custom_value[1]} (#{custom_value[0]})"
+                                        else
+                                          single_value
+                                        end
+                        rescue StandardError => error
+                          puts error
+                        end
+                      end
+                      raw_values.join(', ')
+                    else
+                      value
+                    end
+    %w(title_ss collection_title).include?(attribute) ? strip_tags(value_current.to_s).gsub('::', ' ') : truncate(strip_tags(value_current.to_s).gsub('::', ' '), length: 50)
+  end
+
+  def lock_image(classes = '')
+    "<img class='#{classes}' src='https://#{ENV['S3_HOST_CDN']}/public/lock.png' alt='content locked'>".html_safe
+  end
+
+  def key_hash_manager(string)
+    key = OpenSSL::Digest::SHA256.new.hexdigest(string)
+    %w[ɷ ʇ ʊ ʚ ʎ ʚ ʛ ɸ ʝ ʇ].each_with_index { |index, single_character| key = key.gsub(single_character.to_s, index) }
+    key
   end
 end

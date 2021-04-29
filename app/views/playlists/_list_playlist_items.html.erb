@@ -7,7 +7,7 @@
       <% if !@playlist_show.present? && !@playlist_show && (can? :manage, @playlist) %>
         <div class="form-group no-field plr-sort-container m-0">
           <input type="checkbox" data-bulk_edit_playlist_resource_id="<%= pl_rsrc.id %>" data-bulk_edit_resource_id="<%= pl_rsrc.collection_resource_id %>" class="choose-resource">
-          <span class="sort-icon"><i class="fa fa-bars"></i></span>
+          <span class="sort-icon"><i class="fa fa-ellipsis-v"></i></span>
           <input type="text" value='<%= pl_rsrc.sort_order %>' disabled='disabled' class="form-control plr-sort-index position-relative only_allow_number" style="z-index: 9" data-id='<%= pl_rsrc.id %>' name="playlist_resource_sort[<%= pl_rsrc.id %>]">
         </div>
       <% end %>
@@ -20,6 +20,7 @@
           param_link[:embed] = true if params[:embed].present?
           param_link[:media_player] = true if params[:media_player].present?
           param_link[:share] = params[:share] if params[:share].present?
+          param_link[:access] = params[:access] if params[:access].present?
           playlist_link = (pl_rsrc == @playlist_resource) ? 'javascript:void(0)' : playlist_show_path(param_link) %>
       <% end %>
 
@@ -30,9 +31,11 @@
               <div class="col-12">
                 <div class="col-12 mt-2 d-inline-block">
                   <%= lock_image('h-20px') %>
+
                 </div>
                 <div class="col-12 mt-1">
-                  <span class="text-white font-size-12px">You don't have access to this resource.</span>
+                  <div class="access_request_text_custom text-white">You don't have access.</div>
+
                 </div>
               </div>
             </div>
@@ -57,26 +60,31 @@
           <% thumb_url = "https://#{ENV['S3_HOST_CDN']}/public/images/video-default.png" if thumb_url.blank? %>
           <%= image_tag(thumb_url) %>
         </a>
+
+        <div class="title_description">
+          <% if !@playlist_show.present? && !@playlist_show && (can? :manage, @playlist) %>
+
+            <span style="font-size: 16px;font-weight: bold;color: #000;text-decoration: none;line-height: 1.25;" data-bip-type="input" data-bip-ok_button="title" data-bip-attribute="title" data-bip-activator="#button_id_<%=pl_rsrc.id %>" data-bip-object="playlist_resource" data-bip-original-content="<%= pl_rsrc.name %>"
+                  data-bip-skip-blur="false" data-bip-url="<%= update_description_playlist_playlist_resource_path(playlist_id: pl_rsrc.playlist_id, id: pl_rsrc.id) %>" data-bip-value="<%= pl_rsrc.name %>"
+                  class="best_in_place cursor-pointer" onclick="window.location='<%= playlist_link %>'" id="best_in_place_pl_resource_2_title_<%=pl_rsrc.id %>" method="PUT">  <%= pl_rsrc.name %>
+            </span>
+            <i class="ml-1 mt-1 fa fa-pencil cursor-pointer edit-description-resource" data-toggle="tooltip" data-placement="top" title="Click to edit the title."  id="button_id_<%=pl_rsrc.id %>"></i>
+
+          <% else %>
+            <a href="<%= playlist_link %>" class='title <%= can_access ? 'can-play-resource' : ' ' %>'> <%= pl_rsrc.name %> </a>
+          <% end %>
+        </div>
         <div class="coll-name">
           <div class="ico">
             <% icon_src = (pl_rsrc.collection_resource.collection.present? && pl_rsrc.collection_resource.collection.favicon.present?) ? pl_rsrc.collection_resource.collection.favicon.url(:small) : image_url('collection_folder_icon.svg') %>
             <img src="<%= icon_src %>" alt="collection">
           </div>
+          <!--          collection_url(pl_rsrc.collection_resource.collection, host: Utilities::AviaryDomainHandler.subdomain_handler(pl_rsrc.collection_resource.collection.organization))-->
           <%= link_to pl_rsrc.collection_resource.collection.title, playlist_link, class: "text" %>
         </div>
 
-        <div class="title_description">
-          <% if !@playlist_show.present? && !@playlist_show && (can? :manage, @playlist) %>
 
-<span style="font-size: 15px;font-weight: 500;color: #000;text-decoration: none;line-height: 1.25;" data-bip-type="input" data-bip-ok_button="title" data-bip-attribute="title" data-bip-activator="#button_id_<%=pl_rsrc.id %>" data-bip-object="playlist_resource" data-bip-original-content="<%= pl_rsrc.name %>"
-      data-bip-skip-blur="false" data-bip-url="<%= update_description_playlist_playlist_resource_path(playlist_id: pl_rsrc.playlist_id, id: pl_rsrc.id) %>" data-bip-value="<%= pl_rsrc.name %>"
-      class="best_in_place cursor-pointer" onclick="window.location='<%= playlist_link %>'" id="best_in_place_pl_resource_2_title_<%=pl_rsrc.id %>" method="PUT">  <%= pl_rsrc.name %>
-            </span>
-            <i class="ml-1 mt-1 fa fa-pencil cursor-pointer edit-description-resource" data-toggle="tooltip" data-placement="top" title="Click to edit the title."  id="button_id_<%=pl_rsrc.id %>"></i>
-          <% else %>
-            <a href="<%= playlist_link %>" class='title <%= can_access ? 'can-play-resource' : ' ' %>'> <%= pl_rsrc.name %> </a>
-          <% end %>
-        </div>
+
         <div class="playlist_description_full playlist_resource_description float-left playlist_resource_description_<%= pl_rsrc.id %>">
           <div class="less-description d-inline">
             <%= pl_rsrc.description.strip_tags %>
@@ -88,9 +96,9 @@
         </div>
         <% unless @playlist_show.present? && @playlist_show && (can? :manage, @playlist) %>
           <button class="text-primary edit_description_playlist badge badge-primary" data-toggle="modal" data-target="#edit_playlist_resource_description_modal_center" data-playlist_resource_id='<%= pl_rsrc.id %>' data-url="<%= update_description_playlist_playlist_resource_path(playlist_id: pl_rsrc.playlist_id, id: pl_rsrc.id) %>">
-            <span class="fa fa-pencil"></span> Edit Description
+            Edit Description
           </button>
-          <%= link_to "<i class='fa fa-trash'></i> Remove".html_safe, playlist_playlist_resource_url(pl_rsrc, playlist_id: @playlist.id), method: :delete, data: { confirm: 'Are you sure you want to delete this Resource from Playlist?' }, class: ' badge badge-danger remove_playlist_resoure' %>
+          <%= link_to "Remove".html_safe, playlist_playlist_resource_url(pl_rsrc, playlist_id: @playlist.id), method: :delete, data: { confirm: 'Are you sure you want to delete this Resource from Playlist?' }, class: ' badge badge-danger remove_playlist_resoure' %>
         <% end %>
       </div>
     </div>

@@ -10,13 +10,15 @@
               <% thumb_url = presenter.media_type.include?('avalon') || presenter.media_type.include?('video') ? "https://#{ENV['S3_HOST_CDN']}/public/images/video-default.png" : "https://#{ENV['S3_HOST_CDN']}/public/images/audio-default.png" %>
             <% end %>
           <% end %>
-          <a href="<%= collection_collection_resource_path(single_banner.collection_resource.collection_id, single_banner.collection_resource.id) %>">
-            <span><%= image_tag(thumb_url) %></span>
-            <div class="text-detail">
-              <strong><%= single_banner.collection_resource.title %></strong>
-              <span class="collection"><%= single_banner.collection_resource.collection.title %></span>
-            </div>
-          </a>
+          <% if single_banner.collection_resource.present? %>
+            <a href="<%= collection_collection_resource_path(single_banner.collection_resource.collection_id, single_banner.collection_resource.id) %>">
+              <span><%= image_tag(thumb_url) %></span>
+              <div class="text-detail">
+                <strong><%= single_banner.collection_resource.title if single_banner.collection_resource.present? %></strong>
+                <span class="collection"><%= single_banner.collection_resource.collection.title if single_banner.collection_resource.collection.present? %></span>
+              </div>
+            </a>
+          <% end %>
         <% end %>
       </div>
       <div class="search-nav search1cus flex-column">
@@ -56,8 +58,3 @@
     </div>
   </div>
 <% end %>
-<script type="application/javascript">
-    $(function () {
-        show_slider('.org-banner-slider', true);
-    });
-</script>

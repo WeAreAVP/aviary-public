@@ -33,59 +33,77 @@
                 </div>
                 <div class="">
                   <div class="row">
-                    <div class="col-md-7">
+                    <div class="col-md-12">
                       <table class="table pb-0 mb-0">
                       </table>
-                      <div class="holder custom_fields_container border-0">
-                        <table class="table table-striped table-bordered table-hover border-0">
+                      <div class="holder custom_fields_container border">
+                        <table class="table table-hover border-0">
                           <thead>
                           <tr class="">
-                            <th class='pl-5 ' style="width: 33% !important;"><h2>Field Name</h2></th>
-                            <th style="width: 33% !important; "><h2>Available in Collection</h2></th>
-                            <th style="width: 33% !important; "><h2>Status</h2></th>
+                            <th style="width: 50% !important;"><h2>Field Name</h2></th>
+                            <th style="width: 30% !important; "><h2>Available in Collection</h2></th>
+                            <th style="width: 20% !important; "><h2>Status</h2></th>
                           </tr>
                           </thead>
 
                         </table>
-                        <table class="table table-bordered table-hover border-0" id="sort_facet_fields_table">
+                        <table class="table border-0" id="sort_facet_fields_table">
                           <tbody>
-                          <%= form_tag search_configuration_organization_path, class: "sort-search-field-form" do %>
+
+                          <% flock_params = params.slice(:config_type, :flock_id) %>
+                          <% param = {} %>
+                          <% param = JSON.parse(flock_params.to_json) if flock_params.present? %>
+                          <%= form_tag search_configuration_organization_path(param), class: "sort-search-field-form" do %>
                             <% @dynamic_fields.each do |_key, custom_field| %>
                               <% next if custom_field['type'] == 'editor' %>
                               <% custom_field_info = CustomFields::Field.where(system_name: custom_field['key']).where.not(column_type: 6).try(:first) %>
                               <% system_name = custom_field_info.present? ? custom_field_info.system_name : custom_field['key'] %>
                               <% type = custom_field_info.present? ? CustomFields::Field::TypeInformation.fetch_type(custom_field_info.column_type).to_s : custom_field['type'] %>
-                              <% label = custom_field_info.present? ? custom_field_info.label.titleize : custom_field['label'].titleize %>
+                              <% label = custom_field_info.present? ? custom_field_info.label : custom_field['label'] %>
                               <% is_default_field = custom_field['is_default_field'] %>
                               <% collection = custom_field['collection'] %>
-                              <tr class="facet_field <%= system_name %>" data-facet-field="<%= system_name %>" data-facet-field-type="<%= type %>" data-label="<%= label %>" data-collection="<%= collection %>" data-is-default-field="<%= is_default_field %>">
-                                <td width="30%">
-                                  <i class="fa fa-bars handle" style="color: lightgrey;cursor: move;"></i><span style="margin-left: 10px;">
+                              <% collection_data = Collection.where(id: collection.to_s.split(',')).pluck(:title) if Collection.where(id: collection.to_s.split(',')).present? %>
+                              <% organization = custom_field['organization'] %>
+                              <% if collection_data.present? || collection.blank? %>
+                                <tr class="facet_field <%= system_name %>" data-facet-field="<%= system_name %>" data-facet-field-type="<%= type %>" data-label="<%= label %>" data-collection="<%= collection %>" data-is-default-field="<%= is_default_field %>">
+                                  <td width="50%">
+                                    <i class="fa fa-ellipsis-v handle mx-2" style="color: lightgrey;cursor: move;"></i><span>
                                   <%= label %>
-                                  <% if is_default_field %>
+                                    <% if is_default_field %>
                                     <i class="fa fa-asterisk color-grey font-size-8px" data-toggle="tooltip" data-placement="top" title="This is a default field of collection." aria-hidden="true"></i>
                                   <% end %>
                                 </span>
-                                </td>
-                                <td width="30%">
-                                  <% collection = Collection.where(id: collection.to_s.split(',')).pluck(:title) if Collection.where(id: collection.to_s.split(',')).present? %>
-                                  <%= if collection.present?
-                                        if collection.class == Array
-                                          collection.join('<br/>').html_safe
-                                        else
-                                          collection
-                                        end
-                                      else
-                                        'All'
-                                      end %>
-                                </td>
-                                <td width="30%">
-                                  <label class="toggle-switch">
-                                    <%= check_box_tag 'is_facetable', 'no', custom_field['status'].to_s.to_boolean?, class: "toggle-switch__input template-data-is-facetable template-data-field-is-facetable" %>
-                                    <span class="toggle-switch__slider"></span>
-                                  </label>
-                                </td>
-                              </tr>
+                                  </td>
+
+                                  <% collection_data = collection.to_s.split(',') if collection.present? %>
+                                  <% organization_data = Organization.where(id: organization.to_s.split(',')) if Organization.where(id: organization.to_s.split(',')).present? %>
+                                  <% if organization_data.present? %>
+                                    <% organization_collections = search_facet_fields(organization_data, collection_data) %>
+                                  <% end %>
+                                  <td width="30%">
+                                    <% if organization_data.present? && !organization_collections.empty? && collection_data.present? %>
+                                      <% organization_collections&.each do |key, organization_collection| %>
+                                        <% if params['config_type'] == 'flock' %>
+                                          <strong class="mt-4 mb-4"><%= organization_collection[:org_name] %></strong>
+                                        <% end %>
+                                        <% organization_collection[:collections]&.each do |c| %>
+                                          <% if c.present? %>
+                                            <p class="pl-3"> <%= c.html_safe %></p>
+                                          <% end %>
+                                        <% end %>
+                                      <% end %>
+                                    <% else %>
+                                      <p class="pl-3">All</p>
+                                    <% end %>
+                                  </td>
+                                  <td width="20%">
+                                    <label class="toggle-switch">
+                                      <%= check_box_tag 'is_facetable', 'no', custom_field['status'].to_s.to_boolean?, class: "toggle-switch__input template-data-is-facetable template-data-field-is-facetable" %>
+                                      <span class="toggle-switch__slider"></span>
+                                    </label>
+                                  </td>
+                                </tr>
+                              <% end %>
                             <% end %>
                             <textarea class="d-none sort_info_search" name='sort_info_search'></textarea>
                           <% end %>
@@ -95,7 +113,7 @@
 
                     </div>
                     <div class="text-right mb-4 col-12">
-                      <button class="update-forms-btn btn btn-info mt-2 mr-2" href="javascript://">Update</button>
+                      <button class="update-forms-btn btn btn-primary mt-2" href="javascript://">Update</button>
                     </div>
                   </div>
                 </div>

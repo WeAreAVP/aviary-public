@@ -1,8 +1,9 @@
 <% single_field['values'].each do |single_value| %>
-  <% unless single_value['value'].blank? && single_value['vocab_value'].blank? %>
+  <%
+    unless single_value['value'].to_s.strip.blank? %>
     <div class="single-value single-non-tombstone ">
-      <% if single_field['field'].is_vocabulary %>
-        <span class="badge badge-secondary single_value_non_tombstone"><%= single_value['vocab_value'] if single_value['vocab_value'].present? %></span>
+      <% if single_field['field'].is_vocabulary && single_value['vocab_value'].present? %>
+        <span class="badge badge-secondary single_value_non_tombstone"><%= single_value['vocab_value'] %></span>
       <% end %>
       <% case single_field['field'].column_type.to_s %>
       <% when CustomFields::Field::TypeInformation::TOKEN.to_s %>

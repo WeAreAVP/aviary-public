@@ -1,3 +1,59 @@
+.form-check {
+    margin: 20px 0;
+    padding-left: 0;
+    position: relative;
+}
+
+.form-check .input {
+    display: inline-block;
+}
+
+.form-check label {
+    position: relative;
+    font-size: 14px;
+    font-weight: 500 !important;
+    padding-left: 30px;
+}
+
+.form-check label label {
+    display: none;
+}
+
+.form-check input[type="checkbox"] {
+    display: none;
+}
+
+.form-check .icon-check {
+    position: absolute;
+    display: inline-block;
+    height: 17px;
+    width: 17px;
+    top: 0px;
+    left: 0;
+    border: 2px solid #336075;
+    background-color: #fff;
+    border-radius: 3px;
+    transition: .2s all ease-in-out;
+}
+
+.form-check .icon-check:before {
+    width: 10px;
+    height: 6px;
+    content: '';
+    border-width: 0 0 2px 2px;
+    border-style: solid;
+    border-color: #336074;
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    -webkit-transform: rotate(-45deg);
+    transform: rotate(-45deg);
+    display: none;
+}
+
+.form-check input[type="checkbox"]:checked + .icon-check:before {
+    display: block;
+}
 
 .upload-main .table-hold {
     margin: 20px 20px 0;
@@ -199,7 +255,7 @@
 
 .main_sidebar .card {
     border: none;
-    margin: 0 0 10px;
+    margin: 0 0 0;
     background: transparent;
 }
 
@@ -208,7 +264,7 @@
 }
 
 .main_sidebar .card .card {
-    margin: 0 0 10px;
+    margin: 0;
 }
 
 .main_sidebar .card-header {
@@ -218,12 +274,12 @@
 }
 
 .main_sidebar .card-header button {
-    font-size: 13px !important;
-    color: #2c3e50;
+    font-size: 14px !important;
+    color: #5f5f5f;
     display: block;
     text-decoration: none;
     width: 100%;
-    padding: 4px;
+    padding: 7px 15px;
     text-align: left;
     background: transparent;
     border-radius: 0;
@@ -240,15 +296,18 @@
     position: relative;
 }
 
-.main_collapsed .main_sidebar .card-header button[aria-expanded="true"] .nav-box:after,
-.main_sidebar .card-header button[aria-expanded="true"] .nav-box:after {
-    content: '';
-    position: absolute;
-    top: 0;
-    right: -2px;
-    bottom: 0;
-    width: 3px;
-    background: #f05c1f;
+.main_sidebar .card-header button[aria-expanded="true"] .nav-box {
+    background: rgba(51, 97, 117, 0.10);
+    color: #336175;
+    font-weight: 600;
+    padding: 10px 15px;
+    border: 1px solid #336175;
+    border-radius: 4px;
+    font-weight: 600;
+}
+
+.main_sidebar .card-header button[aria-expanded="true"] .nav-box .ico {
+    opacity: 1;
 }
 
 .main_collapsed .main_sidebar .card-header button[aria-expanded="true"] img,
@@ -258,7 +317,8 @@
 
 .main_sidebar .card-header button[aria-expanded="true"] {
     color: #000;
-    font-weight: 500;
+    padding: 5px 0;
+    font-weight: 600;
 }
 
 .main_collapsed .main_sidebar .card-header button:hover .collapse.show {
@@ -284,20 +344,26 @@
 }
 
 .not-collapsed .main_sidebar .card-header button:after {
-    top: 7px !important;
-    right: 0 !important;
+    top: 20px !important;
+    right: 15px !important;
+}
+
+
+.main_sidebar .card-header button[aria-expanded="true"] button:after {
+    top: 20px !important;
+    right: 20px !important;
 }
 
 .not-collapsed .main_sidebar {
-    width: 240px;
+    width: 250px;
     height: 100%;
 }
 
 .main_sidebar .card-header button.collapsed:after {
     content: "\f067";
     position: absolute;
-    right: 18px;
-    top: 15px;
+    right: 18px !important;
+    top: 15px !important;
     font-size: 10px;
     font-family: "FontAwesome";
 }
@@ -311,28 +377,28 @@
 }
 
 .main_sidebar .inner_sidebar {
-    margin: 0;
+    margin: 0 0 10px;
     padding-left: 5px;
+    padding-top: 0;
 }
 
 .main_sidebar .inner_sidebar a {
     color: #222;
     font-size: 13px;
-    font-family: "Roboto";
     text-decoration: none;
-    margin-bottom: 15px;
+    margin-bottom: 0;
     display: inline-block;
 }
 
 .main_sidebar .inner_sidebar a:hover {
-    color: #dc3545;
-    border-color: #dc3545;
+    color: #204f92;
 }
 
 .two-col .index_point_container,
 .two-col .transcript_point_container {
     height: 400px;
-    overflow: auto;
+    overflow: hidden;
+    overflow-y: auto;
 }
 
 .one-col .index_point_container,
@@ -375,6 +441,10 @@
     padding-top: 0 !important;
 }
 
+.file_index .row:hover {
+    background: #faf9fb;
+}
+
 .file_index br {
     height: 20px;
 }
@@ -415,19 +485,23 @@
     box-shadow: none;
 }
 
-.col-md-2 .play-timecode {
-    color: #1A4679;
+.timecode_section .play-timecode {
+    color: #1A4679 !important;
 }
 
 .play-timecode {
     font-weight: 600;
-    color: #333;
     font-size: 14px;
 }
 
 .file_transcript_mark_custom {
     font-size: 14px;
     line-height: 1.6;
+    position: relative;
+}
+
+.file_transcript_mark_custom .play-timecode {
+    color: #333;
 }
 
 .button-add {

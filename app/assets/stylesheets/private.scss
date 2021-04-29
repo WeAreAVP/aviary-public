@@ -1,0 +1,373 @@
+
+.top-video-part {
+  position: relative;
+  padding: 15px 0 20px;
+}
+
+.top-video-part h1 {
+  flex: 1;
+  font-size: 18px;
+  color: #000;
+  font-weight: bold;
+}
+
+.top-video-part h1 a {
+  font-size: 85%;
+  font-weight: normal;
+  margin-top: 5px;
+}
+
+#back-to-search-btn {
+  font-size: 14px;
+  font-weight: bold;
+  line-height: 14px;
+  width: 25px;
+  height: 25px;
+  background: #fff;
+  border-radius: 30px;
+  text-align: center;
+  border: 2px solid #CCD7DD;
+  color: #003853;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 2;
+  justify-content: center;
+  opacity: 1;
+  margin-top: 1px;
+  margin-right: 10px;
+  text-decoration: none;
+  transition: 0.2s all ease;
+}
+
+#back-to-search-btn span {
+  font-weight: bold;
+  top: -1px;
+  position: relative;
+  font-size: 17px;
+  left: -1px;
+}
+
+#back-to-search-btn small {
+  visibility: hidden;
+  position: absolute;
+  left: 35px;
+  width: 95%;
+  font-size: 13px;
+  font-weight: normal;
+  color: #5d5f5f;
+  background: #fff;
+  z-index: 2;
+  text-align: left;
+  padding: 20px 0;
+  border-radius: 4px;
+}
+
+#back-to-search-btn small strong {
+  font-weight: normal;
+}
+
+#back-to-search-btn:hover small {
+  visibility: visible;
+}
+
+#back-to-search-btn:hover + h1 {
+  visibility: hidden;
+}
+
+.video-detail-holder {
+  transition: all 0.2s linear;
+  z-index: 2;
+}
+
+.shareHolder {
+  position: absolute;
+  z-index: 10;
+  right: 0;
+  visibility: hidden;
+  -webkit-transition: all 0.05s linear;
+  -moz-transition: all 0.05s linear;
+  -o-transition: all 0.05s linear;
+  transition: all 0.05s linear;
+  transition-delay: 1.1s;
+  padding: 0 15px 15px 10px;
+  background: linear-gradient(to left, rgba(0, 0, 0, 0.2) 0%, transparent);
+}
+
+.play_replay_option:hover .shareHolder,
+.carousel-inner:hover .shareHolder {
+  opacity: 1;
+  visibility: visible;
+  transition-delay: 0.2s;
+}
+
+.shareHolder.audioPlayer {
+  position: relative;
+  visibility: visible;
+  background: transparent;
+  padding: 0 10px 0 0;
+  text-align: right;
+}
+
+.shareHolder.audioPlayer button {
+  color: #000 !important;
+  text-align: right;
+}
+
+.shareHolder.audioPlayer button:hover {
+  color: #000 !important;
+  opacity: 0.7;
+}
+
+.shareHolder.audioPlayer button:focus {
+  outline-style: none;
+  box-shadow: none;
+  border-color: transparent;
+}
+
+.shareHolder.audioPlayer button i {
+  margin-right: 0;
+  margin-left: 10px;
+}
+
+.shareHolder .share-btn i {
+  top: 4px;
+  font-size: 20px;
+}
+
+.shareHolder .icon-manifest {
+  background: image-url(iiif) no-repeat;
+  background-size: 17px;
+  font-size: none;
+  display: inline-block;
+  vertical-align: middle;
+  width: 17px;
+  height: 17px;
+}
+
+.shareHolder .playlist-btn i {
+  font-size: 21px;
+  top: 5px;
+  left: 1px;
+}
+
+.shareHolder form {
+  display: inline-block;
+  padding: 0;
+  margin: 5px 0;
+}
+
+.shareHolder form:hover {
+  background: transparent;
+}
+
+.shareHolder button,
+.shareHolder a {
+  background: transparent !important;
+  color: #fff !important;
+  border: none;
+  padding: 0 !important;
+  font-weight: 500;
+  text-align: left;
+  margin: 10px 0;
+}
+
+.shareHolder a:hover,
+.shareHolder a:active
+.shareHolder button:hover,
+.shareHolder button:active {
+  background: transparent !important;
+}
+
+.shareHolder a i
+.shareHolder button i {
+  font-size: 16px;
+  position: relative;
+  top: 0;
+  width: 20px;
+  height: 20px;
+  margin-right: 5px;
+}
+
+.shareHolder button:hover {
+  color: #ddd !important;
+}
+
+.shareHolder a:hover {
+  color: #fff !important;
+  opacity: 0.5;
+  text-decoration: none;
+}
+
+.shareHolder a:hover i {
+  opacity: 0.7;
+}
+
+.shareHolder .dropdown-menu {
+  background: transparent !important;
+  min-width: inherit !important;
+  border: none !important;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  padding: 0;
+  margin: 3px;
+}
+
+.shareHolder .dropdown-menu.show {
+  display: block;
+}
+
+.shareHolder .dropdown-toggle {
+  display: none;
+}
+
+@media screen and (max-width: 1100px) {
+  .shareHolder .dropdown-menu {
+    position: absolute;
+    display: none;
+    background-color: #fff !important;
+    border: 1px solid rgba(0, 0, 0, 0.15) !important;
+    padding: 10px 0;
+    min-width: 10rem !important;
+    margin: 3px;
+    top: 50% !important;
+  }
+
+  .shareHolder .dropdown-toggle {
+    display: block;
+  }
+
+  .shareHolder .dropdown-toggle:after {
+    display: none;
+  }
+
+  .shareHolder .dropdown-item button,
+  .shareHolder .dropdown-item {
+    color: #222 !important;
+    margin: 0;
+    padding: 3px 10px !important;
+    text-align: left;
+  }
+
+  .shareHolder form.dropdown-item {
+    padding: 0 !important;
+  }
+
+  .shareHolder .dropdown-item:hover {
+    background: #ecf0f1 !important;
+    color: #222 !important;
+    display: block;
+    width: 100%;
+  }
+}
+
+@media screen and (max-width: 767px) {
+  #back-to-search-btn small {
+    display: none;
+  }
+}
+
+.time-share {
+  padding: 0 40px;
+}
+
+.time-share .custom-checkbox {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.time-share .custom-checkbox label {
+  font: 14px/17px Roboto, sans-serif;
+  margin: 0;
+  padding: 3px 0 3px 30px;
+}
+
+.time-share .custom-checkbox label:before {
+  width: 18px;
+  height: 18px;
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 0;
+  background: #fff;
+  border-radius: 4px;
+  border: 2px solid #336074;
+}
+
+.time-share .custom-checkbox label:after {
+  top: 7px;
+  left: 4px;
+  width: 11px;
+  height: 6px;
+}
+
+.shareModal .modal-body {
+  padding: 0;
+}
+
+.shareModal .content {
+  padding: 20px;
+  margin: 0 !important;
+  background: #fff;
+}
+
+.shareModal .nav-tabs {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+  justify-content: flex-start;
+  padding-top: 10px;
+  padding-left: 20px;
+}
+
+.shareModal .nav-item {
+  width: auto !important;
+}
+
+.shareModal .nav-link {
+  font-size: 14px !important;
+  color: #888 !important;
+  border-radius: 0 !important;
+  border: none !important;
+  height: auto !important;
+  padding: 10px 5px !important;
+  border-bottom: 3px solid transparent !important;
+}
+
+.shareModal .nav-link:hover {
+  border: none;
+  background: none;
+  border-bottom: 3px solid #999 !important;
+  color: #000;
+}
+
+.shareModal .nav-link.active {
+  border: none !important;
+  border-bottom: 3px solid #000 !important;
+  border-radius: 0 !important;
+  color: #333 !important;
+  font-weight: bold !important;
+  background-color: transparent !important;
+}
+
+.embedLink textarea {
+  resize: none;
+  height: 150px;
+}
+
+.replace_do {
+  margin-top: 8px;
+}
+
+.replace_do input[type="checkbox"] {
+  float: left;
+  margin-right: 5px;
+}
+
+.replace_do p {
+  overflow: hidden;
+}
+
+.checkbox-theme {
+  float: left;
+  margin-right: 5px;
+}

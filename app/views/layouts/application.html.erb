@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <!-- set the viewport width and initial-scale on mobile devices -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <%= display_meta_tags site: current_organization ? "#{current_organization.name} | Aviary" : 'Aviary',reverse:true  %>
+  <%= display_meta_tags site: current_organization ? "#{current_organization.name} | Aviary" : 'Aviary', reverse: true %>
   <%= favicon_link_tag current_organization.present? ? current_organization.favicon(:medium) : "https://#{ENV['S3_HOST_CDN']}/public/fav.ico" %>
   <%= csrf_meta_tags %>
   <%= action_cable_meta_tag %>
@@ -21,19 +21,19 @@
   <% if params[:controller] == 'collections' && params[:action] == 'show' && collection_feed(params[:id]).present? %>
     <link type="application/rss+xml" rel="alternate" title="Your Podcast's Name" href="<%= collection_feed(params[:id]) %>"/>
   <% end %>
-
+  <%= tinymce_assets %>
   <link href="https://fonts.googleapis.com/css?family=Roboto:100,400,500,700" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <%= stylesheet_link_tag 'application', media: 'all' %>
-  <%= javascript_include_tag 'application', 'https://js.stripe.com/v3/' %>
+  <%= javascript_include_tag 'application'%>
 
-
-<!--  TODO:: Need to use this tag when need to integrate React JS-->
+  <!--  TODO:: Need to use this tag when need to integrate React JS-->
   <%#= javascript_pack_tag 'transcript-bundle' %>
 </head>
 <body class="<%= "#{params[:controller]} #{params[:action]} #{params[:controller]}-#{params[:action]}" %>">
 <span class='d-none' id="record_tracking_path" href="<%== record_tracking_path %>"> </span>
-<% if (browser.ie? || browser.opera? || browser.safari?) && cookies[:alert_bypass].blank? %>
+
+<% if !modern_browser?(browser) && cookies[:alert_bypass].blank? %>
   <div class="alert alert-light browser-update" role="alert">
     <span>Aviary works best with the latest versions of Google Chrome and Firefox. </span>
   </div>
@@ -43,25 +43,20 @@
 <div id="wrapper">
   <% unless current_organization %>
     <style>
-      @media screen and (max-width: 767px) {
-        .textBox {
-          width: 55% !important;
+        @media screen and (max-width: 767px) {
+            .textBox {
+                width: 100% !important;
+            }
         }
-      }
     </style>
-    <div style="background-color: #0071e3;overflow: hidden;background-image: url(https://www.color-hex.com/palettes/4914.png);background-repeat: repeat-x;background-size: 400px;padding: 15px 145px 9px 35px;background-position: 0 -260px;">
-      <div class="container-fluid">
-        <div style="width: 70px;height: 50px;float: left;padding: 10px 0;margin-right: 25px;">
-          <img src="https://www.weareavp.com/wp-content/uploads/2016/06/Aviary-logo-color-e1546634499297.png" alt="" style="width: 100%; height: auto; display: block;">
-        </div>
-        <div class="textBox" style="width: 80%;overflow: hidden;color: #dadada;font-size: 13px;font-weight: 400;line-height: 18px;display: inline-block;padding-top: 6px;">
-
-          <p><span class="d-inline">As part of our response to COVID19 we are offering free 90-day Starter Plan subscriptions. Click the Take Flight button to sign up for a free account now.</span>
-            <span class="d-lg-inline d-md-inline d-none"> <a style ="color:#f5f5f7;" href="https://blog.weareavp.com/take-flight" target="_blank">Read more about how Aviary can help you during this time.</a> </span>
-          </p>
+    <div style="background-color: #DEEBFF;padding: 13px 0;">
+      <div class="container-fluid d-flex align-items-center justify-content-center">
+        <div class="textBox" style="font-size: 12px;font-weight: 400;line-height: 18px;color:#000;display: inline-block; padding-right: 20px;">
+          <p>As part of our response to COVID19 we are offering free 90-day Starter Plan subscriptions.</p>
+          <span class="d-none"> <a style="color:#ffff;font-weight:bold;" href="https://blog.weareavp.com/take-flight" target="_blank">Read more about how Aviary can help you during this time.</a> </span>
         </div>
         <div style="float: right;">
-          <a data-toggle="modal" data-target="#covid19SubscriptionPopup" href="javascript://" class="btn btn-primary" style="background: #fff !important;color: #000 !important;border-color: #fff !important;margin: 8px;position: absolute;right: 30px;">Take
+          <a data-toggle="modal" data-target="#covid19SubscriptionPopup" href="javascript://" class="btn btn-outline-primary" style="padding: 3px 13px;font-size: 12px;">Take
             Flight</a>
         </div>
       </div>
@@ -100,12 +95,12 @@
 </div>
 <%= render 'shared/modal', cached: iscached? %>
 <%= render 'shared/messages', cached: iscached? %>
-<% show_popup_compatibility = compatibility_definition %>
-<% if show_popup_compatibility && cookies[:update_pop_bypass].blank? %>
+
+<% if !modern_browser?(browser) && cookies[:update_pop_bypass].blank? %>
   <style>
-    body {
-      overflow-y: hidden !important;
-    }
+      body {
+          overflow-y: hidden !important;
+      }
   </style>
   <div class="not-supported">
     <div class="text">
@@ -134,6 +129,9 @@
     </div>
   </div>
 <% end %>
-<%= render partial: 'shared/accessibility_issue_button' %>
+
+<% unless params[:embed] == 'true' || params[:action] == 'embed_file' %>
+  <%= render partial: 'shared/accessibility_issue_button' %>
+<% end %>
 </body>
 </html>

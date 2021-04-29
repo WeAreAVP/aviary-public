@@ -1,45 +1,66 @@
 <% if featured_resources.present? %>
-  <h3><%= featured ? 'Featured' : 'All' %> Content</h3>
-  <div class="home-featured-resources">
-    <% featured_resources.each do |collection_resource| %>
-      <% file = collection_resource.collection_resource_files.order_file.first %>
-      <% can_access = (can? :read, collection_resource) || collection_resource.can_view || collection_resource.can_edit || (can? :edit, collection_resource.collection.organization) %>
-      <div class="item <%= can_access ? '' : 'locked' %>">
-        <% resource_url = collection_collection_resource_details_url(collection_resource.collection, collection_resource, host: Utilities::AviaryDomainHandler.subdomain_handler(collection_resource.collection.organization)) %>
-        <% unless can_access %>
-          <% resource_url = 'javascript://' %>
 
-        <% end %>
-        <%= link_to resource_url do %>
-          <% thumb_url = file.thumbnail.url(:small) %>
-          <% unless thumb_url.present? %>
-            <% present(file) do |presenter| %>
-              <% thumb_url = presenter.media_type.include?('avalon') || presenter.media_type.include?('video') ? "https://#{ENV['S3_HOST_CDN']}/public/images/video-default.png" : "https://#{ENV['S3_HOST_CDN']}/public/images/audio-default.png" %>
-            <% end %>
-          <% end %>
-          <div class="image" style="background: url(<%= thumb_url %>); background-size:cover;background-position: center;">
-            <!--            <div class="publish-date"><%#= file.collection_resource.created_at.strftime('%d %b, %Y') %></div>-->
-            <h4 class="reso-title">
-              <time><%= !collection_resource.custom_field_value('duration').blank? ? time_to_duration(collection_resource.custom_field_value('duration').first['value']) : '00:00:00' %></time>
-            </h4>
-          </div>
+  <div class="collection-featured-resources">
+    <div class="collection-resources-head">
+      <h3><%= featured ? 'Featured' : 'All' %> Content</h3>
+    </div>
+    <div class="row">
+      <% featured_resources.each_with_index do |collection_resource, index| %>
+        <% break if index > 2 %>
+        <%= render partial: 'home/resources/resources_row', locals: { resource: collection_resource, featured: false } %>
+      <% end %>
+    </div>
+    <% if @collection.present? %>
+      <div class="collection-featured-head">
+        <div class="collection-resources-head">
+          <h3>Featured Collection</h3>
+          <!--          <button>More Collection</button>-->
+        </div>
+        <div class="d-flex">
+          <div class="organization-detail">
+            <div class="img-hold">
+              <%= image_tag(@collection.organization.favicon.present? ? @collection.organization.favicon(:small) : @collection.organization.logo_image(:medium), alt: @collection.organization.name) %>
+            </div>
+            <div>
+              <div class="organization-name"><%= @collection.organization.name %></div>
+              <div class="collection-name"><%= @collection.title %></div>
+              <%= link_to collection_url(@collection, host: Utilities::AviaryDomainHandler.subdomain_handler(@collection.organization)), target: "_blank" do %>
+                See Collection
+              <% end %>
 
-          <div class="resource-detail-data">
-            <div class="col-12 organization">
-              <div class="main-hold">
-                <div class="img-hold">
-                  <%= image_tag(collection_resource.collection.organization.favicon.present? ? collection_resource.collection.organization.favicon(:small) : collection_resource.collection.organization.logo_image(:medium), alt: collection_resource.collection.organization.name) %>
-                </div>
-              </div>
-              <div class="details">
-                <span class="title"><%= collection_resource.title %></span>
-                <span class="collection-title"><%= file.collection_resource.collection.title %>
-                  - <%= collection_resource.collection.organization.name %></span>
-              </div>
             </div>
           </div>
-        <% end %>
+          <div class="resources-list">
+            <div class="owl-carousel owl-theme collection_resource_carousel">
+              <% @collection_resources.each do |collection_resource| %>
+                <% file = collection_resource.collection_resource_files.order_file.first %>
+                <% resource_url = collection_collection_resource_details_url(collection_resource.collection, collection_resource, host: Utilities::AviaryDomainHandler.subdomain_handler(collection_resource.collection.organization)) %>
+                <div class="item">
+                  <div class="box small">
+                    <%= link_to resource_url, target: "_blank" do %>
+                      <div class="image " style="background: url(<%= file.thumbnail_image %>); background-size:cover;background-position: center;min-height: 120px;">
+                        <time><%= !collection_resource.custom_field_value('duration').blank? ? time_to_duration(collection_resource.custom_field_value('duration').first['value']) : '00:00:00' %></time>
+                      </div>
+                      <div class="collection-details">
+                        <h4 class="reso-title"><%= collection_resource.title %></h4>
+                      </div>
+                    <% end %>
+                  </div>
+                </div>
+              <% end %>
+
+
+            </div>
+          </div>
+        </div>
       </div>
     <% end %>
+    <div class="row">
+      <% featured_resources.each_with_index do |collection_resource, index| %>
+        <% next if index < 3 %>
+        <%= render partial: 'home/resources/resources_row', locals: { resource: collection_resource, featured: false } %>
+      <% end %>
+    </div>
+
   </div>
 <% end %>

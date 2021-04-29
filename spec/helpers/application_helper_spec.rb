@@ -38,11 +38,6 @@ RSpec.describe ApplicationHelper, type: :helper do
       expect(helper.storage_percent(1, 1)).to be(0)
     end
   end
-  describe '#compatibility_definition' do
-    it 'return compatibility_definition value' do
-      expect(helper.compatibility_definition).to be(false)
-    end
-  end
 
   describe '#stopwords' do
     it 'return stopwords' do

@@ -1,0 +1,67 @@
+<div id="main_container" class="container-fluid">
+  <div class="main_contain">
+    <main>
+      <div class="text-headline jumbotron">
+        <div class="heading-holder table-head">
+          <div class="row">
+            <div class="col-md-6"><h1>Public Access URLs</h1></div>
+          </div>
+        </div>
+      </div>
+      <% existing_values = [] %>
+      <style>
+          .tooltip-inner {
+              max-width: 450px;
+              /* If max-width does not work, try using width instead */
+              width: 100%;
+          }
+      </style>
+      <div class="data-table public-access-url-datatable">
+        <div>
+          <table class="table table-hover table-bordered" id="public_access_urls_table" data-url="<%= public_access_urls_path %>" data-update-info="<%= public_access_urls_update_info_path %>">
+            <thead>
+            <tr>
+              <th width="25%">Resource Title</th>
+              <th width="25%">Collection</th>
+              <th width="15%">Access Type</th>
+              <th width="15%">Duration</th>
+              <th width="10%">URL</th>
+              <th width="10%">Status</th>
+              <th width="10%">Start At/Stop At</th>
+              <th width="10%">Date Created</th>
+              <th width="10%">Date Modified</th>
+              <th width="10%">Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+
+<div class="modal fade" id="access_edit_popup" tabindex="-1" role="dialog" aria-labelledby="indexUploadLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title h3" id="exampleModalLabel">Edit Public Access URL</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+    let public_Access_url = new PublicAccessUrl();
+    $(function () {
+        public_Access_url.initialize();
+    });
+</script>

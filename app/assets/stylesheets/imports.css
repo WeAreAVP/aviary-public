@@ -11,3 +11,17 @@
     opacity: 0.4;
     cursor: not-allowed;
 }
+
+.aviary-import-text li {
+    padding-bottom: 10px;
+}
+
+.preview_error_listing ul {
+    max-height: 300px;
+    overflow-y: scroll;
+}
+
+.disable_btn:hover,
+.disable_btn:focus {
+    opacity: 0.4 !important;
+}

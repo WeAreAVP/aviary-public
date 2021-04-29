@@ -1,36 +1,11 @@
 <% present(single_file) do |presenter| %>
   <% can_access = permission_to_access_file?(single_file) %>
   <% if can_access %>
-    <% if presenter.media_type.include? "avalon" %>
-      <div class="video-placeholder">
-        <div class="video-hold">
-          <iframe id="avalon_widget" class="<%= presenter.avalon_cls(is_audio_only) %>" data-domain="<%= presenter.target_domain %>" src="<%= presenter.media_url %>" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
-        </div>
-        <% unless is_audio_only %>
-          <div class="title">
-            <strong><%= single_file.file_display_name %></strong>
-          </div>
-        <% end %>
-      </div>
-    <% elsif presenter.media_type == 'video/other' || presenter.embed_type == 0 %>
-      <div class="video-placeholder">
-        <div class="video-hold">
-          <video width='100%' height='360' id="player" poster="<%= presenter.embed_type == 0 ? presenter.thumbnail.url : '' %>">
-            <source src="<%= presenter.embed_code %>" type="<%= presenter.media_type %>" data-quality='Original'>
-            <%== presenter.tracks %>
-          </video>
-        </div>
-
-        <div class="title">
-          <strong><%= single_file.file_display_name %></strong>
-        </div>
-      </div>
-    <% elsif presenter.media_type.include? "video" %>
-      <div class="video-placeholder <%= presenter.embed_source %>">
-        <div class="video-hold">
-
-          <video style="width: 100%;" width='100%' height="360" id="player" poster="<%= presenter.thumbnail.url unless presenter.embed_code.present? %>">
-            <source src="<%= presenter.media_url %>" type="<%= presenter.media_type %>" data-quality='Original '>
+    <% if presenter.media_type.include?("video") || presenter.embed_type == 0 %>
+      <div id="player_section" class="player-section video-placeholder <%= presenter.embed_source %>" data-3d="<%= presenter.is_3d %>" data-h265="<%= presenter.player_type == :jwplayer.to_s %>">
+        <div class="video-hold" oncontextmenu="return false;">
+          <video id="player" class="video-js" controls playsinline preload="auto" <%= presenter.cross_origin_attr %>  style="width: 100%;" data-cast-title="<%= single_file.file_display_name %>" poster="<%= presenter.video_poster %>">
+            <%== presenter.video_source_tag %>
             <%== presenter.tracks %>
           </video>
         </div>
@@ -39,95 +14,36 @@
         </div>
       </div>
     <% else %>
-      <div class="video-placeholder">
-        <div class="audio <%= is_audio_only ? 'audio-player' : '' %>">
-          <audio id="player" style="width: 100%;" width='100%' height="360" class="aviary-player">
-            <source src="<%= presenter.media_url %>" type="audio/mp3">
-            <%== presenter.tracks %>
+      <div class="player-section video-placeholder audio <%= 'audio-player' if is_audio_only %>" id="player_section" oncontextmenu="return false;">
+        <div class="audio">
+          <audio id="player" class="video-js" controls playsinline preload="auto" poster="<%= presenter.audio_poster(is_audio_only) %>">
+            <%== presenter.audio_source_tag %>
+            <%== presenter.tracks unless is_audio_only %>
           </audio>
-          <div class="title">
-            <strong><%= single_file.file_display_name %></strong>
-          </div>
+          <% unless is_audio_only %>
+            <div class="title">
+              <strong><%= single_file.file_display_name %></strong>
+            </div>
+          <% end %>
         </div>
       </div>
     <% end %>
   <% else %>
-    <div class="private-file locked" style="height:360px;">
-      <div class="private_resource_file ">
-        <img src="<%= presenter.thumbnail.url %>" width="100%"/>
+    <div class="private-file locked">
+      <div class="private_resource_file">
+        <img src="<%= presenter.thumbnail.url %>" />
+      </div>
+      <div class="access_hold feat-reso-locked">
+        <div class="holder">
+          <div class="box">
+            <span class="ico"><%= lock_image %></span>
+
+            <div class="access_request_text_custom">You don't have access.</div>
+
+          </div>
+        </div>
       </div>
     </div>
   <% end %>
 <% end %>
-<style>
-    .carousel-indicators {
-        height: 92%;
-    }
 
-    .mejs__poster .mejs__layer {
-        background-size: 100% 100%;
-    }
-
-    .mejs__layer {
-        z-index: 3 !important;
-    }
-
-    .audio {
-        position: relative;
-    }
-
-    .audio:before {
-        position: absolute;
-        width: 80px;
-        height: 80px;
-        background: url(<%= image_url("audio-player.png");  %>);
-        -webkit-background-size: 80px;
-        background-size: 80px;
-        background-repeat: no-repeat;
-        content: "";
-        z-index: 9;
-        top: 45%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-    }
-
-    .audio:after {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        background: url(<%=
-    if(single_file.thumbnail.url.present? && (is_audio_only.nil? || !is_audio_only))
-     single_file.thumbnail.url
-     elsif is_audio_only
-      ''
-     else
-      image_url("audio-player-default.jpg")
-        end %>);
-        -webkit-background-size: 100% 100%;
-        background-size: 100%;
-        background-position: center;
-        content: "";
-        z-index: 2;
-        top: 0;
-    }
-
-    #avalon_widget {
-      height: 360px;
-    }
-
-    #avalon_widget.audio-player {
-      height: 40px;
-    }
-
-    .audio.audio-player .mejs__container {
-        height: 40px !important;
-    }
-
-    .video-placeholder:hover .audio.audio-player .title {
-        display: none;
-    }
-
-    .audio-player::before {
-        display: none;
-    }
-</style>

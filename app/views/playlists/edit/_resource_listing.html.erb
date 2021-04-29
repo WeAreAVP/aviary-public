@@ -15,6 +15,7 @@
                           param_inner[:pst] = current_playlist_item.start_time.to_f if current_playlist_item.present? and current_playlist_item.start_time.present?
                           param_inner[:pet] = current_playlist_item.end_time.to_f if current_playlist_item.present? and current_playlist_item.end_time.present?
                           param_inner[:share] = params[:share] if params[:share].present?
+                          param_inner[:access] = params[:access] if params[:access].present?
                           playlist_show_url(param_inner)
                         end
       media_url_inner += "?1=1" unless media_url_inner.include?('?')

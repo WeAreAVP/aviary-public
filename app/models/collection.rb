@@ -136,6 +136,29 @@ class Collection < ApplicationRecord
     end
   end
 
+  def self.fetch_list(page, per_page, query, organization_id, export = false)
+    collections = Collection.joins(%i[organization]) if organization_id.present?
+    collections = collections.where('collections.organization_id = ? ', organization_id)
+    if query.present?
+      query = query.downcase.strip
+      status = true if 'yes'.include? query
+      status = false if 'no'.include? query
+      query_string_collections = 'collections.title LIKE (?)'
+
+      query_string_collection_resources_count = query.is_i? ? 'collections.collection_resources_count = ? ' : ' "' + Time.now.to_i .to_s + '" = ? '
+      query_string_organizations = 'organizations.id =?'
+      collections = if status.nil?
+                      collections.where("(#{query_string_collections} OR #{query_string_collection_resources_count}) AND #{query_string_organizations}", "%#{query}%", query, organization_id)
+                    else
+                      collections.where("(#{query_string_collections} OR #{query_string_collection_resources_count} OR collections.is_featured =? OR collections.is_public =?) AND #{query_string_organizations}",
+                                        "%#{query}%", query, status, status, organization_id)
+                    end
+    end
+    count = collections.size
+    collections = collections.limit(per_page).offset((page - 1) * per_page) unless export
+    [collections, count]
+  end
+
   def to_csv
     collections = organization.collections
     attributes = %w{Title Resources Featured Public}

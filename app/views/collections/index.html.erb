@@ -7,13 +7,13 @@
             <div class="col-md-6"><h1>Collections</h1></div>
             <div class="col-md-6">
               <%= link_to 'Add Collection', new_collection_path, class: 'btn btn-primary btn-xs pull-right' %>
-              <%= link_to 'Export to CSV', export_collections_path(export_type: 'collection'), class: 'btn btn-primary btn-xs pull-right mr-2 export_btn d-none' %>
+              <%= link_to 'Export to CSV', export_collections_path(export_type: 'collection'), class: 'btn btn-outline-primary btn-xs pull-right mr-2 export_btn d-none' %>
             </div>
           </div>
         </div>
       </div>
-      <div class="data-table">
-        <table class="table table-striped table-bordered" id="collection_data_table">
+      <div class="data-table collections-datatable">
+        <%= content_tag :table, role: :datatable, class: ["table", "table-striped", 'table-bordered'], id: 'collection_data_table', data: { url: collections_path(format: :json)} do %>
           <thead>
           <tr>
             <th>Name</th>
@@ -24,26 +24,8 @@
           </tr>
           </thead>
           <tbody>
-          <% if @collections.present?
-            @collections.each do |c| %>
-              <tr>
-                <td><%= c.title %></td>
-                <td><%= c.collection_resources_count %></td>
-                <td><%= c.is_featured? ? 'Yes' : 'No' %></td>
-                <td><%= c.is_public? ? 'Yes' : 'No' %></td>
-                <td>
-                  &nbsp;<%= link_to 'View', collection_url(c, host: Utilities::AviaryDomainHandler.subdomain_handler(c.organization)), class: 'btn-sm btn-default' %>
-                  &nbsp;<%= link_to 'Edit', edit_collection_path(c), class: 'btn-sm btn-success' %>&nbsp;
-                  <% if can? :destroy, c %>
-                    <%= link_to 'Delete', 'javascript://', class: 'btn-sm btn-danger collection_delete', data: { url: collection_path(c), name: c.title } %>&nbsp;
-                  <% end %>
-                  <%= link_to 'Manage Resources', list_resources_collection_path(c), class: 'btn-sm btn-primary' %>
-                </td>
-              </tr>
-            <% end %>
-          <% end %>
           </tbody>
-        </table>
+        <% end %>
       </div>
     </main>
   </div>

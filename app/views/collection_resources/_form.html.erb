@@ -14,13 +14,13 @@
     <div class="row">
       <div class="col-md-12">
         <div class="hold">
-          <%= render partial: "resource_files_tabs", locals: { collection: collection, tab: '_save', multiple: true, browse_file_name: 'av_resource[resource_files][]', file_class: 'fileuploadAll', append_file_class: 'files', progress: 'progress-bar', button_title: 'Upload and Continue', close_class: 'd-none' } %>
+          <%= render partial: "resource_files_tabs", locals: { collection: collection, tab: '_save', multiple: true, browse_file_name: 'av_resource[resource_files][]', file_class: 'fileuploadAll form-control', append_file_class: 'files', progress: 'progress-bar', button_title: 'Upload and Continue', close_class: 'd-none' } %>
           <div id="resource_files_list">
             <%= render partial: "resource_files_list", locals: { collection: collection, av_resource: @collection_resource, resource_files: @resource_files } %>
           </div>
 
-          <div class="text-right">
-            <%= link_to "Edit Description", collection_collection_resource_details_path(@collection_resource.collection, @collection_resource, edit_description: true), class: "btn btn-default ml-2" %>
+          <div class="text-right my-4">
+            <%= link_to "Edit Description", collection_collection_resource_details_path(@collection_resource.collection, @collection_resource, edit_description: true), class: "btn btn-outline-primary ml-2" %>
             <%= link_to "Save", collection_collection_resource_details_path(@collection_resource.collection, @collection_resource), class: "btn btn-primary ml-2" %>
           </div>
         </div>
@@ -31,7 +31,7 @@
 
 <script>
     var app_helper = new App();
-    
+
     var UploadManagerObj = new UploadManager(app_helper);
     $(function () {
         UploadManagerObj.initialize();

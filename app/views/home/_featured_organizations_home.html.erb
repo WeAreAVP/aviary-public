@@ -1,30 +1,28 @@
 <% if featured_organizations.present? %>
-  <h3>Aviary Sites</h3>
-  <div class="home-featured-organizations">
-    <% featured_organizations.each do |organization| %>
-      <div class="item">
-        <%= link_to root_url(host: Utilities::AviaryDomainHandler.subdomain_handler(organization)), target: "_blank" do %>
-          <div class="image" style="<%= url_image(organization.banner_image.url(:small))%>; background-position: center;">
-
-          </div>
-          <div class="resource-detail-data">
-            <div class="col-12 organization">
-              <div class="main-hold">
-                <div class="img-hold">
-                  <%= image_tag(organization.favicon.present? ? organization.favicon(:small) : organization.logo_image(:medium), alt: organization.name) %>
+  <div class="collection-portal-members">
+    <div class="container">
+      <div class="collection-resources-head">
+        <h3>Featured Aviary Sites</h3>
+        <a href="<%= organizations_path %>" class="view-all-sites">More Aviary Sites</a>
+      </div>
+      <div class="row">
+        <% featured_organizations.each do |organization| %>
+          <div class="col-lg-4 col-md-6 col-sm-6 col-xs-12">
+            <div class="box portal">
+              <%= link_to root_url(host: Utilities::AviaryDomainHandler.subdomain_handler(organization)), target: "_blank" do %>
+                <div class="image " style="<%= url_image(organization.banner_image.url(:small))%>; background-position: center;min-height: 120px;">
                 </div>
-              </div>
-              <div class="details">
-                <span class="title"><%= organization.name %></span>
-              </div>
+                <div class="collection-details">
+                  <div class="img-hold">
+                    <%= image_tag(organization.favicon.present? ? organization.favicon(:small) : organization.logo_image(:medium), alt: organization.name) %>
+                  </div>
+                  <h4 class="reso-title"><%= organization.name %></h4>
+                </div>
+              <% end %>
             </div>
           </div>
         <% end %>
-
       </div>
-    <% end %>
-  </div>
-    <div class="text-right">
-      <a href="<%= organizations_path %>" class="view-all-sites">View all Sites</a>
     </div>
+  </div>
 <% end %>

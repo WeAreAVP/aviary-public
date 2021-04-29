@@ -1,4 +1,4 @@
-<header id="header">
+<header id="header" class="aviary-header">
   <div class="container-fluid">
     <nav class="navbar navbar-expand-sm navbar-light">
       <%= link_to image_tag("homepage/main-logo.png"), root_path, class: 'navbar-brand' %>
@@ -12,8 +12,8 @@
           </div>
         <% end %>
       </div>
-      <div class="nav-right col-lg-3 pull-right text-right">
-        <%= link_to 'Logout', destroy_admin_session_path, method: :delete, class: 'btn btn-danger' %>
+      <div class="nav-right pull-right text-right ml-auto">
+        <%= link_to 'Logout', destroy_admin_session_path, method: :delete, class: 'btn btn-primary' %>
       </div>
     </nav>
   </div>

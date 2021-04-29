@@ -53,6 +53,6 @@ class IndexesController < ApplicationController
 
   # Never trust parameters from the scary internet, only allow the white list through.
   def file_index_params
-    params.require(:file_index).permit(:title, :associated_file, :is_public, :language)
+    params.require(:file_index).permit(:title, :associated_file, :is_public, :language, :description)
   end
 end

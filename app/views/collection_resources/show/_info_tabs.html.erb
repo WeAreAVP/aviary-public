@@ -1,5 +1,5 @@
 <div id="view_edit_custom"><%= render partial: 'collection_resources/details_view', locals: {dynamic_fields: dynamic_fields} %></div>
 <% if can? :edit, @collection_resource %>
-  <div id="form_edit_custom" style="overflow: visible !important;"><%= render partial: 'collection_resources/details_form', locals: {dynamic_fields: dynamic_fields} %></div>
+  <div id="form_edit_custom" class='form_edit_custom_resource' style="overflow: visible !important;"><%= render partial: 'collection_resources/common/details_form', locals: {dynamic_fields: dynamic_fields, from: 'resource_metadata'} %></div>
 <% end %>
 </dl>

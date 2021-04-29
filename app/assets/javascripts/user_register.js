@@ -8,14 +8,12 @@
  * @returns {User}
  */
 
-var selfUser;
-
-function UserRegister(app_helpers) {
-
-    selfUser = this;
-    selfUser.app_helper = app_helper;
-    this.initialize = function () {
+function UserRegister() {
+    var parent_container = null;
+    this.initialize = function (parent_container_validation) {
+        parent_container = parent_container_validation;
         bindings();
+
     };
 
     /**
@@ -30,11 +28,11 @@ function UserRegister(app_helpers) {
 
     const check_password_match = function (pswd) {
         let flag = true;
-        if (pswd == $('#sign_up_user_form #user_password').val() && pswd != '') {
-            $('#password_match').removeClass('invalid-signup').addClass('valid-signup');
+        if (pswd == $(parent_container + ' #user_password').val() && pswd != '') {
+            $(parent_container + ' .validation_password_match').removeClass('invalid-signup').addClass('valid-signup');
         } else {
             flag = false;
-            $('#password_match').removeClass('valid-signup').addClass('invalid-signup');
+            $(parent_container + ' .validation_password_match').removeClass('valid-signup').addClass('invalid-signup');
         }
         return flag;
     };
@@ -44,54 +42,54 @@ function UserRegister(app_helpers) {
         let flag = true;
         //validate the length
         if (pswd.length < 8) {
-            $('#length').removeClass('valid-signup').addClass('invalid-signup');
+            $(parent_container + ' .validation_length').removeClass('valid-signup').addClass('invalid-signup');
             flag = false;
         } else {
-            $('#length').removeClass('invalid-signup').addClass('valid-signup');
+            $(parent_container + ' .validation_length').removeClass('invalid-signup').addClass('valid-signup');
         }
 
         //validate letter
         if (pswd.match(/[A-z]/)) {
-            $('#letter').removeClass('invalid-signup').addClass('valid-signup');
+            $(parent_container + ' .validation_letter').removeClass('invalid-signup').addClass('valid-signup');
         } else {
             flag = false;
-            $('#letter').removeClass('valid-signup').addClass('invalid-signup');
+            $(parent_container + ' .validation_letter').removeClass('valid-signup').addClass('invalid-signup');
         }
 
         //validate uppercase letter
         if (pswd.match(/[A-Z]/)) {
-            $('#capital').removeClass('invalid-signup').addClass('valid-signup');
+            $(parent_container + ' .validation_capital').removeClass('invalid-signup').addClass('valid-signup');
         } else {
             flag = false;
-            $('#capital').removeClass('valid-signup').addClass('invalid-signup');
+            $(parent_container + ' .validation_capital').removeClass('valid-signup').addClass('invalid-signup');
         }
         //validate uppercase letter
         if (pswd.match(/[a-z]/)) {
-            $('#lower').removeClass('invalid-signup').addClass('valid-signup');
+            $(parent_container + ' .validation_lower').removeClass('invalid-signup').addClass('valid-signup');
         } else {
             flag = false;
-            $('#lower').removeClass('valid-signup').addClass('invalid-signup');
+            $(parent_container + ' .validation_lower').removeClass('valid-signup').addClass('invalid-signup');
         }
         //special characters
         if (pswd.match(/[.@$!%*?&]/)) {
-            $('#special_character').removeClass('invalid-signup').addClass('valid-signup');
+            $(parent_container + ' .validation_special_character').removeClass('invalid-signup').addClass('valid-signup');
         } else {
             flag = false;
-            $('#special_character').removeClass('valid-signup').addClass('invalid-signup');
+            $(parent_container + ' .validation_special_character').removeClass('valid-signup').addClass('invalid-signup');
         }
         if (pswd.match(/[#()_+=<>/"'{}\[\]\\|`~;:\^\-]/)) {
             flag = false;
-            $('#can_only_have_special_character').removeClass('valid-signup').addClass('invalid-signup');
+            $(parent_container + ' .validation_can_only_have_special_character').removeClass('valid-signup').addClass('invalid-signup');
         } else {
-            $('#can_only_have_special_character').removeClass('invalid-signup').addClass('valid-signup');
+            $(parent_container + ' .validation_can_only_have_special_character').removeClass('invalid-signup').addClass('valid-signup');
         }
 
         //validate number
         if (pswd.match(/\d/)) {
-            $('#number').removeClass('invalid-signup').addClass('valid-signup');
+            $(parent_container + ' .validation_number').removeClass('invalid-signup').addClass('valid-signup');
         } else {
             flag = false;
-            $('#number').removeClass('valid-signup').addClass('invalid-signup');
+            $(parent_container + ' .validation_number').removeClass('valid-signup').addClass('invalid-signup');
         }
         return flag;
     };
@@ -102,27 +100,37 @@ function UserRegister(app_helpers) {
      * @returns {undefined}
      */
     const bindings = function () {
-        $('#sign_up_user_form #user_password_confirmation').keyup(function () {
+        document_level_binding_element(parent_container + ' #user_password_confirmation', 'keyup', function () {
             var pswd = $(this).val();
             check_password_match(pswd);
-            check_password_strength($('#sign_up_user_form #user_password').val());
-            $('.submit-registration-form').removeAttr('disabled');
+            check_password_strength($(parent_container + ' #user_password').val());
+            $(parent_container + ' .submit-registration-form').removeAttr('disabled');
         });
 
-        $('#sign_up_user_form #user_password').keyup(function () {
+        document_level_binding_element(parent_container + ' #user_password', 'keyup', function () {
             var pswd = $(this).val();
             check_password_strength(pswd);
-            check_password_match($('#sign_up_user_form #user_password_confirmation').val());
-            $('.submit-registration-form').removeAttr('disabled');
+            check_password_match($(parent_container + ' #user_password_confirmation').val());
+            $(parent_container + ' .submit-registration-form').removeAttr('disabled');
         });
 
-        $("#sign_up_user_form").on("submit", function (e) {
+        document_level_binding_element(parent_container + ' #edit_user', 'submit', function (e) {
+            if (!check_password_match($(parent_container + ' #user_password_confirmation').val()) || !check_password_strength($(parent_container + ' #user_password').val())) {
+                e.preventDefault();
+                setTimeout(function () {
+                    $(' .edit_reg_confirm').removeAttr('disabled');
+                }, 1000);
+            }
+        });
+
+        document_level_binding_element(' #sign_up_user_form', 'submit', function (e) {
             e.preventDefault();
-            if (check_password_match($('#sign_up_user_form #user_password_confirmation').val()) && check_password_strength($('#sign_up_user_form #user_password').val())) {
+            if (check_password_match($(parent_container + ' #user_password_confirmation').val()) && check_password_strength($(parent_container + ' #user_password').val())) {
                 $.ajax({
                     type: 'POST',
                     url: $("#sign_up_user_form").attr('action'),
                     data: $("#sign_up_user_form").serialize(),
+                    dataType: 'json',
                     beforeSend: function () {
                     },
                     error: function (xhr, ajaxOptions, thrownError) {
@@ -139,9 +147,12 @@ function UserRegister(app_helpers) {
                             $('.general_modal_body_cust').html(data.message);
                             return $('#general_modal_message_cust').modal();
                         } else {
+
                             if (typeof data.show_only_valiation !== 'undefined' && data.show_only_valiation === true) {
                                 msg = data.validation_error;
                             } else {
+
+
                                 $.each(data.errors, function (index, value) {
                                     if (msg === '') {
                                         return msg += index.charAt(0).toUpperCase() + index.slice(1).replace(/_/g, " ") + ': ' + value.join(", ");
@@ -149,7 +160,7 @@ function UserRegister(app_helpers) {
                                 });
                             }
                             jsMessages('danger', msg);
-                            return $('.submit-registration-form').prop("disabled", false);
+                            return $(parent_container + ' .submit-registration-form').prop("disabled", false);
                         }
                     }
                 });

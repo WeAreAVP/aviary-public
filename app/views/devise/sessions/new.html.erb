@@ -1,8 +1,9 @@
 <% title 'Sign in' %>
 <% description 'Sign in to Aviary.' %>
 <%= render template: 'home/index' %>
-<script>
-    $('#signinmodal').modal()
+<script type="text/javascript">
+    document.addEventListener("DOMContentLoaded", function (event) {
+        $('#signinmodal').modal();
+    });
 </script>
 
-<%#= render partial: 'user_login_form' %>
