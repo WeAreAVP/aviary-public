@@ -255,4 +255,10 @@ module ApplicationHelper
   def lock_image(classes = '')
     "<img class='#{classes}' src='https://#{ENV['S3_HOST_CDN']}/public/lock.png' alt='content locked'>".html_safe
   end
+
+  def key_hash_manager(string)
+    key = OpenSSL::Digest::SHA256.new.hexdigest(string)
+    %w[ɷ ʇ ʊ ʚ ʎ ʚ ʛ ɸ ʝ ʇ].each_with_index { |index, single_character| key = key.gsub(single_character.to_s, index) }
+    key
+  end
 end
