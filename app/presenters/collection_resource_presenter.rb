@@ -111,7 +111,7 @@ class CollectionResourcePresenter < BasePresenter
         listing_transcripts[counter_listing] ||= ''
         listing_transcripts[counter_listing] += presenter.show_transcript_point(transcript_time_start_single, session_video_text_all)
         transcript_time_wise = h.transcript_page_wise_time_range(transcript_time_wise, transcript_point, counter)
-        transcript_count = h.count_occurrence(transcript_point, session_video_text_all, transcript_count, 'transcript', false, counter)
+        transcript_count, _annotation_search_count = h.count_occurrence(transcript_point, session_video_text_all, transcript_count, 'transcript', false, counter)
       end
       global_counter_listing += 1
       if global_counter_listing > 110
@@ -126,7 +126,7 @@ class CollectionResourcePresenter < BasePresenter
       other_file_transcripts.each do |single_file_transcript|
         single_file_transcript.file_transcript_points.each_with_index do |transcript_point, counter|
           transcript_time_wise = transcript_page_wise_time_range(transcript_time_wise, transcript_point, counter)
-          transcript_count = count_occurrence(transcript_point, session_video_text_all, transcript_count, 'transcript', false, counter)
+          transcript_count, _annotation_search_count = count_occurrence(transcript_point, session_video_text_all, transcript_count, 'transcript', false, counter)
         end
       end
     end
@@ -143,7 +143,7 @@ class CollectionResourcePresenter < BasePresenter
       end
       single_file.file_transcripts.includes([:file_transcript_points]).each do |single_transcripts|
         single_transcripts.file_transcript_points.each do |transcript_point|
-          count_file_wise = h.count_occurrence(transcript_point, session_video_text_all, count_file_wise, 'transcript', true)
+          count_file_wise, _annotation_search_count = h.count_occurrence(transcript_point, session_video_text_all, count_file_wise, 'transcript', true)
         end
       end
     end
