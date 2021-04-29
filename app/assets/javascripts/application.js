@@ -656,6 +656,14 @@ function dateTimePicker(objectCaller, element, drops) {
 
 }
 
+const clearKeyWords = function (keyword) {
+    keyword = keyword.replace(/[\/\\()|'"*:^~`{}]/g, '');
+    keyword = keyword.replace(/]/g, '');
+    keyword = keyword.replace(/[[]/g, '');
+    keyword = keyword.replace(/[{}]/g, '');
+    return keyword;
+}
+
 function startTimeCheckbox(update_url, currentTime) {
     $('.start_time_checkbox').click(function () {
         if (update_url)
@@ -672,6 +680,55 @@ function startTimeCheckbox(update_url, currentTime) {
     });
 }
 
+const getSearchKeywordsAsString = function () {
+    let keywords = $('.search_field_selector_single').val();
+    if (typeof keywords == 'undefined') {
+        keywords = $('.search_field_selector_main').val();
+    }
+
+    if ($('.advance_option_search').hasClass('d-none')) {
+        keywords = '';
+        $.each($('.search_field_selector'), function (index, obj) {
+            keywords += $(obj).val() + ' ';
+            if (!$($('select.op_selector')[index]).hasClass('add_wanted_class') && typeof $($('select.op_selector')[index]).val() != 'undefined') {
+                keywords += $($('select.op_selector')[index]).val() + ' ';
+            }
+        });
+    }
+    return keywords;
+}
+
+function removeImageCustom() {
+    let appHandler = new App();
+    document_level_binding_element('.remove_image_custom', 'click', function () {
+        $('#general_modal_close_cust_success').attr('href', $(this).data('url'));
+        $('#general_modal_close_cust_success').removeClass('d-none');
+        appHandler.show_modal_message('Confirmation', '<strong>Are you sure you want to remove this image?</strong>', 'danger', null);
+    });
+}
+
+function timePickerShare() {
+    document_level_binding_element('#start_time_share, #end_time_share', 'blur', function () {
+        let time = $(this).val();
+        if (typeof time != 'undefined' && time != '') {
+            let seconds = humanToSeconds(time);
+            if (!isNaN(seconds)) {
+                $(this).val(secondsToHuman(seconds));
+            }
+        }
+    });
+}
+
+const addKeywordToUrl = function (keyword) {
+    let query = 'keywords[]=' + keyword;
+    let link = window.location.href;
+    if (!link.includes('?')) {
+        link += '?';
+    }
+    link = link + '&' + query;
+    window.location = link;
+}
+
 function isUrlValid(value) {
     return /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)$/i.test(value);
 }
@@ -683,4 +740,4 @@ const linkToExternalTab = function () {
             $(this).attr('target', '_blank');
         }
     });
-};
+}
