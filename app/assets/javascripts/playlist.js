@@ -153,7 +153,7 @@ function Playlist() {
         edit_description_playlist();
         update_description_playlist();
         setAndValidateSlider();
-        update_selected_tab();
+        
         init_tinymce_for_element('.description_text', {
             selector: '.description_text',
             height: $('.description_text').attr('height'),
@@ -264,21 +264,6 @@ function Playlist() {
         }, true);
     };
 
-    const update_selected_tab = function () {
-        document_level_binding_element('.playlist_edit_tabs', 'click', function () {
-            let data = {
-                tabtype: $(this).data('tabtype'),
-                action: 'updateSelectedTab'
-            };
-            selfPL.appHelper.classAction($(this).data('urltab'), data, 'text', 'POST', '', selfPL, false);
-        }, true);
-    };
-
-    this.updateSelectedTab = function(response) {
-        $('playlistrandom#continaer_custom').text(response);
-    }
-
-
     const edit_description_playlist = function () {
         document_level_binding_element('.edit_description_playlist', 'click', function () {
             $('.update_description').data('url', $(this).data('url'));
@@ -341,7 +326,6 @@ function Playlist() {
                 $('.best_in_place').best_in_place();
                 initToolTip(false);
                 $('#no_resource_found').hide();
-                $('#playlist_resources_count').text($('.playlist_resource_single:visible').length);
             }
             $('.playlist_resource_description').each(function () {
                 let content = $(this).children('.less-description').html();

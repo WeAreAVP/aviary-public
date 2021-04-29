@@ -78,6 +78,6 @@ class CollectionResourceFilePresenter < BasePresenter
   end
 
   def cross_origin_attr
-    @model.is_3d ? 'crossorigin="anonymous"' : ''
+    @model.embed_code.present? && @model.embed_content_type.present? ? '' : 'crossorigin="anonymous"'
   end
 end

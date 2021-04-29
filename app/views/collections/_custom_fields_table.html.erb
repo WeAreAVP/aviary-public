@@ -32,7 +32,7 @@
             <%= link_to new_edit_custom_field_collection_path(@collection), class: "btn btn-outline-primary edit-custom-field-button edit-custom-field-button-spec collection-custom-field-icon", data: {id: customfield['field'].id, method_type: "edit"} do %>
               <i class="fa fa-pencil"></i>
             <% end %>
-            <%= link_to 'javascript:void(0);', class: "btn btn-outline-danger collection-custom-field-icon", data: { url: delete_custom_meta_fields_collection_path(@collection, meta_field_id: customfield['field'].id)} do %>
+            <%= link_to 'javascript:void(0);', class: "btn btn-outline-danger delete-custom-field-button collection-custom-field-icon", data: { url: delete_custom_meta_fields_collection_path(@collection, meta_field_id: customfield['field'].id)} do %>
               <i class="fa fa-trash"></i>
             <% end %>
           <% end %>

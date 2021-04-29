@@ -5,7 +5,7 @@
         <h4 class="h4 mb-0">Add Custom Field</h4>
       </div>
       <%= form_for meta_field, url: create_custom_fields_collection_path(collection), method: :post, html: { id: "custom_fields_form" } do |ff| %>
-        <div class="modal-body">
+        <div class="modal-body custom_form">
 
           <%= hidden_field_tag "meta_field_id", meta_field.try(&:id) %>
           <div class="container">

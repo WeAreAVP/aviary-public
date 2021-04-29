@@ -59,7 +59,13 @@ function Collection() {
     };
 
     const bindEvents = function () {
-
+        document_level_binding_element('.delete-custom-field-button', 'click', function () {
+            $('#general_modal_close_cust_success').removeClass('d-none');
+            $('#general_modal_close_cust_success').attr('href', $(this).data('url'));
+            let appHelper = new App();
+            appHelper.show_modal_message('Confirmation', '<strong>Are you sure you want to delete this custom field?</strong>', 'danger');
+        });
+        
         document_level_binding_element('#collection_is_cloning_collection', 'change', function () {
             if ($(this).prop('checked')) {
                 $('#collection_dd_custom').removeClass('d-none');

@@ -340,6 +340,8 @@
                 organization_id: '<%= @collection_resource.present? ? @collection_resource.collection.organization_id : '' %>',
                 user_type: '<%= role_type(current_user, current_organization) %>'
             };
+            var events_tracker = new EventsTracker(params);
+            collectionResource.events_tracker = events_tracker;
             collectionResource.from_playlist = true;
             collectionResource.playlist_info = {
                 playlist_id: '<%= @playlist.present? ? @playlist.id : 0 %>',

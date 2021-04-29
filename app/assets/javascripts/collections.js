@@ -141,6 +141,7 @@ jQuery(function () {
             jsMessages('danger', 'Field name cannot be greater then 32 characters.')
         }
     }, true);
+    $('.edit-custom-field-button').unbind('click');
     $(document).on('click', '.edit-custom-field-button', function (e) {
         e.preventDefault();
         return $.ajax({
