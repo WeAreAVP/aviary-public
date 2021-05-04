@@ -165,6 +165,10 @@ h5.MsoNormal span {
     top: -1px;
 }
 
+.selectize-dropdown-content {
+    max-height: 150px !important;
+}
+
 .finish_editing {
     display: inline-block;
     position: absolute;
