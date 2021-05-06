@@ -1,3 +1,4 @@
+<% player_height = params[:embed] == 'true' && params[:media_player] == 'true' ? 86 : 100 %>
 <style type="text/css">
   .two-col .col-lg-7:first-child:after,
   .one-col .col-lg-7:first-child:after {
@@ -8,22 +9,19 @@
     border: none;
   }
 
-  .mejs__container,
-  .mejs__overlay-play,
-  .mejs__layer,
-  .mejs__mediaelement video {
-    height: 100vh !important;
+  .video-js.vjs-fluid, .video-js.vjs-16-9, .video-js.vjs-4-3 {
+      height: <%= player_height %>vh !important;
+      width: 100vw !important;
+      padding: 0 !important;
+  }
+  
+  .video-placeholder .title {
+      padding: 20px 30px 20px;
   }
 
-  <% if params[:media_player] == 'true' %>
-  .mejs__container {
-    height: 78vh !important;
-  }
-
-  <% end %>
 </style>
 <main id="main" role="main">
-  <div class="search-detail-main">
+  <div>
     <div class="video-main carousel slide" data-ride="carousel">
       <div class="carousel-inner">
         <div class="carousel-item active">
