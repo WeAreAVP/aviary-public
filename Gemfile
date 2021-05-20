@@ -76,7 +76,7 @@ gem 'capistrano', '~> 3.10', require: false
 gem 'capistrano-rails', '~> 1.3', require: false
 gem 'capistrano-passenger', '~> 0.2.0', require: false
 gem 'capistrano-rbenv', '~> 2.1', require: false
-gem 'capistrano3-puma', '~> 3.1', '>= 3.1.1'
+gem 'capistrano3-puma', '~> 5.0'
 # Datatables https://www.driftingruby.com/episodes/datatables
 gem 'rails-assets-jquery', source: 'https://rails-assets.org'
 gem 'kaminari'
