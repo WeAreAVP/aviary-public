@@ -321,8 +321,8 @@ GEM
       railties (>= 3.2.16)
     js_regex (2.2.2)
       regexp_parser (>= 0.5.0, <= 0.6.0)
-    json (2.3.0)
-    json (2.3.0-java)
+    json (2.5.1)
+    json (2.5.1-java)
     json-schema (2.8.1)
       addressable (>= 2.4)
     kaminari (1.2.1)
@@ -778,7 +778,7 @@ DEPENDENCIES
   momentjs-rails
   mysql2
   noid-rails
-  nokogiri (>= 1.11.0)
+  nokogiri (>= 1.11.4)
   open_uri_redirections
   paperclip (~> 6.0.0)
   paperclip-compression
