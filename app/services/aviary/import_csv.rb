@@ -8,7 +8,7 @@ module Aviary
   # ImportCsv
   class ImportCsv
     def process(file_data)
-      if ['text/csv', 'pplication/octet-stream', 'text/plain'].include?(file_data.content_type)
+      if ['text/csv', 'application/octet-stream', 'text/plain'].include?(file_data.content_type)
         begin
           csv = CSV.read(file_data.path, headers: true, encoding: 'ISO8859-1:utf-8')
           global_ip = []

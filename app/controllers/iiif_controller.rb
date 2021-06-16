@@ -118,8 +118,7 @@ class IiifController < ApplicationController
             format: 'text/plain'
           },
           target: {
-            source: media_url.to_s,
-            selector: { type: 'RangeSelector', startSelector: { type: 'PointSelector', t: point.start_time.to_f }, endSelector: { type: 'PointSelector', t: point.end_time.to_f } }
+            source: "#{media_url}##{point.start_time.to_f},#{point.end_time.to_f}"
           }
         }
         annotation_counter += 1
@@ -159,8 +158,7 @@ class IiifController < ApplicationController
             motivation: %w[supplementing describing],
             body: body,
             target: {
-              source: media_url.to_s,
-              selector: { type: 'RangeSelector', startSelector: { type: 'PointSelector', t: point.start_time.to_f }, endSelector: { type: 'PointSelector', t: point.end_time.to_f } }
+              source: "#{media_url}##{point.start_time.to_f},#{point.end_time.to_f}"
             }
           }
           annotation_counter += 1
