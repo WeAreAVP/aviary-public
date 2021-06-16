@@ -112,6 +112,7 @@ RSpec.describe CollectionResource, type: :model do
       it 'Fetch resource Listing' do
         resource_field_values = collection_resource.resource_description_value.try(:resource_field_values)
         duration = resource_field_values.present? && resource_field_values['duration'].present? && resource_field_values['duration']['values'].present? ? resource_field_values['duration']['values'].try(:first) : nil
+        duration = duration.present? ? duration['value'] : 0.0
         expect(duration['value']).to be_a_kind_of(Float)
       end
     end
@@ -120,7 +121,8 @@ RSpec.describe CollectionResource, type: :model do
   describe '#collection resource' do
     context 'Connected to a correct collection resource' do
       it 'Fetch resource Listing' do
-        expect(collection_resource.clean_system).to be_a_kind_of(Hash)
+        resource_field_values = collection_resource.resource_description_value.try(:resource_field_values)
+        expect(resource_field_values).to be_a_kind_of(Hash)
       end
     end
   end

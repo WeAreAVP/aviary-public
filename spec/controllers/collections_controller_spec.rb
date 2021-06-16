@@ -2,7 +2,6 @@ require 'rails_helper'
 
 RSpec.describe CollectionsController, type: :controller do
   let(:collection) { create(:collection) }
-  let(:sample_file) { fixture_file_upload("#{Rails.root}/spec/fixtures/import_collection_ip_list.csv", 'text/csv') }
   before do
     request[:subdomain] = collection.organization.url
     allow(controller).to receive(:current_organization).and_return(collection.organization)
@@ -206,12 +205,5 @@ RSpec.describe CollectionsController, type: :controller do
       get :export, params: { export_type: 'resources' }
       response.header['Content-Disposition'].include?("collection_resources")
     end
-  end
-  describe "Import CSV" do
-    it "should update collection global IP list" do
-    post :import, params: { id: collection.id, importCSV: sample_file }
-      expect(JSON.parse(response.body)['errors']).to be_falsey
-    end
-
   end
 end

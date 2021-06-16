@@ -285,20 +285,12 @@ class CollectionResource < ApplicationRecord
     collection_resource_files.destroy(params[:resource_file_id])
   end
 
-  def tombstone_fields
-    custom_fields = all_fields
-    tombstone_fields = custom_fields['tombstones']
-    if tombstone_fields.length.zero?
-      custom_fields['CollectionResource'].each do |cfield|
-        if %w[agent date duration].include? cfield['field'].system_name
-          tombstone_fields << cfield
-        end
-      end
-    end
+  def tombstone_fields(resource_columns_collection)
     fields = []
-    tombstone_fields.each do |single_field|
-      fields << single_field['field'].system_name
+    resource_columns_collection.each_with_index do |(system_name, single_collection_field), _index|
+      fields << system_name if single_collection_field['tombstone'].to_s.to_boolean?
     end
+    fields = %w[agent date duration] if fields.length.zero?
     fields
   end
 
