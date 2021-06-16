@@ -10,7 +10,7 @@ RSpec.describe Collection, type: :model do
 
 
   context 'properties' do
-    fields_to_check =%i[title about image_file_name image_content_type image_file_size image_updated_at is_public is_featured organization_id external_repository_id external_resource_ids created_at updated_at click_through conditions_for_access automated_access_approval period_of_access time_period target_of_access]
+    fields_to_check =%i[title about image_file_name image_content_type image_file_size image_updated_at is_public is_featured organization_id created_at updated_at]
     fields_to_check.each do |value|
       it "should include #{value} attributes" do
         expect(collection).to have_attribute(value)

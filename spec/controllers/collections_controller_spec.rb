@@ -209,7 +209,7 @@ RSpec.describe CollectionsController, type: :controller do
   end
   describe "Import CSV" do
     it "should update collection global IP list" do
-      post :import, params: { id: collection.id, importCSV: sample_file }
+    post :import, params: { id: collection.id, importCSV: sample_file }
       expect(JSON.parse(response.body)['errors']).to be_falsey
     end
 
