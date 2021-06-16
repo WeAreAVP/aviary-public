@@ -118,13 +118,4 @@ RSpec.describe CollectionResource, type: :model do
     end
   end
 
-  describe '#collection resource' do
-    context 'Connected to a correct collection resource' do
-      it 'Fetch resource Listing' do
-        resource_field_values = collection_resource.resource_description_value.try(:resource_field_values)
-        expect(resource_field_values).to be_a_kind_of(Hash)
-      end
-    end
-  end
-
 end
