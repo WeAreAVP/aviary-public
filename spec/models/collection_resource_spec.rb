@@ -11,18 +11,10 @@ RSpec.describe CollectionResource, type: :model do
 
 
   context 'properties' do
-    fields_to_check = %i[collection_id title is_featured access status created_at updated_at]
+    fields_to_check = %i[collection_id title is_featured access status external_resource_id created_at updated_at]
     fields_to_check.each do |value|
       it "should include #{value} attributes" do
         expect(collection_resource).to have_attribute(value)
-      end
-    end
-  end
-
-  describe '#collection resource ' do
-    context 'Connected to a collection resource' do
-      it 'Check if resource update works' do
-        expect(collection_resource.update_field_value('title', [{ value: 'testing value', vocab_value: '' }])).to be_truthy
       end
     end
   end
@@ -59,7 +51,8 @@ RSpec.describe CollectionResource, type: :model do
   describe '#collection resource ' do
     context 'Connected to a correct collection resource' do
       it 'Check if tombstone_fields working ' do
-        collection_resource.tombstone_fields
+        collection_resource_field = Aviary::FieldManagement::OrganizationFieldManager.new.organization_field_settings(collection.organization, nil, 'resource_fields', 'sort_order')
+        collection_resource.tombstone_fields(collection_resource_field)
       end
     end
   end
@@ -117,7 +110,9 @@ RSpec.describe CollectionResource, type: :model do
   describe '#collection resource' do
     context 'Connected to a correct collection resource' do
       it 'Fetch resource Listing' do
-        expect(collection_resource.custom_field_value('duration').first['value']).to be_a_kind_of(Float)
+        resource_field_values = collection_resource.resource_description_value.try(:resource_field_values)
+        duration = resource_field_values.present? && resource_field_values['duration'].present? && resource_field_values['duration']['values'].present? ? resource_field_values['duration']['values'].try(:first) : nil
+        expect(duration['value']).to be_a_kind_of(Float)
       end
     end
   end
@@ -125,7 +120,7 @@ RSpec.describe CollectionResource, type: :model do
   describe '#collection resource' do
     context 'Connected to a correct collection resource' do
       it 'Fetch resource Listing' do
-        expect(collection_resource.remove_from_solr).to be_a_kind_of(Hash)
+        expect(collection_resource.clean_system).to be_a_kind_of(Hash)
       end
     end
   end
