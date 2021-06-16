@@ -56,6 +56,7 @@ class PreviewScript
                                                                                                     [{ 'value' => preview_hash_switch(@params['new_custom_value']['new_custom_field']).first }]] }
     end
     data_hash_fields['collection_title'] = @params['collection_title']
+    data_hash_fields['fields']['resource'] ||= {}
     unless data_hash_fields['fields']['resource'].count.zero?
       data_hash_fields['fields'].each do |_k, v|
         if v.class.to_s == 'Hash'

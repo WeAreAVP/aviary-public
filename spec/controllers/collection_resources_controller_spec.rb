@@ -9,7 +9,7 @@ RSpec.describe CollectionResourcesController, type: :controller do
   let(:subscription) { build :subscription }
   let(:collection_resource_file) { build :collection_resource_file, collection_resource: collection_resource }
   let(:sample_file) { fixture_file_upload("#{Rails.root}/spec/fixtures/small.mp4", 'video/mp4') }
-  
+
   before do
     request[:subdomain] = collection_resource.collection.organization.url
     allow(controller).to receive(:current_organization).and_return(collection_resource.collection.organization)
@@ -44,7 +44,7 @@ RSpec.describe CollectionResourcesController, type: :controller do
   describe "GET load_resource_details_template" do
     it "has a 200 status code" do
       collection_resource_file.save
-      get :edit, params: { "av_resource_id" => collection_resource.id,  "collection_id" => collection_resource.collection.id, "collection_resource_id" => collection_resource.id, "resource_file_id" => collection_resource_file.id }
+      get :edit, params: { "av_resource_id" => collection_resource.id, "collection_id" => collection_resource.collection.id, "collection_resource_id" => collection_resource.id, "resource_file_id" => collection_resource_file.id }
       expect(response.status).to eq(200)
     end
   end
@@ -52,28 +52,28 @@ RSpec.describe CollectionResourcesController, type: :controller do
   describe "GET delete_resource_file" do
     it "has a 200 status code" do
       collection_resource_file.save
-      get :delete_resource_file, params: { "av_resource_id" => collection_resource.id,  "collection_id" => collection_resource.collection.id, "collection_resource_id" => collection_resource.id, "resource_file_id" => collection_resource_file.id }
+      get :delete_resource_file, params: { "av_resource_id" => collection_resource.id, "collection_id" => collection_resource.collection.id, "collection_resource_id" => collection_resource.id, "resource_file_id" => collection_resource_file.id }
       expect(response.status).to eq(302)
     end
   end
-  
+
   describe "PATCH Index" do
     it "has a 200 status code" do
-      collection_resource_fields = collection_resource.all_fields['CollectionResource']
-      updated_values = []
-      collection_resource_fields.each do |field_value|
-        value = ""
-        unless field_value['field'].id != 8
-          value = "dummy title"
-        end
-        updated_values << { "vocabularies_id" => "", "value" => value, "collection_resource_field_id" => field_value['field'].id, "collection_resource_id" => collection_resource.id }
+      fields = Aviary::FieldManagement::OrganizationFieldManager.new.organization_field_settings(collection_resource.collection.organization, nil, 'resource_fields', 'sort_order')
+      updated_values = {}
+      fields.each_with_index do |(system_name, _single_collection_field), _index|
+        updated_values[system_name] ||= {}
+        updated_values[system_name]['values'] ||= []
+        updated_values[system_name]['system_name'] = system_name
+        value = "dummy title"
+        updated_values[system_name]['values'] << { "vocab_value" => "", "value" => value, "collection_resource_id" => collection_resource.id }
       end
       patch :update_metadata, params: { "resource_file_id" => "1", "collection_resource" => { "collection_resource_field_values" => updated_values }, "collection_id" => collection_resource.collection.id, "collection_resource_id" => collection_resource.id }
       expect(assigns(:msg)).to eq("Resource description metadata has been updated successfully.")
       expect(response.status).to eq(302)
     end
   end
-  
+
   describe "GET load_head_and_tombstone_template" do
     it "has a 200 status code" do
       get :load_head_and_tombstone_template, params: { "collection_id" => "1", "collection_resource_id" => "1" }
@@ -128,18 +128,18 @@ RSpec.describe CollectionResourcesController, type: :controller do
   describe "POST Save Resource File" do
     it "has a 302 status code with with 1 file count when using file_url" do
       post :save_resource_file, params: { collection_id: collection_resource.collection.id, collection_resource_id: collection_resource.id,
-                                          collection_resource: { file_url: 'https://www.weareavp.com/small.mp4' }
+                                          collection_resource: { file_url: 'https://www.weareavp.com/small.mp4', is_3d: false }
       }
       expect(response.status).to eq(302)
       expect(collection_resource.collection_resource_files.size).to eq(1)
     end
-    # it "has a 302 status code with with 1 file count when using embed code" do
-      # post :save_resource_file, params: { collection_id: collection_resource.collection.id, collection_resource_id: collection_resource.id,
-      #                                     collection_resource: { embed_code: collection_resource_file_vimeo.embed_code, embed_type: collection_resource_file_vimeo.embed_type }
-      # }
-      # expect(response.status).to eq(302)
-      # expect(collection_resource.collection_resource_files.size).to eq(1)
-    # end
+    #it "has a 302 status code with with 1 file count when using embed code" do
+    #  post :save_resource_file, params: { collection_id: collection_resource.collection.id, collection_resource_id: collection_resource.id,
+    #                                      collection_resource: { embed_code: collection_resource_file_vimeo.embed_code, embed_type: collection_resource_file_vimeo.embed_type }
+    #  }
+    #  expect(response.status).to eq(302)
+    #  expect(collection_resource.collection_resource_files.size).to eq(1)
+    #end
     it "has a 302 status code with with 1 file count when using youtube embed code" do
       post :save_resource_file, params: { collection_id: collection_resource.collection.id, collection_resource_id: collection_resource.id,
                                           collection_resource: { embed_code: collection_resource_file_youtube.embed_code, embed_type: collection_resource_file_youtube.embed_type }
@@ -149,7 +149,7 @@ RSpec.describe CollectionResourcesController, type: :controller do
     end
     it "has a 302 status code with with 1 file count when using file upload" do
       post :save_resource_file, params: { collection_id: collection_resource.collection.id, collection_resource_id: collection_resource.id,
-                                          av_resource: { resource_files: [sample_file] }
+                                          av_resource: { resource_files: [sample_file] }, is_3d: []
       }
       expect(response.status).to eq(302)
       expect(collection_resource.collection_resource_files.size).to eq(1)
