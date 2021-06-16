@@ -10,27 +10,57 @@ class CatalogController < ApplicationController
   before_action :update_facets, except: %i[assign_to_playlist update_selected_playlist]
 
   def update_facets
-    if current_organization.present? && current_organization.search_facet_fields.present? && JSON.parse(current_organization.search_facet_fields).present?
-      JSON.parse(current_organization.search_facet_fields).each do |_key, single_facet_field|
-        next if !single_facet_field['status'].to_s.to_boolean? || single_facet_field['type'] == 'editor'
-        if single_facet_field['is_default_field'].to_s.to_boolean?
-          default_field_info = Organization.field_list_with_options[single_facet_field['key'].to_sym]
+    @org_field_manager = Aviary::FieldManagement::OrganizationFieldManager.new
+    @resource_fields = @org_field_manager.organization_field_settings(current_organization, nil, 'resource_fields', 'search_sort_order')
+    if current_organization.present? && @resource_fields.present?
+      @resource_fields.each_with_index do |(system_name, single_collection_field), _index|
+        next if !single_collection_field['search_display'].to_s.to_boolean? || single_collection_field['type'] == 'editor'
+        global_status = single_collection_field['description_display'].to_s.to_boolean?
+        field_conf = single_collection_field['field_configuration']
+        global_status = true if field_conf.present? && field_conf['special_purpose'].present? && boolean_value(field_conf['special_purpose']) && !%w[collection_title has_transcript has_index duration access].include?(system_name)
+        next if !global_status && !%w[collection_title has_transcript has_index duration access].include?(system_name)
+        if system_name == 'collection_title'
+          @blacklight_config.add_facet_field('collection_id_is', Organization.field_list_with_options[:collection_id_is])
+          next
+        end
+        if system_name == 'duration'
+          @blacklight_config.add_facet_field('description_duration_ls', Organization.field_list_with_options[:description_duration_ls])
+          next
+        end
+
+        if system_name == 'access'
+          @blacklight_config.add_facet_field('access_ss', Organization.field_list_with_options[:access_ss])
+          next
+        end
+        if system_name == 'has_transcript'
+          @blacklight_config.add_facet_field('has_transcript_ss', Organization.field_list_with_options[:has_transcript_ss])
+          next
+        end
+        if system_name == 'has_index'
+          @blacklight_config.add_facet_field('has_index_ss', Organization.field_list_with_options[:has_index_ss])
+          next
+        end
+        if single_collection_field['is_default'].to_s.to_boolean?
+
+          default_field_info = Organization.field_list_with_options[system_name.to_sym]
+          next unless default_field_info.present?
           field_settings = default_field_info.slice(:label, :single, :helper_method, :tag, :ex, :partial, :range)
-          @blacklight_config.add_facet_field(default_field_info[:key].to_s, field_settings)
+
+          @blacklight_config.add_facet_field(default_field_info[:key], field_settings)
         else
           solr_search_management = SolrSearchManagement.new
-          solr_filed = Aviary::SolrIndexer.define_custom_field_system_name(single_facet_field['key'].to_s, single_facet_field['type'].to_s, true)
+          solr_filed = Aviary::SolrIndexer.define_custom_field_system_name(system_name.to_s, single_collection_field['type'].to_s, true)
           range_start = "['' TO *]"
-          range_start = '[0 TO *]' if single_facet_field['type'].to_s == 'date'
+          range_start = '[0 TO *]' if single_collection_field['type'].to_s == 'date'
           response = begin
-                       solr_search_management.select_query(q: '*:*', fq: ['document_type_ss:collection_resource', "#{solr_filed}:#{range_start}"])
+                       solr_search_management.select_query(q: '*:*', fq: ['document_type_ss:collection_resource', "#{solr_filed}:#{range_start}"], fl: 'id_is', rows: 1)
                      rescue StandardError => e
                        puts e
                        false
                      end
-          field_info = { label: single_facet_field['label'], single: false }
-          if single_facet_field['type'].to_s == 'date'
-            field_info = { label: single_facet_field['label'], single: true, partial: 'blacklight_range_limit/range_limit_panel', range: { segments: false }, tag: "#{solr_filed}-tag", ex: "#{solr_filed}-tag" }
+          field_info = { label: single_collection_field['label'], single: false }
+          if single_collection_field['type'].to_s == 'date'
+            field_info = { label: single_collection_field['label'], single: true, partial: 'blacklight_range_limit/range_limit_panel', range: { segments: false }, tag: "#{solr_filed}-tag", ex: "#{solr_filed}-tag" }
           end
 
           @blacklight_config.add_facet_field(solr_filed.to_s, field_info) if response.present? && response['response'].present? && response['response']['numFound'] > 0
@@ -38,7 +68,12 @@ class CatalogController < ApplicationController
       end
     else
       Organization.field_list_with_options.each do |_index, single_field|
-        @blacklight_config.add_facet_field(single_field[:key].to_s, label: single_field[:label], single: single_field[:single], helper_method: single_field[:helper_method], tag: single_field[:tag], ex: single_field[:ex])
+        if single_field[:key] == 'description_duration_ls' || single_field[:key] == 'description_date_search_lms'
+          @blacklight_config.add_facet_field(single_field[:key].to_s, label: single_field[:label], single: single_field[:single], helper_method: single_field[:helper_method], tag: single_field[:tag],
+                                                                      ex: single_field[:ex], partial: 'blacklight_range_limit/range_limit_panel', range: { segments: false })
+        else
+          @blacklight_config.add_facet_field(single_field[:key].to_s, label: single_field[:label], single: single_field[:single], helper_method: single_field[:helper_method], tag: single_field[:tag], ex: single_field[:ex])
+        end
       end
     end
     flag_param_changed = false

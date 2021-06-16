@@ -24,7 +24,7 @@ module Aviary
       'Access-Control-Request-Method' => %w{GET POST OPTIONS}.join(',')
     }
 
-    config.autoload_paths += Dir["#{config.root}/lib/**/", "#{config.root}/app/services/**/"]
+    config.autoload_paths += Dir["#{config.root}/lib/**/", "#{config.root}/app/services/**/", "#{config.root}/app/services/aviary/field_management/**"]
     config.active_job.queue_adapter = :sidekiq
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers

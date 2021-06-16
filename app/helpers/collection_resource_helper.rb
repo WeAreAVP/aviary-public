@@ -25,6 +25,7 @@ module CollectionResourceHelper
       custom_value = custom_value.join(' ').titleize.strip
       custom_value = 'Public' if custom_value == 'Access'
       custom_value = 'Source Metadata URI' if custom_value == 'Source Metadata Uri'
+      custom_value = value unless custom_value.present?
     end
     custom_value
   end

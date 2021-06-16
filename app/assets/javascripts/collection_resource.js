@@ -262,8 +262,7 @@ function CollectionResource() {
                     $('.edit_collection_resource .select_option.value_holder').selectize();
                     /* Edit resource form */
                     $('.edit_fields').click(function () {
-                        $('body').css('overflow', 'hidden');
-                        $('#form_edit_custom').addClass('open');
+                        loadResourceDescriptionForm();
                     });
                     let resourcePageCommon = new ResourcePageCommon();
                     resourcePageCommon.initialize('.form_edit_custom_resource');
@@ -277,6 +276,32 @@ function CollectionResource() {
             }
         }
 
+    };
+
+    const loadResourceDescriptionForm = function (embed) {
+        let data = {
+            action: 'loadResourceDescriptionForm',
+            tabs_size: $('.info_tabs').data('tabs-size'),
+            search_size: $('.info_tabs').data('search-size'),
+            embed: embed
+        };
+        data = jQuery.extend(data, collectionResource.playlist_info);
+        selfCR.app_helper.classAction($('.edit_fields').data('url'), data, 'html', 'GET', '#form_edit_custom', selfCR, true);
+    };
+
+    this.loadResourceDescriptionForm = function (response, container) {
+        if (response) {
+            response = response.replace(/\s*(>|<)\s*/g, "$1");
+            if (response.includes('form_edit_custom')) {
+                $(container).html(response);
+                init_tinymce_for_element('.edit_collection_resource textarea.value_holder');
+                setTimeout(function (){
+                    $('body').css('overflow', 'hidden');
+                    $('#form_edit_custom').addClass('open');
+                    $('[data-toggle="tooltip"]').tooltip();
+                }, 100);
+            }
+        }
     };
 
     const desc_trans_index_call_complete = function () {

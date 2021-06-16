@@ -27,8 +27,7 @@ module DetailPageHelper
     </div>".html_safe
   end
 
-  def count_transcript_occurrence(transcript_point, single_keyword, transcript_count, is_file_wise, counter, annotation_search_count, all_annotations)
-
+  def count_transcript_occurrence(transcript_point, single_keyword, transcript_count, is_file_wise, counter, annotation_search_count, _all_annotations)
     transcript_point_sum = count_em(transcript_point.text, single_keyword) + count_em(transcript_point.speaker, single_keyword)
     transcript_count[transcript_point.file_transcript.collection_resource_file_id] ||= {}
     transcript_count[transcript_point.file_transcript.collection_resource_file_id]['total-transcript'] ||= 0

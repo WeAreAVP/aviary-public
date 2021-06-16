@@ -1,23 +1,27 @@
-<div class="text-headline jumbotron">
-  <h3>Collection Description</h3>
-  There are optional description fields to add to your Collection. This will appear in "About this collection" on your collection page
+<div class="row align-items-center mt-4">
+  <div class="col-md-6">
+    <div class="text-headline jumbotron">
+      <h3>Collection Description</h3>
+      <p>There are optional description fields to add to your Collection. This will appear in "About this collection" on
+        your collection page</p>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <a class="btn btn-primary text-white mb-10px float-right" onclick="$('#collection_field_sort_popup').modal()">Sort
+      Collection Fields</a>
+  </div>
 </div>
-<a class="btn btn-default text-white mb-10px float-right" onclick="$('#collection_field_sort_popup').modal()">Sort
-  Collection Fields</a>
-<div class="org-metadata" style="margin-top: 80px;">
+<div class="org-metadata">
   <div class="holder">
 
-    <table class="table" id="sort_collection_default_fields_values">
-      <tbody>
-      <% @dynamic_fields['Collection'].each do |collection_field_sort| %>
-        <tr>
-          <td>
-            <%= render partial: 'collection_fields_template', locals: { collection_field_sort: collection_field_sort } %>
-          </td>
-        </tr>
+    <div id="sort_collection_default_fields_values">
+      <% if @collection_fields.present? %>
+        <% @collection_fields.each_with_index do |(_system_name, single_collection_field), _index| %>
+          <% next unless single_collection_field['display'].to_s.to_boolean? %>
+          <%= render partial: 'collection_fields_template', locals: { collection_field_sort: single_collection_field } %>
+        <% end %>
       <% end %>
-      </tbody>
-    </table>
+    </div>
   </div>
 </div>
 
@@ -33,27 +37,29 @@
         </button>
       </div>
       <div class="modal-body">
-        <table class="table" id="sort_collection_default_fields">
-          <tbody>
-
-         <% @dynamic_fields['Collection'].each do |collection_field_sort| %>
-            <tr>
-              <td>
-                <input type="hidden" name="collection_settings[<%= collection_field_sort['field'].id %>][field_id]" id="collection_settings_<%= collection_field_sort['field'].id %>_field_id" value="<%= collection_field_sort['field'].id %>">
-                <input type="hidden" name="collection_settings[<%= collection_field_sort['field'].id %>][is_visible]" id="collection_settings_<%= collection_field_sort['field'].id %>_is_visible" value="<%= collection_field_sort['settings']['is_visible'] %>">
-                <input type="hidden" name="collection_settings[<%= collection_field_sort['field'].id %>][is_tombstone]" id="collection_settings_<%= collection_field_sort['field'].id %>_is_tombstone" value="<%= collection_field_sort['settings']['is_tombstone'] %>">
-                <div>
-                  <i style="cursor: crosshair;" class="fa fa-bars handle float-left collection-metadata-sorting"></i><span class="description-title float-left font-weight-bold"><%= collection_field_sort['field'].label  %></span>
-                </div>
-              </td>
-            </tr>
+        <table class="table border" id="sort_facet_fields_table">
+          <tbody id='sort_facet_fields_table_body' data-type='collection_fields' data-order-custom="sort_order">
+          <% if @collection_fields.present? %>
+            <% @collection_fields.each_with_index do |(system_name, single_collection_field), _index| %>
+              <% next unless single_collection_field['display'].to_s.to_boolean? %>
+              <tr class="facet_field <%= system_name %>" data-field="<%= system_name %>" data-field-type="<%= single_collection_field['field_type'] %>" data-label="<%= single_collection_field['label'] %>" data-collection="<%= '' %>" data-is-default-field="<%= single_collection_field['is_default'] %>">
+                <td>
+                  <input type="hidden" name="collection_settings[<%= system_name %>][field_id]" id="collection_settings_<%= system_name %>_field_id" value="<%= system_name %>">
+                  <input type="hidden" name="collection_settings[<%= system_name %>][is_visible]" id="collection_settings_<%= system_name %>_is_visible" value="<%= single_collection_field['display'] %>">
+                  <input type="hidden" name="collection_settings[<%= system_name %>][is_tombstone]" id="collection_settings_<%= system_name %>_is_tombstone" value="<%= single_collection_field['is_tombstone'] %>">
+                  <div>
+                    <i style="cursor: crosshair;" class="fa fa-bars handle float-left collection-metadata-sorting"></i><span class="description-title float-left font-weight-bold"><%= single_collection_field['label'] %></span>
+                  </div>
+                </td>
+              </tr>
+            <% end %>
           <% end %>
           </tbody>
         </table>
       </div>
       <div class="modal-footer">
-        <a class="update-collection-forms-btn btn btn-info mt-2 mr-2" href="javascript://">Update</a>
-        <a class="btn btn-danger mt-2 mr-2" href="javascript:void(0);" onclick="$('#collection_field_sort_popup').modal('hide')">Close</a>
+        <a class="update-collection-forms-btn btn btn-primary mt-2 mr-2" href="javascript://">Update</a>
+        <a class="btn btn-light mt-2 mr-2" href="javascript:void(0);" onclick="$('#collection_field_sort_popup').modal('hide')">Close</a>
       </div>
     </div>
   </div>

@@ -1,22 +1,22 @@
-<% single_field = {} %>
-<% single_field['field'] = field %>
-<div class="current-parent <%= settings.nil? || (settings[:is_visible] == true && single_field['field'].system_name != 'duration') ? '' : 'd-none' %>">
-  <dt><%= single_field['field'].label %>:
-    <span class="badge badge-info addmore-row " data-type="<%= CustomFields::Field::TypeInformation.fetch_type(single_field['field'].column_type).to_s %>" data-is_repeatable="<%= single_field['field'].is_repeatable %>"> Add More </span>
+
+<div class="current-parent <%= field_settings.nil? || (field_settings.should_display_on_detail_page && field['status'].to_s.to_boolean? && system_name != 'duration') ? '' : 'd-none' %>">
+  <dt>
+    <span data-toggle="tooltip" data-placement="top" data-html="true" title="<%= field_settings.help_text %>"><%= field_settings.label %>:</span>
+    <span class="badge badge-info addmore-row " data-type="<%= field_settings.info_of_attribute('field_type') %>" data-is_repeatable="<%= field_settings.repeatable? %>"> Add More </span>
   </dt>
   <%# end %>
   <dd class="with-date custom_form">
     <div class="w-100 px-3">
-      <div class="single_row_dynamic_form <%= single_field['field'].system_name.to_s %>">
-        <% if values.present? %>
-          <% values.each do |single_value| %>
-            <% if single_value['value'].present? || single_value['vocab_value'].present? %>
-              <%= render partial: 'collection_resources/common/fields_partail_form', locals: {single_field: single_field['field'], single_value: single_value, type_for_view: 'value_holder', from: from} %>
+      <div class="single_row_dynamic_form <%= system_name.to_s %>">
+        <% if values.present? && values['values'].present?  %>
+          <% values['values'].each do |single_value| %>
+            <% if ( single_value.class.name == 'Hash' || single_value.class.name == 'Array') && (single_value['value'].present? || single_value['vocab_value'].present?) %>
+              <%= render partial: 'collection_resources/common/fields_partail_form', locals: {system_name: system_name, field_settings: field_settings, field: field, single_value: single_value, type_for_view: 'value_holder', from: from} %>
             <% end %>
           <% end %>
         <% end %>
         <div style="display: none;" class="row_clone">
-          <%= render partial: 'collection_resources/common/fields_partail_form', locals: {single_field: single_field['field'], single_value: '', type_for_view: 'cloner', from: from} %>
+          <%= render partial: 'collection_resources/common/fields_partail_form', locals: {system_name: system_name, field_settings: field_settings, field: field, single_value: '', type_for_view: 'cloner', from: from} %>
         </div>
       </div>
     </div>

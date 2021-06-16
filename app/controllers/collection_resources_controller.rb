@@ -14,37 +14,47 @@ class CollectionResourcesController < ApplicationController
     record_last_bread_crumb(request.fullpath, 'Back to My Resources') unless request.xhr?
     session[:resource_list_bulk_edit] = [] unless request.xhr?
     session[:resource_list_params] = [] unless request.xhr?
+
+    @organization_field_manager = Aviary::FieldManagement::OrganizationFieldManager.new
+    @resource_fields = @organization_field_manager.organization_field_settings(current_organization, nil, 'resource_fields', 'resource_table_sort_order')
+    @fixed_columns = current_organization.organization_field.present? && current_organization.organization_field.fixed_column.present? ? current_organization.organization_field.fixed_column : 0
+
     respond_to do |format|
       format.html
-      format.json { render json: ResourcesListingDatatable.new(view_context, current_organization, params['called_from']) }
+      format.json { render json: ResourcesListingDatatable.new(view_context, current_organization, params['called_from'], params[:additionalData], @resource_fields) }
     end
   end
 
   def show
+    unless current_organization.try(:id).present?
+      flash[:error] = 'Requested resource not found'
+      redirect_to root_path
+    end
     organization = current_organization
     id = params[:collection_resource_id].present? ? params[:collection_resource_id] : params[:id]
     @collection_resource = CollectionResource.includes(:collection).joins(:collection).where(id: id).where(collections: { organization_id: organization.id, id: params[:collection_id] }).first
-
-    unless @collection_resource.present?
+    if @collection_resource.nil?
       flash[:error] = 'Resource not found'
       return redirect_to root_path
     end
     authorize! :read, @collection_resource
-    @dynamic_fields = @collection_resource.all_fields
-    @description_seo = @collection_resource.custom_field_value('description').try(:first)
+    @resource_field_values = @collection_resource.resource_description_value.try(:resource_field_values)
+    @description_seo = @resource_field_values.present? && @resource_field_values['description'].present? && @resource_field_values['description']['values'].present? ? @resource_field_values['description']['values'].try(:first) : {}
     @collection = @collection_resource.collection
     CollectionResourcePresenter.new(@collection_resource, view_context).breadcrumb_manager('show', @collection_resource, @collection) if can? :manage, @collection_resource
     @resource_file = params[:resource_file_id] && !CollectionResourceFile.where(id: params[:resource_file_id]).empty? ? CollectionResourceFile.find(params[:resource_file_id]) : @collection_resource.collection_resource_files.order_file.first
     @detail_page = true
     @file_index = FileIndex.new
     @file_transcript = FileTranscript.new
-
     @selected_transcript = 0
     @selected_index = 0
     @file_indexes = {}
     @file_transcripts = {}
     session[:count_presence] = { index: false, transcript: false, description: false }
     @session_video_text_all = session[:transcript_count] = session[:index_count] = session[:description_count] = {}
+    @organization_field_manager = Aviary::FieldManagement::OrganizationFieldManager.new
+    @collection_field_manager = Aviary::FieldManagement::CollectionFieldManager.new
+    @resource_columns_collection = @collection_field_manager.sort_fields(@collection_field_manager.collection_resource_field_settings(@collection, 'resource_fields').resource_fields, 'sort_order')
     collection_resource_presenter = CollectionResourcePresenter.new(@collection_resource, view_context)
     @session_video_text_all, @selected_transcript, @selected_index, @count_file_wise = collection_resource_presenter.generate_params_for_detail_page(@resource_file, @collection_resource, session, params)
     @file_indexes, @file_transcripts, @selected_index, @selected_transcript = collection_resource_presenter.selected_index_transcript(@resource_file, @selected_index, @selected_transcript)
@@ -73,14 +83,19 @@ class CollectionResourcesController < ApplicationController
         av_resource_params[:collection_resource_field_values].each do |value|
           unless value['value'].empty? && value['vocabularies_id'].empty?
             if updated_field_values[value['collection_resource_field_id']].nil?
-              updated_field_values[value['collection_resource_field_id']] = { field_id: value['collection_resource_field_id'], values: [] }
+              updated_field_values[value['collection_resource_field_id']] = { system_name: value['collection_resource_field_id'], values: [] }
             end
             updated_field_values[value['collection_resource_field_id']][:values] << { value: value['value'], vocab_value: value['vocabularies_id'] }
           end
         end
-        @collection_resource.batch_update_values(updated_field_values.values, true)
-        @collection_resource.reindex_collection_resource
+
+        resource_description_value = ResourceDescriptionValue.find_or_create_by(collection_resource_id: @collection_resource.id)
+        resource_description_value.resource_field_values = updated_field_values
+        resource_description_value.save
+
         @collection_resource.update(updated_at: Time.now)
+        @collection_resource = CollectionResource.find(@collection_resource.id)
+        @collection_resource.reindex_collection_resource
         @msg = t('description_metadata_updated')
       else
         @msg = t('error_update_again')
@@ -121,11 +136,28 @@ class CollectionResourcesController < ApplicationController
     end
   end
 
+  def load_resource_description_form
+    @resource_file = params[:resource_file_id] ? CollectionResourceFile.find_by(id: params[:resource_file_id]) : @collection_resource.collection_resource_files.order_file.first
+    authorize! :read, @collection_resource
+    @org_field_manager = Aviary::FieldManagement::OrganizationFieldManager.new
+    @collection_field_manager = Aviary::FieldManagement::CollectionFieldManager.new
+
+    @resource_fields_settings = @org_field_manager.organization_field_settings(current_organization, nil, 'resource_fields')
+    @resource_columns_collection = @collection_field_manager.sort_fields(@collection_field_manager.collection_resource_field_settings(@collection_resource.collection, 'resource_fields').resource_fields, 'sort_order')
+    @resource_description_value = @collection_resource.resource_description_value
+    render partial: 'collection_resources/common/details_form', locals: { from: 'resource_metadata' }
+  end
+
   def load_resource_details_template
     @resource_file = params[:resource_file_id] ? CollectionResourceFile.find_by(id: params[:resource_file_id]) : @collection_resource.collection_resource_files.order_file.first
     authorize! :read, @collection_resource
-    @dynamic_fields = @collection_resource.all_fields
-    render partial: 'collection_resources/show/info_tabs', locals: { dynamic_fields: @dynamic_fields, search_size: params[:search_size], tabs_size: params[:tabs_size] }
+    @org_field_manager = Aviary::FieldManagement::OrganizationFieldManager.new
+    @collection_field_manager = Aviary::FieldManagement::CollectionFieldManager.new
+
+    @resource_fields_settings = @org_field_manager.organization_field_settings(current_organization, nil, 'resource_fields')
+    @resource_columns_collection = @collection_field_manager.sort_fields(@collection_field_manager.collection_resource_field_settings(@collection_resource.collection, 'resource_fields').resource_fields, 'sort_order')
+    @resource_description_value = @collection_resource.resource_description_value
+    render partial: 'collection_resources/show/info_tabs', locals: { search_size: params[:search_size], tabs_size: params[:tabs_size] }
   end
 
   def load_head_and_tombstone_template

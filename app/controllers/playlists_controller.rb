@@ -62,6 +62,12 @@ class PlaylistsController < ApplicationController
         return
       end
     end
+    @organization_field_manager = Aviary::FieldManagement::OrganizationFieldManager.new
+    @collection_field_manager = Aviary::FieldManagement::CollectionFieldManager.new
+    @resource_fields = @organization_field_manager.organization_field_settings(current_organization, nil, 'resource_fields', 'resource_table_sort_order')
+    if @collection.present?
+      @resource_columns_collection = @collection_field_manager.sort_fields(@collection_field_manager.collection_resource_field_settings(@collection, 'resource_fields').resource_fields, 'sort_order')
+    end
     @current_playlist_item = @playlist_resource.playlist_items.find_by_collection_resource_file_id(@resource_file.id) if @resource_file.present?
     @playlist_files = {}
     @playlist_files = @collection_resource.collection_resource_files.order_file if @collection_resource.present? && @collection_resource.collection_resource_files.present?
@@ -91,6 +97,9 @@ class PlaylistsController < ApplicationController
     @playlist_show = true
     @playlist_resource = PlaylistResource.find_by_id(params[:playlist_resource_id])
     @collection_resource ||= @playlist_resource.collection_resource if @playlist_resource.present?
+    @organization_field_manager = Aviary::FieldManagement::OrganizationFieldManager.new
+    @collection_field_manager = Aviary::FieldManagement::CollectionFieldManager.new
+    @resource_fields = @organization_field_manager.organization_field_settings(current_organization, nil, 'resource_fields', 'resource_table_sort_order')
 
     if (params[:playlist_resource_id].nil? || params[:collection_resource_file_id].nil?) && @playlist.playlist_resources.present?
       @playlist_resource = params[:playlist_resource_id].present? ? @playlist.playlist_resources.find(params[:playlist_resource_id]) : @playlist.playlist_resources.order(:sort_order).first
@@ -123,7 +132,10 @@ class PlaylistsController < ApplicationController
     return unless @collection_resource.present?
     collection_resource_presenter = CollectionResourcePresenter.new(@collection_resource, view_context)
     @session_video_text_all, @selected_transcript, @selected_index, @count_file_wise = collection_resource_presenter.generate_params_for_detail_page(@resource_file, @collection_resource, session, params)
-    @dynamic_fields = @collection_resource.all_fields
+    @organization_field_manager = Aviary::FieldManagement::OrganizationFieldManager.new
+    @collection_field_manager = Aviary::FieldManagement::CollectionFieldManager.new
+    @resource_fields = @organization_field_manager.organization_field_settings(current_organization, nil, 'resource_fields', 'resource_table_sort_order')
+    @resource_columns_collection = @collection_field_manager.sort_fields(@collection_field_manager.collection_resource_field_settings(@collection, 'resource_fields').resource_fields, 'sort_order')
     @file_indexes, @file_transcripts, @selected_index, @selected_transcript = collection_resource_presenter.selected_index_transcript(@resource_file, @selected_index, @selected_transcript)
   end
 
@@ -209,6 +221,6 @@ class PlaylistsController < ApplicationController
 
   def playlist_params
     params.require(:playlist).permit(:name, :description, :organization_id, :access,
-                                     :is_featured, :thumbnail, :is_audio_only, :enable_rss)
+                                     :is_featured, :thumbnail, :is_audio_only, :enable_rss, :dont_autoplay_flag)
   end
 end

@@ -1,12 +1,13 @@
 # ResourcesListingDatatable
 class ResourcesListingDatatable < ApplicationDatatable
-  delegate :time_to_duration, :html_safe, :strip_tags, :truncate, :check_valid_array, :edit_collection_collection_resource_path, :collection_collection_resource_path,
+  delegate :time_to_duration, :html_safe, :strip_tags, :truncate, :check_valid_array, :edit_collection_collection_resource_path, :collection_collection_resource_path, :boolean_value,
            :bulk_resource_list_collections_path, :collection_resource_path, :current_organization, :can?, to: :@view
 
-  def initialize(view, caller, called_from = '', additional_data = {})
+  def initialize(view, caller, called_from = '', additional_data = {}, resource_fields = {})
     @view = view
     @caller = caller
     @called_from = called_from
+    @resource_fields = resource_fields
     return if additional_data.blank?
     @external_id = additional_data[:external]
     @collection_id = additional_data[:collection_id]
@@ -23,13 +24,19 @@ class ResourcesListingDatatable < ApplicationDatatable
   private
 
   def sort_column
-    if @called_from == 'permission_group'
-      resource_table_column_detail = CollectionResource.permission_group_columns.to_json
-      columns(resource_table_column_detail)[params[:order]['0'][:column].to_i]
-
+    if @called_from == 'permission_group' || @called_from == 'archiveSpacePreview'
+      columns_list = []
+      @resource_fields.each_with_index do |(system_name, single_collection_field), _index|
+        field_settings = Aviary::FieldManagement::FieldManager.new(single_collection_field, system_name)
+        if field_settings.should_display_on_resource_table && %w[id_ss title_ss access_ss description_identifier_sms description_date_sms].include?(field_settings.solr_display_column_name)
+          columns_list << single_collection_field['solr_display_column'] if single_collection_field['solr_display_column'].to_s.to_boolean?
+        end
+      end
     else
-      columns(current_organization.resource_table_column_detail)[params[:order]['0'][:column].to_i]
+      columns_list = columns
     end
+    column = params[:order]['0'][:column].to_i
+    columns_list[column]
   end
 
   def data
@@ -41,16 +48,25 @@ class ResourcesListingDatatable < ApplicationDatatable
                     data-url='#{bulk_resource_list_collections_path(collection_id: resource['collection_id_is'], collection_resource_id: resource['id_is'])}' data-id='#{resource['id_is']}' />"
           end
 
-          resource_table_column_detail = CollectionResource.permission_group_columns.to_json
-          JSON.parse(resource_table_column_detail)['columns_status'].each do |_, value|
-            column << manage(value, resource) if !value['status'].blank? && value['status'] == 'true'
+          @resource_fields.each_with_index do |(system_name, single_collection_field), _index|
+            field_settings = Aviary::FieldManagement::FieldManager.new(single_collection_field, system_name)
+            if %w[id_ss title_ss access_ss description_identifier_sms description_date_sms].include?(field_settings.solr_display_column_name)
+              column << manage(field_settings.solr_display_column_name, resource) if field_settings.should_display_on_resource_table
+            end
           end
         else
           column << "<input type='checkbox' class='resources_selections resources_selections-#{resource['id_is']}'
                   data-url='#{bulk_resource_list_collections_path(collection_id: resource['collection_id_is'], collection_resource_id: resource['id_is'])}' data-id='#{resource['id_is']}' />"
-          if resources.fourth.present? && !resources.fourth.resource_table_column_detail.blank? && !JSON.parse(resources.fourth.resource_table_column_detail).blank?
-            JSON.parse(resources.fourth.resource_table_column_detail)['columns_status'].each do |_, value|
-              column << manage(value, resource) if !value['status'].blank? && value['status'] == 'true'
+          if @resource_fields.present?
+            @resource_fields.each_with_index do |(system_name, single_collection_field), _index|
+              field_settings = Aviary::FieldManagement::FieldManager.new(single_collection_field, system_name)
+              global_status = field_settings.should_display_on_detail_page
+              if field_settings.field_configuration.present? && field_settings.field_configuration['special_purpose'].present? && boolean_value(field_settings.field_configuration['special_purpose'])
+                global_status = true
+              end
+              next unless global_status
+
+              column << manage(field_settings.solr_display_column_name, resource) if field_settings.should_display_on_resource_table
             end
           end
         end
@@ -78,17 +94,17 @@ class ResourcesListingDatatable < ApplicationDatatable
     end
   end
 
-  def manage(value, resource)
-    if value['value'] == 'description_duration_ss'
-      resource[value['value']].present? ? time_to_duration(resource[value['value']]) : '00:00:00'
-    elsif value['value'] == 'collection_title'
+  def manage(system_name, resource)
+    if system_name == 'description_duration_ss'
+      resource[system_name].present? ? time_to_duration(resource[system_name]) : '00:00:00'
+    elsif system_name == 'collection_title'
       resources.third[resource['collection_id_is'].to_s]
-    elsif value['value'] == 'updated_at_ss'
-      resource[value['value']].to_date
-    elsif value['value'] == 'access_ss'
-      resource[value['value']].present? ? resource[value['value']].titleize : resource[value['value']]
+    elsif system_name == 'updated_at_ss'
+      resource[system_name].to_date
+    elsif system_name == 'access_ss'
+      resource[system_name].present? ? resource[system_name].titleize : resource[system_name]
     else
-      check_valid_array(resource[value['value']], value['value'])
+      check_valid_array(resource[system_name], system_name)
     end
   end
 
@@ -106,7 +122,7 @@ class ResourcesListingDatatable < ApplicationDatatable
 
   def fetch_resources
     search_string = []
-    columns(current_organization.resource_table_column_detail).each do |term|
+    columns.each do |term|
       search_string << "#{term} like :search"
     end
     table_of_caller = ''
@@ -122,17 +138,19 @@ class ResourcesListingDatatable < ApplicationDatatable
     if @external_id.present?
       extra_conditions << '+external_resource_id_ss:[* TO *]'
     end
-    CollectionResource.fetch_resources(page, per_page, sort_column, sort_direction, params, "#{table_of_caller}:#{@caller.id}", export: false, current_organization: current_organization, called_from: @called_from, extra_conditions: extra_conditions)
+    CollectionResource.fetch_resources(page, per_page, sort_column, sort_direction, params, "#{table_of_caller}:#{@caller.id}", resource_fields: @resource_fields, export: false, current_organization: current_organization,
+                                                                                                                                called_from: @called_from, extra_conditions: extra_conditions)
   end
 
-  def columns(resource_table_column_detail = false)
+  def columns
     columns_allowed = []
     columns_allowed = ['id_is'] if @called_from != 'permission_group'
-    if resource_table_column_detail && JSON.parse(resource_table_column_detail).present?
-      JSON.parse(resource_table_column_detail)['columns_status'].each do |_, value|
-        if !value['status'].blank? && value['status'] == 'true'
-          columns_allowed << value['value']
-        end
+    if @resource_fields.present?
+      @resource_fields.each_with_index do |(_system_name, single_collection_field), _index|
+        global_status = single_collection_field['description_display'].to_s.to_boolean?
+        field_configuration = single_collection_field['field_configuration']
+        global_status = true if field_configuration.present? && field_configuration['special_purpose'].present? && boolean_value(field_configuration['special_purpose']) && field_configuration['visible_at'].include?('resource_search')
+        columns_allowed << single_collection_field['solr_display_column'] if single_collection_field['resource_table_display'].to_s.to_boolean? && global_status
       end
     end
     columns_allowed

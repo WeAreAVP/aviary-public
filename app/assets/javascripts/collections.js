@@ -142,38 +142,7 @@ jQuery(function () {
         }
     }, true);
     $('.edit-custom-field-button').unbind('click');
-    $(document).on('click', '.edit-custom-field-button', function (e) {
-        e.preventDefault();
-        return $.ajax({
-            type: 'GET',
-            url: $(this).attr('href'),
-            data: {
-                collection_meta_id: $(this).data("id"),
-                methodtype: $(this).data("method-type")
-            },
-            beforeSend: function () {
-            },
-            error: function (xhr, ajaxOptions, thrownError) {
-                var er;
-                er = JSON.parse(xhr.responseText);
-                return console.log(er);
-            },
-            success: function (data) {
-                $('#custom_fields_popup').html(data);
-                $('#collection_custom_fields').modal('show');
-                return $(document).on('change', '#custom_fields_field_column_type', function (e) {
-                    if ($(this).val() === '1') {
-                        $('.meta-options-div').show();
-                        return $('.meta-custom-options').prop('required', true);
-                    } else {
-                        $('.meta-custom-options').val('');
-                        $('.meta-options-div').hide();
-                        return $('.meta-custom-options').prop('required', false);
-                    }
-                });
-            }
-        });
-    });
+
     $(document).on('change', '.template-data-field', function (e) {
         if ($('.template-data-field-tomb:checked').length > 3) {
             $(this).prop('checked', false);
@@ -182,6 +151,15 @@ jQuery(function () {
             return set_switch_fields(null, null);
         }
     });
+    document_level_binding_element('.delete-custom-field-button', 'click', function () {
+        $('#general_modal_close_cust_success').removeClass('d-none');
+        $('#general_modal_close_cust_success').attr('href', $(this).data('url'));
+        $('#general_modal_message_cust #general_modal_close_cust_success').html('Submit');
+        let appHelper = new App();
+        appHelper.show_modal_message('Confirmation', '<strong>Are you sure you want to remove this custom field from the resources in this collection?</strong><br/><br/>' +
+            '<p class=" text-muted">Note: Removing this field will remove its availability from all resources in this collection. If any resources in this collection use this field currently, then any existing metadata for this field will be deleted from those resources. This will not affect resources in other collections that use this field currently.</p>', 'danger');
+    });
+
     $('#resource_description_tab').on('click', function (e) {
         return set_switch_fields(null, null);
     });
@@ -253,7 +231,15 @@ jQuery(function () {
             success: function (data) {
                 var val;
                 if (data.status === "success") {
-                     return $('.collection-edit-form').submit();
+                    if ( tinymce.get("collection_conditions_for_access")){
+                        val = tinymce.get("collection_conditions_for_access").getContent();
+                    }
+                    if (($('#collection_click_through:checked').val() === '1') && val === "") {
+                        $('.conditions_for_access_error').show();
+                        return jsMessages('danger', 'Access Policies: "Conditions For Access" field is required.');
+                    } else {
+                        return $('.collection-edit-form').submit();
+                    }
                 }
             }
         });

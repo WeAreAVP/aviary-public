@@ -23,24 +23,11 @@ class SearchPresenter < BasePresenter
       solr_parameters[:q] = params_default[:last_fq] if params_default[:last_fq].present?
       solr_manager.select_query(solr_parameters)
     end
-
-    def field_selected_for_facet(current_organization, field_key, facet_filter)
-      facet_tag = facet_filter
-      if current_organization.present?
-        JSON.parse(current_organization.search_facet_fields).each do |_key, single_facet_field|
-          if single_facet_field['key'].to_s == field_key && !single_facet_field['status'].to_s.to_boolean?
-            facet_tag = ''
-            break
-          end
-        end
-      end
-      facet_tag
-    end
   end
 
   def self.organization_facet_manager(current_organization, current_user, user_ip, current_params, has_values, last_fq)
     fq = "collection_id_is:(#{current_params[:f][:collection_id_is].join(' OR ')})" if current_params[:f].present? && current_params[:f][:collection_id_is].present?
-    facet_org = field_selected_for_facet(current_organization, 'organization_id_is', '{!ex=organization_id_is-tag}organization_id_is')
+    facet_org = '{!ex=organization_id_is-tag}organization_id_is'
     default_params = { facet: facet_org, fq: fq }
     default_params[:last_fq] = last_fq.present? ? last_fq : false
     org_n_collection_facet_manager(current_organization, current_user, user_ip, current_params, default_params, %w[collection_id_is organization_id_is], has_values)
@@ -48,7 +35,7 @@ class SearchPresenter < BasePresenter
 
   def self.collection_facet_manager(current_organization, current_user, user_ip, current_params, has_values, last_fq)
     fq = "organization_id_is:(#{current_params[:f][:organization_id_is].join(' OR ')})" if current_params[:f].present? && current_params[:f][:organization_id_is].present?
-    facet_collection = field_selected_for_facet(current_organization, 'collection_id_is', '{!ex=collection_id_is-tag}collection_id_is')
+    facet_collection = '{!ex=collection_id_is-tag}collection_id_is'
     default_params = { facet: facet_collection, fq: fq }
     default_params[:last_fq] = last_fq.present? ? last_fq : false
     org_n_collection_facet_manager(current_organization, current_user, user_ip, current_params, default_params, %w[collection_id_is organization_id_is], has_values)

@@ -8,6 +8,7 @@ class CollectionResource < ApplicationRecord
   has_many :playlist_items, dependent: :destroy
   has_many :collection_resource_files, dependent: :destroy
   has_many :public_access_urls
+  has_one :resource_description_value, dependent: :destroy
   validates :noid, uniqueness: { message: 'PURL already taken.' }
   validate :unique_custom_unique_identifier
   accepts_nested_attributes_for :collection_resource_files, reject_if: :all_blank, allow_destroy: true
@@ -22,7 +23,7 @@ class CollectionResource < ApplicationRecord
   after_create :update_resource_count
   before_update :updated_collection_name
   attr_accessor :meta_date_updated, :collection_resource_files_list, :file_indexes_list, :file_transcripts_list
-  custom_fields?
+  # custom_fields?
   attr_accessor :dynamic_initializer
 
   def update_attributes_solr

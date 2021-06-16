@@ -11,6 +11,11 @@ module ApplicationHelper
     nil
   end
 
+  def boolean_value(value)
+    return value.to_s.to_boolean? if value.present?
+    false
+  end
+
   def iscached?
     false
   end

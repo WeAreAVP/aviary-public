@@ -2,6 +2,7 @@
 class Collection < ApplicationRecord
   belongs_to :organization
   has_many :collection_resources, dependent: :destroy
+  has_one :collection_fields_and_value, dependent: :destroy
   enum status: %i[deleted active]
   default_scope { where.not('collections.status=?', Collection.statuses[:deleted]) }
   validates_presence_of :title
@@ -19,7 +20,7 @@ class Collection < ApplicationRecord
   before_save :collection_values_fetch, :update_default_values
   after_destroy :remove_from_solr
   after_save :solr_index
-  custom_fields?
+  # custom_fields?
   attr_accessor :dynamic_initializer
 
   def init_dynamic_initializer
@@ -105,17 +106,19 @@ class Collection < ApplicationRecord
   end
 
   def collection_values_fetch
+    org_field_manager = Aviary::FieldManagement::OrganizationFieldManager.new
+    collection_fields = org_field_manager.organization_field_settings(organization, nil, 'collection_fields', 'sort_order')
     self.collection_values_solr = {}
-    dynamic_fields = all_fields
-    dynamic_fields['Collection'].each do |single_field|
+    return unless collection_fields_and_value.present? && collection_fields_and_value.collection_field_values.present?
+    collection_fields_and_value.collection_field_values.each_with_index do |(system_name, single_collection_values), _index|
       values = []
-      single_field['values'].each do |val|
+      single_collection_values['values'].each do |val|
         if val['vocab_value'].present? || val['value'].present?
           values << val['value']
         end
       end
       if values.present?
-        collection_values_solr[single_field['field'].label] = values
+        collection_values_solr[collection_fields[system_name]['label']] = values
       end
     end
   end
