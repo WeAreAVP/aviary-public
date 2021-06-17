@@ -15,18 +15,19 @@
 
       <div class="data-table collection_resource_listing_datatable mb-4">
         <%= content_tag :table, role: :datatable, class: ['table', 'table-striped','table-bordered'], id: 'collection_resource_datatable', data: { url: data_table_collection_resources_path(format: :json) } do %>
-          <%= render partial: 'collection_resources/listing_table', locals: { table_called_from: 'collection_resource_index', columns_details: JSON.parse(current_organization.resource_table_column_detail), organization_id: current_organization.id } %>
+          <%= render partial: 'collection_resources/listing_table', locals: { table_called_from: 'collection_resource_index', organization_id: current_organization.id } %>
         <% end %>
       </div>
     </main>
   </div>
 </div>
+<% resource_table_column_detail = current_organization.resource_table_column_detail.present? ? JSON.parse(current_organization.resource_table_column_detail) : {} %>
+<% resource_table_search_columns = current_organization.resource_table_search_columns.present? ? JSON.parse(current_organization.resource_table_search_columns) : {} %>
 <%= render partial: 'collections/bulk_edit_popups' %>
-<%= render partial: 'collection_resources/manage_column', locals: { columns_details: JSON.parse(current_organization.resource_table_column_detail), search_columns_details: JSON.parse(current_organization.resource_table_search_columns), organization_id: current_organization.id } %>
-
+<%= render partial: 'collection_resources/manage_column', locals: { columns_details: resource_table_column_detail, search_columns_details: resource_table_search_columns, organization_id: current_organization.id } %>
 <script type="text/javascript">
     var collection_resource_table = new CollectionResourceTable();
     document.addEventListener("DOMContentLoaded", function () {
-        collection_resource_table.initialize('<%== current_organization.resource_table_column_detail %>', '<%= session[:resource_list_bulk_edit] %>');
+        collection_resource_table.initialize('<%== {} %>', '<%= session[:resource_list_bulk_edit] %>', <%= @fixed_columns %>);
     });
 </script>
