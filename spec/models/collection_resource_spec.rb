@@ -113,7 +113,7 @@ RSpec.describe CollectionResource, type: :model do
         resource_field_values = collection_resource.resource_description_value.try(:resource_field_values)
         duration = resource_field_values.present? && resource_field_values['duration'].present? && resource_field_values['duration']['values'].present? ? resource_field_values['duration']['values'].try(:first) : nil
         duration = duration.present? ? duration['value'] : 0.0
-        expect(duration['value']).to be_a_kind_of(Float)
+        expect(duration).to be_a_kind_of(Float)
       end
     end
   end

@@ -13,7 +13,6 @@ RSpec.describe CollectionsController, type: :controller do
   describe "Index" do
     it "has a 200 status code with current organization" do
       organization = collection.organization
-      puts organization
       allow(controller).to receive(:current_organization).and_return(organization)
       allow(controller).to receive(:current_user).and_return(organization.user)
       get :index
