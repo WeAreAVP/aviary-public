@@ -43,7 +43,7 @@
                     <strong class="mt-4 mb-4"><%= single_member['organization_name'] %></strong>
                     <br/>
                   <% end %>
-                  <%= single_member['collections'].present? ? single_member['collections'].join(' <br/> ').html_safe : 'none' %>
+                  <%= single_member['collections'].present? ? single_member['collections'].sort.join(' <br/> ').html_safe : 'none' %>
                 </p>
               <% end %>
             </div>
