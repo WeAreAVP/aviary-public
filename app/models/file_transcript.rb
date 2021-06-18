@@ -125,7 +125,6 @@ class FileTranscript < ApplicationRecord
       'description_ss' => 'Notes',
       'file_display_name_ss' => 'Media File',
       'collection_resource_title_ss' => 'Resource Title',
-      'annotation_count_is' => 'Annotation Set Count',
       'updated_at_ds' => 'Date Updated',
       'created_at_ds' => 'Date Added'
     }
@@ -157,9 +156,6 @@ class FileTranscript < ApplicationRecord
 
     integer :organization_id, multiple: false, stored: true do
       collection_resource_file.collection_resource.collection.organization_id
-    end
-    integer :annotation_count, multiple: false, stored: true do
-      annotation_set.present? ? 1 : 0
     end
     string :file_display_name, multiple: false, stored: true do
       collection_resource_file.file_display_name
