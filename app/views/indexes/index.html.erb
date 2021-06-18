@@ -1,0 +1,31 @@
+<div id="main_container" class="container-fluid">
+  <div class="main_contain">
+    <main>
+      <div class="text-headline jumbotron">
+        <div class="heading-holder table-head">
+          <div class="row">
+            <div class="col-md-7"><h1>Indexes</h1></div>
+            <div class="col-md-5 ">
+              <%= render partial: 'indexes/indexes_buttons' %>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="data-table resource-file-datatable">
+        <%= content_tag :table, role: :datatable, class: ['table', 'table-striped', 'table-bordered'], id: 'indexes_datatable', data: { url: data_table_indexes_path(format: :json) } do %>
+          <%= render partial: 'indexes/indexes_listing_table', locals: { table_called_from: 'media_files_index', columns_details: JSON.parse(current_organization.file_index_display_column)['columns_status'], organization_id: current_organization.id } %>
+        <% end %>
+      </div>
+    </main>
+  </div>
+</div>
+
+<%= render partial: 'indexes/manage_column', locals: { columns_details: JSON.parse(current_organization.file_index_display_column)['columns_status'], search_columns_details: JSON.parse(current_organization.file_index_search_column), organization_id: current_organization.id } %>
+<%= render partial: 'indexes/bulk_edit_file_index' %>
+<script type="text/javascript">
+    var index_table = new IndexTable();
+    document.addEventListener("DOMContentLoaded", function () {
+        index_table.initialize('<%== current_organization.file_index_display_column %>', '<%= session[:file_index_bulk_edit] %>');
+    });
+</script>

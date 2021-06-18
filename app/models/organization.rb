@@ -430,4 +430,62 @@ class Organization < ApplicationRecord
     update_search_configuration(true)
     detect_search_facets_change
   end
+
+  def update_file_index_fields
+    display_columns_update = {
+      number_of_column_fixed: '0',
+      columns_status:
+        {
+          '0' => { status: 'true', value: 'id_is', sort_name: true },
+          '1' => { status: 'true', value: 'title_ss', sort_name: true },
+          '2' => { status: 'true', value: 'is_public_ss', sort_name: true },
+          '3' => { status: 'true', value: 'language_ss', sort_name: true },
+          '4' => { status: 'true', value: 'description_ss', sort_name: true },
+          '5' => { status: 'true', value: 'updated_at_ds', sort_name: true },
+          '6' => { status: 'true', value: 'created_at_ds', sort_name: true },
+          '7' => { status: 'true', value: 'file_display_name_ss', sort_name: true },
+          '8' => { status: 'true', value: 'collection_resource_title_ss', sort_name: true }
+        }
+    }.to_json
+
+    search_columns_update = {
+      '0' => { status: 'true', value: 'id_is' },
+      '1' => { status: 'true', value: 'title_ss', sort_name: true },
+      '2' => { status: 'true', value: 'is_public_ss', sort_name: true },
+      '3' => { status: 'true', value: 'language_ss', sort_name: true },
+      '4' => { status: 'true', value: 'description_ss', sort_name: true },
+      '5' => { status: 'true', value: 'file_display_name_ss', sort_name: true },
+      '6' => { status: 'true', value: 'collection_resource_title_ss', sort_name: true }
+    }.to_json
+    update(file_index_display_column: display_columns_update, file_index_search_column: search_columns_update) if file_index_display_column.blank?
+  end
+
+  def update_transcript_fields
+    display_columns_update = {
+      number_of_column_fixed: '0',
+      columns_status:
+        {
+          '0' => { status: 'true', value: 'id_is', sort_name: true },
+          '1' => { status: 'true', value: 'title_ss', sort_name: true },
+          '2' => { status: 'true', value: 'is_public_ss', sort_name: true },
+          '3' => { status: 'true', value: 'language_ss', sort_name: true },
+          '4' => { status: 'true', value: 'description_ss', sort_name: true },
+          '5' => { status: 'true', value: 'updated_at_ds', sort_name: true },
+          '6' => { status: 'true', value: 'created_at_ds', sort_name: true },
+          '7' => { status: 'true', value: 'file_display_name_ss', sort_name: true },
+          '8' => { status: 'true', value: 'collection_resource_title_ss', sort_name: true }
+        }
+    }.to_json
+
+    search_columns_update = {
+      '0' => { status: 'true', value: 'id_is' },
+      '1' => { status: 'true', value: 'title_ss', sort_name: true },
+      '2' => { status: 'true', value: 'is_public_ss', sort_name: true },
+      '3' => { status: 'true', value: 'language_ss', sort_name: true },
+      '4' => { status: 'true', value: 'description_ss', sort_name: true },
+      '5' => { status: 'true', value: 'file_display_name_ss', sort_name: true },
+      '6' => { status: 'true', value: 'collection_resource_title_ss', sort_name: true }
+    }.to_json
+    update(transcript_display_column: display_columns_update, transcript_search_column: search_columns_update) if transcript_display_column.blank?
+  end
 end

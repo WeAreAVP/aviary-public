@@ -9,6 +9,31 @@
 # Author::    Nouman Tayyab  (mailto:nouman@weareavp.com)
 class IndexesController < ApplicationController
   before_action :authenticate_user!
+  def index
+    authorize! :manage, current_organization
+    session[:file_index_bulk_edit] = []
+    respond_to do |format|
+      format.html
+      format.json { render json: IndexesDatatable.new(view_context, current_organization, params['called_from'], params[:additionalData]) }
+    end
+  end
+
+  def bulk_file_index_edit
+    respond_to do |format|
+      format.html
+      if params['check_type'] == 'bulk_delete'
+        FileIndex.where(id: session[:file_index_bulk_edit]).each(&:destroy)
+      elsif params['check_type'] == 'change_status'
+        FileIndex.where(id: session[:file_index_bulk_edit]).each do |index|
+          index.update(is_public: params['access_type'] == 'yes')
+        end
+      end
+      render json: { message: t('updated_successfully'),
+                     errors: false,
+                     status: 'success',
+                     action: 'bulk_file_index_edit' }
+    end
+  end
 
   def create
     if params[:file_index_id]

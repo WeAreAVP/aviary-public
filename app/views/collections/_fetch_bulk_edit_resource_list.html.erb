@@ -5,6 +5,12 @@
       <% if params[:type] == 'collection_resource_file' %>
         <td><%=h truncate(single_resource.resource_file_file_name, :length => 158) %></td>
         <td><%=h truncate(single_resource.collection_resource.title, :length => 158) %></td>
+      <% elsif params[:type] == 'file_index_bulk_edit' %>
+        <td><%=h truncate(single_resource.title, :length => 158) %></td>
+        <td><%=h truncate(single_resource.collection_resource_file.resource_file_file_name, :length => 158) %></td>
+      <% elsif params[:type] == 'file_transcript_bulk_edit' %>
+        <td><%=h truncate(single_resource.title, :length => 158) %></td>
+        <td><%=h truncate(single_resource.collection_resource_file.resource_file_file_name, :length => 158) %></td>
       <% else %>
         <td><%=h truncate(single_resource.title, :length => 158) %></td>
       <% end %>
