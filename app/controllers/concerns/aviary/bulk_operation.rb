@@ -8,7 +8,11 @@ module Aviary::BulkOperation
 
   def bulk_resource_list
     current_key = params['type'] == 'collection_resource_files' ? :resource_file_list_bulk_edit : :resource_list_bulk_edit
+    current_key = :file_index_bulk_edit if params['type'] == :file_index_bulk_edit.to_s
+    current_key = :file_transcript_bulk_edit if params['type'] == :file_transcript_bulk_edit.to_s
     collection_resource_file_id = params['type'] == 'collection_resource_files' ? params['collection_resource_file_id'] : params['collection_resource_id']
+    collection_resource_file_id = params['collection_resource_file_id'] if params['type'] == :file_index_bulk_edit.to_s
+    collection_resource_file_id = params['collection_resource_file_id'] if params['type'] == :file_transcript_bulk_edit.to_s
     session[current_key] ||= []
     if params[:status] == 'add'
       if params[:bulk] == '1' && params[:ids].present?
@@ -68,6 +72,12 @@ module Aviary::BulkOperation
       when 'change_resource_transcript_status'
         access_update = params[:bulk_edit][:status] == 'access_private' ? 0 : 1
         count = FileTranscript.where(collection_resource_file_id: CollectionResourceFile.where(collection_resource_id: session[:resource_list_bulk_edit]).pluck(:id), is_public: access_update).length
+      when 'change_resource_index_status'
+        access_update = params[:bulk_edit][:status] == 'access_private' ? 0 : 1
+        count = FileIndex.where(collection_resource_file_id: CollectionResourceFile.where(collection_resource_id: session[:resource_list_bulk_edit]).pluck(:id), is_public: access_update).length
+      when 'change_resource_transcript_status'
+        access_update = params[:bulk_edit][:status] == 'access_private' ? 0 : 1
+        count = FileTranscript.where(collection_resource_file_id: CollectionResourceFile.where(collection_resource_id: session[:resource_list_bulk_edit]).pluck(:id), is_public: access_update).length
       when 'change_featured'
         count = if params[:bulk_edit_featured] == 'Yes'
                   CollectionResource.where(id: params[:ids], is_featured: true).length
@@ -89,7 +99,11 @@ module Aviary::BulkOperation
 
   def fetch_bulk_edit_resource_list
     @resources = nil
-    @resources = if params[:type] == 'collection_resource_file' && !session[:resource_file_list_bulk_edit].empty?
+    @resources = if session[:file_index_bulk_edit].present? && params[:type] == :file_index_bulk_edit.to_s
+                   FileIndex.where(id: (session[:file_index_bulk_edit] - [nil]))
+                 elsif session[:file_transcript_bulk_edit].present? && params[:type] == :file_transcript_bulk_edit.to_s
+                   FileTranscript.where(id: (session[:file_transcript_bulk_edit] - [nil]))
+                 elsif params[:type] == 'collection_resource_file' && !session[:resource_file_list_bulk_edit].empty?
                    CollectionResourceFile.where(id: session[:resource_file_list_bulk_edit])
                  elsif session[:search_playlist_id].present? && !session[:search_playlist_id].empty?
                    CollectionResource.where(id: session[:search_playlist_id].to_a.flatten.uniq!)
@@ -117,11 +131,11 @@ module Aviary::BulkOperation
         when 'change_resource_index_status'
           access_update = params[:bulk_edit][:child_status] == 'access_private' ? 0 : 1
           FileIndex.where(collection_resource_file_id: CollectionResourceFile.where(collection_resource_id: session[:resource_list_bulk_edit]).pluck(:id)).update(is_public: access_update)
-          msg = " Status of transcript for #{session[:resource_list_bulk_edit].length} resource(s) have been updated successfully"
+          msg = " Status for #{session[:resource_list_bulk_edit].length} indexes have been updated successfully"
         when 'change_resource_transcript_status'
           access_update = params[:bulk_edit][:child_status] == 'access_private' ? 0 : 1
           FileTranscript.where(collection_resource_file_id: CollectionResourceFile.where(collection_resource_id: session[:resource_list_bulk_edit]).pluck(:id)).update(is_public: access_update)
-          msg = " Status of indexes for #{session[:resource_list_bulk_edit].length} resource(s) have been updated successfully"
+          msg = " Status for #{session[:resource_list_bulk_edit].length} transcripts have been updated successfully"
         when 'change_featured'
           if params[:bulk_edit][:featured] == 'Yes'
             CollectionResource.where(id: session[:resource_list_bulk_edit]).update(is_featured: true)

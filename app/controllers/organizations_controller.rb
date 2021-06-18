@@ -35,6 +35,31 @@ class OrganizationsController < ApplicationController
     end
   end
 
+  # POST: file index columns management
+  def update_file_index_column
+    authorize! :manage, current_organization
+    respond_to do |format|
+      format.html
+      if current_organization.update(file_index_display_column: { number_of_column_fixed: params[:number_of_column_fixed], columns_status: params[:columns_status] }.to_json, file_index_search_column: params[:columns_search_status].to_json)
+        render json: { message: t('updated_successfully'), errors: false, status: 'success' }
+      else
+        render json: { message: t('error_update'), errors: true, status: 'danger' }
+      end
+    end
+  end
+
+  def update_file_transcript_column
+    authorize! :manage, current_organization
+    respond_to do |format|
+      format.html
+      if current_organization.update(transcript_display_column: { number_of_column_fixed: params[:number_of_column_fixed], columns_status: params[:columns_status] }.to_json, transcript_search_column: params[:columns_search_status].to_json)
+        render json: { message: t('updated_successfully'), errors: false, status: 'success' }
+      else
+        render json: { message: t('error_update'), errors: true, status: 'danger' }
+      end
+    end
+  end
+
   def confirm_invite
     organization_user = OrganizationUser.find_by_token(params[:token])
     if organization_user.present?

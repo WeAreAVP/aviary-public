@@ -56,6 +56,34 @@
             <div class="card <%= disabled_organization_cls %>">
               <div class="card-header" id="headingTwo">
                 <h5 class="mb-0">
+                  <button class="btn btn-link collapsed no_sub_colaps assetsNavCus" onclick="document.location.href='<%= indexes_path %>'" aria-expanded="<%= ((request.path).include?("indexes") ? 'active' : '') != '' ? 'true' : '' %>" aria-controls="collapseTwo">
+                    <div class="nav-box">
+                      <span class="ico" data-toggle="tooltip" data-placement="right" title="Indexes"><%= image_tag 'icons/indexes.png' %></span>
+                      <span class="title">
+                        Indexes
+                      </span>
+                    </div>
+                  </button>
+                </h5>
+              </div>
+            </div>
+            <div class="card <%= disabled_organization_cls %>">
+              <div class="card-header" id="headingTwo">
+                <h5 class="mb-0">
+                  <button class="btn btn-link collapsed no_sub_colaps assetsNavCus" onclick="document.location.href='<%= transcripts_path %>'" aria-expanded="<%= ((request.path).include?("transcripts") ? 'active' : '') != '' ? 'true' : '' %>" aria-controls="collapseTwo">
+                    <div class="nav-box">
+                      <span class="ico" data-toggle="tooltip" data-placement="right" title="Transcripts"><%= image_tag 'icons/indexes.png' %></span>
+                      <span class="title">
+                        Transcripts
+                      </span>
+                    </div>
+                  </button>
+                </h5>
+              </div>
+            </div>
+            <div class="card <%= disabled_organization_cls %>">
+              <div class="card-header" id="headingTwo">
+                <h5 class="mb-0">
                   <button class="btn btn-link collapsed no_sub_colaps assetsNavCus" onclick="document.location.href='<%= playlists_path %>'" aria-expanded="<%= ((request.path).include?("playlists") ? 'active' : '') != '' ? 'true' : '' %>" aria-controls="collapseTwo">
                     <div class="nav-box">
                       <span class="ico" data-toggle="tooltip" data-placement="right" title="Playlists"><%= image_tag image_path('icons/playlist.png'), style: 'padding-top: 3px;' %></span>
