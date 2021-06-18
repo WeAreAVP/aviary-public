@@ -50,6 +50,7 @@ class CollectionResourcesController < ApplicationController
     @selected_index = 0
     @file_indexes = {}
     @file_transcripts = {}
+    set_selected_session
     session[:count_presence] = { index: false, transcript: false, description: false }
     @session_video_text_all = session[:transcript_count] = session[:index_count] = session[:description_count] = {}
     @organization_field_manager = Aviary::FieldManagement::OrganizationFieldManager.new
@@ -294,6 +295,28 @@ class CollectionResourcesController < ApplicationController
     return unless allowed > 0 && allowed - used <= 0
     flash[:notice] = t('resource_limit')
     redirect_back(fallback_location: root_path)
+  end
+
+  def set_selected_session
+    if params[:collection_resource_id].present? &&
+       params[:resource_file_id].present? && params[:view_type].present? && params[:view_type] == 'index' &&
+       params[:selected_index].present?
+      index = FileIndex.where(id: params[:selected_index], collection_resource_file_id: params[:resource_file_id])
+      unless index.empty?
+        session[:search_text] = { "selected_index_#{params[:collection_resource_id]}" => {
+          params[:resource_file_id].to_s => params[:selected_index]
+        } }
+      end
+    elsif params[:collection_resource_id].present? &&
+          params[:resource_file_id].present? && params[:view_type].present? && params[:view_type] == 'transcript' &&
+          params[:selected_transcript].present?
+      transcript = FileTranscript.where(id: params[:selected_transcript], collection_resource_file_id: params[:resource_file_id])
+      unless transcript.empty?
+        session[:search_text] = { "selected_transcript_#{params[:collection_resource_id]}" => {
+          params[:resource_file_id].to_s => params[:selected_transcript]
+        } }
+      end
+    end
   end
 
   # Use callbacks to share common setup or constraints between actions .

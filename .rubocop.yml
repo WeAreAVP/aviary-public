@@ -1527,7 +1527,7 @@ Metrics/BlockLength:
 
 Metrics/BlockNesting:
   CountBlocks: false
-  Max: 6
+  Max: 8
 
 Metrics/ClassLength:
   CountComments: false  # count full line comments?

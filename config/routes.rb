@@ -184,7 +184,22 @@ Rails.application.routes.draw do
       post :data_table, to: 'collection_resources#index'
     end
   end
-
+  resources :indexes, only: %i[index] do
+    collection do
+      post :data_table, to: 'indexes#index'
+      post :bulk_file_index_edit
+    end
+  end
+  resources :transcripts, only: %i[index] do
+    collection do
+      post :data_table, to: 'transcripts#index'
+      post :bulk_file_transcript_edit
+    end
+  end
+  post '/update_file_index_column_sort/:id', to: 'organizations#update_file_index_column_sort', as: 'update_file_index_column_sort'
+  post '/update_file_index_column/:id', to: 'organizations#update_file_index_column', as: 'update_file_index_column'
+  post '/update_file_transcript_column_sort/:id', to: 'organizations#update_file_transcript_column_sort', as: 'update_file_transcript_column_sort'
+  post '/update_file_transcript_column/:id', to: 'organizations#update_file_transcript_column', as: 'update_file_transcript_column'
   post 'indexes/upload/:resource_file_id(/:file_index_id)', to: 'indexes#create', as: 'upload_index'
   patch 'indexes/sort/:resource_file_id', to: 'indexes#sort', as: 'index_sort'
   delete 'indexes/delete/:id', to: 'indexes#destroy', as: 'delete_file_index'
