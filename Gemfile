@@ -50,7 +50,7 @@ group :test do
   gem 'factory_bot_rails', '~> 4.0'
   gem 'shoulda-matchers'
   # Use Puma as the app server
-  gem "puma", ">= 3.12.6"
+  gem "puma"
   # Adds support for Capybara system testing and selenium driver
   gem 'capybara'
   gem 'selenium-webdriver'

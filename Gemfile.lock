@@ -784,7 +784,7 @@ DEPENDENCIES
   paperclip-compression
   pry
   pry-rails
-  puma (>= 3.12.6)
+  puma
   rack (>= 2.0.6)
   rack-attack
   rack-cors (>= 1.0.4)
