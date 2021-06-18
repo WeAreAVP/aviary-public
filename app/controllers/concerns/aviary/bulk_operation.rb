@@ -72,12 +72,6 @@ module Aviary::BulkOperation
       when 'change_resource_transcript_status'
         access_update = params[:bulk_edit][:status] == 'access_private' ? 0 : 1
         count = FileTranscript.where(collection_resource_file_id: CollectionResourceFile.where(collection_resource_id: session[:resource_list_bulk_edit]).pluck(:id), is_public: access_update).length
-      when 'change_resource_index_status'
-        access_update = params[:bulk_edit][:status] == 'access_private' ? 0 : 1
-        count = FileIndex.where(collection_resource_file_id: CollectionResourceFile.where(collection_resource_id: session[:resource_list_bulk_edit]).pluck(:id), is_public: access_update).length
-      when 'change_resource_transcript_status'
-        access_update = params[:bulk_edit][:status] == 'access_private' ? 0 : 1
-        count = FileTranscript.where(collection_resource_file_id: CollectionResourceFile.where(collection_resource_id: session[:resource_list_bulk_edit]).pluck(:id), is_public: access_update).length
       when 'change_featured'
         count = if params[:bulk_edit_featured] == 'Yes'
                   CollectionResource.where(id: params[:ids], is_featured: true).length
