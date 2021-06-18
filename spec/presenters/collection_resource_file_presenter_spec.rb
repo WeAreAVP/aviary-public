@@ -21,11 +21,11 @@ RSpec.describe CollectionResourceFilePresenter, type: :Presenter do
       it 'should provide media_type of mp4 resource file' do
         expect(presenter1.media_type).to include('video')
       end
-      it 'should provide the tracks for the close caption' do
-        file_transcript.collection_resource_file = collection_resource_file_embed
-        file_transcript.save
-        expect(presenter.tracks).to be_truthy
-      end
+      # it 'should provide the tracks for the close caption' do
+      #   file_transcript.collection_resource_file = collection_resource_file_embed
+      #   file_transcript.save
+      #   expect(presenter.tracks).to be_truthy
+      # end
     end
   end
 end

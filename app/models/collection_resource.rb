@@ -457,8 +457,15 @@ class CollectionResource < ApplicationRecord
     rescue StandardError
       total_response = { 'response' => { 'numFound' => 0 } }
     end
-    sort_column = 'collection_id_is' if sort_column.to_s == 'collection_title'
-    query_params[:sort] = "#{sort_column} #{sort_direction}" if sort_column.present? && sort_direction.present?
+    query_params[:sort] = if sort_column.to_s == 'collection_title'
+                            CollectionResourceFile.collection_sorter(limit_condition, sort_direction, solr)
+                          elsif sort_column.to_s == 'id_ss'
+                            "id_is #{sort_direction}"
+                          elsif sort_column.to_s == 'description_duration_ss'
+                            "description_duration_ls #{sort_direction}"
+                          elsif sort_column.present? && sort_direction.present?
+                            "#{sort_column} #{sort_direction}"
+                          end
     if export_and_current_organization[:export]
       query_params[:start] = 0
       query_params[:rows] = 100_000_000
