@@ -359,7 +359,8 @@ class CollectionResource < ApplicationRecord
     RSolr.connect url: solr_path
   end
 
-  def self.fetch_resources(page, per_page, sort_column, sort_direction, params, limit_condition, export_and_current_organization = { export: false, current_organization: false, called_from: '' })
+  def self.fetch_resources(page, per_page, sort_column, sort_direction, params, limit_condition,
+                           export_and_current_organization = { export: false, current_organization: false, called_from: '', extra_conditions: [] })
     q = params[:search][:value] if params.present?
     solr = solr_connect
     solr_url = solr_path
@@ -375,75 +376,95 @@ class CollectionResource < ApplicationRecord
     elsif q.present?
       counter = 0
       fq_filters_inner = ''
-      search_columns = JSON.parse(export_and_current_organization[:current_organization][:resource_table_search_columns])
+      search_columns = export_and_current_organization[:resource_fields]
       if export_and_current_organization[:called_from] == 'permission_group'
         search_columns = { '0' => { 'value' => 'id_ss', 'status' => 'true' },
                            '1' => { 'value' => 'title_text', 'status' => 'true' },
                            '2' => { 'value' => 'description_identifier_search_texts', 'status' => 'true' } }
       end
-      search_columns.each do |_, value|
-        if value['status'] == 'true'
-          case value['value']
-          when 'index'
-            SearchBuilder.index_search_fields.each do |single_field_index|
-              fq_filters_inner = fq_filters_inner + (counter != 0 ? ' OR ' : ' ') + " #{search_perp(q, single_field_index.to_s)} "
-            end
-          when 'transcript'
-            SearchBuilder.transcript_search_fields.each do |single_field_transcript|
-              fq_filters_inner = fq_filters_inner + (counter != 0 ? ' OR ' : ' ') + " #{search_perp(q, single_field_transcript.to_s)} "
-            end
-          when 'collection_title'
-            # if limit is organization then let it go but if limit is collection_is then change it to id_is to only get that specific collection
-            fq_filters_inner, counter = CollectionResource.search_collection_column(limit_condition, solr, q, counter, fq_filters_inner)
-          when 'id_ss', 'title_ss', 'id_is', 'title_text', 'custom_unique_identifier_texts', 'custom_unique_identifier_ss'
-            fq_filters_inner += simple_field_search_handler(value, fq_filters_inner, counter, q)
-            if value['value'] == 'title_ss'
-              alter_search_new = 'title_text'
+
+      if search_columns.present?
+        search_columns.each_with_index do |(system_name, single_collection_field), _index|
+          field_settings = Aviary::FieldManagement::FieldManager.new(single_collection_field, system_name)
+          global_status = field_settings.should_display_on_detail_page
+          if field_settings.field_configuration.present? && field_settings.field_configuration['special_purpose'].present? && field_settings.field_configuration['special_purpose'].to_s.to_boolean?
+            global_status = true
+          end
+          next unless global_status
+          if field_settings.should_search_on_resource_table
+            field_name = field_settings.solr_search_column_name
+            flag_added_filter = false
+            case field_name
+            when 'index'
+              SearchBuilder.index_search_fields.each do |single_field_index|
+                fq_filters_inner = fq_filters_inner + (counter != 0 ? ' OR ' : ' ') + " #{search_perp(q, single_field_index.to_s)} "
+              end
+              flag_added_filter = true
+            when 'transcript'
+              SearchBuilder.transcript_search_fields.each do |single_field_transcript|
+                fq_filters_inner = fq_filters_inner + (counter != 0 ? ' OR ' : ' ') + " #{search_perp(q, single_field_transcript.to_s)} "
+              end
+              flag_added_filter = true
+            when 'collection_title'
+              # if limit is organization then let it go but if limit is collection_is then change it to id_is to only get that specific collection
+              fq_filters_inner, counter = CollectionResource.search_collection_column(limit_condition, solr, q, counter, fq_filters_inner)
+              flag_added_filter = true
+            when 'id_ss', 'title_ss', 'id_is', 'title_text', 'custom_unique_identifier_texts', 'custom_unique_identifier_ss'
+              fq_filters_inner += simple_field_search_handler(field_name, fq_filters_inner, counter, q)
+              if field_name == 'title_ss'
+                alter_search_new = 'title_text'
+                fq_filters_inner += " OR  #{search_perp(q, alter_search_new)} "
+                fq_filters_inner += " OR  #{straight_search_perp(q, alter_search_new)} "
+              end
+              flag_added_filter = true
+            when 'description_agent_search_texts', 'description_coverage_search_texts', 'description_description_search_texts', 'description_identifier_search_texts', 'description_keyword_search_texts',
+              'description_language_search_texts', 'description_preferred_citation_search_texts', 'description_publisher_search_texts', 'description_relation_search_texts', 'description_rights_statement_search_texts',
+              'description_source_metadata_uri_search_texts', 'description_source_search_texts', 'description_subject_search_texts', 'description_title_search_texts', 'description_type_search_texts', 'description_format_search_texts'
+              fq_filters_inner = fq_filters_inner + (counter != 0 ? ' OR ' : ' ') + " #{search_perp(q, field_name)} "
+              alter_search = field_name.clone
+              alter_search_wildcard = field_name.clone
+              if !%w[description_rights_statement_search_texts description_description_search_texts title_ss].include?(alter_search)
+                alter_search = if %w[description_source_metadata_uri_search_texts description_preferred_citation_search_texts].include?(alter_search)
+                                 alter_search.sub! '_search_texts', '_facet_ss'
+                                 alter_search_wildcard.sub! '_search_texts', '_ss'
+                               else
+                                 alter_search.sub! '_search_texts', '_facet_sms'
+                                 alter_search_wildcard.sub! '_search_texts', '_sms'
+                               end
+                fq_filters_inner += " OR  #{search_perp(q, alter_search)} "
+                fq_filters_inner += " OR  #{straight_search_perp(q, alter_search)} "
+                fq_filters_inner += " OR  #{search_perp(q, alter_search_wildcard)} "
+                fq_filters_inner += " OR  #{straight_search_perp(q, alter_search_wildcard)} "
+              elsif %w[description_rights_statement_search_texts description_description_search_texts].include?(alter_search_wildcard)
+                alter_search_wildcard_string = alter_search_wildcard.clone
+                alter_search_wildcard.sub! '_search_texts', '_search_facet_texts'
+                fq_filters_inner += " OR  #{search_perp(q, alter_search_wildcard)} "
+                fq_filters_inner += " OR  #{straight_search_perp(q, alter_search_wildcard)} "
+                alter_search_wildcard_string.sub! '_search_texts', '_search_sms'
+                fq_filters_inner += " OR  #{straight_search_perp(q, alter_search_wildcard_string)} "
+              end
+              flag_added_filter = true
+            when field_name.include?('custom_field_values_')
+              alter_search = field_name.clone
+              alter_search_new = alter_search.sub(/.*\K_sms/, '_texts') unless alter_search.include?('_lms') && alter_search.include?('_text')
+
+              fq_filters_inner += ' OR ' unless fq_filters_inner.blank?
+              fq_filters_inner += " #{search_perp(q, alter_search)} "
+              fq_filters_inner += " OR  #{straight_search_perp(q, alter_search)} "
+
               fq_filters_inner += " OR  #{search_perp(q, alter_search_new)} "
               fq_filters_inner += " OR  #{straight_search_perp(q, alter_search_new)} "
+              flag_added_filter = true
             end
-          when 'description_agent_search_texts', 'description_coverage_search_texts', 'description_description_search_texts', 'description_identifier_search_texts', 'description_keyword_search_texts',
-            'description_language_search_texts', 'description_preferred_citation_search_texts', 'description_publisher_search_texts', 'description_relation_search_texts', 'description_rights_statement_search_texts',
-            'description_source_metadata_uri_search_texts', 'description_source_search_texts', 'description_subject_search_texts', 'description_title_search_texts', 'description_type_search_texts', 'description_format_search_texts'
-            fq_filters_inner = fq_filters_inner + (counter != 0 ? ' OR ' : ' ') + " #{search_perp(q, value['value'])} "
-            alter_search = value['value'].clone
-            alter_search_wildcard = value['value'].clone
-            if !%w[description_rights_statement_search_texts description_description_search_texts title_ss].include?(alter_search)
-              alter_search = if %w[description_source_metadata_uri_search_texts description_preferred_citation_search_texts].include?(alter_search)
-                               alter_search.sub! '_search_texts', '_facet_ss'
-                               alter_search_wildcard.sub! '_search_texts', '_ss'
-                             else
-                               alter_search.sub! '_search_texts', '_facet_sms'
-                               alter_search_wildcard.sub! '_search_texts', '_sms'
-                             end
-              fq_filters_inner += " OR  #{search_perp(q, alter_search)} "
-              fq_filters_inner += " OR  #{straight_search_perp(q, alter_search)} "
-              fq_filters_inner += " OR  #{search_perp(q, alter_search_wildcard)} "
-              fq_filters_inner += " OR  #{straight_search_perp(q, alter_search_wildcard)} "
-            elsif %w[description_rights_statement_search_texts description_description_search_texts].include?(alter_search_wildcard)
-              alter_search_wildcard_string = alter_search_wildcard.clone
-              alter_search_wildcard.sub! '_search_texts', '_search_facet_texts'
-              fq_filters_inner += " OR  #{search_perp(q, alter_search_wildcard)} "
-              fq_filters_inner += " OR  #{straight_search_perp(q, alter_search_wildcard)} "
-              alter_search_wildcard_string.sub! '_search_texts', '_search_sms'
-              fq_filters_inner += " OR  #{straight_search_perp(q, alter_search_wildcard_string)} "
-            end
-          when ->(search_key) { search_key.include?('custom_field_values_') }
-            alter_search = value['value'].clone
-            alter_search_new = alter_search.sub(/.*\K_sms/, '_texts') unless alter_search.include?('_lms') && alter_search.include?('_text')
-
-            fq_filters_inner += " OR  #{search_perp(q, alter_search)} "
-            fq_filters_inner += " OR  #{straight_search_perp(q, alter_search)} "
-
-            fq_filters_inner += " OR  #{search_perp(q, alter_search_new)} "
-            fq_filters_inner += " OR  #{straight_search_perp(q, alter_search_new)} "
+            counter += 1 if flag_added_filter
           end
-          counter += 1
         end
       end
       fq_filters += " AND (#{fq_filters_inner}) " unless fq_filters_inner.blank?
     end
     limiter << limit_condition
+    limiter << export_and_current_organization[:extra_conditions] if export_and_current_organization[:extra_conditions].present?
+
     collections = fetch_collections(export_and_current_organization, solr)
     filters = ['-{!join from=collection_collection_id_i to=resource_collection_id_i}status_ss:deleted']
     filters << fq_filters
@@ -452,6 +473,7 @@ class CollectionResource < ApplicationRecord
     query_params[:defType] = 'complexphrase' if complex_phrase_def_type
     query_params[:wt] = 'json'
     total_response = Curl.post(select_url, query_params)
+
     begin
       total_response = JSON.parse(total_response.body_str)
     rescue StandardError
@@ -466,6 +488,7 @@ class CollectionResource < ApplicationRecord
                           elsif sort_column.present? && sort_direction.present?
                             "#{sort_column} #{sort_direction}"
                           end
+
     if export_and_current_organization[:export]
       query_params[:start] = 0
       query_params[:rows] = 100_000_000
@@ -479,14 +502,13 @@ class CollectionResource < ApplicationRecord
     rescue StandardError
       response = { 'response' => { 'docs' => {} } }
     end
-
     count = total_response['response']['numFound'].to_i
     [response['response']['docs'], count, collections, export_and_current_organization[:current_organization]]
   end
 
   def self.simple_field_search_handler(value, fq_filters_inner, counter, query)
-    alter_search = value['value']
-    fq_filters_inner += fq_filters_inner + (counter != 0 ? ' OR ' : ' ') + " #{search_perp(query, value['value'])} "
+    alter_search = value
+    fq_filters_inner += fq_filters_inner + (counter != 0 ? ' OR ' : ' ') + " #{search_perp(query, value)} "
     fq_filters_inner += " OR  #{alter_search}:#{query}"
     fq_filters_inner += " OR  #{straight_search_perp(query, alter_search)} "
     fq_filters_inner

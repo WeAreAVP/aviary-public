@@ -427,5 +427,4 @@ class CollectionResourceFile < ApplicationRecord
       "collection_id_is #{sort_direction}"
     end
   end
-
 end

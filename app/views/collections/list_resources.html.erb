@@ -21,7 +21,6 @@
 </div>
 <%= render partial: 'collections/bulk_edit_popups' %>
 <%= render partial: 'collection_resources/manage_column', locals: { columns_details: @collection.organization.resource_table_column_detail.present? ? JSON.parse(@collection.organization.resource_table_column_detail) : {}, search_columns_details: @collection.organization.resource_table_search_columns.present? ? JSON.parse(@collection.organization.resource_table_search_columns) : {}, organization_id: @collection.organization_id } %>
-<%= render partial: 'collection_resources/import_csv' %>
 <script type="text/javascript">
     var collection_resource_table = new CollectionResourceTable();
     $(function () {

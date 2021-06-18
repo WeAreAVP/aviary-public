@@ -1,7 +1,7 @@
 # ResourcesListingDatatable
 class ResourcesListingDatatable < ApplicationDatatable
-  delegate :time_to_duration, :html_safe, :strip_tags, :truncate, :check_valid_array, :edit_collection_collection_resource_path, :collection_collection_resource_path, :boolean_value,
-           :bulk_resource_list_collections_path, :collection_resource_path, :current_organization, :can?, to: :@view
+  delegate :time_to_duration, :html_safe, :strip_tags, :truncate, :check_valid_array, :edit_collection_collection_resource_path, :collection_collection_resource_path,
+           :bulk_resource_list_collections_path, :collection_resource_path, :current_organization, :boolean_value, :can?, to: :@view
 
   def initialize(view, caller, called_from = '', additional_data = {}, resource_fields = {})
     @view = view
@@ -47,6 +47,7 @@ class ResourcesListingDatatable < ApplicationDatatable
             column << "<input type='checkbox' class='resources_selections resources_selections-#{resource['id_is']}'
                     data-url='#{bulk_resource_list_collections_path(collection_id: resource['collection_id_is'], collection_resource_id: resource['id_is'])}' data-id='#{resource['id_is']}' />"
           end
+
           @resource_fields.each_with_index do |(system_name, single_collection_field), _index|
             field_settings = Aviary::FieldManagement::FieldManager.new(single_collection_field, system_name)
             if %w[id_ss title_ss access_ss description_identifier_sms description_date_sms].include?(field_settings.solr_display_column_name)
@@ -57,8 +58,6 @@ class ResourcesListingDatatable < ApplicationDatatable
           column << "<input type='checkbox' class='resources_selections resources_selections-#{resource['id_is']}'
                   data-url='#{bulk_resource_list_collections_path(collection_id: resource['collection_id_is'], collection_resource_id: resource['id_is'])}' data-id='#{resource['id_is']}' />"
           if @resource_fields.present?
-            @resource_fields = Aviary::FieldManagement::BasedFieldManager.new.sort_fields(@resource_fields, 'resource_table_sort_order')
-
             @resource_fields.each_with_index do |(system_name, single_collection_field), _index|
               field_settings = Aviary::FieldManagement::FieldManager.new(single_collection_field, system_name)
               global_status = field_settings.should_display_on_detail_page
