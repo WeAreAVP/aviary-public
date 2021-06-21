@@ -10,7 +10,6 @@ class IiifController < ApplicationController
       render json: { error: 'Not found' }, status: 404
     else
       authorize! :read, @collection_resource
-      @dynamic_fields = @collection_resource.all_fields
 
       iiif_hash = {}
       iiif_hash['@context'] = 'http://iiif.io/api/presentation/3/context.json'
@@ -20,19 +19,44 @@ class IiifController < ApplicationController
       iiif_hash['metadata'] = []
       descriptions = []
       right_statements = []
-      @dynamic_fields['CollectionResource'].each do |field|
-        values = []
-        field['values'].each do |value|
-          next unless value['value'].present?
-          final_value = Rails::Html::WhiteListSanitizer.new.sanitize(value['value'], tags: %w(a b br i p img small span sub sup))
-          final_value = time_to_duration(value['value']) if field['field'].system_name == 'duration'
-          final_value += " (#{value['vocab_value']})" if value['vocab_value'].present?
-          values << final_value
-          descriptions << value['value'] if field['field'].system_name == 'description'
-          right_statements << value['value'] if field['field'].system_name == 'rights_statement'
+      org_field_manager = Aviary::FieldManagement::OrganizationFieldManager.new
+      collection_field_manager = Aviary::FieldManagement::CollectionFieldManager.new
+      resource_fields_settings = org_field_manager.organization_field_settings(current_organization, nil, 'resource_fields')
+      resource_columns_collection = collection_field_manager.sort_fields(collection_field_manager.collection_resource_field_settings(@collection_resource.collection, 'resource_fields').resource_fields, 'sort_order')
+      resource_description_value = @collection_resource.resource_description_value
+      resource_columns_collection.each_with_index do |(system_name, single_collection_field), _index|
+        next if single_collection_field['field_configuration'].present? && single_collection_field['field_configuration']['special_purpose'].present? && single_collection_field['field_configuration']['special_purpose'].to_s.to_boolean?
+        next if resource_fields_settings[system_name].blank? || system_name.blank?
+        field_settings = Aviary::FieldManagement::FieldManager.new(resource_fields_settings[system_name], system_name)
+        label = field_settings.label
+        next if label == 'Title'
+
+        if field_settings.should_display_on_detail_page && single_collection_field['status'].to_s.to_boolean? && resource_description_value.present?
+          resource_field_values = resource_description_value.resource_field_values
+          if resource_field_values.present? && resource_field_values[system_name].present? && !resource_field_values[system_name].empty? && resource_field_values[system_name]['values'].present?
+            system_name = system_name
+            values = resource_field_values[system_name]
+            values_all = []
+            if values.present? && values['values'].present?
+              values['values'].each do |single_value|
+                next if single_value.class.name != 'Hash'
+                unless single_value['value'].to_s.strip.blank?
+                  vocab = single_value['vocab_value']
+                  value = single_value['value']
+                  final_value = Rails::Html::WhiteListSanitizer.new.sanitize(value, tags: %w(a b br i p img small span sub sup))
+                  final_value = time_to_duration(value) if system_name.to_s == 'duration'
+                  final_value += " (#{vocab})" if vocab.present?
+                  values_all << final_value
+                  descriptions << value if system_name.to_s == 'description'
+                  right_statements << value if system_name.to_s == 'rights_statement'
+                end
+              end
+              iiif_hash['metadata'] << { label: { en: [label] }, value: { en: values_all } } if values.present?
+            end
+          end
         end
-        iiif_hash['metadata'] << { label: { en: [field['field'].label] }, value: { en: values } } if values.present?
       end
+
       iiif_hash['summary'] = { en: descriptions } if descriptions.present?
 
       iiif_hash['requiredStatement'] = { label: { en: ['Attribution'] }, value: { en: right_statements } } if right_statements.present?
@@ -118,7 +142,8 @@ class IiifController < ApplicationController
             format: 'text/plain'
           },
           target: {
-            source: "#{media_url}##{point.start_time.to_f},#{point.end_time.to_f}"
+            source: "#{media_url}##{point.start_time.to_f},#{point.end_time.to_f}",
+            # selector: { type: 'RangeSelector', startSelector: { type: 'PointSelector', t: point.start_time.to_f }, endSelector: { type: 'PointSelector', t: point.end_time.to_f } }
           }
         }
         annotation_counter += 1
