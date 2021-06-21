@@ -69,12 +69,12 @@ class IiifController < ApplicationController
           type: 'Agent',
           label: { en: [organization.name] },
           homepage: [{
-                       id: root_url,
-                       type: 'Text',
-                       label: { en: [organization.name] },
-                       format: 'text/html'
+            id: root_url,
+            type: 'Text',
+            label: { en: [organization.name] },
+            format: 'text/html'
 
-                     }],
+          }],
           logo: [org_logo]
         }
       ]
@@ -99,17 +99,17 @@ class IiifController < ApplicationController
           duration: media_file.duration.to_f,
           thumbnail: [{ id: media_file.thumbnail_image, type: 'Image', format: content_type }],
           items: [{ id: media_url + '/content/1', type: 'AnnotationPage', items: [{
-                                                                                    id: media_url + "/content/#{count}/annotation/1",
-                                                                                    type: 'Annotation',
-                                                                                    motivation: ['painting'],
-                                                                                    body: {
-                                                                                      id: media_file.media_direct_url,
-                                                                                      type: media_file.media_content_type.include?('video') ? 'Video' : 'Audio',
-                                                                                      format: media_file.media_content_type,
-                                                                                      duration: media_file.duration.to_f
-                                                                                    },
-                                                                                    target: media_url
-                                                                                  }] }],
+            id: media_url + "/content/#{count}/annotation/1",
+            type: 'Annotation',
+            motivation: ['painting'],
+            body: {
+              id: media_file.media_direct_url,
+              type: media_file.media_content_type.include?('video') ? 'Video' : 'Audio',
+              format: media_file.media_content_type,
+              duration: media_file.duration.to_f
+            },
+            target: media_url
+          }] }],
           annotations: annotations(media_file, media_url)
         }
       end
