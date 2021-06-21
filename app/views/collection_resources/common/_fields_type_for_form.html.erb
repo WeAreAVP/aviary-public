@@ -1,22 +1,21 @@
-
 <% single_value_raw  = single_value.present? && single_value['value'].present? ? single_value['value'] : '' %>
-<% case single_field.column_type.to_s %>
-<% when CustomFields::Field::TypeInformation::TOKEN.to_s %>
-  <%= text_field_tag("collection_resource[collection_resource_field_values][][value]", single_value_raw.present? ? single_value_raw : '', class: "form-control add_wanted_class  #{single_field.system_name} #{type_for_view}") %>
-<% when CustomFields::Field::TypeInformation::DATE.to_s %>
-  <%= text_field_tag("collection_resource[collection_resource_field_values][][value]", single_value_raw.present? ? single_value_raw : '', class: "form-control add_wanted_class  #{single_field.system_name} #{type_for_view}", placeholder: 'yyyy-mm-dd or yyyy-mm or yyyy') %>
-<% when CustomFields::Field::TypeInformation::DROPDOWN.to_s %>
-  <% dropdown =  single_field.dropdown_options.present? ? JSON.parse(single_field.dropdown_options) : [] %>
+<% case field_settings.info_of_attribute('field_type').to_s %>
+<% when OrganizationField::TypeInformation::TOKEN.to_s %>
+  <%= text_field_tag("collection_resource[collection_resource_field_values][][value]", single_value_raw.present? ? single_value_raw : '', class: "form-control add_wanted_class  #{system_name} #{type_for_view}") %>
+<% when OrganizationField::TypeInformation::DATE.to_s %>
+  <%= text_field_tag("collection_resource[collection_resource_field_values][][value]", single_value_raw.present? ? single_value_raw : '', class: "form-control add_wanted_class  #{system_name} #{type_for_view}", placeholder: 'yyyy-mm-dd or yyyy-mm or yyyy') %>
+<% when OrganizationField::TypeInformation::DROPDOWN.to_s %>
+  <% dropdown =  field_settings.field_configuration.present? && field_settings.field_configuration['dropdown_options'] ? field_settings.field_configuration['dropdown_options'] : [] %>
   <%= select_tag "collection_resource[collection_resource_field_values][][value]", options_for_select(dropdown, selected: single_value_raw.present? ? single_value_raw : ''), { :class => "select_option #{type_for_view}", :include_blank => true } %>
-<% when CustomFields::Field::TypeInformation::TEXTAREA.to_s %>
+<% when OrganizationField::TypeInformation::TEXTAREA.to_s %>
   <% rand_id = random_number %>
   <% class_more = ''
      class_more = ' apply_froala_editor tinymce ' if type_for_view.present? && type_for_view == 'value_holder' %>
   <% if type_for_view == 'cloner' %>
-    <textarea name="collection_resource[collection_resource_field_values][][value]" id="" class="form-control add_wanted_class  <%= "#{single_field.system_name} #{class_more} #{type_for_view}" %>"></textarea>
+    <textarea name="collection_resource[collection_resource_field_values][][value]" id="" class="form-control add_wanted_class  <%= "#{system_name} #{class_more} #{type_for_view}" %>"></textarea>
   <% else %>
-    <%= text_area_tag("collection_resource[collection_resource_field_values][][value]", single_value_raw.present? ? single_value_raw : '', id: 'collection_resource_collection_resource_field_values__value_' + rand_id.to_s, class: "form-control add_wanted_class  #{single_field.system_name} #{class_more} #{type_for_view}") %>
+    <%= text_area_tag("collection_resource[collection_resource_field_values][][value]", single_value_raw.present? ? single_value_raw : '', id: 'collection_resource_collection_resource_field_values__value_' + rand_id.to_s, class: "form-control add_wanted_class  #{system_name} #{class_more} #{type_for_view}") %>
   <% end %>
 <% else %>
-  <%= text_field_tag("collection_resource[collection_resource_field_values][][value]",  single_value_raw.present? ? single_value_raw : '', readonly: (single_field.system_name == 'duration'), class: "form-control add_wanted_class  #{single_field.system_name} #{type_for_view}") %>
+  <%= text_field_tag("collection_resource[collection_resource_field_values][][value]",  single_value_raw.present? ? single_value_raw : '', readonly: (system_name == 'duration'), class: "form-control add_wanted_class  #{system_name} #{type_for_view}") %>
 <% end %>

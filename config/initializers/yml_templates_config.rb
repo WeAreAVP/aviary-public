@@ -1,0 +1,1 @@
+Rails.configuration.default_fields = YAML.load_file(Rails.root.join('config','default_fields.yml'))

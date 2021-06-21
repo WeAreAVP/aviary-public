@@ -1,0 +1,14 @@
+<div class="row">
+  <div class="col-12 collection_listing">
+    <label> Collections</label>
+    <select multiple id='collection_ids_assignment'>
+      <% if @collections_list.present? %>
+        <% @collections_list.each do |key, single_collection| %>
+          <option value='<%= key %>'><%= single_collection %></option>
+        <% end %>
+      <% else %>
+        <option value=''> No collection found</option>
+      <% end %>
+    </select>
+  </div>
+</div>

@@ -1,0 +1,410 @@
+<div id="main_container" class="container-fluid">
+  <div class="main_contain">
+    <main>
+      <div class="text-headline jumbotron">
+        <div class="heading-holder table-head">
+          <div class="row">
+            <div class="col-md-6"><h1> Fields Configuration </h1></div>
+            <div class="col-md-6"></div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <div id="wrapper">
+            <div class="org-metadata">
+              <div class="text-headline jumbotron">
+                <p>In this configuration page, you can select which of which metadata fields appear as facets for your
+                  organization search page. You can also select in which order (from top to bottom on the page) they
+                  will appear for your users.</p>
+              </div>
+              <div class="sort_update_fields" data-url="<%= update_information_organization_fields_path %>">
+                <div class="row">
+                  <div class="col-md-12">
+                    <div class="organization_field_settings">
+                      <div class="hold">
+                        <ul class="nav nav-tabs" id="organization_field_settings" role="tablist">
+                          <li class="nav-item">
+                            <a class="nav-link active show parent_menu" id="collection_field_settings" data-tab="collection_field_settings_content" data-toggle="tab" href="#collection_field_settings_content" role="tab" aria-controls="collection_field_settings_content" aria-selected="true">Collection
+                              Fields Settings</a>
+                          </li>
+                          <li class="nav-item">
+                            <a class="nav-link parent_menu" id="resource_field_settings" data-tab="organization_field_settings_content" data-toggle="tab" href="#organization_field_settings_content" role="tab" aria-controls="organization_field_settings_content" aria-selected="false">Resource
+                              Fields Settings</a>
+                          </li>
+                        </ul>
+                      </div>
+                      <div class="tab">
+                        <div class="tab-content">
+                          <div class="tab-pane fade active show" id="collection_field_settings_content" role="tabpanel" aria-labelledby="collection_field_settings_content">
+                            <div class="row">
+                              <div class="col-12 p-5">
+                                <div class="holder custom_fields_container border">
+                                  <table class="table table-hover border-0">
+                                    <thead>
+                                    <tr class="">
+                                      <th style="width: 70% !important;"><h2>Field Name</h2></th>
+                                      <th style="width: 10% !important; "><h2>Status</h2></th>
+                                      <th style="width: 20% !important; "><h2>Action</h2></th>
+                                    </tr>
+                                    </thead>
+                                  </table>
+                                  <table class="table border-0" id="sort_facet_fields_table">
+                                    <tbody id='collection_field_preview_org' data-type="collection_fields" data-order-custom="sort_order" data-status-columns="display">
+                                    <% if @collection_fields.present? %>
+                                      <% @collection_fields.each_with_index do |(system_name, single_collection_field), _index| %>
+                                        <% label = single_collection_field['label'] %>
+                                        <% is_default_field = single_collection_field['is_default'] %>
+                                        <% type = single_collection_field['field_type'] %>
+                                        <tr class="facet_field <%= single_collection_field['system_name'] %>" data-field="<%= system_name %>" data-field-type="<%= type %>" data-label="<%= label %>" data-collection="<%= '' %>" data-is-default-field="<%= is_default_field %>">
+                                          <td width="70%">
+                                            <i class="fa fa-ellipsis-v handle mx-2" style="color: lightgrey;cursor: move;"></i>
+                                            <span>
+                                          <%= label %>
+
+                                        </span>
+                                            <% if is_default_field %>
+                                              <i class="fa fa-asterisk color-grey font-size-8px" data-toggle="tooltip" data-placement="top" title="" aria-hidden="true" data-original-title="This is a default field of collection."></i>
+                                            <% end %>
+                                            <% if single_collection_field['default_name'].present? && single_collection_field['default_name'] != single_collection_field['label'] %>
+                                              <small class="mt-2 form-text font-size-12px text-muted d-inline">
+                                                <%= single_collection_field['default_name'] %>
+                                              </small>
+                                            <% end %>
+
+                                          </td>
+                                          <td width="10%">
+                                            <label class="toggle-switch">
+                                              <%= check_box_tag 'display' + single_collection_field['system_name'], single_collection_field['display'], single_collection_field['display'].to_s.to_boolean?, class: "display toggle-switch__input template-data-is-facetable template-data-field-is-facetable" %>
+                                              <span class="toggle-switch__slider"></span>
+                                            </label>
+                                          </td>
+                                          <td width="20%">
+                                            <a class="btn btn-sm btn-success ml-1 text-white edit_custom_field_info" data-fieldtype="collection_fields" data-field="<%= system_name %>" data-url="<%= new_edit_custom_field_organization_fields_path(system_name: system_name, methodtype: 'edit') %>">
+                                              Edit </a>
+                                          </td>
+                                        </tr>
+                                      <% end %>
+                                    <% end %>
+                                    </tbody>
+                                  </table>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div class="tab-pane fade active w-100" style="z-index: 999999" id="organization_field_settings_content" role="tabpanel" aria-labelledby="organization_field_settings_content">
+                            <ul class="nav nav-tabs bg-white" id="manage_fields_options" role="tablist">
+                              <li class="nav-item">
+                                <a class="nav-link active show field_config_menu" id="display_settings" data-tab="display_settings_content" data-toggle="tab" href="#display_settings_content" role="tab" aria-controls="display_settings_content" aria-selected="true">Global
+                                  Metadata Fields</a>
+                              </li>
+                              <li class="nav-item">
+                                <a class="nav-link field_config_menu" id="table_configuration" data-tab="table_configuration_content" data-toggle="tab" href="#table_configuration_content" role="tab" aria-controls="table_configuration_content" aria-selected="true">Resource
+                                  Table
+                                  Configuration</a>
+                              </li>
+                              <li class="nav-item">
+                                <a class="nav-link field_config_menu" id="search_configuration" data-tab="search_configuration" data-toggle="tab" href="#search_configuration_content" role="tab" aria-controls="search_configuration" aria-selected="false">Search
+                                  Configuration</a>
+                              </li>
+                            </ul>
+                            <div class="tab">
+                              <div class="tab-content">
+                                <div class="tab-pane fade active show" id="display_settings_content" role="tabpanel" aria-labelledby="display_settings_content">
+                                  <div class="row">
+                                    <div class="col-12 p-5">
+                                      <div class="add-new-field-holder">
+                                        <a class="btn btn-light btn-sm edit-custom-field-button edit-custom-field-button-new-custom-spec" data-method-type="new" data-url="<%= new_edit_custom_field_organization_fields_path(methodtype: 'new') %>">Add
+                                          Custom Fields</a>
+                                      </div>
+                                      <div class="holder custom_fields_container border">
+                                        <table class="table table-hover border-0">
+                                          <thead class="border-top-0">
+                                          <tr class="">
+                                            <th style="width: 50% !important;"><h2>Field Name</h2></th>
+                                            <th style="width: 10% !important; "><h2>Status</h2></th>
+                                            <th style="width: 40% !important; "><h2>Action</h2></th>
+                                          </tr>
+                                          </thead>
+                                        </table>
+                                        <table class="table border-0" id="sort_facet_fields_table">
+                                          <tbody id='description_preview_org' data-type="resource_fields" data-option='description_preview_org' data-order-custom="sort_order" data-status-columns="description_display">
+                                          <% if @resource_fields.present? %>
+                                            <% @resource_fields.each_with_index do |(system_name, single_collection_field), _index| %>
+                                              <% next if single_collection_field['field_configuration'].present? && single_collection_field['field_configuration']['special_purpose'].present? && single_collection_field['field_configuration']['special_purpose'].to_s.to_boolean? %>
+                                              <% label = single_collection_field['label'] %>
+                                              <% is_default_field = single_collection_field['is_default'] %>
+                                              <% type = single_collection_field['field_type'] %>
+                                              <% status = true %>
+                                              <tr class="facet_field <%= single_collection_field['system_name'] %>" data-field="<%= system_name %>" data-field-type="<%= type %>" data-label="<%= label %>" data-collection="<%= '' %>" data-is-default-field="<%= is_default_field %>">
+                                                <td width="50%">
+                                                  <i class="fa fa-ellipsis-v handle mx-2" style="color: lightgrey;cursor: move;"></i>
+                                                  <span data-toggle="tooltip" data-placement="top" title="" aria-hidden="true" data-original-title="<%= single_collection_field['help_text'] %>">
+                                                <%= label %>
+                                                  </span>
+                                                  <% if is_default_field %>
+                                                    <i class="fa fa-asterisk color-grey font-size-8px" data-toggle="tooltip" data-placement="top" title="" aria-hidden="true" data-original-title="This is a default field of collection."></i>
+                                                  <% end %>
+                                                  <% if single_collection_field['default_name'].present? && single_collection_field['default_name'] != single_collection_field['label'] %>
+                                                    <small class="mt-2 form-text font-size-12px text-muted d-inline">
+                                                      <%= single_collection_field['default_name'] %>
+                                                    </small>
+                                                  <% end %>
+
+                                                </td>
+                                                <td width="10%">
+                                                  <label class="toggle-switch">
+                                                    <%= check_box_tag 'description_display' + single_collection_field['system_name'], boolean_value(single_collection_field['description_display']), boolean_value(single_collection_field['description_display']), class: "description_display toggle-switch__input template-data-is-facetable template-data-field-is-facetable" %>
+                                                    <span class="toggle-switch__slider"></span>
+                                                  </label>
+                                                </td>
+                                                <td width="40%">
+                                                  <a class="btn-sm btn-default ml-1  text-white manage_field_assignment" data-toggle="modal" data-target="#assignment_field_popup" data-field="<%= system_name %>" data-label="<%= label %>">
+                                                    Assign field to collection </a>
+                                                  <a class="btn-sm btn-success ml-1  text-white edit_custom_field_info" data-field="<%= system_name %>" data-url="<%= new_edit_custom_field_organization_fields_path(system_name: system_name, methodtype: 'edit') %>">
+                                                    Edit </a>
+                                                  <% if !is_default_field %>
+                                                    <a class="btn-sm btn-danger ml-1 text-white delete_field" data-field="<%= system_name %>" data-url="<%= delete_field_organization_fields_path(delete_type: 'organization_level', system_name: system_name, type: 'resource_fields') %>">
+                                                      Delete</a>
+                                                  <% end %>
+                                                </td>
+                                              </tr>
+                                            <% end %>
+                                          <% end %>
+                                          </tbody>
+                                        </table>
+                                      </div>
+                                      <div class="add-new-field-holder">
+                                        <a class="btn btn-light btn-sm edit-custom-field-button edit-custom-field-button-new-custom-spec" data-method-type="new" data-url="<%= new_edit_custom_field_organization_fields_path(methodtype: 'new') %>">Add
+                                          Custom Fields</a>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div class="tab-pane fade " id="table_configuration_content" role="tabpanel" aria-labelledby="table_configuration_content">
+                                  <div class="row">
+                                    <div class="col-12 p-5">
+                                      <div class="holder custom_fields_container border">
+                                        <table class="table table-hover border-0">
+                                          <thead class="border-top-0">
+                                          <tr class="">
+                                            <th style="width: 80% !important;"><h2>Field Name</h2></th>
+                                            <th style="width: 10% !important;"><h2>Display Columns</h2></th>
+                                            <th style="width: 10% !important; "><h2>Search Column</h2></th>
+                                          </tr>
+                                          </thead>
+                                        </table>
+                                        <table class="table border-0" id="sort_facet_fields_table">
+                                          <tbody id='resource_table_org' data-type="resource_fields" data-option='resource_table_org' data-order-custom="resource_table_sort_order" data-status-columns="resource_table_display,resource_table_search">
+                                          <% if @resource_columns_table.present? %>
+                                            <% @resource_columns_table.each_with_index do |(system_name, single_collection_field), _index| %>
+                                              <% label = single_collection_field['label'] %>
+                                              <% is_default_field = single_collection_field['is_default'] %>
+                                              <% type = single_collection_field['field_type'] %>
+                                              <% global_status = @resource_fields[system_name]['description_display'].to_s.to_boolean? %>
+
+                                              <% if @resource_fields[system_name]['field_configuration'].present? && @resource_fields[system_name]['field_configuration']['special_purpose'].present? && boolean_value(@resource_fields[system_name]['field_configuration']['special_purpose'])
+                                                   global_status = true
+                                                 end %>
+
+                                              <tr class="facet_field <%= single_collection_field['system_name'] %>" data-field="<%= system_name %>" data-field-type="<%= type %>" data-label="<%= label %>" data-collection="<%= '' %>" data-is-default-field="<%= is_default_field %>">
+                                                <td width="80%">
+                                                  <i class="fa fa-ellipsis-v handle mx-2" style="color: lightgrey;cursor: move;"></i>
+                                                  <span data-toggle="tooltip" data-placement="top" title="" aria-hidden="true" data-original-title="<%= single_collection_field['help_text'] %>">
+                                                <%= label %>
+                                                  </span>
+                                                  <% if is_default_field %>
+                                                    <i class="fa fa-asterisk color-grey font-size-8px" data-toggle="tooltip" data-placement="top" title="" aria-hidden="true" data-original-title="This is a default field of collection."></i>
+                                                  <% end %>
+                                                  <% if single_collection_field['default_name'].present? && single_collection_field['default_name'] != single_collection_field['label'] %>
+                                                    <small class="mt-2 form-text font-size-12px text-muted d-inline">
+                                                      <%= single_collection_field['default_name'] %>
+                                                    </small>
+                                                  <% end %>
+
+                                                </td>
+                                                <% visible_at = nil
+                                                   visible_at = @resource_fields[system_name]['field_configuration']['visible_at'] if @resource_fields[system_name]['field_configuration'].present? && @resource_fields[system_name]['field_configuration']['special_purpose'].present? && @resource_fields[system_name]['field_configuration']['special_purpose'].to_s.to_boolean? %>
+                                                <td width="10%">
+                                                  <label class="toggle-switch ml-3">
+                                                    <%= check_box_tag 'resource_table_display' + single_collection_field['system_name'], single_collection_field['resource_table_display'], single_collection_field['resource_table_display'].to_s.to_boolean?, disabled: !global_status, class: "resource_table_display toggle-switch__input template-data-is-facetable template-data-field-is-facetable" %>
+                                                    <span class="toggle-switch__slider"></span>
+                                                  </label>
+                                                </td>
+                                                <td width="10%">
+                                                  <% if visible_at.nil? || visible_at.include?('resource_search') %>
+                                                    <label class="toggle-switch ml-3">
+                                                      <%= check_box_tag 'resource_table_search' + single_collection_field['system_name'], single_collection_field['resource_table_search'], single_collection_field['resource_table_search'].to_s.to_boolean?, disabled: !global_status, class: "resource_table_search toggle-switch__input template-data-is-facetable template-data-field-is-facetable" %>
+                                                      <span class="toggle-switch__slider"></span>
+                                                    </label>
+                                                  <% end %>
+                                                </td>
+                                              </tr>
+                                            <% end %>
+                                          <% end %>
+                                          </tbody>
+                                        </table>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div class="tab-pane fade " id="search_configuration_content" role="tabpanel" aria-labelledby="search_configuration_content">
+                                  <div class="row">
+                                    <div class="col-12 p-5">
+                                      <div class="holder custom_fields_container border">
+                                        <%= render partial: 'organization_fields/search_configuration' %>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+
+<div class="modal fade" id="assignment_field_popup" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-md modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title h5"></h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-12">
+            <label> Action</label>
+            <select id='assignment_option_custom' placeholder=" Select Collection(s)" class="dont-apply-selectize" data-url="<%= assignment_management_organization_fields_path %>">
+              <option value="'">Select option</option>
+              <option value="0">Assign field to selected collection(s)</option>
+              <option value="1">Remove field from selected collection(s)</option>
+            </select>
+          </div>
+        </div>
+        <br/>
+        <input type="hidden" id='selected_file'>
+        <div class="row">
+          <div class="col-12" id='list_of_collections'>
+          </div>
+        </div>
+        <br/><br/>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-danger " href="javascript:void(0)" data-dismiss="modal">Close</a>
+        <a class="btn btn-primary " id='assign_field' href="javascript:void(0)" id="">Yes</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="update_vocabulary_popup" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-xl modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title h5"></h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-12">
+            <div class="d-inline">
+              <label class="float-left"> Action</label>
+              <a href="javascript:void(0)" id='reset_to_default' class="btn-sm btn-success float-right mb-2 cursor-pointer text-decoration-none d-none">Reset
+                to default</a>
+            </div>
+            <div class="mt-15px">
+              <select id='update_vocabulary' data-url="<%= update_information_organization_fields_path %>">
+                <option value="0">Overwrite Existing Vocabulary</option>
+                <option value="1">Append to Existing Vocabulary</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <br/>
+        <div class="row">
+          <div class="col-12">
+            <label> Vocabulary</label>
+            <textarea class="form-control" rows="5" id='new_vocabulary'></textarea>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-danger " href="javascript:void(0)" data-dismiss="modal">Close</a>
+        <a class="btn btn-primary " id='update_vocabulary_btn' data-url="<%= update_information_organization_fields_path %>" href="javascript:void(0)">Yes</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="update_dropdown_option_popup" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-xl modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title h5"></h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-12">
+            <div class="d-inline">
+              <label class="float-left"> Action</label>
+              <a href="javascript:void(0)" id='reset_to_default' class="btn-sm btn-success float-right mb-2 cursor-pointer text-decoration-none d-none">Reset
+                to default</a>
+            </div>
+            <div class="mt-15px">
+              <select id='update_dropdown_options' data-url="<%= update_information_organization_fields_path %>">
+                <option value="0">Overwrite Existing Dropdown Options</option>
+                <option value="1">Append to Existing Dropdown Options</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <br/>
+        <div class="row">
+          <div class="col-12">
+            <label> Dropdown Options</label>
+            <textarea class="form-control" rows="5" id='new_update_dropdown_options'></textarea>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-danger " href="javascript:void(0)" data-dismiss="modal">Close</a>
+        <a class="btn btn-primary " id='update_dropdown_options_btn' data-url="<%= update_information_organization_fields_path %>" href="javascript:void(0)">Yes</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div id="custom_fields_popup">
+
+</div>
+<%= render 'shared/modal' %>
+<script type="text/javascript">
+
+    var organization_fields_management = new OrganizationFieldsManagement();
+    // var orgnization = new Organization();
+    $(function () {
+        // orgnization.initFacetFields();
+        organization_fields_management.initialize();
+    });
+</script>

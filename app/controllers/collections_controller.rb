@@ -4,6 +4,7 @@ class CollectionsController < ApplicationController
   before_action :authenticate_user!, except: :show
   load_and_authorize_resource except: :show
   include Aviary::BulkOperation
+  include Aviary::FieldManagement
   include CollectionResourceHelper
 
   def index
@@ -68,24 +69,26 @@ class CollectionsController < ApplicationController
   end
 
   def edit
+    @organization_field_manager = Aviary::FieldManagement::OrganizationFieldManager.new
+    @collection_field_manager = Aviary::FieldManagement::CollectionFieldManager.new
+    @resource_fields = @organization_field_manager.organization_field_settings(current_organization, nil, 'resource_fields')
+    @resource_columns_collection = @collection_field_manager.sort_fields(@collection_field_manager.collection_resource_field_settings(@collection, 'resource_fields').resource_fields, 'sort_order')
+    @collection_fields = @organization_field_manager.organization_field_settings(current_organization, nil, 'collection_fields', 'sort_order')
+    @collection_fields_and_value = @collection.collection_fields_and_value
     @collection_resource = @collection.collection_resources.first
+    @resource_file = @collection_resource.try { |collection_resource| collection_resource.collection_resource_files.order_file.first }
     if request.xhr?
-      @resource_file = @collection_resource.try { |collection_resource| collection_resource.collection_resource_files.order_file.first }
-      @data_hash = PreviewScript.new(@collection, params).update_data_hash(eval(params['previous_hash']))
+      @data_hash ||= {}
+      @data_hash = PreviewScript.new(@collection, params, @resource_fields, @resource_columns_collection).update_data_hash(eval(params['previous_hash']))
       render partial: 'collection_resource_preview', locals: { data_hash: @data_hash, resource_file: @resource_file }
     else
-      @dynamic_fields = @collection.all_fields
-      @resource_file = @collection_resource.try { |collection_resource| collection_resource.collection_resource_files.order_file.first }
       @detail_page = false
-      @data_hash = PreviewScript.new(@collection).data_hash(@collection_resource, @dynamic_fields)
+      @data_hash = PreviewScript.new(@collection, nil, @resource_fields, @resource_columns_collection).data_hash(@collection_resource, {})
     end
-    current_organization.update_resource_search_column_fields(true)
-    current_organization.update_resource_column_fields(true)
   end
 
   def update
-    if @collection.update(collection_params)
-      @collection.update_field_settings(params['collection_settings'].values)
+    if @collection.update(collection_params.except('request_access_template_collection_ids', 'access_request_approval_email', 'request_access_template', 'request_access_button_text', 'accept_request_notification_recipients'))
       updated_field_values = {}
       params['collection']['collection_field_values_attributes'].each do |value|
         if value['collection_field_id'].present?
@@ -95,13 +98,15 @@ class CollectionsController < ApplicationController
           updated_field_values[value['collection_field_id']][:values] << { value: value['value'], vocab_value: '' }
         end
       end
-      @collection.batch_update_values(updated_field_values.values, true)
-      redirect_to collections_path, notice: t('collection_updated')
+
+      collection_field_value = CollectionFieldsAndValue.find_or_create_by(collection_id: @collection.id)
+      collection_field_value.collection_field_values = updated_field_values
+      collection_field_value.save unless updated_field_values.nil?
+      redirect_back(fallback_location: root_path)
     else
-      @dynamic_fields = @collection.all_fields
       @collection_resource = @collection.collection_resources.first
       @resource_file = @collection_resource.try { |collection_resource| collection_resource.collection_resource_files.order_file.first }
-      @data_hash = PreviewScript.new(@collection).data_hash(@collection_resource, @dynamic_fields)
+      @data_hash = PreviewScript.new(@collection).data_hash(@collection_resource, {})
       render 'edit'
     end
   end
@@ -113,9 +118,12 @@ class CollectionsController < ApplicationController
     session[:resource_list_bulk_edit] = [] unless request.xhr?
     session[:resource_list_params] = [] unless request.xhr?
     record_last_bread_crumb(request.fullpath, "Back to <strong>#{@collection.title}</strong>") unless request.xhr?
+    @organization_field_manager = Aviary::FieldManagement::OrganizationFieldManager.new
+    @resource_fields = @organization_field_manager.organization_field_settings(current_organization, nil, 'resource_fields', 'resource_table_sort_order')
+    @fixed_columns = current_organization.organization_field.present? && current_organization.organization_field.fixed_column.present? ? current_organization.organization_field.fixed_column : 0
     respond_to do |format|
       format.html
-      format.json { render json: ResourcesListingDatatable.new(view_context, collection) }
+      format.json { render json: ResourcesListingDatatable.new(view_context, collection, 'listing_resource_collection_wise', {}, @resource_fields) }
     end
   end
 
@@ -149,24 +157,14 @@ class CollectionsController < ApplicationController
   end
 
   def update_sort_fields
-    @collection.update_field_settings(params['collection_resource_field'].values, 'CollectionResource')
+    FieldSettingsJob.perform_later(@collection, params['collection_resource_field'].values, 'CollectionResource')
     render json: { status: 'success' }
-  end
-
-  def new_edit_custom_field
-    @collection = this_collection
-    if params[:methodtype] == 'new'
-      @meta_field = CustomFields::Field.new
-    elsif params[:methodtype] == 'edit'
-      @meta_field = CustomFields::Field.find_by_id(params[:collection_meta_id])
-    end
-    @source_type = 'CollectionResource'
-    render partial: 'collection_custom_fields', locals: { meta_field: @meta_field, collection: @collection, source_type: @source_type }
   end
 
   def delete_custom_meta_fields
     @collection = this_collection
     @collection.delete_dynamic(params[:meta_field_id])
+    @collection.organization.update_field_settings
     flash[:notice] = 'Custom field deleted successfully.'
     redirect_back(fallback_location: edit_collection_path(@collection))
   end
@@ -251,25 +249,18 @@ class CollectionsController < ApplicationController
     new_collection.save
 
     if new_collection.persisted?
-      fields = JSON.parse(CustomFields::Settings.where(customizable_type: 'Collection', customizable_id: clone_collection.id).first.settings)
-      unless fields.blank?
-        settings = {}
-        settings['Collection'] = fields['Collection']
-        settings['CollectionResource'] = []
-        collection_resource_settings = fields['CollectionResource']
-        unless collection_resource_settings.blank?
-          collection_resource_settings.each do |single_settings|
-            if CustomFields::Field.find(single_settings['field_id']).is_custom
-              new_record = CustomFields::Field.find(single_settings['field_id']).dup
-              new_record.save(validate: false)
-              settings['CollectionResource'] << { 'is_visible' => single_settings['is_visible'], 'is_tombstone' => single_settings['is_tombstone'], 'field_id' => new_record.id }
-            else
-              settings['CollectionResource'] << single_settings
-            end
-          end
-        end
-        CustomFields::Settings.create(customizable_id: new_collection.id, customizable_type: 'Collection', settings: settings.to_json) if settings.present?
+      @org_field_manager = Aviary::FieldManagement::OrganizationFieldManager.new
+      @collection_field_manager = Aviary::FieldManagement::CollectionFieldManager.new
+      @resource_columns_collection = @collection_field_manager.collection_resource_field_settings(clone_collection, 'resource_fields').resource_fields
+      template = OrganizationTemplate.where(template_type: 'access_request_approval_email').where('model_id like ?', "%-#{clone_collection.id}-%").try(:first)
+      unless template.blank?
+        new_template = template.dup
+        new_template.model_id = "-#{new_collection.id}-"
+        new_template.content = new_template.content.gsub(clone_collection.title, new_collection.title)
+        new_template.save
       end
+      new_collection.collection_fields_and_value.resource_fields = @collection_field_manager.sort_fields(@resource_columns_collection, 'sort_order')
+      new_collection.save
       new_collection
     else
       false
@@ -282,11 +273,12 @@ class CollectionsController < ApplicationController
     resources = CollectionResource.fetch_resources(0, 0, 'collection_id_is', 'desc', session[:resource_list_params], limit_condition, export: true, current_organization: current_organization)
 
     attributes = ['aviary ID', 'Resource User Key']
-    if current_organization.present? && !current_organization.resource_table_column_detail.blank? && !JSON.parse(current_organization.resource_table_column_detail).blank?
-      JSON.parse(current_organization.resource_table_column_detail)['columns_status'].each do |_, value|
-        if !value['status'].blank? && value['status'] == 'true'
-          attributes << display_field_title_table(value['value'])
-        end
+    organization_field_manager = Aviary::FieldManagement::OrganizationFieldManager.new
+    resource_fields = organization_field_manager.organization_field_settings(current_organization, nil, 'resource_fields', 'resource_table_sort_order')
+    if resource_fields.present?
+      resource_fields.each_with_index do |(system_name, single_collection_field), _index|
+        field_settings = Aviary::FieldManagement::FieldManager.new(single_collection_field, system_name)
+        attributes << display_field_title_table(field_settings.label) if field_settings.should_display_on_resource_table
       end
     end
     %w[PURL URL Embed].map { |name| attributes << name }
@@ -311,17 +303,19 @@ class CollectionsController < ApplicationController
         puts e.backtrace.join("\n")
       end
       row = [resource['id_is'], '']
-      if resources.fourth.resource_table_column_detail
-        JSON.parse(resources.fourth.resource_table_column_detail)['columns_status'].each do |_, value|
-          if !value['status'].blank? && value['status'] == 'true'
-            row << if value['value'] == 'description_duration_ss'
-                     resource[value['value']].present? ? time_to_duration(resource[value['value']]) : '00:00:00'
-                   elsif value['value'] == 'collection_title'
+
+      if resource_fields.present?
+        resource_fields.each_with_index do |(system_name, single_collection_field), _index|
+          field_settings = Aviary::FieldManagement::FieldManager.new(single_collection_field, system_name)
+          if field_settings.should_display_on_resource_table
+            row << if field_settings.solr_display_column_name == 'description_duration_ss'
+                     resource[field_settings.solr_display_column_name].present? ? time_to_duration(resource[field_settings.solr_display_column_name]) : '00:00:00'
+                   elsif field_settings.solr_display_column_name == 'collection_title'
                      resources.third[resource['collection_id_is'].to_s]
-                   elsif value['value'] == 'access_ss'
-                     resource[value['value']].gsub('access_', '').titleize.strip
-                   elsif !resource[value['value']].blank?
-                     resource[value['value']].class == Array ? resource[value['value']].join(' | ') : resource[value['value']]
+                   elsif field_settings.solr_display_column_name == 'access_ss'
+                     resource[field_settings.solr_display_column_name].gsub('access_', '').titleize.strip
+                   elsif !resource[field_settings.solr_display_column_name].blank?
+                     resource[field_settings.solr_display_column_name].class == Array ? resource[field_settings.solr_display_column_name].join(' | ') : resource[field_settings.solr_display_column_name]
                    else
                      ''
                    end

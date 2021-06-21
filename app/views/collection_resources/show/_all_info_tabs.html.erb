@@ -184,14 +184,14 @@
     </div>
   </div>
   <% @description_count = {} %>
-  <% if @collection_resource.present? && @dynamic_fields.present? && @dynamic_fields['CollectionResource'].present? %>
-    <% @dynamic_fields['CollectionResource'].each do |single_field| %>
-      <% single_field['values'].each do |single_value| %>
+  <% @resource_columns_collection.each_with_index do |(system_name, single_collection_field), _index| %>
+    <% field_settings = Aviary::FieldManagement::FieldManager.new(single_collection_field, system_name) %>
+    <% if @resource_field_values.present? && boolean_value(field_settings.info_of_attribute('status')) && @resource_field_values[system_name].present? %>
+      <% @resource_field_values[system_name]['values'].each do |single_value| %>
         <% @description_count = count_occurrence(single_value, @session_video_text_all, @description_count, 'description', false, nil, nil, nil, 'resource_metadata') %>
       <% end %>
     <% end %>
   <% end %>
-
 
   <% session[:description_count] = @description_count %>
   <div class="marker_list_hanlder_custom_tmp d-none">

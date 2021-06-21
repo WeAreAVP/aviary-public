@@ -14,9 +14,14 @@ function CollectionResourceTable() {
     this.resource_table_column_detail = {};
     this.app_helper = {};
     this.resource_list_bulk_edit;
+    this.number_of_column_fixed = 0;
 
 
-    this.initialize = function (resource_table_column_detail, resource_list_bulk_edit) {
+    this.initialize = function (resource_table_column_detail, resource_list_bulk_edit, number_of_column_fixed) {
+        console.log(resource_table_column_detail);
+        if (typeof number_of_column_fixed != 'undefined') {
+            this.number_of_column_fixed = number_of_column_fixed;
+        }
         that.app_helper = new App();
         that.resource_table_column_detail = resource_table_column_detail;
         that.resource_list_bulk_edit = resource_list_bulk_edit;
@@ -122,8 +127,7 @@ function CollectionResourceTable() {
             tableName = 'collection_resource_datatable';
         }
         let rightColumns = 1;
-
-        let resource_table_column_detail = JSON.parse(that.resource_table_column_detail);
+        let resource_table_column_detail = that.resource_table_column_detail;
         let dataTableElement = $('#' + tableName);
 
         let ajax_url = dataTableElement.data('url');
@@ -131,6 +135,16 @@ function CollectionResourceTable() {
             {orderable: false, targets: -1}, {orderable: false, targets: 0}
         ];
 
+        if (called_from == 'permission_group') {
+            rightColumns = 1;
+            sorters = [];
+        }
+        if (called_from == 'archiveSpacePreview') {
+            rightColumns = 0;
+            sorters = [
+                {orderable: false, targets: 0}
+            ];
+        }
         if (dataTableElement.length > 0) {
             that.dataTableObj = dataTableElement.DataTable({
                 responsive: true,
@@ -141,7 +155,7 @@ function CollectionResourceTable() {
                 scrollCollapse: false,
                 paging: true,
                 fixedColumns: {
-                    leftColumns: resource_table_column_detail.number_of_column_fixed > 0 ? parseInt(resource_table_column_detail.number_of_column_fixed, 10) + 1 : 0,
+                    leftColumns: that.number_of_column_fixed > 0 ? parseInt(that.number_of_column_fixed, 10) + 1 : 0,
                     rightColumns: rightColumns
                 },
                 order: [[1, 'asc']],
@@ -169,12 +183,18 @@ function CollectionResourceTable() {
                     }
                 },
                 drawCallback: function (settings) {
-
+                    if (called_from == 'permission_group' || called_from == 'archiveSpacePreview') {
+                        $('#collection_resource_datatable_length').addClass('d-none');
+                    }
 
                     if (called_from == 'playlist_add_resource' && typeof caller != 'undefined') {
                         caller.handler_resource_playlist();
+                    } else if (called_from == 'archiveSpacePreview' && typeof caller != 'undefined') {
+                        caller.eventCallbackBinding(tableName);
+                        caller.syncTableEventCallback(tableName);
                     } else {
                         initDeletePopup();
+
                         setTimeout(function () {
                             if (typeof that.resource_bulk_edit != "undefined") {
                                 that.resource_bulk_edit.re_init_bulk();
@@ -188,13 +208,10 @@ function CollectionResourceTable() {
                                 value = value.replace(/[{}]/g, '');
                                 $(this).val(value);
                             });
-                            $('.add_to_resource_group').unbind('click');
-                            $('.add_to_resource_group').on('click', function () {
-
-                            });
 
                         }, 500);
                     }
+
                 },
                 initComplete: function (settings) {
                     if (settings.aoData.length > 0) {
@@ -225,23 +242,38 @@ function CollectionResourceTable() {
         let metadata_fields_status = $('#sortable_resource_columns').sortable('toArray');
         let number_of_column_fixed = $('#number_of_column_fixed').selectize();
         let selectize = number_of_column_fixed[0].selectize;
-        let data = {
-            action: 'update_resource_column_sort',
-            number_of_column_fixed: 0,
-            columns_status: {},
-            columns_search_status: {}
-        };
-        data['number_of_column_fixed'] = selectize.getValue();
+        let info = {};
         $.each(metadata_fields_status, function (index, value) {
-            data['columns_status'][index] = {value: value, status: $('#' + value + '_status').prop('checked')};
+            info[index] = {};
+            info[index]['system_name'] = value
+            info[index]['resource_table_display'] = $('#' + value + '_status').prop('checked');
+            info[index]['resource_table_sort_order'] = index
+            if ($('.all_fields_search_identifier#'+value).length > 0 ) {
+                info[index]['resource_table_search'] = $('.all_fields_search_identifier#'+value).prop('checked');
+            } else {
+                info[index]['resource_table_search'] = false;
+            }
+
         });
 
-        $.each($('.all_fields_search_identifier'), function (index) {
-            data['columns_search_status'][index] = {value: $(this).attr('id'), status: $(this).prop('checked')};
-        });
+        let data = {
+            js_action: 'updateSort',
+            action: 'updateSort',
+            info: info,
+            fixed_column: selectize.getValue(),
+            options: 'resource_table_org',
+            type: 'resource_fields'
+        };
 
-        that.app_helper.classAction($('#manage_resource_columns_modal').data('url'), data, 'JSON', 'POST', '', that);
+        that.app_helper.classAction($('#update_sort_information').data('url'), data, 'JSON', 'POST', '', that);
     };
+
+    this.updateSort = function () {
+        jsMessages('success', 'Information updated successfully.');
+        setTimeout(function () {
+            location.reload();
+        }, 2000);
+    }
 
     this.update_resource_column_sort = function (response, container) {
 

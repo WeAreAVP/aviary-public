@@ -6,11 +6,11 @@
         <input type="checkbox" class="select_all_checkbox_resources" data-url="<%= bulk_resource_list_collections_path %>"/>
       </th>
     <% end %>
-    <% resource_table_column_detail = CollectionResource.permission_group_columns.to_json %>
-    <% JSON.parse(resource_table_column_detail)['columns_status'].each do |_, value| %>
-      <% if !value['status'].blank? && value['status'] == 'true' %>
+    <% @resource_fields.each_with_index do |(system_name, single_collection_field), _index| %>
+      <% field_settings = Aviary::FieldManagement::FieldManager.new(single_collection_field, system_name) %>
+      <% if field_settings.should_display_on_resource_table && %w[id_ss title_ss access_ss description_identifier_sms description_date_sms].include?(field_settings.solr_display_column_name)%>
         <th>
-          <span style="max-width: 180px; width: 180px; float: left; min-width: 100px;"><%= display_field_title_table(value['value']) %></span>
+          <span style="max-width: 180px; width: 180px; float: left; min-width: 100px;"><%= display_field_title_table(field_settings.label) %></span>
         </th>
       <% end %>
     <% end %>
@@ -18,19 +18,28 @@
     <th>
       <input type="checkbox" class="select_all_checkbox_resources" data-url="<%= bulk_resource_list_collections_path %>"/>
     </th>
+    <% if current_organization.present? && @resource_fields.present? %>
+      <% @resource_fields.each_with_index do |(system_name, single_collection_field), _index| %>
+        <% field_settings = Aviary::FieldManagement::FieldManager.new(single_collection_field, system_name) %>
+        <%
+          global_status = field_settings.should_display_on_detail_page
+          if field_settings.field_configuration.present? && field_settings.field_configuration['special_purpose'].present? && boolean_value(field_settings.field_configuration['special_purpose'])
+            global_status = true
+          end
+          next unless global_status
 
-    <% if current_organization.present? && !current_organization.resource_table_column_detail.blank? && !JSON.parse(current_organization.resource_table_column_detail).blank? %>
-      <% JSON.parse(current_organization.resource_table_column_detail)['columns_status'].each do |_, value| %>
-        <% if !value['status'].blank? && value['status'] == 'true' %>
+        %>
+        <% if field_settings.should_display_on_resource_table %>
           <th>
-            <span style="max-width: 180px; width: 180px; float: left; min-width: 100px;"><%= display_field_title_table(value['value']) %></span>
+            <span style="max-width: 180px; width: 180px; float: left; min-width: 100px;"><%= display_field_title_table(field_settings.label) %></span>
           </th>
         <% end %>
       <% end %>
     <% end %>
   <% end %>
-  <th>Action</th>
-
+  <% unless table_called_from == 'archiveSpacePreview' %>
+    <th>Action</th>
+  <% end %>
 </tr>
 </thead>
 <tbody>

@@ -19,7 +19,7 @@ function Playlist() {
     this.playlist_ajaxs = [];
     this.calls_inprogress = 0;
     var playlist_ended = false;
-
+    var currentRequest = null;
     var that = this;
 
     this.initialize = function () {
@@ -306,80 +306,85 @@ function Playlist() {
             action: 'list_playlist_items_action'
         };
         selfPL.playlist_ajaxs = [];
-        if(selfPL.calls_inprogress <= 0){
-            selfPL.calls_inprogress++;
-            selfPL.appHelper.classAction($('#playlist-list-contanier').data('url'), data, 'HTML', 'GET', '', selfPL, false);
+        if (currentRequest != null) {
+            currentRequest.abort();
         }
+        currentRequest = selfPL.appHelper.classAction($('#playlist-list-contanier').data('url'), data, 'HTML', 'GET', '', selfPL, false);
     };
 
     this.list_playlist_items_action = function (response, _container, requestData) {
-        if (!response.includes('playlist_resource_single')) {
-            playlist_ended = true
-        }
-        $('#playlist-list-page-no').val(parseInt($('#playlist-list-page-no').val(), 10) + 1);
-        $('#playlist-list-contanier').append(response);
-        setTimeout(function () {
-
-            bulkDeletePlaylistResources();
-            if (selfPL.playlist_show == false || selfPL.playlist_show == 'false') {
-                init_sortable();
-                $('.best_in_place').best_in_place();
-                initToolTip(false);
-                $('#no_resource_found').hide();
+        try {
+            if (!response.includes('playlist_resource_single')) {
+                playlist_ended = true
             }
-            $('.playlist_resource_description').each(function () {
-                let content = $(this).children('.less-description').html();
-                let show_Char = 120;
-                if (content.length > show_Char) {
-                    content = $(this).children('.less-description').html();
-                    let c = content.substr(0, show_Char);
-                    c = c.substr(0, c.lastIndexOf(" "));
-                    let handlers = '<span class="lessToMore ml-1"><random class="style: text-decoration: none;">...</random>&nbsp; Show more</span>';
-                    var html = c;
-                    $(this).children('.less-description').html(html);
-                    $(this).children('.less-description').after(handlers);
-                    $(this).children('.full-description').after('<span class="moreToLess d-none">Show less</span>');
+            $('#no_resource_found').hide();
+            $('#playlist-list-page-no').val(parseInt($('#playlist-list-page-no').val(), 10) + 1);
+            $('#playlist-list-contanier').append(response);
+            setTimeout(function () {
+
+                bulkDeletePlaylistResources();
+                if (selfPL.playlist_show == false || selfPL.playlist_show == 'false') {
+                    init_sortable();
+                    $('.best_in_place').best_in_place();
+                    initToolTip(false);
+                    $('#no_resource_found').hide();
+
                 }
-            });
+                $('.playlist_resource_description').each(function () {
+                    let content = $(this).children('.less-description').html();
+                    let show_Char = 120;
+                    if (content.length > show_Char) {
+                        content = $(this).children('.less-description').html();
+                        let c = content.substr(0, show_Char);
+                        c = c.substr(0, c.lastIndexOf(" "));
+                        let handlers = '<span class="lessToMore ml-1"><random class="style: text-decoration: none;">...</random>&nbsp; Show more</span>';
+                        var html = c;
+                        $(this).children('.less-description').html(html);
+                        $(this).children('.less-description').after(handlers);
+                        $(this).children('.full-description').after('<span class="moreToLess d-none">Show less</span>');
+                    }
+                });
 
-            $('.lessToMore').unbind('click');
-            $('.lessToMore').click(function () {
-                $(this).addClass('d-none');
-                $(this).closest('.playlist_description_full').children('.less-description').addClass('d-none');
+                $('.lessToMore').unbind('click');
+                $('.lessToMore').click(function () {
+                    $(this).addClass('d-none');
+                    $(this).closest('.playlist_description_full').children('.less-description').addClass('d-none');
 
-                $(this).closest('.playlist_description_full').children('.full-description').removeClass('d-none');
-                $(this).closest('.playlist_description_full').children('.moreToLess').removeClass('d-none');
-            });
+                    $(this).closest('.playlist_description_full').children('.full-description').removeClass('d-none');
+                    $(this).closest('.playlist_description_full').children('.moreToLess').removeClass('d-none');
+                });
 
-            $('.moreToLess').unbind('click');
-            $('.moreToLess').click(function () {
-                $(this).addClass('d-none');
-                $(this).closest('.playlist_description_full').children('.full-description').addClass('d-none');
+                $('.moreToLess').unbind('click');
+                $('.moreToLess').click(function () {
+                    $(this).addClass('d-none');
+                    $(this).closest('.playlist_description_full').children('.full-description').addClass('d-none');
 
-                $(this).closest('.playlist_description_full').children('.less-description').removeClass('d-none');
-                $(this).closest('.playlist_description_full').children('.lessToMore').removeClass('d-none');
-            });
+                    $(this).closest('.playlist_description_full').children('.less-description').removeClass('d-none');
+                    $(this).closest('.playlist_description_full').children('.lessToMore').removeClass('d-none');
+                });
 
-            $(".title_description, .less-description, .full-description").unmark();
-            $(".title_description, .less-description, .full-description").mark(requestData['query'].trim(), {
-                "element": "span",
-                "className": "highlight-marker ",
-                "caseSensitive": false,
-                "separateWordSearch": false
-            });
+                $(".title_description, .less-description, .full-description").unmark();
+                $(".title_description, .less-description, .full-description").mark(requestData['query'].trim(), {
+                    "element": "span",
+                    "className": "highlight-marker ",
+                    "caseSensitive": false,
+                    "separateWordSearch": false
+                });
 
-        }, 500);
-        setTimeout(function () {
-            selfPL.calls_inprogress = 0;
-        }, 1000);
-        $('.loader-playlist_items').addClass('d-none');
-        setTimeout(function () {
-            if ($('.playlist_resource_single').length == 0 && selfPL.calls_inprogress <= 0) {
-                $('#no_resource_found').show();
-            }
-        }, 1000);
-
-
+            }, 500);
+            setTimeout(function () {
+                selfPL.calls_inprogress = 0;
+            }, 1000);
+            $('.loader-playlist_items').addClass('d-none');
+            setTimeout(function () {
+                if ($('.playlist_resource_single').length == 0 && selfPL.calls_inprogress <= 0) {
+                    $('#no_resource_found').show();
+                }
+            }, 1000);
+        } catch (e) {
+            playlist_ended = false;
+            $('#no_resource_found').hide();
+        }
     };
 
     this.update_description_playlist_action = function (response, _container, request) {

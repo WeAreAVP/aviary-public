@@ -179,8 +179,15 @@
 
                     <div class='row border-bottom mb-4'>
                       <div class='col-md-12'>
-                        <div class='render form-check my-2 mb-4'>
+                        <div class='render form-check my-2 mb-4 is_audio_only'>
                           <%= pl.input_field :is_audio_only, as: :boolean %>
+                        </div>
+                      </div>
+                    </div>
+                    <div class='row border-bottom mb-4'>
+                      <div class='col-md-12'>
+                        <div class='render form-check my-2 mb-4 autoplay_flag'>
+                          <%= pl.input_field :dont_autoplay_flag, as: :boolean %>
                         </div>
                       </div>
                     </div>
@@ -327,6 +334,10 @@
                                           else
                                             0
                                           end %>;
+    <% if params['auto_play'] != 'true' %>
+    collectionResource.auto_play = <%= !@playlist.dont_autoplay_flag  %>;
+    <% end %>
+
     collectionResource.end_time = <%= params['pet'].present? ? params['pet'] : 0 %>;
     collectionResource.max = '<%= max %>';
     collectionResource.clip_exists = '<%= params['pst'].present? || params['pet'].present? %>';
@@ -373,8 +384,9 @@
     $(function(e) {
         e.preventDefault;
 
-        $(document).ready(function(){
-            $('.render.form-check label').append('Render as Audio Player<span class="icon-check"></span>');
+        $(document).ready(function () {
+            $('.render.form-check.autoplay_flag label').append('Do not allow playlist to autoplay upon page load. <span class="icon-check"></span>');
+            $('.render.form-check.is_audio_only label').append('Render as Audio Player<span class="icon-check"></span>');
         })
     });
 </script>

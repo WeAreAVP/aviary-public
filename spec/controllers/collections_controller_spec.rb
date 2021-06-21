@@ -2,7 +2,6 @@ require 'rails_helper'
 
 RSpec.describe CollectionsController, type: :controller do
   let(:collection) { create(:collection) }
-  let(:sample_file) { fixture_file_upload("#{Rails.root}/spec/fixtures/import_collection_ip_list.csv", 'text/csv') }
   before do
     request[:subdomain] = collection.organization.url
     allow(controller).to receive(:current_organization).and_return(collection.organization)
@@ -10,11 +9,10 @@ RSpec.describe CollectionsController, type: :controller do
     sign_in(collection.organization.user)
     allow(controller).to receive(:authenticate_user!).and_return(true)
   end
-  
+
   describe "Index" do
     it "has a 200 status code with current organization" do
       organization = collection.organization
-      puts organization
       allow(controller).to receive(:current_organization).and_return(organization)
       allow(controller).to receive(:current_user).and_return(organization.user)
       get :index
@@ -44,12 +42,12 @@ RSpec.describe CollectionsController, type: :controller do
 
   describe "Create" do
     it "will create collection when params are provided" do
-      post :create, params: { collection: { title: 'Test Collection', about: 'Testing', is_public: true, is_featured: true }}
+      post :create, params: { collection: { title: 'Test Collection', about: 'Testing', is_public: true, is_featured: true } }
       expect(assigns(:collection).title).to eq('Test Collection')
     end
 
     it "will not create collection when params are not provided" do
-      post :create, params: { collection: { is_public: true, is_featured: true }}
+      post :create, params: { collection: { is_public: true, is_featured: true } }
       expect(assigns(:collection).title).to eq(nil)
     end
   end
@@ -57,15 +55,17 @@ RSpec.describe CollectionsController, type: :controller do
   describe "edit" do
     context "when not an xhr request" do
       it "will return collection field sort" do
-        collection_field_sort = collection.all_fields['Collection']
+        collection_field_sort = Aviary::FieldManagement::OrganizationFieldManager.new.organization_field_settings(collection.organization, nil, 'collection_fields', 'sort_order')
+        fields = Rails.configuration.default_fields['fields']['collection']
         get :edit, params: { id: collection.id }
-        expect(assigns(:dynamic_fields)['Collection'].first).to eq(collection_field_sort.first)
+        expect(fields.first).to eq(collection_field_sort.first)
       end
 
       it "will return collection resource field sort" do
-        collection_resource_field = collection.all_fields['CollectionResource']
+        collection_resource_field = Aviary::FieldManagement::OrganizationFieldManager.new.organization_field_settings(collection.organization, nil, 'resource_fields', 'sort_order')
+        fields = Rails.configuration.default_fields['fields']['resource']
         get :edit, params: { id: collection.id }
-        expect(assigns(:dynamic_fields)['CollectionResource'].first).to eq(collection_resource_field.first)
+        expect(fields['title']).to eq(collection_resource_field['title'])
       end
       #
       it "will return collection field sort" do
@@ -79,15 +79,21 @@ RSpec.describe CollectionsController, type: :controller do
   describe "update" do
     context "when collection update" do
       it "will create collection when params are provided" do
-        dynamic_attrs = collection.dynamic_attributes
-        first_field = dynamic_attrs['fields'].first
-        current_settings = dynamic_attrs['settings']['Collection'].rotate(2)
-        updated_settings = {}
-        current_settings.each do |setting|
-          updated_settings[setting['field_id']] = setting
+
+        fields = Aviary::FieldManagement::OrganizationFieldManager.new.organization_field_settings(collection.organization, nil, 'collection_fields', 'sort_order')
+        updated_values = {}
+        fields.each_with_index do |(system_name, _single_collection_field), _index|
+          updated_values[system_name] ||= {}
+          updated_values[system_name]['values'] ||= []
+          updated_values[system_name]['system_name'] = system_name
+          value = "dummy title"
+          updated_values[system_name]['values'] << { "vocab_value" => "", "value" => value, "collection_resource_id" => collection.id }
         end
+
         put :update, params: { id: collection.id, collection: { title: 'Test Collection1', about: 'Testing', is_public: true, is_featured: true,
-          collection_field_values_attributes: [{ collection_field_id: first_field.id, value: 'hello' }] }, collection_settings: updated_settings }
+                                                                collection_field_values_attributes: [{ collection_field_id: fields.first.second['system_name'],
+                                                                                                       value: 'hello' }] },
+                               collection_settings: updated_values }
         expect(assigns(:collection).title).to eq('Test Collection1')
       end
     end
@@ -96,15 +102,17 @@ RSpec.describe CollectionsController, type: :controller do
   describe "list_resources" do
     context "when collection list_resources" do
       it "list_resources" do
-        dynamic_attrs = collection.dynamic_attributes
-        first_field = dynamic_attrs['fields'].first
-        current_settings = dynamic_attrs['settings']['Collection'].rotate(2)
-        updated_settings = {}
-        current_settings.each do |setting|
-          updated_settings[setting['field_id']] = setting
+        fields = Aviary::FieldManagement::OrganizationFieldManager.new.organization_field_settings(collection.organization, nil, 'collection_fields', 'sort_order')
+        updated_values = {}
+        fields.each_with_index do |(system_name, _single_collection_field), _index|
+          updated_values[system_name] ||= {}
+          updated_values[system_name]['values'] ||= []
+          updated_values[system_name]['system_name'] = system_name
+          value = "dummy title"
+          updated_values[system_name]['values'] << { "vocab_value" => "", "value" => value, "collection_resource_id" => collection.id }
         end
         put :list_resources, params: { id: collection.id, collection: { title: 'Test Collection1', about: 'Testing', is_public: true, is_featured: true,
-                                                                        collection_field_values_attributes: [{ collection_field_id: first_field.id, value: 'hello' }] }, collection_settings: updated_settings }
+                                                                        collection_field_values_attributes: [{ collection_field_id: fields.first.second['system_name'], value: 'hello' }] }, collection_settings: updated_values }
         assigns(:collection).title.include?('title')
       end
     end
@@ -112,13 +120,13 @@ RSpec.describe CollectionsController, type: :controller do
 
   describe "update_sort_fields" do
     it "will return collection" do
-      collection_resource_field = collection.dynamic_attributes['settings']['CollectionResource'].rotate(3)
+      collection_resource_field = Aviary::FieldManagement::OrganizationFieldManager.new.organization_field_settings(collection.organization, nil, 'collection_fields', 'sort_order')
       updated_settings = {}
-      collection_resource_field.each_with_index do |setting, index|
+      collection_resource_field.each_with_index do |(system_name, single_collection_field), index|
         unless index != 0
-          updated_settings[setting['field_id']] = { field_id: setting['field_id'], is_visible: true, is_tombstone: false}.as_json
+          updated_settings[system_name] = { field_id: system_name, is_visible: true, is_tombstone: false }.as_json
         else
-          updated_settings[setting['field_id']] = setting
+          updated_settings[system_name] = single_collection_field
         end
       end
       get :update_sort_fields, xhr: true, params: { id: collection.id, collection_resource_field: updated_settings }
@@ -133,7 +141,6 @@ RSpec.describe CollectionsController, type: :controller do
       expect(Collection.all).to be_empty
     end
   end
-
 
   describe "Show" do
     it "has a 200 status code with current organization" do
@@ -180,7 +187,6 @@ RSpec.describe CollectionsController, type: :controller do
       expect(response.status).to eq(200).or eq(202)
     end
   end
-
 
   describe "Export CSV" do
     it "should return csv" do

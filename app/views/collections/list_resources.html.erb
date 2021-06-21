@@ -13,18 +13,18 @@
       </div>
       <div class="data-table">
         <%= content_tag :table, role: :datatable, class: ['table', 'table-striped','table-bordered'], id: 'collection_resource_datatable', data: { url: list_resources_collection_path(@collection, format: :json) } do %>
-          <%= render partial: 'collection_resources/listing_table', locals: {table_called_from: 'list_resource', columns_details: JSON.parse(current_organization.resource_table_column_detail), organization_id: current_organization.id } %>
+          <%= render partial: 'collection_resources/listing_table', locals: {table_called_from: 'list_resource', columns_details: current_organization.resource_table_column_detail.present? ? JSON.parse(current_organization.resource_table_column_detail) : {}, organization_id: current_organization.id } %>
         <% end %>
       </div>
     </main>
   </div>
 </div>
 <%= render partial: 'collections/bulk_edit_popups' %>
-<%= render partial: 'collection_resources/manage_column', locals: { columns_details: JSON.parse(@collection.organization.resource_table_column_detail), search_columns_details: JSON.parse(@collection.organization.resource_table_search_columns), organization_id: @collection.organization_id } %>
-
+<%= render partial: 'collection_resources/manage_column', locals: { columns_details: @collection.organization.resource_table_column_detail.present? ? JSON.parse(@collection.organization.resource_table_column_detail) : {}, search_columns_details: @collection.organization.resource_table_search_columns.present? ? JSON.parse(@collection.organization.resource_table_search_columns) : {}, organization_id: @collection.organization_id } %>
 <script type="text/javascript">
     var collection_resource_table = new CollectionResourceTable();
     $(function () {
-        collection_resource_table.initialize('<%== @collection.organization.resource_table_column_detail %>', '<%= session[:resource_list_bulk_edit] %>');
+
+        collection_resource_table.initialize('<%== @collection.organization.resource_table_column_detail %>', '<%= session[:resource_list_bulk_edit] %>', '<%= @fixed_columns %>');
     });
 </script>

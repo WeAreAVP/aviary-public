@@ -88,6 +88,17 @@ Rails.application.routes.draw do
     end
     get :media_thumbnail_remove
   end
+
+  resources :organization_fields do
+    collection do
+      post :update_information
+      get :delete_field
+      get :assignment_management
+      post :create_custom_fields
+      get :new_edit_custom_field
+    end
+  end
+
   resources :collections do
     member do
       get 'edit/(:tab_type)', to: 'collections#edit', as: :edit_with_tab
@@ -115,6 +126,7 @@ Rails.application.routes.draw do
       post :save_resource_file
       put :update_file_name
       get '/load_resource_details_template(/file/:resource_file_id)', to: 'collection_resources#load_resource_details_template', as: 'load_resource_details_template'
+      get '/load_resource_description_form(/file/:resource_file_id)', to: 'collection_resources#load_resource_description_form', as: 'load_resource_description_form'
       get '/load_index(/file/:resource_file_id)', to: 'collection_resources#load_index_template', as: 'load_index_template'
       get '/load_transcript(/file/:resource_file_id)', to: 'collection_resources#load_transcript_template', as: 'load_transcript_template'
       get '/show_search_counts/file(/:resource_file_id)', to: 'collection_resources#show_search_counts', as: 'show_search_counts'

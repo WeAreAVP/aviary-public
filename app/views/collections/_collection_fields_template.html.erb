@@ -1,24 +1,26 @@
-<div class="collection_dynamic_details" id="<%= collection_field_sort['field'].system_name %>">
+<div class="collection_dynamic_details" id="<%= collection_field_sort['system_name'] %>">
   <div class="d-flex justify-content-between">
-    <span class="description-title float-left font-weight-bold"><%= collection_field_sort['field'].label.titleize %>
+    <span class="description-title float-left font-weight-bold"><%= collection_field_sort['label'] %>
     </span>
-    <label class="badge badge-info add_badge_default_value" data-type="<%= collection_field_sort['field'].fetch_type.to_s %>" data-col_id="<%= collection_field_sort['field'].id %>" href="javascript:void(0)">
+    <label class="badge badge-info add_badge_default_value" data-type="<%= collection_field_sort['field_type'] %>" data-col_id="<%= collection_field_sort['system_name'] %>" href="javascript:void(0)">
       Add More
     </label>
   </div>
-  <% collection_field_sort['values'].each do |single_value| %>
-    <% if single_value['value'] != '' %>
-      <div class="single_row_default_feild">
-        <div class="w-100 px-3">
-          <% if collection_field_sort['field'].fetch_type == 'editor' %>
-            <textarea name="collection[collection_field_values_attributes][][value]" class="form-control apply_froala_editor tinymce"><%== single_value['value'] %></textarea>
-          <% else %>
-            <input type="<%= collection_field_sort['field'].fetch_type %>" name="collection[collection_field_values_attributes][][value]" value="<%= single_value['value'] %>" class="form-control"/>
-          <% end %>
+  <% if @collection_fields_and_value.present? && @collection_fields_and_value.collection_field_values.present?  && @collection_fields_and_value.collection_field_values[collection_field_sort['system_name']].present? && @collection_fields_and_value.collection_field_values[collection_field_sort['system_name']]['values'].present? %>
+    <% @collection_fields_and_value.collection_field_values[collection_field_sort['system_name']]['values'].each do |single_value| %>
+      <% if single_value['value'] != '' %>
+        <div class="single_row_default_feild">
+          <div class="w-100 px-3">
+            <% if collection_field_sort['field_type'] == 'editor' %>
+              <textarea name="collection[collection_field_values_attributes][][value]" class="form-control apply_froala_editor tinymce"><%== single_value['value'] %></textarea>
+            <% else %>
+              <input type="<%= collection_field_sort['field_type']  %>" name="collection[collection_field_values_attributes][][value]" value="<%= single_value['value'] %>" class="form-control"/>
+            <% end %>
+          </div>
+          <input type="hidden" name="collection[collection_field_values_attributes][][collection_field_id]" class="destroy_element" value="<%= collection_field_sort['system_name'] %>"/>
+          <label class="remove_badge_default_value_collection"></label>
         </div>
-        <input type="hidden" name="collection[collection_field_values_attributes][][collection_field_id]" class="destroy_element" value="<%= collection_field_sort['field'].id %>"/>
-        <label class="remove_badge_default_value_collection"></label>
-      </div>
+      <% end %>
     <% end %>
   <% end %>
 </div>

@@ -10,48 +10,56 @@
       <th>
         <h2> Description View</h2>
       </th>
+      <th>
+        <h2> Action</h2>
+      </th>
     </tr>
   </head>
 </table>
+
 <%= form_tag update_sort_fields_collection_path(@collection), class: "sort-collection-field-form" do %>
-  <table class="table table-hover" id="sort_custom_fields_table" data-path="<%= update_sort_fields_collection_path %>" data-latest="<%= latest_field_label %>">
-    <tbody>
-
-    <% @dynamic_fields['CollectionResource'].each do |customfield| %>
-      <% next if customfield['field'].label.titleize == 'Title' %>
-      <tr class="<%= customfield['field'].id %>">
-        <%= hidden_field_tag "collection_template_field_sort[#{customfield['field'].id}][field_id]", customfield['field'].id, class: "sort-order-field", data: { field_name: customfield['field'].system_name} %>
-
+  <table class="table table-hover" id="sort_custom_fields_table" data-url="<%= update_information_organization_fields_path(collection_id: @collection.id) %>" data-latest="<%= latest_field_label %>" data-path="<%= update_sort_fields_collection_path %>">
+    <tbody id='collection_resource_field_preview_org' data-type="resource_fields" data-order-custom="sort_order" data-status-columns="tombstone,status">
+    <% @resource_columns_collection.each_with_index do |(system_name, single_collection_field), _index| %>
+      <% unless @resource_fields[system_name].present? %>
+        <% @collection_field_manager.delete_field(@collection, 'resource_fields', system_name) %>
+        <% next %>
+      <% end %>
+      <% next if @resource_fields[system_name]['field_configuration'].present? && @resource_fields[system_name]['field_configuration']['special_purpose'].present? && @resource_fields[system_name]['field_configuration']['special_purpose'].to_s.to_boolean? %>
+      <% label = @resource_fields[system_name]['label'] %>
+      <% is_default_field = @resource_fields[system_name]['is_default'] %>
+      <tr class="facet_field <%= system_name %>" data-field="<%= system_name %>" data-label="<%= label %>" data-collection="<%= '' %>" data-is-default-field="<%= is_default_field %>">
         <td>
-          <i class="fa fa-ellipsis-v drag-icon handle"></i><span style="margin-left: 10px;"><%= customfield['field'].label.titleize %>
+          <i class="fa fa-ellipsis-v drag-icon handle"></i><span style="margin-left: 10px;"><%= label %>
           </span>
-        </td>
-
-        <td>
-          <% if customfield['field'].is_custom %>
-            <%= link_to new_edit_custom_field_collection_path(@collection), class: "btn btn-outline-primary edit-custom-field-button edit-custom-field-button-spec collection-custom-field-icon", data: {id: customfield['field'].id, method_type: "edit"} do %>
-              <i class="fa fa-pencil"></i>
-            <% end %>
-            <%= link_to 'javascript:void(0);', class: "btn btn-outline-danger delete-custom-field-button collection-custom-field-icon", data: { url: delete_custom_meta_fields_collection_path(@collection, meta_field_id: customfield['field'].id)} do %>
-              <i class="fa fa-trash"></i>
-            <% end %>
+          <% if @resource_fields[system_name]['default_name'].present? && @resource_fields[system_name]['default_name'] != @resource_fields[system_name]['label'] %>
+            <small class="mt-2 form-text font-size-10px text-muted d-inline">
+              <%= @resource_fields[system_name]['default_name'] %>
+            </small>
           <% end %>
-          <% unless customfield['field'].system_name == 'title' ||  customfield['field'].is_custom %>
-
+        </td>
+        <td>
+          <% if is_default_field %>
             <label class="toggle-switch">
-              <%= check_box_tag 'is_tombstone', 'no', customfield['settings'][:is_tombstone], class: "toggle-switch__input template-data-field template-data-field-tomb", data: {field_id: customfield['field'].id, field_name: customfield['field'].system_name, field_type: 'tombstone'} %>
+              <%= check_box_tag 'is_tombstone', 'no', boolean_value(single_collection_field['tombstone']) && @resource_fields[system_name]['description_display'].to_s.to_boolean?, disabled: !@resource_fields[system_name]['description_display'].to_s.to_boolean?, class: "toggle-switch__input template-data-field template-data-field-tomb tombstone", data: { field_id: system_name, field_name: system_name, field_type: 'tombstone' } %>
               <span class="toggle-switch__slider"></span>
             </label>
           <% end %>
         </td>
         <td>
           <label class="toggle-switch">
-            <%= check_box_tag 'is_visible', 'no', customfield['settings'][:is_visible], class: "toggle-switch__input template-data-field template-data-field-visible", data: {field_id: customfield['field'].id, field_name: customfield['field'].system_name, field_type: 'visible'} %>
+            <%= check_box_tag 'is_visible', 'no', boolean_value(single_collection_field['status']), disabled: !@resource_fields[system_name]['description_display'].to_s.to_boolean?, class: "toggle-switch__input template-data-field template-data-field-visible status", data: { field_id: system_name, field_name: system_name, field_type: 'visible' } %>
             <span class="toggle-switch__slider"></span>
           </label>
         </td>
+        <td class="text-center">
+          <%= link_to 'javascript:void(0);', class: "btn btn-outline-danger collection-custom-field-icon delete-custom-field-button", data: { url: delete_field_organization_fields_path(collection_id: @collection.id, system_name: system_name, type: 'resource_fields') } do %>
+            <i class="fa fa-times-circle"></i>
+          <% end %>
+        </td>
       </tr>
     <% end %>
+
 <% end %>
 </tbody>
 </table>

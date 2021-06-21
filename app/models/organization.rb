@@ -4,6 +4,8 @@ class Organization < ApplicationRecord
 
   enum storage_type: { free_storage: 0, no_storage: 1, wasabi_storage: 2 }
   belongs_to :user, optional: true
+  has_one :organization_field, dependent: :destroy
+  has_many :collection_fields_and_values, dependent: :destroy
   has_one :subscription, dependent: :destroy
   has_many :billing_histories, dependent: :destroy
   has_many :collections, dependent: :destroy
@@ -101,6 +103,16 @@ class Organization < ApplicationRecord
     columns_status = custom_fields_manager(columns_status, total_columns)
     columns_update = { number_of_column_fixed: fixed_number_of_column, columns_status: columns_status }.to_json
     update(resource_table_column_detail: columns_update)
+  end
+
+  def assign_fields_to_organization(_force = false)
+    fields_information = Rails.configuration.default_fields['fields']
+    org_field = OrganizationField.find_or_create_by(organization: self)
+    if (org_field.resource_fields.blank? && org_field.collection_fields.blank?) || org_field.blank?
+      return org_field.update(collection_fields: fields_information['collection'], resource_fields: fields_information['resource'])
+    end
+    org_field.update(collection_fields: fields_information['collection']) if org_field.blank? || org_field.collection_fields.blank?
+    org_field.update(resource_fields: fields_information['resource']) if org_field.blank? || org_field.resource_fields.blank?
   end
 
   def self.field_list_with_options

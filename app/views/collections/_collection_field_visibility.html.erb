@@ -1,43 +1,53 @@
-  <div id="wrapper">
-    <main id="main" role="main">
-      <div class="org-metadata">
-        <div class="text-headline jumbotron">
-          <h4>Resource Description</h4>
-          <p>The description fields below can be used to describe resources in this collection.
-              From this, you can establish a customized template for the resources in this collection.
-              The settings you define here will affect which descriptive fields are available for description and
-              for visibility on the “Description” tab of the detail view of a resource in this collection.</p>
-            <p>You can drag and drop the fields below to reorder them into a sequence that you prefer.
-              This will change the sequence in which the fields are displayed on the resource detail page.</p>
-            <p>“Tombstone” fields are fixed metadata fields that will always be visible in the main view
-              of the Resource Detail page, as well as in search results where the resource is shown,
-              and anywhere the resource is listed publicly throughout the Aviary interface,
+<div id="wrapper">
+  <main id="main" role="main">
+    <div class="org-metadata">
+      <div class="text-headline jumbotron mt-4">
+        <h3>Resource Description</h3>
+        <p>The description fields below can be used to describe resources in this collection.
+          From this, you can establish a customized template for the resources in this collection.
+          The settings you define here will affect which descriptive fields are available for description and
+          for visibility on the “Description” tab of the detail view of a resource in this collection.</p>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="text-content mb-2">
+            <h6 class="title-preview">Tombstone Fields
+              <button type="button" class="info-btn" data-content="“Tombstone” fields are fixed metadata fields that will always be visible in the main view of the Resource Detail page, as well as in search results where the resource is shown, and anywhere the resource is listed publicly throughout the Aviary interface,
               except the Aviary home page. You can select up to three fields to be displayed
-              as Tombstone fields for the resources in this collection. Title is part of the Tomstone by default.</p>
-            <p>Description fields that have been enabled will appear in the “Description” tab of all the Resource in this collection (when you have opted to make a field visible).</p>
-        </div>
-        <div class="container">
-          <div class="row">
-            <div class="col-md-6">
-              <table class="table pb-0 mb-0">
-              </table>
-              <%= link_to "Add Custom Fields", new_edit_custom_field_collection_path(@collection), class: "btn btn-primary btn-sm mb-4 edit-custom-field-button edit-custom-field-button-new-custom-spec", data: { method_type: "new" } %>
-              <div class="holder custom_fields_container">
-                <%= render partial: "custom_fields_table", locals: { latest_field_label: nil } %>
-              </div>
-              <div class="row bottom">
-                <div class="col-md-6">
-                  <%= link_to "Add Custom Fields", new_edit_custom_field_collection_path(@collection), class: "btn btn-primary btn-sm mb-4 edit-custom-field-button edit-custom-field-button-new-custom-spec", data: { method_type: "new" } %>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-6 collection_resource_preview">
-              <%= render partial: "collection_resource_preview", locals: { data_hash: @data_hash, resource_file: @resource_file } %>
-            </div>
+              as Tombstone fields for the resources in this collection. Title is part of the Tomstone by default." data-original-title="" title=""></button>
+            </h6>
+            <p>You can drag and drop the fields below to reorder them into a sequence that you prefer. This will change
+              the sequence in which the fields are displayed on the resource detail page.</p>
+          </div>
+          <table class="table pb-0 mb-0">
+          </table>
+          <div class="add-new-field-holder">
+            <%= link_to "Assign Field", 'javascript:void(0)', class: "btn btn-light btn-sm assign-field-to-collection", data: { method_type: "new" } %>
+          </div>
+          <div class="holder custom_fields_container">
+            <%= render partial: "custom_fields_table", locals: { latest_field_label: nil } %>
+          </div>
+          <div class="add-new-field-holder">
+            <%= link_to "Assign Field", 'javascript:void(0)', class: "btn btn-light btn-sm assign-field-to-collection", data: { method_type: "new" } %>
           </div>
         </div>
+        <div class="col-md-6 collection_resource_preview">
+          <%= render partial: "collection_resource_preview", locals: { data_hash: @data_hash, resource_file: @resource_file } %>
+        </div>
       </div>
-    </main>
-  </div>
-  <div id="show_custom_fields_add"></div>
-  <div id="show_custom_vocabulary_modal"></div>
+    </div>
+  </main>
+</div>
+<div id="show_custom_fields_add"></div>
+<div id='collection_dropdown' class="sort_update_fields d-none" data-url="<%= update_information_organization_fields_path(collection_id: @collection.id) %>">
+  <select id='custom_drop_down_class' class="dont-apply-selectize">
+    <% @resource_fields.each_with_index do |(system_name, single_collection_field), _index| %>
+      <% field_settings = Aviary::FieldManagement::FieldManager.new(single_collection_field, system_name) %>
+      <% if @resource_columns_collection[system_name].blank? && !boolean_value(field_settings.field_configuration['special_purpose']) %>
+        <option value="<%= system_name %>"> <%= single_collection_field['label'] %> </option>
+      <% end %>
+    <% end %>
+  </select>
+</div>
+<div id="show_custom_vocabulary_modal"></div>
+

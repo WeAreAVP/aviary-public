@@ -1,0 +1,136 @@
+<div class="add-field modal fade" id="collection_custom_fields" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="h4 mb-0">Add/Edit Custom Field</h4>
+      </div>
+      <%= form_for :custom_fields, url: update_information_organization_fields_path(update_form_info: true, js_action: 'updateInformation'), method: :post, html: { id: "custom_fields_form" } do |ff| %>
+        <div class="modal-body">
+          <%= hidden_field_tag "meta_field_id", meta_field_info.present? ? meta_field_info['system_name'] : '' %>
+          <div class="container">
+            <div class="row mt-2">
+              <% if meta_field_info['default_name'].present? && meta_field_info['default_name'] != meta_field_info['label'] %>
+                <div class="col-md-12">
+                  <div class="form-group">
+                    <div class="field-title">
+                      <label for="">Default System Name </label>
+                      <span class="font-size-13px"><%= meta_field_info['default_name'] %></span>
+                      <small class="mt-2 form-text font-size-12px text-muted">
+                        This is the system name for this default Aviary metadata field.
+                      </small>
+                    </div>
+                  </div>
+                </div>
+              <% end %>
+              <%#= f.fields_for meta_field do |ff| %>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <div class="field-title">
+                    <label for="">Field Name <sup>*</sup></label>
+                  </div>
+                  <%= ff.text_field :label, class: "form-control", required: true, maxlength: 32, value: meta_field_info.present? ? meta_field_info['label'] : '' %>
+                </div>
+              </div>
+
+              <div class="col-md-6 <%= meta_field_info['is_default'].present? && meta_field_info['is_default'].to_s.to_boolean? ? 'd-none' : '' %>">
+                <div class="form-group">
+                  <div class="field-title">
+                    <label for="">Field Type <sup>*</sup></label>
+                  </div>
+                  <%= ff.select :field_type, options_for_select(OrganizationField::TypeInformation.for_select, meta_field_info.present? ? meta_field_info['field_type'] : 'text'), {}, { class: "meta-type-select field_type_manager" } %>
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <div class="form-group">
+                  <div class="field-title">
+                    <label for="">Help Text</label>
+                  </div>
+                  <%= ff.text_field :help_text, class: "form-control", value: meta_field_info.present? ? meta_field_info['help_text'] : '' %>
+                </div>
+              </div>
+
+              <%= ff.hidden_field :is_vocabulary, value: 0 %>
+              <%= ff.hidden_field :source_type, value: source_type %>
+              <%= ff.hidden_field :system_name, value: meta_field_info.present? ? meta_field_info['system_name'] : '' %>
+
+            </div>
+
+            <% if source_type == 'collection_fields' %>
+              <input type="hidden" name='type' value='collection_fields'/>
+            <% end %>
+
+            <div class="row">
+              <div class="col-md-6 meta-custom-vocabulary-div <%= source_type == 'collection_fields' ? 'd-none' : '' %>">
+                <div class="form-group">
+                  <div class="field-title">
+                    <label for="" class="float-left">Custom Vocabulary</label>
+                    <% if meta_field_info['system_name'].present? %>
+                      <a id='edit_vocabulary' href="javascript:void(0);" class="btn-sm btn-success float-right mb-2 cursor-pointer edit_vocabulary text-decoration-none" data-label="<%= meta_field_info['label'] %>" data-toggle="modal" data-target="#update_vocabulary_popup" data-field="<%= meta_field_info['system_name'] %>">
+                        Edit Vocabulary</a>
+                    <% end %>
+                  </div>
+                  <% vocab = meta_field_info.present? && meta_field_info['vocabulary'].present? ? meta_field_info['vocabulary'] : [] %>
+
+                  <% vocab = vocab.class.name == 'String' ? JSON.parse(vocab) : vocab %>
+                  <% vocab = vocab.class.name == 'Array' ? vocab.join(',') : vocab %>
+                  <%= ff.text_area :vocabulary, disabled: meta_field_info['system_name'].present?, value: vocab.present? && !vocab.length.zero? ? vocab : '', class: "form-control meta-custom-vocabulary", rows: 5 %>
+                </div>
+              </div>
+              <div class="col-md-6 meta-options-div">
+                <div class="form-group">
+                  <% if meta_field_info['system_name'].present? %>
+                    <a id='edit_dropdown_option' href="javascript:void(0);" class="btn-sm btn-success float-right mb-2 cursor-pointer edit_dropdown_option text-decoration-none"
+                       data-label="<%= meta_field_info['label'] %>" data-toggle="modal" data-target="#update_dropdown_option_popup" data-field="<%= meta_field_info['system_name'] %>">
+                      Edit Dropdown options</a>
+                  <% end %>
+                  <div class="field-title">
+                    <label for="">Dropdown Options<sup>*</sup></label>
+                  </div>
+                  <% options = meta_field_info.present? && meta_field_info['field_configuration'].present? && meta_field_info['field_configuration']['dropdown_options'].present? ? meta_field_info['field_configuration']['dropdown_options'] : [] %>
+                  <% options = options.class.name == 'String' ? JSON.parse(options) : options %>
+                  <% options = options.class.name == 'Array' ? options.join(',') : options %>
+                  <%= ff.text_area :dropdown_options, disabled: meta_field_info['system_name'].present?, value: options.present? ? options : '', class: "form-control meta-custom-options", required: true, rows: 5 %>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-2 d-none">
+                <label>
+                  <%= ff.check_box :is_required, checked: meta_field_info.present? && meta_field_info['is_required'].present? && meta_field_info['is_required'].to_s.to_boolean? %>
+                  Required
+                </label>
+              </div>
+              <div class="col-md-2 d-none">
+                <label>
+                  <%= ff.check_box :is_public, checked: meta_field_info.present? && meta_field_info['is_public'].present? && meta_field_info['is_public'].to_s.to_boolean? %>
+                  Public
+                </label>
+              </div>
+              <div class="col-md-3  <%= meta_field_info['is_default'].present? && meta_field_info['is_default'].to_s.to_boolean? ? 'd-none' : '' %>">
+                <label>
+                  <%= ff.check_box :is_repeatable, checked: meta_field_info.present? && meta_field_info['is_repeatable'].present? && meta_field_info['is_repeatable'].to_s.to_boolean? %>
+                  Repeatable
+                </label>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-default add-custom-fields">Save changes</button>
+          <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        if ($('#custom_fields_field_type').val() != 'dropdown') {
+            $('.meta-options-div').hide()
+            $('.meta-custom-options').prop('required', false)
+        }
+    });
+</script>

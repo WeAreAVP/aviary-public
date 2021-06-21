@@ -66,66 +66,79 @@ module Aviary::SolrIndexer
   def description_values_fetch
     self.description_values_solr = {}
     self.custom_description_solr = {}
+    @org_field_manager = Aviary::FieldManagement::OrganizationFieldManager.new
+    @resource_fields_settings = @org_field_manager.organization_field_settings(collection.organization, nil, 'resource_fields')
+    @collection_field_manager = Aviary::FieldManagement::CollectionFieldManager.new
+    @resource_fields = @collection_field_manager.collection_resource_field_settings(collection, 'resource_fields')
     begin
       resource_values = all_fields
     rescue
       resource_values = []
     end
+    resource_values = resource_description_value.resource_field_values if resource_description_value.present?
     return unless resource_values.present?
-    resource_values['CollectionResource'].each do |res|
-      next if !res['values'].empty? && res['values'][0]['value'] == '' && res['values'][0]['vocab_value'] == ''
-      field_name = res['field'].system_name
-
-      if res['field'].is_custom
-        field_name = Aviary::SolrIndexer.define_custom_field_system_name(field_name)
+    resource_values.each_with_index do |(system_name, single_collection_field), _index|
+      next if single_collection_field['values'].present? && !single_collection_field['values'].empty? && single_collection_field['values'][0]['value'] == '' && single_collection_field['values'][0]['vocab_value'] == ''
+      field_name = system_name
+      current_field_settings = @resource_fields_settings[system_name]
+      begin
+        field_name = Aviary::SolrIndexer.define_custom_field_system_name(field_name) unless current_field_settings['is_default'].to_s.to_boolean?
+      rescue StandardError => ex
+        Rails.logger.error ex
+        next
       end
-
       unless description_values_solr.key?(field_name)
-        description_values_solr[field_name] = [] unless res['field'].is_custom
-        description_values_solr["#{field_name}_search"] = [] unless res['field'].is_custom
+        description_values_solr[field_name] = [] if current_field_settings['is_default'].to_s.to_boolean?
+        description_values_solr["#{field_name}_search"] = [] if current_field_settings['is_default'].to_s.to_boolean?
       end
 
-      res['values'].each do |val|
-        vocab = ''
-        if val['vocab_value'].present? || val['value'].present?
-          value = val['value'].to_s
-          value = languages_array_simple[0][value] if res['field'].system_name == 'language' && languages_array_simple[0][value].present?
-          value = ActionController::Base.helpers.strip_tags(value)
-          value_with_vocab = value
-          if res['field'].is_vocabulary
-            vocab = val['vocab_value']
-            value_with_vocab = vocab.to_s.present? ? vocab.to_s + ' :: ' + value.to_s : value.to_s
-          end
-          if field_name.include?('custom_field_values') || res['field'].is_custom
-            custom_description_solr[field_name] ||= {}
-            custom_description_solr[field_name]['value'] ||= []
-            custom_description_solr[field_name]['type'] = res['field'].fetch_type
-            custom_description_solr[field_name]['value'] << value_with_vocab
-          elsif res['field'].system_name == 'coverage'
-            description_values_solr["#{field_name}_search"] << value_with_vocab
-          elsif res['field'].system_name == 'duration'
-            description_values_solr[field_name] << value
-            value = ((value.present? && !value.empty? ? value : '00:00:00').split(':').map(&:to_i).inject(0) { |a, b| a * 60 + b }.to_f / 60).round(2)
-            description_values_solr["#{field_name}_search"] << value
-          else
-            description_values_solr["#{field_name}_search"] << if res['field'].system_name == 'date'
-                                                                 Aviary::SolrIndexer.date_handler(value)
-                                                               else
-                                                                 value_with_vocab
-                                                               end
+      if single_collection_field.present? && single_collection_field['values'].present?
+        single_collection_field['values'].each do |val|
+          vocab = ''
+          next if val.class.name != 'Hash'
+          if val['vocab_value'].present? || val['value'].present?
+            value = val['value'].to_s
+            value = languages_array_simple[0][value] if system_name == 'language' && languages_array_simple[0][value].present?
+            value = ActionController::Base.helpers.strip_tags(value)
+            value_with_vocab = value
 
-          end
-          begin
-            description_values_solr[field_name] ||= []
-            description_values_solr[field_name] << unless res['field'].system_name == 'duration'
-                                                     value_with_vocab
-                                                   end
-          rescue StandardError => e
-            puts e
-          end
+            if current_field_settings['is_vocabulary']
+              vocab = val['vocab_value']
+              value_with_vocab = vocab.to_s.present? ? vocab.to_s + ' :: ' + value.to_s : value.to_s
+            end
 
-          description_values_solr['all_vocabs'] = [] unless description_values_solr['all_vocabs'].present?
-          description_values_solr['all_vocabs'] << vocab if vocab.present? && !description_values_solr['all_vocabs'].include?(vocab)
+            if field_name.include?('custom_field_values') || !current_field_settings['is_default'].to_s.to_boolean?
+              custom_description_solr[field_name] ||= {}
+              custom_description_solr[field_name]['value'] ||= []
+              custom_description_solr[field_name]['type'] = single_collection_field['field_type']
+              custom_description_solr[field_name]['value'] << value_with_vocab
+              description_values_solr['custom_field_values_search'] ||= []
+              description_values_solr['custom_field_values_search'] << value_with_vocab
+            elsif system_name == 'coverage'
+              description_values_solr["#{field_name}_search"] << value_with_vocab
+            elsif system_name == 'duration'
+              description_values_solr[field_name] << value
+              value = ((value.present? && !value.empty? ? value : '00:00:00').split(':').map(&:to_i).inject(0) { |a, b| a * 60 + b }.to_f / 60).round(2)
+              description_values_solr["#{field_name}_search"] << value
+            else
+              description_values_solr["#{field_name}_search"] << if system_name == 'date'
+                                                                   Aviary::SolrIndexer.date_handler(value)
+                                                                 else
+                                                                   value_with_vocab
+                                                                 end
+            end
+            begin
+              description_values_solr[field_name] ||= []
+              description_values_solr[field_name] << unless system_name == 'duration'
+                                                       value_with_vocab
+                                                     end
+            rescue StandardError => e
+              puts e
+            end
+
+            description_values_solr['all_vocabs'] = [] unless description_values_solr['all_vocabs'].present?
+            description_values_solr['all_vocabs'] << vocab if vocab.present? && !description_values_solr['all_vocabs'].include?(vocab)
+          end
         end
       end
     end

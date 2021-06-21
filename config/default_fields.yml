@@ -1,0 +1,1068 @@
+fields:
+  resource_file:
+
+  resource:
+    id:
+      label: 'Aviary Resource ID'
+      system_name: id_ss
+      field_type: text
+      is_required: false
+      is_public: false
+      is_default: true
+      is_vocabulary: false
+      vocabulary: []
+      help_text: null
+      is_repeatable: true
+      field_configuration: { special_purpose: true, visible_at: 'resource_listing,resource_search' }
+      field_level: resource
+      sort_order: 18
+      description_display: false
+      resource_table_display: true
+      resource_table_search: true
+      solr_display_column: 'id_ss'
+      solr_search_column: 'id_ss'
+      resource_table_sort_order: 0
+      search_display: false
+      search_sort_order: 18
+    title:
+      label: 'Title'
+      system_name: title_ss
+      field_type: text
+      is_required: false
+      is_public: false
+      is_default: true
+      is_vocabulary: false
+      vocabulary: []
+      help_text: null
+      is_repeatable: true
+      field_configuration: { special_purpose: true, visible_at: 'resource_listing,resource_search' }
+      field_level: resource
+      sort_order: 0
+      description_display: false
+      resource_table_display: true
+      resource_table_search: true
+      solr_display_column: 'title_ss'
+      solr_search_column: 'title_ss'
+      resource_table_sort_order: 1
+      search_display: false
+      search_sort_order: 1
+    preferred_citation:
+      label: 'Preferred Citation'
+      default_name: 'Preferred Citation'
+      system_name: preferred_citation
+      field_type: editor
+      is_required: false
+      is_public: false
+      is_default: true
+      is_vocabulary: false
+      vocabulary: []
+      help_text: null
+      is_repeatable: true
+      field_configuration: { }
+      field_level: resource
+      sort_order: 1
+      description_display: true
+      resource_table_display: true
+      resource_table_search: true
+      solr_display_column: 'description_preferred_citation_ss'
+      solr_search_column: 'description_preferred_citation_search_texts'
+      resource_table_sort_order: 27
+      search_display: ture
+      search_sort_order: 2
+    source_metadata_uri:
+      label: 'Source Metadata URI'
+      default_name: 'Source Metadata URI'
+      system_name: source_metadata_uri
+      field_type: text
+      is_required: false
+      is_public: false
+      is_default: true
+      is_vocabulary: false
+      vocabulary: []
+      help_text: null
+      is_repeatable: true
+      field_configuration: { }
+      field_level: resource
+      sort_order: 2
+      description_display: true
+      resource_table_display: true
+      resource_table_search: true
+      solr_display_column: 'description_source_metadata_uri_ss'
+      solr_search_column: 'description_source_metadata_uri_search_texts'
+      resource_table_sort_order: 2
+      search_display: ture
+      search_sort_order: 3
+    duration:
+      label: 'Duration'
+      default_name: 'Duration'
+      system_name: duration
+      field_type: text
+      is_required: false
+      is_public: false
+      is_default: true
+      is_vocabulary: false
+      vocabulary: []
+      help_text: null
+      is_repeatable: false
+      field_configuration: { }
+      field_level: resource
+      sort_order: 3
+      description_display: true
+      resource_table_display: true
+      resource_table_search: true
+      solr_display_column: 'description_duration_ss'
+      solr_search_column: ''
+      resource_table_sort_order: 3
+      search_display: ture
+      search_sort_order: 4
+    publisher:
+      label: 'Publisher'
+      default_name: 'Publisher'
+      system_name: publisher
+      field_type: text
+      is_required: false
+      is_public: false
+      is_default: true
+      is_vocabulary: false
+      vocabulary: []
+      help_text: null
+      is_repeatable: true
+      field_configuration: { }
+      field_level: resource
+      sort_order: 4
+      description_display: true
+      resource_table_display: true
+      resource_table_search: true
+      solr_display_column: 'description_publisher_sms'
+      solr_search_column: 'description_publisher_search_texts'
+      resource_table_sort_order: 4
+      search_display: ture
+      search_sort_order: 4
+    rights_statement:
+      label: 'Rights Statement'
+      default_name: 'Rights Statement'
+      system_name: rights_statement
+      field_type: editor
+      is_required: false
+      is_public: false
+      is_default: true
+      is_vocabulary: false
+      vocabulary: []
+      help_text: null
+      is_repeatable: true
+      field_configuration: { }
+      field_level: resource
+      sort_order: 5
+      description_display: true
+      resource_table_display: true
+      resource_table_search: true
+      solr_display_column: 'description_rights_statement_sms'
+      solr_search_column: 'description_rights_statement_search_texts'
+      resource_table_sort_order: 5
+      search_display: ture
+      search_sort_order: 5
+    source:
+      label: 'Source'
+      default_name: 'Source'
+      system_name: source
+      field_type: text
+      is_required: false
+      is_public: false
+      is_default: true
+      is_vocabulary: false
+      vocabulary: []
+      help_text: null
+      is_repeatable: true
+      field_configuration: { }
+      field_level: resource
+      sort_order: 6
+      description_display: true
+      resource_table_display: true
+      resource_table_search: true
+      solr_display_column: 'description_source_sms'
+      solr_search_column: 'description_source_search_texts'
+      resource_table_sort_order: 6
+      search_display: ture
+      search_sort_order: 6
+    agent:
+      label: 'Agent'
+      default_name: 'Agent'
+      system_name: agent
+      field_type: text
+      is_required: false
+      is_public: false
+      is_default: true
+      is_vocabulary: true
+      vocabulary: [ "Abridger",
+                    "Actor",
+                    "Adapter",
+                    "Addressee",
+                    "Analyst",
+                    "Animator",
+                    "Annotator",
+                    "Appellant",
+                    "Appellee",
+                    "Applicant",
+                    "Architect",
+                    "Arranger",
+                    "Art copyist",
+                    "Art director",
+                    "Artist",
+                    "Artistic director",
+                    "Assignee",
+                    "Associated name",
+                    "Attributed name",
+                    "Auctioneer",
+                    "Author",
+                    "Author in quotations or text abstracts",
+                    "Author of afterword, colophon, etc.",
+                    "Author of dialog",
+                    "Author of introduction, etc.",
+                    "Autographer",
+                    "Bibliographic antecedent",
+                    "Binder",
+                    "Binding designer",
+                    "Blurb writer",
+                    "Book designer",
+                    "Book producer",
+                    "Bookjacket designer",
+                    "Bookplate designer",
+                    "Bookseller",
+                    "Braille embosser",
+                    "Broadcaster",
+                    "Calligrapher",
+                    "Cartographer",
+                    "Caster",
+                    "Censor",
+                    "Choreographer",
+                    "Cinematographer",
+                    "Client",
+                    "Collection registrar",
+                    "Collector",
+                    "Collotyper",
+                    "Colorist",
+                    "Commentator",
+                    "Commentator for written text",
+                    "Compiler",
+                    "Complainant",
+                    "Complainant-appellant",
+                    "Complainant-appellee",
+                    "Composer",
+                    "Compositor",
+                    "Conceptor",
+                    "Conductor",
+                    "Conservator",
+                    "Consultant",
+                    "Consultant to a project",
+                    "Contestant",
+                    "Contestant-appellant",
+                    "Contestant-appellee",
+                    "Contestee",
+                    "Contestee-appellant",
+                    "Contestee-appellee",
+                    "Contractor",
+                    "Contributor",
+                    "Copyright claimant",
+                    "Copyright holder",
+                    "Corrector",
+                    "Correspondent",
+                    "Costume designer",
+                    "Court governed",
+                    "Court reporter",
+                    "Cover designer",
+                    "Creator",
+                    "Curator",
+                    "Dancer",
+                    "Data contributor",
+                    "Data manager",
+                    "Dedicatee",
+                    "Dedicator",
+                    "Defendant",
+                    "Defendant-appellant",
+                    "Defendant-appellee",
+                    "Degree granting institution",
+                    "Degree supervisor",
+                    "Delineator",
+                    "Depicted",
+                    "Depositor",
+                    "Designer",
+                    "Director",
+                    "Dissertant",
+                    "Distribution place",
+                    "Distributor",
+                    "Donor",
+                    "Draftsman",
+                    "Dubious author",
+                    "Editor",
+                    "Editor of compilation",
+                    "Editor of moving image work",
+                    "Electrician",
+                    "Electrotyper",
+                    "Enacting jurisdiction",
+                    "Engineer",
+                    "Engraver",
+                    "Etcher",
+                    "Event place",
+                    "Expert",
+                    "Facsimilist",
+                    "Field director",
+                    "Film director",
+                    "Film distributor",
+                    "Film editor",
+                    "Film producer",
+                    "Filmmaker",
+                    "First party",
+                    "Forger",
+                    "Former owner",
+                    "Funder",
+                    "Geographic information specialist",
+                    "Honoree",
+                    "Host",
+                    "Host institution",
+                    "Illuminator",
+                    "Illustrator",
+                    "Inscriber",
+                    "Instrumentalist",
+                    "Interviewee",
+                    "Interviewer",
+                    "Inventor",
+                    "Issuing body",
+                    "Judge",
+                    "Jurisdiction governed",
+                    "Laboratory",
+                    "Laboratory director",
+                    "Landscape architect",
+                    "Lead",
+                    "Lender",
+                    "Libelant",
+                    "Libelant-appellant",
+                    "Libelant-appellee",
+                    "Libelee",
+                    "Libelee-appellant",
+                    "Libelee-appellee",
+                    "Librettist",
+                    "Licensee",
+                    "Licensor",
+                    "Lighting designer",
+                    "Lithographer",
+                    "Lyricist",
+                    "Manufacture place",
+                    "Manufacturer",
+                    "Marbler",
+                    "Markup editor",
+                    "Medium",
+                    "Metadata contact",
+                    "Metal-engraver",
+                    "Minute taker",
+                    "Moderator",
+                    "Monitor",
+                    "Music copyist",
+                    "Musical director",
+                    "Musician",
+                    "Narrator",
+                    "Onscreen presenter",
+                    "Opponent",
+                    "Organizer",
+                    "Originator",
+                    "Other",
+                    "Owner",
+                    "Panelist",
+                    "Papermaker",
+                    "Patent applicant",
+                    "Patent holder",
+                    "Patron",
+                    "Performer",
+                    "Permitting agency",
+                    "Photographer",
+                    "Plaintiff",
+                    "Plaintiff-appellant",
+                    "Plaintiff-appellee",
+                    "Platemaker",
+                    "Praeses",
+                    "Presenter",
+                    "Printer",
+                    "Printer of plates",
+                    "Printmaker",
+                    "Process contact",
+                    "Producer",
+                    "Production company",
+                    "Production designer",
+                    "Production manager",
+                    "Production personnel",
+                    "Production place",
+                    "Programmer",
+                    "Project director",
+                    "Proofreader",
+                    "Provider",
+                    "Publication place",
+                    "Publisher",
+                    "Publishing director",
+                    "Puppeteer",
+                    "Radio director",
+                    "Radio producer",
+                    "Recording engineer",
+                    "Recordist",
+                    "Redaktor",
+                    "Renderer",
+                    "Reporter",
+                    "Repository",
+                    "Research team head",
+                    "Research team member",
+                    "Researcher",
+                    "Respondent",
+                    "Respondent-appellant",
+                    "Respondent-appellee",
+                    "Responsible party",
+                    "Restager",
+                    "Restorationist",
+                    "Reviewer",
+                    "Rubricator",
+                    "Scenarist",
+                    "Scientific advisor",
+                    "Screenwriter",
+                    "Scribe",
+                    "Sculptor",
+                    "Second party",
+                    "Secretary",
+                    "Seller",
+                    "Set designer",
+                    "Setting",
+                    "Signer",
+                    "Singer",
+                    "Sound designer",
+                    "Speaker",
+                    "Sponsor",
+                    "Stage director",
+                    "Stage manager",
+                    "Standards body",
+                    "Stereotyper",
+                    "Storyteller",
+                    "Supporting host",
+                    "Surveyor",
+                    "Teacher",
+                    "Technical director",
+                    "Television director",
+                    "Television producer",
+                    "Thesis advisor",
+                    "Transcriber",
+                    "Translator",
+                    "Type designer",
+                    "Typographer",
+                    "University place",
+                    "Videographer",
+                    "Voice actor",
+                    "Witness",
+                    "Wood engraver",
+                    "Woodcutter",
+                    "Writer of accompanying material",
+                    "Writer of added commentary",
+                    "Writer of added lyrics",
+                    "Writer of added text",
+                    "Writer of introduction",
+                    "Writer of preface",
+                    "Writer of supplementary textual content",
+                    "creator",
+                    "producer" ]
+      help_text: null
+      is_repeatable: true
+      field_configuration: { }
+      field_level: resource
+      sort_order: 7
+      description_display: true
+      resource_table_display: true
+      resource_table_search: true
+      solr_display_column: 'description_agent_sms'
+      solr_search_column: 'description_agent_search_texts'
+      resource_table_sort_order: 7
+      search_display: ture
+      search_sort_order: 7
+    date:
+      label: 'Date'
+      default_name: 'Date'
+      system_name: date
+      field_type: date
+      is_required: false
+      is_public: false
+      is_default: true
+      is_vocabulary: true
+      vocabulary: [ "issued", "created", "captured", "valid", "modified", "other", "Created" ]
+      help_text: null
+      is_repeatable: true
+      field_configuration: { }
+      field_level: resource
+      sort_order: 8
+      description_display: true
+      resource_table_display: true
+      resource_table_search: true
+      solr_display_column: 'description_date_sms'
+      solr_search_column: ''
+      resource_table_sort_order: 8
+      search_display: ture
+      search_sort_order: 8
+    coverage:
+      label: 'Coverage'
+      default_name: 'Coverage'
+      system_name: coverage
+      field_type: text
+      is_required: false
+      is_public: false
+      is_default: true
+      is_vocabulary: true
+      vocabulary: [ "spatial", "temporal" ]
+      help_text: null
+      is_repeatable: true
+      field_configuration: { }
+      field_level: resource
+      sort_order: 9
+      description_display: true
+      resource_table_display: true
+      resource_table_search: true
+      solr_display_column: 'description_coverage_sms'
+      solr_search_column: 'description_coverage_search_texts'
+      resource_table_sort_order: 9
+      search_display: ture
+      search_sort_order: 9
+    language:
+      label: 'Language'
+      default_name: 'Language'
+      system_name: Language
+      field_type: text
+      is_required: false
+      is_public: false
+      is_default: true
+      is_vocabulary: true
+      vocabulary: [ "primary", "secondary", "tertiary", "other" ]
+      help_text: null
+      is_repeatable: true
+      field_configuration: { }
+      field_level: resource
+      sort_order: 10
+      description_display: true
+      resource_table_display: true
+      resource_table_search: true
+      solr_display_column: 'description_language_sms'
+      solr_search_column: 'description_language_search_texts'
+      resource_table_sort_order: 10
+      search_display: ture
+      search_sort_order: 10
+    description:
+      label: 'Description'
+      default_name: 'Description'
+      system_name: description
+      field_type: editor
+      is_required: false
+      is_public: false
+      is_default: true
+      is_vocabulary: true
+      vocabulary: [ "general", "citation", "summary", "scope content", "supplement", "other", "abstract", "Summary" ]
+      help_text: null
+      is_repeatable: true
+      field_configuration: { }
+      field_level: resource
+      sort_order: 11
+      description_display: true
+      resource_table_display: true
+      resource_table_search: true
+      solr_display_column: 'description_description_sms'
+      solr_search_column: 'description_description_search_texts'
+      resource_table_sort_order: 11
+      search_display: ture
+      search_sort_order: 11
+    format:
+      label: 'Format'
+      default_name: 'Format'
+      system_name: format
+      field_type: text
+      is_required: false
+      is_public: false
+      is_default: true
+      is_vocabulary: false
+      vocabulary: []
+      help_text: null
+      is_repeatable: true
+      field_configuration: { }
+      field_level: resource
+      sort_order: 12
+      description_display: true
+      resource_table_display: true
+      resource_table_search: true
+      solr_display_column: 'description_format_sms'
+      solr_search_column: 'description_format_search_texts'
+      resource_table_sort_order: 12
+      search_display: ture
+      search_sort_order: 12
+    identifier:
+      label: 'Identifier'
+      default_name: 'Identifier'
+      system_name: identifier
+      field_type: text
+      is_required: false
+      is_public: false
+      is_default: true
+      is_vocabulary: true
+      vocabulary: [ "doi (Digital Objects Identifier)",
+                    "hdl (Handle)",
+                    "isbn (International Standard Book Number)",
+                    "ismn (International Standard Music Number)",
+                    "isrc (International Standard Recording Code)",
+                    "issn (International Standard Serials Number)",
+                    "issue number",
+                    "istc (International Standard Text Code)",
+                    "lccn (Library of Congress Control Number)",
+                    "local",
+                    "matrix number",
+                    "music plate",
+                    "music publisher",
+                    "sici (Serial Item and Contribution Identifier)",
+                    "stock number",
+                    "upc (Universal Product Code)",
+                    "uri (Uniform Resource Identifier)",
+                    "videorecording identifier",
+                    "other",
+                    "accession number",
+                    "cms record id" ]
+      help_text: null
+      is_repeatable: true
+      field_configuration: { }
+      field_level: resource
+      sort_order: 13
+      description_display: true
+      resource_table_display: true
+      resource_table_search: true
+      solr_display_column: 'description_identifier_sms'
+      solr_search_column: 'description_identifier_search_texts'
+      resource_table_sort_order: 13
+      search_display: ture
+      search_sort_order: 13
+    relation:
+      label: 'Relation'
+      default_name: 'Relation'
+      system_name: relation
+      field_type: text
+      is_required: false
+      is_public: false
+      is_default: true
+      is_vocabulary: true
+      vocabulary: [ "conforms to", "has format", "has part", "has version", "is format of", "is part of", "is referenced by", "is replaced by", "is required by", "is version of", "other" ]
+      help_text: null
+      is_repeatable: true
+      field_configuration: { }
+      field_level: resource
+      sort_order: 14
+      description_display: true
+      resource_table_display: true
+      resource_table_search: true
+      solr_display_column: 'description_relation_sms'
+      solr_search_column: 'description_relation_search_texts'
+      resource_table_sort_order: 14
+      search_display: ture
+      search_sort_order: 14
+    subject:
+      label: 'Subject'
+      default_name: 'Subject'
+      system_name: subject
+      field_type: text
+      is_required: false
+      is_public: false
+      is_default: true
+      is_vocabulary: true
+      vocabulary: ["personal name", "corporate name", "meeting name", "named event", "chronological term", "topical term", "geographic term", "uncontrolled", "genre/form", "other", "local term", "geographic"]
+      help_text: null
+      is_repeatable: true
+      field_configuration: { }
+      field_level: resource
+      sort_order: 15
+      description_display: true
+      resource_table_display: true
+      resource_table_search: true
+      solr_display_column: 'description_subject_sms'
+      solr_search_column: 'description_subject_search_texts'
+      resource_table_sort_order: 15
+      search_display: ture
+      search_sort_order: 15
+    keyword:
+      label: 'Keyword'
+      default_name: 'Keyword'
+      system_name: keyword
+      field_type: text
+      is_required: false
+      is_public: false
+      is_default: true
+      is_vocabulary: false
+      vocabulary: []
+      help_text: null
+      is_repeatable: true
+      field_configuration: { }
+      field_level: resource
+      sort_order: 16
+      description_display: true
+      resource_table_display: true
+      resource_table_search: true
+      solr_display_column: 'description_keyword_sms'
+      solr_search_column: 'description_keyword_search_texts'
+      resource_table_sort_order: 16
+      search_display: ture
+      search_sort_order: 16
+    type:
+      label: 'Type'
+      default_name: 'Type'
+      system_name: type
+      field_type: text
+      is_required: false
+      is_public: false
+      is_default: true
+      is_vocabulary: false
+      vocabulary: []
+      help_text: null
+      is_repeatable: true
+      field_configuration: { }
+      field_level: resource
+      sort_order: 17
+      description_display: true
+      resource_table_display: true
+      resource_table_search: true
+      solr_display_column: 'description_type_sms'
+      solr_search_column: 'description_type_search_texts'
+      resource_table_sort_order: 17
+      search_display: ture
+      search_sort_order: 17
+    resource_file_count:
+      label: 'Resource File Count'
+      system_name: resource_file_count_ss
+      field_type: text
+      is_required: false
+      is_public: false
+      is_default: true
+      is_vocabulary: false
+      vocabulary: []
+      help_text: null
+      is_repeatable: true
+      field_configuration: { special_purpose: true, visible_at: 'resource_listing' }
+      field_level: resource
+      sort_order: 20
+      description_display: false
+      resource_table_display: true
+      resource_table_search: false
+      solr_display_column: 'resource_file_count_ss'
+      solr_search_column: ''
+      resource_table_sort_order: 20
+      search_display: false
+      search_sort_order: 20
+    transcripts_count:
+      label: 'Transcripts Count'
+      system_name: transcripts_count_ss
+      field_type: text
+      is_required: false
+      is_public: false
+      is_default: true
+      is_vocabulary: false
+      vocabulary: []
+      help_text: null
+      is_repeatable: true
+      field_configuration: { special_purpose: true, visible_at: 'resource_listing' }
+      field_level: resource
+      sort_order: 21
+      description_display: false
+      resource_table_display: true
+      resource_table_search: false
+      solr_display_column: 'transcripts_count_ss'
+      solr_search_column: ''
+      resource_table_sort_order: 21
+      search_display: false
+      search_sort_order: 21
+    indexes_count:
+      label: 'Indexes Count'
+      system_name: indexes_count_ss
+      field_type: text
+      is_required: false
+      is_public: false
+      is_default: true
+      is_vocabulary: false
+      vocabulary: []
+      help_text: null
+      is_repeatable: true
+      field_configuration: { special_purpose: true, visible_at: 'resource_listing' }
+      field_level: resource
+      sort_order: 22
+      description_display: false
+      resource_table_display: true
+      resource_table_search: false
+      solr_display_column: 'indexes_count_ss'
+      solr_search_column: ''
+      resource_table_sort_order: 22
+      search_display: false
+      search_sort_order: 22
+    updated_at:
+      label: 'Updated At'
+      system_name: updated_at_ss
+      field_type: text
+      is_required: false
+      is_public: false
+      is_default: true
+      is_vocabulary: false
+      vocabulary: []
+      help_text: null
+      is_repeatable: true
+      field_configuration: { special_purpose: true, visible_at: 'resource_listing' }
+      field_level: resource
+      sort_order: 23
+      description_display: false
+      resource_table_display: true
+      resource_table_search: false
+      solr_display_column: 'updated_at_ss'
+      solr_search_column: ''
+      resource_table_sort_order: 23
+      search_display: false
+      search_sort_order: 23
+    access:
+      label: 'Access'
+      system_name: access_ss
+      field_type: text
+      is_required: false
+      is_public: false
+      is_default: true
+      is_vocabulary: false
+      vocabulary: []
+      help_text: null
+      is_repeatable: true
+      field_configuration: { special_purpose: true, visible_at: 'resource_listing' }
+      field_level: resource
+      sort_order: 24
+      description_display: false
+      resource_table_display: true
+      resource_table_search: false
+      solr_display_column: 'access_ss'
+      solr_search_column: ''
+      resource_table_sort_order: 24
+      search_display: false
+      search_sort_order: 24
+    custom_unique_identifier:
+      label: 'Custom Unique Identifier'
+      system_name: custom_unique_identifier_ss
+      field_type: text
+      is_required: false
+      is_public: false
+      is_default: true
+      is_vocabulary: false
+      vocabulary: []
+      help_text: null
+      is_repeatable: true
+      field_configuration: { special_purpose: true, visible_at: 'resource_listing,resource_search' }
+      field_level: resource
+      sort_order: 25
+      description_display: false
+      resource_table_display: true
+      resource_table_search: false
+      solr_display_column: 'custom_unique_identifier_ss'
+      solr_search_column: 'custom_unique_identifier_texts'
+      resource_table_sort_order: 25
+      search_display: false
+      search_sort_order: 25
+    supplemental_file_count:
+      label: 'Supplemental File Count'
+      system_name: supplemental_file_count_ss
+      field_type: text
+      is_required: false
+      is_public: false
+      is_default: true
+      is_vocabulary: false
+      vocabulary: []
+      help_text: null
+      is_repeatable: true
+      field_configuration: { special_purpose: true, visible_at: 'resource_listing' }
+      field_level: resource
+      sort_order: 26
+      description_display: false
+      resource_table_display: true
+      resource_table_search: false
+      solr_display_column: 'supplemental_file_count_ss'
+      solr_search_column: ''
+      resource_table_sort_order: 26
+      search_display: false
+      search_sort_order: 26
+    collection_title:
+      label: 'Collection Title'
+      system_name: collection_title
+      field_type: integer
+      is_required: false
+      is_public: false
+      is_default: true
+      is_vocabulary: false
+      vocabulary: []
+      help_text: null
+      is_repeatable: true
+      field_configuration: { special_purpose: true, visible_at: 'resource_listing,resource_search' }
+      field_level: resource
+      sort_order: 28
+      description_display: false
+      resource_table_display: true
+      resource_table_search: true
+      solr_display_column: 'collection_title'
+      solr_search_column: 'collection_title'
+      resource_table_sort_order: 28
+      search_display: true
+      search_sort_order: 0
+    has_transcript:
+      label: 'Has Transcript'
+      system_name: has_transcript
+      field_type: integer
+      is_required: false
+      is_public: false
+      is_default: true
+      is_vocabulary: false
+      vocabulary: []
+      help_text: null
+      is_repeatable: true
+      field_configuration: { special_purpose: true, visible_at: 'resource_listing,resource_search' }
+      field_level: resource
+      sort_order: 28
+      description_display: false
+      resource_table_display: true
+      resource_table_search: true
+      solr_display_column: 'has_transcript_ss'
+      solr_search_column: 'has_transcript_ss'
+      resource_table_sort_order: 28
+      search_display: true
+      search_sort_order: 28
+    has_index:
+      label: 'Has Index'
+      system_name: collection_title
+      field_type: integer
+      is_required: false
+      is_public: false
+      is_default: true
+      is_vocabulary: false
+      vocabulary: []
+      help_text: null
+      is_repeatable: true
+      field_configuration: { special_purpose: true, visible_at: 'resource_listing,resource_search' }
+      field_level: resource
+      sort_order: 28
+      description_display: false
+      resource_table_display: true
+      resource_table_search: true
+      solr_display_column: 'has_index_ss'
+      solr_search_column: 'has_index_ss'
+      resource_table_sort_order: 28
+      search_display: true
+      search_sort_order: 28
+  collection:
+    identifier:
+      label: 'Identifier'
+      default_name: 'Identifier'
+      system_name: identifier
+      field_type: text
+      is_required: false
+      is_public: false
+      is_default: true
+      is_vocabulary: false
+      tombstone: false
+      vocabulary: []
+      help_text: null
+      is_repeatable: true
+      field_configuration: { }
+      field_level: collection
+      sort_order: 1
+      display: true
+    creator:
+      label: 'Creator'
+      default_name: 'Creator'
+      system_name: creator
+      field_type: text
+      is_required: false
+      is_public: false
+      is_default: true
+      is_vocabulary: false
+      tombstone: false
+      vocabulary: []
+      help_text: null
+      is_repeatable: true
+      field_configuration: { }
+      field_level: collection
+      sort_order: 2
+      display: true
+    link:
+      label: 'Link'
+      default_name: 'Link'
+      system_name: link
+      field_type: editor
+      is_required: false
+      is_public: false
+      is_default: true
+      is_vocabulary: false
+      tombstone: false
+      vocabulary: []
+      help_text: null
+      is_repeatable: true
+      field_configuration: { }
+      field_level: collection
+      sort_order: 3
+      display: true
+    date_span:
+      label: 'date Span'
+      default_name: 'date Span'
+      system_name: date_span
+      field_type: text
+      is_required: false
+      is_public: false
+      is_default: true
+      is_vocabulary: false
+      tombstone: false
+      vocabulary: []
+      help_text: null
+      is_repeatable: true
+      field_configuration: { }
+      field_level: collection
+      sort_order: 4
+      display: true
+    extent:
+      label: 'Extent'
+      default_name: 'Extent'
+      system_name: extent
+      field_type: text
+      is_required: false
+      is_public: false
+      is_default: true
+      is_vocabulary: false
+      tombstone: false
+      vocabulary: []
+      help_text: null
+      is_repeatable: true
+      field_configuration: { }
+      field_level: collection
+      sort_order: 5
+      display: true
+    language:
+      label: 'Language'
+      default_name: 'Language'
+      system_name: language
+      field_type: text
+      is_required: false
+      is_public: false
+      is_default: true
+      is_vocabulary: false
+      tombstone: false
+      vocabulary: []
+      help_text: null
+      is_repeatable: true
+      field_configuration: { }
+      field_level: collection
+      sort_order: 6
+      display: true
+    conditions_governing_access:
+      label: 'Conditions Governing Access'
+      default_name: 'Conditions Governing Access'
+      system_name: conditions_governing_access
+      field_type: editor
+      is_required: false
+      is_public: false
+      is_default: true
+      is_vocabulary: false
+      tombstone: false
+      vocabulary: []
+      help_text: null
+      is_repeatable: true
+      field_configuration: { }
+      field_level: collection
+      sort_order: 7
+      display: true

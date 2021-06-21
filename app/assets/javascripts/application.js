@@ -371,7 +371,7 @@ function init_tinymce_for_element(selector, custom_config) {
 
 
 function selectizeInit(element){
-    return $(element).not('.dataTables_length select').selectize({
+    return $(element).not('.dataTables_length select, .dont-apply-selectize').selectize({
         openOnFocus: false,
         onInitialize: function () {
             var that = this;
@@ -444,12 +444,9 @@ function mobileLayoutEvents() {
     });
 }
 
-
 $(document).on('turbolinks:load', function () {
-    $('select').not('.dataTables_length select').selectize();
+    $('select').not('.dataTables_length select, .dont-apply-selectize').selectize();
     $(".transcript-dl").mCustomScrollbar();
-
-
 });
 
 $(window).resize(function () {
@@ -577,7 +574,7 @@ $(function () {
     $('#signupmodal').on('shown.bs.modal', function () {
         $('#password_help').tooltip();
     });
-    $('select').not('.dataTables_length select').selectize();
+    $('select').not('.dataTables_length select, .dont-apply-selectize').selectize();
     $('.sign_up_link').click(function (e) {
         $('#signinmodal').modal('hide');
         $('#access_denied_popup').modal('hide');

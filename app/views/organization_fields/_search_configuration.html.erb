@@ -1,0 +1,70 @@
+<table class="table table-hover border-0">
+  <thead class="border-top-0">
+  <tr class="">
+    <th style="width: 60% !important;"><h2>Field Name</h2></th>
+    <th style="width: 30% !important;"><h2>Available in Collection</h2></th>
+    <th style="width: 10% !important; "><h2>Status</h2></th>
+  </tr>
+  </thead>
+</table>
+<table class="table border-0" id="sort_facet_fields_table">
+  <tbody id='search_facet_org' data-type="resource_fields" data-option='search_facet_org' data-order-custom="search_sort_order" data-status-columns="search_display">
+  <% if @resource_columns_search.present? %>
+    <% @resource_columns_search.each_with_index do |(system_name, single_collection_field), _index| %>
+      <% puts single_collection_field %>
+      <% Rails.logger.error '##########################################################################################' %>
+      <% Rails.logger.error single_collection_field %>
+      <% next if single_collection_field['field_configuration'].present? && single_collection_field['field_configuration']['special_purpose'].present? && single_collection_field['field_configuration']['special_purpose'].to_s.to_boolean? && !%w[collection_title has_transcript has_index access].include?(system_name) %>
+      <% label = single_collection_field['label'] %>
+      <% is_default_field = single_collection_field['is_default'] %>
+      <% type = single_collection_field['field_type'] %>
+      <tr class="facet_field <%= single_collection_field['system_name'] %>" data-field="<%= system_name %>" data-field-type="<%= type %>" data-label="<%= label %>" data-collection="<%= '' %>" data-is-default-field="<%= is_default_field %>">
+        <td width="60%">
+          <i class="fa fa-ellipsis-v handle mx-2" style="color: lightgrey;cursor: move;"></i>
+          <span data-toggle="tooltip" data-placement="top" title="" aria-hidden="true" data-original-title="<%= single_collection_field['help_text'] %>">
+                                                <%= label %>
+                                                  </span>
+          <% if is_default_field %>
+            <i class="fa fa-asterisk color-grey font-size-8px" data-toggle="tooltip" data-placement="top" title="" aria-hidden="true" data-original-title="This is a default field of collection."></i>
+          <% end %>
+          <% if single_collection_field['default_name'].present? && single_collection_field['default_name'] != single_collection_field['label'] %>
+            <small class="mt-2 form-text font-size-12px text-muted d-inline">
+              <%= single_collection_field['default_name'] %>
+            </small>
+          <% end %>
+        </td>
+        <td width="30%">
+          <% if @part_of_collections[system_name].present? %>
+            <a class="btn-sm btn-default ml-1  text-white ml-1  text-white list_of_collections_action" href='javascript:void(0)'>Collection List</a>
+            <div class="list_of_collections  d-none">
+              <% @part_of_collections[system_name].each_with_index do |(_id, single_member), _index| %>
+                <p class="ml-3 text-left">
+                  <% if params['config_type'] == 'flock' %>
+                    <strong class="mt-4 mb-4"><%= single_member['organization_name'] %></strong>
+                    <br/>
+                  <% end %>
+                  <%= single_member['collections'].present? ? single_member['collections'].sort.join(' <br/> ').html_safe : 'none' %>
+                </p>
+              <% end %>
+            </div>
+          <% else %>
+            <p class="ml-3">All</p>
+          <% end %>
+        </td>
+        <td width="10%" class="ml-2">
+          <label class="toggle-switch ml-3">
+            <% global_status = false %>
+            <% if @resource_fields[system_name].present? && @resource_fields[system_name]['description_display'].present? %>
+              <% global_status = @resource_fields[system_name]['description_display'].to_s.to_boolean? %>
+              <% global_status = true if @resource_fields[system_name]['field_configuration'].present? && @resource_fields[system_name]['field_configuration']['special_purpose'].present? && boolean_value(@resource_fields[system_name]['field_configuration']['special_purpose']) %>
+            <% end %>
+            <% global_status = true if %w[collection_title has_transcript has_index access].include?(system_name) %>
+            <%= check_box_tag 'search_display' + single_collection_field['system_name'], single_collection_field['search_display'], single_collection_field['search_display'].to_s.to_boolean?, disabled: !global_status, class: "search_display toggle-switch__input template-data-is-facetable template-data-field-is-facetable" %>
+            <span class="toggle-switch__slider"></span>
+          </label>
+        </td>
+      </tr>
+    <% end %>
+  <% end %>
+  </tbody>
+</table>
