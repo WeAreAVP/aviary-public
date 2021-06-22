@@ -52,6 +52,8 @@ module Aviary
         next unless cc_hash.present?
         create_transcript(resource_file, cc_hash, language)
       end
+    rescue StandardError
+      'Failed to process'
     end
 
     def cc_text(video_id, language_code, resource_file, url = nil)
