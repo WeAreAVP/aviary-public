@@ -16,6 +16,7 @@ class IiifController < ApplicationController
       iiif_hash['id'] = iiif_manifest_url(@collection_resource.noid)
       iiif_hash['type'] = 'Manifest'
       iiif_hash['label'] = { en: [@collection_resource.title] }
+      iiif_hash['logo'] = organization.logo_image.url
       iiif_hash['metadata'] = []
       descriptions = []
       right_statements = []
@@ -91,22 +92,28 @@ class IiifController < ApplicationController
         content_type = media_file.thumbnail.try(:content_type).present? ? media_file.thumbnail.content_type : 'image/png'
         media_url = collection_collection_resource_details_url(@collection_resource.collection, @collection_resource, media_file)
         count = index + 1
-
+        media_type = media_file.media_content_type.include?('video') ? 'Video' : 'Audio'
+        width = 640
+        height = @collection_resource.collection.is_audio_only && media_type == 'Audio' ? 40 : 360
         iiif_hash['items'] << {
           id: media_url,
           type: 'Canvas',
           label: { en: ["Media File #{count} of #{media_files.count}"] },
           duration: media_file.duration.to_f,
+          width: width,
+          height: height,
           thumbnail: [{ id: media_file.thumbnail_image, type: 'Image', format: content_type }],
           items: [{ id: media_url + '/content/1', type: 'AnnotationPage', items: [{
             id: media_url + "/content/#{count}/annotation/1",
             type: 'Annotation',
-            motivation: ['painting'],
+            motivation: 'painting',
             body: {
               id: media_file.media_direct_url,
-              type: media_file.media_content_type.include?('video') ? 'Video' : 'Audio',
+              type: media_type,
               format: media_file.media_content_type,
-              duration: media_file.duration.to_f
+              duration: media_file.duration.to_f,
+              width: width,
+              height: height
             },
             target: media_url
           }] }],
@@ -135,16 +142,13 @@ class IiifController < ApplicationController
         points << {
           id: "#{media_url}/transcript/#{transcript.id}/annotation/#{annotation_counter}",
           type: 'Annotation',
-          motivation: %w[supplementing transcribing],
+          motivation: 'supplementing',
           body: {
             type: 'TextualBody',
             value: text,
             format: 'text/plain'
           },
-          target: {
-            source: "#{media_url}##{point.start_time.to_f},#{point.end_time.to_f}",
-            # selector: { type: 'RangeSelector', startSelector: { type: 'PointSelector', t: point.start_time.to_f }, endSelector: { type: 'PointSelector', t: point.end_time.to_f } }
-          }
+          target: "#{media_url}##{point.start_time.to_f},#{point.end_time.to_f}"
         }
         annotation_counter += 1
       end
@@ -180,11 +184,9 @@ class IiifController < ApplicationController
           points << {
             id: "#{media_url}/index/#{single_index.id}/annotation/#{annotation_counter}",
             type: 'Annotation',
-            motivation: %w[supplementing describing],
+            motivation: 'supplementing',
             body: body,
-            target: {
-              source: "#{media_url}##{point.start_time.to_f},#{point.end_time.to_f}"
-            }
+            target: "#{media_url}##{point.start_time.to_f},#{point.end_time.to_f}"
           }
           annotation_counter += 1
         end
