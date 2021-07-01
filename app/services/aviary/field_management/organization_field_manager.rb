@@ -52,7 +52,7 @@ module Aviary
         updated_values.each_with_index do |(_index, single_collection_field), _key|
           single_collection_field.each do |key, value|
             value = value.to_i if key.include? 'sort'
-            fields[single_collection_field['system_name']][key] = value
+            fields[single_collection_field['system_name'].downcase][key] = value
           end
         end
         organization.organization_field[type] = fields

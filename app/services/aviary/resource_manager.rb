@@ -135,13 +135,14 @@ module Aviary
       sort_order = collection_resource.collection_resource_files.length + 1
       collection_resource_file = nil
       access_file = resource[:file].permission_of_element_private('media_files') ? CollectionResourceFile.accesses[:no] : CollectionResourceFile.accesses[:yes]
-      if %w[vimeo soundcloud youtube avalon].include?(resource_file[:host][:value].downcase) && resource[:resource_file][:embed_code].present?
-        embed_or_url = resource[:resource_file][:embed_code][:value]
+      if %w[vimeo soundcloud youtube avalon].include?(resource_file[:host][:value].downcase)
+        embed_or_url = ''
+        embed_or_url = resource[:resource_file][:embed_code][:value] if resource[:resource_file][:embed_code].present?
+        embed_or_url = resource[:resource_file][:link][:value] unless embed_or_url.present?
 
         embed_name = resource_file[:host][:value].humanize
         target_domain = resource[:resource_file][:target_domain].present? ? resource[:resource_file][:target_domain][:value] : ''
-        video_metadata = Aviary::ExtractVideoMetadata::VideoEmbed.new(embed_name, embed_or_url).metadata
-
+        video_metadata = embed_or_url.present? ? Aviary::ExtractVideoMetadata::VideoEmbed.new(embed_name, embed_or_url).metadata : nil
         if video_metadata
           thumbnail = video_metadata['thumbnail'].present? ? open(video_metadata['thumbnail'], allow_redirections: :all) : ''
           title = video_metadata['title'].present? ? video_metadata['title'] : resource[:title]
