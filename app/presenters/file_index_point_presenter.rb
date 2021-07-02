@@ -2,7 +2,7 @@
 # presenters/file_index_point_presenter.rb
 #
 # Author::    Nouman Tayyab  (mailto:nouman@weareavp.com)
-class FileIndexPointPresenter < BasePresenter
+class FileIndexPointPresenter < BaseIndexTranscriptPresenter
   def display_time
     Time.at(@model.start_time.to_f).utc.strftime('%H:%M:%S')
   end
@@ -47,11 +47,7 @@ class FileIndexPointPresenter < BasePresenter
       <div class='pt-10px'>#{display_hyperlink}</div>
     </div>
   </div>"
-    if session_video_text_all.present?
-      session_video_text_all.each do |key_keyword, single_keyword|
-        text = text.gsub(/(#{single_keyword})/i, '<span data-markjs="true" class="highlight-marker mark ' + key_keyword + '">' + single_keyword + '</span>')
-      end
-    end
+    text = add_marker_occurrences(session_video_text_all, text)
     text
   end
 

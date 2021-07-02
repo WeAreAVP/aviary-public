@@ -686,7 +686,8 @@ plans = [
   { name: 'Premium Max', stripe_id: 'aviary-premium-max-monthly', amount: 1999.95, frequency: 1, max_resources: 150000 },
   { name: 'Premium Max', stripe_id: 'aviary-premium-max-yearly', amount: 19199.52, frequency: 2, max_resources: 150000 },
   { name: 'Enterprise', stripe_id: '', amount: 0, frequency: 3, max_resources: 9999999 },
-  { name: 'Pay-as-you-go', stripe_id: 'aviary-pay-as-you-go', amount: 0, frequency: 1, max_resources: 9999999 }
+  { name: 'Pay-as-you-go', stripe_id: 'aviary-pay-as-you-go', amount: 0, frequency: 1, max_resources: 9999999 },
+  { name: 'Aviary OHMS Subscription', stripe_id: 'aviary-ohms-subscription', amount: 0, frequency: 1, max_resources: 10 }
 ]
 
 plans.each do |plan|

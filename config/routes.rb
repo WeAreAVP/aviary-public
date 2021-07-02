@@ -24,6 +24,17 @@ Rails.application.routes.draw do
     invitations: 'users/invitations',
     confirmations: 'users/confirmations'
   }
+
+  namespace :ohms do
+    resources :thesauru_manager do
+      get :export
+      collection do
+        match :assignment_management, via: %i[get post]
+        match :datatable, via: %i[get post]
+      end
+    end
+  end
+
   devise_scope :user do
     get '/profile', to: 'devise/registrations#edit'
   end

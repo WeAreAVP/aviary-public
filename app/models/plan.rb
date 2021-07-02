@@ -7,6 +7,7 @@ class Plan < ApplicationRecord
   scope :monthly, -> { where(frequency: Frequency::MONTHLY).where.not(stripe_id: pay_a_y_go) }
   scope :yearly, -> { where(frequency: Frequency::YEARLY) }
   scope :pay_as_you_go, -> { where(stripe_id: pay_a_y_go) }
+  scope :ohms_subscription_plan, -> { where(stripe_id: ohms_subscription) }
   scope :admin_packages, -> { where('frequency != ?', Frequency::FOREVER) }
   # Frequency Class
   class Frequency
@@ -35,4 +36,9 @@ class Plan < ApplicationRecord
   def self.pay_a_y_go
     'aviary-pay-as-you-go'
   end
+
+  def self.ohms_subscription
+    'aviary-ohms-subscription'
+  end
+
 end

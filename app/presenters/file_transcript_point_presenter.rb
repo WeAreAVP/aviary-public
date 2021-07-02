@@ -2,7 +2,7 @@
 # presenters/file_transcript_point_presenter.rb
 #
 # Author::    Nouman Tayyab  (mailto:nouman@weareavp.com)
-class FileTranscriptPointPresenter < BasePresenter
+class FileTranscriptPointPresenter < BaseIndexTranscriptPresenter
   delegate :can?, to: :h
   include DetailPageHelper
   include ApplicationHelper
@@ -28,11 +28,7 @@ class FileTranscriptPointPresenter < BasePresenter
 
     replacement, text = prep_string_for_markers(text)
 
-    if session_video_text_all.present?
-      session_video_text_all.each do |key_keyword, single_keyword|
-        text = text.gsub(/(#{single_keyword})/i, '<span data-markjs="true" class="highlight-marker mark ' + key_keyword + '">' + single_keyword + '</span>')
-      end
-    end
+    text = add_marker_occurrences(session_video_text_all, text)
 
     if replacement.present?
       replacement.each do |key, single_replacement|
