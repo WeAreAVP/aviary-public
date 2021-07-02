@@ -141,6 +141,12 @@ class CollectionResource < ApplicationRecord
     end
     string :created_at, stored: true
     string :updated_at, stored: true
+    integer :created_at, stored: true do
+      created_at.to_i
+    end
+    integer :updated_at, stored: true do
+      updated_at.to_i
+    end
     integer :collection_id, stored: true
     string :noid, multiple: false, stored: true
     text :custom_unique_identifier, stored: true
@@ -479,12 +485,15 @@ class CollectionResource < ApplicationRecord
     rescue StandardError
       total_response = { 'response' => { 'numFound' => 0 } }
     end
+
     query_params[:sort] = if sort_column.to_s == 'collection_title'
                             CollectionResourceFile.collection_sorter(limit_condition, sort_direction, solr)
                           elsif sort_column.to_s == 'id_ss'
                             "id_is #{sort_direction}"
                           elsif sort_column.to_s == 'description_duration_ss'
                             "description_duration_ls #{sort_direction}"
+                          elsif sort_column.to_s == 'updated_at_ss'
+                            "updated_at_is #{sort_direction}"
                           elsif sort_column.present? && sort_direction.present?
                             "#{sort_column} #{sort_direction}"
                           end
@@ -496,6 +505,7 @@ class CollectionResource < ApplicationRecord
       query_params[:start] = (page - 1) * per_page
       query_params[:rows] = per_page
     end
+
     response = Curl.post(select_url, query_params)
     begin
       response = JSON.parse(response.body_str)

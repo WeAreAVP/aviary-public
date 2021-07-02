@@ -28,6 +28,11 @@ class ResourcesListingDatatable < ApplicationDatatable
       columns_list = []
       @resource_fields.each_with_index do |(system_name, single_collection_field), _index|
         field_settings = Aviary::FieldManagement::FieldManager.new(single_collection_field, system_name)
+        global_status = field_settings.should_display_on_detail_page
+        if field_settings.field_configuration.present? && field_settings.field_configuration['special_purpose'].present? && boolean_value(field_settings.field_configuration['special_purpose'])
+          global_status = true
+        end
+        next unless global_status
         if field_settings.should_display_on_resource_table && %w[id_ss title_ss access_ss description_identifier_sms description_date_sms].include?(field_settings.solr_display_column_name)
           columns_list << single_collection_field['solr_display_column'] if single_collection_field['solr_display_column'].to_s.to_boolean?
         end
@@ -146,11 +151,14 @@ class ResourcesListingDatatable < ApplicationDatatable
     columns_allowed = []
     columns_allowed = ['id_is'] if @called_from != 'permission_group'
     if @resource_fields.present?
-      @resource_fields.each_with_index do |(_system_name, single_collection_field), _index|
-        global_status = single_collection_field['description_display'].to_s.to_boolean?
-        field_configuration = single_collection_field['field_configuration']
-        global_status = true if field_configuration.present? && field_configuration['special_purpose'].present? && boolean_value(field_configuration['special_purpose']) && field_configuration['visible_at'].include?('resource_search')
-        columns_allowed << single_collection_field['solr_display_column'] if single_collection_field['resource_table_display'].to_s.to_boolean? && global_status
+      @resource_fields.each_with_index do |(system_name, single_collection_field), _index|
+        field_settings = Aviary::FieldManagement::FieldManager.new(single_collection_field, system_name)
+        global_status = field_settings.should_display_on_detail_page
+        if field_settings.field_configuration.present? && field_settings.field_configuration['special_purpose'].present? && boolean_value(field_settings.field_configuration['special_purpose'])
+          global_status = true
+        end
+        next unless global_status
+        columns_allowed << single_collection_field['solr_display_column'] if field_settings.should_display_on_resource_table
       end
     end
     columns_allowed

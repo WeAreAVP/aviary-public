@@ -40,5 +40,4 @@ class Plan < ApplicationRecord
   def self.ohms_subscription
     'aviary-ohms-subscription'
   end
-
 end
