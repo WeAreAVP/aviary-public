@@ -53,11 +53,12 @@ module Ohms
       @action_type = params['action_type']
       if params['list_of_fields_dropdown'].present?
         system_name, option_selected = params['list_of_fields_dropdown'].split('||-@||')
+
         if @resource_fields_settings[system_name].present?
           if params['assignment_option_custom_thesaurus'].to_s == '0'
             @resource_fields_settings[system_name]['thesaurus'] = { params['inlineRadioOptions'].to_s => { 'id' => params['selected_file'], 'assign_to' => option_selected } }
           else
-            @resource_fields_settings[system_name] = @resource_fields_settings[system_name].except!('thesaurus')
+            @resource_fields_settings[system_name]['thesaurus'] = {}
           end
           @organization_field_manager.update_field_settings(@organization_field_manager.organization_field_settings(current_organization, nil, 'resource_fields', 'sort_order'),
                                                             { 0 => @resource_fields_settings[system_name] }, current_organization, 'resource_fields')
