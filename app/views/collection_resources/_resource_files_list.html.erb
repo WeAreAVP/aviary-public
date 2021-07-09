@@ -27,7 +27,7 @@
                 <i class="fa fa-pencil edit_title ml-2"></i>
               </div>
               <div class="remove_video">
-                <a href="javascript://" class="btn btn-outline-primary manage-media manage-media-thumbnail text-white" data-url="<%= collection_collection_resource_update_thumbnail_path(collection, @collection_resource, collection_resource_file_id: file.id) %>" data-remove-url="<%= collection_resource_file_media_thumbnail_remove_path(file.id) %>" data-file-id="<%= file.id %>" data-sort="<%= file.sort_order %>" data-file-status="<%= file.access %>" data-file-downloadable="<%= file.is_downloadable %>" data-file-download_enabled_for="<%= file.download_enabled_for %>" data-file-downloadable_till="<%= file.downloadable_duration %>" data-3d="<%= file.is_3d %>">
+                <a href="javascript://" class="btn btn-outline-primary manage-media manage-media-thumbnail text-white" data-url="<%= collection_collection_resource_update_thumbnail_path(collection, @collection_resource, collection_resource_file_id: file.id) %>" data-remove-url="<%= collection_resource_file_media_thumbnail_remove_path(file.id) %>" data-file-id="<%= file.id %>" data-sort="<%= file.sort_order %>" data-file-status="<%= file.access %>" data-file-downloadable="<%= file.is_downloadable %>" data-file-download_enabled_for="<%= file.download_enabled_for %>" data-file-downloadable_till="<%= file.downloadable_duration %>" data-3d="<%= file.is_3d %>" data-is_cc_on="<%= file.is_cc_on %>">
                   Manage Media </a>
                 <%= link_to collection_collection_resource_delete_resource_file_path(@collection, @collection_resource, file), class: "btn btn-light delete-resource-file", style: "float: right;" do %>
                   Remove
@@ -87,6 +87,14 @@
                       <div class="form-group">
                         <div class="field-title"><label>Public?</label></div>
                         <%= f.select :access, CollectionResourceFile.accesses.map { |key, _| [key.humanize, key] }, {}, required: false, label: false, class: 'custom-placeholder file-status-custom' %>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <div class="field-title"><label>Turn on CC?
+                          <button type="button" class="info-btn" data-content="When this is enabled, media that has closed captions will play with the closed captions turned on by default when a user plays the media file."></button>
+                        </label></div>
+                        <%= f.select :is_cc_on, [['Yes', true], ['No', false]], {}, required: false, label: false, class: 'custom-placeholder file-download-custom' %>
                       </div>
                     </div>
                     <div class="col-md-6">

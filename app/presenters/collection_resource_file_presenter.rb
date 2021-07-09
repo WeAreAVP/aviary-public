@@ -26,8 +26,10 @@ class CollectionResourceFilePresenter < BasePresenter
     tracks = ''
     close_captions = @model.file_transcripts.cc
     return tracks if close_captions.nil?
-    close_captions.each do |cc|
-      tracks += format('<track label="%s" kind="captions" srclang="%s" src="%s">', languages_array_simple[0].key(cc.language), cc.language, cc.associated_file.url)
+    default = ''
+    close_captions.each_with_index do |cc, index|
+      default = 'default' if @model.is_cc_on && index.zero?
+      tracks += format('<track label="%s" kind="captions" srclang="%s" src="%s" %s>', languages_array_simple[0].key(cc.language), cc.language, cc.associated_file.url, default)
     end
     tracks
   end
