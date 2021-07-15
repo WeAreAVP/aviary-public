@@ -37,6 +37,7 @@ module Aviary::ResourceFileManagement
       begin
         update_hash = { access: params[:collection_resource_file][:access] }
         update_hash[:is_downloadable] = params[:collection_resource_file][:is_downloadable]
+        update_hash[:is_cc_on] = params[:collection_resource_file][:is_cc_on]
         update_hash[:download_enabled_for] = params[:collection_resource_file][:download_enabled_for] if params[:collection_resource_file].include? 'download_enabled_for'
         update_hash[:downloadable_duration] = params[:collection_resource_file][:downloadable_till] if params[:collection_resource_file].include? 'downloadable_till'
         unless params[:collection_resource_file][:thumbnail].blank?

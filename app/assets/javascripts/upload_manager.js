@@ -27,6 +27,13 @@ function UploadManager(app_helper) {
      */
     this.initialize = function () {
         bindings();
+        if ($('.info-btn').length > 0) {
+            $('.info-btn').popover({
+                html: true,
+                trigger: "click",
+                placement: "top"
+            });
+        }
         CheckEmbedType('');
     };
 
@@ -134,14 +141,17 @@ function UploadManager(app_helper) {
                 var file_status = $(this).data('file-status');
                 var is_downloadable = $(this).data('file-downloadable');
                 var downloadable_till = $(this).data('file-downloadable_till');
+                var isCcOn = $(this).data('is_cc_on');
                 var download_enabled_for = $(this).data('file-download_enabled_for');
                 var $select = $('#collection_resource_file_access').selectize();
                 var downloadable = $('#collection_resource_file_is_downloadable')[0].selectize;
+                var isCcOnSelect = $('#collection_resource_file_is_cc_on')[0].selectize;
                 var selectize = $select[0].selectize;
                 $('.resource-file-id').val($(this).data('fileId'));
                 $('.resource-file-sort-order').val($(this).data('sort'));
                 selectize.setValue(file_status, false);
                 downloadable.setValue(is_downloadable.toString(), false);
+                isCcOnSelect.setValue(isCcOn.toString(), false);
                 loadImageThumbnail(this);
                 $('.manage-media-modal').modal();
                 intialize_datepicker(is_downloadable, download_enabled_for, downloadable_till);
