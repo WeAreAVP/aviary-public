@@ -23,12 +23,9 @@ function IndexTranscript() {
     this.index_visible_pages = [];
     this.index_number_of_ajax_calls = 0;
     this.transcript_number_of_ajax_calls = 0;
-    this.recent_scroll_top = false;
-    this.recent_scroll_bottom = false;
-    this.transcript_visible_pages = [];
+    this.annotation_markers = {};
     this.type = '';
     let that = this;
-    var last_point_visited = '';
     var apppend_integer = 0;
     this.setup_prerequisites = function (type, selected_val, resource_obj, embed, from_playlist) {
         this.cuePointType = type;
@@ -44,6 +41,9 @@ function IndexTranscript() {
         } else {
             this.selected_transcript = selected_val;
         }
+        that.annotation_markers = new AnnotationMarkers();
+        that.annotation_markers.collection_resource = that.collection_resource;
+
     };
 
     this.pages_be_shown = function (current_page, scroll_moving, type, total_pages, called_from, container, scroll_percent) {
@@ -77,7 +77,6 @@ function IndexTranscript() {
     };
 
     this.initialize = function (selected_val) {
-
         activeFileUploading();
         activateSortable();
         updateOrder();
@@ -92,14 +91,15 @@ function IndexTranscript() {
             var file_selectize = file_select[0].selectize;
             if (selected_val > 0) {
                 file_selectize.setValue(selected_val);
+                if (that.cuePointType == 'transcript') {
+                    that.annotation_markers.initialize(selected_val);
+                }
             }
         }
 
         $('#file_' + that.cuePointType + '_select').next().find('div.selectize-input > input').prop('disabled', 'disabled');
         activatePoints(this.call_type);
         activatePlayTimecode();
-        disableBodyScrollIndexTrancript();
-
 
     };
 
@@ -231,7 +231,7 @@ function IndexTranscript() {
             $('.' + type + '_point_container .current_page_type').addClass('previous_page_type').removeClass('current_page_type');
             $('.' + type + '_point_container .next_page_type').addClass('current_page_type').removeClass('next_page_type');
         }
-        if (request['sliding'] == 'timeline' || request['sliding'] == 'marker_button' || request['sliding'] == 'clear' || request['sliding'] == 'auto_scroll') {
+        if (request['sliding'] == 'timeline' || request['sliding'] == 'marker_button' || request['sliding'] == 'clear' || request['sliding'] == 'marker_button_annotation' || request['sliding'] == 'auto_scroll') {
             $(container).html('');
         }
         if (request['page_type'] == 'previous_page') {
@@ -266,10 +266,13 @@ function IndexTranscript() {
             that.collection_resource.auto_loading_inprogress = false;
             $(container).append(response);
         }
+        let sectionHeight = $('.two_col_custom').height();
+        if(sectionHeight > 650)
+            sectionHeight = 650;
         if (that.from_playlist) {
-            $('.' + type + '_point_container').attr('style', 'height:' + ($('.two_col_custom').height() - 50) + 'px!important;max-height:500px!important;');
+            $('.' + type + '_point_container').attr('style', 'height:' + (sectionHeight - 50) + 'px!important;max-height:650px !important;');
         } else {
-            $('.' + type + '_point_container').attr('style', 'height:' + ($('.two_col_custom').height()) + 'px!important;max-height:500px!important;');
+            $('.' + type + '_point_container').attr('style', 'height:' + (sectionHeight) + 'px!important;max-height:650px !important;');
         }
         if (request['first_call'] == true)
             that.call_type = 'toggle';
@@ -349,6 +352,18 @@ function IndexTranscript() {
             that.mcustomscroll_init = true;
         }
 
+        if (request['sliding'] == 'marker_button_annotation') {
+            setTimeout(function () {
+                let all_hits = that.collection_resource.annotation_hits_count[that.collection_resource.selected_transcript];
+                let information = all_hits[(that.annotation_markers.currentIndexAnnotation)].split('||');
+                let $current = $('#' + information[0]).find('.annotation_marker')[parseInt(information[1], 10)];
+                if ($($current).length > 0) {
+                    let total_page = that.annotation_markers.collection_resource.transcripts.current_selected_total_page('transcript', that.collection_resource.transcripts.selected_transcript, false);
+                    that.annotation_markers.jumpTo($current, total_page);
+                }
+            }, 1000);
+
+        }
         $('.edit_by_information').addClass('d-none');
         $('.previous_page_type .edit_by_information').removeClass('d-none');
         let marker_load_time = 2000;
@@ -535,16 +550,74 @@ function IndexTranscript() {
             }
 
             try {
-                if (that.collection_resource.transcript_infor[that.collection_resource.resource_file_id]['total-transcript']) {
-                    $('.transcript_count_tab').text(that.collection_resource.transcript_infor[that.collection_resource.resource_file_id]['total-transcript']);
-                    $('.transcript_count_tab').removeClass('d-none');
+                that.collection_resource.annotation_hits_count = JSON.parse($('.annotation_count').val()).hits;
+                that.collection_resource.annotation_hits_ids = JSON.parse($('.annotation_count').val()).annotation_ids;
+            } catch (e) {
+
+            }
+
+            try {
+                that.collection_resource.annotationSearchCount = JSON.parse($('.annotation_search_count').val());
+            } catch (e) {
+
+            }
+            try {
+                if (that.collection_resource.annotation_hits_count['total'][that.collection_resource.selected_transcript]) {
+                    $('.annotation_current_total').text(that.collection_resource.annotation_hits_count['total'][that.collection_resource.selected_transcript]);
                 }
-                $.each(that.collection_resource.total_transcript_wise[that.collection_resource.selected_transcript], function (index, value) {
-                    $('.transcript.total_count.' + index).text(value);
-                });
             } catch (err) {
 
             }
+            try {
+                if (that.collection_resource.transcript_infor[that.collection_resource.resource_file_id]['total-transcript'] || that.collection_resource.annotationSearchCount[that.collection_resource.resource_file_id].total) {
+
+                    let fileTranscriptCount = 0;
+                    let annotationCount = 0;
+                    if (parseInt(that.collection_resource.transcript_infor[that.collection_resource.resource_file_id]['total-transcript'], 10)) {
+                        fileTranscriptCount = that.collection_resource.transcript_infor[that.collection_resource.resource_file_id]['total-transcript'];
+                    }
+
+                    if (parseInt(that.collection_resource.annotationSearchCount[that.collection_resource.resource_file_id].total, 10)) {
+                        annotationCount = that.collection_resource.annotationSearchCount[that.collection_resource.resource_file_id].total;
+                    }
+
+                    $('.transcript_count_tab').text(fileTranscriptCount + annotationCount);
+                    $('.transcript_count_tab').removeClass('d-none');
+                }
+                $.each(that.collection_resource.total_transcript_wise[that.collection_resource.selected_transcript], function (index, value) {
+                    let total = 0;
+                    try {
+                        total = parseInt(value, 10) + that.collection_resource.annotationSearchCount[that.collection_resource.resource_file_id].total_transcript_wise[that.collection_resource.selected_transcript][index].total;
+                    } catch (e) {
+                        total = value;
+                    }
+
+                    $('.transcript.total_count.' + index).text(total);
+                });
+
+            } catch (err) {
+
+            }
+
+
+            try {
+                let fileSelectAnnotation = $('#annotation_set_select').selectize();
+                let fileSelectizeAnnotation = fileSelectAnnotation[0].selectize;
+                for (cnt in fileSelectizeAnnotation.options) {
+                    let data = fileSelectizeAnnotation.options[cnt];
+                    let value = data['value'];
+                    let countAnnotations = that.collection_resource.annotationSearchCount[that.collection_resource.resource_file_id].total_set_wise.total;
+                    let text = data['text'];
+                    if (countAnnotations > 0 && !text.includes('badge-danger')) {
+                        fileSelectizeAnnotation.updateOption(value, {
+                            text: '<span class="badge badge-pill badge-danger">' + countAnnotations + '</span> ' + text,
+                            value: value
+                        });
+                    }
+                }
+            } catch (err) {
+            }
+
             let cuePointTypeCurrent = 'transcript';
             var file_select = selectizeInit('#file_transcript_select');
             if ($('#file_' + cuePointTypeCurrent + '_select').length > 0 && that.collection_resource.transcript_infor.single_transcript_count) {
@@ -553,6 +626,18 @@ function IndexTranscript() {
         }
 
         setTimeout(function () {
+            if (lastAnnotationId > 0) {
+                firstTimeAnnotation = 1;
+                $('.annotation_' + lastAnnotationId).trigger('click');
+                lastAnnotationId = 0;
+                $('.transcript_point_container').mCustomScrollbar("scrollTo", $('.annotation_marker.active'), {
+                    scrollInertia: 10,
+                    timeout: 1
+                });
+            } else if ($('#transcript-tab').hasClass('active') && $('.transcript_point_container').hasClass('enable_annotation') && $('.annotation_flag').length > 0) {
+                firstTimeAnnotation = 1;
+                $($('.annotation_flag')[0]).trigger('click');
+            }
             that.transcript_loading_call = {};
             that.transcript_number_of_ajax_calls--;
             if (that.transcript_number_of_ajax_calls < 0) {
@@ -583,6 +668,7 @@ function IndexTranscript() {
             element_update += this.selected_transcript;
         }
         element = element_update + ' ' + element;
+
         if ($(element).length > 0 && element != that.last_point_visited) {
             type = type.toLowerCase();
             that.last_point_visited = element;
@@ -590,7 +676,6 @@ function IndexTranscript() {
                 $('.transcript_time').removeClass('active');
                 $(element).addClass('active');
             }
-
             scrollTo('.' + type + '_point_container', element);
         }
     };
@@ -705,6 +790,7 @@ function IndexTranscript() {
             $('#file_' + that.cuePointType + '_title').val(current.text());
             $('#file_' + that.cuePointType + '_language')[0].selectize.setValue($('.file_' + that.cuePointType + '_' + current.val()).data().language);
             $('#file_' + that.cuePointType + '_is_public')[0].selectize.setValue($('.file_' + that.cuePointType + '_' + current.val()).data().public.toString());
+            $('#file_' + that.cuePointType + '_description').val($('.file_' + that.cuePointType + '_' + current.val()).data().description.toString());
             if (that.cuePointType == 'transcript') {
                 let current_transcript = $('.file_' + that.cuePointType + '_' + current.val());
                 if (current_transcript.data('webvtt')) {
@@ -753,7 +839,14 @@ function IndexTranscript() {
         $('#delete_' + that.cuePointType).click(function () {
             $('#modalPopupTitle').html('Delete ' + capitalize(that.cuePointType));
             currentInfo = $('#file_' + that.cuePointType + '_select');
-            $('#modalPopupBody').html('Are you sure you want to delete this ' + capitalize(that.cuePointType) + ' information ("' + currentInfo.text() + '") for this file? This operation cannot be undone.');
+            message = 'Are you sure you want to delete this ' + that.cuePointType + ' ("' + currentInfo.text() + '") from Aviary?';
+            if (that.cuePointType == 'transcript') {
+                currentTranscript = $('.file_transcript_' + currentInfo.val()).data();
+                if (currentTranscript.annotation != '') {
+                    message += ' If you do, you will lose the annotations that you have created for this transcript. To export the annotations, select the option to "Export to Text with Annotations" before continuing with the delete process.';
+                }
+            }
+            $('#modalPopupBody').html(message);
             $('#modalPopupFooterYes').attr('href', $(this).data().url + currentInfo.val());
             $('#modalPopup').modal('show');
         });
@@ -765,18 +858,23 @@ function IndexTranscript() {
             if ($('#avalon_widget').length > 0) {
                 player_widget('set_offset', {'offset': currentTime});
                 player_widget('play');
-            } else if ($('#360_player').length > 0) {
-                player_widget.seek(currentTime);
-                player_widget.play();
             } else {
+                playerSpecificTimePlay = currentTime;
                 player_widget.currentTime(currentTime);
                 player_widget.play();
+            }
+            if ($(this).parent().hasClass('annotation_text')) {
+                $('.transcript_point_container').mCustomScrollbar("scrollTo", $('.annotation_marker.active'), {
+                    scrollInertia: 10,
+                    timeout: 1
+                });
             }
         }, true)
     };
 
     let activatePoints = function (call_type) {
         let selected_element = '.file_' + that.cuePointType + '_' + $('#file_' + that.cuePointType + '_select').val();
+        showAnnotationSet(selected_element);
         $(selected_element).removeClass('d-none');
         $('.' + that.cuePointType + '_' + $('#file_' + that.cuePointType + '_select').val()).removeClass('d-none');
         $('.file_' + that.cuePointType + '_' + $('#file_' + that.cuePointType + '_select').val()).toggleClass('selected_' + that.cuePointType + 'file');
@@ -802,6 +900,7 @@ function IndexTranscript() {
             $('.file_' + that.cuePointType).removeClass('selected_' + that.cuePointType + 'file');
             $('.file_' + that.cuePointType + '_' + $('#file_' + that.cuePointType + '_select').val()).addClass('selected_' + that.cuePointType + 'file');
             $('#selected_' + that.cuePointType).val($('#file_' + that.cuePointType + '_select').val());
+            showAnnotationSet('.file_' + that.cuePointType + '_' + $('#file_' + that.cuePointType + '_select').val());
             that.collection_resource.init_scoll(that.cuePointType, that.collection_resource.currentTime, true);
             try {
                 if (typeof that.collection_resource.events_tracker != 'undefined')
@@ -815,6 +914,9 @@ function IndexTranscript() {
                     object.currentIndex = 0;
                     $('.current_location').text(object.currentIndex);
                 });
+            }
+            if (that.cuePointType == 'transcript') {
+                that.annotation_markers.switch_marker_arrows(that.collection_resource.selected_transcript);
             }
 
         });
@@ -833,6 +935,13 @@ function IndexTranscript() {
                     $('.text_export').attr('href', $('.text_export').data('url') + '/' + currentId);
                 } else {
                     $('.export_transcript').addClass('d-none');
+                }
+                if (dataInfo.annotation_access && dataInfo.annotation != '') {
+                    $('.textanno_export').removeClass('d-none');
+                    $('.textanno_export').attr('href', $('.textanno_export').data('url') + '/' + currentId);
+                } else {
+                    $('.textanno_export').addClass('d-none');
+                    $('.textanno_export').attr('href', 'javascript://;');
                 }
                 if (dataInfo.json) {
                     $('.json_export').removeClass('d-none');
@@ -872,16 +981,6 @@ function IndexTranscript() {
             }
         }).disableSelection();
         data = $('#sortable_' + that.cuePointType).sortable('toArray');
-    };
-
-
-    let disableBodyScrollIndexTrancript = function () {
-        $(".file_transcript, .file_index").hover(function () {
-            $('body').css('overflow', 'hidden');
-        }, function () {
-            $('body').css('overflow', 'inherit');
-        });
-
     };
 
     let updateOrder = function () {
@@ -948,12 +1047,12 @@ function IndexTranscript() {
     };
 
     const checkErrors = function (result) {
-        $(".text-danger").html("");
+        $(".modal-body .organization-section .text-danger").html("");
         if (Object.size(result.errors) > 0) {
             $('#progress .progress-bar').css("width", "0%");
             $('.upload_' + that.cuePointType + '_btn').html("Upload " + capitalize(that.cuePointType)).prop("disabled", false);
             for (cnt in result.errors) {
-                $('.' + cnt).html(result.errors[cnt]);
+                $('.modal-body .organization-section .' + cnt).html(result.errors[cnt]);
             }
         } else {
             $('.upload_' + that.cuePointType + '_btn').hide();
@@ -1003,6 +1102,38 @@ function IndexTranscript() {
 
                 });
             });
+        }
+    };
+
+    const showAnnotationSet = function (selected_element) {
+        if (that.cuePointType == 'transcript') {
+            if ($(selected_element).data('annotation_access')) {
+                if ($(selected_element).data('annotation') != '') {
+                    let file_selectize = $('#annotation_set_select')[0].selectize;
+                    file_selectize.setValue($(selected_element).data('annotation'));
+                    $('.show-annotation-box').removeClass('d-none');
+                    $('.annotation-option').removeClass('d-none');
+                    $('.add-annotation-box').addClass('d-none');
+                    $('.transcript_enable_annotation_section').removeClass('d-none');
+                } else {
+                    $('.show-annotation-box').addClass('d-none');
+                    $('.annotation-option').addClass('d-none');
+                    $('.add-annotation-box').removeClass('d-none');
+                    $('.transcript_enable_annotation_section').addClass('d-none');
+                }
+                $('.annotation-box-holder').addClass('d-none');
+                $('.annotation-box').addClass('d-none');
+                $('.annotation_flag, .annotation_marker').removeClass('active');
+                $('.annotation_delete_section').addClass('d-none');
+                $('.annotation-box .text-box').removeClass('delete');
+            } else {
+                $('.annotation-box-holder').addClass('d-none');
+                $('.show-annotation-box').addClass('d-none');
+                $('.annotation-option').addClass('d-none');
+                $('.add-annotation-box').addClass('d-none');
+                $('.transcript_enable_annotation_section').addClass('d-none');
+            }
+
         }
     };
 

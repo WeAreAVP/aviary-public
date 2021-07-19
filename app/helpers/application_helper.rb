@@ -266,4 +266,8 @@ module ApplicationHelper
     %w[ɷ ʇ ʊ ʚ ʎ ʚ ʛ ɸ ʝ ʇ].each_with_index { |index, single_character| key = key.gsub(single_character.to_s, index) }
     key
   end
+
+  def speaker_regex
+    /([A-Za-z0-9._\' ]+: )/
+  end
 end

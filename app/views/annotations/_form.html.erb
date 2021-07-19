@@ -1,0 +1,37 @@
+<div class="annotation-box d-none" id="annotation_section">
+  <div class="floating-box">
+    <div class="text-box p-0">
+      <div class="top d-flex align-items-center justify-content-between p-2 px-3 border-bottom mb-2">
+        <div class="d-flex align-items-center">
+          <strong class="font-weight-bold m-0 mr-3">Annotations</strong>
+          <% if @file_transcripts.present? %>
+            <% @file_transcripts.each do |file_transcript| %>
+              <div class="button_handle  annotation_markers_button_handle align-items-center annotation_markers_<%= file_transcript.id %> d-none">
+                <button class="back_button back_button_annotation mr-2" data-transcript_id="<%= file_transcript.id %>">
+                  <i class="fa fa-angle-left" aria-hidden="true"></i>
+                </button>
+                <span class="badge "> <div class="annotation_current_count d-inline-block annotation_current_count_<%= file_transcript.id %>">0</div><small class="d-inline px-2">of</small> <div class="annotation_current_total d-inline-block"></div></span>
+                <button class="next_button next_button_annotation ml-2" data-transcript_id="<%= file_transcript.id %>">
+                  <i class="fa fa-angle-right" aria-hidden="true"></i>
+                </button>
+              </div>
+            <% end %>
+          <% end %>
+        </div>
+        <div class="annotation_btns_holder">
+          <span id="annotation_message"></span>
+          <button class="btn btn-custom cancel_annotation">Cancel</button>
+          <button class="btn btn-custom ml-2 done_annotation" disabled>Done</button>
+          <button type="button" class="close close_annotation" aria-label="Close">
+            <span aria-hidden="true">×</span>
+          </button>
+        </div>
+      </div>
+      <div class="title annotation_text mx-3 d-block"></div>
+      <p class="readable-text annotation-information mx-3 mb-3 d-none"></p>
+      <div class="editable-text d-none">
+        <textarea class="form-control enter_annotation_text" id="enter_annotation_text" placeholder="Enter your annotation" data-url="<%= annotations_url %>"></textarea>
+      </div>
+    </div>
+  </div>
+</div>

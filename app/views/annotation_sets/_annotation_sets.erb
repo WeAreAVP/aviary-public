@@ -1,0 +1,79 @@
+<% if file_transcripts.present? %>
+  <% if ((can? :manage, @collection_resource) || @collection_resource.can_edit) && !from_playlist.to_s.to_boolean? %>
+    <div class="grey-box add-annotation-box pt-0 pb-2 d-none">
+      <span class="label">Annotation Set</span>
+      <button class="btn btn-custom add-annotation-button" data-url="<%= new_annotation_set_url %>">
+        <i class="fa fa-plus-circle" aria-hidden="true"></i> Add annotation set
+      </button>
+    </div>
+  <% end %>
+  <div class="grey-box show-annotation-box d-none">
+    <div class="d-flex align-items-center">
+      <div class="holder">
+        <div class="form-group">
+          <div class="field-title"><label><span class="label">Annotations</span></label></div>
+          <select id="annotation_set_select" class="select_type_annotation_set" disabled="disabled">
+            <% file_transcripts.each do |file_transcript| %>
+              <% unless file_transcript.annotation_set.nil? %>
+                <option value="<%= file_transcript.annotation_set.id %>"><%= file_transcript.annotation_set.title %></option>
+              <% end %>
+            <% end %>
+          </select>
+        </div>
+      </div>
+      <% if ((can? :manage, @collection_resource) || @collection_resource.can_edit) && !from_playlist.to_s.to_boolean? %>
+        <div class="dropdown annotation-dropdown">
+          <button class="btn-icon dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" data-flip="false" aria-haspopup="true" aria-expanded="false">
+            <i class="fa fa-ellipsis-v"></i>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-right custom-right-dropdown" aria-labelledby="dropdownMenuButton">
+            <li>
+              <a href="javascript://" class="dropdown-item edit_annotation" data-url="<%= annotation_sets_url %>">
+                <i class="fa fa-pencil-square-o" aria-hidden="true"></i> Edit this annotation set
+              </a>
+            </li>
+            <li>
+              <a href="javascript://" class="dropdown-item delete_annotation" data-url="<%= annotation_sets_url %>">
+                <i class="material-icons custom-delete-icon">delete</i> Delete this annotation set
+              </a>
+            </li>
+          </ul>
+        </div>
+      <% end %>
+    </div>
+  </div>
+  <% if ((can? :manage, @collection_resource) || @collection_resource.can_edit) && !from_playlist.to_s.to_boolean? %>
+    <div class="grey-box annotation-option d-none">
+      <div class="d-flex justify-content-between">
+        <div>
+          <button class="btn btn-custom add_text_annotation"><i class="fa fa-plus-circle" aria-hidden="true"></i> Add
+          </button>
+          <button class="btn btn-custom edit_text_annotation" disabled="disabled">
+            <i class="fa fa-pencil-square-o" aria-hidden="true"></i> Edit
+          </button>
+        </div>
+        <div>
+          <button class="btn btn-custom delete_text_annotation" disabled="disabled">
+            <i class="material-icons custom-delete-icon">delete</i> Delete
+          </button>
+        </div>
+      </div>
+    </div>
+  <% end %>
+  <div class="highlight-info annotation_delete_section d-none">
+    <!--        <div class="add">-->
+    <!--          <span><i class="fa fa-plus-circle" aria-hidden="true"></i> Add</span>-->
+    <!--          Highlight text to add a new annotation-->
+    <!--        </div>-->
+    <div class="delete d-flex justify-content-between align-items-center">
+      <div>
+        <span><i class="material-icons custom-delete-icon">delete</i> Delete</span>
+        Are you sure?
+      </div>
+      <div class="b-holder">
+        <button class="btn btn-custom btn_cancel btn_delete_annotation_cancel"> Cancel</button>
+        <button class="btn btn-custom btn_delete_annotation_confirm">Confirm</button>
+      </div>
+    </div>
+  </div>
+<% end %>

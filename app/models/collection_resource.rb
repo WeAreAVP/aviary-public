@@ -7,6 +7,7 @@ class CollectionResource < ApplicationRecord
   has_many :playlist_resources, dependent: :destroy
   has_many :playlist_items, dependent: :destroy
   has_many :collection_resource_files, dependent: :destroy
+  has_many :annotation_sets, dependent: :destroy
   has_many :public_access_urls
   has_one :resource_description_value, dependent: :destroy
   validates :noid, uniqueness: { message: 'PURL already taken.' }
@@ -93,7 +94,7 @@ class CollectionResource < ApplicationRecord
   end
 
   searchable do
-    solr_mapper_transcript_point = [{ text: :transcript_point_text }, { speaker: :transcript_point_speaker }, { title: :index_point_title }]
+    solr_mapper_transcript_point = [{ text: :transcript_point_text }, { speaker: :transcript_point_speaker }, { title: :index_point_title }, { annotation_body_content: :annotation_body_content }]
     solr_mapper_index_point = [{ title: :index_point_title }, { synopsis: :index_point_synopsis }, { subjects: :index_point_subjects },
                                { keywords: :index_point_keywords }, { partial_script: :index_point_partial_script }]
     solr_mapper_definition = [

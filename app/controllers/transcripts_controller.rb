@@ -105,6 +105,15 @@ class TranscriptsController < ApplicationController
     end
   end
 
+  def refresh_hits_annotation
+    annotation_count = {}
+    file_transcript = FileTranscript.find_by_id(params[:transcript_id])
+    annotation_count = FileTranscriptPresenter.new(file_transcript, view_context).count_annotation_occurrence_present(file_transcript.id, annotation_count)
+    respond_to do |format|
+      format.json { render json: { annotation_count: annotation_count }, status: :accepted }
+    end
+  end
+
   # Never trust parameters from the scary internet, only allow the white list through.
   def file_transcript_params
     params.require(:file_transcript).permit(:title, :is_caption, :associated_file, :is_public, :language, :is_edit, :draftjs, :description)

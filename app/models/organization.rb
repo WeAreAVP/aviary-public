@@ -12,6 +12,7 @@ class Organization < ApplicationRecord
   has_many :organization_users, dependent: :destroy
   has_many :playlists, dependent: :destroy
   has_many :playlist_resources, dependent: :destroy
+  has_many :annotation_sets, dependent: :destroy
   validates :name, :address_line_1, :url,
             :city, :state, :country, :zip, presence: true
   validates :url, uniqueness: { message: 'Already taken. Please choose another.' }
@@ -485,7 +486,8 @@ class Organization < ApplicationRecord
           '5' => { status: 'true', value: 'updated_at_ds', sort_name: true },
           '6' => { status: 'true', value: 'created_at_ds', sort_name: true },
           '7' => { status: 'true', value: 'file_display_name_ss', sort_name: true },
-          '8' => { status: 'true', value: 'collection_resource_title_ss', sort_name: true }
+          '8' => { status: 'true', value: 'collection_resource_title_ss', sort_name: true },
+          '9' => { status: 'true', value: 'annotation_count_is', sort_name: true }
         }
     }.to_json
 

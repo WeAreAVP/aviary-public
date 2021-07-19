@@ -46,4 +46,10 @@ function MarkersCommon() {
         let all_hits = collection_resource.transcript_hits_count[collection_resource.selected_transcript];
         return {total_page: total_page, all_hits: all_hits};
     }
+
+    this.transcript_hits_annotations = function (collection_resource) {
+        let total_page = collection_resource.transcripts.current_selected_total_page('transcript', collection_resource.transcripts.selected_transcript, false);
+        let all_hits = collection_resource.annotation_hits_ids[collection_resource.selected_transcript];
+        return {total_page: total_page, all_hits: all_hits};
+    }
 }

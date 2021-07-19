@@ -1,0 +1,57 @@
+<%= simple_form_for @annotation_set, html: { novalidate: false, class: 'submit_annotation_set_form' } do |form| %>
+  <div class="modal-body custom_form pt-0 pb-4">
+    <div class="form-group">
+      <div class="field-title annotation_public_field">
+        <label for="annotation_set_title">Title&nbsp;<span class="text-danger">*</span></label>
+      </div>
+      <%= form.input :title, label: false, input_html: { class: 'form-control' }, required: true %>
+      <div class="text-danger error_annotation"></div>
+    </div>
+    <div class="form-group">
+      <div class="field-title annotation_public_field">
+        <label for="annotation_set_is_public">Public?&nbsp;<span class="text-danger">*</span></label>
+      </div>
+      <%= form.select :is_public, [['Yes', true], ['No', false]], required: true, label: false, class: 'custom-placeholder' %>
+    </div>
+    <div class="dynamic_section_annotation_set">
+      <% dublin_core = valid_json?(@annotation_set.dublin_core) %>
+      <% unless dublin_core.blank? %>
+        <% dublin_core.each do |dublin_field| %>
+          <div class="row mb-1">
+            <div class="col-md-4">
+              <select name="annotation_set[dublincore_key][]" class="dublin_core_select existing_dublin_core">
+                <% ['Contributor', 'Coverage', 'Creator', 'Date', 'Description', 'Format', 'Identifier', 'Language',
+                    'Publisher', 'Relation', 'Rights', 'Source', 'Subject', 'Type'].each do |single| %>
+                  <option value="<%= single %>" <%= single == dublin_field['key'] ? 'selected="selected"' : '' %>><%= single %></option>
+                  <%= "<option value='#{single}'>#{single}</option>" %>
+                <% end %>
+              </select>
+            </div>
+            <div class="col-md-7">
+              <input type="text" class="string form-control" name="annotation_set[dublincore_value][]" value="<%= dublin_field['value'] %>"/>
+            </div>
+            <a href="javascript://" class="remove_dublin_core" title="Remove Field"><i class="remove_icon_image"></i></a>
+          </div>
+
+
+        <% end %>
+      <% end %>
+    </div>
+    <div class="row mb-1">
+      <div class="col-md-11">
+        <a class="btn btn-sm btn-outline-primary" href="javascript://" id="add_dublincore">Add Field</a>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12">
+        <p class="text-success" id="annotation_success"></p>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
+    <%= form.submit 'Save', class: 'btn btn-primary annotation_save_btn' %>
+  </div>
+<% end %>
+

@@ -27,14 +27,14 @@ module DetailPageHelper
     </div>".html_safe
   end
 
-  def count_transcript_occurrence(transcript_point, single_keyword, transcript_count, is_file_wise, counter, annotation_search_count, _all_annotations)
+  def count_transcript_occurrence(transcript_point, single_keyword, transcript_count, is_file_wise, counter, annotation_search_count, all_annotations)
     transcript_point_sum = count_em(transcript_point.text, single_keyword) + count_em(transcript_point.speaker, single_keyword)
+
     transcript_count[transcript_point.file_transcript.collection_resource_file_id] ||= {}
     transcript_count[transcript_point.file_transcript.collection_resource_file_id]['total-transcript'] ||= 0
     transcript_count[transcript_point.file_transcript.collection_resource_file_id]['total-transcript'] += transcript_point_sum
     return transcript_count if is_file_wise
     hash_keyword = key_hash_manager(single_keyword)
-
     transcript_count[transcript_point.file_transcript.collection_resource_file_id][single_keyword] ||= 0
     transcript_count[transcript_point.file_transcript.collection_resource_file_id][single_keyword] += transcript_point_sum
     transcript_count['individual'] ||= {}
@@ -50,9 +50,35 @@ module DetailPageHelper
     transcript_count[:hits][transcript_point.file_transcript_id] ||= {}
     transcript_count[:hits][transcript_point.file_transcript_id][hash_keyword] ||= []
 
+    collection_resource_file_id = transcript_point.file_transcript.collection_resource_file_id
     annotation_search_count ||= {}
+    annotation_search_count[collection_resource_file_id] ||= {}
+    annotation_search_count[collection_resource_file_id][:total_transcript_wise] ||= {}
+    annotation_search_count[collection_resource_file_id][:total_set_wise] ||= {}
+    annotation_search_count[collection_resource_file_id][:total] ||= 0
 
     if counter.present?
+      all_marker_occurrences_annotation = {}
+      if all_annotations.present?
+        transcript_id = transcript_point.file_transcript_id
+        transcript_id_point_id = transcript_point.id
+        annotation_search_count = annotation_search_count_init(collection_resource_file_id, annotation_search_count, transcript_id, hash_keyword, transcript_id_point_id)
+
+        counter = 0
+        if all_annotations[transcript_point.id].present?
+          all_annotations[transcript_point.id].each do |key, single_annotation_point|
+            all_marker_occurrences_annotation[key] ||= []
+            annotation_point_sum = count_em(single_annotation_point.body_content, single_keyword)
+            inc = 0
+            while inc < annotation_point_sum
+              all_marker_occurrences_annotation[key] << "annotation_#{single_annotation_point.id}"
+              inc += 1
+            end
+            annotation_search_count = count_handler_annotations(annotation_search_count, collection_resource_file_id, transcript_id, annotation_point_sum, hash_keyword, single_annotation_point, transcript_id_point_id)
+            counter += 1
+          end
+        end
+      end
 
       transcript_count[:page_wise] ||= {}
       transcript_count[:page_wise][:transcript] ||= {}
@@ -66,7 +92,11 @@ module DetailPageHelper
       transcript_count[:total_transcript_wise][transcript_point.file_transcript_id][hash_keyword] ||= 0
       transcript_count[:total_transcript_wise][transcript_point.file_transcript_id][hash_keyword] += transcript_point_sum
       all_marker_occurrences_point = transcript_point.text.match_all(single_keyword, "transcript_timecode_#{transcript_point.id}")
-      all_hits = all_marker_occurrences_point
+      all_hits = begin
+                   all_marker_occurrences_annotation.merge(all_marker_occurrences_point) { |_key, a_val, b_val| a_val.merge b_val }.sort.to_h
+                 rescue StandardError
+                   all_marker_occurrences_point
+                 end
       x = 0
       all_hits.each do |_key, single_hit|
         if single_hit.class == Array

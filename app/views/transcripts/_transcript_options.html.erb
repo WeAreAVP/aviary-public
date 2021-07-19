@@ -27,7 +27,7 @@
                   <% file_transcripts.each do |file_transcript| %>
                     <option value="<%= file_transcript.id %>"><%= file_transcript.title %></option>
                     <% html += "<input id='total_transcript_points_#{file_transcript.id}' type='hidden' value='#{file_transcript.file_transcript_points.count / Aviary::IndexTranscriptManager::POINTS_PER_PAGE}'/>" %>
-
+                    <% html += "<span class='refresh_hits_annotation refresh_hits_annotation_#{file_transcript.id}' data-url='#{refresh_hits_annotation_path(transcript_id: file_transcript.id)}'> </span>" %>
                   <% end %>
                 </select>
               </div>

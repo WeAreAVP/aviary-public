@@ -126,9 +126,21 @@ class CollectionResourcesController < ApplicationController
     @file_transcript_points = @file_transcript.file_transcript_points
     @total_transcript_points = @file_transcript.file_transcript_points.count
     @can_access_transcript = @file_transcript.is_public || @collection_resource.can_view || @collection_resource.can_edit || (can? :edit, @collection_resource.collection.organization) || (can? :read, @file_transcript)
+
+    @can_access_annotation = (can? :edit, @collection_resource.collection.organization) || (can? :read, @file_transcript.annotation_set)
     collection_resource_presenter = CollectionResourcePresenter.new(@collection_resource, view_context)
     @session_video_text_all = collection_resource_presenter.all_params_information(params)
-    @listing_transcripts, @transcript_count, @transcript_time_wise = collection_resource_presenter.transcript_point_list(@file_transcript, @file_transcript_points, @session_video_text_all)
+    sorted_annotations = {}
+    if @file_transcript.annotation_set.try(:annotations).present?
+      @file_transcript.annotation_set.annotations.each do |single_annotation|
+        sorted_annotations[single_annotation.target_sub_id] ||= {}
+        target_info = JSON.parse(single_annotation.target_info)
+        sorted_annotations[single_annotation.target_sub_id][target_info['startOffset']] = single_annotation
+      end
+    end
+
+    @listing_transcripts, @transcript_count, @transcript_time_wise, @annotation_count, @annotation_search_count = collection_resource_presenter.transcript_point_list(@file_transcript, @file_transcript_points,
+                                                                                                                                                                      @session_video_text_all, @can_access_annotation, sorted_annotations)
 
     body_response = view_context.render 'transcripts/index', locals: { size: params[:tabs_size], xray: false }
 

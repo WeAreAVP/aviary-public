@@ -152,10 +152,10 @@
       <% if show_transcript_tab %>
         <div class="resourceContantSection tab-pane fade <%= transcript_tab_active %> transcript-tab" id="transcript" role="tabpanel" aria-labelledby="transcript-tab" data-template-url="<%= collection_collection_resource_load_transcript_template_path(@collection, @collection_resource, @resource_file, share: params[:share], access: params[:access]) %>">
           <% if (@resource_file.present? && @resource_file.file_transcripts.present?) %>
-            <% file_transcripts = @resource_file.file_transcripts.order_transcript %>
+            <% file_transcripts = @resource_file.file_transcripts.includes([:annotation_set]).order_transcript %>
           <% end %>
           <%= render partial: 'transcripts/transcript_options', locals: { file_transcripts: file_transcripts, from_playlist: from_playlist } %>
-
+          <%= render partial: 'annotation_sets/annotation_sets', locals: { file_transcripts: file_transcripts, from_playlist: from_playlist } %>
           <div class="row">
             <div class="col-md-12">
               <div class="transcript_point_container enable_annotation">
