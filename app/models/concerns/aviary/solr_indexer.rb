@@ -41,7 +41,7 @@ module Aviary::SolrIndexer
     self.trans_points_solr = {}
     return [] unless CollectionResourceFile.where(collection_resource_id: id).present?
     file_ids = CollectionResourceFile.where(collection_resource_id: id).map(&:id)
-    self.trans_points_solr = { speaker: [], text: [], writing_direction: [], title: [] }
+    self.trans_points_solr = { speaker: [], text: [], writing_direction: [], title: [], annotation_body_content: [] }
     ids = nil
     ids = FileTranscript.where(collection_resource_file_id: file_ids).pluck(:id) if file_ids.present?
     return [] unless ids.present?
@@ -52,6 +52,7 @@ module Aviary::SolrIndexer
       trans_points_solr[:speaker] << single_transcript_point.speaker.to_s
       trans_points_solr[:writing_direction] << single_transcript_point.writing_direction
     end
+    Annotation.where(target_content_id: ids).map { |single_annotation| trans_points_solr[:annotation_body_content] << single_annotation.body_content } if ids.present?
   end
 
   def self.define_custom_field_system_name(system_name, type = nil, append_solr_type = false)

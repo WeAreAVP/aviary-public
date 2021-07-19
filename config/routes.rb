@@ -141,6 +141,8 @@ Rails.application.routes.draw do
       patch 'update_metadata', to: 'collection_resources#update_metadata', as: 'update_metadata'
     end
   end
+  resources :annotations, only: %i[show create update destroy]
+  resources :annotation_sets, except: %i[index show]
   resources :playlists, except: %i[edit show] do
     resources :playlist_resources do
       collection do
@@ -207,6 +209,7 @@ Rails.application.routes.draw do
   patch 'transcripts/sort/:resource_file_id', to: 'transcripts#sort', as: 'transcript_sort'
   delete 'transcripts/delete/:id', to: 'transcripts#destroy', as: 'transcript_delete'
   get 'transcripts/export/:type(/:id)', to: 'transcripts#export', as: 'transcript_export'
+  post 'transcripts/refresh_hits_annotation/:transcript_id', to: 'transcripts#refresh_hits_annotation', as: 'refresh_hits_annotation'
   post :data_table, to: 'collection_resources#index'
   get '/confirm_organization_invite/:token', to: 'organizations#confirm_invite', as: :org_confirm_invite
   get 'remove_image/:target_type/target_id/:target_id/target_attr/:target_attr', to: 'home#remove_image_for_assets', as: :remove_image_target_wise

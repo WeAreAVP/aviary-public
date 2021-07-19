@@ -10,6 +10,7 @@ function MarkerHandlerIndexTranscript(identifier, keyword) {
     this.identifier = identifier;
     this.tab_type = 'transcript';
     this.last_button_action = 'next';
+    var lastActiveAnnotation = '';
     this.collection_resource = {};
     this.search_keyword = keyword;
     this.$input = $("#search_text");
@@ -72,34 +73,6 @@ function MarkerHandlerIndexTranscript(identifier, keyword) {
         }
     };
 
-    const load_occurrence_by_type = function (total_page, type, first_or_last) {
-        let indexPageInfo = load_marker(total_page, selfMHIT.identifier, type, first_or_last);
-        if (type == 'index') {
-            selfMHIT.collection_resource.indexes.specific_page_load('marker_button', indexPageInfo['page_number_inner']);
-        } else {
-            selfMHIT.collection_resource.transcripts.specific_page_load_transcript('marker_button', indexPageInfo['page_number_inner']);
-        }
-    };
-
-    const load_marker = function (total_page, identifire, type, last_or_first) {
-        let page_number_inner = false;
-        let all_hits = selfMHIT.collection_resource.transcript_hits_count[selfMHIT.collection_resource.selected_transcript][identifire];
-        if (type == 'index') {
-            all_hits = selfMHIT.collection_resource.index_hits_count[selfMHIT.collection_resource.selected_index][identifire];
-        }
-
-        let loop_all_hits = all_hits[0];
-        let indexCurrent = 0;
-        if (last_or_first == 'last') {
-            loop_all_hits = all_hits[all_hits.length - 1];
-        }
-
-        let information = loop_all_hits.split('||');
-        page_number_inner = parseInt(information[2], 10);
-
-        return {indexCurrent: indexCurrent, page_number_inner: page_number_inner};
-    };
-
     const init_marker_buttons = function () {
         /**
          * Clears the search
@@ -131,6 +104,35 @@ function MarkerHandlerIndexTranscript(identifier, keyword) {
 
     };
 
+    const handleActiveChangeAnnotation = function (annotationElement) {
+        if (lastActiveAnnotation != annotationElement) {
+            lastActiveAnnotation = annotationElement;
+            return true;
+        }
+        lastActiveAnnotation = annotationElement;
+        return false;
+    };
+
+    const annotationSearchMarker = function (information, element, selfMHIT, movement) {
+
+        if(handleActiveChangeAnnotation(information[0])){
+            $('.close.close_annotation').click();
+        }
+        let identifier = $('.next_button_other:hover, .back_button_other:hover').data('identifire');
+        let current = $('.readable-text.annotation-information p').find('.highlight-marker.mark.' + identifier)[parseInt(information[1], 10)];
+
+        if (!$('.annotation_marker.' + information[0]).hasClass('active')) {
+            $('#identifier_movement').val(movement.toString());
+            $('#clicked_identifier').val(identifier);
+            setTimeout(function () {
+                $('.annotation_marker.' + information[0]).click();
+            }, 200);
+
+            $('.transcript #overlay-counters').removeClass('d-none');
+        }
+        $('.' + selfMHIT.tab_type.toLowerCase() + '_point_container').mCustomScrollbar("scrollTo", '.annotation_marker.' + information[0], {scrollInertia: 200, timeout: 1});
+        return current;
+    };
 
     const handle_index_transcript = function (element) {
         let $current = {};
@@ -160,55 +162,53 @@ function MarkerHandlerIndexTranscript(identifier, keyword) {
         }
 
         if (all_hits.length > 0) {
+            let limitedIdentifier = $(element).data('identifire');
             selfMHIT.currentIndex = selfMHIT.markers_common.current_index_update(selfMHIT.currentIndex, is_next_button, selfMHIT.last_button_action);
             if (typeof all_hits[(selfMHIT.currentIndex)] != 'undefined') {
                 let information = all_hits[(selfMHIT.currentIndex)].split('||');
-                $current = $('#' + information[0]).find('.highlight-marker.mark.' + $(element).data('identifire'))[parseInt(information[1], 10)];
+                if(information[0].includes('annotation_')) {
+                    $current = annotationSearchMarker(information, element, selfMHIT, number);
+                } else {
+                    $('.close.close_annotation').click();
+                    $current = $('#' + information[0]).find('.highlight-marker.mark.' + $(element).data('identifire'))[parseInt(information[1], 10)];
+                }
                 if ($($current).length > 0) {
                     // found and loading
                     jumpTo($current, total_page);
                     selfMHIT.markers_common.set_count_update(selfMHIT.currentIndex + 1, '.current_location', element, 'li');
-                    selfMHIT.currentIndex += number
-
-
-                } else if(false) {
-                    // found but not on current pages;
-                    let information = all_hits[selfMHIT.currentIndex].split('||');
-                    let page_number_index = selfMHIT.markers_common.page_manager(information, total_page);
-
-                    if (selfMHIT.tab_type.toLowerCase() == 'index') {
-                        // index new page
-                        selfMHIT.collection_resource.indexes.specific_page_load('marker_button', parseInt(page_number_index, 10));
-                    } else {
-                        // new transcript page
-                        selfMHIT.collection_resource.transcripts.specific_page_load_transcript('marker_button', parseInt(page_number_index, 10));
-                    }
+                    selfMHIT.currentIndex += number;
                 }
             } else if (selfMHIT.currentIndex > (all_hits.length - 1)) {
+
                 //not found loading first occurrence
                 selfMHIT.currentIndex = 0;
                 let information = all_hits[(selfMHIT.currentIndex)].split('||');
-                $current = $('#' + information[0]).find('.highlight-marker.mark.' + $(element).data('identifire'))[parseInt(information[1], 10)];
+                if(information[0].includes('annotation_')) {
+                    $current = annotationSearchMarker(information, element, selfMHIT, number);
+
+                } else {
+                    $('.close.close_annotation').click();
+                    $current = $('#' + information[0]).find('.highlight-marker.mark.' + limitedIdentifier)[parseInt(information[1], 10)];
+                }
                 if ($($current).length > 0) {
                     jumpTo($current, total_page);
                     selfMHIT.currentIndex += number;
-                    selfMHIT.markers_common.set_count_update(selfMHIT.currentIndex, '.current_location', element, 'li');
-                } else {
-                    load_occurrence_by_type(total_page, selfMHIT.tab_type.toLowerCase(), 'first')
                     selfMHIT.markers_common.set_count_update(selfMHIT.currentIndex, '.current_location', element, 'li');
                 }
             } else if (selfMHIT.currentIndex < 0) {
                 // not found loading last occurrence
                 selfMHIT.currentIndex = all_hits.length - 1;
                 let information = all_hits[(selfMHIT.currentIndex)].split('||');
-                $current = $('#' + information[0]).find('.highlight-marker.mark.' + $(element).data('identifire'))[parseInt(information[1], 10)];
+                if(information[0].includes('annotation_')) {
+                    $current = annotationSearchMarker(information, element, selfMHIT, number);
+                } else {
+                    $('.close.close_annotation').click();
+                    $current = $('#' + information[0]).find('.highlight-marker.mark.' + $(element).data('identifire'))[parseInt(information[1], 10)];
+                }
                 if ($($current).length > 0) {
                     jumpTo($current, total_page);
                     selfMHIT.markers_common.set_count_update(selfMHIT.currentIndex + 1, '.current_location', element, 'li');
                     selfMHIT.currentIndex += number;
-                } else {
-                    load_occurrence_by_type(total_page, selfMHIT.tab_type.toLowerCase(), 'last')
-                    selfMHIT.markers_common.set_count_update(selfMHIT.currentIndex + 1, '.current_location', element, 'li');
                 }
             }
             selfMHIT.last_button_action = selfMHIT.markers_common.update_last_action(is_next_button)

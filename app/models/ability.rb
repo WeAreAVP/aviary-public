@@ -21,6 +21,7 @@ class Ability
         can :manage, Collection
         can :manage, [FileIndex, FileIndexPoint]
         can :manage, [FileTranscript, FileTranscriptPoint]
+        can :manage, [AnnotationSet, Annotation]
         can :manage, CollectionResourceFile
         roles = Role.org_owner_and_admin_id
         unless roles.include? user_current_organization.first.role_id

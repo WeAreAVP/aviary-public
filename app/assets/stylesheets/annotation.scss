@@ -1,0 +1,386 @@
+.add-annotation-box span,
+.show-annotation-box span {
+  font-size: 14px;
+  color: #00324B;
+  display: block;
+  margin-bottom: 0;
+}
+
+.annotation-box-holder {
+  position: absolute;
+  bottom: 0;
+  left: 6px;
+  width: 58%;
+  min-height: 230px;
+}
+
+.show-annotation-box .holder {
+  flex: 1;
+}
+
+.add-annotation-box .btn-custom,
+.annotation-option .btn-custom {
+  border: 1px solid #336075;
+  background: #fff;
+  font-size: 14px;
+  color: #336075;
+  padding: 3px 6px;
+}
+
+.add-annotation-box .btn-custom:hover,
+.annotation-option .btn-custom:hover {
+  border-color: #000;
+  opacity: 1;
+  color: #000;
+}
+
+.add-annotation-box .btn-custom:disabled,
+.annotation-option .btn-custom:disabled {
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+.annotation-option .btn-custom .custom-delete-icon {
+  font-size: 16px;
+  left: 0px !important;
+  position: relative;
+  top: 2px !important;
+  margin-right: -2px;
+}
+
+
+.remove_dublin_core {
+  padding-top: 10px;
+  position: relative;
+  i {
+    position: absolute;
+    right: -17px;
+    top: 16px;
+  }
+}
+
+.timecode_section {
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+
+.highlight-info {
+  margin-left: 15px;
+
+  .add {
+    background: #DAF4EA;
+    padding: 15px;
+    font-size: 13px;
+    color: #554D63;
+
+    span {
+      color: #3C334C;
+      text-transform: uppercase;
+      font-weight: 500;
+      margin-right: 10px;
+    }
+  }
+
+  .delete {
+    background: #FDEDED;
+    padding: 10px 15px;
+    font-size: 13px;
+    color: #554D63;
+
+    span {
+      color: #3C334C;
+      text-transform: uppercase;
+      font-weight: 500;
+      margin-right: 10px;
+      position: relative;
+      padding-left: 15px;
+
+      i {
+        position: absolute;
+        left: -1px !important;
+        top: -1px !important;
+        font-size: 15px;
+      }
+    }
+
+    .btn-custom {
+      border: 1px solid #336075;
+      font-size: 14px;
+      background: #fff;
+      text-transform: uppercase;
+      color: #336075;
+      padding: 3px 6px;
+
+      &.btn_cancel {
+        background: transparent;
+      }
+    }
+  }
+}
+
+#annotation_message {
+  color: #00324B;
+}
+
+.transcript_point_container {
+  ::-moz-selection { /* Code for Firefox */
+    color: #3B3B3B;
+    background: #7EFBC74D;
+  }
+
+  ::selection {
+    color: #3B3B3B;
+    background: #7EFBC74D;
+  }
+}
+
+.file_transcript_mark_custom .flag {
+  display: none;
+}
+
+.enable_annotation .file_transcript_mark_custom .flag {
+  position: absolute;
+  left: -91px;
+  cursor: pointer;
+  display: inline;
+}
+
+.enable_annotation .file_transcript_mark_custom .flag:before {
+  font-family: "Material Icons";
+  content: "\e892";
+  position: absolute;
+  font-size: 24px;
+  line-height: 1;
+  top: 0;
+  left: -7px;
+  -webkit-text-fill-color: #fff;
+  -webkit-text-stroke-width: 2px;
+  -webkit-text-stroke-color: #959595;
+  z-index: 2;
+}
+
+.enable_annotation .file_transcript_mark_custom .flag.active:before {
+  -webkit-text-fill-color: #7EFBC74D;
+  -webkit-text-stroke-color: #2B785A;
+}
+
+.enable_annotation .file_transcript_mark_custom .flag.active .line {
+  position: absolute;
+  top: 4px;
+  left: -5px;
+  bottom: -99999999999px;
+  background: #2b785a;
+  width: 2px;
+  z-index: 1;
+}
+
+.enable_annotation .file_transcript_mark_custom .flag.active.delete:before {
+  -webkit-text-fill-color: #FF7A71;
+  -webkit-text-stroke-color: #B6001D;
+}
+
+.enable_annotation .file_transcript_mark_custom .flag.active.delete .line {
+  position: absolute;
+  top: 4px;
+  left: -5px;
+  bottom: -99999999999px;
+  background: #B6001D;
+  width: 2px;
+  z-index: 1;
+}
+
+.enable_annotation .annotation_marker {
+  border: 1px solid #959595;
+  padding: 2px;
+}
+
+.enable_annotation .annotation_marker.active {
+  border: 1px solid #2B785A;
+  background: #7EFBC74D;
+
+}
+
+.enable_annotation .annotation_marker.active.delete {
+  border: 1px solid #B6001D;
+  background: #FFD7D4;
+
+}
+
+.annotation-box .text-box.delete {
+  border: 2px solid #B6001D;
+
+  .annotation_text {
+    background: #FFD7D4;
+  }
+}
+
+.close_annotation {
+  color: #00324B;
+}
+
+.transcript_enable_annotation_section {
+  display: inline;
+}
+
+/* annotation box styles */
+.annotation-box {
+  //background: #eef9f5;
+  padding: 30px 20px 35px;
+  position: relative;
+  margin: 0 14px 0px 0;
+}
+
+.annotation-box:after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  height: 100vh;
+  right: -17px;
+  width: 2px;
+  background: #fff;
+  z-index: 2;
+}
+
+.annotation-box strong {
+  font-size: 16px;
+  color: #00324B;
+  font-weight: normal;
+  margin-bottom: 10px;
+  display: block;
+}
+
+.annotation-box .badge {
+  font-size: 13px;
+  font-weight: 500;
+  padding: 0;
+}
+
+.annotation-box .button_handle .back_button,
+.annotation-box .button_handle .next_button {
+  background-color: transparent;
+  color: #002232;
+  font-weight: 500;
+  font-size: 18px;
+  border: 2px solid #CCD7DD;
+  padding: 0px 7px;
+  border-radius: 2px;
+}
+
+.annotation-box .floating-box {
+  position: absolute;
+  right: -18px;
+  width: 102%;
+  z-index: 99;
+  bottom: 0;
+}
+
+.annotation-box .text-box {
+  border: 2px solid #2B785A;
+  background: #fff;
+  padding: 10px;
+}
+
+.annotation-box .text-box .title {
+  background: #d7feee;
+  color: #000;
+  font-size: 14px;
+  padding: 5px;
+  margin-bottom: 10px;
+  display: inline-block;
+}
+
+.annotation-box .text-box .readable-text,
+.annotation-box .text-box .form-control {
+  border: 1px solid #9FB1CB;
+  font-size: 14px;
+  padding: 10px;
+  min-height: 120px;
+  max-height: 150px;
+  resize: none;
+  overflow: auto;
+}
+
+.annotation-box .buttons-holder {
+  margin-bottom: 5px;
+  text-align: right;
+  padding-right: 25px;
+}
+
+.annotation-box .btn-custom {
+  border: 1px solid #336075;
+  background: #fff;
+  font-size: 14px;
+  text-transform: uppercase;
+  color: #336075;
+  padding: 3px 6px;
+}
+
+.annotation-box .btn-custom:hover {
+  border-color: #000;
+  opacity: 1;
+  color: #000;
+}
+
+.annotation-box .btn-custom:disabled {
+  opacity: 0.3;
+  cursor: unset;
+}
+
+.annotation-box .readable-text strong {
+  display: inline;
+  font-weight: bold;
+  color: inherit;
+  font-size: inherit;
+}
+.editable-text .tox-tinymce{
+  height: 160px !important;
+}
+
+.playlists-edit .enable_annotation .file_transcript_mark_custom .flag {
+  left: -91px;
+}
+
+.playlists-show .enable_annotation .file_transcript_mark_custom .flag {
+  left: -91px;
+}
+@media screen and (max-width: 1700px) {
+  .annotation-box-holder {
+    left: 5px;
+  }
+}
+@media screen and (max-width: 1500px) {
+  .annotation-box .floating-box {
+    right: -17px;
+  }
+}
+@media screen and (max-width: 1300px) {
+  .annotation-box .floating-box {
+    right: -16px;
+  }
+}
+@media screen and (max-width: 992px) {
+  .transcript_point_container {
+    margin-bottom: 230px; 
+    padding-bottom: 0 !important;
+  }
+  .annotation-box {
+    height: auto !important;
+  }
+  .annotation-box-holder {
+    left: -14px !important;
+    width: 100.7%;
+    height: auto !important;
+    bottom: -132px;
+  }
+}
+@media screen and (max-width: 767px) {
+  .annotation-box-holder {
+    left: -11px !important;
+    width: 100%;
+    height: auto !important;
+    bottom: -153px;
+  }
+}
