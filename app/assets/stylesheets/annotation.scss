@@ -52,6 +52,7 @@
 .remove_dublin_core {
   padding-top: 10px;
   position: relative;
+
   i {
     position: absolute;
     right: -17px;
@@ -335,7 +336,8 @@
   color: inherit;
   font-size: inherit;
 }
-.editable-text .tox-tinymce{
+
+.editable-text .tox-tinymce {
   height: 160px !important;
 }
 
@@ -346,24 +348,28 @@
 .playlists-show .enable_annotation .file_transcript_mark_custom .flag {
   left: -91px;
 }
+
 @media screen and (max-width: 1700px) {
   .annotation-box-holder {
     left: 5px;
   }
 }
+
 @media screen and (max-width: 1500px) {
   .annotation-box .floating-box {
     right: -17px;
   }
 }
+
 @media screen and (max-width: 1300px) {
   .annotation-box .floating-box {
     right: -16px;
   }
 }
+
 @media screen and (max-width: 992px) {
   .transcript_point_container {
-    margin-bottom: 230px; 
+    margin-bottom: 230px;
     padding-bottom: 0 !important;
   }
   .annotation-box {
@@ -376,6 +382,7 @@
     bottom: -132px;
   }
 }
+
 @media screen and (max-width: 767px) {
   .annotation-box-holder {
     left: -11px !important;
