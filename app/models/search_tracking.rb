@@ -1,4 +1,7 @@
 # SearchTracking
+#
+# Aviary is an audiovisual content publishing platform with sophisticated features for search and permissions controls.
+# Copyright (C) 2019 Audio Visual Preservation Solutions, Inc.
 class SearchTracking < ApplicationRecord
   has_one :ahoy_event, class_name: 'Ahoy::Event'
   include ApplicationHelper

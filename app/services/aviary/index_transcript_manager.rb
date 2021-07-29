@@ -7,6 +7,9 @@
 # dry-transaction gem is needed for adding transcript steps to this process
 #
 # Author::    Nouman Tayyab  (mailto:nouman@weareavp.com)
+#
+# Aviary is an audiovisual content publishing platform with sophisticated features for search and permissions controls.
+# Copyright (C) 2019 Audio Visual Preservation Solutions, Inc.
 module Aviary::IndexTranscriptManager
   POINTS_PER_PAGE = 7000.to_f
   # IndexManager Class for managing the index import of OHMS and WebVTT files

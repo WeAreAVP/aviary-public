@@ -1,11 +1,15 @@
+/**
+ * ResourcePageCommon Management
+ *
+ * @author Furqan Wasi <furqan@weareavp.com>
+ *
+ * Aviary is an audiovisual content publishing platform with sophisticated features for search and permissions controls.
+ * Copyright (C) 2019 Audio Visual Preservation Solutions, Inc.
+ *
+ */
 function ResourcePageCommon() {
 
-    /**
-     * CollectionResourceFile Management
-     *
-     * @author Furqan Wasi <furqan@weareavp.com>
-     *
-     */
+
     this.initialize = function (parentElement) {
         dataValidation(parentElement);
         bindingAddRow(parentElement);

@@ -1,4 +1,7 @@
 # Collection Resources Controller
+#
+# Aviary is an audiovisual content publishing platform with sophisticated features for search and permissions controls.
+# Copyright (C) 2019 Audio Visual Preservation Solutions, Inc.
 class CollectionResourcesController < ApplicationController
   before_action :set_av_resource, except: %I[new show create embed_file]
   before_action :authenticate_user!, except: %I[show search_text load_head_and_tombstone_template load_resource_details_template load_time_line_template embed_file show_search_counts load_index_template load_transcript_template file_wise_counts]

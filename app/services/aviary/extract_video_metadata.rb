@@ -7,6 +7,9 @@
 # soundcloud gem is needed to successfully process the embed code for the SoundCloud
 #
 # Author::    Nouman Tayyab  (mailto:nouman@weareavp.com)
+#
+# Aviary is an audiovisual content publishing platform with sophisticated features for search and permissions controls.
+# Copyright (C) 2019 Audio Visual Preservation Solutions, Inc.
 module Aviary::ExtractVideoMetadata
   # VideoEmbed Class helps to get the metadata from the embed code
   class VideoEmbed

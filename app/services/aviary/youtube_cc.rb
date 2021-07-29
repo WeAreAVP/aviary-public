@@ -5,6 +5,9 @@
 # and store it as transcript
 #
 # Author::    Nouman Tayyab  (mailto:nouman@weareavp.com)
+#
+# Aviary is an audiovisual content publishing platform with sophisticated features for search and permissions controls.
+# Copyright (C) 2019 Audio Visual Preservation Solutions, Inc.
 module Aviary
   # YoutubeCC Class to check the close caption against youtube video and extract and store it
   class YoutubeCC

@@ -1,3 +1,5 @@
+# Aviary is an audiovisual content publishing platform with sophisticated features for search and permissions controls.
+# Copyright (C) 2019 Audio Visual Preservation Solutions, Inc.
 namespace :aviary do
   namespace :solr_index do
     desc 'Index all objects of given Class for Solr; in descending order'

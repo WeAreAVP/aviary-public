@@ -1,4 +1,7 @@
 # ApplicationHelperExtended
+#
+# Aviary is an audiovisual content publishing platform with sophisticated features for search and permissions controls.
+# Copyright (C) 2019 Audio Visual Preservation Solutions, Inc.
 module ApplicationHelperExtended
   def role_type(user, organization)
     role_name = Role.all_user_types[4]

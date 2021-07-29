@@ -1,5 +1,8 @@
 # CollectionResourcePresenter
 # Author::  Furqan Wasi(mailto:furqan@weareavp.com)
+#
+# Aviary is an audiovisual content publishing platform with sophisticated features for search and permissions controls.
+# Copyright (C) 2019 Audio Visual Preservation Solutions, Inc.
 class CollectionResourcePresenter < BasePresenter
   delegate :list_resources_collection_path, :collection_collection_resource_path, :collection_collection_resource_add_resource_file_path, :session, :edit_collection_collection_resource_path, :add_breadcrumb, to: :h
   include ApplicationHelper

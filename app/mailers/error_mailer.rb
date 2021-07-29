@@ -1,4 +1,7 @@
 # ErrorMailer
+#
+# Aviary is an audiovisual content publishing platform with sophisticated features for search and permissions controls.
+# Copyright (C) 2019 Audio Visual Preservation Solutions, Inc.
 class ErrorMailer < ApplicationMailer
   def email_error_info(exception_object, extra_information, to_email, subject)
     @error_trace_string = exception_object.to_s

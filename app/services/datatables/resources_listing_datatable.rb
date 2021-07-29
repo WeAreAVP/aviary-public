@@ -1,4 +1,7 @@
 # ResourcesListingDatatable
+#
+# Aviary is an audiovisual content publishing platform with sophisticated features for search and permissions controls.
+# Copyright (C) 2019 Audio Visual Preservation Solutions, Inc.
 class ResourcesListingDatatable < ApplicationDatatable
   delegate :time_to_duration, :html_safe, :strip_tags, :truncate, :check_valid_array, :edit_collection_collection_resource_path, :collection_collection_resource_path,
            :bulk_resource_list_collections_path, :collection_resource_path, :current_organization, :boolean_value, :can?, to: :@view

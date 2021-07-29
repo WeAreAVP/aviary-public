@@ -1,11 +1,15 @@
+/**
+ * CollectionResource Management
+ *
+ * @author Nouman Tayyab <nouman@weareavp.com>
+ *
+ * Aviary is an audiovisual content publishing platform with sophisticated features for search and permissions controls.
+ * Copyright (C) 2019 Audio Visual Preservation Solutions, Inc.
+ *
+ */
 function CollectionResource() {
 
-    /**
-     * CollectionResource Management
-     *
-     * @author Nouman Tayyab <nouman@weareavp.com>
-     *
-     */
+
     var file_access = true;
     var selfCR = this;
     selfCR.markerHandlerArrayDescription = {};

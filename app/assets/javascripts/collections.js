@@ -1,3 +1,9 @@
+/**
+ *
+ *
+ * Aviary is an audiovisual content publishing platform with sophisticated features for search and permissions controls.
+ * Copyright (C) 2019 Audio Visual Preservation Solutions, Inc.
+ */
 jQuery(function () {
     var fixHelperModified, handle, preview_data, set_switch_fields, updateIndex, updateIndex1;
     $(document).on('submit', '.new_collection_resource_field,.edit_collection_resource_field', function (e) {

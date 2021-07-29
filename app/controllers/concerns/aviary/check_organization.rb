@@ -3,6 +3,9 @@
 # The module is written to get the current organization and manage its redirect
 #
 # Author::    Nouman Tayyab  (mailto:nouman@weareavp.com)
+#
+# Aviary is an audiovisual content publishing platform with sophisticated features for search and permissions controls.
+# Copyright (C) 2019 Audio Visual Preservation Solutions, Inc.
 module Aviary::CheckOrganization
   extend ActiveSupport::Concern
 

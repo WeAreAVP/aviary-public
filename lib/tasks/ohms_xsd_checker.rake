@@ -4,6 +4,9 @@
 # The task is written to send notification when there is a change in xsd at http://weareavp.com/nunncenter/ohms/ohms.xsd
 #
 # Author::    Nouman Tayyab (mailto:nouman@weareavp.com)
+#
+# Aviary is an audiovisual content publishing platform with sophisticated features for search and permissions controls.
+# Copyright (C) 2019 Audio Visual Preservation Solutions, Inc.
 namespace :aviary do
   namespace :ohms_xsd_checker do
     desc 'Trigger the job to check if there is a change in ohms.xsd at nunncenter'

@@ -1,4 +1,7 @@
 # Ahoy::Visit
+#
+# Aviary is an audiovisual content publishing platform with sophisticated features for search and permissions controls.
+# Copyright (C) 2019 Audio Visual Preservation Solutions, Inc.
 class Ahoy::Visit < ApplicationRecord
   self.table_name = 'ahoy_visits'
 

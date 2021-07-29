@@ -4,6 +4,9 @@
 # Module Aviary::General
 #
 # Author::    Furqan Wasi  (mailto:furqan@weareavp.com)
+#
+# Aviary is an audiovisual content publishing platform with sophisticated features for search and permissions controls.
+# Copyright (C) 2019 Audio Visual Preservation Solutions, Inc.
 module Aviary
   # General class
   class General

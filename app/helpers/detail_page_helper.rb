@@ -1,4 +1,7 @@
 # Detail Page Helper
+#
+# Aviary is an audiovisual content publishing platform with sophisticated features for search and permissions controls.
+# Copyright (C) 2019 Audio Visual Preservation Solutions, Inc.
 module DetailPageHelper
   def count_occurrence(point, session_video_text, type_count, type, is_file_wise = false, counter = nil, annotation_search_count = nil, all_annotations = nil, sub_type = nil)
     return type_count if session_video_text.blank?

@@ -5,6 +5,9 @@
 # and user forgot to unlock it.
 #
 # Author::    Nouman Tayyab  (mailto:nouman@weareavp.com)
+#
+# Aviary is an audiovisual content publishing platform with sophisticated features for search and permissions controls.
+# Copyright (C) 2019 Audio Visual Preservation Solutions, Inc.
 namespace :aviary do
   desc 'Automated unlock the locked transcript after 24 hours'
   task unlock_transcript: :environment do

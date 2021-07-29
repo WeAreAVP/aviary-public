@@ -4,6 +4,9 @@
 # The module is written to for Organization Field Management and saving and fetching information in the Aviary system
 #
 # Author::    Furqan wasi  (mailto:furqan@weareavp.com)
+#
+# Aviary is an audiovisual content publishing platform with sophisticated features for search and permissions controls.
+# Copyright (C) 2019 Audio Visual Preservation Solutions, Inc.
 
 module Aviary
   module FieldManagement

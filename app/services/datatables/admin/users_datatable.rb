@@ -1,5 +1,8 @@
 # Admin::UsersDatatable
 # Author::    Nouman Tayyab  (mailto:nouman@weareavp.com)
+#
+# Aviary is an audiovisual content publishing platform with sophisticated features for search and permissions controls.
+# Copyright (C) 2019 Audio Visual Preservation Solutions, Inc.
 class Admin::UsersDatatable < ApplicationDatatable
   delegate :edit_admin_user_path, :admin_user_path, to: :@view
   def initialize(view)

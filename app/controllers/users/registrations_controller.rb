@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 # Users::RegistrationsController
+#
+# Aviary is an audiovisual content publishing platform with sophisticated features for search and permissions controls.
+# Copyright (C) 2019 Audio Visual Preservation Solutions, Inc.
 class Users::RegistrationsController < Devise::RegistrationsController
   respond_to :html, :json
   before_action :configure_sign_up_params, only: [:create]

@@ -1,5 +1,8 @@
 # Playlist Presenter
 # Author::  Furqan Wasi(mailto:furqan@weareavp.com)
+#
+# Aviary is an audiovisual content publishing platform with sophisticated features for search and permissions controls.
+# Copyright (C) 2019 Audio Visual Preservation Solutions, Inc.
 class PlaylistPresenter < BasePresenter
   def self.add_resource_to_playlist(collection_resource_id, playlists, current_user, sorter = nil)
     collection_resource = CollectionResource.find(collection_resource_id)

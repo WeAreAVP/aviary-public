@@ -1,5 +1,7 @@
-# Detail ArchivesSpaceHelper Helper
 # CollectionResourceFileHelper
+#
+# Aviary is an audiovisual content publishing platform with sophisticated features for search and permissions controls.
+# Copyright (C) 2019 Audio Visual Preservation Solutions, Inc.
 module CollectionResourceFileHelper
   def display_field(field)
     current_organization.resource_file_display_column.map { |_a, b| b['status'] if b['value'] == field }.compact.first

@@ -13,7 +13,7 @@ set :repo_url, 'git@github.com:WeAreAVP/aviary-public.git'
 set :keep_releases, 3
 
 # files we want symlinking to specific entries in shared
-set :linked_files, %w{config/database.yml .env}
+set :linked_files, %w{.env}
 
 set :use_sudo, true
 
@@ -21,7 +21,7 @@ set :use_sudo, true
 set :ssh_options, keys: ['config/deploy_id_rsa'] if File.exist?('config/deploy_id_rsa')
 
 namespace :deploy do
-  before :deploy, 'copy:database_file'
+  # before :deploy, 'copy:database_file'
   before :deploy, 'copy:env_file'
   after :deploy, 'restart:nginx'
   after :deploy, 'sidekiq:restart'

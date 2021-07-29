@@ -1,6 +1,9 @@
 # models/concerns/xml_file_handler.rb
 # Module XMLFileHandler
 # XML File Handler
+#
+# Aviary is an audiovisual content publishing platform with sophisticated features for search and permissions controls.
+# Copyright (C) 2019 Audio Visual Preservation Solutions, Inc.
 module XMLFileHandler
   extend ActiveSupport::Concern
 

@@ -1,4 +1,7 @@
 # SearchHelper
+#
+# Aviary is an audiovisual content publishing platform with sophisticated features for search and permissions controls.
+# Copyright (C) 2019 Audio Visual Preservation Solutions, Inc.
 module FacetHelper
   def add_facet_params_to_url(url, search_facets)
     if search_facets && url

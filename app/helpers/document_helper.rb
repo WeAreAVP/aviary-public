@@ -1,4 +1,7 @@
 # SearchHelper
+#
+# Aviary is an audiovisual content publishing platform with sophisticated features for search and permissions controls.
+# Copyright (C) 2019 Audio Visual Preservation Solutions, Inc.
 module DocumentHelper
   def description_search_fields
     %i[description_publisher_search_texts description_rights_statement_search_texts description_source_search_texts

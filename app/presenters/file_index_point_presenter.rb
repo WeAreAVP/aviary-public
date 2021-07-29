@@ -2,6 +2,9 @@
 # presenters/file_index_point_presenter.rb
 #
 # Author::    Nouman Tayyab  (mailto:nouman@weareavp.com)
+#
+# Aviary is an audiovisual content publishing platform with sophisticated features for search and permissions controls.
+# Copyright (C) 2019 Audio Visual Preservation Solutions, Inc.
 class FileIndexPointPresenter < BasePresenter
   def display_time
     Time.at(@model.start_time.to_f).utc.strftime('%H:%M:%S')

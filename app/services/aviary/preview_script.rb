@@ -1,4 +1,7 @@
 # PreviewScript
+#
+# Aviary is an audiovisual content publishing platform with sophisticated features for search and permissions controls.
+# Copyright (C) 2019 Audio Visual Preservation Solutions, Inc.
 class PreviewScript
   def initialize(collection, params = nil, resource_fields = nil, resource_columns_collection = nil)
     @params = params

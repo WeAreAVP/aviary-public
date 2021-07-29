@@ -1,49 +1,9 @@
 # frozen_string_literal: true
 
-# SearchHelper is a controller layer mixin. It is in the controller scope: request params, session etc.
-#
-# NOTE: Be careful when creating variables here as they may be overriding something that already exists.
-# The ActionController docs: http://api.rubyonrails.org/classes/ActionController/Base.html
-#
-# Override these methods in your own controller for customizations:
-#
-#   class CatalogController < ActionController::Base
-#     include Blacklight::Catalog
-#
-#     def repository_class
-#       MyAlternativeRepo
-#     end
-#   end
-#
-# Or by including in local extensions:
-#   module LocalSearchHelperExtension
-#     [ local overrides ]
-#   end
-#
-#   class CatalogController < ActionController::Base
-#     include Blacklight::Catalog
-#     include LocalSearchHelperExtension
-#
-#     def repository_class
-#       MyAlternativeRepo
-#     end
-#   end
-#
-# Or by using ActiveSupport::Concern:
-#
-#   module LocalSearchHelperExtension
-#     extend ActiveSupport::Concern
-#     include Blacklight::SearchHelper
-#
-#     [ local overrides ]
-#   end
-#
-#   class CatalogController < ApplicationController
-#     include LocalSearchHelperExtension
-#     include Blacklight::Catalog
-#   end
-
 # Blacklight::SearchHelper
+#
+# Aviary is an audiovisual content publishing platform with sophisticated features for search and permissions controls.
+# Copyright (C) 2019 Audio Visual Preservation Solutions, Inc.
 module Blacklight::SearchHelper
   extend ActiveSupport::Concern
   include Blacklight::RequestBuilders

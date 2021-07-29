@@ -3,6 +3,9 @@
 # The module is written to get manage common methods those are needed or the organization and super admins
 #
 # Author::    Nouman Tayyab  (mailto:nouman@weareavp.com)
+#
+# Aviary is an audiovisual content publishing platform with sophisticated features for search and permissions controls.
+# Copyright (C) 2019 Audio Visual Preservation Solutions, Inc.
 module Aviary::ManageOrganization
   extend ActiveSupport::Concern
 

@@ -1,3 +1,9 @@
+# Aviary Copyright
+
+Copyright (C) 2013 Audio Visual Preservation Solutions, Inc. www.weareavp.com, aviary@weareavp.com
+
+
+# Aviary License
                     GNU AFFERO GENERAL PUBLIC LICENSE
                        Version 3, 19 November 2007
 

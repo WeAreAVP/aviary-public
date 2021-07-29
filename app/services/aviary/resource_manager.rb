@@ -5,6 +5,9 @@
 #
 # Author::    Nouman Tayyab  (mailto:nouman@weareavp.com)
 # TODO: Need to cleanup this ResourceManager Class
+#
+# Aviary is an audiovisual content publishing platform with sophisticated features for search and permissions controls.
+# Copyright (C) 2019 Audio Visual Preservation Solutions, Inc.
 module Aviary
   # ResourceManager Class for managing and mapping the resource information
   class ResourceManager

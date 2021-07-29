@@ -1,4 +1,7 @@
 # Advance Search Helper
+#
+# Aviary is an audiovisual content publishing platform with sophisticated features for search and permissions controls.
+# Copyright (C) 2019 Audio Visual Preservation Solutions, Inc.
 module AdvanceSearchHelper
   def self.advance_search_query_only(searched_keywords, all_queries = false, search_type = 'search_type=simple', stopwords)
     all_keywords = {}

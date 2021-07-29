@@ -1,4 +1,7 @@
 # Playlist Helper
+#
+# Aviary is an audiovisual content publishing platform with sophisticated features for search and permissions controls.
+# Copyright (C) 2019 Audio Visual Preservation Solutions, Inc.
 module PlaylistHelper
   def set_playlist
     @playlist = Playlist.find_by_id(params[:playlist_id] || params[:id]) if params[:playlist_id] || params[:id]

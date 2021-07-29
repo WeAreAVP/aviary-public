@@ -1,4 +1,7 @@
 # UsersDatatable
+#
+# Aviary is an audiovisual content publishing platform with sophisticated features for search and permissions controls.
+# Copyright (C) 2019 Audio Visual Preservation Solutions, Inc.
 class PublicAccessUrlDatatable < ApplicationDatatable
   delegate :edit_admin_user_path, :options_for_select, :select_tag, :content_tag, :date_time_format, :check_box_tag, :collection_collection_resource_path, :public_access_urls_edit_path, to: :@view
   attr_accessor :current_user_details

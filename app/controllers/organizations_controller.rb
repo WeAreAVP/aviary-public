@@ -1,6 +1,9 @@
 # controllers/organizations_controller.rb
 #
 # Author::    Nouman Tayyab  (mailto:nouman@weareavp.com)
+#
+# Aviary is an audiovisual content publishing platform with sophisticated features for search and permissions controls.
+# Copyright (C) 2019 Audio Visual Preservation Solutions, Inc.
 class OrganizationsController < ApplicationController
   before_action :set_organization, only: %I[edit update show display_settings autocomplete_resources]
   before_action :authenticate_user!, except: %I[index show confirm_invite]

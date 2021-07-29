@@ -1,4 +1,7 @@
 # SolrSearchManagement
+#
+# Aviary is an audiovisual content publishing platform with sophisticated features for search and permissions controls.
+# Copyright (C) 2019 Audio Visual Preservation Solutions, Inc.
 class SolrSearchManagement
   mattr_accessor :solr_select_url, :solr_connection
 
