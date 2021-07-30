@@ -1,0 +1,16 @@
+<select id="list_of_fields_dropdown" name='list_of_fields_dropdown'>
+  <% @resource_fields_settings.each_with_index do |(system_name, single_collection_field), _index| %>
+    <%
+       next if single_collection_field['field_configuration'].present? && single_collection_field['field_configuration']['special_purpose'].present? && single_collection_field['field_configuration']['special_purpose'].to_s.to_boolean?
+       next if @resource_fields_settings.blank? || @resource_fields_settings[system_name].blank? || system_name.blank?
+       field_settings = Aviary::FieldManagement::FieldManager.new(@resource_fields_settings[system_name], system_name)
+       next unless field_settings.vocabulary? || field_settings.dropdown_options.present? || !field_settings.default?
+       thesaurus = field_settings.info_of_attribute('thesaurus')
+
+       next if (thesaurus.blank? && @action_type.to_s == '1')
+       next if (thesaurus.present? && ((thesaurus['vocabulary'].present? && thesaurus['vocabulary']['id'] == @selected_file) || (thesaurus['dropdown'].present? && thesaurus['dropdown']['id'] == @selected_file)) && @action_type.to_s == '0')
+       next if (((thesaurus.present? && thesaurus['vocabulary'].present? && thesaurus['vocabulary']['id'] != @selected_file) || (thesaurus.present? && thesaurus['dropdown'].present? && thesaurus['dropdown']['id'] != @selected_file)) && @action_type.to_s == '1')
+    %>
+    <option value='<%= field_settings.system_name %>||-@||<%= field_settings.info_of_attribute('field_type') %>'> <%= field_settings.label %></option>
+  <% end %>
+</select>

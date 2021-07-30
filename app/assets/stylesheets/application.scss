@@ -493,3 +493,21 @@ th.table-head-id {
 .anchor-disable-custom {
   pointer-events: none !important;
 }
+
+.filename_cust {
+  background: #f9f8f8;
+  display: block;
+  padding: 10px;
+  border-radius: 0 0 6px 6px;
+  font-size: 13px;
+  text-align: center;
+}
+
+.filename_cust + .filename_cust {
+  text-align: center;
+  background: #f9f8f8;
+  display: block;
+  padding: 10px;
+  border-radius: 0 0 6px 6px;
+  font-size: 13px;
+}
