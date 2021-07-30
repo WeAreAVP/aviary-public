@@ -102,7 +102,7 @@ This project is intended to be a safe, welcoming space for collaboration, and co
 
 License
 ===
-See the [LICENSE](LICENSE.txt) and [THIRD-PARTY-LICENSE](THIRD-PARTY-LICENSE.md) files for information on the project licenses and the licenses of incorporated third-party software.
+See the [LICENSE](LICENSE.md) and [THIRD-PARTY-LICENSE](THIRD-PARTY-LICENSE.md) files for information on the project licenses and the licenses of incorporated third-party software.
 
 
 Contributors
