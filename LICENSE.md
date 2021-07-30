@@ -1,6 +1,6 @@
 # Aviary Copyright
 
-Copyright (C) 2013 Audio Visual Preservation Solutions, Inc. www.weareavp.com, aviary@weareavp.com
+Copyright (C) 2019 Audio Visual Preservation Solutions, Inc. www.weareavp.com, aviary@weareavp.com
 
 
 # Aviary License
