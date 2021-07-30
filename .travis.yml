@@ -7,7 +7,7 @@ services:
 jdk:
 - oraclejdk8
 rvm:
-- 2.5.1
+- 2.6.8
 addons:
   apt:
     sources:
