@@ -137,7 +137,7 @@ class IiifController < ApplicationController
     annotations = []
     counter = 1
     annotation_counter = 1
-    media_file.file_transcripts.each do |transcript|
+    media_file.file_transcripts.public_transcript.each do |transcript|
       points = []
       transcript_points = transcript.file_transcript_points
       transcript_points.each do |point|
@@ -156,6 +156,30 @@ class IiifController < ApplicationController
         annotation_counter += 1
       end
       annotations << { id: media_url + "/transcript/#{transcript.id}", type: 'AnnotationPage', label: { en: [transcript.title] }, items: points }
+      counter += 1
+    end
+    media_file.file_transcripts.each do |transcript|
+      next unless transcript.annotation_set.present?
+      annotation_set = transcript.annotation_set
+      next unless annotation_set.is_public
+      points = []
+      annotation_set.annotations.each do |single_annotation|
+        target_info = JSON.parse(single_annotation.target_info)
+        annotation_transcript_point = transcript.file_transcript_points.find(target_info['pointId'])
+        points << {
+          id: "#{media_url}/annotation_set/#{annotation_set.id}/annotation/#{annotation_counter}",
+          type: 'Annotation',
+          motivation: 'supplementing',
+          body: {
+            type: 'TextualBody',
+            value: Rails::Html::WhiteListSanitizer.new.sanitize(single_annotation.body_content, tags: %w(a b br i p small span sub sup)),
+            format: 'text/plain'
+          },
+          target: "#{media_url}##{annotation_transcript_point.start_time.to_f},#{annotation_transcript_point.end_time.to_f}"
+        }
+        annotation_counter += 1
+      end
+      annotations << { id: media_url + "/annotation_set/#{transcript.annotation_set.id}", type: 'AnnotationPage', label: { en: [transcript.annotation_set.title] }, items: points }
       counter += 1
     end
     media_file.file_indexes.public_index.each do |single_index|
