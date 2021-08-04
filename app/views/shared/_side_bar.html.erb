@@ -96,7 +96,7 @@
               </div>
             </div>
 
-            <% if current_user.current_org_owner_admin(current_organization).present?  %>
+            <% if ENV['OHMS_DEVELOPMENT_ONLY'].to_s == '1' && current_user.current_org_owner_admin(current_organization).present?  %>
               <div class="card <%= disabled_organization_cls %>">
                 <div class="card-header" id="headingOne">
                   <h5 class="mb-0">
