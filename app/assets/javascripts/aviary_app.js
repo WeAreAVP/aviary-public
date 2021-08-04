@@ -303,27 +303,28 @@ function App() {
 
     };
 
-    this.serverSideDatatable = function (element, caller, config, ajax_url) {
-
+    this.serverSideDatatable = function (element,caller,config, ajax_url) {
         if (!config || typeof config == 'undefined' ) {
             config = {
                 responsive: true,
                 processing: true,
                 serverSide: true,
-                pageLength: 10,
+                pageLength: pageLength,
                 bInfo: true,
                 destroy: true,
-                bLengthChange: false,
+                bLengthChange: true,
+                lengthMenu: lengthMenuValues,
                 scrollX: true,
                 scrollCollapse: false,
                 pagingType: 'simple_numbers',
-                'dom': "<'row'<'col-md-6'f><'col-md-6'p>>" +
+                'dom': "<'row'<'col-md-6 d-flex'f><'col-md-6'p>>" +
                     "<'row'<'col-md-12'tr>>" +
-                    "<'row'<'col-md-5'i><'col-md-7'p>>",
+                    "<'row'<'col-md-6'li><'col-md-6'p>>",
                 language: {
                     info: 'Showing _START_ - _END_ of _TOTAL_',
                     infoFiltered: '',
                     zeroRecords: 'No Records found.',
+                    lengthMenu: " _MENU_ "
                 },
                 ajax: {
                     url: ajax_url,
@@ -338,7 +339,6 @@ function App() {
                     } catch (e) {
 
                     }
-
                 }
             }
         };

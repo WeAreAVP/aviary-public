@@ -20,7 +20,7 @@ module Thesaurus
     end
 
     def self.fetch_list(page, per_page, query, organization_id, export = false)
-      thesaurus = Thesaurus.joins(%i[organization updated_by]) if organization_id.present?
+      thesaurus = Thesaurus::Thesaurus.joins(%i[organization updated_by]) if organization_id.present?
       thesaurus = thesaurus.where('thesaurus.organization_id = ? ', organization_id)
       if query.present?
         query = query.downcase.strip
