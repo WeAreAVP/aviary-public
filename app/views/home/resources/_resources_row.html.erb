@@ -18,7 +18,7 @@
   <% end %>
   <div class="box <%= 'featured' if featured %>">
     <%= link_to resource_url, target: "_blank" do %>
-      <div class="image" style="background: url(<%= file.present? && file.thumbnail_image.present? ? file.thumbnail_image : '' %>); background-size:cover;background-position: center;min-height: 120px;">
+      <div class="image" style='backgrsound: url("<%= file.present? && file.thumbnail_image.present? ? file.thumbnail_image : nil.to_s %>"); background-size:cover;background-position: center;min-height: 120px;'>
       </div>
 
       <div class="collection-details">

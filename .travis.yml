@@ -1,19 +1,17 @@
 sudo: true
-dist: trusty
+dist: bionic
 language: ruby
 services:
-- redis-server
-- mysql
+  - redis-server
+  - mysql
 jdk:
-- oraclejdk8
+  - oraclejdk9
 rvm:
-- 2.6.8
+  - 2.6.8
 addons:
   apt:
-    sources:
-    - sourceline: "ppa:mc3man/trusty-media"
     packages:
-    - ffmpeg
+      - ffmpeg
 cache:
   bundler: true
 before_install:
