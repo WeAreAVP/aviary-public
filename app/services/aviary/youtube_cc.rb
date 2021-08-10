@@ -40,23 +40,18 @@ module Aviary
     end
 
     def check_alternative_cc(video_id, resource_file)
-      decoded_content = URI.parse("https://youtube.com/get_video_info?video_id=#{video_id}").read.force_encoding('UTF-8')
-      content = CGI.unescape(decoded_content)
-      regex = /({"captionTracks":.*isTranslatable":(true|false)})/
-      match = regex.match(content)
-      return unless match.present?
-      caption_track = match[0] + ']}'
-      tracks = valid_json?(caption_track)
-      return unless tracks.present?
-      tracks['captionTracks'].each do |track|
-        track_uri = CGI.unescape(track['baseUrl'].gsub('u0026', '&'))
-        language = track['languageCode']
-        cc_hash = cc_text(video_id, language, resource_file, track_uri)
-        next unless cc_hash.present?
-        create_transcript(resource_file, cc_hash, language)
+      path = Rails.root.join("bin","youtube-dl").to_s
+      output_path = Rails.root.join("tmp","youtube-dl",video_id+"/").to_s
+      system(path+' --write-auto-sub --skip-download --output "'+output_path+video_id+'" https://www.youtube.com/watch\?v\='+video_id)
+      files = Dir[output_path+"*"]
+      files.each do | file |
+        file_segments = file.split(".")
+        language = file_segments[file_segments.size - 2] ? file_segments[file_segments.size - 2] : nil
+        language ? create_transcript(resource_file, "", language,file) : nil
+        FileUtils.rm_rf(output_path)
       end
-    rescue StandardError
-      'Failed to process'
+      rescue StandardError
+        'Failed to process'
     end
 
     def cc_text(video_id, language_code, resource_file, url = nil)
@@ -75,12 +70,17 @@ module Aviary
       cc_hash
     end
 
-    def create_transcript(resource_file, cc_hash, language)
-      language_code = languages_array_simple[0][language].present? ? language : 'en'
-      language = languages_array_simple[0][language]
-      language = language.present? ? language : 'English'
-      tmp = Tempfile.new("transcript_#{Time.now.to_i}.vtt")
-      file_path = generate_webvtt(cc_hash, tmp)
+    def create_transcript(resource_file, cc_hash, language,file="")
+      if file.empty?
+        language_code = languages_array_simple[0][language].present? ? language : 'en'
+        language = languages_array_simple[0][language]
+        language = language.present? ? language : 'English'
+        tmp = Tempfile.new("transcript_#{Time.now.to_i}.vtt")
+        file_path = generate_webvtt(cc_hash, tmp)    
+      else 
+        language_code = language
+        file_path = file   
+      end
       file_transcript = FileTranscript.new
       file_transcript.collection_resource_file = resource_file
       file_transcript.user = resource_file.collection_resource.collection.organization.user
@@ -91,10 +91,16 @@ module Aviary
       file_transcript.associated_file = open(file_path)
       file_transcript.is_caption = false
       file_transcript.save
-      tmp.close
-      file_transcript.file_transcript_points.create(cc_hash)
+      if file.empty?
+        tmp.close
+        file_transcript.file_transcript_points.create(cc_hash)
+      else
+        Aviary::IndexTranscriptManager::TranscriptManager.new.process(file_transcript)
+      end
       collection_resource = CollectionResource.find(resource_file.collection_resource.id)
       collection_resource.reindex_collection_resource
+      rescue StandardError
+        'Failed to process'
     end
 
     def generate_webvtt(cc_hash, tmp_file)
