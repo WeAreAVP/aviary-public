@@ -38,6 +38,7 @@ Rails.application.routes.draw do
   get 'record_tracking', to: 'home#record_tracking', as: :record_tracking
   get 'get_collectionwise_resources/:id', to: 'home#collection_wise_resources', as: :get_collectionwise_resources
   get 'users/add_member_row', to: 'users#add_member_row', as: :add_member_row
+
   namespace :admin do
     resources :users, except: %i[show] do
       put '/organization', to: 'users#organization_update'
@@ -52,6 +53,26 @@ Rails.application.routes.draw do
 
     get '/', to: 'users#index'
   end
+  namespace :interviews do
+    resources :managers do
+      collection do
+        post :update_column_info
+        post :listing
+      end
+    end
+  end
+
+  namespace :thesaurus do
+    resources :manager do
+      get :export
+      collection do
+        match :autocomplete, via: %i[get post]
+        match :assignment_management, via: %i[get post]
+        match :datatable, via: %i[get post]
+      end
+    end
+  end
+
 
   resources :users, only: %i[destroy index] do
     post '/add_new_member', to: 'users#add_new_member', as: :add_new_member

@@ -1,12 +1,22 @@
-<% single_value_raw  = single_value.present? && single_value['value'].present? ? single_value['value'] : '' %>
+<% single_value_raw = single_value.present? && single_value['value'].present? ? single_value['value'] : '' %>
 <% case field_settings.info_of_attribute('field_type').to_s %>
 <% when OrganizationField::TypeInformation::TOKEN.to_s %>
   <%= text_field_tag("collection_resource[collection_resource_field_values][][value]", single_value_raw.present? ? single_value_raw : '', class: "form-control add_wanted_class  #{system_name} #{type_for_view}") %>
 <% when OrganizationField::TypeInformation::DATE.to_s %>
   <%= text_field_tag("collection_resource[collection_resource_field_values][][value]", single_value_raw.present? ? single_value_raw : '', class: "form-control add_wanted_class  #{system_name} #{type_for_view}", placeholder: 'yyyy-mm-dd or yyyy-mm or yyyy') %>
 <% when OrganizationField::TypeInformation::DROPDOWN.to_s %>
-  <% dropdown =  field_settings.field_configuration.present? && field_settings.field_configuration['dropdown_options'] ? field_settings.field_configuration['dropdown_options'] : [] %>
-  <%= select_tag "collection_resource[collection_resource_field_values][][value]", options_for_select(dropdown, selected: single_value_raw.present? ? single_value_raw : ''), { :class => "select_option #{type_for_view}", :include_blank => true } %>
+
+  <% thesaurus = field_settings.info_of_attribute('thesaurus') %>
+  <% if thesaurus.present? && thesaurus.present? && thesaurus['dropdown'] && thesaurus['dropdown']['id'].present? %>
+    <% thesaurus_dropdown = Thesaurus::Thesaurus.find_by_id(thesaurus['dropdown']['id']) %>
+    <% assigned_thesaurus = thesaurus_dropdown.present? ? thesaurus_dropdown.id : '' %>
+    <% type = 'thesaurus' %>
+  <% else %>
+    <% type = 'dropdown' %>
+    <% assigned_thesaurus = field_settings.system_name %>
+  <% end %>
+  <input name="collection_resource[collection_resource_field_values][][value]" type="text" id="thesaurus_term_autocomplete_<%= field_settings.system_name %>" value="<%= single_value_raw.present? ? single_value_raw : '' %>" class="form-control thesaurus_term_autocomplete" autocomplete="nope" placeholder="Enter a term" data-type-of-list="<%= type %>" data-assigned-thesaurus="<%= assigned_thesaurus %>" data-path="<%= autocomplete_thesaurus_manager_index_path %>"/>
+
 <% when OrganizationField::TypeInformation::TEXTAREA.to_s %>
   <% rand_id = random_number %>
   <% class_more = ''
@@ -17,5 +27,5 @@
     <%= text_area_tag("collection_resource[collection_resource_field_values][][value]", single_value_raw.present? ? single_value_raw : '', id: 'collection_resource_collection_resource_field_values__value_' + rand_id.to_s, class: "form-control add_wanted_class  #{system_name} #{class_more} #{type_for_view}") %>
   <% end %>
 <% else %>
-  <%= text_field_tag("collection_resource[collection_resource_field_values][][value]",  single_value_raw.present? ? single_value_raw : '', readonly: (system_name == 'duration'), class: "form-control add_wanted_class  #{system_name} #{type_for_view}") %>
+  <%= text_field_tag("collection_resource[collection_resource_field_values][][value]", single_value_raw.present? ? single_value_raw : '', readonly: (system_name == 'duration'), class: "form-control add_wanted_class  #{system_name} #{type_for_view}") %>
 <% end %>

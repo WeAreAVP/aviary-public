@@ -96,6 +96,58 @@
               </div>
             </div>
 
+            <% if ENV['OHMS_DEVELOPMENT_ONLY'].to_s == '1' && current_user.current_org_owner_admin(current_organization).present?  %>
+              <div class="card <%= disabled_organization_cls %>">
+                <div class="card-header" id="headingOne">
+                  <h5 class="mb-0">
+                    <button class="btn btn-link <%= (["ohms_integrations"].include?(params[:controller])) ? '' : 'collapsed' %>" data-toggle="collapse" data-target="#ohms_nav" aria-expanded="<%= '' %>" aria-controls="permission">
+                      <div class="nav-box">
+                        <span class="ico" data-toggle="tooltip" data-placement="right" title="OHMS"><%= image_tag 'icons/integration.png' %></span>
+                        <span class="title">OHMS</span>
+                      </div>
+                    </button>
+                  </h5>
+
+                </div>
+
+                <div id="ohms_nav" class="collapse <%= '' %>" aria-labelledby="headingOne"
+                     data-parent="#accordion" style="">
+                  <div class="card-body">
+                    <div id="accordion">
+                      <% if current_user.current_org_owner_admin(current_organization).present?  %>
+                        <div class="card <%= disabled_organization_cls %>">
+                          <div class="card-header headingOne">
+                            <h5 class="mb-0">
+                              <button onclick="document.location.href='<%= interviews_managers_path %>'" class="btn btn-link  no_sub_colaps" data-toggle="collapse" aria-expanded="<%= (params[:controller] == 'ohms_integrations' ? 'active' : '') != '' ? 'true' : '' %>" aria-controls="collapse">
+                                <div class="nav-box">
+                                  <span class="ico" data-toggle="tooltip" data-placement="right" title="Authentication Configuration"><%= image_tag 'icons/integration.png' %></span>
+                                  <span class="title">Interview Manager</span>
+                                </div>
+                              </button>
+                            </h5>
+                          </div>
+                        </div>
+                      <% end %>
+                      <% if current_user.current_org_owner_admin(current_organization).present? %>
+                        <div class="card <%= disabled_organization_cls %>">
+                          <div class="card-header headingOne">
+                            <h5 class="mb-0">
+                              <button onclick="document.location.href='<%= thesaurus_manager_index_path %>'" class="btn btn-link  no_sub_colaps" data-toggle="collapse" aria-expanded="<%= params[:action] == "third_party" ? 'true' : '' %>" aria-controls="collapse">
+                                <div class="nav-box">
+                                  <span class="ico" data-toggle="tooltip" data-placement="right" title="Trint"><i class="fa fa-file font-size-16px" style="color: dimgray;"></i></span>
+                                  <span class="title">Projects</span>
+                                </div>
+                              </button>
+                            </h5>
+                          </div>
+                        </div>
+                      <% end %>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+
             <% if current_user.current_org_owner_admin(current_organization).present? %>
               <div class="card <%= disabled_organization_cls %>">
                 <div class="card-header" id="headingOne">
@@ -126,6 +178,8 @@
                     </button>
                   </h5>
                 </div>
+
+
                 <div id="organization_subnav" class="collapse <%= (["organizations"].include?(params[:controller]) && params[:flock_id].blank? || (["themes"].include?(params[:controller]) && params[:flock_id].blank?)) ? 'show' : '' %>" aria-labelledby="headingOne"
                      data-parent="#accordion" style="">
                   <div class="card-body">

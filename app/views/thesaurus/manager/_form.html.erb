@@ -1,0 +1,83 @@
+<%= simple_form_for @thesaurus, :url => @thesaurus.new_record? ? thesaurus_manager_index_path : thesaurus_manager_path(@thesaurus), html: { novalidate: true, :multipart => true } do |c| %>
+  <div class="row org-collection-form">
+
+    <div class="col-md-12">
+      <div class="form-group">
+        <div class="field-title">
+          <label for="">Thesaurus Title</label>
+        </div>
+        <%= c.input :title, label: false, input_html: { class: 'form-control ohms_integrations-title-field' } %>
+      </div>
+    </div>
+
+    <% unless @thesaurus.new_record? %>
+      <% if @thesaurus.number_of_terms.present? %>
+        <% count = @thesaurus.number_of_terms %>
+        <div class="col-md-12">
+          <div class="form-group">
+            <div class="field-title mt-5px">
+              <%= c.label 'Existing Terms ( ' + count.to_s + ' )', for: 'ohms_integrations_terms' %>
+            </div>
+            <a href='<%= thesaurus_manager_export_path(@thesaurus) %>' class="float-right btn-sm btn-default mb-5px"> Download Thesaurus</a>
+            <% all_terms = Thesaurus::ThesaurusTerms.where(thesaurus_information_id: @thesaurus.id).limit(500) %>
+            <textarea class="form-control ohms_integrations_terms" readonly><%= all_terms.pluck(:term).join(',') %> <%= count > 100 ? '...' : '' %> </textarea>
+          </div>
+        </div>
+      <% end %>
+    <% end %>
+
+    <div class="col-md-6">
+      <div class="mb-3">
+        <div class="form-group">
+          <div class="field-title"><label>Update Vocabulary CSV</label></div>
+          <span class="btn fileinput-button import_ohms">Browse
+            <%= c.file_field :ohms_integrations_vocabulary, class: 'ohms_integrations_vocabulary', accept: "text/csv" %>
+              </span>
+          <span class="filename_cust"></span>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="form-group">
+        <div class="field-title">
+          <%= c.label 'Status ?', for: 'ohms_integrations_status' %>
+        </div>
+        <%= c.select :status, Thesaurus::Thesaurus.statuses.map { |key, value| [key.humanize, key] }, {}, required: false, label: false, class: 'custom-placeholder' %>
+      </div>
+    </div>
+
+    <% unless @thesaurus.new_record? %>
+      <div class="col-md-6 operation_type_cust" style="display: none;">
+        <div class="form-group">
+          <div class="field-title">
+            <%= c.label 'Operation', for: 'ohms_integrations_status' %>
+          </div>
+          <%= c.select :operation_type, Thesaurus::Thesaurus.operation_types.map { |key, value| [key, value] }, {}, required: false, label: false, class: 'custom-placeholder' %>
+        </div>
+      </div>
+    <% end %>
+
+    <div class="col-md-12">
+      <div class="form-group">
+        <div class="field-title">
+          <label for="ohms_integrations">About Thesaurus
+            <button type="button" class="info-btn" data-content="Tell users about your collection. This will appear in &quot;About this Collection&quot; on your collection page."></button>
+          </label>
+        </div>
+        <%= c.input :description, label: false, input_html: { class: 'form-control apply_tinymce_to_it' } %>
+      </div>
+    </div>
+  </div>
+  <div class="row pt-4 mt-5 border-top">
+    <div class="col-md-12 text-right">
+      <input type="submit" name="commit" value="Save" class="btn btn-primary" data-disable-with="Save">
+    </div>
+  </div>
+<% end %>
+<br>
+<script type="text/javascript">
+    $(function () {
+        let ohms_manager = new ThesaurusManager();
+        ohms_manager.initializeForm();
+    });
+</script>

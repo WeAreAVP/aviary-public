@@ -16,8 +16,7 @@ class Organization < ApplicationRecord
   has_many :playlists, dependent: :destroy
   has_many :playlist_resources, dependent: :destroy
   has_many :annotation_sets, dependent: :destroy
-  validates :name, :address_line_1, :url,
-            :city, :state, :country, :zip, presence: true
+  validates :name, :url , presence: true
   validates :url, uniqueness: { message: 'Already taken. Please choose another.' }
   validates :logo_image, attachment_presence: true
   validates :banner_image, attachment_presence: true
@@ -37,7 +36,7 @@ class Organization < ApplicationRecord
   scope :active_storage, -> { where(status: true, storage_type: :wasabi_storage.to_s) }
   before_save :update_default_values
   before_create :create_bucket
-  after_save :update_solr, :update_resource_column_fields, :update_resource_search_column_fields, :update_resource_files_fields, :update_search_configuration
+  after_save :update_solr, :update_resource_column_fields, :update_resource_search_column_fields, :update_resource_files_fields, :update_search_configuration, :update_interview_fields
 
   searchable do
     integer :id, stored: true
@@ -63,6 +62,87 @@ class Organization < ApplicationRecord
     self.default_tab_selection = 2 if default_tab_selection.blank?
     self.title_font_color = '#ffffff' if title_font_color.blank?
     self.title_font_size = '28px' if title_font_size.blank?
+  end
+
+  def update_interview_fields
+    display_columns_update = {
+      number_of_column_fixed: '0',
+      columns_status:
+        {
+          '0' => { status: 'true', value: 'title_accession_number_ss', sort_name: true },
+          '1' => { status: 'true', value: 'collection_id_ss', sort_name: true },
+          '2' => { status: 'true', value: 'series_id_ss', sort_name: true },
+          '3' => { status: 'true', value: 'interviewee_sms', sort_name: true },
+          '4' => { status: 'true', value: 'interviewer_sms', sort_name: true },
+          '5' => { status: 'true', value: 'interview_date_ss', sort_name: true },
+          '6' => { status: 'true', value: 'date_non_preferred_format_ss', sort_name: true },
+          '7' => { status: 'true', value: 'collection_name_ss', sort_name: true },
+          '8' => { status: 'true', value: 'collection_link_ss', sort_name: true },
+          '9' => { status: 'true', value: 'series_ss', sort_name: true },
+          '10' => { status: 'true', value: 'series_link_ss', sort_name: true },
+          '11' => { status: 'true', value: 'media_format_ss', sort_name: true },
+          '12' => { status: 'true', value: 'keywords_sms', sort_name: true },
+          '13' => { status: 'true', value: 'subjects_sms', sort_name: true },
+          '14' => { status: 'true', value: 'thesaurus_subjects_ss', sort_name: true },
+          '15' => { status: 'true', value: 'thesaurus_titles_ss', sort_name: true },
+          '16' => { status: 'true', value: 'media_host_ss', sort_name: true },
+          '17' => { status: 'true', value: 'media_duration_ss', sort_name: true },
+          '18' => { status: 'true', value: 'media_filename_ss', sort_name: true },
+          '19' => { status: 'true', value: 'media_type_ss', sort_name: true },
+          '20' => { status: 'true', value: 'format_info_sms', sort_name: true },
+          '21' => { status: 'true', value: 'language_info_ss', sort_name: true },
+          '22' => { status: 'true', value: 'include_language_bs', sort_name: true },
+          '23' => { status: 'true', value: 'language_for_translation_ss', sort_name: true },
+          '24' => { status: 'true', value: 'miscellaneous_cms_record_id_ss', sort_name: true },
+          '25' => { status: 'true', value: 'miscellaneous_use_restrictions_bs', sort_name: true },
+          '26' => { status: 'true', value: 'interview_status_is', sort_name: true },
+          '28' => { status: 'true', value: 'summary_texts', sort_name: true },
+          '31' => { status: 'true', value: 'media_url_texts', sort_name: true },
+          '32' => { status: 'true', value: 'right_statement_texts', sort_name: true },
+          '33' => { status: 'true', value: 'created_by_id_is', sort_name: true },
+          '34' => { status: 'true', value: 'updated_by_id_is', sort_name: true },
+          '35' => { status: 'true', value: 'created_at_is', sort_name: true },
+          '36' => { status: 'true', value: 'updated_at_is', sort_name: true }
+        }
+    }.to_json
+
+    search_columns_update = {
+      '0' => { status: 'true', value: 'title_accession_number_ss', sort_name: true },
+      '1' => { status: 'true', value: 'collection_id_ss', sort_name: true },
+      '2' => { status: 'true', value: 'series_id_ss', sort_name: true },
+      '3' => { status: 'true', value: 'interviewee_sms', sort_name: true },
+      '4' => { status: 'true', value: 'interviewer_sms', sort_name: true },
+      '5' => { status: 'true', value: 'interview_date_ss', sort_name: true },
+      '6' => { status: 'true', value: 'date_non_preferred_format_ss', sort_name: true },
+      '7' => { status: 'true', value: 'collection_name_ss', sort_name: true },
+      '8' => { status: 'true', value: 'collection_link_ss', sort_name: true },
+      '9' => { status: 'true', value: 'series_ss', sort_name: true },
+      '10' => { status: 'true', value: 'series_link_ss', sort_name: true },
+      '11' => { status: 'true', value: 'media_format_ss', sort_name: true },
+      '12' => { status: 'true', value: 'keywords_sms', sort_name: true },
+      '13' => { status: 'true', value: 'subjects_sms', sort_name: true },
+      '14' => { status: 'true', value: 'thesaurus_subjects_ss', sort_name: true },
+      '15' => { status: 'true', value: 'thesaurus_titles_ss', sort_name: true },
+      '16' => { status: 'true', value: 'media_host_ss', sort_name: true },
+      '17' => { status: 'true', value: 'media_duration_ss', sort_name: true },
+      '18' => { status: 'true', value: 'media_filename_ss', sort_name: true },
+      '19' => { status: 'true', value: 'media_type_ss', sort_name: true },
+      '20' => { status: 'true', value: 'format_info_sms', sort_name: true },
+      '21' => { status: 'true', value: 'language_info_ss', sort_name: true },
+      '22' => { status: 'true', value: 'include_language_bs', sort_name: true },
+      '23' => { status: 'true', value: 'language_for_translation_ss', sort_name: true },
+      '24' => { status: 'true', value: 'miscellaneous_cms_record_id_ss', sort_name: true },
+      '25' => { status: 'true', value: 'miscellaneous_use_restrictions_bs', sort_name: true },
+      '26' => { status: 'true', value: 'interview_status_is', sort_name: true },
+      '28' => { status: 'true', value: 'summary_texts', sort_name: true },
+      '31' => { status: 'true', value: 'media_url_texts', sort_name: true },
+      '32' => { status: 'true', value: 'right_statement_texts', sort_name: true },
+      '33' => { status: 'true', value: 'created_by_id_is', sort_name: true },
+      '34' => { status: 'true', value: 'updated_by_id_is', sort_name: true },
+      '35' => { status: 'true', value: 'created_at_is', sort_name: true },
+      '36' => { status: 'true', value: 'updated_at_is', sort_name: true }
+    }.to_json
+    update(interview_display_column: display_columns_update, interview_search_column: search_columns_update) if interview_search_column.blank? && interview_display_column.blank?
   end
 
   def update_resource_column_fields(force_update = false, refresh_entry = false)

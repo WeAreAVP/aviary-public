@@ -1,13 +1,27 @@
 <div class="col-12 parent_of_each_row">
   <div class="row">
     <% if field_settings.vocabulary? %>
-      <div class="col-md-6">
-        <div class="form--group">
-          <%= select_tag "collection_resource[collection_resource_field_values][][vocabularies_id]",
-                         options_for_select(field_settings.vocabulary? ? field_settings.vocabulary_list : [], selected: single_value.present? && single_value['vocab_value'].present? ? single_value['vocab_value'] : ''),
-                         {:class => "select_option #{type_for_view} selectized", :include_blank => true} %>
+      <% vocabulary_list = field_settings.vocabulary_list %>
+      <% thesaurus = field_settings.info_of_attribute('thesaurus') %>
+      <% if thesaurus.present? && thesaurus.present? && thesaurus['vocabulary'] && thesaurus['vocabulary']['id'].present? %>
+        <% thesaurus_vocabulary = Thesaurus::Thesaurus.find_by_id(thesaurus['vocabulary']['id']) %>
+        <% if thesaurus_vocabulary.present? %>
+          <div class="col-md-6">
+            <div class="form--group">
+              <input name="collection_resource[collection_resource_field_values][][vocabularies_id]" type="text" id="thesaurus_term_autocomplete_<%= field_settings.system_name %>" value="<%= single_value.present? && single_value['vocab_value'].present? ? single_value['vocab_value'] : '' %>" class="form-control thesaurus_term_autocomplete" autocomplete="nope" placeholder="Enter a term" data-type-of-list="thesaurus" data-assigned-thesaurus="<%= thesaurus_vocabulary.id %>" data-path="<%= autocomplete_thesaurus_manager_index_path %>"/>
+            </div>
+          </div>
+        <% else %>
+          <%= hidden_field_tag("collection_resource[collection_resource_field_values][][vocabularies_id]", '') %>
+        <% end %>
+      <% else %>
+        <div class="col-md-6">
+          <div class="form--group">
+            <input name="collection_resource[collection_resource_field_values][][vocabularies_id]" type="text" id="thesaurus_term_autocomplete_<%= field_settings.system_name %>" value="<%= single_value.present? && single_value['vocab_value'].present? ? single_value['vocab_value'] : '' %>" class="form-control thesaurus_term_autocomplete" autocomplete="nope" placeholder="Enter a term" data-type-of-list="vocabulary" data-assigned-thesaurus="<%= field_settings.system_name %>" data-path="<%= autocomplete_thesaurus_manager_index_path %>"/>
+          </div>
         </div>
-      </div>
+      <% end %>
+
     <% else %>
       <%= hidden_field_tag("collection_resource[collection_resource_field_values][][vocabularies_id]", '') %>
     <% end %>
@@ -18,12 +32,12 @@
         <% if field_settings.label == 'language' %>
           <select name="collection_resource[collection_resource_field_values][][value]" id="collection_resource_collection_resource_field_values__value_" tabindex="-1" class="selectized">
             <option value="">Select Language</option>
-            <% languages_array_simple[0].each_with_index do |value, index| %>
+            <% languages_array_simple[0].each_with_index do |value, _index| %>
               <option value="<%= value.first %>"> <%= value.second %></option>
             <% end %>
           </select>
         <% else %>
-          <%= render partial: 'collection_resources/common/fields_type_for_form', locals: {field_settings: field_settings, system_name: system_name, single_field: field, single_value: single_value, type_for_view: type_for_view} %>
+          <%= render partial: 'collection_resources/common/fields_type_for_form', locals: { field_settings: field_settings, system_name: system_name, single_field: field, single_value: single_value, type_for_view: type_for_view } %>
         <% end %>
         <% if from == 'resource_metadata' %>
           <%= hidden_field_tag("collection_resource[collection_resource_field_values][][collection_resource_field_id]", system_name) %>
