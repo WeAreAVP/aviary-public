@@ -7,6 +7,6 @@ class CreateTableThesaurusTerms < ActiveRecord::Migration[5.2]
       t.text :term
       t.timestamps
     end
-    execute "CREATE FULLTEXT INDEX fulltext_term ON thesaurus_terms (term)"
+    execute "CREATE FULLTEXT INDEX fulltext_term ON thesaurus_terms (term)" unless Rails.env.test?
   end
 end
