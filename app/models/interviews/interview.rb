@@ -1,8 +1,12 @@
+# Interviews
+#
+# Aviary is an audiovisual content publishing platform with sophisticated features for search and permissions controls.
+# Copyright (C) 2019 Audio Visual Preservation Solutions, Inc.
 module Interviews
   # Interview
   class Interview < ApplicationRecord
     belongs_to :organization
-    enum media_host: %w[Host Avalon Aviary Brightcove Kaltura SoundCloud Vimeo YouTube]
+    enum media_host: [%w[Host Others], %w[Avalon Avalon], %w[Aviary Aviary], %w[Brightcove Brightcove], %w[Kaltura Kaltura], %w[SoundCloud SoundCloud], %w[Vimeo Vimeo], %w[YouTube YouTube]]
 
     searchable do
       integer :id, stored: true

@@ -1,6 +1,10 @@
+# Thesaurus
+#
+# Aviary is an audiovisual content publishing platform with sophisticated features for search and permissions controls.
+# Copyright (C) 2019 Audio Visual Preservation Solutions, Inc.
 module Thesaurus
   # ThesaurusDatatable
-  class ThesaurusInformationDatatable < ApplicationDatatable
+  class InformationDatatable < ApplicationDatatable
     delegate :link_to, :edit_thesaurus_manager_path, :thesaurus_manager_path, :strip_tags, :truncate, to: :@view
 
     def initialize(view, current_organization, field_has_thesaurus)
@@ -16,7 +20,7 @@ module Thesaurus
       thesaurus_data = all_thesaurus.map do |thesauru|
         [].tap do |column|
           column << thesauru.title
-          column << truncate(strip_tags(thesauru.description.to_s).gsub('::', ' '), length: 50)
+          column << truncate(strip_tags(thesauru.description.to_s).gsub('::', ''), length: 50)
           column << (thesauru.number_of_terms.present? ? thesauru.number_of_terms : 0)
           column << thesauru.updated_by.first_name + ' ' + thesauru.updated_by.last_name
           column << thesauru.updated_at.to_date
@@ -77,7 +81,7 @@ module Thesaurus
       columns.each do |term|
         search_string << "#{term} like :search"
       end
-      thesaurus, count = Thesaurus::Thesaurus.fetch_list(page, per_page, params[:search][:value], @current_organization.id)
+      thesaurus, count = ::Thesaurus::Thesaurus.fetch_list(page, per_page, params[:search][:value], @current_organization.id)
       thesaurus = thesaurus.order(sort_column => sort_direction)
 
       [thesaurus, count]

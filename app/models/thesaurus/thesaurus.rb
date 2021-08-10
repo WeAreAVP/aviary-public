@@ -1,3 +1,6 @@
+#
+# Aviary is an audiovisual content publishing platform with sophisticated features for search and permissions controls.
+# Copyright (C) 2019 Audio Visual Preservation Solutions, Inc.
 module Thesaurus
   # Thesaurus
   class Thesaurus < ApplicationRecord
@@ -20,7 +23,7 @@ module Thesaurus
     end
 
     def self.fetch_list(page, per_page, query, organization_id, export = false)
-      thesaurus = Thesaurus::Thesaurus.joins(%i[organization updated_by]) if organization_id.present?
+      thesaurus = Thesaurus.joins(%i[organization updated_by]) if organization_id.present?
       thesaurus = thesaurus.where('thesaurus.organization_id = ? ', organization_id)
       if query.present?
         query = query.downcase.strip
@@ -38,7 +41,7 @@ module Thesaurus
     end
 
     def self.list_thesaurus(org)
-      [['Not Assigned', '0']] + Thesaurus.all_active(org).map { |key, _| [key.title.humanize, key.id] }
+      [['Not Assigned', '0']] + Thesaurus.all_active(org).map { |key, _| [key.title, key.id] }
     end
   end
 end

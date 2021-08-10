@@ -1,4 +1,7 @@
 # frozen_string_literal: true
+#
+# Aviary is an audiovisual content publishing platform with sophisticated features for search and permissions controls.
+# Copyright (C) 2019 Audio Visual Preservation Solutions, Inc.
 
 module Thesaurus
   # OHMS Integration Controller
@@ -29,13 +32,13 @@ module Thesaurus
       end
       respond_to do |format|
         format.html
-        format.json { render json: Thesaurus::ThesaurusInformationDatatable.new(view_context, current_organization, @field_has_thesaurus) }
+        format.json { render json: InformationDatatable.new(view_context, current_organization, @field_has_thesaurus) }
       end
     end
 
     def new
       authorize! :manage, current_organization
-      @thesaurus = Thesaurus::Thesaurus.new
+      @thesaurus = ::Thesaurus::Thesaurus.new
     end
 
     def destroy
@@ -76,10 +79,12 @@ module Thesaurus
     end
 
     def create
-      authorize! :manage, current_organization
+      # authorize! :manage, current_organization
 
-      @thesaurus = Thesaurus::Thesaurus.new(thesaurus_params)
+      @thesaurus = ::Thesaurus::Thesaurus.new(thesaurus_params)
       @thesaurus.organization_id = current_organization.id
+      @thesaurus.organization = current_organization
+      @thesaurus.number_of_terms = 0
 
       @thesaurus.inject_created_by(current_user)
       @thesaurus.inject_updated_by(current_user)
@@ -123,7 +128,7 @@ module Thesaurus
     def edit
       authorize! :manage, current_organization
       error = t('access_information_not_available')
-      return redirect_to organization_fields_path, flash: { error: error } if @thesaurus.parent_id.to_i > 0 || Thesaurus::Thesaurus.where(id: @thesaurus, organization_id: current_organization.id).blank?
+      return redirect_to organization_fields_path, flash: { error: error } if @thesaurus.parent_id.to_i > 0 || ::Thesaurus::Thesaurus.where(id: @thesaurus, organization_id: current_organization.id).blank?
     end
 
     def export
@@ -149,7 +154,7 @@ module Thesaurus
       type_of_list = params['typeOfList']
       json_data = []
       json_data = if type_of_list == 'thesaurus'
-                    thesaurus_information = Thesaurus::Thesaurus.find_by_id(t_id)
+                    thesaurus_information = Thesaurus.find_by_id(t_id)
                     thesaurus_id = thesaurus_information.present? && thesaurus_information.parent_id.present? && thesaurus_information.parent_id > 0 ? thesaurus_information.parent_id : t_id
                     thesaurus = Thesaurus::ThesaurusTerms.select('id, term').where('MATCH(term) AGAINST(?)', term.to_s).where(thesaurus_information_id: thesaurus_id).order('term desc').limit(10)
                     thesaurus.map { |e| { id: e.id, label: e.term, value: e.term } } if thesaurus.present?
@@ -188,7 +193,7 @@ module Thesaurus
     def current_thesaurus
       @thesaurus = nil
       id = params[:id].present? ? params[:id] : params[:manager_id]
-      @thesaurus = id.present? ? Thesaurus::Thesaurus.find_by_id(id) : nil
+      @thesaurus = id.present? ? ::Thesaurus::Thesaurus.find_by_id(id) : nil
     end
 
     def over_write_terms(file, thesaurus)

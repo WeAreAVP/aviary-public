@@ -26,9 +26,9 @@
       <div class="form-group" style="margin-top: 30px;">
         <%= f.label :media_format, "Media Format*" %>
         Audio
-        <input type="radio" checked value="Audio" name="interviews_interview[media_format]" id="interviews_interview_media_format">
+        <input type="radio" <%= @interview.media_format.to_s.downcase == 'audio' || @interview.media_format.blank? ? 'checked' : '' %> value="audio" name="interviews_interview[media_format]" id="interviews_interview_media_format">
         Video
-        <input type="radio" value="video" name="interviews_interview[media_format]" id="interviews_interview_media_format">
+        <input type="radio" <%= @interview.media_format.to_s.downcase == 'video' ? 'checked' : '' %> value="video" name="interviews_interview[media_format]" id="interviews_interview_media_format">
       </div>
     </div>
 
@@ -44,8 +44,45 @@
     <div class="col-md-6">
       <div class="form-group">
         <div class="field-title"><%= f.label :media_host %></div>
-        <%= f.select :media_host, Interviews::Interview.media_hosts.map { |key, _| [key.humanize, key] }, {}, required: false, label: false, class: 'custom-placeholder' %>
+        <%= f.select :media_host, Interviews::Interview.media_hosts.map { |key, _| key }, {}, required: false, label: false, class: 'custom-placeholder media_hosts_value' %>
       </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-6"></div>
+    <div class="col-md-6">
+      <div class="form-group media_url_embed dynamic_control_interview">
+        <div class="field-title"><%= f.label :media_url, 'Media URL' %></div>
+        <%= f.input :media_url, label: false, input_html: { class: 'form-control media_url' } %>
+      </div>
+      <div class="form-group avalon_target_domain dynamic_control_interview">
+        <div class="field-title"><%= f.label :avalon_target_domain, 'Avalon Target Domain' %></div>
+        <%= f.input :avalon_target_domain, label: false, input_html: { class: 'form-control avalon_target_domain' } %>
+      </div>
+
+      <div class="form-group embed_code dynamic_control_interview">
+        <div class="field-title"><%= f.label :embed_code, 'Embed Code' %></div>
+        <%= f.input :embed_code, label: false, input_html: { class: 'form-control embed_code' } %>
+      </div>
+
+
+      <div class="form-group media_host_account_id dynamic_control_interview">
+        <div class="field-title"><%= f.label :embed_code, 'Media Host Account ID' %></div>
+        <%= f.input :media_host_account_id, label: false, input_html: { class: 'form-control media_host_account_id' } %>
+      </div>
+
+      <div class="form-group media_host_player_id dynamic_control_interview">
+        <div class="field-title"><%= f.label :media_host_player_id, 'Media Host Player ID' %></div>
+        <%= f.input :media_host_player_id, label: false, input_html: { class: 'form-control media_host_player_id' } %>
+      </div>
+
+      <div class="form-group media_host_item_id dynamic_control_interview">
+        <div class="field-title"><%= f.label :media_host_player_id, 'Media Host Item ID' %></div>
+        <%= f.input :media_host_item_id, label: false, input_html: { class: 'form-control media_host_item_id' } %>
+      </div>
+
+
     </div>
   </div>
   <div class="row">
@@ -76,10 +113,7 @@
       </div>
     </div>
     <div class="col-md-6">
-      <div class="form-group">
-        <div class="field-title"><%= f.label :media_url %></div>
-        <%= f.input :media_url, label: false, input_html: { class: 'form-control media_url' } %>
-      </div>
+
     </div>
   </div>
   <div class="row">
@@ -149,7 +183,7 @@
     <div class="col-md-6">
       <div class="form-group">
         <div class="field-title"><%= f.label :media_filename, 'Media Filename' %></div>
-        <%= f.input :media_filename, label: false, input_html: { class: 'form-control media_filename' } %>
+        <%= f.input :media_filename, label: false, input_html: { class: 'form-control media_filename', input_html: { type: 'number' } } %>
       </div>
     </div>
   </div>
@@ -157,7 +191,7 @@
     <div class="col-md-6">
       <div class="form-group">
         <div class="field-title"><%= f.label :interview_date, 'Interview Date' %></div>
-        <input type="text" name="interviews_interview[interview_date]" class="form-control" id="interviews_interview_interview_date"/>
+        <%= f.input :interview_date, label: false, input_html: { class: 'form-control interview_date', type: 'text'  } %>
       </div>
     </div>
     <div class="col-md-6">
@@ -185,14 +219,16 @@
       </div>
     </div>
     <div class="col-md-6">
+
+    </div>
+  </div>
+  <div class="row mt-4">
+    <div class="col-md-6">
       <div class="form-group">
         <div class="field-title"><%= f.label :collection_name, 'Collection Name' %></div>
         <%= f.input :collection_name, label: false, input_html: { class: 'form-control collection_id' } %>
       </div>
     </div>
-  </div>
-  <div class="row mt-4">
-    <div class="col-md-6"></div>
     <div class="col-md-6">
       <h1 class="h3">Rights and Usage</h1>
     </div>
@@ -463,8 +499,8 @@
 <% end %>
 
 <script type="application/javascript">
+    let interviews_manager = new InterviewManager();
     $(function () {
-        let interviews_manager = new InterviewManager();
         interviews_manager.initialize();
     })
 </script>
