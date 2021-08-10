@@ -6,8 +6,8 @@ module Interviews
   # Interview
   class Interview < ApplicationRecord
     belongs_to :organization
-    enum media_host: [%w[Host Others], %w[Avalon Avalon], %w[Aviary Aviary], %w[Brightcove Brightcove], %w[Kaltura Kaltura], %w[SoundCloud SoundCloud], %w[Vimeo Vimeo], %w[YouTube YouTube]]
-
+    has_many :interview_notes, dependent: :destroy
+    enum media_host: %w[Host Avalon Aviary Brightcove Kaltura SoundCloud Vimeo YouTube]
     searchable do
       integer :id, stored: true
       integer :organization_id, stored: true
@@ -35,6 +35,15 @@ module Interviews
       text :summary, stored: true
       string :keywords, multiple: true, stored: true
       string :subjects, multiple: true, stored: true
+      integer :notes_count, stored: true do
+        interview_notes.count
+      end
+      integer :notes_unresolve_count, stored: true do
+        interview_notes.where(status: false).count
+      end
+      integer :notes_resolve_count, stored: true do
+        interview_notes.where(status: true).count
+      end
       string :thesaurus_keywords, stored: true do
         Thesaurus::Thesaurus.find_by_id(thesaurus_keywords).try(:title)
       end
@@ -223,7 +232,6 @@ module Interviews
 
     def self.fetch_interview_list(page, per_page, sort_column, sort_direction, params, limit_condition, export_and_current_organization = { export: false, current_organization: false })
       q = params[:search][:value] if params.present? && params.key?(:search) && params[:search].key?(:value)
-      solr = Interviews::Interview.solr_connect
       solr_url = Interviews::Interview.solr_path
       select_url = "#{solr_url}/select"
       solr_q_condition = '*:*'
@@ -298,6 +306,11 @@ module Interviews
 
     def self.column_configuration
       { search_columns: { title_accession_number: true, collection_id: true, series_id: true }, display_columns: { title_accession_number: true, collection_id: true, series_id: true } }
+    end
+
+    def reindex
+      Sunspot.index self
+      Sunspot.commit
     end
   end
 end

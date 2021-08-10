@@ -60,6 +60,9 @@ Rails.application.routes.draw do
         post :listing
       end
     end
+    get 'interview/notes/:id.:format', to: 'notes#index', as: :list_notes
+    post 'interview/notes/:id.:format', to: 'notes#create', as: :create_note
+    post 'interview/notes/update/:id.:format', to: 'notes#update', as: :update_note
   end
 
   namespace :thesaurus do

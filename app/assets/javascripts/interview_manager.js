@@ -10,6 +10,8 @@
 function InterviewManager() {
     let that = this;
     let appHelper = new App();
+    let notesEvent;
+    let notesEventColor;
     this.initialize = function () {
         bindEvents();
     };
@@ -38,6 +40,7 @@ function InterviewManager() {
             $('.' + $(this).data('search-field')).prop('checked', $(this).data('search-status'));
         });
         initDeletePopup();
+        initNotesPopup();
     };
 
     this.update_resource_columns = function () {
@@ -94,6 +97,7 @@ function InterviewManager() {
         containerRepeatManager.makeContainerRepeatable(".add_interviewer", ".remove_interviewer", '.container_interviewer_inner', '.container_interviewer', '.interviewer');
         containerRepeatManager.makeContainerRepeatable(".add_format", ".remove_format", '.container_format_inner', '.container_format', '.format');
         initDeletePopup();
+        initNotesPopup();
     }
 
     const initDeletePopup = function () {
@@ -104,6 +108,89 @@ function InterviewManager() {
             $('#modalPopupFooterYes').attr('href', $(this).data().url);
             $('#modalPopup').modal('show');
         });
+    };
+    const setNotesResponse = function (response) {
+        let html = ""
+        response.data.forEach(element => {
+            html = html + '<div>'+element.note+'</div>';
+            html = html + '<div class="d-flex mb-3"><div class="custom-checkbox mr-3"><input type="radio" class="unresolve notes_status" name="status_'+element.id+'" id="unresolve_'+element.id+'" value="0" '+(element.status? "" : 'checked="checked"' )+' data-id="'+element.id+'" data-status="0" data-url="/interviews/interview/notes/update/'+element.id+'.json" ></input><label for="unresolve_'+element.id+'">Unresolved</label></div>';
+            html = html + '<div class="custom-checkbox mr-3"><input type="radio" class="resolve notes_status" name="status_'+element.id+'" id="resolve_'+element.id+'" value="1" '+(element.status? 'checked="checked"' : "" )+' data-id="'+element.id+'" data-status="1" data-url="/interviews/interview/notes/update/'+element.id+'.json" ></input><label for="resolve_'+element.id+'">Resolved</label></div></div>';
+        });
+        html = (response.length == 0 ? "There are currently no notes associated with this interview." : html);
+        $('#listNotes').html(html);
+    }
+    const initNotesPopup = function () {
+        document_level_binding_element(".interview_notes", 'click', function (e) {
+            notesEvent = e;
+            $("#notesForm").attr("action", $(this).data().url);
+            $.ajax({
+                url: $(this).data().url,
+                type: 'GET',
+                dataType: 'json',
+                success: function (response) {
+                    setNotesResponse(response);
+                    if(response.color) notesEventColor = response.color;
+                    $('#note').val("");
+                    $('#modalPopupNotes').modal('show');
+                },
+            });
+        });
+        document_level_binding_element(".notes_status", 'click', function (e) {
+            let formData = {
+                'note_id': e.target.getAttribute("data-id"),
+                'status': e.target.getAttribute("data-status")
+            };
+            $.ajax({
+                url: e.target.getAttribute("data-url"),
+                data: formData,
+                type: 'POST',
+                dataType: 'json',
+                success: function (response) {
+                    if(response.color) notesEventColor = response.color;
+                },
+            });
+            jsMessages('success','Note updated successfully.');
+        });
+        $("#note").on("mousedown mouseup click focus", function(e) {
+            $('.error_note').html("");
+          })
+          $('#modalPopupNotes').on('hidden.bs.modal', function () {
+            $('#interview_note_'+notesEvent.target.getAttribute("data-id")).removeClass("text-danger text-success text-secondary"); 
+            $('#interview_note_'+notesEvent.target.getAttribute("data-id")).addClass(notesEventColor); 
+            notesEventColor = "";            
+        });
+        $(document).on("submit", "#notesForm", function(e) {
+            e.preventDefault();
+            let form = $(this);
+            let url = form.attr("action");
+            let serializedData = form.serialize();
+            if($('#note').val() === "")
+            {
+                $('.error_note').html("Please type a note before clicking the Add Note button.");
+            }
+            else
+            {
+                $.ajax({
+                    type: "POST",
+                    url: url,
+                    data: serializedData,
+                    success: function(response) {
+                        $('#note').val("");
+                        $('.errors').html("");
+                        setNotesResponse(response);
+                        jsMessages('success','Note added successfully.');  
+                        if(response.color) notesEventColor = response.color;                      
+                    },
+                    error: function(response, status, error) {
+                        let info = jQuery.parseJSON(response.responseText);
+                        for (const property in info.errors) {
+                            $('.error_'+property).html(property.toUpperCase()+' '+info.errors[property]);
+                          }
+                    }
+                });
+            }
+        })
+
     };
     this.handlecallback = function (response, container, requestData) {
         try {

@@ -30,8 +30,6 @@ module InterviewsHelper
       'Alt Sync URL (Legacy Field)'
     when 'miscellaneous_user_notes'
       'User Notes'
-    when 'thesaurus_titles'
-      'Thesaurus (Titles)'
     else
       field.to_s.sub('_ss', '').sub('_sms', '').sub('_texts', '').sub('_text', '').sub('_is', '').sub('_bs', '').titleize
     end
