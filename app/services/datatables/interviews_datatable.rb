@@ -85,7 +85,7 @@ class InterviewsDatatable < ApplicationDatatable
 
   def columns(resource_search_column = false)
     columns_allowed = []
-    if resource_search_column && resource_search_column.present?
+    if resource_search_column&.present?
       resource_search_column.each do |_, value|
         if !value['status'].blank? && value['status'].to_s.to_boolean?
           columns_allowed << value['value']
@@ -95,4 +95,3 @@ class InterviewsDatatable < ApplicationDatatable
     columns_allowed
   end
 end
-

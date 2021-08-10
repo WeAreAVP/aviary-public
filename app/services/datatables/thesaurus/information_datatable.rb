@@ -58,8 +58,6 @@ module Thesaurus
       end
       advance_action_html += '&nbsp;'
 
-
-
       # Delete button
       advance_action_html += link_to 'Delete', 'javascript://', class: 'btn-sm btn-danger thesauru_delete', data: { url: thesaurus_manager_path(path), name: path.title }
       advance_action_html += '&nbsp;'

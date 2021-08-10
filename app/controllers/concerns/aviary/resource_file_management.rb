@@ -80,11 +80,11 @@ module Aviary::ResourceFileManagement
         if resource_file_id.present?
           resource_file = collection_resource.collection_resource_files.where(id: resource_file_id).first
           result = resource_file.update(resource_file: open(param_collection_resource[:file_url], read_timeout: 10), sort_order: update_sort)
-          return result ? flash[:notice] = t('information_updated') : flash[:danger] = 'Error updating file.'
+          result ? flash[:notice] = t('information_updated') : flash[:danger] = 'Error updating file.'
         else
           result = collection_resource.collection_resource_files.create(resource_file: open(param_collection_resource[:file_url], read_timeout: 10), sort_order: sort_order)
           return flash[:notice] = file_successfully_uploaded if result.id.present?
-          return flash[:danger] = result.errors[:resource_file][0]
+          flash[:danger] = result.errors[:resource_file][0]
         end
       elsif param_collection_resource[:embed_code].present?
         embed_name = CollectionResourceFile.embed_type_name(param_collection_resource[:embed_type].to_i)

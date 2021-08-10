@@ -62,10 +62,8 @@ class IndexesController < ApplicationController
   end
 
   def sort
-    unless params[:sort_list].nil?
-      params[:sort_list].each_with_index do |id, index|
-        FileIndex.where(id: id).update_all(sort_order: index + 1)
-      end
+    params[:sort_list]&.each_with_index do |id, index|
+      FileIndex.where(id: id).update_all(sort_order: index + 1)
     end
     respond_to do |format|
       format.json { render json: [errors: []] }
