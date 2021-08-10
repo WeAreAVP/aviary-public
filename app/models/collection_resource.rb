@@ -5,7 +5,7 @@ class CollectionResource < ApplicationRecord
   attr_accessor :can_edit, :can_view
   include Aviary::SolrIndexer
 
-  belongs_to :collection, counter_cache: ENV['RAILS_ENV'] == 'test' ? false : true
+  belongs_to :collection, counter_cache: ENV['RAILS_ENV'] != 'test'
   has_many :playlist_resources, dependent: :destroy
   has_many :playlist_items, dependent: :destroy
   has_many :collection_resource_files, dependent: :destroy

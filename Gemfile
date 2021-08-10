@@ -36,7 +36,8 @@ group :development do
   gem 'better_errors'
   gem 'binding_of_caller'
   gem 'awesome_print', require: 'ap'
-  gem 'rubocop', '= 0.49.1'
+  gem 'rubocop', '= 0.83'
+  gem 'rubocop-ast', '< 0.7.0'
   # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
   gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
   gem 'rails-erd'

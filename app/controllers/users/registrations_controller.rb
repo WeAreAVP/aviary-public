@@ -16,12 +16,12 @@ class Users::RegistrationsController < Devise::RegistrationsController
     resource.save
     if resource.valid?
       resource.update(updated_by_id: resource.id, created_by_id: resource.id)
-      return render json: { success: true, message: t('devise.registrations.signed_up_but_unconfirmed') }
+      render json: { success: true, message: t('devise.registrations.signed_up_but_unconfirmed') }
     else
       clean_up_passwords resource
       set_minimum_password_length
       validation_error = t('validation_error')
-      return render json: { success: false, errors: resource.errors.messages, validation_error: validation_error }
+      render json: { success: false, errors: resource.errors.messages, validation_error: validation_error }
     end
   end
 

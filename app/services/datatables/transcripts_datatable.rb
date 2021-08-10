@@ -113,7 +113,7 @@ class TranscriptsDatatable < ApplicationDatatable
 
   def columns(resource_file_search_column = false)
     columns_allowed = ['id_is']
-    if resource_file_search_column && resource_file_search_column.present?
+    if resource_file_search_column&.present?
       resource_file_search_column.each do |_, value|
         if !value['status'].blank? && value['status'] == 'true'
           columns_allowed << value['value']
