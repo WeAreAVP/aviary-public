@@ -232,7 +232,6 @@ module Interviews
 
     def self.fetch_interview_list(page, per_page, sort_column, sort_direction, params, limit_condition, export_and_current_organization = { export: false, current_organization: false })
       q = params[:search][:value] if params.present? && params.key?(:search) && params[:search].key?(:value)
-      solr = Interviews::Interview.solr_connect
       solr_url = Interviews::Interview.solr_path
       select_url = "#{solr_url}/select"
       solr_q_condition = '*:*'

@@ -72,7 +72,9 @@ class InterviewsDatatable < ApplicationDatatable
   def links(interview)
     html = ''
     html += link_to 'Metadata', edit_interviews_manager_path(interview['id_is']), class: 'btn-sm btn-link mr-1 float-left'
-    html += link_to 'Notes', 'javascript://', class: 'btn-sm btn-link mr-1 float-left interview_notes ' + notes_color(interview), id: 'interview_note_' + interview['id_is'].to_s, data: { id: interview['id_is'], url: interviews_list_notes_path(interview['id_is'], 'json') }
+    html += link_to 'Notes', 'javascript://', class: 'btn-sm btn-link mr-1 float-left interview_notes ' + notes_color(interview), id: 'interview_note_' + interview['id_is'].to_s, data: {
+      id: interview['id_is'], url: interviews_list_notes_path(interview['id_is'], 'json')
+    }
     html += '<div class="dropdown float-left">'
     html += ' <button type="button" class="btn btn-sm mr-2 btn-outline-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Export</button>'
     html += ' <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; transform: translate3d(137px, 33px, 0px); top: 0px; left: 0px; will-change: transform;">'
