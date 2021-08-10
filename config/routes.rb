@@ -76,7 +76,6 @@ Rails.application.routes.draw do
     end
   end
 
-
   resources :users, only: %i[destroy index] do
     post '/add_new_member', to: 'users#add_new_member', as: :add_new_member
     post '/change_org_status', to: 'users#change_org_status', as: :change_org_status

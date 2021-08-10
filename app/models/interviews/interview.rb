@@ -7,7 +7,7 @@ module Interviews
   class Interview < ApplicationRecord
     belongs_to :organization
     has_many :interview_notes, dependent: :destroy
-    enum media_host: ['Host', 'Avalon', 'Aviary', 'Brightcove', 'Kaltura', 'SoundCloud', 'Vimeo', 'YouTube']
+    enum media_host: %w[Host Avalon Aviary Brightcove Kaltura SoundCloud Vimeo YouTube]
     searchable do
       integer :id, stored: true
       integer :organization_id, stored: true
@@ -36,13 +36,13 @@ module Interviews
       string :keywords, multiple: true, stored: true
       string :subjects, multiple: true, stored: true
       integer :notes_count, stored: true do
-        self.interview_notes.count
+        interview_notes.count
       end
       integer :notes_unresolve_count, stored: true do
-        self.interview_notes.where(status: false).count
+        interview_notes.where(status: false).count
       end
       integer :notes_resolve_count, stored: true do
-        self.interview_notes.where(status: true).count
+        interview_notes.where(status: true).count
       end
       string :thesaurus_keywords, stored: true do
         Thesaurus::Thesaurus.find_by_id(thesaurus_keywords).try(:title)
@@ -313,6 +313,5 @@ module Interviews
       Sunspot.index self
       Sunspot.commit
     end
-
   end
 end

@@ -16,7 +16,7 @@ class Organization < ApplicationRecord
   has_many :playlists, dependent: :destroy
   has_many :playlist_resources, dependent: :destroy
   has_many :annotation_sets, dependent: :destroy
-  validates :name, :url , presence: true
+  validates :name, :url, presence: true
   validates :url, uniqueness: { message: 'Already taken. Please choose another.' }
   validates :logo_image, attachment_presence: true
   validates :banner_image, attachment_presence: true

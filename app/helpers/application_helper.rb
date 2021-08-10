@@ -170,9 +170,9 @@ module ApplicationHelper
     return false if json.nil?
     begin
       ruby_hash = JSON.parse(json)
-      return ruby_hash
+      ruby_hash
     rescue JSON::ParserError
-      return false
+      false
     end
   end
 
@@ -242,16 +242,14 @@ module ApplicationHelper
     value_current = if value.class == Array
                       raw_values = []
                       value.each do |single_value|
-                        begin
-                          raw_values << if single_value.class == Array && single_value.include?(' :: ')
-                                          custom_value = single_value.split(' :: ')
-                                          "#{custom_value[1]} (#{custom_value[0]})"
-                                        else
-                                          single_value
-                                        end
-                        rescue StandardError => error
-                          puts error
-                        end
+                        raw_values << if single_value.class == Array && single_value.include?(' :: ')
+                                        custom_value = single_value.split(' :: ')
+                                        "#{custom_value[1]} (#{custom_value[0]})"
+                                      else
+                                        single_value
+                                      end
+                      rescue StandardError => error
+                        puts error
                       end
                       raw_values.join(', ')
                     else

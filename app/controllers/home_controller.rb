@@ -154,9 +154,9 @@ class HomeController < ApplicationController
                  end
     url_params[:embed] = 'true' if (params[:embed].present? && params[:embed] == 'true') || request.url.include?('/embed/')
     url_params[:tabs] = params[:tabs] if params[:tabs].present?
-    return redirect_to collection_collection_resource_details_url(url_params)
+    redirect_to collection_collection_resource_details_url(url_params)
   rescue StandardError
-    return redirect_to not_found_url(subdomain: false)
+    redirect_to not_found_url(subdomain: false)
   end
 
   def media

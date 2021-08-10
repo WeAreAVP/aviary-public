@@ -175,7 +175,7 @@ module Aviary::ExtractVideoMetadata
         metadata['content_type'] = 'audio/mp3'
         metadata
       rescue StandardError
-        return false
+        false
       end
     end
   end
@@ -218,7 +218,7 @@ module Aviary::ExtractVideoMetadata
         metadata['content_type'] = "#{media_type}/avalon"
         metadata
       rescue StandardError
-        return false
+        false
       end
     end
   end

@@ -76,7 +76,7 @@ module Aviary::SolrIndexer
     @resource_fields = @collection_field_manager.collection_resource_field_settings(collection, 'resource_fields')
     begin
       resource_values = all_fields
-    rescue
+    rescue StandardError
       resource_values = []
     end
     resource_values = resource_description_value.resource_field_values if resource_description_value.present?
@@ -170,7 +170,7 @@ module Aviary::SolrIndexer
   def self.date_handler(value)
     begin
       value = value.blank? ? '' : value.strip
-      case value.scan(/(?=#{'-'})/).count
+      case value.scan(/(?=-)/).count
       when 0
         value += '-01-01'
       when 1
