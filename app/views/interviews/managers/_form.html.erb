@@ -1,10 +1,16 @@
 <%= simple_form_for @interview, :url => @interview.new_record? ? interviews_managers_path : interviews_manager_path(@interview), html: { class: "interview_manager" } do |f| %>
-  <div class="col-md-12 text-right">
-    <% unless @interview.new_record? %>
-      <%= link_to 'Delete Interview', 'javascript://', class: 'btn btn-danger interview_delete', data: { url: interviews_manager_path(@interview), name: @interview.title } %>
-    <% end %>
-    <%= link_to 'Return To Interviews', interviews_managers_path, class: 'btn btn-primary' %>
-    <%= f.submit 'Save', class: 'btn btn-success' %>
+  <div class="row ">
+    <div class="col-md-12 text-right">
+
+      <% unless @interview.new_record? %>
+        <%= link_to 'Delete Interview', 'javascript://', class: 'btn btn-danger interview_delete float-right ml-1 mr-1', data: { url: interviews_manager_path(@interview), name: @interview.title } %>
+      <% end %>
+      <%= link_to 'Return To Interviews', interviews_managers_path, class: 'btn btn-primary float-right ml-1 mr-1' %>
+      <%= f.submit 'Save', class: 'btn btn-success float-right ml-1 mr-1' %>
+      <div class="float-right w-25 ml-1 mr-4">
+        <%= f.select :metadata_status, options_for_select(@interview.listing_metadata_status.map { |key, index| [index, key] }, @interview.metadata_status), {},required: false, label: false, class: 'custom-placeholder dont-apply-selectize form-control ml-2 mr-3', style: ' margin-top: -10px; height: 50px !important; ' %>
+      </div>
+    </div>
   </div>
   <div class="row mt-4">
     <div class="col-md-6">
@@ -43,9 +49,46 @@
 
     <div class="col-md-6">
       <div class="form-group">
-        <div class="field-title"><%= f.label :media_host %></div>
-        <%= f.select :media_host, Interviews::Interview.media_hosts.map { |key, _| key }, {}, required: false, label: false, class: 'custom-placeholder media_hosts_value' %>
+        <div class="field-title"><%= f.label :media_host %> <%=@interview.media_host %></div>
+        <%= f.select :media_host, options_for_select(@interview.listing_media_host.map { |key, index| [key, index] }, @interview.media_host), {}, required: false, label: false, class: 'custom-placeholder media_hosts_value ' %>
       </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-6"></div>
+    <div class="col-md-6">
+      <div class="form-group media_url_embed dynamic_control_interview">
+        <div class="field-title"><%= f.label :media_url, 'Media URL' %></div>
+        <%= f.input :media_url, label: false, input_html: { class: 'form-control media_url' } %>
+      </div>
+      <div class="form-group avalon_target_domain dynamic_control_interview">
+        <div class="field-title"><%= f.label :avalon_target_domain, 'Avalon Target Domain' %></div>
+        <%= f.input :avalon_target_domain, label: false, input_html: { class: 'form-control avalon_target_domain' } %>
+      </div>
+
+      <div class="form-group embed_code dynamic_control_interview">
+        <div class="field-title"><%= f.label :embed_code, 'Embed Code' %></div>
+        <%= f.input :embed_code, label: false, input_html: { class: 'form-control embed_code' } %>
+      </div>
+
+
+      <div class="form-group media_host_account_id dynamic_control_interview">
+        <div class="field-title"><%= f.label :embed_code, 'Media Host Account ID' %></div>
+        <%= f.input :media_host_account_id, label: false, input_html: { class: 'form-control media_host_account_id' } %>
+      </div>
+
+      <div class="form-group media_host_player_id dynamic_control_interview">
+        <div class="field-title"><%= f.label :media_host_player_id, 'Media Host Player ID' %></div>
+        <%= f.input :media_host_player_id, label: false, input_html: { class: 'form-control media_host_player_id' } %>
+      </div>
+
+      <div class="form-group media_host_item_id dynamic_control_interview">
+        <div class="field-title"><%= f.label :media_host_player_id, 'Media Host Item ID' %></div>
+        <%= f.input :media_host_item_id, label: false, input_html: { class: 'form-control media_host_item_id' } %>
+      </div>
+
+
     </div>
   </div>
 
@@ -88,23 +131,23 @@
   <div class="row">
     <div class="col-md-6">
       <div class="form-group">
-        <div class="mb-2"><%= f.label :interviewee %>
-          <a href="javascript:void(0);" class="add_interviewee badge badge-success text-decoration-none"> + Add</a>
+        <div class="field-title"><%= f.label :interviewee %>
+          <a href="javascript:void(0);" class="add_interviewee add_button_interview text-decoration-none"> +</a>
         </div>
         <div class="container_interviewee">
           <% if @interview.interviewee.present? && @interview.interviewee.size > 0 %>
             <% @interview.interviewee.each do |single_interview| %>
-              <div class="row container_interviewee_inner">
+              <div class="row container_interviewee_inner field_container">
                 <div class="col-12 mb-2">
-                  <input type='text' name='interviews_interview[interviewee][]' id="interviews_interview_interviewee" value="<%= single_interview %>" class="json optional form-control interviewee w-92percent"/>
+                  <input type='text' name='interviews_interview[interviewee][]' id="interviews_interview_interviewee" value="<%= single_interview %>" class="json optional form-control interviewee"/>
                   <a href="javascript://" class="remove_interviewee" title="Remove Interviewee"><i class="remove_icon_image"></i></a>
                 </div>
               </div>
             <% end %>
           <% else %>
-            <div class="row container_interviewee_inner">
+            <div class="row container_interviewee_inner field_container">
               <div class="col-12 mb-2">
-                <input type='text' name='interviews_interview[interviewee][]' id="interviews_interview_interviewee" class="json optional form-control interviewee w-92percent"/>
+                <input type='text' name='interviews_interview[interviewee][]' id="interviews_interview_interviewee" class="json optional form-control interviewee"/>
                 <a href="javascript://" class="remove_interviewee" title="Remove Interviewee"><i class="remove_icon_image"></i></a>
               </div>
             </div>
@@ -119,23 +162,23 @@
   <div class="row">
     <div class="col-md-6">
       <div class="form-group">
-        <div class="mb-2"><%= f.label :interviewer %>
-          <a href="javascript:void(0);" class="add_interviewer badge badge-success text-decoration-none"> + Add</a>
+        <div class="field-title"><%= f.label :interviewer %>
+          <a href="javascript:void(0);" class="add_interviewer add_button_interview text-decoration-none"> + </a>
         </div>
         <div class="container_interviewer">
           <% if @interview.interviewer.present? && @interview.interviewer.size > 0 %>
             <% @interview.interviewer.each do |single_interviewer| %>
-              <div class="row container_interviewer_inner">
+              <div class="row container_interviewer_inner field_container">
                 <div class="col-12 mb-2">
-                  <input type='text' name='interviews_interview[interviewer][]' id="interviews_interview_interviewer" value="<%= single_interviewer %>" class="json optional form-control interviewer w-92percent"/>
+                  <input type='text' name='interviews_interview[interviewer][]' id="interviews_interview_interviewer" value="<%= single_interviewer %>" class="json optional form-control interviewer "/>
                   <a href="javascript://" class="remove_interviewer" title="Remove interviewer"><i class="remove_icon_image"></i></a>
                 </div>
               </div>
             <% end %>
           <% else %>
-            <div class="row container_interviewer_inner">
+            <div class="row container_interviewer_inner field_container">
               <div class="col-12 mb-2">
-                <input type='text' name='interviews_interview[interviewer][]' id="interviews_interview_interviewer" value="" class="json optional form-control interviewer w-92percent"/>
+                <input type='text' name='interviews_interview[interviewer][]' id="interviews_interview_interviewer" value="" class="json optional form-control interviewer "/>
                 <a href="javascript://" class="remove_interviewer" title="Remove interviewer"><i class="remove_icon_image"></i></a>
               </div>
             </div>
@@ -146,23 +189,23 @@
 
     <div class="col-md-6">
       <div class="form-group">
-        <div class="mb-2"><%= f.label :media_format, ' Format' %>
-          <a href="javascript:void(0);" class="add_format badge badge-success text-decoration-none"> + Add</a>
+        <div class="field-title"><%= f.label :media_format, ' Format' %>
+          <a href="javascript:void(0);" class="add_format add_button_interview text-decoration-none"> +</a>
         </div>
         <div class="container_format">
           <% if @interview.format_info.present? && @interview.format_info.size > 0 %>
             <% @interview.format_info.each do |single_format| %>
-              <div class="row container_format_inner">
+              <div class="row container_format_inner field_container">
                 <div class="col-12 mb-2">
-                  <input type='text' name='interviews_interview[format_info][]' id="interviews_interview_format" value='<%= single_format %>' class="json optional form-control format w-92percent"/>
+                  <input type='text' name='interviews_interview[format_info][]' id="interviews_interview_format" value='<%= single_format %>' class="json optional form-control format "/>
                   <a href="javascript://" class="remove_format" title="Remove Format"><i class="remove_icon_image"></i></a>
                 </div>
               </div>
             <% end %>
           <% else %>
-            <div class="row container_format_inner">
+            <div class="row container_format_inner field_container">
               <div class="col-12 mb-2">
-                <input type='text' name='interviews_interview[format_info][]' id="interviews_interview_format" class="json optional form-control format w-92percent"/>
+                <input type='text' name='interviews_interview[format_info][]' id="interviews_interview_format" class="json optional form-control format"/>
                 <a href="javascript://" class="remove_format" title="Remove Format"><i class="remove_icon_image"></i></a>
               </div>
             </div>
@@ -191,7 +234,7 @@
     <div class="col-md-6">
       <div class="form-group">
         <div class="field-title"><%= f.label :interview_date, 'Interview Date' %></div>
-        <%= f.input :interview_date, label: false, input_html: { class: 'form-control interview_date', type: 'text'  } %>
+        <%= f.input :interview_date, label: false, input_html: { class: 'form-control interview_date', type: 'text' } %>
       </div>
     </div>
     <div class="col-md-6">
@@ -316,27 +359,24 @@
   <div class="row">
     <div class="col-md-6">
       <div class="form-group">
-        <div class="mb-2"><%= f.label :keywords %>
-          <a href="javascript:void(0);" class="add_keywords badge badge-success text-decoration-none"> +
-            Add</a>
+        <div class="field-title"><%= f.label :keywords %>
+          <a href="javascript:void(0);" class="add_keywords add_button_interview text-decoration-none"> +</a>
         </div>
-
-
         <div class="container_keywords">
           <% if @interview.keywords.present? && @interview.keywords.size > 0 %>
             <% @interview.keywords.each do |single_keywords| %>
-              <div class="row container_keywords_inner">
+              <div class="row container_keywords_inner field_container">
                 <div class="col-12 mb-2">
-                  <input type='text' name='interviews_interview[keywords][]' id="interviews_interview_keywords" value="<%= single_keywords %>" class="json optional form-control keywords w-92percent"/>
+                  <input type='text' name='interviews_interview[keywords][]' id="interviews_interview_keywords" value="<%= single_keywords %>" class="json optional form-control keywords"/>
                   <a href="javascript://" class="remove_keywords" title="Remove keywords"><i class="remove_icon_image"></i></a>
                 </div>
               </div>
             <% end %>
           <% else %>
 
-            <div class="row container_keywords_inner">
+            <div class="row container_keywords_inner field_container">
               <div class="col-12 mb-2">
-                <input type='text' name='interviews_interview[keywords][]' id="interviews_interview_keywords" class="json optional form-control keywords w-92percent"/>
+                <input type='text' name='interviews_interview[keywords][]' id="interviews_interview_keywords" class="json optional form-control keywords "/>
                 <a href="javascript://" class="remove_keywords" title="Remove keywords"><i class="remove_icon_image"></i></a>
               </div>
             </div>
@@ -364,24 +404,24 @@
   <div class="row">
     <div class="col-md-6">
       <div class="form-group">
-        <div class="mb-2"><%= f.label :subjects %>
-          <a href="javascript:void(0);" class="add_subjects badge badge-success text-decoration-none"> +
-            Add</a>
+        <div class="field-title"><%= f.label :subjects %>
+          <a href="javascript:void(0);" class="add_subjects add_button_interview text-decoration-none"> +
+          </a>
         </div>
         <div class="container_subjects">
           <% if @interview.subjects.present? && @interview.subjects.size > 0 %>
             <% @interview.subjects.each do |single_subjects| %>
-              <div class="row container_subjects_inner">
+              <div class="row container_subjects_inner field_container">
                 <div class="col-12 mb-2">
-                  <input type='text' name='interviews_interview[subjects][]' id="interviews_interview_subjects" value='<%= single_subjects %>' class="json optional form-control subjects w-92percent"/>
+                  <input type='text' name='interviews_interview[subjects][]' id="interviews_interview_subjects" value='<%= single_subjects %>' class="json optional form-control subjects "/>
                   <a href="javascript://" class="remove_subjects" title="Remove subjects"><i class="remove_icon_image"></i></a>
                 </div>
               </div>
             <% end %>
           <% else %>
-            <div class="row container_subjects_inner">
+            <div class="row container_subjects_inner field_container">
               <div class="col-12 mb-2">
-                <input type='text' name='interviews_interview[subjects][]' id="interviews_interview_subjects" class="json optional form-control subjects w-92percent"/>
+                <input type='text' name='interviews_interview[subjects][]' id="interviews_interview_subjects" class="json optional form-control subjects "/>
                 <a href="javascript://" class="remove_subjects" title="Remove subjects"><i class="remove_icon_image"></i></a>
               </div>
             </div>

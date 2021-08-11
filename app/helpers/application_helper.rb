@@ -242,11 +242,11 @@ module ApplicationHelper
     value_current = if value.class == Array
                       raw_values = []
                       value.each do |single_value|
-                        raw_values << if single_value.class == Array && single_value.include?(' :: ')
-                                        custom_value = single_value.split(' :: ')
-                                        "#{custom_value[1]} (#{custom_value[0]})"
+                        raw_values << if single_value.class == Array && single_value.include?('::')
+                                        custom_value = single_value.split('::')
+                                        "#{custom_value[1].to_s.strip} (#{custom_value[0].to_s.strip})"
                                       else
-                                        single_value
+                                        single_value.to_s.strip
                                       end
                       rescue StandardError => error
                         puts error
@@ -255,7 +255,7 @@ module ApplicationHelper
                     else
                       value
                     end
-    %w(title_ss collection_title).include?(attribute) ? strip_tags(value_current.to_s).gsub('::', ' ') : truncate(strip_tags(value_current.to_s).gsub('::', ' '), length: 50)
+    %w(title_ss collection_title).include?(attribute) ? strip_tags(value_current.to_s.strip).gsub('::', ' ') : truncate(strip_tags(value_current.to_s.strip).gsub('::', ' '), length: 50)
   end
 
   def lock_image(classes = '')

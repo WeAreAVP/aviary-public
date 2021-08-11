@@ -74,8 +74,9 @@ class ResourcesListingDatatable < ApplicationDatatable
           end
         end
         links = if %w[permission_group playlist_add_resource].include?(@called_from)
-                  description_identifier_sms = resource['description_identifier_sms'].present? ? truncate(strip_tags(resource['description_identifier_sms'].join(', ')).gsub('::', ' ')) : 'none'
-                  description_date_sms = resource['description_date_sms'].present? ? truncate(strip_tags(resource['description_date_sms'].join(', ')).gsub('::', ' ')) : 'none'
+                  resource['description_identifier_sms'] = resource['description_identifier_sms'].collect { |e| e ? e.to_s.strip : e }
+                  description_identifier_sms = resource['description_identifier_sms'].present? ? truncate(strip_tags(resource['description_identifier_sms'].join(',')).gsub('::', '')) : 'none'
+                  description_date_sms = resource['description_date_sms'].present? ? truncate(strip_tags(resource['description_date_sms'].join(',')).gsub('::', '')) : 'none'
                   access_ss = resource['access_ss'].present? ? resource['access_ss'].titleize : 'none'
                   "<a href='javascript:void(0)' data-label='#{strip_tags(resource['title_ss'].to_s.delete('"'))} (#{resource['id_is']})'
                           data-value='#{strip_tags(resource['title_ss'].to_s.delete('"'))}' data-description_identifier='#{description_identifier_sms}' data-description_date='#{description_date_sms}'
