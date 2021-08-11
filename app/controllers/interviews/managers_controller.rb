@@ -6,6 +6,7 @@
 module Interviews
   # ManagerController
   class ManagersController < ApplicationController
+    include XMLFileHandler
     before_action :authenticate_user!
     before_action :set_interview, only: %i[show edit update destroy]
 
@@ -39,6 +40,26 @@ module Interviews
     # GET /interviews/1/edit
     def edit
       authorize! :manage, current_organization
+    end
+
+    # GET /interviews/1/export.format
+    def export
+      authorize! :manage, current_organization
+      interview = Interviews::Interview.find(params[:id])
+      export_text = Aviary::ExportOhmsInterviewXml.new.export(interview)
+      doc = Nokogiri::XML(export_text.to_xml)
+      error_messages = xml_validation(doc)
+      if error_messages.any?
+        respond_to do |format|
+          format.any { redirect_to interviews_managers_path, notice: 'Something went wrong. Please try again later.' }
+        end
+      else
+        file_name = interview.miscellaneous_ohms_xml_filename.empty? ? interview.title : interview.miscellaneous_ohms_xml_filename
+        respond_to do |format|
+          format.xml { send_data(export_text.to_xml, filename: "#{file_name}.xml") }
+          format.any { redirect_to interviews_managers_path, notice: 'Not a valid URL.' }
+        end
+      end
     end
 
     # POST /interviews

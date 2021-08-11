@@ -3,7 +3,7 @@
 # Aviary is an audiovisual content publishing platform with sophisticated features for search and permissions controls.
 # Copyright (C) 2019 Audio Visual Preservation Solutions, Inc.
 class InterviewsDatatable < ApplicationDatatable
-  delegate :can?, :interviews_manager_path, :interviews_list_notes_path, :edit_interviews_manager_path, :check_valid_array, to: :@view
+  delegate :can?, :interviews_manager_path, :interviews_list_notes_path, :edit_interviews_manager_path, :export_interviews_manager_path, :check_valid_array, to: :@view
 
   def initialize(view, current_organization = nil)
     @view = view
@@ -78,8 +78,8 @@ class InterviewsDatatable < ApplicationDatatable
     html += '<div class="dropdown float-left">'
     html += ' <button type="button" class="btn btn-sm mr-2 btn-outline-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Export</button>'
     html += ' <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; transform: translate3d(137px, 33px, 0px); top: 0px; left: 0px; will-change: transform;">'
-    html += '   <a class="dropdown-item export_btn" href="#">XML</a>'
-    html += '   <a class="dropdown-item export_btn" href="#">CSV</a>'
+    html += link_to 'XML', export_interviews_manager_path(interview['id_is'], 'xml'), class: 'dropdown-item export_btn'
+    html += link_to 'CSV', export_interviews_manager_path(interview['id_is'], 'csv'), class: 'dropdown-item export_btn'
     html += ' </div>'
     html += '</div>'
     html += link_to 'Delete', 'javascript://', class: 'btn-sm btn-danger interview_delete', data: { url: interviews_manager_path(interview['id_is']), name: interview['title_ss'] }
