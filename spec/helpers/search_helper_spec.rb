@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe SearchHelper, type: :helper do
   let(:collection) { create(:collection) }
-  let(:arguments) {[:description_agent_sms, 1, {description_agent_sms: ['vocab 1:: val1 ', 'vocab 2 :: val 2 ']}]}
+  let(:arguments) {[:description_agent_sms, 1, {description_agent_sms: ['vocab 1:: val1 ', 'vocab 2::val 2 ']}]}
   let(:arguments_1) {[:description_agent_sms, 1, {description_agent_sms: ['testing asdasd', 't']}]}
   let(:document) {{"collection_id_is" => collection.id, "id_is" => 1, "organization_id_is" => collection.organization.id}}
 

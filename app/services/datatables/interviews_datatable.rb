@@ -42,6 +42,9 @@ class InterviewsDatatable < ApplicationDatatable
       else
         'none'
       end
+    elsif value['value'] == 'interview_status_is'
+      color, process_status = Interviews::Interview.find_by(id: resource['id_is']).try(:interview_status_info)
+      "<span style='#{color}'>  #{process_status.present? ? process_status : ' none '}</span>"
     elsif value['value'] == 'created_at_is'
       Time.at(resource[value['value']]).to_date
     elsif value['value'] == 'updated_at_is'
@@ -70,11 +73,16 @@ class InterviewsDatatable < ApplicationDatatable
   end
 
   def links(interview)
+    this_interview = Interviews::Interview.find_by(id: interview['id_is'])
+    color_metadata = this_interview.try(:interview_metadata_status)
     html = ''
-    html += link_to 'Metadata', edit_interviews_manager_path(interview['id_is']), class: 'btn-sm btn-link mr-1 float-left'
+    html += link_to 'Metadata', edit_interviews_manager_path(interview['id_is']), class: 'btn-sm btn-link mr-1 float-left', style: color_metadata.to_s, data: {
+      toggle: 'tooltip', placement: 'top', title: (this_interview.present? ? this_interview.listing_metadata_status[this_interview.metadata_status.to_s] : '')
+    }
     html += link_to 'Notes', 'javascript://', class: 'btn-sm btn-link mr-1 float-left interview_notes ' + notes_color(interview), id: 'interview_note_' + interview['id_is'].to_s, data: {
       id: interview['id_is'], url: interviews_list_notes_path(interview['id_is'], 'json')
     }
+
     html += '<div class="dropdown float-left">'
     html += ' <button type="button" class="btn btn-sm mr-2 btn-outline-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Export</button>'
     html += ' <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; transform: translate3d(137px, 33px, 0px); top: 0px; left: 0px; will-change: transform;">'

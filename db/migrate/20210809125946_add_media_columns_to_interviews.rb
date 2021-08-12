@@ -7,5 +7,6 @@ class AddMediaColumnsToInterviews < ActiveRecord::Migration[5.2]
     add_column :interviews, :media_host_account_id, :string
     add_column :interviews, :media_host_player_id, :string
     add_column :interviews, :media_host_item_id, :string
+
   end
 end

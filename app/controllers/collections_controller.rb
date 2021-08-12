@@ -98,7 +98,7 @@ class CollectionsController < ApplicationController
           if updated_field_values[value['collection_field_id']].nil?
             updated_field_values[value['collection_field_id']] = { field_id: value['collection_field_id'], values: [] }
           end
-          updated_field_values[value['collection_field_id']][:values] << { value: value['value'], vocab_value: '' }
+          updated_field_values[value['collection_field_id']][:values] << { value: value['value'].to_s.strip, vocab_value: '' }
         end
       end
 
@@ -318,7 +318,12 @@ class CollectionsController < ApplicationController
                    elsif field_settings.solr_display_column_name == 'access_ss'
                      resource[field_settings.solr_display_column_name].gsub('access_', '').titleize.strip
                    elsif !resource[field_settings.solr_display_column_name].blank?
-                     resource[field_settings.solr_display_column_name].class == Array ? resource[field_settings.solr_display_column_name].join(' | ') : resource[field_settings.solr_display_column_name]
+                     if resource[field_settings.solr_display_column_name].class == Array
+                       resource[field_settings.solr_display_column_name] = resource[field_settings.solr_display_column_name].collect { |elem| elem ? elem.to_s.strip : elem }
+                       resource[field_settings.solr_display_column_name].join('|')
+                     else
+                       resource[field_settings.solr_display_column_name].to_s.strip
+                     end
                    else
                      ''
                    end

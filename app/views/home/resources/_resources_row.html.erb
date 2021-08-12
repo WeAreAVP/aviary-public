@@ -9,21 +9,23 @@
         <div class="box">
           <span class="ico"><img src="https://<%= ENV['S3_HOST_CDN'] %>/public/lock.png" alt=""></span>
 
-
-          <div class="access_request_text_custom text-white">You don't have access.</div>
-
+          <% request_template = access_request_text(resource) %>
+          <div class="access_request_text_custom text-white"><%== request_template[:content] %></div>
+          <%= access_request_link('', { organization_id: resource.collection.organization.id, title: resource.title, id: resource.id, click_through: resource.collection.click_through, conditions_for_access: resource.collection.conditions_for_access }, request_template[:button_text]) %>
         </div>
       </div>
     </div>
   <% end %>
   <div class="box <%= 'featured' if featured %>">
     <%= link_to resource_url, target: "_blank" do %>
-      <div class="image" style='backgrsound: url("<%= file.present? && file.thumbnail_image.present? ? file.thumbnail_image : nil.to_s %>"); background-size:cover;background-position: center;min-height: 120px;'>
+      <div class="image" style='background: url("<%= file.present? && file.thumbnail_image.present? ? file.thumbnail_image : nil.to_s %>"); background-size:cover;background-position: center;min-height: 120px;'>
       </div>
 
       <div class="collection-details">
         <h4 class="reso-title"><%= resource.title %></h4>
-        <time><%= !resource.custom_field_value('duration').blank? ? time_to_duration(resource.custom_field_value('duration').first['value']) : '00:00:00' %></time>
+        <% resource_field_values = resource.resource_description_value.try(:resource_field_values) %>
+        <% duration = resource_field_values.present? && resource_field_values['duration'].present? && resource_field_values['duration']['values'].present? ? resource_field_values['duration']['values'].try(:first) : nil %>
+        <time><%= duration.present? && duration['value'].present? ? time_to_duration(duration['value']) : '00:00:00' %></time>
       </div>
 
       <div class="collection-bottom-details">

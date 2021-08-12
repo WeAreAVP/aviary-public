@@ -17,7 +17,7 @@ module SearchHelper
       value_with_label += "<strong>#{label_to_slow}</strong>: "
       if document[tombstone].first.include? '::'
         document[tombstone].each do |single_vocb_val|
-          raw_voc_val = single_vocb_val.split(' :: ')
+          raw_voc_val = single_vocb_val.split('::')
           value += "<span class='badge badge-secondary'>#{raw_voc_val.first} </span> #{raw_voc_val.second} (@)"
           temp_with_out_tags = strip_tags(raw_voc_val.second)
           value_with_out_tags += "<span class='badge badge-secondary'>#{raw_voc_val.first} </span> #{temp_with_out_tags} (@)"

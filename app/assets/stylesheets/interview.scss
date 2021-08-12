@@ -1,0 +1,42 @@
+// Aviary is an audiovisual content publishing platform with sophisticated features for search and permissions controls.
+// Copyright (C) 2019 Audio Visual Preservation Solutions, Inc.
+#ui-datepicker-div {
+  z-index: 99999 !important;
+}
+
+.container_interviewee .container_interviewee_inner:nth-of-type(1) .remove_icon_image,
+.container_interviewer .container_interviewer_inner:nth-of-type(1) .remove_icon_image,
+.container_keywords .container_keywords_inner:nth-of-type(1) .remove_icon_image,
+.container_format .container_format_inner:nth-of-type(1) .remove_icon_image,
+.container_subjects .container_subjects_inner:nth-of-type(1) .remove_icon_image {
+  display: none;
+}
+
+.add_button_interview {
+  width: 22px;
+  height: 22px;
+  background: #fff;
+  color: #003853;
+  border: 2px solid #CCD7DD;
+  border-radius: 20px;
+  position: absolute;
+  right: -20px;
+  top: 0px;
+  font-size: 17px;
+  line-height: 1;
+  text-align: center;
+  padding: 0px;
+}
+.add_button_interview:hover {
+  background: #003853;
+  border-color: #003853;
+  color: #fff;
+}
+
+.field_container .form-control {
+  padding: 15px 40px 13px 20px !important;
+}
+
+.field_container .remove_icon_image {
+  top: 18px;
+}

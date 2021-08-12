@@ -6,8 +6,59 @@ module Interviews
   # Interview
   class Interview < ApplicationRecord
     belongs_to :organization
+    enum interview_status: { '0' => 'In Progress', '1' => 'Complete' }, _prefix: :interview
     has_many :interview_notes, dependent: :destroy
-    enum media_host: %w[Host Avalon Aviary Brightcove Kaltura SoundCloud Vimeo YouTube]
+    before_save :purify_value
+
+    def purify_value
+      self.metadata_status = metadata_status.to_i
+      self.media_host = Interviews::Interview.media_hosts[media_host] if media_host == 'Host'
+    end
+
+    def interview_status_info
+      notes_status = !interview_notes.pluck(:status).include?(false)
+      index_available = true
+      transcript_available = true
+
+      color = color_grading['0']
+      process_status = 'In Progress'
+
+      case metadata_status.to_s
+      when '4'
+        process_status = listing_metadata_status['4']
+        color = color_grading['4']
+      when '3'
+        if notes_status && index_available && transcript_available
+          color = color_grading['3']
+          process_status = 'Completed'
+        else
+          process_status = 'In Progress'
+          color = color_grading['0']
+        end
+      when '-1', ''
+        process_status = ''
+        color = ''
+      end
+
+      [color, process_status]
+    end
+
+    def interview_metadata_status
+      color_grading[metadata_status.to_s]
+    end
+
+    def color_grading
+      { '-1' => 'color: #000;', '0' => 'color: #1a1aff;', '1' => 'color: #cd2200;', '2' => 'color: #9c43b6;', '3' => 'color: #008b17;', '4' => 'color: #279ade;', '' => 'color: #000;' }
+    end
+
+    def listing_metadata_status
+      { '-1' => 'Please Select', '4' => 'Pending', '0' => 'In Process', '1' => 'Ready for QC', '2' => 'Active QC', '3' => 'Complete' }
+    end
+
+    def listing_media_host
+      { 'Host' => 'Other', 'Avalon' => 'Avalon', 'Aviary' => 'Aviary', 'Brightcove' => 'Brightcove', 'Kaltura' => 'Kaltura', 'SoundCloud' => 'SoundCloud', 'Vimeo' => 'Vimeo', 'YouTube' => 'YouTube' }
+    end
+
     searchable do
       integer :id, stored: true
       integer :organization_id, stored: true
@@ -55,10 +106,7 @@ module Interviews
       end
       text :transcript_sync_data, stored: true
       text :transcript_sync_data_translation, stored: true
-      string :media_host, stored: true do
-        Interviews::Interview.media_hosts[media_host]
-      end
-
+      string :media_host, stored: true
       text :media_url, stored: true do
         media_url.present? ? media_url : 'None'
       end
@@ -149,9 +197,7 @@ module Interviews
       text :media_format, stored: true
       text :keywords, stored: true
       text :subjects, stored: true
-      text :media_host, stored: true do
-        Interviews::Interview.media_hosts[media_host]
-      end
+      text :media_host, stored: true
       text :media_url, stored: true do
         media_url.present? ? media_url : 'None'
       end

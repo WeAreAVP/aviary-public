@@ -80,7 +80,7 @@ module Thesaurus
     end
 
     def create
-      # authorize! :manage, current_organization
+      authorize! :manage, current_organization
 
       @thesaurus = ::Thesaurus::Thesaurus.new(thesaurus_params)
       @thesaurus.organization_id = current_organization.id

@@ -2,8 +2,10 @@
  * Interviews Manager
  *
  * @author Furqan Wasi <furqan@weareavp.com>
+ *
  * Aviary is an audiovisual content publishing platform with sophisticated features for search and permissions controls.
  * Copyright (C) 2019 Audio Visual Preservation Solutions, Inc.
+ *
  */
 "use strict";
 
@@ -42,6 +44,10 @@ function InterviewManager() {
         initDeletePopup();
         initNotesPopup();
     };
+
+    this.datatableInitComplete = function () {
+        $('[data-toggle="tooltip"]').tooltip();
+    }
 
     this.update_resource_columns = function () {
         let metadata_fields_status = $('#sortable_resource_columns').sortable('toArray');
@@ -98,7 +104,31 @@ function InterviewManager() {
         containerRepeatManager.makeContainerRepeatable(".add_format", ".remove_format", '.container_format_inner', '.container_format', '.format');
         initDeletePopup();
         initNotesPopup();
-    }
+        document_level_binding_element('#interviews_interview_media_host', 'change', function () {
+            manageFieldsMedia($(this).val());
+        });
+        manageFieldsMedia($('#interviews_interview_media_host').val());
+
+    };
+
+    const manageFieldsMedia = function (value) {
+        let listing = {
+            'Other': ['.media_url_embed'],
+            'Avalon': ['.avalon_target_domain', '.embed_code', '.media_url_embed'],
+            'Aviary': ['.media_url_embed'],
+            'Brightcove': ['.media_host_account_id', '.media_host_player_id', '.media_host_item_id'],
+            'Kaltura': ['.embed_code'],
+            'SoundCloud': ['.embed_code'],
+            'Vimeo': ['.embed_code'],
+            'YouTube': ['.embed_code', '.media_url_embed'],
+        }
+        if (typeof listing[value] != 'undefined') {
+            $('.dynamic_control_interview').addClass('d-none');
+            $.each(listing[value], function (index, val) {
+                $(val).removeClass('d-none');
+            });
+        }
+    };
 
     const initDeletePopup = function () {
 
@@ -112,9 +142,9 @@ function InterviewManager() {
     const setNotesResponse = function (response) {
         let html = ""
         response.data.forEach(element => {
-            html = html + '<div>'+element.note+'</div>';
-            html = html + '<div class="d-flex mb-3"><div class="custom-checkbox mr-3"><input type="radio" class="unresolve notes_status" name="status_'+element.id+'" id="unresolve_'+element.id+'" value="0" '+(element.status? "" : 'checked="checked"' )+' data-id="'+element.id+'" data-status="0" data-url="/interviews/interview/notes/update/'+element.id+'.json" ></input><label for="unresolve_'+element.id+'">Unresolved</label></div>';
-            html = html + '<div class="custom-checkbox mr-3"><input type="radio" class="resolve notes_status" name="status_'+element.id+'" id="resolve_'+element.id+'" value="1" '+(element.status? 'checked="checked"' : "" )+' data-id="'+element.id+'" data-status="1" data-url="/interviews/interview/notes/update/'+element.id+'.json" ></input><label for="resolve_'+element.id+'">Resolved</label></div></div>';
+            html = html + '<div>' + element.note + '</div>';
+            html = html + '<div class="d-flex mb-3"><div class="custom-checkbox mr-3"><input type="radio" class="unresolve notes_status" name="status_' + element.id + '" id="unresolve_' + element.id + '" value="0" ' + (element.status ? "" : 'checked="checked"') + ' data-id="' + element.id + '" data-status="0" data-url="/interviews/interview/note/update/' + element.id + '.json" ></input><label for="unresolve_' + element.id + '">Unresolved</label></div>';
+            html = html + '<div class="custom-checkbox mr-3"><input type="radio" class="resolve notes_status" name="status_' + element.id + '" id="resolve_' + element.id + '" value="1" ' + (element.status ? 'checked="checked"' : "") + ' data-id="' + element.id + '" data-status="1" data-url="/interviews/interview/note/update/' + element.id + '.json" ></input><label for="resolve_' + element.id + '">Resolved</label></div></div>';
         });
         html = (response.length == 0 ? "There are currently no notes associated with this interview." : html);
         $('#listNotes').html(html);
@@ -129,7 +159,7 @@ function InterviewManager() {
                 dataType: 'json',
                 success: function (response) {
                     setNotesResponse(response);
-                    if(response.color) notesEventColor = response.color;
+                    if (response.color) notesEventColor = response.color;
                     $('#note').val("");
                     $('#modalPopupNotes').modal('show');
                 },
@@ -146,52 +176,50 @@ function InterviewManager() {
                 type: 'POST',
                 dataType: 'json',
                 success: function (response) {
-                    if(response.color) notesEventColor = response.color;
+                    if (response.color) notesEventColor = response.color;
                 },
             });
-            jsMessages('success','Note updated successfully.');
+            jsMessages('success', 'Note updated successfully.');
         });
-        $("#note").on("mousedown mouseup click focus", function(e) {
+        $("#note").on("mousedown mouseup click focus", function (e) {
             $('.error_note').html("");
-          })
-          $('#modalPopupNotes').on('hidden.bs.modal', function () {
-            $('#interview_note_'+notesEvent.target.getAttribute("data-id")).removeClass("text-danger text-success text-secondary"); 
-            $('#interview_note_'+notesEvent.target.getAttribute("data-id")).addClass(notesEventColor); 
-            notesEventColor = "";            
+        })
+        $('#modalPopupNotes').on('hidden.bs.modal', function () {
+            $('#interview_note_' + notesEvent.target.getAttribute("data-id")).removeClass("text-danger text-success text-secondary");
+            $('#interview_note_' + notesEvent.target.getAttribute("data-id")).addClass(notesEventColor);
+            notesEventColor = "";
         });
-        $(document).on("submit", "#notesForm", function(e) {
+        $(document).on("submit", "#notesForm", function (e) {
             e.preventDefault();
             let form = $(this);
             let url = form.attr("action");
             let serializedData = form.serialize();
-            if($('#note').val() === "")
-            {
+            if ($('#note').val() === "") {
                 $('.error_note').html("Please type a note before clicking the Add Note button.");
-            }
-            else
-            {
+            } else {
                 $.ajax({
                     type: "POST",
                     url: url,
                     data: serializedData,
-                    success: function(response) {
+                    success: function (response) {
                         $('#note').val("");
                         $('.errors').html("");
                         setNotesResponse(response);
-                        jsMessages('success','Note added successfully.');  
-                        if(response.color) notesEventColor = response.color;                      
+                        jsMessages('success', 'Note added successfully.');
+                        if (response.color) notesEventColor = response.color;
                     },
-                    error: function(response, status, error) {
+                    error: function (response, status, error) {
                         let info = jQuery.parseJSON(response.responseText);
                         for (const property in info.errors) {
-                            $('.error_'+property).html(property.toUpperCase()+' '+info.errors[property]);
-                          }
+                            $('.error_' + property).html(property.toUpperCase() + ' ' + info.errors[property]);
+                        }
                     }
                 });
             }
         })
 
     };
+
     this.handlecallback = function (response, container, requestData) {
         try {
             eval('this.' + requestData.action + '(response,container,requestData)');

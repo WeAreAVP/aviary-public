@@ -333,6 +333,9 @@ function App() {
                 columnDefs: [
                     {orderable: false, targets: -1}
                 ],
+                drawCallback: function (settings) {
+                    caller.datatableInitComplete(settings);
+                },
                 initComplete: function (settings) {
                     try {
                         caller.datatableInitComplete(settings);
