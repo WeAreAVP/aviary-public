@@ -3,7 +3,7 @@
 # Aviary is an audiovisual content publishing platform with sophisticated features for search and permissions controls.
 # Copyright (C) 2019 Audio Visual Preservation Solutions, Inc.
 class InterviewsDatatable < ApplicationDatatable
-  delegate :can?, :interviews_manager_path, :interviews_list_notes_path, :edit_interviews_manager_path, :export_interviews_manager_path, :check_valid_array, to: :@view
+  delegate :can?, :interviews_manager_path, :interviews_list_notes_path, :interviews_update_note_path, :edit_interviews_manager_path, :export_interviews_manager_path, :check_valid_array, to: :@view
 
   def initialize(view, current_organization = nil)
     @view = view
@@ -80,7 +80,7 @@ class InterviewsDatatable < ApplicationDatatable
       toggle: 'tooltip', placement: 'top', title: (this_interview.present? ? this_interview.listing_metadata_status[this_interview.metadata_status.to_s] : '')
     }
     html += link_to 'Notes', 'javascript://', class: 'btn-sm btn-link mr-1 float-left interview_notes ' + notes_color(interview), id: 'interview_note_' + interview['id_is'].to_s, data: {
-      id: interview['id_is'], url: interviews_list_notes_path(interview['id_is'], 'json')
+      id: interview['id_is'], url: interviews_list_notes_path(interview['id_is'], 'json'), updateurl: interviews_update_note_path(interview['id_is'], 'json')
     }
 
     html += '<div class="dropdown float-left">'
