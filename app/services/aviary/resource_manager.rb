@@ -238,11 +238,9 @@ module Aviary
       end
       return unless sync_problem.present?
       sync_problem.each do |single_problem_sync|
-        begin
-          sync_single_resource_file(single_problem_sync[:resource_hash], import, single_problem_sync[:collection_resource])
-        rescue StandardError => e
-          Rails.logger.error e
-        end
+        sync_single_resource_file(single_problem_sync[:resource_hash], import, single_problem_sync[:collection_resource])
+      rescue StandardError => e
+        Rails.logger.error e
       end
     end
 
