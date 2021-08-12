@@ -143,8 +143,8 @@ function InterviewManager() {
         let html = ""
         response.data.forEach(element => {
             html = html + '<div>' + element.note + '</div>';
-            html = html + '<div class="d-flex mb-3"><div class="custom-checkbox mr-3"><input type="radio" class="unresolve notes_status" name="status_' + element.id + '" id="unresolve_' + element.id + '" value="0" ' + (element.status ? "" : 'checked="checked"') + ' data-id="' + element.id + '" data-status="0" data-url="/interviews/interview/note/update/' + element.id + '.json" ></input><label for="unresolve_' + element.id + '">Unresolved</label></div>';
-            html = html + '<div class="custom-checkbox mr-3"><input type="radio" class="resolve notes_status" name="status_' + element.id + '" id="resolve_' + element.id + '" value="1" ' + (element.status ? 'checked="checked"' : "") + ' data-id="' + element.id + '" data-status="1" data-url="/interviews/interview/note/update/' + element.id + '.json" ></input><label for="resolve_' + element.id + '">Resolved</label></div></div>';
+            html = html + '<div class="d-flex mb-3"><div class="custom-checkbox mr-3"><input type="radio" class="unresolve notes_status" name="status_' + element.id + '" id="unresolve_' + element.id + '" value="0" ' + (element.status ? "" : 'checked="checked"') + ' data-id="' + element.id + '" data-status="0" data-url="/interviews/interview/notes/update/' + element.id + '.json" ></input><label for="unresolve_' + element.id + '">Unresolved</label></div>';
+            html = html + '<div class="custom-checkbox mr-3"><input type="radio" class="resolve notes_status" name="status_' + element.id + '" id="resolve_' + element.id + '" value="1" ' + (element.status ? 'checked="checked"' : "") + ' data-id="' + element.id + '" data-status="1" data-url="/interviews/interview/notes/update/' + element.id + '.json" ></input><label for="resolve_' + element.id + '">Resolved</label></div></div>';
         });
         html = (response.length == 0 ? "There are currently no notes associated with this interview." : html);
         $('#listNotes').html(html);
