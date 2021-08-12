@@ -59,6 +59,9 @@ Rails.application.routes.draw do
         post :update_column_info
         post :listing
       end
+      member do
+        get 'export.:format', to: 'managers#export', as: :export
+      end
     end
     get 'interview/notes/:id.:format', to: 'notes#index', as: :list_notes
     post 'interview/notes/:id.:format', to: 'notes#create', as: :create_note

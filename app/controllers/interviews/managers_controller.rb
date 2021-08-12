@@ -6,6 +6,7 @@
 module Interviews
   # ManagerController
   class ManagersController < ApplicationController
+    include XMLFileHandler
     before_action :authenticate_user!
     before_action :set_interview, only: %i[show edit update destroy]
 
@@ -39,6 +40,26 @@ module Interviews
     # GET /interviews/1/edit
     def edit
       authorize! :manage, current_organization
+    end
+
+    # GET /interviews/1/export.format
+    def export
+      authorize! :manage, current_organization
+      interview = Interviews::Interview.find(params[:id])
+      export_text = Aviary::ExportOhmsInterviewXml.new.export(interview)
+      doc = Nokogiri::XML(export_text.to_xml)
+      error_messages = xml_validation(doc)
+      if error_messages.any?
+        respond_to do |format|
+          format.any { redirect_to interviews_managers_path, notice: 'Something went wrong. Please try again later.' }
+        end
+      else
+        file_name = interview.miscellaneous_ohms_xml_filename.empty? ? interview.title : interview.miscellaneous_ohms_xml_filename
+        respond_to do |format|
+          format.xml { send_data(export_text.to_xml, filename: "#{file_name}.xml") }
+          format.any { redirect_to interviews_managers_path, notice: 'Not a valid URL.' }
+        end
+      end
     end
 
     # POST /interviews
@@ -119,7 +140,7 @@ module Interviews
       params.require(:interviews_interview).permit(:title, :accession_number, :interview_date, :date_non_preferred_format, :collection_id, :collection_name, :collection_link, :series_id, :series, :series_link,
                                                    :summary, :thesaurus_keywords, :thesaurus_subjects, :thesaurus_titles, :transcript_sync_data, :transcript_sync_data_translation, :media_format, :media_host, :media_url,
                                                    :media_duration, :media_filename, :media_type, :right_statement, :usage_statement, :acknowledgment, :language_info, :include_language, :language_for_translation, :miscellaneous_cms_record_id,
-                                                   :miscellaneous_ohms_xml_filename, :miscellaneous_use_restrictions, :miscellaneous_sync_url, :miscellaneous_user_notes, :interview_status, :status, :avalon_target_domain,
+                                                   :miscellaneous_ohms_xml_filename, :miscellaneous_use_restrictions, :miscellaneous_sync_url, :miscellaneous_user_notes, :interview_status, :status, :avalon_target_domain, :metadata_status,
                                                    :embed_code, :media_host_account_id, :media_host_player_id, :media_host_item_id, interviewee: [], interviewer: [], keywords: [], subjects: [], format_info: [])
     end
   end
