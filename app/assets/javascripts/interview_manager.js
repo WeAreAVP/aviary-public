@@ -95,6 +95,7 @@ function InterviewManager() {
             dropdown: true,
             scrollbar: true
         }).val(val);
+
         $('#interviews_interview_interview_date').datepicker();
         let containerRepeatManager = new ContainerRepeatManager();
         containerRepeatManager.makeContainerRepeatable(".add_keywords", ".remove_keywords", '.container_keywords_inner', '.container_keywords', '.keywords');
