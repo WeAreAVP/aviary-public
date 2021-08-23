@@ -14,7 +14,7 @@ module XMLFileHandler
     xsds.each do |schema|
       xsd = Nokogiri::XML::Schema(File.read(schema.to_s))
       validation = xsd.validate(doc)
-      if validation.any? && validation.include?(check_type)
+      if validation.any? && (check_type == '' || validation.include?(check_type))
         error_found += 1
         error_messages = validation
       end

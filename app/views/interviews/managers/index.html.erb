@@ -16,6 +16,9 @@
                   <button class="dropdown-item manage-resource-columns-btn" data-target=".manage-interview-column-modal" data-toggle="modal">
                     Manage Table
                   </button>
+                  <button class="dropdown-item import-xml-resource-columns-btn" data-target=".manage-interview-import-xml-modal" data-toggle="modal">
+                    Import XML
+                  </button>
                 </div>
               </div>
             </div>
@@ -129,6 +132,45 @@
       <div class="modal-footer" id="modalPopupFooter">
         <a href="javascript://" class="btn btn-primary" id="update_column_status">Update</a>
         <button type="button" class="btn btn-light" data-dismiss="modal">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade manage-interview-import-xml-modal" id="import_xml_modal" tabindex="-1" role="dialog" aria-labelledby="ipPopupLabel" aria-hidden="true">
+  <div class="modal-lg modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title h5">Import OHMS XML</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="single-upload">
+          <ul class="import_csv_note">
+            <li class="text-muted mb-2 font-size-14px">Select one or more valid OHMS XML files to upload.</li>
+            </li>
+          </ul>
+          <div id="progress_import" class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="background-color: #ffffff;">
+            <div class="progress-bar progress-bar-success" style="width:0%;"></div>
+          </div>
+          <div class="import-file-confirmation" style="display: none;">
+            <p class="text-muted mb-4">This process will create a new interview record for each valid OHMS XML file you uploaded.</p>
+            <p class="text-muted">Do you want to proceed?
+            </p>
+          </div>
+          <div class="import-xml-file-section">
+              <span class="fileinput-button single-upload-file-cus text-center">
+                  Browse and add xml file
+                  <input type="file" name="importXML[]" id="import_xml_file" accept="text/xml" data-url="<%= import_metadata_xml_interviews_managers_path %>" multiple/>
+                </span>
+            <span id="import_file_name"></span>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" id="import_xml_btn">Import</button>
+        <button type="button" class="btn btn-light close-import-popup" data-dismiss="modal">Close</button>
       </div>
     </div>
   </div>

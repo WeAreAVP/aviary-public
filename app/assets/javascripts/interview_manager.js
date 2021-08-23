@@ -43,6 +43,7 @@ function InterviewManager() {
         });
         initDeletePopup();
         initNotesPopup();
+        initImportXmlFile();
     };
 
     this.datatableInitComplete = function () {
@@ -104,6 +105,7 @@ function InterviewManager() {
         containerRepeatManager.makeContainerRepeatable(".add_format", ".remove_format", '.container_format_inner', '.container_format', '.format');
         initDeletePopup();
         initNotesPopup();
+        initImportXmlFile();
         document_level_binding_element('#interviews_interview_media_host', 'change', function () {
             manageFieldsMedia($(this).val());
         });
@@ -149,6 +151,69 @@ function InterviewManager() {
         html = (response.length == 0 ? "There are currently no notes associated with this interview." : html);
         $('#listNotes').html(html);
     }
+    const initImportXmlFile = function () {
+        $("#import_file_name").html("");
+        $('#import_xml_file').fileupload({
+            url: $('#import_xml_file').data('url'),
+            type: 'POST',
+            sequentialUploads: true,
+            singleFileUploads: false,
+            acceptFileTypes: /^text\/(xml)$/i,
+            dataType: 'json',
+            autoUpload: false,
+            add: function (e, data) {
+                console.log('data.files',data.files,data.files.length)
+                $.each(data.files, function (index, file) {
+                    let filename = file.name;
+                    let fileExt = filename.split('.').pop();
+                    if ((file.type != '' && file.type != 'text/xml' && file.type != 'application/vnd.ms-excel') || (file.type == '' && fileExt != 'xml')) {
+                        jsMessages('danger', 'Only XML file allowed.');
+                        return false;
+                    } else {
+                        $("#import_file_name").append("Selected File: " + file.name + "<br/>");
+                        $('.import-xml-file-section').hide();
+                        $('.import_csv_note').hide();
+                        $('.import-file-confirmation').show();
+                        $('#import_xml_btn').text('Yes');
+                        $('.close-import-popup').removeAttr('data-dismiss').text('No');
+                        $('#import_xml_btn').unbind("click").bind("click", function () {
+                            $(this).prop("disabled", true);
+                            data.submit();
+                            $(this).html("Processing...");
+                        });
+                        $('.close-import-popup').unbind("click").bind("click", function () {
+                            $('.import-xml-file-section').show();
+                        });
+                    }
+                });
+
+            },
+            progressall: function (e, data) {
+                var progress = parseInt(data.loaded / data.total * 100, 10);
+                $('#progress_import .progress-bar').css(
+                    "width",
+                    progress + "%"
+                );
+            },
+            done: function (e, data) {
+                let response = data.response().result;
+                if (response.error) {
+                    jsMessages('danger', response.message);
+                    $('#progress_import .progress-bar').css("width", "0%");
+                    $('.import-xml-file-section').show();
+                    $('.import_csv_note').show();
+                    $('.import-file-confirmation').hide();
+                    $('#import_xml_btn').prop("disabled", false);
+                    $('#import_xml_btn').html("Import");
+
+                } else {
+                    jsMessages('success', 'XML imported successfully.');
+                    setTimeout('window.location.reload();', 5000);
+                }
+
+            }
+        });
+    };
     const initNotesPopup = function () {
         document_level_binding_element(".interview_notes", 'click', function (e) {
             notesEvent = e;
