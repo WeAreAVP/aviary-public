@@ -20,7 +20,7 @@
             </div>
             <a href='<%= thesaurus_manager_export_path(@thesaurus) %>' class="float-right btn-sm btn-default mb-5px"> Download Thesaurus</a>
             <% all_terms = Thesaurus::ThesaurusTerms.where(thesaurus_information_id: @thesaurus.id).limit(500) %>
-            <textarea class="form-control ohms_integrations_terms" readonly><%= all_terms.pluck(:term).join(',') %><%= count > 100 ? '...' : '' %></textarea>
+            <textarea class="form-control ohms_integrations_terms" readonly><%= all_terms.pluck(:term).join(',') %><%= count > 100 ? '...' : '' %></textarea> 
           </div>
         </div>
       <% end %>
