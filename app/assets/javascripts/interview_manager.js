@@ -162,7 +162,6 @@ function InterviewManager() {
             dataType: 'json',
             autoUpload: false,
             add: function (e, data) {
-                console.log('data.files',data.files,data.files.length)
                 $.each(data.files, function (index, file) {
                     let filename = file.name;
                     let fileExt = filename.split('.').pop();
