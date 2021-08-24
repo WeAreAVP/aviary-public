@@ -281,7 +281,7 @@ class CollectionsController < ApplicationController
     if resource_fields.present?
       resource_fields.each_with_index do |(system_name, single_collection_field), _index|
         field_settings = Aviary::FieldManagement::FieldManager.new(single_collection_field, system_name)
-        attributes << display_field_title_table(field_settings.label) if field_settings.should_display_on_resource_table
+        attributes << display_field_title_table(field_settings.label) if field_settings.should_display_on_resource_table && field_settings.should_display_on_detail_page
       end
     end
     %w[PURL URL Embed].map { |name| attributes << name }
@@ -310,7 +310,7 @@ class CollectionsController < ApplicationController
       if resource_fields.present?
         resource_fields.each_with_index do |(system_name, single_collection_field), _index|
           field_settings = Aviary::FieldManagement::FieldManager.new(single_collection_field, system_name)
-          if field_settings.should_display_on_resource_table
+          if field_settings.should_display_on_resource_table && field_settings.should_display_on_detail_page
             row << if field_settings.solr_display_column_name == 'description_duration_ss'
                      resource[field_settings.solr_display_column_name].present? ? time_to_duration(resource[field_settings.solr_display_column_name]) : '00:00:00'
                    elsif field_settings.solr_display_column_name == 'collection_title'
