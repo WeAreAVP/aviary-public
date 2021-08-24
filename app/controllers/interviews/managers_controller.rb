@@ -128,6 +128,25 @@ module Interviews
       end
     end
 
+    def import_metadata_xml
+      file_data = params[:importXML]
+      response_body = {}
+      file_data.each do |data|
+        response = Aviary::ImportOhmsInterviewXml.new.import(data, current_organization, current_user)
+        response_body = if response.is_a?(Array)
+                          { error: true, message: response.first.to_s.capitalize + ' ' + response.second.first }
+                        elsif response.is_a?(String)
+                          { error: true, message: response }
+                        else
+                          { errors: false }
+                        end
+        if response_body[:errors]
+          break
+        end
+      end
+      render json: response_body
+    end
+    
     private
 
     # Use callbacks to share common setup or constraints between actions.

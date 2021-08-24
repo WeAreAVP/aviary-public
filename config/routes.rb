@@ -56,6 +56,7 @@ Rails.application.routes.draw do
   namespace :interviews do
     resources :managers do
       collection do
+        post :import_metadata_xml
         post :update_column_info
         post :listing
       end
