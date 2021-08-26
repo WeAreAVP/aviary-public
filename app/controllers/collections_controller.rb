@@ -313,7 +313,7 @@ class CollectionsController < ApplicationController
           if field_settings.should_display_on_resource_table && field_settings.should_display_on_detail_page
             row << if field_settings.solr_display_column_name == 'description_duration_ss'
                      resource[field_settings.solr_display_column_name].present? ? time_to_duration(resource[field_settings.solr_display_column_name]) : '00:00:00'
-                   elsif field_settings&.field_type == 'editor'
+                   elsif field_settings.field_type.present? && field_settings.field_type == 'editor'
                      if db_resource.present? &&
                         db_resource.resource_description_value.present? &&
                         db_resource.resource_description_value.resource_field_values.present? &&
