@@ -13,9 +13,10 @@ module Aviary::BulkOperation
     current_key = params['type'] == 'collection_resource_files' ? :resource_file_list_bulk_edit : :resource_list_bulk_edit
     current_key = :file_index_bulk_edit if params['type'] == :file_index_bulk_edit.to_s
     current_key = :file_transcript_bulk_edit if params['type'] == :file_transcript_bulk_edit.to_s
+    current_key = :interview_bulk if params['type'] == :interview_bulk.to_s
     collection_resource_file_id = params['type'] == 'collection_resource_files' ? params['collection_resource_file_id'] : params['collection_resource_id']
-    collection_resource_file_id = params['collection_resource_file_id'] if params['type'] == :file_index_bulk_edit.to_s
-    collection_resource_file_id = params['collection_resource_file_id'] if params['type'] == :file_transcript_bulk_edit.to_s
+    collection_resource_file_id = params['collection_resource_file_id'] if [:file_index_bulk_edit.to_s, :file_transcript_bulk_edit.to_s, :interview_bulk.to_s].include?(params['type'])
+    collection_resource_file_id = params['id'] if [:interview_bulk.to_s].include?(params['type'])
     session[current_key] ||= []
     if params[:status] == 'add'
       if params[:bulk] == '1' && params[:ids].present?
@@ -104,6 +105,8 @@ module Aviary::BulkOperation
                    CollectionResourceFile.where(id: session[:resource_file_list_bulk_edit])
                  elsif session[:search_playlist_id].present? && !session[:search_playlist_id].empty?
                    CollectionResource.where(id: session[:search_playlist_id].to_a.flatten.uniq!)
+                 elsif session[:interview_bulk].present?
+                   Interviews::Interview.where(id: session[:interview_bulk])
                  elsif session[:resource_list_bulk_edit].present? && !session[:resource_list_bulk_edit].empty?
                    CollectionResource.where(id: session[:resource_list_bulk_edit])
                  end
