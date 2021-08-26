@@ -455,7 +455,7 @@ function InterviewManager() {
             });
             jsMessages('success', 'Note updated successfully.');
         });
-        
+
         $("#note").on("mousedown mouseup click focus", function (e) {
             $('.error_note').html("");
         })
