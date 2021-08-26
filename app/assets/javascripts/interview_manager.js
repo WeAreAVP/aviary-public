@@ -455,14 +455,17 @@ function InterviewManager() {
             });
             jsMessages('success', 'Note updated successfully.');
         });
+        
         $("#note").on("mousedown mouseup click focus", function (e) {
             $('.error_note').html("");
         })
+
         $('#modalPopupNotes').on('hidden.bs.modal', function () {
             $('#interview_note_' + notesEvent.target.getAttribute("data-id")).removeClass("text-danger text-success text-secondary");
             $('#interview_note_' + notesEvent.target.getAttribute("data-id")).addClass(notesEventColor);
             notesEventColor = "";
         });
+
         $(document).on("submit", "#notesForm", function (e) {
             e.preventDefault();
             let form = $(this);
@@ -491,7 +494,6 @@ function InterviewManager() {
                 });
             }
         })
-
     };
 
     this.handlecallback = function (response, container, requestData) {
