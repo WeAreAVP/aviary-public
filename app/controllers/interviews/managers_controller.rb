@@ -146,7 +146,7 @@ module Interviews
       end
       render json: response_body
     end
-    
+
     private
 
     # Use callbacks to share common setup or constraints between actions.
