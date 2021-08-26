@@ -59,6 +59,8 @@ Rails.application.routes.draw do
         post :import_metadata_xml
         post :update_column_info
         post :listing
+        match :bulk_resource_list, via: %i[get post]
+        post :bulk_interview_edit
       end
       member do
         get 'export.:format', to: 'managers#export', as: :export
@@ -66,7 +68,7 @@ Rails.application.routes.draw do
     end
     get 'interview/notes/:id.:format', to: 'notes#index', as: :list_notes
     post 'interview/notes/:id.:format', to: 'notes#create', as: :create_note
-    post 'interview/notes/update/:id.:format', to: 'notes#update', as: :update_note
+    post 'interview/note/update/:id.:format', to: 'notes#update', as: :update_note
   end
 
   namespace :thesaurus do

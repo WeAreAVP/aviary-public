@@ -16,9 +16,8 @@
                   <button class="dropdown-item manage-resource-columns-btn" data-target=".manage-interview-column-modal" data-toggle="modal">
                     Manage Table
                   </button>
-                  <button class="dropdown-item import-xml-resource-columns-btn" data-target=".manage-interview-import-xml-modal" data-toggle="modal">
-                    Import XML
-                  </button>
+                  <button class="dropdown-item bluk-edit-btn">Bulk Edit Options</button>
+                  <button class="dropdown-item import-xml-resource-columns-btn" data-target=".manage-interview-import-xml-modal" data-toggle="modal">Import XML</button>
                 </div>
               </div>
             </div>
@@ -29,6 +28,9 @@
         <%= content_tag :table, role: :datatable, class: ["table", "table-striped", 'table-bordered'], id: 'interviews_data_table', data: { url: listing_interviews_managers_path(format: :json) } do %>
           <thead>
           <tr>
+            <th>
+              <input type="checkbox" class="select_all_checkbox_interview" data-url="<%= bulk_resource_list_interviews_managers_path %>"/>
+            </th>
             <% if @display_columns.present? %>
               <% JSON.parse(@display_columns)['columns_status'].each_with_index do |(_field, status), _index| %>
                 <% field_status = status['status'] %>
@@ -136,6 +138,87 @@
     </div>
   </div>
 </div>
+
+<div class="modal fade bd-example-modal-lg bulk-edit-review-modal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
+  <div class="modal-dialog modal-xl" role="document">
+
+    <div class="modal-content ">
+
+      <div class="modal-header">
+        <h1 class="font-weight-bold modal-title" style="font-size: 21px;">Bulk Edit Review</h1>
+      </div>
+      <div class="modal-body">
+        <h1 class="alert-danger font-size-21px text-center mb-20px p-2 "> Are you sure you want to
+          <span id="confirm_msg_pop_bulk"> export the interviews listed below as XML.</span>? </h1>
+        <table class="table table-hover review_resources_file_bulk table-sm " style="width: 100%;">
+          <thead>
+          <tr>
+            <td class="font-weight-bold"> ID</td>
+            <td class="font-weight-bold"> Title </td>
+          </tr>
+          </thead>
+          <tbody class="bulk-edit-review-content-resource-file">
+
+          </tbody>
+        </table>
+        <input id="token" name="token" type="hidden" value="" />
+        <%= hidden_field_tag "check_type", '', class: 'resource-file-check-type' %>
+        <%= hidden_field_tag "access_type", '', class: 'resource-file-access-type' %>
+        <%= hidden_field_tag "ids", '', class: 'resource-file-ids' %>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button class="btn btn-primary bulk-edit-do-it" onclick="$('#bulk_edit_form').submit();" data-url="<%= bulk_interview_edit_interviews_managers_path %>">Apply</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade bulk-edit-resource-file-modal bulk-edit-modal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <%= form_tag bulk_interview_edit_interviews_managers_path, {id: 'bulk_edit_form'} do %>
+        <div class="modal-header">
+          <h1 class="font-weight-bold modal-title" style="font-size: 21px;">Bulk Edit</h1>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <input value="assign_to_collection" type="hidden" name="bulk_edit[type_of_bulk_operation]" id="bulk_edit_type_of_bulk_operation">
+            <div class="col-md-12">
+              <div class="row">
+                <div class="col-12 float-left">
+                  <select class="bulk_operation_interviews" name="check_type">
+                    <option value="download_xml">Export as XML</option>
+                    <option value="bulk_delete">Bulk Delete</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <input type="hidden" name='action' value="bulk_edit_operation"/>
+            <div class="col-md-12 mt-20px">
+              <div class="bulk_delete_content operation_content d-none">
+                <h1 class="font-size-18px text-left"> Delete selected interviews.</h1>
+              </div>
+
+              <div class="export_xml_content operation_content ">
+                <h1 class="font-size-18px text-left"> Export selected interviews as XML.</h1>
+              </div>
+
+            </div>
+            <div class="col-12 mt-20px">
+              <span id="number_of_bulk_selected_popup" class="float-right"></span>
+            </div>
+          </div>
+        </div>
+      <% end %>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button class="btn btn-primary bulk-edit-submit" data-url="<%= fetch_bulk_edit_resource_list_collections_path %>" onclick="$('.bulk-edit-review-modal').modal()" data-dismiss="modal">Apply</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="modal fade manage-interview-import-xml-modal" id="import_xml_modal" tabindex="-1" role="dialog" aria-labelledby="ipPopupLabel" aria-hidden="true">
   <div class="modal-lg modal-dialog" role="document">
     <div class="modal-content">
