@@ -334,7 +334,11 @@ function App() {
                     {orderable: false, targets: -1}
                 ],
                 drawCallback: function (settings) {
-                    caller.datatableInitComplete(settings);
+                    try {
+                        caller.datatableInitComplete(settings);
+                    } catch (e) {
+
+                    }
                 },
                 initComplete: function (settings) {
                     try {

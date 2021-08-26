@@ -3,7 +3,7 @@
 # Aviary is an audiovisual content publishing platform with sophisticated features for search and permissions controls.
 # Copyright (C) 2019 Audio Visual Preservation Solutions, Inc.
 class InterviewsDatatable < ApplicationDatatable
-  delegate :can?, :interviews_manager_path, :interviews_list_notes_path, :interviews_update_note_path, :edit_interviews_manager_path, :export_interviews_manager_path, :check_valid_array, to: :@view
+  delegate :can?, :interviews_manager_path, :interviews_list_notes_path, :interviews_update_note_path, :edit_interviews_manager_path, :export_interviews_manager_path, :check_valid_array, :bulk_resource_list_interviews_managers_path, to: :@view
 
   def initialize(view, current_organization = nil)
     @view = view
@@ -16,6 +16,8 @@ class InterviewsDatatable < ApplicationDatatable
     all_interviews, interviews_count = interviews
     users_data = all_interviews.map do |resource|
       [].tap do |column|
+        column << "<input type='checkbox' class='interviews_selections interviews_selections-#{resource['id_is']}'
+                    data-url='#{bulk_resource_list_interviews_managers_path(id: resource['id_is'])}' data-id='#{resource['id_is']}' />"
         if @current_organization.interview_display_column.present? && JSON.parse(@current_organization.interview_display_column).present?
           JSON.parse(@current_organization.interview_display_column)['columns_status'].each do |_, value|
             field_status = value['status']
@@ -42,9 +44,8 @@ class InterviewsDatatable < ApplicationDatatable
       else
         'none'
       end
-    elsif value['value'] == 'interview_status_is'
-      color, process_status = Interviews::Interview.find_by(id: resource['id_is']).try(:interview_status_info)
-      "<span style='#{color}'>  #{process_status.present? ? process_status : ' none '}</span>"
+    elsif value['value'] == 'interview_status_ss'
+      "<span style='#{resource['interview_color_ss']}'>  #{resource['interview_status_ss'].present? ? resource['interview_status_ss'] : ' None '}</span>"
     elsif value['value'] == 'created_at_is'
       Time.at(resource[value['value']]).to_date
     elsif value['value'] == 'updated_at_is'
@@ -95,7 +96,7 @@ class InterviewsDatatable < ApplicationDatatable
   end
 
   def columns(resource_search_column = false)
-    columns_allowed = []
+    columns_allowed = ['id_is']
     if resource_search_column&.present?
       resource_search_column.each do |_, value|
         if !value['status'].blank? && value['status'].to_s.to_boolean?

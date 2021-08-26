@@ -42,7 +42,7 @@
         <div class="field-title">
           <%= c.label 'Status ?', for: 'ohms_integrations_status' %>
         </div>
-        <%= c.select :status, Thesaurus::Thesaurus.statuses.map { |key, value| [key.humanize, key] }, {}, required: false, label: false, class: 'custom-placeholder' %>
+        <%= c.select :status, ::Thesaurus::Thesaurus.statuses.map { |key, value| [key.humanize, key] }, {}, required: false, label: false, class: 'custom-placeholder' %>
       </div>
     </div>
 
@@ -52,7 +52,7 @@
           <div class="field-title">
             <%= c.label 'Operation', for: 'ohms_integrations_status' %>
           </div>
-          <%= c.select :operation_type, Thesaurus::Thesaurus.operation_types.map { |key, value| [key, value] }, {}, required: false, label: false, class: 'custom-placeholder' %>
+          <%= c.select :operation_type, ::Thesaurus::Thesaurus.operation_types.map { |key, value| [key, value] }, {}, required: false, label: false, class: 'custom-placeholder' %>
         </div>
       </div>
     <% end %>
