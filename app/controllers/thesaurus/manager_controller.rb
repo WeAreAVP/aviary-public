@@ -199,7 +199,7 @@ module Thesaurus
 
     def over_write_terms(file, thesaurus)
       thesaurus_terms = if file.present?
-                          file.respond_to?(:read) ? file.read.strip.split(/\s*,\s*/) : []
+                          file.respond_to?(:read) ? file.read.strip.gsub('"""', '"').split(/\s*,\s*/) : []
                         else
                           []
                         end
@@ -210,7 +210,7 @@ module Thesaurus
 
     def append_terms(file, thesaurus)
       thesaurus_terms = if file.present?
-                          file.respond_to?(:read) ? file.read.strip.split(/\s*,\s*/) : []
+                          file.respond_to?(:read) ? file.read.strip.gsub('"""', '"').split(/\s*,\s*/) : []
                         else
                           []
                         end
