@@ -1,8 +1,7 @@
 # app/controllers/concerns/aviary/zipper_service.rb
 #
 # Module Aviary::ZipperService
-# The module is written to get the youtube close captions
-# and store it as transcript
+# The module is handle creating zip of a folder
 #
 # Author::  Furqan Wasi  (mailto:furqan@weareavp.com)
 #
