@@ -194,6 +194,10 @@ module Aviary
         key
       end
 
+      def field_type
+        field_settings['field_type']
+      end
+
       def label
         field_settings['label']
       end

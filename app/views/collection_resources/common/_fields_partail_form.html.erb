@@ -4,7 +4,7 @@
       <% vocabulary_list = field_settings.vocabulary_list %>
       <% thesaurus = field_settings.info_of_attribute('thesaurus') %>
       <% if thesaurus.present? && thesaurus.present? && thesaurus['vocabulary'] && thesaurus['vocabulary']['id'].present? %>
-        <% thesaurus_vocabulary = Thesaurus::Thesaurus.find_by_id(thesaurus['vocabulary']['id']) %>
+        <% thesaurus_vocabulary = ::Thesaurus::Thesaurus.find_by_id(thesaurus['vocabulary']['id']) %>
         <% if thesaurus_vocabulary.present? %>
           <div class="col-md-6">
             <div class="form--group">
@@ -17,7 +17,9 @@
       <% else %>
         <div class="col-md-6">
           <div class="form--group">
-            <input name="collection_resource[collection_resource_field_values][][vocabularies_id]" type="text" id="thesaurus_term_autocomplete_<%= field_settings.system_name %>" value="<%= single_value.present? && single_value['vocab_value'].present? ? single_value['vocab_value'] : '' %>" class="form-control thesaurus_term_autocomplete" autocomplete="nope" placeholder="Enter a term" data-type-of-list="vocabulary" data-assigned-thesaurus="<%= field_settings.system_name %>" data-path="<%= autocomplete_thesaurus_manager_index_path %>"/>
+            <%= select_tag "collection_resource[collection_resource_field_values][][vocabularies_id]",
+                           options_for_select(field_settings.vocabulary? ? field_settings.vocabulary_list : [], selected: single_value.present? && single_value['vocab_value'].present? ? single_value['vocab_value'] : ''),
+                           {:class => "select_option #{type_for_view} selectized", :include_blank => true} %>
           </div>
         </div>
       <% end %>

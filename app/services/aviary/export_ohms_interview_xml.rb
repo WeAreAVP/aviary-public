@@ -29,20 +29,34 @@ module Aviary
             xml.repository interview.organization.name
             xml.funding interview.acknowledgment
             xml.repository_url interview.organization.url
-            interview.subjects.each do |subject|
-              xml.subject subject
+            if interview.subjects.present?
+              interview.subjects.each do |subject|
+                xml.subject subject
+              end
             end
-            interview.keywords.each do |keyword|
-              xml.keyword keyword
+
+            if interview.keywords.present?
+              interview.keywords.each do |keyword|
+                xml.keyword keyword
+              end
             end
-            interview.interviewee.each do |interviewee|
-              xml.interviewee interviewee
+
+            if interview.interviewee.present?
+              interview.interviewee.each do |interviewee|
+                xml.interviewee interviewee
+              end
             end
-            interview.interviewer.each do |interviewer|
-              xml.interviewer interviewer
+
+            if interview.interviewer.present?
+              interview.interviewer.each do |interviewer|
+                xml.interviewer interviewer
+              end
             end
-            interview.format_info.each do |format|
-              xml.format format
+
+            if interview.format_info.present?
+              interview.format_info.each do |format|
+                xml.format format
+              end
             end
             xml.file_name interview.media_filename
             xml.sync interview.transcript_sync_data

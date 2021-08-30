@@ -6,9 +6,9 @@ module Interviews
   # Interview
   class Interview < ApplicationRecord
     belongs_to :organization
-    enum interview_status: { '0' => 'In Progress', '1' => 'Complete' }, _prefix: :interview
+    validates :title, :media_format, presence: true
     has_many :interview_notes, dependent: :destroy
-    before_save :purify_value
+    before_save :purify_value, :interview_status_info
 
     def purify_value
       self.metadata_status = metadata_status.to_i
@@ -39,7 +39,7 @@ module Interviews
         process_status = ''
         color = ''
       end
-
+      self.interview_status = process_status
       [color, process_status]
     end
 
@@ -96,13 +96,13 @@ module Interviews
         interview_notes.where(status: true).count
       end
       string :thesaurus_keywords, stored: true do
-        Thesaurus::Thesaurus.find_by_id(thesaurus_keywords).try(:title)
+        ::Thesaurus::Thesaurus.find_by_id(thesaurus_keywords).try(:title)
       end
       string :thesaurus_subjects, stored: true do
-        Thesaurus::Thesaurus.find_by_id(thesaurus_subjects).try(:title)
+        ::Thesaurus::Thesaurus.find_by_id(thesaurus_subjects).try(:title)
       end
       string :thesaurus_titles, stored: true do
-        Thesaurus::Thesaurus.find_by_id(thesaurus_titles).try(:title)
+        ::Thesaurus::Thesaurus.find_by_id(thesaurus_titles).try(:title)
       end
       text :transcript_sync_data, stored: true
       text :transcript_sync_data_translation, stored: true
@@ -155,9 +155,14 @@ module Interviews
       text :miscellaneous_user_notes, stored: true do
         miscellaneous_user_notes.present? ? miscellaneous_user_notes : 'None'
       end
-      integer :interview_status, stored: true do
-        interview_status.present? ? interview_status : 'None'
+      string :interview_status, stored: true do
+        interview_status_info.try(:second).present? ? interview_status_info.try(:second) : ''
       end
+
+      string :interview_color, stored: true do
+        interview_status_info.try(:first).present? ? interview_status_info.try(:first) : '#000000'
+      end
+
       integer :status, stored: true do
         status.present? ? status : 'None'
       end
@@ -333,6 +338,7 @@ module Interviews
         total_response = { 'response' => { 'numFound' => 0 } }
       end
       query_params[:sort] = "#{sort_column} #{sort_direction}" if sort_column.present? && sort_direction.present?
+
       if export_and_current_organization[:export]
         query_params[:start] = 0
         query_params[:rows] = 100_000_000

@@ -49,7 +49,7 @@
 
     <div class="col-md-6">
       <div class="form-group">
-        <div class="field-title"><%= f.label :media_host %> <%=@interview.media_host %></div>
+        <div class="field-title"><%= f.label :media_host %> </div>
         <%= f.select :media_host, options_for_select(@interview.listing_media_host.map { |key, index| [key, index] }, @interview.media_host), {}, required: false, label: false, class: 'custom-placeholder media_hosts_value ' %>
       </div>
     </div>
@@ -413,7 +413,7 @@
     <div class="col-md-6">
       <div class="form-group">
         <div class="field-title"><%= f.label :thesaurus_keywords, "Thesaurus (Keywords)" %></div>
-        <%= f.select :thesaurus_keywords, Thesaurus::Thesaurus.list_thesaurus(current_organization), {}, required: false, label: false, class: 'custom-placeholder thesaurus_keywords  ' %>
+        <%= f.select :thesaurus_keywords, ::Thesaurus::Thesaurus.list_thesaurus(current_organization), {}, required: false, label: false, class: 'custom-placeholder thesaurus_keywords  ' %>
       </div>
     </div>
     <div class="col-md-6">
@@ -428,7 +428,7 @@
     <div class="col-md-6">
       <div class="form-group">
         <div class="field-title"><%= f.label :thesaurus_subjects, "Thesaurus (Subjects)" %></div>
-        <%= f.select :thesaurus_subjects, Thesaurus::Thesaurus.list_thesaurus(current_organization), {}, required: false, label: false, class: 'custom-placeholder thesaurus_subjects' %>
+        <%= f.select :thesaurus_subjects, ::Thesaurus::Thesaurus.list_thesaurus(current_organization), {}, required: false, label: false, class: 'custom-placeholder thesaurus_subjects' %>
       </div>
     </div>
     <div class="col-md-6 mt-4">
@@ -443,7 +443,7 @@
     <div class="col-md-6">
       <div class="form-group">
         <div class="field-title"><%= f.label :thesaurus_titles, "Thesaurus (Titles)" %></div>
-        <%= f.select :thesaurus_titles, Thesaurus::Thesaurus.list_thesaurus(current_organization), {}, required: false, label: false, class: 'custom-placeholder' %>
+        <%= f.select :thesaurus_titles, ::Thesaurus::Thesaurus.list_thesaurus(current_organization), {}, required: false, label: false, class: 'custom-placeholder' %>
       </div>
     </div>
     <div class="col-md-6">

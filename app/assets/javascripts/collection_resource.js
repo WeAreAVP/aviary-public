@@ -337,10 +337,14 @@ function CollectionResource() {
             if (response.includes('form_edit_custom')) {
                 $(container).html(response);
                 init_tinymce_for_element('.edit_collection_resource textarea.value_holder');
+                selectizeInit($('#form_edit_custom .select_option:not(.cloner)'));
                 setTimeout(function (){
                     $('body').css('overflow', 'hidden');
                     $('#form_edit_custom').addClass('open');
                     $('[data-toggle="tooltip"]').tooltip();
+                    let thesaurus_manager = new ThesaurusManager();
+                    thesaurus_manager.auto_complete();
+
                 }, 100);
             }
         }

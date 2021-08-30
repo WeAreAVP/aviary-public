@@ -200,10 +200,10 @@ class OrganizationFieldsController < ApplicationController
         update_information.delete('vocabulary')
         update_information.delete('is_vocabulary')
         update_information.delete('column_type')
+        update_information.delete('dropdown_options')
         update_information['is_public'] = update_information['is_public'].to_boolean?
         update_information['is_repeatable'] = update_information['is_repeatable'].to_boolean?
         update_information['is_required'] = update_information['is_required'].to_boolean?
-        update_information['field_configuration'] = { 'dropdown_options' => update_information['dropdown_options'].present? ? update_information['dropdown_options'].split(',') : [] }
         update_information['is_vocabulary'] = is_vocabulary
         @org_field_manager.update_field_settings(field_values, { '0' => update_information }, current_organization, params['type'].present? ? params['type'] : 'resource_fields')
       end

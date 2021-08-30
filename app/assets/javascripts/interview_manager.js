@@ -14,12 +14,57 @@ function InterviewManager() {
     let appHelper = new App();
     let notesEvent;
     let notesEventColor;
+    that.ids_session_raw = [];
+    that.ids_session = [];
     this.initialize = function () {
         bindEvents();
     };
 
     this.initializeTable = function () {
-        appHelper.serverSideDatatable('#interviews_data_table', that, false, $('#interviews_data_table').data('url'));
+        let config = {
+            responsive: true,
+            processing: true,
+            serverSide: true,
+            pageLength: pageLength,
+            bInfo: true,
+            destroy: true,
+            bLengthChange: true,
+            lengthMenu: lengthMenuValues,
+            scrollX: true,
+            scrollCollapse: false,
+            pagingType: 'simple_numbers',
+            'dom': "<'row'<'col-md-6 d-flex'f><'col-md-6'p>>" +
+                "<'row'<'col-md-12'tr>>" +
+                "<'row'<'col-md-6'li><'col-md-6'p>>",
+            language: {
+                info: 'Showing _START_ - _END_ of _TOTAL_',
+                infoFiltered: '',
+                zeroRecords: 'No Records found.',
+                lengthMenu: " _MENU_ "
+            },
+            ajax: {
+                url: $('#interviews_data_table').data('url'),
+                type: 'POST'
+            },
+            columnDefs: [
+                {orderable: false, targets: -1}, {orderable: false, targets: 0}
+            ],
+            drawCallback: function (settings) {
+                try {
+                    that.datatableInitDraw(settings);
+                } catch (e) {
+
+                }
+            },
+            initComplete: function (settings) {
+                try {
+                    that.datatableInitComplete(settings);
+                } catch (e) {
+
+                }
+            }
+        };
+        appHelper.serverSideDatatable('#interviews_data_table', that, config, $('#interviews_data_table').data('url'));
         $('#sortable_resource_columns').sortable({
             handle: '.handle'
         });
@@ -43,12 +88,177 @@ function InterviewManager() {
         });
         initDeletePopup();
         initNotesPopup();
+        bulk_option_selection();
         initImportXmlFile();
     };
 
-    this.datatableInitComplete = function () {
+    this.datatableInitDraw = function () {
         $('[data-toggle="tooltip"]').tooltip();
+        setTimeout(function () {
+            if (typeof that.resource_bulk_edit != "undefined") {
+                that.resource_bulk_edit.re_init_bulk();
+            }
+            $('.select_all_checkbox_interview').prop('checked', false);
+            $('.select_all_checkbox_interview').unbind('click');
+            $('.select_all_checkbox_interview').click(function () {
+                let all_ids = [];
+                if (this.checked) {
+                    $(".interviews_selections").prop('checked', true);
+                } else {
+                    $(".interviews_selections").prop('checked', false);
+                }
+
+                $('.interviews_selections').each(function () {
+                    let current_id = $(this).data('id').toString();
+                    if (typeof that.ids_session == 'undefined' || that.ids_session.length <= 0) {
+                        that.ids_session = [];
+                    }
+                    all_ids.push(current_id);
+                    if (this.checked) {
+                        let index = that.ids_session.indexOf(current_id);
+                        if (index <= 0) {
+                            that.ids_session.push(current_id);
+                        }
+                    } else {
+                        let index = that.ids_session.indexOf(current_id);
+                        if (index > -1) {
+                            that.ids_session.splice(index, 1);
+                        }
+                    }
+                });
+
+                let data = {
+                    action: 'bulk_resource_list',
+                    ids: all_ids,
+                    bulk: 1,
+                    type: 'interview_bulk'
+                };
+
+                if (this.checked) {
+                    data.status = 'add';
+                } else {
+                    data.status = 'remove';
+                }
+                appHelper.classAction($(this).data().url, data, 'JSON', 'POST', '', that, true);
+            });
+
+            $(".interviews_selections").unbind('change');
+            $(".interviews_selections").bind('change', function () {
+                let data = {
+                    action: 'bulk_resource_list',
+                    bulk: 0,
+                    type: 'interview_bulk'
+                };
+                let current_id = $(this).data().id.toString();
+                if (this.checked) {
+                    data.status = 'add';
+                    that.ids_session.push(current_id);
+                } else {
+                    var index = that.ids_session.indexOf(current_id);
+                    if (index > -1) {
+                        that.ids_session.splice(index, 1);
+                    }
+                    data.status = 'remove';
+                }
+                appHelper.classAction($(this).data().url, data, 'JSON', 'GET', '', that, true);
+                $('.select_all_checkbox_interview').prop('checked', false);
+            });
+            $(".bluk-edit-btn").unbind('click');
+            $('.bluk-edit-btn').on('click', function () {
+                if (that.ids_session.length <= 0) {
+                    jsMessages('danger', 'Please select interviews before doing bulk operations.');
+                } else {
+                    $('.bulk-edit-modal').modal();
+                }
+            });
+        }, 500);
+
     }
+
+    const bulk_option_selection = function () {
+        $('.bulk_operation_interviews').change(function () {
+            update_bulk_edit_view($(this).val());
+        });
+
+        $('.bulk-edit-submit').unbind('click');
+        $('.bulk-edit-submit').on('click', function () {
+            appHelper.classAction($(this).data('url'), {
+                action: 'fetch_bulk_edit_resource_list',
+                type: 'interviews'
+            }, 'HTML', 'GET', '', that);
+        });
+    };
+
+    this.fetch_bulk_edit_resource_list = function (response) {
+        $('.bulk-edit-review-content-resource-file').html('');
+        $('.review_resources_file_bulk').DataTable().destroy();
+        $('.bulk-edit-review-content-resource-file').html(response);
+        $('.review_resources_file_bulk').DataTable({
+            pagingType: 'simple_numbers',
+            'dom': "<'row'<'col-md-6 d-flex'f><'col-md-6'p>>" +
+                "<'row'<'col-md-12'tr>>" +
+                "<'row'<'col-md-6'li><'col-md-6'p>>",
+            pageLength: 10,
+            bLengthChange: false,
+            destroy: true,
+            bInfo: true,
+        });
+    };
+
+    const update_bulk_edit_view = function (selected_type) {
+        $('.operation_content').addClass('d-none');
+        if (selected_type == 'download_xml') {
+            $('.export_xml_content').removeClass('d-none');
+            $('#bulk_edit_type_of_bulk_operation').val('download_xml');
+            $('#confirm_msg_pop_bulk').html(' export the interviews listed below as XML.');
+        } else if (selected_type == 'bulk_delete') {
+            $('.bulk_delete_content').removeClass('d-none');
+            $('#bulk_edit_type_of_bulk_operation').val('bulk_delete');
+            $('#confirm_msg_pop_bulk').html(' delete the interviews listed below.');
+
+        }
+    };
+
+    this.bulk_resource_list_clear_all = function () {
+        location.reload();
+    };
+
+    const updateCount = function (number_selected) {
+        emptyCount();
+        if (number_selected > 0) {
+            let text = (number_selected > 1) ? 'Interviews' : 'Interview';
+            $('#interviews_data_table_filter label').append('<span style="color:#204f92" class="ml-10px font-weight-bold" id="resource_selected"> <strong  class="font-size-16px ">' + number_selected + '</strong> ' + text + ' selected | </span> ');
+            $('#interviews_data_table_filter label').append('<a href="javascript://" id="clear_all_selection">Clear selected</a>');
+            $('#number_of_bulk_selected_popup').html('<span style="color:#204f92" class="ml-10px font-weight-bold" id="resource_selected">  ( <strong  class="font-size-16px ">' + number_selected + '</strong> ' + text + ' will be affected ) </span>');
+        }
+        $('#clear_all_selection').unbind('click');
+        $('#clear_all_selection').bind('click', function () {
+            var data = {
+                action: 'bulk_resource_list_clear_all',
+                ids: that.ids_session,
+                bulk: 1,
+                status: 'remove'
+            };
+
+            that.ids_session = [];
+            updateCount(that.ids_session.length);
+            appHelper.classAction($('.select_all_checkbox_interview').data().url, data, 'JSON', 'GET', '', that, false);
+        });
+    };
+
+    const emptyCount = function () {
+        $('#resource_selected').remove();
+        $('#number_of_bulk_selected_popup').html('');
+        $('#clear_all_selection').remove();
+    };
+
+    this.bulk_resource_list = function (response) {
+        emptyCount();
+        let ids = response[0]['ids'].split(',');
+        if (ids != '' && ids.length > 0) {
+            updateCount(ids.length);
+        }
+    };
 
     this.update_resource_columns = function () {
         let metadata_fields_status = $('#sortable_resource_columns').sortable('toArray');
@@ -146,7 +356,7 @@ function InterviewManager() {
         response.data.forEach(element => {
             html = html + '<div>' + element.note + '</div>';
             html = html + '<div class="d-flex mb-3"><div class="custom-checkbox mr-3"><input type="radio" class="unresolve notes_status" name="status_' + element.id + '" id="unresolve_' + element.id + '" value="0" ' + (element.status ? "" : 'checked="checked"') + ' data-id="' + element.id + '" data-status="0" data-url="' + notesEvent.target.getAttribute("data-updateurl") + '" ></input><label for="unresolve_' + element.id + '">Unresolved</label></div>';
-            html = html + '<div class="custom-checkbox mr-3"><input type="radio" class="resolve notes_status" name="status_' + element.id + '" id="resolve_' + element.id + '" value="1" ' + (element.status ? 'checked="checked"' : "") + ' data-id="' + element.id + '" data-status="1" data-url="' + notesEvent.target.getAttribute("data-updateurl")+ '" ></input><label for="resolve_' + element.id + '">Resolved</label></div></div>';
+            html = html + '<div class="custom-checkbox mr-3"><input type="radio" class="resolve notes_status" name="status_' + element.id + '" id="resolve_' + element.id + '" value="1" ' + (element.status ? 'checked="checked"' : "") + ' data-id="' + element.id + '" data-status="1" data-url="' + notesEvent.target.getAttribute("data-updateurl") + '" ></input><label for="resolve_' + element.id + '">Resolved</label></div></div>';
         });
         html = (response.length == 0 ? "There are currently no notes associated with this interview." : html);
         $('#listNotes').html(html);
@@ -245,14 +455,17 @@ function InterviewManager() {
             });
             jsMessages('success', 'Note updated successfully.');
         });
+
         $("#note").on("mousedown mouseup click focus", function (e) {
             $('.error_note').html("");
         })
+
         $('#modalPopupNotes').on('hidden.bs.modal', function () {
             $('#interview_note_' + notesEvent.target.getAttribute("data-id")).removeClass("text-danger text-success text-secondary");
             $('#interview_note_' + notesEvent.target.getAttribute("data-id")).addClass(notesEventColor);
             notesEventColor = "";
         });
+
         $(document).on("submit", "#notesForm", function (e) {
             e.preventDefault();
             let form = $(this);
@@ -281,7 +494,6 @@ function InterviewManager() {
                 });
             }
         })
-
     };
 
     this.handlecallback = function (response, container, requestData) {

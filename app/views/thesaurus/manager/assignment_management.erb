@@ -4,7 +4,7 @@
        next if single_collection_field['field_configuration'].present? && single_collection_field['field_configuration']['special_purpose'].present? && single_collection_field['field_configuration']['special_purpose'].to_s.to_boolean?
        next if @resource_fields_settings.blank? || @resource_fields_settings[system_name].blank? || system_name.blank?
        field_settings = Aviary::FieldManagement::FieldManager.new(@resource_fields_settings[system_name], system_name)
-       next unless field_settings.vocabulary? || field_settings.dropdown_options.present? || !field_settings.default?
+       next unless field_settings.vocabulary? || (field_settings.try(:dropdown_options).present? && field_settings.dropdown_options.present? ) || !field_settings.default?
        thesaurus = field_settings.info_of_attribute('thesaurus')
 
        next if (thesaurus.blank? && @action_type.to_s == '1')

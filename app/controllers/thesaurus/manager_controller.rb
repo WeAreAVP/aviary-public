@@ -44,8 +44,13 @@ module Thesaurus
 
     def destroy
       authorize! :manage, current_organization
+
       begin
-        flash[:notice] = @thesaurus.destroy ? 'deleted successfully.' : t('error_update_again')
+        flash[:notice] = if @thesaurus.parent_id.to_i != 1
+                           @thesaurus.destroy ? 'deleted successfully.' : t('error_update_again')
+                         else
+                           t('error_update_again')
+                         end
       rescue StandardError
         flash[:notice] = t('error_update_again')
       end
@@ -92,7 +97,7 @@ module Thesaurus
       respond_to do |format|
         if @thesaurus.save
           @thesaurus = over_write_terms(thesaurus_params['ohms_integrations_vocabulary'], @thesaurus)
-          @thesaurus.number_of_terms = ThesaurusTerms.where(thesaurus_information_id: @thesaurus.id).count
+          @thesaurus.number_of_terms = ::Thesaurus::ThesaurusTerms.where(thesaurus_information_id: @thesaurus.id).count
           @thesaurus.save
           format.html { redirect_to edit_thesaurus_manager_path(@thesaurus.id), notice: 'Ohms Thesaurus  created successfully.' }
           format.json { render json: { msg: 'Thesaurus  created successfully.', id: @thesaurus.id } }
@@ -113,7 +118,7 @@ module Thesaurus
                        append_terms(thesaurus_params['ohms_integrations_vocabulary'], @thesaurus)
                      end
       end
-      @thesaurus.number_of_terms = ThesaurusTerms.where(thesaurus_information_id: @thesaurus.id).count
+      @thesaurus.number_of_terms = ::Thesaurus::ThesaurusTerms.where(thesaurus_information_id: @thesaurus.id).count
       @thesaurus.inject_updated_by(current_user)
       respond_to do |format|
         if @thesaurus.update(thesaurus_params)
@@ -135,7 +140,7 @@ module Thesaurus
     def export
       authorize! :manage, current_organization
       row = []
-      all_terms = ThesaurusTerms.where(thesaurus_information_id: @thesaurus.id)
+      all_terms = ::Thesaurus::ThesaurusTerms.where(thesaurus_information_id: @thesaurus.id)
       thesaurus = CSV.generate do |csv|
         all_terms.each do |single_term|
           row << single_term.term.strip
@@ -155,9 +160,16 @@ module Thesaurus
       type_of_list = params['typeOfList']
       json_data = []
       json_data = if type_of_list == 'thesaurus'
-                    thesaurus_information = Thesaurus.find_by_id(t_id)
+                    thesaurus_information = ::Thesaurus::Thesaurus.find_by(id: t_id)
                     thesaurus_id = thesaurus_information.present? && thesaurus_information.parent_id.present? && thesaurus_information.parent_id > 0 ? thesaurus_information.parent_id : t_id
-                    thesaurus = Thesaurus::ThesaurusTerms.select('id, term').where('MATCH(term) AGAINST(?)', term.to_s).where(thesaurus_information_id: thesaurus_id).order('term desc').limit(10)
+
+                    thesaurus = if term.present?
+                                  terms_all = term.split(' ')
+                                  terms_all = terms_all.map { |item| "*#{item}*" }
+                                  ::Thesaurus::ThesaurusTerms.select('id, term').where('MATCH(term) AGAINST(? IN BOOLEAN MODE)', terms_all.join(' ').to_s).where(thesaurus_information_id: thesaurus_id).order('term asc').limit(10)
+                                else
+                                  ::Thesaurus::ThesaurusTerms.select('id, term').where(thesaurus_information_id: thesaurus_id).order('term asc').limit(10)
+                                end
                     thesaurus.map { |e| { id: e.id, label: e.term, value: e.term } } if thesaurus.present?
                   elsif %w[dropdown vocabulary].include? type_of_list
                     @organization_field_manager = Aviary::FieldManagement::OrganizationFieldManager.new
@@ -203,7 +215,7 @@ module Thesaurus
                         else
                           []
                         end
-      all_terms = ThesaurusTerms.where(thesaurus_information_id: thesaurus.id)
+      all_terms = ::Thesaurus::ThesaurusTerms.where(thesaurus_information_id: thesaurus.id)
       all_terms.destroy_all if all_terms.present?
       manage_terms(thesaurus_terms, thesaurus)
     end
@@ -219,9 +231,9 @@ module Thesaurus
 
     def manage_terms(thesaurus_terms, thesaurus)
       if thesaurus_terms.present?
-        ThesaurusTerms.transaction do
+        ::Thesaurus::ThesaurusTerms.transaction do
           thesaurus_terms.each do |single_term|
-            ThesaurusTerms.create(thesaurus_information_id: thesaurus.id, term: single_term) unless ThesaurusTerms.where(thesaurus_information_id: thesaurus.id, term: single_term).present?
+            ::Thesaurus::ThesaurusTerms.create(thesaurus_information_id: thesaurus.id, term: single_term) unless ::Thesaurus::ThesaurusTerms.where(thesaurus_information_id: thesaurus.id, term: single_term).present?
           end
         end
       end
