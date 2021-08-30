@@ -63,23 +63,26 @@ function ThesaurusManager() {
     };
 
     this.auto_complete = function () {
-        document_level_binding_element('.thesaurus_term_autocomplete', 'keydown', function () {
-            let min_length = 3;
-            $(this).autocomplete({
-                source: $(this).data('path') + '?tId=' + $(this).data('assigned-thesaurus') + '&typeOfList=' + $(this).data('typeOfList'),
-                minLength: min_length,
-                select: function (event, ui) {
-                    $(this).val(ui.item.value);
-                },
-                change: function (e, ui) {
-                    if (!(ui.item)) {
-                        e.target.value = "";
-                    }
-                },
-            }).on('focus', function () {
-                if (min_length == 0)
-                    $(this).keydown();
-            });
+        document_level_binding_element('.thesaurus_term_autocomplete', 'focus', function () {
+            let min_length = 0;
+            if (!$(this).hasClass('ui-autocomplete-input')) {
+                $(this).autocomplete({
+                    source: $(this).data('path') + '?tId=' + $(this).data('assigned-thesaurus') + '&typeOfList=' + $(this).data('typeOfList'),
+                    minLength: min_length,
+                    select: function (event, ui) {
+                        $(this).val(ui.item.value);
+                    },
+                    change: function (e, ui) {
+                        if (!(ui.item)) {
+                            e.target.value = "";
+                        }
+                    },
+                }).on('focus', function () {
+                    if (min_length == 0)
+                        $(this).keydown();
+                });
+            }
+            $(this).autocomplete("search");
         });
 
     };

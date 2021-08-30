@@ -66,10 +66,10 @@ module Interviews
             export_text = Aviary::ExportOhmsInterviewXml.new.export(interview)
             doc = Nokogiri::XML(export_text.to_xml)
             error_messages = xml_validation(doc)
-            # unless error_messages.any?
-            Rails.logger.error dos_xml
-            dos_xml << { xml: export_text.to_xml, title: interview.title, id: interview.id }
-            # end
+            unless error_messages.any?
+              Rails.logger.error dos_xml
+              dos_xml << { xml: export_text.to_xml, title: interview.title, id: interview.id }
+            end
           end
         end
         if dos_xml.present?

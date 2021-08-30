@@ -342,6 +342,9 @@ function CollectionResource() {
                     $('body').css('overflow', 'hidden');
                     $('#form_edit_custom').addClass('open');
                     $('[data-toggle="tooltip"]').tooltip();
+                    let thesaurus_manager = new ThesaurusManager();
+                    thesaurus_manager.auto_complete();
+
                 }, 100);
             }
         }

@@ -162,9 +162,14 @@ module Thesaurus
       json_data = if type_of_list == 'thesaurus'
                     thesaurus_information = ::Thesaurus::Thesaurus.find_by(id: t_id)
                     thesaurus_id = thesaurus_information.present? && thesaurus_information.parent_id.present? && thesaurus_information.parent_id > 0 ? thesaurus_information.parent_id : t_id
-                    terms_all = term.split(' ')
-                    terms_all = terms_all.map { |item| "*#{item}*" }
-                    thesaurus = ::Thesaurus::ThesaurusTerms.select('id, term').where('MATCH(term) AGAINST(? IN BOOLEAN MODE)', terms_all.join(' ').to_s).where(thesaurus_information_id: thesaurus_id).order('term desc').limit(1000)
+
+                    thesaurus = if term.present?
+                                  terms_all = term.split(' ')
+                                  terms_all = terms_all.map { |item| "*#{item}*" }
+                                  ::Thesaurus::ThesaurusTerms.select('id, term').where('MATCH(term) AGAINST(? IN BOOLEAN MODE)', terms_all.join(' ').to_s).where(thesaurus_information_id: thesaurus_id).order('term asc').limit(10)
+                                else
+                                  ::Thesaurus::ThesaurusTerms.select('id, term').where(thesaurus_information_id: thesaurus_id).order('term asc').limit(10)
+                                end
                     thesaurus.map { |e| { id: e.id, label: e.term, value: e.term } } if thesaurus.present?
                   elsif %w[dropdown vocabulary].include? type_of_list
                     @organization_field_manager = Aviary::FieldManagement::OrganizationFieldManager.new
