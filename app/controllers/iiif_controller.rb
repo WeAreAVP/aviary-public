@@ -151,7 +151,7 @@ class IiifController < ApplicationController
             value: text,
             format: 'text/plain'
           },
-          target: "#{media_url}##{point.start_time.to_f},#{point.end_time.to_f}"
+          target: "#{media_url}#t=#{point.start_time.to_f},#{point.end_time.to_f}"
         }
         annotation_counter += 1
       end
@@ -175,7 +175,7 @@ class IiifController < ApplicationController
             value: Rails::Html::WhiteListSanitizer.new.sanitize(single_annotation.body_content, tags: %w(a b br i p small span sub sup)),
             format: 'text/plain'
           },
-          target: "#{media_url}##{annotation_transcript_point.start_time.to_f},#{annotation_transcript_point.end_time.to_f}"
+          target: "#{media_url}#t=#{annotation_transcript_point.start_time.to_f},#{annotation_transcript_point.end_time.to_f}"
         }
         annotation_counter += 1
       end
@@ -213,7 +213,7 @@ class IiifController < ApplicationController
             type: 'Annotation',
             motivation: 'supplementing',
             body: body,
-            target: "#{media_url}##{point.start_time.to_f},#{point.end_time.to_f}"
+            target: "#{media_url}#t=#{point.start_time.to_f},#{point.end_time.to_f}"
           }
           annotation_counter += 1
         end
