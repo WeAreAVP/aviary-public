@@ -3,7 +3,9 @@
 # Aviary is an audiovisual content publishing platform with sophisticated features for search and permissions controls.
 # Copyright (C) 2019 Audio Visual Preservation Solutions, Inc.
 class InterviewsDatatable < ApplicationDatatable
-  delegate :can?, :interviews_manager_path, :interviews_list_notes_path, :interviews_update_note_path, :edit_interviews_manager_path, :export_interviews_manager_path, :check_valid_array, :bulk_resource_list_interviews_managers_path, to: :@view
+  delegate :can?, :interviews_manager_path, :interviews_list_notes_path, :interviews_update_note_path,
+           :edit_interviews_manager_path, :export_interviews_manager_path, :check_valid_array,
+           :bulk_resource_list_interviews_managers_path, :preview_interviews_manager_path, to: :@view
 
   def initialize(view, current_organization = nil)
     @view = view
@@ -77,6 +79,7 @@ class InterviewsDatatable < ApplicationDatatable
     this_interview = Interviews::Interview.find_by(id: interview['id_is'])
     color_metadata = this_interview.try(:interview_metadata_status)
     html = ''
+    html += link_to 'Preview', preview_interviews_manager_path(interview['id_is']), class: 'btn-sm btn-link mr-1 float-left'
     html += link_to 'Metadata', edit_interviews_manager_path(interview['id_is']), class: 'btn-sm btn-link mr-1 float-left', style: color_metadata.to_s, data: {
       toggle: 'tooltip', placement: 'top', title: (this_interview.present? ? this_interview.listing_metadata_status[this_interview.metadata_status.to_s] : '')
     }

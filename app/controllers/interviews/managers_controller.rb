@@ -9,7 +9,7 @@ module Interviews
     include XMLFileHandler
     include Aviary::BulkOperation
     include Aviary::ZipperService
-    before_action :authenticate_user!
+    before_action :authenticate_user!, except: :export
     before_action :set_interview, only: %i[show edit update destroy]
 
     # GET /interviews
@@ -44,6 +44,8 @@ module Interviews
     def edit
       authorize! :manage, current_organization
     end
+
+    def preview; end
 
     # GET /interviews/bulk_edit
     def bulk_edit; end
@@ -89,7 +91,8 @@ module Interviews
 
     # GET /interviews/1/export.format
     def export
-      authorize! :manage, current_organization
+      authenticate_user! unless params[:viewer] == ENV['PREVIEW_KEY']
+      authorize! :manage, current_organization unless params[:viewer] == ENV['PREVIEW_KEY']
       interview = Interviews::Interview.find(params[:id])
       export_text = Aviary::ExportOhmsInterviewXml.new.export(interview)
       doc = Nokogiri::XML(export_text.to_xml)

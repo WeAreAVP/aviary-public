@@ -64,6 +64,7 @@ Rails.application.routes.draw do
       end
       member do
         get 'export.:format', to: 'managers#export', as: :export
+        get 'preview', to: 'managers#preview', as: :preview
       end
     end
     get 'interview/notes/:id.:format', to: 'notes#index', as: :list_notes
