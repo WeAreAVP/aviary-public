@@ -1,7 +1,8 @@
 # app/controllers/concerns/aviary/zipper_service.rb
 #
 # Module Aviary::ZipperService
-# The module is handle creating zip of a folder
+# The module is written to get the youtube close captions
+# and store it as transcript
 #
 # Author::  Furqan Wasi  (mailto:furqan@weareavp.com)
 #
@@ -15,11 +16,17 @@ module Aviary::ZipperService
 
   private
 
-  def process_and_create_zip_file(files)
-    FileUtils.mkdir_p(tmp_user_folder) unless Dir.exist?(tmp_user_folder)
-    files.each do |filename|
-      create_zip_from_tmp_folder(tmp_user_folder, filename)
+  def process_and_create_zip_file(files, _file_path)
+    begin
+      FileUtils.mkdir_p(tmp_user_folder) unless Dir.exist?(tmp_user_folder)
+      files.each do |filename|
+        create_zip_from_tmp_folder(tmp_user_folder, filename)
+      end
+      zip_data = File.read("#{tmp_user_folder}.zip")
+    ensure
+      FileUtils.rm_rf([tmp_user_folder, "#{tmp_user_folder}.zip"])
     end
+    zip_data
   end
 
   def create_zip_from_tmp_folder(tmp_user_folder, filename)

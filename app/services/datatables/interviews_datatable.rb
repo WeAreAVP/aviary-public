@@ -5,7 +5,7 @@
 class InterviewsDatatable < ApplicationDatatable
   delegate :can?, :interviews_manager_path, :interviews_list_notes_path, :interviews_update_note_path,
            :edit_interviews_manager_path, :export_interviews_manager_path, :check_valid_array,
-           :bulk_resource_list_interviews_managers_path, :preview_interviews_manager_path, to: :@view
+           :bulk_resource_list_interviews_managers_path, :preview_interviews_manager_path, :interviews_transcript_path, to: :@view
 
   def initialize(view, current_organization = nil)
     @view = view
@@ -83,6 +83,10 @@ class InterviewsDatatable < ApplicationDatatable
     html += link_to 'Metadata', edit_interviews_manager_path(interview['id_is']), class: 'btn-sm btn-link mr-1 float-left', style: color_metadata.to_s, data: {
       toggle: 'tooltip', placement: 'top', title: (this_interview.present? ? this_interview.listing_metadata_status[this_interview.metadata_status.to_s] : '')
     }
+    html += link_to (this_interview.try(:interview_transcript).present? && this_interview.interview_transcript.associated_file_updated_at.present? ? 'Re-Upload Transcript' : 'Upload Transcript'), 'javascript:void(0);',
+                    class: 'btn-sm btn-link mr-1 float-left interview_transcript_upload ',
+                    style: transcripts_color(this_interview), id: 'interview_tupload_' + interview['id_is'].to_s, data: { id: "upload_#{interview['id_is']}", url: interviews_transcript_path(interview['id_is']) }
+
     html += link_to 'Notes', 'javascript://', class: 'btn-sm btn-link mr-1 float-left interview_notes ' + notes_color(interview), id: 'interview_note_' + interview['id_is'].to_s, data: {
       id: interview['id_is'], url: interviews_list_notes_path(interview['id_is'], 'json'), updateurl: interviews_update_note_path(interview['id_is'], 'json')
     }
@@ -116,5 +120,18 @@ class InterviewsDatatable < ApplicationDatatable
     else
       'text-secondary'
     end
+  end
+
+  def transcripts_color(interview)
+    interview_transcript = interview.try(:interview_transcript)
+    text_color = 'color: #1a1aff;'
+    if interview_transcript.present?
+      if interview_transcript.no_transcript
+        text_color = 'color: #000;'
+      elsif interview_transcript.associated_file_updated_at.present?
+        text_color = 'color: #008b17;'
+      end
+    end
+    text_color
   end
 end

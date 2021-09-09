@@ -8,6 +8,7 @@ module Interviews
     belongs_to :organization
     validates :title, :media_format, presence: true
     has_many :interview_notes, dependent: :destroy
+    has_one :interview_transcript
     before_save :purify_value, :interview_status_info
 
     def purify_value
@@ -39,6 +40,11 @@ module Interviews
         process_status = ''
         color = ''
       end
+
+      if miscellaneous_ohms_xml_filename.present? && !miscellaneous_ohms_xml_filename.include?('.xml')
+        self.miscellaneous_ohms_xml_filename = miscellaneous_ohms_xml_filename + '.xml'
+      end
+
       self.interview_status = process_status
       [color, process_status]
     end

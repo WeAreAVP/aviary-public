@@ -1,0 +1,75 @@
+<div class="modal fade" id="modalPopupUpload" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-lg modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title h5" id="modalPopupNotesTitle">Upload Transcript</h5>
+        <button type="button" class="close modalPopupNotesClose" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <%= simple_form_for :interview_transcript, action: '', method: :post, html: { id: 'interviewTranscriptForm' } do |form| %>
+        <div class="modal-body" id="modalPopupNotesBody">
+          <div class="text">
+            <strong>Note: </strong><span class="small">Please see the <a href="">OHMS User Guide</a> for more details.</span>
+          </div>
+          <hr/>
+          <div id="listNotes" class="custom-height-list"></div>
+
+
+          <div class="form-group row">
+            <label for="inputFile" class="col-sm-3 col-form-label">File</label>
+            <div class="col-sm-8">
+              <%= form.file_field :associated_file, as: :file, error: false, label: false, class: 'form-control' %>
+              <span id='selected_file_associated_file' class="d-none"> </span>
+              <div class="small">Transcript files can be .txt (plain text, UTF-8), .docx, or .doc format and must be
+                less than 8 megabytes in size.
+              </div>
+              <div class="small mt-3">If your uploaded transcript contains timestamps, select the appropriate timecode
+                interval below to match your transcript. Otherwise, select the timecode interval that you will be using
+                to sync your transcript in OHMS.
+              </div>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="inputFile" class="col-sm-3 col-form-label">Timecode Intervals</label>
+            <div class="col-sm-8">
+              <%= form.select :timecode_intervals, [["30 seconds", '0.5'], ['1 minute (Default)', '1'], ['2 minute', '2'], ['3 minute', '3'], ['4 minutes', '4'], ['5 minutes', '5']], selected: '1' %>
+              <div class="small">Transcripts can contain timecode at 30 seconds, 1 minute, 2, 3, 4 or 5 minutes
+                intervals and must conform to this format <code>[HH:MM:SS]</code></div>
+            </div>
+
+          </div>
+          <div class="form-group row mt-3">
+            <label for="inputFile" class="col-sm-3 col-form-label">Translated Transcript</label>
+            <div class="col-sm-8">
+
+              <%= form.file_field :translation, as: :file, error: false, label: false, class: 'form-control' %>
+              <span id='selected_file_translation' class="d-none"> </span>
+              <div class="small">Transcript files can be .txt (plain text, UTF-8), .docx, or .doc format and must be
+                less than 8 megabytes in size.
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group row">
+            <label for="no-transcript-checkbox" class="col-sm-3 col-form-label">No Transcript</label>
+            <div class="col-sm-1 float-left m-2">
+              <%= form.check_box :no_transcript, as: :file, error: false, label: false, class: 'form-check-input' %>
+
+            </div>
+            <div class="col-sm-8 float-left">
+              <div class="small">Uploading a new transcript, or checking "no transcript" when a transcript has been
+                previously uploaded, will overwrite or delete the current transcript.
+              </div>
+            </div>
+          </div>
+
+        </div>
+        <div class="modal-footer" id="modalPopupFooter">
+          <a href="javascript:$('#interviewTranscriptForm').submit()" class="btn btn-primary" id="update_column_status">Save</a>
+          <button type="button" class="btn btn-light" data-dismiss="modal">Cancel</button>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
