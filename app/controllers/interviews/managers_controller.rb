@@ -10,6 +10,7 @@ module Interviews
     include Aviary::BulkOperation
     include Aviary::ZipperService
     before_action :authenticate_user!, except: :export
+
     before_action :set_interview, only: %i[show edit update destroy]
 
     # GET /interviews
@@ -57,35 +58,34 @@ module Interviews
           format.html { redirect_to interviews_managers_path, notice: t('updated_successfully') }
         end
       elsif params['check_type'] == 'download_xml'
-        self.tmp_user_folder = "public/reports/archive_#{current_user.id}_#{Time.now.to_i}"
+        self.tmp_user_folder = "tmp/archive_#{current_user.id}_#{Time.now.to_i}"
         dos_xml = []
         dos_xml_files = []
         FileUtils.mkdir_p(tmp_user_folder) unless Dir.exist?(tmp_user_folder)
         session[:interview_bulk].each do |single_interview|
           interview = Interviews::Interview.find_by(id: single_interview)
           if interview.present?
-            Rails.logger.error interview
             export_text = Aviary::ExportOhmsInterviewXml.new.export(interview)
             doc = Nokogiri::XML(export_text.to_xml)
             error_messages = xml_validation(doc)
             unless error_messages.any?
-              Rails.logger.error dos_xml
-              dos_xml << { xml: export_text.to_xml, title: interview.title, id: interview.id }
+              dos_xml << { xml: export_text.to_xml, title: interview.title, id: interview.id, ohms_xml_filename: interview.miscellaneous_ohms_xml_filename }
             end
           end
         end
+
         if dos_xml.present?
           dos_xml.each do |single_dos_xml|
-            file_name = 'interview_xml_' + single_dos_xml[:title].to_s.parameterize.underscore + '_' + single_dos_xml[:id].to_s + '_' + Time.now.to_i.to_s + '.xml'
+            file_name = single_dos_xml[:ohms_xml_filename].present? ? single_dos_xml[:ohms_xml_filename] : 'interview' + single_dos_xml[:id].to_s + '.xml'
             File.open(File.join(tmp_user_folder, file_name), 'wb') do |file|
               file.write(single_dos_xml[:xml])
             end
             dos_xml_files << file_name
           end
         end
-        process_and_create_zip_file(dos_xml_files)
-        send_file(Rails.root.join("#{tmp_user_folder}.zip"), type: 'application/zip', filename: "export_xml_interview_#{Time.now.to_i}.zip", disposition: 'attachment')
-        # FileUtils.rm_rf([tmp_user_folder, "#{tmp_user_folder}.zip"])
+        file_path = Rails.root.join("#{tmp_user_folder}.zip")
+        zip_data = process_and_create_zip_file(dos_xml_files, file_path)
+        send_data(zip_data, type: 'application/zip', filename: "export_xml_interview_#{Time.now.to_i}.zip", disposition: 'attachment')
       end
     end
 
