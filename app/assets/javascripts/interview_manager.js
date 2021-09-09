@@ -171,6 +171,7 @@ function InterviewManager() {
                     $('.bulk-edit-modal').modal();
                 }
             });
+            initUploadPopup();
         }, 500);
 
     }
@@ -423,6 +424,50 @@ function InterviewManager() {
             }
         });
     };
+
+    const initUploadPopup = function () {
+        document_level_binding_element(".interview_transcript_upload", 'click', function (e) {
+            $("#interviewTranscriptForm").attr("action", $(this).data().url);
+            let data = {
+                action: 'transcriptInformation',
+                js_action: 'transcriptInformation',
+            };
+            appHelper.classAction($(this).data().url, data, 'JSON', 'GET', '', that, true);
+        });
+    }
+
+    this.transcriptInformation = function (response) {
+        if (typeof response.response != 'undefined') {
+            let associatedFileName = response.response['associated_file_file_name'];
+            if (associatedFileName) {
+                $('#selected_file_associated_file').text(associatedFileName);
+                $('#selected_file_associated_file').removeClass('d-none');
+            }
+
+            let translationFileName = response.response['translation_file_name'];
+            if (translationFileName) {
+                $('#selected_file_translation').text(translationFileName);
+                $('#selected_file_translation').removeClass('d-none');
+            }
+
+            let noTranscript = response.response['no_transcript'];
+            $('#interview_transcript_no_transcript').prop('checked', false)
+            if (noTranscript) {
+                $('#interview_transcript_no_transcript').prop('checked', noTranscript)
+            }
+
+            let timecodeIntervals = response.response['timecode_intervals']
+            if (timecodeIntervals) {
+                $('#interview_transcript_timecode_intervals')[0].selectize.setValue(timecodeIntervals);
+            } else {
+                $('#interview_transcript_timecode_intervals')[0].selectize.setValue('1');
+            }
+        }
+
+        $('#modalPopupUpload').modal('show');
+    }
+    ;
+
     const initNotesPopup = function () {
         document_level_binding_element(".interview_notes", 'click', function (e) {
             notesEvent = e;
@@ -455,17 +500,14 @@ function InterviewManager() {
             });
             jsMessages('success', 'Note updated successfully.');
         });
-
         $("#note").on("mousedown mouseup click focus", function (e) {
             $('.error_note').html("");
         })
-
         $('#modalPopupNotes').on('hidden.bs.modal', function () {
             $('#interview_note_' + notesEvent.target.getAttribute("data-id")).removeClass("text-danger text-success text-secondary");
             $('#interview_note_' + notesEvent.target.getAttribute("data-id")).addClass(notesEventColor);
             notesEventColor = "";
         });
-
         $(document).on("submit", "#notesForm", function (e) {
             e.preventDefault();
             let form = $(this);
@@ -494,6 +536,7 @@ function InterviewManager() {
                 });
             }
         })
+
     };
 
     this.handlecallback = function (response, container, requestData) {
