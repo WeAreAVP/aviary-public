@@ -55,7 +55,7 @@ module Aviary
         updated_values.each_with_index do |(_index, single_collection_field), _key|
           single_collection_field.each do |key, value|
             value = value.to_i if key.include? 'sort'
-            fields[single_collection_field['system_name'].downcase][key] = value
+            fields[single_collection_field['system_name'].downcase][key] = value if fields[single_collection_field['system_name'].downcase].present?
           end
         end
         organization.organization_field[type] = fields
@@ -68,7 +68,6 @@ module Aviary
         if fields_settings[system_name].present?
           fields_settings[system_name]
         else
-
           type_field = Aviary::SolrIndexer.field_type_finder(fields_type)
           fields_settings[system_name] = {
             'label' => label,
@@ -228,6 +227,10 @@ module Aviary
 
       def vocabulary_list
         field_settings['vocabulary']
+      end
+
+      def dropdown_options
+        field_settings['field_configuration'].present? && field_settings['field_configuration']['dropdown_options'] ? field_settings['field_configuration']['dropdown_options'] : []
       end
 
       def help_text
