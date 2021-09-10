@@ -10,7 +10,7 @@
       <%= simple_form_for :interview_transcript, action: '', method: :post, html: { id: 'interviewTranscriptForm' } do |form| %>
         <div class="modal-body" id="modalPopupNotesBody">
           <div class="text">
-            <strong>Note: </strong><span class="small">Please see the <a href="">OHMS User Guide</a> for more details.</span>
+            <strong>Note: </strong><span class="small">Please see the <a href="https://www.oralhistoryonline.org/wp-content/uploads/2017/06/OHMS_User_Guide_Master_2017.pdf" target="_blank">OHMS User Guide</a> for more details.</span>
           </div>
           <hr/>
           <div id="listNotes" class="custom-height-list"></div>
@@ -19,7 +19,7 @@
           <div class="form-group row">
             <label for="inputFile" class="col-sm-3 col-form-label">File</label>
             <div class="col-sm-8">
-              <%= form.file_field :associated_file, as: :file, error: false, label: false, class: 'form-control' %>
+              <%= form.file_field :associated_file, as: :file, error: false, label: false, class: 'form-control', accept: 'text/plain,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/msword' %>
               <span id='selected_file_associated_file' class="d-none"> </span>
               <div class="small">Transcript files can be .txt (plain text, UTF-8), .docx, or .doc format and must be
                 less than 8 megabytes in size.
@@ -43,7 +43,7 @@
             <label for="inputFile" class="col-sm-3 col-form-label">Translated Transcript</label>
             <div class="col-sm-8">
 
-              <%= form.file_field :translation, as: :file, error: false, label: false, class: 'form-control' %>
+              <%= form.file_field :translation, as: :file, error: false, label: false, class: 'form-control', accept: 'text/plain,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/msword'  %>
               <span id='selected_file_translation' class="d-none"> </span>
               <div class="small">Transcript files can be .txt (plain text, UTF-8), .docx, or .doc format and must be
                 less than 8 megabytes in size.
