@@ -277,6 +277,19 @@ function IndexTranscript() {
         } else {
             $('.' + type + '_point_container').attr('style', 'height:' + (sectionHeight) + 'px!important;max-height:650px !important;');
         }
+
+        t_height = $('.transcript_point_container').height();
+        i_height = $('.index_point_container').height();
+        d_heigth = $('#view_edit_custom').height();
+        let max_height = t_height > i_height ? t_height : i_height;
+        if(max_height > d_heigth){
+            $('.mCustomScrollbar_description').mCustomScrollbar('destroy');
+            $('#view_edit_media_metadata_custom').mCustomScrollbar('destroy');
+            $('.mCustomScrollbar_description').attr('style', 'height:' + (max_height) + 'px!important;max-height:650px !important;');
+            $('#view_edit_media_metadata_custom').attr('style', 'height:' + (max_height) + 'px!important;max-height:650px !important;');
+            $('.mCustomScrollbar_description').mCustomScrollbar();
+            $('#view_edit_media_metadata_custom').mCustomScrollbar();
+        }
         if (request['first_call'] == true)
             that.call_type = 'toggle';
         else

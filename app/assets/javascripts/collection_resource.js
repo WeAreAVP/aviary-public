@@ -287,8 +287,8 @@ function CollectionResource() {
         let sectionHeight = $('.two_col_custom').height();
         if(sectionHeight > 650)
             sectionHeight = 650;
-        $('#view_edit_custom').attr('style', 'height:' + (sectionHeight) + 'px!important;height:650px !important;');
-        $('#view_edit_media_metadata_custom').attr('style', 'height:' + (sectionHeight) + 'px!important;height:650px !important;');
+        $('#mCustomScrollbar_description').attr('style', 'height:' + (sectionHeight) + 'px!important;max-height:650px !important;');
+        $('#view_edit_media_metadata_custom').attr('style', 'height:' + (sectionHeight) + 'px!important;,max-height:650px !important;');
 
         $('.mCustomScrollbar_description').mCustomScrollbar();
         $('#view_edit_media_metadata_custom').mCustomScrollbar();
