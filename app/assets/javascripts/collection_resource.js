@@ -418,6 +418,16 @@ function CollectionResource() {
                     location = location.replace('auto_play=true', '').replace('?&', '?').replace('&&', '&');
                     window.history.replaceState({}, 'auto_play=true', location);
                 }
+                if ($('.video-placeholder').hasClass('youtube')) {
+                    $('.vjs-big-play-button, .vjs-poster').unbind('click').click(function () {
+                        setTimeout(function () {
+                            if (!(player_widget.currentTime() > 0 && !player_widget.paused() && !player_widget.ended() && player_widget.readyState() > 2)) {
+                                setTimeout("$('.vjs-poster').trigger('click');", 1000);
+                            }
+                        }, 1000);
+
+                    });
+                }
 
             });
 
