@@ -189,6 +189,14 @@ module Interviews
         updated_at.to_i if updated_at.present?
       end
 
+      string :created_at, stored: true do
+        created_at.to_s if created_at.present?
+      end
+
+      string :updated_at, stored: true do
+        updated_at.to_s if updated_at.present?
+      end
+
       text :title, stored: true
       text :accession_number, stored: true
       text :title_accession_number, stored: true do
@@ -303,6 +311,16 @@ module Interviews
 
               alter_search_wildcard = value['value']
               alter_search_wildcard_string = alter_search_wildcard.clone
+
+              if alter_search_wildcard == 'created_at_is'
+                alter_search_wildcard = 'created_at_ss'
+                alter_search_wildcard_string = 'created_at_ss'
+              end
+
+              if alter_search_wildcard == 'updated_at_is'
+                alter_search_wildcard = 'updated_at_ss'
+                alter_search_wildcard_string = 'updated_at_ss'
+              end
 
               alter_search_wildcard.sub! '_ss', '_texts'
               alter_search_wildcard.sub! '_sms', '_texts'
