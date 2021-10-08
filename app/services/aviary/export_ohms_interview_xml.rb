@@ -84,53 +84,55 @@ module Aviary
             file_index = FileIndex.find_by(interview_id: interview.id, language: interview_lang_info(interview.language_info.gsub(/(\w+)/, &:capitalize)))
             file_index_alt = FileIndex.find_by(interview_id: interview.id, language: interview_lang_info(interview.language_for_translation.gsub(/(\w+)/, &:capitalize)))
             xml.index {
-              file_index.file_index_points.sort_by { |t| t.start_time.to_f }.each_with_index do |data, _index|
-                file_index_point_alt = FileIndexPoint.where(file_index_id: file_index_alt.id).where(start_time: data.start_time.to_f).where.not(id: data.id)
-                xml.point {
-                  xml.time data.start_time.to_i
-                  xml.title data.title
-                  xml.title_alt(file_index_point_alt.length.positive? ? file_index_point_alt.first.title : '')
-                  xml.partial_transcript data.partial_script
-                  xml.partial_transcript_alt(file_index_point_alt.length.positive? ? file_index_point_alt.first.partial_script : '')
-                  xml.synopsis data.synopsis
-                  xml.synopsis_alt(file_index_point_alt.length.positive? ? file_index_point_alt.first.synopsis : '')
-                  xml.keywords data.keywords
-                  xml.keywords_alt(file_index_point_alt.length.positive? ? file_index_point_alt.first.keywords : '')
-                  xml.subjects data.subjects
-                  xml.subjects_alt(file_index_point_alt.length.positive? ? file_index_point_alt.first.subjects : '')
-                  if JSON.parse(data.gps_points).length.positive?
-                    JSON.parse(data.gps_points).each_with_index do |gps_points, g_index|
+              if file_index.present?
+                file_index.file_index_points.sort_by { |t| t.start_time.to_f }.each_with_index do |data, _index|
+                  file_index_point_alt = FileIndexPoint.where(file_index_id: file_index_alt.id).where(start_time: data.start_time.to_f).where.not(id: data.id)
+                  xml.point {
+                    xml.time data.start_time.to_i
+                    xml.title data.title
+                    xml.title_alt(file_index_point_alt.length.positive? ? file_index_point_alt.first.title : '')
+                    xml.partial_transcript data.partial_script
+                    xml.partial_transcript_alt(file_index_point_alt.length.positive? ? file_index_point_alt.first.partial_script : '')
+                    xml.synopsis data.synopsis
+                    xml.synopsis_alt(file_index_point_alt.length.positive? ? file_index_point_alt.first.synopsis : '')
+                    xml.keywords data.keywords
+                    xml.keywords_alt(file_index_point_alt.length.positive? ? file_index_point_alt.first.keywords : '')
+                    xml.subjects data.subjects
+                    xml.subjects_alt(file_index_point_alt.length.positive? ? file_index_point_alt.first.subjects : '')
+                    if JSON.parse(data.gps_points).length.positive?
+                      JSON.parse(data.gps_points).each_with_index do |gps_points, g_index|
+                        xml.gpspoints {
+                          xml.gps "#{gps_points['lat']}, #{gps_points['long']}"
+                          xml.gps_zoom gps_points['zoom'].to_i
+                          xml.gps_text gps_points['description']
+                          xml.gps_text_alt(file_index_point_alt.length.positive? ? JSON.parse(file_index_point_alt.first.gps_points)[g_index]['description'] : '')
+                        }
+                      end
+                    else
                       xml.gpspoints {
-                        xml.gps "#{gps_points['lat']}, #{gps_points['long']}"
-                        xml.gps_zoom gps_points['zoom'].to_i
-                        xml.gps_text gps_points['description']
-                        xml.gps_text_alt(file_index_point_alt.length.positive? ? JSON.parse(file_index_point_alt.first.gps_points)[g_index]['description'] : '')
+                        xml.gps ''
+                        xml.gps_zoom 0
+                        xml.gps_text ''
+                        xml.gps_text_alt ''
                       }
                     end
-                  else
-                    xml.gpspoints {
-                      xml.gps ''
-                      xml.gps_zoom 0
-                      xml.gps_text ''
-                      xml.gps_text_alt ''
-                    }
-                  end
-                  if JSON.parse(data.hyperlinks).length.positive?
-                    JSON.parse(data.hyperlinks).each_with_index do |hyperlinks, h_index|
+                    if JSON.parse(data.hyperlinks).length.positive?
+                      JSON.parse(data.hyperlinks).each_with_index do |hyperlinks, h_index|
+                        xml.hyperlinks {
+                          xml.hyperlink hyperlinks['hyperlink']
+                          xml.hyperlink_text hyperlinks['description']
+                          xml.hyperlink_text_alt(file_index_point_alt.length.positive? ? JSON.parse(file_index_point_alt.first.hyperlinks)[h_index]['description'] : '')
+                        }
+                      end
+                    else
                       xml.hyperlinks {
-                        xml.hyperlink hyperlinks['hyperlink']
-                        xml.hyperlink_text hyperlinks['description']
-                        xml.hyperlink_text_alt(file_index_point_alt.length.positive? ? JSON.parse(file_index_point_alt.first.hyperlinks)[h_index]['description'] : '')
+                        xml.hyperlink ''
+                        xml.hyperlink_text ''
+                        xml.hyperlink_text_alt ''
                       }
                     end
-                  else
-                    xml.hyperlinks {
-                      xml.hyperlink ''
-                      xml.hyperlink_text ''
-                      xml.hyperlink_text_alt ''
-                    }
-                  end
-                }
+                  }
+                end
               end
             }
             xml.type interview.media_type
