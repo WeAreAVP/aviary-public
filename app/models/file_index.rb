@@ -14,8 +14,8 @@ class FileIndex < ApplicationRecord
   has_attached_file :associated_file, validate_media_type: false, default_url: ''
   validates_presence_of :title, :language, message: 'is required.'
   validates_inclusion_of :is_public, in: [true, false], message: 'is required.'
-  validates_attachment_content_type :associated_file, content_type: ['text/xml', 'application/xml', 'text/vtt', 'text/plain'], message: 'Only XML and WebVTT formats allowed.'
-  validate :validate_file
+  validates_attachment_content_type :associated_file, content_type: ['text/xml', 'application/xml', 'text/vtt', 'text/plain'], message: 'Only XML and WebVTT formats allowed.', if: :validate_attachment_content_type
+  validate :validate_file, if: :validate_attachment_content_type
 
   scope :public_index, -> { where(is_public: true).order_index }
   scope :order_index, -> { order('sort_order ASC') }
@@ -24,7 +24,15 @@ class FileIndex < ApplicationRecord
   after_destroy :update_solr
 
   def update_solr
-    collection_resource_file.collection_resource.reindex_collection_resource
+    collection_resource_file.collection_resource.reindex_collection_resource if interview_id.nil?
+  end
+
+  def validate_attachment_content_type
+    if associated_file_content_type.present?
+      true
+    else
+      false
+    end
   end
 
   def validate_file
@@ -169,14 +177,14 @@ class FileIndex < ApplicationRecord
     end
 
     integer :organization_id, multiple: false, stored: true do
-      collection_resource_file.collection_resource.collection.organization_id
+      collection_resource_file.collection_resource.collection.organization_id if interview_id.nil?
     end
 
     string :file_display_name, multiple: false, stored: true do
-      collection_resource_file.file_display_name
+      collection_resource_file.file_display_name if interview_id.nil?
     end
     string :collection_resource_title, stored: true do
-      collection_resource_file.collection_resource.title
+      collection_resource_file.collection_resource.title if interview_id.nil?
     end
     string :document_type, stored: true do
       'file_index'

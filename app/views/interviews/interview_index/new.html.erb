@@ -1,0 +1,13 @@
+<div id="main_container" class="container-fluid">
+  <div class="main_contain">
+    <main>
+      <%= render 'interviews/interview_index/form' %> 
+    </main>
+  </div>
+</div>
+<script type="text/javascript">
+    let interviews_index_manager = new InterviewIndexManager();
+    $(function () {
+      interviews_index_manager.initialize();
+    });
+</script>

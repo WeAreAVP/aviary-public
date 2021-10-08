@@ -1,0 +1,145 @@
+<div id="main_container" class="container-fluid">
+  <div class="main_contain">
+    <main>
+      <div class="text-headline jumbotron">
+      <div class="row">
+        <div class="col-md-12 text-right">
+          <div class="py-2 mb-4 d-flex justify-content-start flex-row-reverse align-items-center">
+          <% if @interview.present? %>
+            <%= link_to 'Return To Interviews', interviews_managers_path, class: 'btn btn-primary ml-1 mr-1' %>
+          <% else %>
+           <%= link_to 'Return To Resource', "#{collection_collection_resource_details_url(@collection_resource.collection, @collection_resource, @resource_file)}/index?", class: 'btn btn-primary ml-1 mr-1' %>
+          <% end %>
+            <div class="w-25 ml-1 mr-4">
+              <%= render 'interviews/interview_index/status' %>
+              
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="heading-holder table-head">
+            <h1><%= @interview.present? ? @interview.title : @collection_resource.title %></h1>
+          </div>
+          
+          <div class="accordion interview-accordion" id="accordionIndex">
+            <%  @file_index_point.sort_by {|t| t.start_time.to_f }.each_with_index do |data, index| %>
+              <div class="card">
+                <div class="card-header" id="heading_<%=index%>">
+                  <h2 class="mb-0">
+                    <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#collapse_<%=index%>" aria-expanded="true" aria-controls="collapse_<%=index%>">
+                      <%= time_to_duration(data.start_time)  %> - <%= data.title  %>
+                    </button>
+                  </h2>
+                </div>
+
+                <div id="collapse_<%=index%>" class="collapse" aria-labelledby="heading_<%=index%>" data-parent="#accordionIndex">
+                  <div class="card-body custom-form-height">
+                    <div class="text-right px-3">
+                      <a href="<%= @interview.present? ? edit_interviews_interview_index_path(data.id) : edit_index_file_path(@resource_file.id,@file_index.id,data.id) %>?time=<%= data.start_time%>" class="btn mb-3 btn-outline-dark" >Edit</a>
+                      <a href="javascript:void(0);" class="btn mb-3 btn-outline-dark btn-danger text-white delete_index" data-url= "<%= @interview.present? ? interviews_interview_index_path(data.id) : destroy_index_path(data.id) %>" data-name="<%= data.title%>">Delete</a>
+                    </div>
+                    <ul class="list-group list-group-flush">
+                      <li class="list-group-item d-flex justify-content-between">
+                        <div class="w-50"><strong>Segment Title:</strong></div>
+                        <div class="w-50"><%= data.title  %></div>
+                      </li>
+                      <% unless data.partial_script.blank?  %>
+                      <li class="list-group-item d-flex justify-content-between">
+                        <div class="w-50"><strong>Partial Transcript:</strong></div>
+                        <div class="w-50"><%= data.partial_script  %></div>
+                      </li>
+                      <% end %>
+                      <% unless data.subjects.blank?  %>
+                      <li class="list-group-item d-flex justify-content-between">
+                        <div class="w-50"><strong>Subjects:</strong></div>
+                        <div class="w-50">
+                          <%  data.subjects.split(/;(?=(?:(?:[^"]*"){2})*[^"]*$)/).each do |subject| %>
+                            <span class="badge badge-secondary single_value_non_tombstone"><%= subject.strip %></span>
+                          <% end %>
+                        </div>
+                      </li>
+                      <% end %>
+                      <% unless data.keywords.blank?  %>      
+                      <li class="list-group-item d-flex justify-content-between">
+                        <div class="w-50"><strong>Keywords:</strong></div>
+                        <div class="w-50">
+                          <%  data.keywords.split(/;(?=(?:(?:[^"]*"){2})*[^"]*$)/).each do |keyword| %>
+                            <span class="badge badge-secondary single_value_non_tombstone"><%= keyword.strip %></span>
+                          <% end %>
+                        </div>
+                      </li>
+                      <% end %>
+                      <% unless data.synopsis.blank?  %>
+                      <li class="list-group-item d-flex justify-content-between">
+                        <div class="w-50"><strong>Segment Synopsis:</strong></div>
+                        <div class="w-50"><%= data.synopsis  %></div>
+                      </li>
+                      <% end %>
+                      
+                      <% if JSON.parse(data.gps_points).length.positive? %>
+                      <li class="list-group-item ">
+                        <div class="w-100"><strong>GPS</strong></div>
+                        <div class="w-100">
+                          <div class="card-box">
+                            <% JSON.parse(data.gps_points).each do |gps| %>
+                              <ul class="list-group list-group-flush border mb-2">
+                                <li class="list-group-item d-flex justify-content-between">
+                                  <div class="w-50"><strong>GPS:</strong></div><div class="w-50"><%= gps["lat"] %>, <%= gps["long"] %></div>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between">
+                                  <div class="w-50"><strong>GPS Description:</strong></div>
+                                  <div class="w-50"><%= gps["description"] %></div>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between">
+                                  <div class="w-50"><strong>Zoom:</strong></div><div class="w-50"><%= gps["zoom"] %></div>
+                                </li>
+                              </ul>
+                            <% end %>
+                          </div>
+                        </div>
+                      </li>
+                      <% end %>
+                      <% if  JSON.parse(data.hyperlinks).length.positive? %>
+                      <li class="list-group-item ">
+                        <div class="w-100"><strong>Hyperlinks</strong></div>
+                        <div class="w-100">
+                          <div class="card-box">
+                            <% JSON.parse(data.hyperlinks).each do |hyperlink| %>
+                              <ul class="list-group list-group-flush border mb-2">
+                                <li class="list-group-item d-flex justify-content-between">
+                                  <div class="w-50"><strong>Hyperlink:</strong></div><div class="w-50"><%= hyperlink["hyperlink"] %></div>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between">
+                                  <div class="w-50"><strong>Hyperlink Description:</strong></div>
+                                  <div class="w-50"><%= hyperlink["description"] %></div>
+                                </li>
+                              </ul>
+                            <% end %>
+                          </div>
+                        </div>
+                      </li>
+                      <% end %>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+            <% end %>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <%= render 'interviews/interview_index/top' %>
+        </div>
+      </div>
+        
+      </div>
+     
+    </main>
+  </div>
+</div>
+<script type="text/javascript">
+    let interviews_index_manager = new InterviewIndexManager();
+    $(function () {
+      interviews_index_manager.initialize();
+    });
+</script>

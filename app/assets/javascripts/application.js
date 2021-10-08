@@ -39,6 +39,8 @@
 //= require mediaelement-and-player.min
 //= require video
 //= require cast_sender
+//= require bootstrap-tokenfield
+//= require jquery.mask
 //= require_tree .
 
 var isIE = /*@cc_on!@*/false || !!document.documentMode;

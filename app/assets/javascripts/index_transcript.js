@@ -103,7 +103,11 @@ function IndexTranscript() {
         $('#file_' + that.cuePointType + '_select').next().find('div.selectize-input > input').prop('disabled', 'disabled');
         activatePoints(this.call_type);
         activatePlayTimecode();
-
+        if (that.cuePointType == 'index') {
+            $('.edit_index_url').unbind("click").bind("click", function () {
+                setTimeout(window.location.href = $(this).data('url')+'/'+$('#file_index_select').val(), 500);
+            });
+        }
     };
 
     this.handlecallback = function (response, container, requestData) {

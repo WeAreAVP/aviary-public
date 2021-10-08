@@ -1,0 +1,109 @@
+<%if @interview.present? %>
+  <% if @interview.media_url.empty? && @interview.embed_code.empty? && @interview.media_host_item_id.empty? %>
+  <div class="no-media">
+    <% if params[:action] == "show" || params[:action] == "show_index" %>
+    <div id="noAudio">
+      There is no online media associated with this item. Please update the media settings in the <a href="<%= edit_interviews_manager_path(@interview.id) %>">metadata editor</a> or proceed to index this item using offline media.
+    </div>
+    <% else %>
+    <div id="noMediaConnection">No Media Connection</div>
+    <% end %>
+  </div>
+  <% else %>
+  <% video_info = interview_video_info(@interview) %>
+  <div id="media_host" data-host="<%= @interview.media_host %>" style="width: 75%;" >
+    <% if @interview.media_host == 'Kaltura' %>
+      <div id="player_section" class="player-section video-placeholder">
+        <div class="video-hold" oncontextmenu="return false;">
+          <div id="kaltura_player_embed"></div>
+          <script src="<%= video_info['kaltura_url'] %>/p/<%= video_info['partner_id'] %>/sp/<%= video_info['partner_id'] %>00/embedIframeJs/uiconf_id/<%= video_info['uiconf_id'] %>/partner_id/<%= video_info['partner_id'] %>"></script>
+          <script>
+              kWidget.embed({
+                  'targetId': 'kaltura_player_embed',
+                  'wid': '_<%= video_info['partner_id'] %>',
+                  'uiconf_id': '<%= video_info['uiconf_id'] %>',
+                  'entry_id': '<%= video_info['entry_id'] %>',
+                  'flashvars':
+                          {
+                              'autoPlay': false,
+                              'externalInterfaceDisabled': false
+                          },
+                  'params':
+                          {
+                              'wmode': 'transparent'
+                          },
+                  readyCallback: function (playerId) {
+                      console.log('Player:' + playerId + ' is ready ');
+                      window.kdp = document.getElementById(playerId);
+                  }
+              });
+          </script>
+
+        </div>
+      </div>
+    <% elsif @interview.media_host == 'SoundCloud' %>
+      <div id="player_section" class="player-section video-placeholder">
+        <div class="video-hold" oncontextmenu="return false;">
+          <%= video_info['iframe'].html_safe %>
+          <script src="https://w.soundcloud.com/player/api.js"></script>
+        </div>
+      </div>
+
+    <% elsif @interview.media_host == 'Brightcove' %>
+      <video
+      class="video-js" controls playsinline preload="auto"  style="width: 100%;" data-cast-title="<%= @interview.title %>"
+      id="player"
+      data-account="<%= video_info['account'] %>" 
+      data-player="<%= video_info['player'] %>" 
+      data-embed="default" 
+      data-video-id="<%= video_info['video_id'] %>" 
+
+      ></video>
+      <script src="https://players.brightcove.net/<%= video_info['account'] %>/<%= video_info['player'] %>_default/index.min.js"></script>
+
+    <% elsif @interview.media_format.include?("video") %>
+      <div id="player_section" class="player-section video-placeholder">
+        <div class="video-hold" oncontextmenu="return false;">
+          <video id="player" class="video-js" controls playsinline preload="auto"  style="width: 100%;" data-cast-title="<%= @interview.title %>" client_id="<%= video_info['client_id'] %>" >
+            <% if video_info['source_tags'].present? %>
+              <%= video_info['source_tags'].html_safe %>
+            <% else %>
+              <source src="<%= video_info['src'] %>" type="<%= video_info['type'] %>" />
+            <% end %>
+          </video>
+        </div>
+        <div class="title">
+          <strong><%= @interview.title %></strong>
+        </div>
+      </div>
+    <% else %>
+      <div class="player-section video-placeholder audio audio-player" id="player_section" oncontextmenu="return false;">
+        <div class="audio">
+          <audio id="player" class="video-js" controls playsinline preload="auto">
+          <% if video_info['source_tags'].present? %>
+              <%= video_info['source_tags'].html_safe %>
+            <% else %>
+              <source src="<%= video_info['src'] %>" type="<%= video_info['type'] %>" />
+            <% end %>
+          </audio>
+        </div>
+      </div>
+    <% end %>
+  </div>
+  <% end %>
+  <% if params[:action] == "show" || params[:action] == "show_index"  %>
+  <%= link_to 'Add Tag', 'javascript://', class: 'btn btn-primary btn-xs pull-left mt-2 add_tag', data: { url: interviews_interview_index_new_path } %>
+  <% end %>
+<% else %>
+  <div id="media_host" data-host="" style="width: 75%;" >
+    <% is_audio_only = @collection_resource.present? ? @collection_resource.collection.is_audio_only : false %>
+    <%= render partial: 'collection_resources/show/mediaplayer', locals: { single_file: @resource_file, is_audio_only: is_audio_only } %>
+    <% if params[:action] == "show" || params[:action] == "show_index"  %>
+      <% if @file_index.present? %>
+        <%= link_to 'Add Tag', 'javascript://', class: 'btn btn-primary btn-xs pull-left mt-2 add_tag', data: { url: add_index_file_path(@resource_file.id, @file_index.id) } %>
+      <% else %>
+        <%= link_to 'Add Tag', 'javascript://', class: 'btn btn-primary btn-xs pull-left mt-2 add_tag', data: { url: add_index_path(@resource_file.id) } %>
+      <% end %>
+    <% end %>
+  </div>
+<% end %>

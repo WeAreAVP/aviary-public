@@ -11,7 +11,27 @@
 .container_subjects .container_subjects_inner:nth-of-type(1) .remove_icon_image {
   display: none;
 }
+.custom-form-height {
+  height: 350px;
+  overflow: auto;
+  .d-flex {
+    margin: 0 -10px;
+    .form-group {
+      flex: 1;
+      padding: 0 10px;
+    }
+  }
+}
+.border_title
+{
+  top: -35px !important;
+  left: -15px !important;
+}
+.container_gps > .container_gps_inner:first-child .remove_gps {display: none}
+.container_gps > .container_gps_inner + .container_gps_inner {padding-top: 40px}
 
+.container_hyperlinks > .container_hyperlinks_inner:first-child .remove_hyperlinks {display: none}
+.container_hyperlinks > .container_hyperlinks_inner + .container_hyperlinks_inner {padding-top: 40px}
 .add_button_interview {
   width: 22px;
   height: 22px;
@@ -39,4 +59,25 @@
 
 .field_container .remove_icon_image {
   top: 18px;
+}
+div#noAudio {
+  border: #000000 1px solid;
+  padding: 5px;
+  width: 75%;
+  font-size: 15px;
+}
+div#noMediaConnection {
+  font-size: 21px;
+  color: white;
+  padding: 10px;
+  width: 75%;
+  margin-top: 20px;
+  background-color: #a0a0a0;
+  float: left;
+}
+.interview-accordion {
+  button {
+    white-space: normal !important;
+    color: #000;
+  }
 }

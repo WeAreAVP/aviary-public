@@ -4,6 +4,7 @@
 # Copyright (C) 2019 Audio Visual Preservation Solutions, Inc.
 module ApplicationHelper
   include ApplicationHelperExtended
+  include InterviewIndexHelper
   require 'securerandom'
 
   def organization_layout?
@@ -75,6 +76,14 @@ module ApplicationHelper
     (a[0].to_i * 60 * 60) + (a[1].to_i * 60) + a[2].to_i
   rescue StandardError
     0
+  end
+
+  def interview_video_info(interview)
+    interview_video_info_helper(interview)
+  end
+
+  def interview_lang_info(language)
+    interview_lang_info_helper(language)
   end
 
   def date_time_format(date_time)
