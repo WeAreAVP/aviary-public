@@ -281,7 +281,8 @@ class CollectionsController < ApplicationController
     if resource_fields.present?
       resource_fields.each_with_index do |(system_name, single_collection_field), _index|
         field_settings = Aviary::FieldManagement::FieldManager.new(single_collection_field, system_name)
-        attributes << display_field_title_table(field_settings.label) if field_settings.should_display_on_resource_table && field_settings.should_display_on_detail_page
+        display_on_resource_table = field_settings.should_display_on_resource_table
+        attributes << display_field_title_table(field_settings.label) if (display_on_resource_table && field_settings.should_display_on_detail_page) || (display_on_resource_table && %w[access collection_title title].include?(system_name))
       end
     end
     %w[PURL URL Embed].map { |name| attributes << name }
@@ -310,7 +311,7 @@ class CollectionsController < ApplicationController
       if resource_fields.present?
         resource_fields.each_with_index do |(system_name, single_collection_field), _index|
           field_settings = Aviary::FieldManagement::FieldManager.new(single_collection_field, system_name)
-          if field_settings.should_display_on_resource_table && field_settings.should_display_on_detail_page
+          if (field_settings.should_display_on_resource_table && field_settings.should_display_on_detail_page) || (field_settings.should_display_on_resource_table && %w[access collection_title title].include?(system_name))
             row << if field_settings.solr_display_column_name == 'description_duration_ss'
                      resource[field_settings.solr_display_column_name].present? ? time_to_duration(resource[field_settings.solr_display_column_name]) : '00:00:00'
                    elsif field_settings.field_type == 'editor'
@@ -324,7 +325,7 @@ class CollectionsController < ApplicationController
                      end
                    elsif field_settings.solr_display_column_name == 'collection_title'
                      resources.third[resource['collection_id_is'].to_s]
-                   elsif field_settings.solr_display_column_name == 'access_ss'
+                   elsif field_settings.solr_display_column_name == 'access'
                      resource[field_settings.solr_display_column_name].gsub('access_', '').titleize.strip
                    elsif !resource[field_settings.solr_display_column_name].blank?
                      if resource[field_settings.solr_display_column_name].class == Array
