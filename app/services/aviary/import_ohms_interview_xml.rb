@@ -77,7 +77,9 @@ module Aviary
 
       if interview.valid?
         interview.save
-        set_points(xml_data, interview, user)
+        unless xml_data['index'].nil?
+          set_points(xml_data, interview, user)
+        end
         true
       else
         interview.errors.messages.first

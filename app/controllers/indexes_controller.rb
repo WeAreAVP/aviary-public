@@ -110,7 +110,7 @@ class IndexesController < ApplicationController
     else
       @file_index = FileIndex.new({
                                     collection_resource_file_id: @resource_file.id,
-                                    title: "#{@collection_resource.title} #{Time.now.strftime('%d-%m-%Y %k:%M')}",
+                                    title: "#{@collection_resource.title} #{Time.now.strftime('%m-%d-%Y %k:%M')}",
                                     user_id: current_user.id,
                                     language: 'en'
                                   })
