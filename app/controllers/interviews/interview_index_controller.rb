@@ -52,7 +52,9 @@ module Interviews
       authorize! :manage, current_organization
       @file_index_point = FileIndexPoint.find(params[:id])
       @file_index_point.update(file_index_point_params)
-      @file_index_point.start_time = human_to_seconds(params[:file_index_point][:start_time]).to_f
+      start_time = human_to_seconds(params[:file_index_point][:start_time])
+
+      @file_index_point.start_time = start_time.to_f
       @file_index_point = set_custom_values(@file_index_point, '', params)
       @file_index = FileIndex.find(@file_index_point.file_index_id)
       @interview = Interview.find(@file_index.interview_id)
@@ -61,17 +63,17 @@ module Interviews
           if params[:file_index_point][:language].length > 1
             @file_index_point_alt = FileIndexPoint.find(params[:file_index_point][:id_alt])
             @file_index_point_alt.update(file_index_point_params_alt.transform_keys { |key| key.gsub('_alt', '') })
-            @file_index_point_alt.start_time = human_to_seconds(params[:file_index_point][:start_time]).to_f
+            @file_index_point_alt.start_time = start_time.to_f
             @file_index_point_alt = set_custom_values(@file_index_point_alt, '_alt', params)
             if @file_index_point_alt.save
-              format.html { redirect_to interviews_interview_index_path(@file_index.interview_id), notice: 'Interview Index was successfully updated.' }
+              format.html { redirect_to "#{interviews_interview_index_path(@file_index.interview_id)}?time=#{start_time}", notice: 'Interview Index was successfully updated.' }
               format.json { render :show, status: :created, location: @file_index }
             else
               format.html { render :new }
               format.json { render json: @file_index_point.errors, status: :unprocessable_entity }
             end
           else
-            format.html { redirect_to interviews_interview_index_path(@file_index.interview_id), notice: 'Interview Index was successfully updated.' }
+            format.html { redirect_to "#{interviews_interview_index_path(@file_index.interview_id)}?time=#{start_time}", notice: 'Interview Index was successfully updated.' }
             format.json { render :show, status: :created, location: @file_index }
           end
         else
@@ -109,7 +111,8 @@ module Interviews
 
       @file_index_point = FileIndexPoint.new(file_index_point_params)
       @file_index_point.file_index_id = @file_index.id
-      @file_index_point.start_time = human_to_seconds(params[:file_index_point][:start_time]).to_f
+      start_time = human_to_seconds(params[:file_index_point][:start_time])
+      @file_index_point.start_time = start_time.to_f
       @file_index_point = set_custom_values(@file_index_point, '', params)
       respond_to do |format|
         if @file_index_point.save
@@ -121,10 +124,10 @@ module Interviews
             @file_index_alt.save(validate: false)
             @file_index_point_alt = FileIndexPoint.new(file_index_point_params_alt.transform_keys { |key| key.gsub('_alt', '') })
             @file_index_point_alt.file_index_id = @file_index_alt.id
-            @file_index_point_alt.start_time = human_to_seconds(params[:file_index_point][:start_time]).to_f
+            @file_index_point_alt.start_time = start_time.to_f
             @file_index_point_alt = set_custom_values(@file_index_point_alt, '_alt', params)
             if @file_index_point_alt.save
-              format.html { redirect_to interviews_interview_index_path(@file_index.interview_id), notice: 'Interview Index was successfully created.' }
+              format.html { redirect_to "#{interviews_interview_index_path(@file_index.interview_id)}?time=#{start_time}", notice: 'Interview Index was successfully created.' }
               format.json { render :show, status: :created, location: @file_index_point }
             else
               format.html { render :new }
@@ -132,7 +135,7 @@ module Interviews
             end
 
           else
-            format.html { redirect_to interviews_interview_index_path(@file_index.interview_id), notice: 'Interview Index was successfully created.' }
+            format.html { redirect_to "#{interviews_interview_index_path(@file_index.interview_id)}?time=#{start_time}", notice: 'Interview Index was successfully created.' }
             format.json { render :show, status: :created, location: @file_index_point }
           end
 
