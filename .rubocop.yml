@@ -1899,7 +1899,7 @@ Metrics/BlockLength:
   VersionAdded: '0.44'
   VersionChanged: '0.66'
   CountComments: false  # count full line comments?
-  Max: 450
+  Max: 500
   ExcludedMethods:
     # By default, exclude the `#refine` method, as it tends to have larger
     # associated blocks.
@@ -1932,7 +1932,7 @@ Metrics/CyclomaticComplexity:
   VersionAdded: '0.25'
   VersionChanged: '0.81'
   IgnoredMethods: []
-  Max: 45
+  Max: 50
 
 Metrics/MethodLength:
   Description: 'Avoid methods longer than 10 lines of code.'

@@ -39,6 +39,8 @@
 //= require mediaelement-and-player.min
 //= require video
 //= require cast_sender
+//= require bootstrap-tokenfield
+//= require jquery.mask
 //= require_tree .
 
 var isIE = /*@cc_on!@*/false || !!document.documentMode;
@@ -415,7 +417,7 @@ function resourceSearchBar() {
 
 function checkMenuType(layout) {
     activeCollapsedLayout = $('#main_container').hasClass('main_collapsed');
-    subNavs = ['#permission_subnav', '#integration_nav', '#analytics_subnav', '#organization_subnav'];
+    subNavs = ['#permission_subnav', '#integration_nav', '#analytics_subnav', '#organization_subnav','#ohms_nav'];
     if (layout == 'main_collapsed') {
         for (subnav in subNavs) {
             if ($(subNavs[subnav]).hasClass('show')) {

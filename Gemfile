@@ -188,3 +188,5 @@ gem 'meta-tags'
 
 gem "rubyzip", ">= 1.3.0"
 gem 'sanitize'
+gem 'bootstrap_tokenfield_rails'
+gem 'jquery_mask_rails', '~> 0.1.0'

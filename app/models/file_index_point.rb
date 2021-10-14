@@ -7,7 +7,11 @@
 # Copyright (C) 2019 Audio Visual Preservation Solutions, Inc.
 class FileIndexPoint < ApplicationRecord
   belongs_to :file_index
-  before_create :manage_gps_points, :manage_hyperlinks
+  before_save :manage_gps_points, :manage_hyperlinks
+  validate :validate_time_uniqueness
+  validates_presence_of :title
+  attr_accessor :id_alt, :title_alt, :partial_script_alt, :keywords_alt, :subjects_alt, :synopsis_alt, :gps_latitude_alt,
+                :gps_description_alt, :zoom_alt, :hyperlink_alt, :hyperlink_description_alt, :gps_points_alt, :hyperlinks_alt
 
   def manage_gps_points
     points = []
@@ -45,5 +49,18 @@ class FileIndexPoint < ApplicationRecord
       end
     end
     self.hyperlinks = links.to_json
+  end
+
+  def validate_time_uniqueness
+    if id.present?
+      if FileIndexPoint.where(file_index_id: file_index_id).where(start_time: start_time).where.not(id: id).first
+        errors.add(:start_time, 'Entry already exists for time point.')
+        return false
+      end
+    elsif FileIndexPoint.where(file_index_id: file_index_id).where(start_time: start_time).first
+      errors.add(:start_time, 'Entry already exists for time point.')
+      return false
+    end
+    true
   end
 end

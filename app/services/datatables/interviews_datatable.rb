@@ -3,7 +3,7 @@
 # Aviary is an audiovisual content publishing platform with sophisticated features for search and permissions controls.
 # Copyright (C) 2019 Audio Visual Preservation Solutions, Inc.
 class InterviewsDatatable < ApplicationDatatable
-  delegate :can?, :interviews_manager_path, :interviews_list_notes_path, :interviews_update_note_path,
+  delegate :can?, :interviews_manager_path, :interviews_list_notes_path, :interviews_update_note_path, :interviews_interview_index_path,
            :edit_interviews_manager_path, :export_interviews_manager_path, :check_valid_array,
            :bulk_resource_list_interviews_managers_path, :preview_interviews_manager_path, :interviews_transcript_path, to: :@view
 
@@ -78,6 +78,7 @@ class InterviewsDatatable < ApplicationDatatable
   def links(interview)
     this_interview = Interviews::Interview.find_by(id: interview['id_is'])
     color_metadata = this_interview.try(:interview_metadata_status)
+    index_color_metadata = this_interview.try(:index_status)
     html = ''
     html += link_to 'Preview', preview_interviews_manager_path(interview['id_is']), class: 'btn-sm btn-link mr-1 float-left'
     html += link_to 'Metadata', edit_interviews_manager_path(interview['id_is']), class: 'btn-sm btn-link mr-1 float-left', style: color_metadata.to_s, data: {
@@ -90,7 +91,8 @@ class InterviewsDatatable < ApplicationDatatable
     html += link_to 'Notes', 'javascript://', class: 'btn-sm btn-link mr-1 float-left interview_notes ' + notes_color(interview), id: 'interview_note_' + interview['id_is'].to_s, data: {
       id: interview['id_is'], url: interviews_list_notes_path(interview['id_is'], 'json'), updateurl: interviews_update_note_path(interview['id_is'], 'json')
     }
-
+    html += link_to 'Index', interviews_interview_index_path(interview['id_is']), class: 'btn-sm btn-link mr-1 float-left', style: this_interview.color_grading_index[index_color_metadata.to_s], data: {
+    }
     html += '<div class="dropdown float-left">'
     html += ' <button type="button" class="btn btn-sm mr-2 btn-outline-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Export</button>'
     html += ' <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; transform: translate3d(137px, 33px, 0px); top: 0px; left: 0px; will-change: transform;">'

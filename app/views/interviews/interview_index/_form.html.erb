@@ -1,0 +1,104 @@
+<div class="text-headline jumbotron">
+  <div class="heading-holder table-head">
+    <div class="row">
+      <div class="col-md-6"><h1><%= @interview.present? ? @interview.title : @collection_resource.title %></div>
+      
+    </div>
+  </div>
+</div>
+<div class="organization-section">
+<h1 class="h3">Tag Data</h1>
+      <%= simple_form_for @file_index_point, :url => @file_index_point.new_record? ? @interview.present? ? interviews_interview_index_create_path(@interview.id) : create_index_path(@resource_file.id) : @interview.present? ? interviews_interview_index_path(@file_index_point.id) : update_index_file_path(@resource_file.id,@file_index.id,@file_index_point.id), html: { class: "interview_index_manager" } do |f| %>
+  <div class="row ">
+    <div class="col-md-12 text-right">
+      <div class="py-2 mb-4 d-flex justify-content-start flex-row-reverse align-items-center">
+      <% if @interview.present? %>
+        <%= link_to 'Return To Interviews', interviews_managers_path, class: 'btn btn-primary ml-1 mr-1' %>
+        <%= link_to 'Return To Index', interviews_interview_index_path(@interview.id), class: 'btn btn-secondary ml-1 mr-1' %>
+      <% else %>
+        <%= link_to 'Return To Resource', "#{collection_collection_resource_details_url(@collection_resource.collection, @collection_resource, @resource_file)}/index?", class: 'btn btn-primary ml-1 mr-1' %>
+        <% if @file_index.present? %>
+        <%= link_to 'Return To Index', show_index_file_path(@resource_file.id,@file_index.id), class: 'btn btn-secondary ml-1 mr-1' %>
+        <% else %>
+        <%= link_to 'Return To Index', show_index_path(@resource_file.id), class: 'btn btn-secondary ml-1 mr-1' %>
+        <% end %>
+      <% end %>
+      <%= f.submit 'Save', class: 'btn btn-success ml-1 mr-1' %>
+
+      </div>
+    </div>
+  </div>
+  <div class="row">
+  <div class="col-md-6">
+    <div class="border p-2">
+      <div class="form-group">
+          <div class="field-title"><%= f.label :start_time, "Timestamp*" %></div>
+          <% if @interview.present? %>
+            <%= f.hidden_field :interview_id, value: @interview.id %>
+          <%else%>
+            <%= f.hidden_field :resource_file_id, value: @resource_file.id %>
+          <%end%>
+          <% if @file_index.present? %>
+            <%= f.hidden_field :file_index_id, value: @file_index.id %>
+          <%end%>
+          <input type="hidden" name="item_length" id="item_length" />
+          <%= f.hidden_field :start_time, value: time_to_duration(@file_index_point.start_time.to_f), class: 'video_time', id: "hidden_video_time" %>
+          <%= f.text_field :start_time, value: time_to_duration(@file_index_point.start_time.to_f), class: 'video_time video_input form-control', disabled: true %>
+          <% if @file_index_point.errors && @file_index_point.errors.messages && @file_index_point.errors.messages.length.positive? && @file_index_point.errors.messages[:start_time] && @file_index_point.errors.messages[:start_time].first%>
+          <span class="form_error"><%= @file_index_point.errors.messages[:start_time].first %></span>
+          <% end %>
+        </div>
+        <div class="buttons-box mb-2 pb-2 music_btn">
+          <a href="javascript:void(0);" class="btn btn-outline-dark update_step_backward"><i class="fa fa-step-backward"></i></a>
+          <a href="javascript:void(0);" class="btn btn-outline-dark update_backward"><i class="fa fa-fast-backward"></i></a>
+          <a href="javascript:void(0);" class="btn btn-outline-dark update_play"><i class="fa fa-play"></i></a>
+          <a href="javascript:void(0);" class="btn btn-outline-dark update_pause"><i class="fa fa-stop"></i></a>
+          <a href="javascript:void(0);" class="btn btn-outline-dark update_forward"><i class="fa fa-fast-forward"></i></a>
+          <a href="javascript:void(0);" class="btn btn-outline-dark update_time">Update Time</a>
+        </div>
+      
+      </div>
+    </div>
+  <div class="col-md-6">
+    <%= render 'interviews/interview_index/top' %>
+  </div>
+
+
+ <div class="row w-100 mt-4">
+  <% if @interview.present? && @interview.include_language %>
+    <div class="col-md-6">
+      <div class="m-1"><strong><%=@interview.language_info %></strong></div>
+    </div>
+    <div class="col-md-6">
+      <div class="m-1 pl-3"><strong><%=@interview.language_for_translation %></strong></div>
+    </div>
+  <% else %>
+  <div class="col-md-12">
+  <% if @interview.present?%>
+      <div class="m-1"><strong><%=@interview.language_info %></strong></div>
+  <% else %>
+      <div class="m-1"><strong>English</strong></div>
+  <% end %>
+
+
+  
+  </div>
+  <% end %>
+  </div>
+  <div class="w-100 mt-2 custom-form-height">
+  
+    <div class="col-md-12">
+    <% if @interview.present? %>   
+        <%= render :partial => 'interviews/interview_index/inner_form', :locals => { :alt => "", :f => f,:lang => interview_lang_info(@interview.language_info.gsub(/(\w+)/) {|s| s.capitalize})} %>
+    <% else %>   
+        <%= render :partial => 'interviews/interview_index/inner_form', :locals => { :alt => "", :f => f,:lang => "en"} %>
+    <% end %>    
+    </div>
+  </div>
+  </div>
+  <br/>
+  <br/>
+
+<% end %>
+
+</div>

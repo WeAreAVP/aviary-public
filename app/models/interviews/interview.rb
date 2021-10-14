@@ -8,6 +8,7 @@ module Interviews
     belongs_to :organization
     validates :title, :media_format, presence: true
     has_many :interview_notes, dependent: :destroy
+    has_many :file_indexes, dependent: :destroy
     has_one :interview_transcript
     before_save :purify_value, :interview_status_info
 
@@ -57,12 +58,20 @@ module Interviews
       { '-1' => 'color: #000;', '0' => 'color: #1a1aff;', '1' => 'color: #cd2200;', '2' => 'color: #9c43b6;', '3' => 'color: #008b17;', '4' => 'color: #279ade;', '' => 'color: #000;' }
     end
 
+    def color_grading_index
+      { '-1' => 'color: #000;', '0' => 'color: #1a1aff;', '1' => 'color: #cd2200;', '2' => 'color: #9c43b6;', '3' => 'color: #008b17;', '4' => 'color: #aaaaaa;', '' => 'color: #000;' }
+    end
+
     def listing_metadata_status
       { '-1' => 'Please Select', '4' => 'Pending', '0' => 'In Process', '1' => 'Ready for QC', '2' => 'Active QC', '3' => 'Complete' }
     end
 
     def listing_media_host
       { 'Host' => 'Other', 'Avalon' => 'Avalon', 'Aviary' => 'Aviary', 'Brightcove' => 'Brightcove', 'Kaltura' => 'Kaltura', 'SoundCloud' => 'SoundCloud', 'Vimeo' => 'Vimeo', 'YouTube' => 'YouTube' }
+    end
+
+    def listing_metadata_index_status
+      { '-1' => 'Please Select', '5' => 'Pending', '0' => 'In Process', '1' => 'Ready for QC', '2' => 'Active QC', '3' => 'Complete', '4' => 'Not Applicable' }
     end
 
     searchable do

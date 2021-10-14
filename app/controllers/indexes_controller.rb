@@ -77,8 +77,105 @@ class IndexesController < ApplicationController
     redirect_back(fallback_location: root_path)
   end
 
+  def show_index
+    authorize! :manage, current_organization
+    @resource_file = CollectionResourceFile.find(params[:resource_file_id])
+    @collection_resource = CollectionResource.find(@resource_file.collection_resource_id)
+    if params[:file_index_id].nil?
+      @file_index_point = []
+    else
+      @file_index = FileIndex.find(params[:file_index_id])
+      @file_index_point = @file_index.file_index_points
+    end
+    render template: 'interviews/interview_index/show'
+  end
+
+  def add_index
+    authorize! :manage, current_organization
+    @resource_file = CollectionResourceFile.find(params[:resource_file_id])
+    @collection_resource = CollectionResource.find(@resource_file.collection_resource_id)
+    @file_index_point = FileIndexPoint.new
+    if params[:file_index_id].present? && !params[:file_index_id].empty?
+      @file_index = FileIndex.find(params[:file_index_id])
+    end
+    render template: 'interviews/interview_index/new'
+  end
+
+  def create_index
+    authorize! :manage, current_organization
+    @resource_file = CollectionResourceFile.find(params[:file_index_point][:resource_file_id])
+    @collection_resource = CollectionResource.find(@resource_file.collection_resource_id)
+    if params[:file_index_point][:file_index_id].present?
+      @file_index = FileIndex.find(params[:file_index_point][:file_index_id])
+    else
+      @file_index = FileIndex.new({
+                                    collection_resource_file_id: @resource_file.id,
+                                    title: "#{@collection_resource.title} #{Time.now.strftime('%m-%d-%Y %k:%M')}",
+                                    user_id: current_user.id,
+                                    language: 'en'
+                                  })
+      @file_index.save(validate: false)
+    end
+    @file_index_point = FileIndexPoint.new(file_index_point_params)
+    @file_index_point.file_index_id = @file_index.id
+    @file_index_point.start_time = human_to_seconds(params[:file_index_point][:start_time]).to_f
+    @file_index_point = set_custom_values(@file_index_point, '', params)
+    respond_to do |format|
+      if @file_index_point.save
+        format.html { redirect_to show_index_file_path(@resource_file.id, @file_index.id), notice: 'Resource Index was successfully created.' }
+        format.json { render :show_index, status: :created, location: @file_index_point }
+      else
+        format.html { render template: 'interviews/interview_index/new' }
+        format.json { render json: @file_index_point.errors, status: :unprocessable_entity }
+      end
+    end
+  end
+
+  def update_index
+    authorize! :manage, current_organization
+    @resource_file = CollectionResourceFile.find(params[:resource_file_id])
+    @collection_resource = CollectionResource.find(@resource_file.collection_resource_id)
+    @file_index = FileIndex.find(params[:file_index_id])
+    @file_index_point = FileIndexPoint.find(params[:file_index_point_id])
+    @file_index_point.update(file_index_point_params)
+    @file_index_point.start_time = human_to_seconds(params[:file_index_point][:start_time]).to_f
+    @file_index_point = set_custom_values(@file_index_point, '', params)
+    respond_to do |format|
+      if @file_index_point.save
+        format.html { redirect_to show_index_file_path(@resource_file.id, @file_index.id), notice: 'Resource Index was successfully created.' }
+        format.json { render :show_index, status: :created, location: @file_index_point }
+      else
+        format.html { render template: 'interviews/interview_index/edit' }
+        format.json { render json: @file_index_point.errors, status: :unprocessable_entity }
+      end
+    end
+  end
+
+  def destroy_index
+    authorize! :manage, current_organization
+    file_index_point = FileIndexPoint.find(params[:index_file_point_id])
+    file_index = FileIndex.find(file_index_point.file_index_id)
+    update_end_time(file_index_point)
+    respond_to do |format|
+      format.html { redirect_to show_index_file_path(file_index.collection_resource_file_id, file_index.id), notice: 'The Resource index you selected has been deleted successfully.' }
+    end
+  end
+
+  def edit_index
+    authorize! :manage, current_organization
+    @resource_file = CollectionResourceFile.find(params[:resource_file_id])
+    @collection_resource = CollectionResource.find(@resource_file.collection_resource_id)
+    @file_index = FileIndex.find(params[:file_index_id])
+    @file_index_point = FileIndexPoint.find(params[:file_index_point_id])
+    render template: 'interviews/interview_index/edit'
+  end
+
   # Never trust parameters from the scary internet, only allow the white list through.
   def file_index_params
     params.require(:file_index).permit(:title, :associated_file, :is_public, :language, :description)
+  end
+
+  def file_index_point_params
+    params.require(:file_index_point).permit(:id, :start_time, :title, :synopsis, :partial_script, :keywords, :subjects, :gps_latitude, :gps_zoom, :gps_description, :gps_points, :hyperlinks)
   end
 end
