@@ -137,7 +137,7 @@ class ApplicationController < ActionController::Base
   end
 
   def set_headers
-    headers['Access-Control-Allow-Origin'] = '*'
+    headers['Access-Control-Allow-Origin'] = root_url.chop
   end
 
   def after_sign_out_path_for(resource)
