@@ -50,6 +50,8 @@ var activeCollapsedLayout = false;
 var reloadTime = 2 * 60 * 1000; // action * second * millisecond
 var lengthMenuValues = [[10, 25, 50, 100], [10, 25, 50, 100]];   // datatable row length values
 var pageLength = 25;
+var allowedParams = ['keywords[]', 'selected_transcript', 'selected_index','embed','t','e','auto_play','media_player','media',
+    'access','offset'];
 Object.size = function (obj) {
     var size = 0, key;
     for (key in obj) {
@@ -720,13 +722,19 @@ function timePickerShare() {
 }
 
 const addKeywordToUrl = function (keyword) {
+    let allowed = allowedParams;
     let query = 'keywords[]=' + keyword;
-    let link = window.location.href;
-    if (!link.includes('?')) {
-        link += '?';
+    querySeperator = window.location.search == '' ?  '?' : '&'
+    stringParams = window.location.search + querySeperator + query;
+    params = new URLSearchParams(stringParams);
+    counter = 0;
+    for (let p of params) {
+        if (!allowed.includes(p[0])){
+            params.delete(p[0]);
+        }
+        counter +=1;
     }
-    link = link + '&' + query;
-    window.location = link;
+    window.location = '?' + params.toString();
 }
 
 function isUrlValid(value) {

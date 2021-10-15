@@ -49,4 +49,21 @@ module ApplicationHelperExtended
       browser.facebook? && browser.safari_webapp_mode? && browser.webkit_full_version.to_i >= 602
     ].any? || browser.device.mobile?
   end
+
+  def allowed_query_params
+    ['keywords[]', 'selected_transcript', 'selected_index', 'embed', 't', 'e', 'auto_play', 'media_player', 'media',
+     'access', 'offset', 'from_playlist', 'playlist_view_type', 'resource_file_id', 'f', 'search_field', 'search_type', 'title_text', 'type_of_search',
+     'id', 'collection_id', 'collection_resource_id', 'collection_resource_file_id', 'organization_id', 'playlist_id', 'playlist_resource_id',
+     'utf8', 'update_advance_search', 'search_type', 'transliteration_status', 'f', 'keywords', 'title_text',
+     'resource_description', 'indexes', 'transcript', 'collection_title', 'op', 'search_field', 'type_of_search', 'type_of_field_selector',
+     'sort', 'search_field', 'commit']
+  end
+
+  def check_params(request_url, only_params = false)
+    keys_to_extract = allowed_query_params
+    query_hash = Rack::Utils.parse_query(URI.parse(request_url).query).select { |key, _| keys_to_extract.include? key }
+    return query_hash if only_params
+    path = query_hash.empty? ? request.path : "#{request.path}?#{CGI.unescape(query_hash.to_query).gsub('[][]', '[]')}"
+    root_url.chop + path
+  end
 end

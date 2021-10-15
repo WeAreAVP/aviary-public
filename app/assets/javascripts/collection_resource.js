@@ -1080,18 +1080,11 @@ function CollectionResource() {
                 e;
             }
 
-            let append_params = '?';
-            $.each(selfCR.app_helper.getUrlParamRepeatable(window.location.href)[0], function (index, single_obejct) {
-                if (typeof single_obejct != 'undefined') {
-                    append_params += single_obejct + '&';
-                }
-            });
-
             if (collectionResource.from_playlist == false) {
                 if ($.inArray(tabType, ['transcript', 'description', 'index']) >= 0)
-                    window.history.replaceState({}, document.title, window.location.pathname.replace(/\/[^\/]*$/, '/' + currentTab) + append_params);
+                    window.history.replaceState({}, document.title, window.location.pathname.replace(/\/[^\/]*$/, '/' + currentTab) + window.location.search);
                 else
-                    window.history.replaceState({}, document.title, window.location.pathname + '/' + currentTab + append_params);
+                    window.history.replaceState({}, document.title, window.location.pathname + '/' + currentTab + window.location.search);
             }
 
             if (tabType == 'index') {

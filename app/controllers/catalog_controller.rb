@@ -12,6 +12,12 @@ class CatalogController < ApplicationController
   before_action :mutiple_keyword_handler, :session_param_update
   before_action :update_facets, except: %i[assign_to_playlist update_selected_playlist]
 
+  def index
+    response.headers['Cache-Control'] = 'no-cache, no-store'
+    response.headers['Pragma'] = 'no-cache'
+    super
+  end
+
   def update_facets
     @org_field_manager = Aviary::FieldManagement::OrganizationFieldManager.new
     @resource_fields = @org_field_manager.organization_field_settings(current_organization, nil, 'resource_fields', 'search_sort_order')
