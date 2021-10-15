@@ -25,7 +25,7 @@ function InterviewManager() {
             responsive: true,
             processing: true,
             serverSide: true,
-            pageLength: pageLength,
+            pageLength: 100,
             bInfo: true,
             destroy: true,
             bLengthChange: true,
