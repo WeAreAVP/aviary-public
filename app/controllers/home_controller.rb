@@ -220,7 +220,8 @@ class HomeController < ApplicationController
 
   def robots
     respond_to :text
-    expires_in 6.hours, public: true
+    response.headers['Cache-Control'] = 'no-cache, no-store'
+    response.headers['Pragma'] = 'no-cache'
   end
 
   private

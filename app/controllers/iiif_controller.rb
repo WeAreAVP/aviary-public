@@ -47,7 +47,7 @@ class IiifController < ApplicationController
                 unless single_value['value'].to_s.strip.blank?
                   vocab = single_value['vocab_value']
                   value = single_value['value']
-                  final_value = Rails::Html::WhiteListSanitizer.new.sanitize(value, tags: %w(a b br i p img small span sub sup))
+                  final_value = Rails::Html::WhiteListSanitizer.new.sanitize(value, tags: %w(a b br i p img small span sub sup em strong))
                   final_value = time_to_duration(value) if system_name.to_s == 'duration'
                   final_value += " (#{vocab})" if vocab.present?
                   values_all << final_value
@@ -179,7 +179,7 @@ class IiifController < ApplicationController
           motivation: 'supplementing',
           body: {
             type: 'TextualBody',
-            value: Rails::Html::WhiteListSanitizer.new.sanitize(single_annotation['body_content'], tags: %w(a b br i p small span sub sup)),
+            value: Rails::Html::WhiteListSanitizer.new.sanitize(single_annotation['body_content'], tags: %w(a b br i p small span sub sup em strong)),
             format: 'text/plain'
           },
           target: "#{media_url}#t=#{annotation_transcript_point.start_time.to_f},#{annotation_transcript_point.end_time.to_f}"

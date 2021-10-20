@@ -234,6 +234,7 @@ module ApplicationHelper
   end
 
   def tracker_params(params, remove_extra_param = false)
+    keys_to_extract = allowed_query_params
     raw_params = params.clone
     raw_params = raw_params.except('controller').except('action')
     if remove_extra_param.present?
@@ -242,6 +243,7 @@ module ApplicationHelper
         raw_params.delete(single_params.to_s) if raw_params[single_params.to_s].present?
       end
     end
+    raw_params = raw_params.select { |key, _| keys_to_extract.include? key }
     raw_params.to_json
   end
 
