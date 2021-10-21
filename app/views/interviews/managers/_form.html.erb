@@ -21,9 +21,7 @@
             <div class="d-flex align-items-center py-4">
               <div class="btn-group">
                 <%= link_to 'Return To Interviews', interviews_managers_path, class: 'btn btn-outline-secondary' %>
-                <% unless @interview.new_record? %>
-                  <%= link_to 'Delete Interview', 'javascript://', class: 'btn btn-outline-danger interview_delete', data: { url: interviews_manager_path(@interview), name: @interview.title } %>
-                <% end %>
+                
               </div>
               <%= f.submit 'Save', class: 'btn btn-success ml-3' %>
             </div>
