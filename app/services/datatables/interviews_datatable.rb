@@ -108,6 +108,7 @@ class InterviewsDatatable < ApplicationDatatable
     html
   end
 
+  
   def columns(resource_search_column = false)
     columns_allowed = ['id_is']
     if resource_search_column&.present?
