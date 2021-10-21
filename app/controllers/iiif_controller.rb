@@ -163,8 +163,15 @@ class IiifController < ApplicationController
       annotation_set = transcript.annotation_set
       next unless annotation_set.is_public
       points = []
-      annotation_set.annotations.each do |single_annotation|
-        target_info = JSON.parse(single_annotation.target_info)
+      annotations = JSON.parse(annotation_set.annotations.to_json)
+      annotations.each_with_index do |v, i|
+        annotations[i]['target_info'] = JSON.parse(v['target_info'])
+        annotations[i]['time'] = annotations[i]['target_info']['time']
+      end
+      annotations = annotations.sort_by { |a| a['time'].to_f }
+
+      annotations.each do |single_annotation|
+        target_info = single_annotation['target_info']
         annotation_transcript_point = transcript.file_transcript_points.find(target_info['pointId'])
         points << {
           id: "#{media_url}/annotation_set/#{annotation_set.id}/annotation/#{annotation_counter}",
@@ -172,7 +179,7 @@ class IiifController < ApplicationController
           motivation: 'supplementing',
           body: {
             type: 'TextualBody',
-            value: Rails::Html::WhiteListSanitizer.new.sanitize(single_annotation.body_content, tags: %w(a b br i p small span sub sup em strong)),
+            value: Rails::Html::WhiteListSanitizer.new.sanitize(single_annotation['body_content'], tags: %w(a b br i p small span sub sup em strong)),
             format: 'text/plain'
           },
           target: "#{media_url}#t=#{annotation_transcript_point.start_time.to_f},#{annotation_transcript_point.end_time.to_f}"
