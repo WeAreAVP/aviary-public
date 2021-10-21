@@ -11,7 +11,7 @@
   </div>
   <% else %>
   <% video_info = interview_video_info(@interview) %>
-  <div id="media_host" data-host="<%= @interview.media_host %>" style="width: 75%;" >
+  <div id="media_host" data-host="<%= @interview.media_host %>">
     <% if @interview.media_host == 'Kaltura' %>
       <div id="player_section" class="player-section video-placeholder">
         <div class="video-hold" oncontextmenu="return false;">
@@ -92,7 +92,7 @@
   </div>
   <% end %>
   <% if params[:action] == "show" || params[:action] == "show_index"  %>
-  <%= link_to 'Add Tag', 'javascript://', class: 'btn btn-primary btn-xs pull-left mt-2 add_tag', data: { url: interviews_interview_index_new_path } %>
+  <%= link_to 'Add Tag', 'javascript://', class: 'btn btn-outline-dark btn-block btn-xs pull-left mt-2 add_tag', data: { url: interviews_interview_index_new_path } %>
   <% end %>
 <% else %>
   <div id="media_host" data-host="" style="width: 75%;" >

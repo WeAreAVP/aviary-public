@@ -8,17 +8,21 @@
         </button>
       </div>
       <div class="modal-body" id="modalPopupNotesBody">
-          <div id="listNotes" class="custom-height-list"></div>
-          <form method="POST" action="" id='notesForm'>
-
-          <div class="row mt-2">
+        <div id="listNotes" class="custom-height-list"></div>
+        <form method="POST" action="" id='notesForm'>
+          <div class="row custom_form mb-2">
             <div class="col-md-12">
-              <textarea name="note" id="note" rows="3" placeholder="Add a note here. When you're done, click the Add Note button below." class="form-control" ></textarea>
+              <div class="form-group">
+                <div class="field-title"><label>Add Note</label></div>
+                <textarea name="note" id="note" rows="3" placeholder="Add a note here. When you're done, click the Add Note button below." class="form-control" ></textarea>
+              </div>
             </div>
             <div class="col-md-12"><span class="errors error_note muted text-danger"></span></div>
           </div>
-          <button  class="btn btn-primary saveNotes mt-2 mb-4">Add Note</button>
-          </form>
+        </div>
+        <div class="modal-footer">
+          <button  class="btn btn-primary saveNotes">Add Note</button>
+        </form>
       </div>
     </div>
   </div>

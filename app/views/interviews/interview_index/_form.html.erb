@@ -1,37 +1,40 @@
+<div class="interview-index">
+<%= simple_form_for @file_index_point, :url => @file_index_point.new_record? ? @interview.present? ? interviews_interview_index_create_path(@interview.id) : create_index_path(@resource_file.id) : @interview.present? ? interviews_interview_index_path(@file_index_point.id) : update_index_file_path(@resource_file.id,@file_index.id,@file_index_point.id), html: { class: "interview_index_manager" } do |f| %>
 <div class="text-headline jumbotron">
   <div class="heading-holder table-head">
     <div class="row">
-      <div class="col-md-6"><h1><%= @interview.present? ? @interview.title : @collection_resource.title %></div>
-      
+      <div class="col-md-6">
+          <h1><%= @interview.present? ? @interview.title : @collection_resource.title %>
+          <small>Tag Data</small>
+      </div>
+      <div class="col-md-6">
+        <div class="button-holder text-right pt-2">
+          <div class="btn-group">
+            <% if @interview.present? %>
+              <%= link_to 'Return To Interviews', interviews_managers_path, class: 'btn btn-outline-secondary ' %>
+              <%= link_to 'Return To Index', interviews_interview_index_path(@interview.id), class: 'btn btn-outline-secondary' %>
+            <% else %>
+              <%= link_to 'Return To Resource', "#{collection_collection_resource_details_url(@collection_resource.collection, @collection_resource, @resource_file)}/index?", class: 'btn btn-primary' %>
+              <% if @file_index.present? %>
+              <%= link_to 'Return To Index', show_index_file_path(@resource_file.id,@file_index.id), class: 'btn btn-outline-secondary' %>
+              <% else %>
+              <%= link_to 'Return To Index', show_index_path(@resource_file.id), class: 'btn btn-outline-secondary' %>
+              <% end %>
+            <% end %>
+          </div>
+          <%= f.submit 'Save', class: 'btn btn-success ml-2' %>
+        </div>
+      </div>
     </div>
   </div>
 </div>
 <div class="organization-section">
-<h1 class="h3">Tag Data</h1>
-      <%= simple_form_for @file_index_point, :url => @file_index_point.new_record? ? @interview.present? ? interviews_interview_index_create_path(@interview.id) : create_index_path(@resource_file.id) : @interview.present? ? interviews_interview_index_path(@file_index_point.id) : update_index_file_path(@resource_file.id,@file_index.id,@file_index_point.id), html: { class: "interview_index_manager" } do |f| %>
-  <div class="row ">
-    <div class="col-md-12 text-right">
-      <div class="py-2 mb-4 d-flex justify-content-start flex-row-reverse align-items-center">
-      <% if @interview.present? %>
-        <%= link_to 'Return To Interviews', interviews_managers_path, class: 'btn btn-primary ml-1 mr-1' %>
-        <%= link_to 'Return To Index', interviews_interview_index_path(@interview.id), class: 'btn btn-secondary ml-1 mr-1' %>
-      <% else %>
-        <%= link_to 'Return To Resource', "#{collection_collection_resource_details_url(@collection_resource.collection, @collection_resource, @resource_file)}/index?", class: 'btn btn-primary ml-1 mr-1' %>
-        <% if @file_index.present? %>
-        <%= link_to 'Return To Index', show_index_file_path(@resource_file.id,@file_index.id), class: 'btn btn-secondary ml-1 mr-1' %>
-        <% else %>
-        <%= link_to 'Return To Index', show_index_path(@resource_file.id), class: 'btn btn-secondary ml-1 mr-1' %>
-        <% end %>
-      <% end %>
-      <%= f.submit 'Save', class: 'btn btn-success ml-1 mr-1' %>
-
-      </div>
-    </div>
-  </div>
+  
+  <div class="top-section-test-interview border rounded">
   <div class="row">
   <div class="col-md-6">
-    <div class="border p-2">
-      <div class="form-group">
+    <div class="left-section">
+        <div class="form-group">
           <div class="field-title"><%= f.label :start_time, "Timestamp*" %></div>
           <% if @interview.present? %>
             <%= f.hidden_field :interview_id, value: @interview.id %>
@@ -47,27 +50,31 @@
           <% if @file_index_point.errors && @file_index_point.errors.messages && @file_index_point.errors.messages.length.positive? && @file_index_point.errors.messages[:start_time] && @file_index_point.errors.messages[:start_time].first%>
           <span class="form_error"><%= @file_index_point.errors.messages[:start_time].first %></span>
           <% end %>
+          <a href="javascript:void(0);" class="btn btn-outline-dark update_time">Update Time</a>
         </div>
-        <div class="buttons-box mb-2 pb-2 music_btn">
+        <div class="buttons-box music_btn">
           <a href="javascript:void(0);" class="btn btn-outline-dark update_step_backward"><i class="fa fa-step-backward"></i></a>
           <a href="javascript:void(0);" class="btn btn-outline-dark update_backward"><i class="fa fa-fast-backward"></i></a>
           <a href="javascript:void(0);" class="btn btn-outline-dark update_play"><i class="fa fa-play"></i></a>
           <a href="javascript:void(0);" class="btn btn-outline-dark update_pause"><i class="fa fa-stop"></i></a>
           <a href="javascript:void(0);" class="btn btn-outline-dark update_forward"><i class="fa fa-fast-forward"></i></a>
-          <a href="javascript:void(0);" class="btn btn-outline-dark update_time">Update Time</a>
         </div>
-      
       </div>
     </div>
   <div class="col-md-6">
     <%= render 'interviews/interview_index/top' %>
   </div>
+  </div>
+  </div>
 
-
- <div class="row w-100 mt-4">
+  <% if @interview.present? && @interview.include_language %>
+    <div class="row mt-2 language_name_row">
+  <% else %>
+    <div class="row mt-0 language_name_row">
+  <% end %>
   <% if @interview.present? && @interview.include_language %>
     <div class="col-md-6">
-      <div class="m-1"><strong><%=@interview.language_info %></strong></div>
+      <div class="m-1"><strong class="left_space"><%=@interview.language_info %></strong></div>
     </div>
     <div class="col-md-6">
       <div class="m-1 pl-3"><strong><%=@interview.language_for_translation %></strong></div>
@@ -75,7 +82,7 @@
   <% else %>
   <div class="col-md-12">
   <% if @interview.present?%>
-      <div class="m-1"><strong><%=@interview.language_info %></strong></div>
+      <div class="m-1"><strong class="no_text"><%=@interview.language_info %></strong></div>
   <% else %>
       <div class="m-1"><strong>English</strong></div>
   <% end %>
@@ -85,7 +92,7 @@
   </div>
   <% end %>
   </div>
-  <div class="w-100 mt-2 custom-form-height">
+  <div class="w-100 mt-2 interview-index-form p-2 border rounded">
   
     <div class="col-md-12">
     <% if @interview.present? %>   
@@ -102,3 +109,8 @@
 <% end %>
 
 </div>
+<script>
+  $(document).ready(function(){
+    $(".top-section-test-interview").sticky({topSpacing: 50});
+  })
+</script>
