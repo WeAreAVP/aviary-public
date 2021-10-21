@@ -181,7 +181,11 @@ module Interviews
       file_data = params[:importXML]
       response_body = {}
       file_data.each do |data|
-        response = Aviary::ImportOhmsInterviewXml.new.import(data, current_organization, current_user)
+        response = if data.content_type.include? 'csv'
+          Aviary::ImportOhmsInterviewCsv.new.import(data, current_organization, current_user)
+        else
+          Aviary::ImportOhmsInterviewXml.new.import(data, current_organization, current_user)
+        end
         response_body = if response.is_a?(Array)
                           { error: true, message: response.first.to_s.capitalize + ' ' + response.second.first }
                         elsif response.is_a?(String)
