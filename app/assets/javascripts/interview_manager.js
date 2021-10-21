@@ -230,6 +230,7 @@ function InterviewManager() {
             let text = (number_selected > 1) ? 'Interviews' : 'Interview';
             $('#interviews_data_table_filter label').append('<span style="color:#204f92" class="ml-10px font-weight-bold" id="resource_selected"> <strong  class="font-size-16px ">' + number_selected + '</strong> ' + text + ' selected | </span> ');
             $('#interviews_data_table_filter label').append('<a href="javascript://" id="clear_all_selection">Clear selected</a>');
+            $('#interviews_data_table_filter label').append('<span id="delete_all_selection_sp"> | <a href="javascript://" id="delete_all_selection">Bulk Delete</a></span>');
             $('#number_of_bulk_selected_popup').html('<span style="color:#204f92" class="ml-10px font-weight-bold" id="resource_selected">  ( <strong  class="font-size-16px ">' + number_selected + '</strong> ' + text + ' will be affected ) </span>');
         }
         $('#clear_all_selection').unbind('click');
@@ -245,12 +246,24 @@ function InterviewManager() {
             updateCount(that.ids_session.length);
             appHelper.classAction($('.select_all_checkbox_interview').data().url, data, 'JSON', 'GET', '', that, false);
         });
+        $('#delete_all_selection').unbind('click');
+        $('#delete_all_selection').bind('click', function () {
+            appHelper.classAction($('.select_all_checkbox_interview').data().bulk_delete, {
+                action: 'fetch_bulk_edit_resource_list',
+                type: 'interviews'
+            }, 'HTML', 'GET', '', that);
+            $('.bulk_operation_interviews')[0].selectize.setValue('bulk_delete');
+            $('.bulk-edit-review-modal').modal()
+
+        });
     };
 
     const emptyCount = function () {
         $('#resource_selected').remove();
         $('#number_of_bulk_selected_popup').html('');
         $('#clear_all_selection').remove();
+        $('#delete_all_selection_sp').remove();
+        $('#delete_all_selection').remove();
     };
 
     this.bulk_resource_list = function (response) {
@@ -376,8 +389,8 @@ function InterviewManager() {
                 $.each(data.files, function (index, file) {
                     let filename = file.name;
                     let fileExt = filename.split('.').pop();
-                    if ((file.type != '' && file.type != 'text/xml' && file.type != 'application/vnd.ms-excel') || (file.type == '' && fileExt != 'xml')) {
-                        jsMessages('danger', 'Only XML file allowed.');
+                    if ((file.type != '' && file.type != 'text/xml' && file.type != 'text/csv' && file.type != 'application/vnd.ms-excel') || (file.type == '' && fileExt != 'xml')) {
+                        jsMessages('danger', 'Only XML or CSV file allowed.');
                         return false;
                     } else {
                         $("#import_file_name").append("Selected File: " + file.name + "<br/>");
@@ -417,7 +430,7 @@ function InterviewManager() {
                     $('#import_xml_btn').html("Import");
 
                 } else {
-                    jsMessages('success', 'XML imported successfully.');
+                    jsMessages('success', 'XML or CSV imported successfully.');
                     setTimeout('window.location.reload();', 5000);
                 }
 

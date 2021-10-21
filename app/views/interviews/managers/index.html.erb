@@ -6,7 +6,15 @@
           <div class="row">
             <div class="col-md-6"><h1>OHMS Records</h1></div>
             <div class="col-md-6">
-              <%= link_to 'Add Interview', new_interviews_manager_path, class: 'btn btn-primary btn-xs pull-right ml-2' %>
+              <div class="dropdown float-right  ml-2 ">
+                <button type="button" class="btn mr-2 btn-outline-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Add Interview
+                </button>
+                <div class="dropdown-menu dropdown-menu-right">
+                  <%= link_to 'Add Manually', new_interviews_manager_path, class: 'dropdown-item' %>
+                  <button class="dropdown-item import-xml-resource-columns-btn" data-target=".manage-interview-import-xml-modal" data-toggle="modal">Import XML or CSV</button>
+                </div>
+              </div>
 
               <div class="dropdown float-right  ml-2 ">
                 <button type="button" class="btn mr-2 btn-outline-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -29,7 +37,7 @@
           <thead>
           <tr>
             <th>
-              <input type="checkbox" class="select_all_checkbox_interview" data-url="<%= bulk_resource_list_interviews_managers_path %>"/>
+              <input type="checkbox" class="select_all_checkbox_interview" data-url="<%= bulk_resource_list_interviews_managers_path %>" data-bulk_delete="<%= fetch_bulk_edit_resource_list_collections_path %>"/>
             </th>
             <% if @display_columns.present? %>
               <% JSON.parse(@display_columns)['columns_status'].each_with_index do |(_field, status), _index| %>
@@ -223,7 +231,7 @@
   <div class="modal-lg modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title h5">Import OHMS XML</h5>
+        <h5 class="modal-title h5">Import OHMS Interview XML or CSV</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -231,22 +239,23 @@
       <div class="modal-body">
         <div class="single-upload">
           <ul class="import_csv_note">
-            <li class="text-muted mb-2 font-size-14px">Select one or more valid OHMS XML files to upload.</li>
+            <li class="text-muted mb-2 font-size-14px">Select one or more valid OHMS XML or CSV files using the box below to upload.</li>
             </li>
           </ul>
           <div id="progress_import" class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="background-color: #ffffff;">
             <div class="progress-bar progress-bar-success" style="width:0%;"></div>
           </div>
           <div class="import-file-confirmation" style="display: none;">
-            <p class="text-muted mb-4">This process will create a new interview record for each valid OHMS XML file you uploaded.</p>
+            <p class="text-muted mb-4">This process will create a new interview record for each valid OHMS XML or CSV file you uploaded.</p>
             <p class="text-muted">Do you want to proceed?
             </p>
           </div>
           <div class="import-xml-file-section">
               <span class="fileinput-button single-upload-file-cus text-center">
-                  Browse and add xml file
-                  <input type="file" name="importXML[]" id="import_xml_file" accept="text/xml" data-url="<%= import_metadata_xml_interviews_managers_path %>" multiple/>
+                  Browse and upload XML or CSV files
+                  <input type="file" name="importXML[]" id="import_xml_file" accept=".csv, text/xml" data-url="<%= import_metadata_xml_interviews_managers_path %>" multiple/>
                 </span>
+                <div>Download a CSV import template <a href="/assets/OHMS_Import_Template.csv" download>here</a></div>
             <span id="import_file_name"></span>
           </div>
         </div>
