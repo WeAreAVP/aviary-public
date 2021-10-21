@@ -168,6 +168,11 @@
   height: auto !important;
 }
 
+.organization-section textarea.form-control {
+  height: 55px !important;
+  word-break: break-all;
+}
+
 .custom_form .form-control:disabled,
 .custom_form .form-control[readonly] {
   background-color: #ffffff;

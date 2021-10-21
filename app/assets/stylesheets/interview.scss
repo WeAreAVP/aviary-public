@@ -13,16 +13,21 @@
 }
 
 .custom-form-height {
-  height: 350px;
+  height: 263px;
   overflow: auto;
 
   .d-flex {
-    margin: 0 -10px;
-
     .form-group {
       flex: 1;
       padding: 0 10px;
     }
+  }
+}
+
+.interview-index-form {
+  .form-group {
+    flex: 1;
+    padding: 0 10px;
   }
 }
 
@@ -56,11 +61,11 @@
   border-radius: 20px;
   position: absolute;
   right: -20px;
-  top: 0;
+  top: 0px;
   font-size: 17px;
   line-height: 1;
   text-align: center;
-  padding: 0;
+  padding: 0px;
 }
 
 .add_button_interview:hover {
@@ -94,9 +99,362 @@ div#noMediaConnection {
   float: left;
 }
 
+.interview-index {
+  h1 {
+    small {
+      font-size: 70%;
+      display: block;
+      margin-top: 10px;
+    }
+  }
+
+  .top-section-test-interview {
+    background: #f9fafb;
+    padding: 0;
+
+    .left-section {
+      height: 100%;
+      padding: 30px 30px 0;
+      position: relative;
+
+      .update_time {
+        position: absolute;
+        top: 52px;
+        right: 30px;
+        border: 1px solid #ced4da;
+        font-size: 14px;
+        height: 54px;
+        display: flex;
+        align-items: center;
+        border-radius: 0 4px 4px 0;
+      }
+
+      .field-title {
+        background: #f9fafb;
+      }
+
+      .form-control {
+        background: #f9fafb;
+      }
+
+      .buttons-box {
+        display: flex;
+        margin: 0 -5px;
+
+        .btn {
+          border-color: #e5ebed;
+          background: #e5ebed;
+          color: #222;
+          padding: 10px;
+          margin: 5px 5px 10px;
+          flex: 1;
+        }
+      }
+    }
+  }
+
+  #media_host {
+    width: 80%;
+    margin: 0 0 0 auto;
+  }
+
+  .language_name_row {
+    strong {
+      border-bottom: 2px solid #000;
+      background: #fff;
+      padding: 3px 10px;
+      display: inline-block;
+      border-radius: 0;
+      color: #000;
+      top: 13px;
+      position: relative;
+      left: -10px;
+
+      &.left_space {
+        left: 20px;
+      }
+
+      &.no_text {
+        border: none;
+        padding: 0;
+      }
+    }
+  }
+
+  .container_gps,
+  .container_hyperlinks {
+    margin-top: -30px;
+
+    .container_gps_inner,
+    .container_hyperlinks_inner {
+      & + .container_gps_inner,
+      & + .container_hyperlinks_inner {
+        position: relative;
+        margin-top: 25px;
+
+        &:after {
+          content: "";
+          position: absolute;
+          top: 0;
+          left: -25px;
+          right: -25px;
+          height: 1px;
+          background: #dee2e6;
+        }
+      }
+    }
+  }
+}
+
+.sticky-wrapper.is-sticky {
+  .top-section-test-interview {
+    z-index: 99 !important;
+    border-radius: 4px 4px 0 0 !important;
+
+    #media_host {
+      width: 45%;
+    }
+
+    .left-section {
+      padding-top: 0;
+
+      .update_time {
+        top: 22px;
+      }
+
+      .buttons-box {
+        .btn {
+          padding: 4px;
+        }
+      }
+    }
+  }
+}
+
+#interviews_data_table_wrapper {
+  .DTFC_RightBodyLiner {
+    tr {
+      &:nth-of-type(odd) {
+        td {
+          background: #f9fafb !important;
+        }
+      }
+
+      td {
+        background: #fff !important;
+      }
+    }
+  }
+}
+
+.status {
+  span {
+    font-weight: 600;
+    margin-right: 10px;
+    font-size: 14px;
+  }
+}
+
+.custom-checkbox-holder {
+  padding-top: 35px;
+  padding-bottom: 29px;
+}
+
+.add_tag {
+  padding: 10px;
+  border-radius: 0 0 4px 4px;
+  border-color: #003853;
+  font-size: 16px;
+  background: #003853;
+  color: #fff;
+}
+
+.top-index-interview {
+  select {
+    border-color: #6d757d;
+    border-radius: 4px !important;
+    font-size: 14px;
+    color: #6d757d;
+    height: 34px !important;
+  }
+
+  .btn-group {
+    .btn {
+      &:hover {
+        opacity: 1;
+      }
+    }
+  }
+}
+
 .interview-accordion {
   button {
     white-space: normal !important;
     color: #000;
+  }
+
+  .card {
+    overflow: hidden;
+    border-radius: 0 4px 4px 0;
+    border-left: 3px solid #003853;
+
+    & + .card {
+      margin-top: 20px;
+    }
+
+    .card-header {
+      background: #fff;
+      border: none;
+      padding: 0;
+
+      .btn-collapse {
+        font-size: 14px;
+        font-weight: bold;
+        line-height: 14px;
+        width: 25px;
+        height: 25px;
+        background: #fff;
+        border-radius: 30px;
+        text-align: center;
+        border: 2px solid #CCD7DD;
+        color: #003853;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        z-index: 2;
+        justify-content: center;
+        opacity: 1;
+        margin-top: 0px;
+        margin-right: 10px;
+        margin-left: 0px;
+        text-decoration: none;
+        transition: 0.2s all ease;
+        padding: 0;
+        flex: 0 0 25px;
+
+        i {
+          font-size: 20px;
+          position: relative;
+          left: 0px;
+          top: -1px;
+          transform: rotate(0deg);
+          -webkit-transform: rotate(0deg);
+          transition: 0.2s all ease;
+        }
+      }
+
+      .btn-collapse[aria-expanded="true"] {
+        i {
+          transform: rotate(-180deg);
+          -webkit-transform: rotate(-180deg);
+          transition: 0.2s all ease;
+        }
+      }
+
+      h2 {
+        & > div {
+          flex: 0 0 68%;
+          width: 100%;
+        }
+      }
+
+      button {
+        background: #fff;
+        text-decoration: none;
+        color: #000;
+        padding: 10px 20px;
+      }
+
+      .d-flex {
+        margin-right: 5px;
+        padding: 10px;
+      }
+
+      .btn-group {
+        position: absolute;
+        top: -1px;
+        right: -1px;
+      }
+
+      a {
+        border: 1px solid #ddd;
+        border-radius: 0;
+        padding: 8px 15px;
+      }
+    }
+
+    .list-group-item {
+      padding: 5px 15px;
+      font-size: 14px;
+      font-weight: 600;
+
+      strong {
+        font-weight: 600;
+        color: #828282;
+      }
+    }
+  }
+
+  .collapse {
+    .card-body {
+      padding: 10px;
+    }
+  }
+
+  .segment-title {
+    font-weight: 600;
+    color: #000;
+    font-size: 16px;
+    margin-bottom: 5px;
+    width: 100%;
+  }
+
+  .segment-duration {
+    font-size: 14px;
+    font-weight: 600;
+    display: block;
+    color: #336175;
+  }
+}
+
+.action-btn-holder {
+  margin-right: 10px;
+  display: inline-flex;
+  width: 200px;
+  flex-wrap: wrap;
+
+  .btn-interview {
+    margin: 3px;
+    padding: 0.25rem 0.5rem;
+    border: 1px solid;
+    flex: 1;
+    text-align: center;
+
+    &:hover {
+      border: 1px solid;
+      opacity: 0.6;
+      text-decoration: none;
+    }
+  }
+}
+
+.container_interviewer,
+.container_interviewee,
+.container_format {
+  .row {
+    & + .row {
+      margin-top: 1.5rem;
+    }
+  }
+}
+
+.text-custom-dropdown {
+  font-size: 18px;
+}
+
+#interviews_data_table {
+  th,
+  td {
+    white-space: nowrap;
   }
 }

@@ -8,21 +8,23 @@
         </button>
       </div>
       <%= simple_form_for :interview_transcript, action: '', method: :post, html: { id: 'interviewTranscriptForm' } do |form| %>
-        <div class="modal-body" id="modalPopupNotesBody">
-          <div class="text">
-            <strong>Note: </strong><span class="small">Please see the <a href="https://www.oralhistoryonline.org/wp-content/uploads/2017/06/OHMS_User_Guide_Master_2017.pdf" target="_blank">OHMS User Guide</a> for more details.</span>
-          </div>
-          <hr/>
-          <div id="listNotes" class="custom-height-list"></div>
-
-
-          <div class="form-group row">
-            <label for="inputFile" class="col-sm-3 col-form-label">File</label>
-            <div class="col-sm-8">
+        <div class="modal-body custom_form" id="modalPopupNotesBody">
+          
+        <div class="alert alert-warning">
+          <strong>Note: </strong><span class="small">Please see the <a href="https://www.oralhistoryonline.org/wp-content/uploads/2017/06/OHMS_User_Guide_Master_2017.pdf" target="_blank">OHMS User Guide</a> for more details.</span>
+        </div>
+        
+        <div id="listNotes" class="custom-height-list"></div>
+          <div class="form-group">
+            <div class="field-title"><label>File</label></div>
+            <span class="fileinput-button single-upload-file-cus text-center">Browse and add file(s)
               <%= form.file_field :associated_file, as: :file, error: false, label: false, class: 'form-control', accept: 'text/plain,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/msword' %>
-              <span id='selected_file_associated_file' class="d-none"> </span>
-              <div class="small">Transcript files can be .txt (plain text, UTF-8), .docx, or .doc format and must be
-                less than 8 megabytes in size.
+            </span>
+            <span id='selected_file_associated_file' class="d-none"> </span>
+          </div>
+          <div class="form-group row">
+            <div class="col-sm-12">
+              <div class="small">Transcript files can be .txt (plain text, UTF-8), .docx, or .doc format and must be less than 8 megabytes in size.
               </div>
               <div class="small mt-3">If your uploaded transcript contains timestamps, select the appropriate timecode
                 interval below to match your transcript. Otherwise, select the timecode interval that you will be using
@@ -30,38 +32,34 @@
               </div>
             </div>
           </div>
-          <div class="form-group row">
-            <label for="inputFile" class="col-sm-3 col-form-label">Timecode Intervals</label>
-            <div class="col-sm-8">
-              <%= form.select :timecode_intervals, [["30 seconds", '0.5'], ['1 minute (Default)', '1'], ['2 minute', '2'], ['3 minute', '3'], ['4 minutes', '4'], ['5 minutes', '5']], selected: '1' %>
-              <div class="small">Transcripts can contain timecode at 30 seconds, 1 minute, 2, 3, 4 or 5 minutes
-                intervals and must conform to this format <code>[HH:MM:SS]</code></div>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group mt-2">
+                <div class="field-title"><label for="inputFile">Timecode Intervals</label></div>
+                  <%= form.select :timecode_intervals, [["30 seconds", '0.5'], ['1 minute (Default)', '1'], ['2 minute', '2'], ['3 minute', '3'], ['4 minutes', '4'], ['5 minutes', '5']], selected: '1' %>
+                  <div class="small">Transcripts can contain timecode at 30 seconds, 1 minute, 2, 3, 4 or 5 minutes intervals and must conform to this format <code>[HH:MM:SS]</code></div>
+              </div>
             </div>
-
-          </div>
-          <div class="form-group row mt-3">
-            <label for="inputFile" class="col-sm-3 col-form-label">Translated Transcript</label>
-            <div class="col-sm-8">
-
-              <%= form.file_field :translation, as: :file, error: false, label: false, class: 'form-control', accept: 'text/plain,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/msword'  %>
-              <span id='selected_file_translation' class="d-none"> </span>
+            <div class="col-md-6">
+              <div class="form-group mt-2">
+                <div class="field-title"><label>Translated Transcript</label></div>
+                <span class="fileinput-button single-upload-file-cus text-center">Browse and add transcript(s)
+                <%= form.file_field :translation, as: :file, error: false, label: false, class: 'form-control', accept: 'text/plain,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/msword'  %>
+                </span>
+                <span id='selected_file_translation' class="d-none"> </span>  
+              </div>
               <div class="small">Transcript files can be .txt (plain text, UTF-8), .docx, or .doc format and must be
                 less than 8 megabytes in size.
               </div>
             </div>
           </div>
 
-          <div class="form-group row">
-            <label for="no-transcript-checkbox" class="col-sm-3 col-form-label">No Transcript</label>
-            <div class="col-sm-1 float-left m-2">
-              <%= form.check_box :no_transcript, as: :file, error: false, label: false, class: 'form-check-input' %>
-
-            </div>
-            <div class="col-sm-8 float-left">
-              <div class="small">Uploading a new transcript, or checking "no transcript" when a transcript has been
-                previously uploaded, will overwrite or delete the current transcript.
-              </div>
-            </div>
+          <div class="custom-checkbox mt-3">
+              <%= form.check_box :no_transcript, as: :file, error: false, label: false, id: "no-transcript-checkbox", class: 'form-check-input' %>
+              <label for="no-transcript-checkbox" class="col-sm-3 col-form-label">No Transcript</label>
+          </div>
+          <div class="small mt-2">Uploading a new transcript, or checking "no transcript" when a transcript has been
+            previously uploaded, will overwrite or delete the current transcript.
           </div>
 
         </div>

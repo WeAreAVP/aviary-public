@@ -1,492 +1,363 @@
 <%= simple_form_for @interview, :url => @interview.new_record? ? interviews_managers_path : interviews_manager_path(@interview), html: { class: "interview_manager" } do |f| %>
   <div class="row ">
+    <div class="col-md-12 border-bottom mb-4 top-index-interview">
+      <div class="row">
+        <div class="col-md-5">
+          <div class="text-headline jumbotron">
+            <div class="heading-holder">
+              <h1>Metadata Editor </h1>
+            </div>
+          </div>
+          
+        </div>
+        <div class="col-md-7 text-right">
+          <div class="d-flex align-items-center justify-content-between">
+            <div class="status d-flex align-items-center">
+              <span>Status</span>
+              <div class="ml-1">
+                <%= f.select :metadata_status, options_for_select(@interview.listing_metadata_status.map { |key, index| [index, key] }, @interview.metadata_status), {},required: false, label: false, class: 'custom-placeholder dont-apply-selectize form-control p-2' %>
+              </div>
+            </div>
+            <div class="d-flex align-items-center py-4">
+              <div class="btn-group">
+                <%= link_to 'Return To Interviews', interviews_managers_path, class: 'btn btn-outline-secondary' %>
+                <% unless @interview.new_record? %>
+                  <%= link_to 'Delete Interview', 'javascript://', class: 'btn btn-outline-danger interview_delete', data: { url: interviews_manager_path(@interview), name: @interview.title } %>
+                <% end %>
+              </div>
+              <%= f.submit 'Save', class: 'btn btn-success ml-3' %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <div class="text-headline jumbotron mt-2 mb-2">
+        <h3>Admin and Description</h3>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="form-group">
+            <div class="field-title"><%= f.label :title, "Title*" %></div>
+            <%= f.input :title, label: false, input_html: { class: 'form-control title' } %>
+          </div>
+          <div class="form-group mb-3">
+            <div class="field-title"><%= f.label :accession_number, 'Accession Number' %></div>
+            <%= f.input :accession_number, label: false, input_html: { class: 'form-control accession_number' } %>
+          </div>
+          <div class="form-group">
+            <div class="field-title"><%= f.label :interviewee %>
+              <a href="javascript:void(0);" class="add_interviewee add_button_interview text-decoration-none"> +</a>
+            </div>
+            <div class="container_interviewee">
+              <% if @interview.interviewee.present? && @interview.interviewee.size > 0 %>
+                <% @interview.interviewee.each do |single_interview| %>
+                  <div class="row container_interviewee_inner field_container">
+                    <div class="col-12">
+                      <input type='text' name='interviews_interview[interviewee][]' id="interviews_interview_interviewee" value="<%= single_interview %>" class="json optional form-control interviewee"/>
+                      <a href="javascript://" class="remove_interviewee" title="Remove Interviewee"><i class="remove_icon_image"></i></a>
+                    </div>
+                  </div>
+                <% end %>
+              <% else %>
+                <div class="row container_interviewee_inner field_container">
+                  <div class="col-12">
+                    <input type='text' name='interviews_interview[interviewee][]' id="interviews_interview_interviewee" class="json optional form-control interviewee"/>
+                    <a href="javascript://" class="remove_interviewee" title="Remove Interviewee"><i class="remove_icon_image"></i></a>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="field-title"><%= f.label :interviewer %>
+              <a href="javascript:void(0);" class="add_interviewer add_button_interview text-decoration-none"> + </a>
+            </div>
+            <div class="container_interviewer">
+              <% if @interview.interviewer.present? && @interview.interviewer.size > 0 %>
+                <% @interview.interviewer.each do |single_interviewer| %>
+                  <div class="row container_interviewer_inner field_container">
+                    <div class="col-12">
+                      <input type='text' name='interviews_interview[interviewer][]' id="interviews_interview_interviewer" value="<%= single_interviewer %>" class="json optional form-control interviewer "/>
+                      <a href="javascript://" class="remove_interviewer" title="Remove interviewer"><i class="remove_icon_image"></i></a>
+                    </div>
+                  </div>
+                <% end %>
+              <% else %>
+                <div class="row container_interviewer_inner field_container">
+                  <div class="col-12">
+                    <input type='text' name='interviews_interview[interviewer][]' id="interviews_interview_interviewer" value="" class="json optional form-control interviewer "/>
+                    <a href="javascript://" class="remove_interviewer" title="Remove interviewer"><i class="remove_icon_image"></i></a>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="field-title"><%= f.label :interview_date, 'Interview Date' %></div>
+            <%= f.input :interview_date, label: false, input_html: { class: 'form-control interview_date', type: 'text' } %>
+          </div>
+          <div class="form-group">
+            <div class="field-title"><%= f.label :media_type, 'Type' %></div>
+            <%= f.input :media_type, label: false, input_html: { class: 'form-control media_type' } %>
+          </div>
+          <div class="form-group">
+            <div class="field-title"><%= f.label :date_non_preferred_format, 'Date (non-preferred format) ' %></div>
+            <%= f.input :date_non_preferred_format, label: false, input_html: { class: 'form-control date_non_preferred_format' } %>
+          </div>
+          <div class="form-group">
+            <div class="field-title"><%= f.label :collection_id, 'Collection ID' %></div>
+            <%= f.input :collection_id, label: false, input_html: { class: 'form-control collection_id' } %>
+          </div>
+          <div class="form-group">
+            <div class="field-title"><%= f.label :collection_name, 'Collection Name' %></div>
+            <%= f.input :collection_name, label: false, input_html: { class: 'form-control collection_id' } %>
+          </div>
+          <div class="form-group">
+            <div class="field-title"><%= f.label :collection_link, 'Collection Link' %></div>
+            <%= f.input :collection_link, label: false, input_html: { class: 'form-control collection_link' } %>
+          </div>
+          <div class="form-group">
+            <div class="field-title"><%= f.label :series_id, 'Series ID' %></div>
+            <%= f.input :series_id, label: false, input_html: { class: 'form-control series_id' } %>
+          </div>
+          <div class="form-group">
+            <div class="field-title"><%= f.label :series, 'Series (Name)' %></div>
+            <%= f.input :series, label: false, input_html: { class: 'form-control series' } %>
+          </div>
+          <div class="form-group">
+            <div class="field-title"><%= f.label :series_link, "Series Link" %></div>
+            <%= f.input :series_link, label: false, input_html: { class: 'form-control series_link' } %>
+          </div>
+          <div class="form-group">
+            <div class="field-title"><%= f.label :summary %></div>
+            <%= f.input :summary, label: false, input_html: { class: 'form-control summary' } %>
+          </div>
+          <div class="form-group">
+            <div class="field-title"><%= f.label :keywords %>
+              <a href="javascript:void(0);" class="add_keywords add_button_interview text-decoration-none"> +</a>
+            </div>
+            <div class="container_keywords">
+              <% if @interview.keywords.present? && @interview.keywords.size > 0 %>
+                <% @interview.keywords.each do |single_keywords| %>
+                  <div class="row container_keywords_inner field_container">
+                    <div class="col-12 mb-2">
+                      <input type='text' name='interviews_interview[keywords][]' id="interviews_interview_keywords" value="<%= single_keywords %>" class="json optional form-control keywords"/>
+                      <a href="javascript://" class="remove_keywords" title="Remove keywords"><i class="remove_icon_image"></i></a>
+                    </div>
+                  </div>
+                <% end %>
+              <% else %>
+
+                <div class="row container_keywords_inner field_container">
+                  <div class="col-12 mb-2">
+                    <input type='text' name='interviews_interview[keywords][]' id="interviews_interview_keywords" class="json optional form-control keywords "/>
+                    <a href="javascript://" class="remove_keywords" title="Remove keywords"><i class="remove_icon_image"></i></a>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="field-title"><%= f.label :subjects %>
+              <a href="javascript:void(0);" class="add_subjects add_button_interview text-decoration-none"> +
+              </a>
+            </div>
+            <div class="container_subjects">
+              <% if @interview.subjects.present? && @interview.subjects.size > 0 %>
+                <% @interview.subjects.each do |single_subjects| %>
+                  <div class="row container_subjects_inner field_container">
+                    <div class="col-12 mb-2">
+                      <input type='text' name='interviews_interview[subjects][]' id="interviews_interview_subjects" value='<%= single_subjects %>' class="json optional form-control subjects "/>
+                      <a href="javascript://" class="remove_subjects" title="Remove subjects"><i class="remove_icon_image"></i></a>
+                    </div>
+                  </div>
+                <% end %>
+              <% else %>
+                <div class="row container_subjects_inner field_container">
+                  <div class="col-12 mb-2">
+                    <input type='text' name='interviews_interview[subjects][]' id="interviews_interview_subjects" class="json optional form-control subjects "/>
+                    <a href="javascript://" class="remove_subjects" title="Remove subjects"><i class="remove_icon_image"></i></a>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          </div>
+          <div class="text-headline jumbotron custom-title-headline">
+            <h3>Thesaurus</h3>
+          </div>
+          <div class="form-group">
+            <div class="field-title"><%= f.label :thesaurus_keywords, "Thesaurus (Keywords)" %></div>
+            <%= f.select :thesaurus_keywords, ::Thesaurus::Thesaurus.list_thesaurus(current_organization), {}, required: false, label: false, class: 'custom-placeholder thesaurus_keywords  ' %>
+          </div>
+          <div class="form-group">
+            <div class="field-title"><%= f.label :thesaurus_subjects, "Thesaurus (Subjects)" %></div>
+            <%= f.select :thesaurus_subjects, ::Thesaurus::Thesaurus.list_thesaurus(current_organization), {}, required: false, label: false, class: 'custom-placeholder thesaurus_subjects' %>
+          </div>
+          <div class="form-group">
+            <div class="field-title"><%= f.label :thesaurus_titles, "Thesaurus (Titles)" %></div>
+            <%= f.select :thesaurus_titles, ::Thesaurus::Thesaurus.list_thesaurus(current_organization), {}, required: false, label: false, class: 'custom-placeholder' %>
+          </div>
+          <div class="text-headline jumbotron custom-title-headline">
+            <h3>Transcript</h3>
+          </div>
+          <div class="form-group">
+            <div class="field-title"><%= f.label :transcript_sync_data, "Transcript Sync Data" %></div>
+            <%= f.input :transcript_sync_data, label: false, input_html: { class: 'form-control transcript_sync_data' } %>
+          </div>
+          <div class="form-group">
+            <div class="field-title"><%= f.label :transcript_sync_data_translation, "Transcript Sync Data Translation" %></div>
+            <%= f.input :transcript_sync_data_translation, label: false, input_html: { class: 'form-control transcript_sync_data_translation' } %>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="text-headline jumbotron mt-2 mb-2">
+        <h3>Media and Technical</h3>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="d-flex align-items-center custom-checkbox-holder">
+            <%= f.label :media_format, "Media Format*" %>
+            <div class="custom-checkbox ml-4 mr-3">
+              <input type="radio" <%= @interview.media_format.to_s.downcase == 'audio' || @interview.media_format.blank? ? 'checked' : '' %> value="audio" name="interviews_interview[media_format]" id="interviews_interview_media_format">
+              <label for="interviews_interview_media_format" class="pt-0">Audio</label>
+            </div>
+            <div class="custom-checkbox">
+              <input type="radio" <%= @interview.media_format.to_s.downcase == 'video' ? 'checked' : '' %> value="video" name="interviews_interview[media_format]" id="interviews_interview_media_format_video">
+              <label for="interviews_interview_media_format_video" class="pt-0">Video</label>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="field-title"><%= f.label :media_host %> </div>
+            <%= f.select :media_host, options_for_select(@interview.listing_media_host.map { |key, index| [key, index] }, @interview.media_host), {}, required: false, label: false, class: 'custom-placeholder media_hosts_value ' %>
+          </div>
+          <div class="form-group media_url_embed dynamic_control_interview">
+            <div class="field-title"><%= f.label :media_url, 'Media URL' %></div>
+            <%= f.input :media_url, label: false, input_html: { class: 'form-control media_url' } %>
+          </div>
+          <div class="form-group avalon_target_domain dynamic_control_interview">
+            <div class="field-title"><%= f.label :avalon_target_domain, 'Avalon Target Domain' %></div>
+            <%= f.input :avalon_target_domain, label: false, input_html: { class: 'form-control avalon_target_domain' } %>
+          </div>
+
+          <div class="form-group embed_code dynamic_control_interview">
+            <div class="field-title"><%= f.label :embed_code, 'Embed Code' %></div>
+            <%= f.input :embed_code, label: false, input_html: { class: 'form-control embed_code' } %>
+          </div>
+
+          <div class="form-group media_host_account_id dynamic_control_interview">
+            <div class="field-title"><%= f.label :embed_code, 'Media Host Account ID' %></div>
+            <%= f.input :media_host_account_id, label: false, input_html: { class: 'form-control media_host_account_id' } %>
+          </div>
+
+          <div class="form-group media_host_player_id dynamic_control_interview">
+            <div class="field-title"><%= f.label :media_host_player_id, 'Media Host Player ID' %></div>
+            <%= f.input :media_host_player_id, label: false, input_html: { class: 'form-control media_host_player_id' } %>
+          </div>
+
+          <div class="form-group media_host_item_id dynamic_control_interview">
+            <div class="field-title"><%= f.label :media_host_player_id, 'Media Host Item ID' %></div>
+            <%= f.input :media_host_item_id, label: false, input_html: { class: 'form-control media_host_item_id' } %>
+          </div>
+          <div class="form-group">
+            <div class="field-title"><%= f.label :media_duration, 'Duration' %></div>
+            <%= f.input :media_duration, label: false, input_html: { class: 'form-control media_duration' } %>
+          </div>
+          <div class="form-group">
+            <div class="field-title"><%= f.label :media_format, ' Format' %>
+              <a href="javascript:void(0);" class="add_format add_button_interview text-decoration-none"> +</a>
+            </div>
+            <div class="container_format">
+              <% if @interview.format_info.present? && @interview.format_info.size > 0 %>
+                <% @interview.format_info.each do |single_format| %>
+                  <div class="row container_format_inner field_container">
+                    <div class="col-12 mb-2">
+                      <input type='text' name='interviews_interview[format_info][]' id="interviews_interview_format" value='<%= single_format %>' class="json optional form-control format "/>
+                      <a href="javascript://" class="remove_format" title="Remove Format"><i class="remove_icon_image"></i></a>
+                    </div>
+                  </div>
+                <% end %>
+              <% else %>
+                <div class="row container_format_inner field_container">
+                  <div class="col-12 mb-2">
+                    <input type='text' name='interviews_interview[format_info][]' id="interviews_interview_format" class="json optional form-control format"/>
+                    <a href="javascript://" class="remove_format" title="Remove Format"><i class="remove_icon_image"></i></a>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="field-title"><%= f.label :media_filename, 'Media Filename' %></div>
+            <%= f.input :media_filename, label: false, input_html: { class: 'form-control media_filename', input_html: { type: 'number' } } %>
+          </div>
+          <div class="text-headline jumbotron custom-title-headline">
+            <h3>Rights and Usage</h3>
+          </div>
+          <div class="form-group">
+            <div class="field-title"><%= f.label :right_statement, "Rights Statement" %></div>
+            <%= f.input :right_statement, label: false, input_html: { class: 'form-control right_statement' } %>
+          </div>
+          <div class="form-group">
+            <div class="field-title"><%= f.label :usage_statement, "Usage Statement" %></div>
+            <%= f.input :usage_statement, label: false, input_html: { class: 'form-control usage_statement' } %>
+          </div>
+          <div class="form-group">
+            <div class="field-title"><%= f.label :acknowledgment %></div>
+            <%= f.input :acknowledgment, label: false, input_html: { class: 'form-control acknowledgment' } %>
+          </div>
+          <div class="text-headline jumbotron custom-title-headline">
+            <h3>Language</h3>
+          </div>
+          <div class="form-group">
+            <div class="field-title"><%= f.label :language_info %></div>
+            <%= f.input :language_info, label: false, input_html: { class: 'form-control language' } %>
+          </div>
+          <div class="custom-checkbox mt-4 mb-3">
+            <%= f.check_box :include_language, label: false, id: "include_language", input_html: { class: 'include_language' } %>
+            <label for="include_language">Include Language</label>
+          </div>
+          <div class="form-group">
+            <div class="field-title"><%= f.label :language_for_translation, 'Include For Translation' %></div>
+            <%= f.input :language_for_translation, label: false, input_html: { class: 'form-control language_for_translation' } %>
+          </div>
+          <div class="text-headline jumbotron custom-title-headline">
+            <h3>Miscellaneous</h3>
+          </div>
+          <div class="form-group">
+            <div class="field-title"><%= f.label :miscellaneous_cms_record_id, "CMS Record ID" %></div>
+            <%= f.input :miscellaneous_cms_record_id, label: false, input_html: { class: 'form-control miscellaneous_cms_record_id' } %>
+          </div>
+          <div class="form-group">
+            <div class="field-title"><%= f.label :miscellaneous_ohms_xml_filename, "OHMS XML Filename" %></div>
+            <%= f.input :miscellaneous_ohms_xml_filename, label: false, input_html: { class: 'form-control miscellaneous_ohms_xml_filename' } %>
+          </div>
+          <div class="custom-checkbox mt-4 mb-3">
+            <%= f.check_box :miscellaneous_use_restrictions, label: false, id: "miscellaneous_use_restrictions" , input_html: { class: 'form-control miscellaneous_use_restrictions' } %>
+            <label for="miscellaneous_use_restrictions">Use Restrictions*</label>
+          </div>
+          <div class="form-group">
+            <div class="field-title"><%= f.label :miscellaneous_sync_url, "Alt Sync URL (Legacy Field)" %></div>
+            <%= f.input :miscellaneous_sync_url, label: false, input_html: { class: 'form-control miscellaneous_sync_url' } %>
+          </div>
+          <div class="form-group">
+            <div class="field-title"><%= f.label :miscellaneous_user_notes, "User Notes" %></div>
+            <%= f.input :miscellaneous_user_notes, label: false, input_html: { class: 'form-control miscellaneous_user_notes' } %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+
+
+  <div class="row mt-4">
     <div class="col-md-12 text-right">
-
-      <%= link_to 'Return To Interviews', interviews_managers_path, class: 'btn btn-primary float-right ml-1 mr-1' %>
-      <%= f.submit 'Save', class: 'btn btn-success float-right ml-1 mr-1' %>
-      <div class="float-right w-25 ml-1 mr-4">
-        <%= f.select :metadata_status, options_for_select(@interview.listing_metadata_status.map { |key, index| [index, key] }, @interview.metadata_status), {},required: false, label: false, class: 'custom-placeholder dont-apply-selectize form-control ml-2 mr-3', style: ' margin-top: -10px; height: 50px !important; ' %>
-      </div>
-    </div>
-  </div>
-  <div class="row mt-4">
-    <div class="col-md-6">
-      <h1 class="h3">Admin and Description</h1>
-    </div>
-    <div class="col-md-6">
-      <h1 class="h3">Media and Technical</h1>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-md-6">
-      <div class="form-group">
-        <div class="field-title"><%= f.label :title, "Title*" %></div>
-        <%= f.input :title, label: false, input_html: { class: 'form-control title' } %>
-      </div>
-    </div>
-
-    <div class="col-md-6">
-      <div class="form-group" style="margin-top: 30px;">
-        <%= f.label :media_format, "Media Format*" %>
-        Audio
-        <input type="radio" <%= @interview.media_format.to_s.downcase == 'audio' || @interview.media_format.blank? ? 'checked' : '' %> value="audio" name="interviews_interview[media_format]" id="interviews_interview_media_format">
-        Video
-        <input type="radio" <%= @interview.media_format.to_s.downcase == 'video' ? 'checked' : '' %> value="video" name="interviews_interview[media_format]" id="interviews_interview_media_format">
-      </div>
-    </div>
-
-  </div>
-  <div class="row">
-    <div class="col-md-6">
-      <div class="form-group">
-        <div class="field-title"><%= f.label :accession_number, 'Accession Number' %></div>
-        <%= f.input :accession_number, label: false, input_html: { class: 'form-control accession_number' } %>
-      </div>
-    </div>
-
-    <div class="col-md-6">
-      <div class="form-group">
-        <div class="field-title"><%= f.label :media_host %> </div>
-        <%= f.select :media_host, options_for_select(@interview.listing_media_host.map { |key, index| [key, index] }, @interview.media_host), {}, required: false, label: false, class: 'custom-placeholder media_hosts_value ' %>
-      </div>
-    </div>
-  </div>
-
-  <div class="row">
-    <div class="col-md-6"></div>
-    <div class="col-md-6">
-      <div class="form-group media_url_embed dynamic_control_interview">
-        <div class="field-title"><%= f.label :media_url, 'Media URL' %></div>
-        <%= f.input :media_url, label: false, input_html: { class: 'form-control media_url' } %>
-      </div>
-      <div class="form-group avalon_target_domain dynamic_control_interview">
-        <div class="field-title"><%= f.label :avalon_target_domain, 'Avalon Target Domain' %></div>
-        <%= f.input :avalon_target_domain, label: false, input_html: { class: 'form-control avalon_target_domain' } %>
-      </div>
-
-      <div class="form-group embed_code dynamic_control_interview">
-        <div class="field-title"><%= f.label :embed_code, 'Embed Code' %></div>
-        <%= f.input :embed_code, label: false, input_html: { class: 'form-control embed_code' } %>
-      </div>
-
-
-      <div class="form-group media_host_account_id dynamic_control_interview">
-        <div class="field-title"><%= f.label :embed_code, 'Media Host Account ID' %></div>
-        <%= f.input :media_host_account_id, label: false, input_html: { class: 'form-control media_host_account_id' } %>
-      </div>
-
-      <div class="form-group media_host_player_id dynamic_control_interview">
-        <div class="field-title"><%= f.label :media_host_player_id, 'Media Host Player ID' %></div>
-        <%= f.input :media_host_player_id, label: false, input_html: { class: 'form-control media_host_player_id' } %>
-      </div>
-
-      <div class="form-group media_host_item_id dynamic_control_interview">
-        <div class="field-title"><%= f.label :media_host_player_id, 'Media Host Item ID' %></div>
-        <%= f.input :media_host_item_id, label: false, input_html: { class: 'form-control media_host_item_id' } %>
-      </div>
-
-
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-md-6">
-      <div class="form-group">
-        <div class="field-title"><%= f.label :interviewee %>
-          <a href="javascript:void(0);" class="add_interviewee add_button_interview text-decoration-none"> +</a>
-        </div>
-        <div class="container_interviewee">
-          <% if @interview.interviewee.present? && @interview.interviewee.size > 0 %>
-            <% @interview.interviewee.each do |single_interview| %>
-              <div class="row container_interviewee_inner field_container">
-                <div class="col-12 mb-2">
-                  <input type='text' name='interviews_interview[interviewee][]' id="interviews_interview_interviewee" value="<%= single_interview %>" class="json optional form-control interviewee"/>
-                  <a href="javascript://" class="remove_interviewee" title="Remove Interviewee"><i class="remove_icon_image"></i></a>
-                </div>
-              </div>
-            <% end %>
-          <% else %>
-            <div class="row container_interviewee_inner field_container">
-              <div class="col-12 mb-2">
-                <input type='text' name='interviews_interview[interviewee][]' id="interviews_interview_interviewee" class="json optional form-control interviewee"/>
-                <a href="javascript://" class="remove_interviewee" title="Remove Interviewee"><i class="remove_icon_image"></i></a>
-              </div>
-            </div>
-          <% end %>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-6">
-
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-md-6">
-      <div class="form-group">
-        <div class="field-title"><%= f.label :interviewer %>
-          <a href="javascript:void(0);" class="add_interviewer add_button_interview text-decoration-none"> + </a>
-        </div>
-        <div class="container_interviewer">
-          <% if @interview.interviewer.present? && @interview.interviewer.size > 0 %>
-            <% @interview.interviewer.each do |single_interviewer| %>
-              <div class="row container_interviewer_inner field_container">
-                <div class="col-12 mb-2">
-                  <input type='text' name='interviews_interview[interviewer][]' id="interviews_interview_interviewer" value="<%= single_interviewer %>" class="json optional form-control interviewer "/>
-                  <a href="javascript://" class="remove_interviewer" title="Remove interviewer"><i class="remove_icon_image"></i></a>
-                </div>
-              </div>
-            <% end %>
-          <% else %>
-            <div class="row container_interviewer_inner field_container">
-              <div class="col-12 mb-2">
-                <input type='text' name='interviews_interview[interviewer][]' id="interviews_interview_interviewer" value="" class="json optional form-control interviewer "/>
-                <a href="javascript://" class="remove_interviewer" title="Remove interviewer"><i class="remove_icon_image"></i></a>
-              </div>
-            </div>
-          <% end %>
-        </div>
-      </div>
-    </div>
-
-    <div class="col-md-6">
-      <div class="form-group">
-        <div class="field-title"><%= f.label :media_format, ' Format' %>
-          <a href="javascript:void(0);" class="add_format add_button_interview text-decoration-none"> +</a>
-        </div>
-        <div class="container_format">
-          <% if @interview.format_info.present? && @interview.format_info.size > 0 %>
-            <% @interview.format_info.each do |single_format| %>
-              <div class="row container_format_inner field_container">
-                <div class="col-12 mb-2">
-                  <input type='text' name='interviews_interview[format_info][]' id="interviews_interview_format" value='<%= single_format %>' class="json optional form-control format "/>
-                  <a href="javascript://" class="remove_format" title="Remove Format"><i class="remove_icon_image"></i></a>
-                </div>
-              </div>
-            <% end %>
-          <% else %>
-            <div class="row container_format_inner field_container">
-              <div class="col-12 mb-2">
-                <input type='text' name='interviews_interview[format_info][]' id="interviews_interview_format" class="json optional form-control format"/>
-                <a href="javascript://" class="remove_format" title="Remove Format"><i class="remove_icon_image"></i></a>
-              </div>
-            </div>
-          <% end %>
-        </div>
-
-      </div>
-    </div>
-  </div>
-
-  <div class="row">
-    <div class="col-md-6">
-      <div class="form-group">
-        <div class="field-title"><%= f.label :media_duration, 'Duration' %></div>
-        <%= f.input :media_duration, label: false, input_html: { class: 'form-control media_duration' } %>
-      </div>
-    </div>
-    <div class="col-md-6">
-      <div class="form-group">
-        <div class="field-title"><%= f.label :media_filename, 'Media Filename' %></div>
-        <%= f.input :media_filename, label: false, input_html: { class: 'form-control media_filename', input_html: { type: 'number' } } %>
-      </div>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-md-6">
-      <div class="form-group">
-        <div class="field-title"><%= f.label :interview_date, 'Interview Date' %></div>
-        <%= f.input :interview_date, label: false, input_html: { class: 'form-control interview_date', type: 'text' } %>
-      </div>
-    </div>
-    <div class="col-md-6">
-      <div class="form-group">
-        <div class="field-title"><%= f.label :media_type, 'Type' %></div>
-        <%= f.input :media_type, label: false, input_html: { class: 'form-control media_type' } %>
-      </div>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-md-6">
-      <div class="form-group">
-        <div class="field-title"><%= f.label :date_non_preferred_format, 'Date (non-preferred format) ' %></div>
-        <%= f.input :date_non_preferred_format, label: false, input_html: { class: 'form-control date_non_preferred_format' } %>
-      </div>
-    </div>
-
-  </div>
-
-  <div class="row">
-    <div class="col-md-6">
-      <div class="form-group">
-        <div class="field-title"><%= f.label :collection_id, 'Collection ID' %></div>
-        <%= f.input :collection_id, label: false, input_html: { class: 'form-control collection_id' } %>
-      </div>
-    </div>
-    <div class="col-md-6">
-
-    </div>
-  </div>
-  <div class="row mt-4">
-    <div class="col-md-6">
-      <div class="form-group">
-        <div class="field-title"><%= f.label :collection_name, 'Collection Name' %></div>
-        <%= f.input :collection_name, label: false, input_html: { class: 'form-control collection_id' } %>
-      </div>
-    </div>
-    <div class="col-md-6">
-      <h1 class="h3">Rights and Usage</h1>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-md-6">
-      <div class="form-group">
-        <div class="field-title"><%= f.label :collection_link, 'Collection Link' %></div>
-        <%= f.input :collection_link, label: false, input_html: { class: 'form-control collection_link' } %>
-      </div>
-    </div>
-    <div class="col-md-6">
-      <div class="form-group">
-        <div class="field-title"><%= f.label :right_statement, "Rights Statement" %></div>
-        <%= f.input :right_statement, label: false, input_html: { class: 'form-control right_statement' } %>
-      </div>
-    </div>
-  </div>
-
-  <div class="row">
-    <div class="col-md-6">
-      <div class="form-group">
-        <div class="field-title"><%= f.label :series_id, 'Series ID' %></div>
-        <%= f.input :series_id, label: false, input_html: { class: 'form-control series_id' } %>
-      </div>
-    </div>
-    <div class="col-md-6">
-      <div class="form-group">
-        <div class="field-title"><%= f.label :usage_statement, "Usage Statement" %></div>
-        <%= f.input :usage_statement, label: false, input_html: { class: 'form-control usage_statement' } %>
-      </div>
-    </div>
-  </div>
-
-  <div class="row">
-    <div class="col-md-6">
-      <div class="form-group">
-        <div class="field-title"><%= f.label :series, 'Series (Name)' %></div>
-        <%= f.input :series, label: false, input_html: { class: 'form-control series' } %>
-      </div>
-    </div>
-    <div class="col-md-6">
-      <div class="form-group">
-        <div class="field-title"><%= f.label :acknowledgment %></div>
-        <%= f.input :acknowledgment, label: false, input_html: { class: 'form-control acknowledgment' } %>
-      </div>
-    </div>
-  </div>
-  <div class="row mt-4">
-    <div class="col-md-6"></div>
-    <div class="col-md-6">
-      <h1 class="h3">Language</h1>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-md-6">
-      <div class="form-group">
-        <div class="field-title"><%= f.label :series_link, "Series Link" %></div>
-        <%= f.input :series_link, label: false, input_html: { class: 'form-control series_link' } %>
-      </div>
-    </div>
-    <div class="col-md-6">
-      <div class="form-group">
-        <div class="field-title"><%= f.label :language_info %></div>
-        <%= f.input :language_info, label: false, input_html: { class: 'form-control language' } %>
-      </div>
-    </div>
-  </div>
-
-  <div class="row">
-    <div class="col-md-6">
-      <div class="form-group">
-        <div class="field-title"><%= f.label :summary %></div>
-        <%= f.input :summary, label: false, input_html: { class: 'form-control summary' } %>
-      </div>
-    </div>
-    <div class="col-md-6 mt-4">
-      <div class="form-group">
-        <div class=""><%= f.label :include_language, "Include Language" %></div>
-        <%= f.check_box :include_language, label: false, input_html: { class: 'form-control include_language' } %>
-      </div>
-    </div>
-  </div>
-
-  <div class="row">
-    <div class="col-md-6">
-      <div class="form-group">
-        <div class="field-title"><%= f.label :keywords %>
-          <a href="javascript:void(0);" class="add_keywords add_button_interview text-decoration-none"> +</a>
-        </div>
-        <div class="container_keywords">
-          <% if @interview.keywords.present? && @interview.keywords.size > 0 %>
-            <% @interview.keywords.each do |single_keywords| %>
-              <div class="row container_keywords_inner field_container">
-                <div class="col-12 mb-2">
-                  <input type='text' name='interviews_interview[keywords][]' id="interviews_interview_keywords" value="<%= single_keywords %>" class="json optional form-control keywords"/>
-                  <a href="javascript://" class="remove_keywords" title="Remove keywords"><i class="remove_icon_image"></i></a>
-                </div>
-              </div>
-            <% end %>
-          <% else %>
-
-            <div class="row container_keywords_inner field_container">
-              <div class="col-12 mb-2">
-                <input type='text' name='interviews_interview[keywords][]' id="interviews_interview_keywords" class="json optional form-control keywords "/>
-                <a href="javascript://" class="remove_keywords" title="Remove keywords"><i class="remove_icon_image"></i></a>
-              </div>
-            </div>
-          <% end %>
-        </div>
-
-
-      </div>
-    </div>
-
-    <div class="col-md-6">
-      <div class="form-group">
-        <div class="field-title"><%= f.label :language_for_translation, 'Include For Translation' %></div>
-        <%= f.input :language_for_translation, label: false, input_html: { class: 'form-control language_for_translation' } %>
-      </div>
-    </div>
-  </div>
-
-  <div class="row mt-4">
-    <div class="col-md-6"></div>
-    <div class="col-md-6">
-      <h1 class="h3">Miscellaneous</h1>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-md-6">
-      <div class="form-group">
-        <div class="field-title"><%= f.label :subjects %>
-          <a href="javascript:void(0);" class="add_subjects add_button_interview text-decoration-none"> +
-          </a>
-        </div>
-        <div class="container_subjects">
-          <% if @interview.subjects.present? && @interview.subjects.size > 0 %>
-            <% @interview.subjects.each do |single_subjects| %>
-              <div class="row container_subjects_inner field_container">
-                <div class="col-12 mb-2">
-                  <input type='text' name='interviews_interview[subjects][]' id="interviews_interview_subjects" value='<%= single_subjects %>' class="json optional form-control subjects "/>
-                  <a href="javascript://" class="remove_subjects" title="Remove subjects"><i class="remove_icon_image"></i></a>
-                </div>
-              </div>
-            <% end %>
-          <% else %>
-            <div class="row container_subjects_inner field_container">
-              <div class="col-12 mb-2">
-                <input type='text' name='interviews_interview[subjects][]' id="interviews_interview_subjects" class="json optional form-control subjects "/>
-                <a href="javascript://" class="remove_subjects" title="Remove subjects"><i class="remove_icon_image"></i></a>
-              </div>
-            </div>
-          <% end %>
-        </div>
-      </div>
-    </div>
-
-    <div class="col-md-6">
-      <div class="form-group">
-        <div class="field-title"><%= f.label :miscellaneous_cms_record_id, "CMS Record ID" %></div>
-        <%= f.input :miscellaneous_cms_record_id, label: false, input_html: { class: 'form-control miscellaneous_cms_record_id' } %>
-      </div>
-    </div>
-  </div>
-
-  <div class="row mt-4">
-    <div class="col-md-6">
-      <h1 class="h3">Thesaurus</h1>
-    </div>
-    <div class="col-md-6">
-
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-md-6">
-      <div class="form-group">
-        <div class="field-title"><%= f.label :thesaurus_keywords, "Thesaurus (Keywords)" %></div>
-        <%= f.select :thesaurus_keywords, ::Thesaurus::Thesaurus.list_thesaurus(current_organization), {}, required: false, label: false, class: 'custom-placeholder thesaurus_keywords  ' %>
-      </div>
-    </div>
-    <div class="col-md-6">
-      <div class="form-group">
-        <div class="field-title"><%= f.label :miscellaneous_ohms_xml_filename, "OHMS XML Filename" %></div>
-        <%= f.input :miscellaneous_ohms_xml_filename, label: false, input_html: { class: 'form-control miscellaneous_ohms_xml_filename' } %>
-      </div>
-    </div>
-  </div>
-
-  <div class="row">
-    <div class="col-md-6">
-      <div class="form-group">
-        <div class="field-title"><%= f.label :thesaurus_subjects, "Thesaurus (Subjects)" %></div>
-        <%= f.select :thesaurus_subjects, ::Thesaurus::Thesaurus.list_thesaurus(current_organization), {}, required: false, label: false, class: 'custom-placeholder thesaurus_subjects' %>
-      </div>
-    </div>
-    <div class="col-md-6 mt-4">
-      <div class="form-group">
-        <div class=""><%= f.label :miscellaneous_use_restrictions, "Use Restrictions*" %></div>
-        <%= f.check_box :miscellaneous_use_restrictions, label: false, input_html: { class: 'form-control miscellaneous_use_restrictions' } %>
-      </div>
-    </div>
-  </div>
-
-  <div class="row">
-    <div class="col-md-6">
-      <div class="form-group">
-        <div class="field-title"><%= f.label :thesaurus_titles, "Thesaurus (Titles)" %></div>
-        <%= f.select :thesaurus_titles, ::Thesaurus::Thesaurus.list_thesaurus(current_organization), {}, required: false, label: false, class: 'custom-placeholder' %>
-      </div>
-    </div>
-    <div class="col-md-6">
-      <div class="form-group">
-        <div class="field-title"><%= f.label :miscellaneous_sync_url, "Alt Sync URL (Legacy Field)" %></div>
-        <%= f.input :miscellaneous_sync_url, label: false, input_html: { class: 'form-control miscellaneous_sync_url' } %>
-      </div>
-    </div>
-  </div>
-  <div class="row mt-4">
-    <div class="col-md-6">
-      <h1 class="h3">Transcript</h1>
-    </div>
-    <div class="col-md-6">
-
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-md-6">
-      <div class="form-group">
-        <div class="field-title"><%= f.label :transcript_sync_data, "Transcript Sync Data" %></div>
-        <%= f.input :transcript_sync_data, label: false, input_html: { class: 'form-control transcript_sync_data' } %>
-      </div>
-    </div>
-    <div class="col-md-6">
-      <div class="form-group">
-        <div class="field-title"><%= f.label :miscellaneous_user_notes, "User Notes" %></div>
-        <%= f.input :miscellaneous_user_notes, label: false, input_html: { class: 'form-control miscellaneous_user_notes' } %>
-      </div>
-    </div>
-  </div>
-
-  <div class="row">
-    <div class="col-md-6">
-      <div class="form-group">
-        <div class="field-title"><%= f.label :transcript_sync_data_translation, "Transcript Sync Data Translation" %></div>
-        <%= f.input :transcript_sync_data_translation, label: false, input_html: { class: 'form-control transcript_sync_data_translation' } %>
-      </div>
-    </div>
-
-
-  </div>
-  <br/>
-  <div class="row">
-    <div class="col-md-12 text-right">
-      <%= link_to 'Return To Interviews', interviews_managers_path, class: 'btn btn-primary' %>
+      <%= link_to 'Return To Interviews', interviews_managers_path, class: 'btn btn-outline-secondary mr-2' %>
       <%= f.submit 'Save', class: 'btn btn-success' %>
     </div>
   </div>

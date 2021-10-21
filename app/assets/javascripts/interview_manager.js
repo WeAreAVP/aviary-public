@@ -32,6 +32,10 @@ function InterviewManager() {
             lengthMenu: lengthMenuValues,
             scrollX: true,
             scrollCollapse: false,
+            fixedColumns:   {
+                leftColumns: 0,
+                rightColumns: 1
+            },
             pagingType: 'simple_numbers',
             'dom': "<'row'<'col-md-6 d-flex'f><'col-md-6'p>>" +
                 "<'row'<'col-md-12'tr>>" +

@@ -79,31 +79,36 @@ class InterviewsDatatable < ApplicationDatatable
     this_interview = Interviews::Interview.find_by(id: interview['id_is'])
     color_metadata = this_interview.try(:interview_metadata_status)
     index_color_metadata = this_interview.try(:index_status)
-    html = ''
-    html += link_to 'Preview', preview_interviews_manager_path(interview['id_is']), class: 'btn-sm btn-link mr-1 float-left'
-    html += link_to 'Metadata', edit_interviews_manager_path(interview['id_is']), class: 'btn-sm btn-link mr-1 float-left', style: color_metadata.to_s, data: {
+    html = '<div class="d-flex align-items-center"><div class="action-btn-holder btn-group">'
+    html += link_to 'Preview', preview_interviews_manager_path(interview['id_is']), class: 'btn-interview btn-sm btn-link'
+    html += link_to 'Metadata', edit_interviews_manager_path(interview['id_is']), class: 'btn-interview btn-sm btn-link', style: color_metadata.to_s, data: {
       toggle: 'tooltip', placement: 'top', title: (this_interview.present? ? this_interview.listing_metadata_status[this_interview.metadata_status.to_s] : '')
     }
+    html += link_to 'Index', interviews_interview_index_path(interview['id_is']), class: 'btn-interview btn-sm btn-link', style: this_interview.color_grading_index[index_color_metadata.to_s], data: {
+
+    }
     html += link_to (this_interview.try(:interview_transcript).present? && this_interview.interview_transcript.associated_file_updated_at.present? ? 'Re-Upload Transcript' : 'Upload Transcript'), 'javascript:void(0);',
-                    class: 'btn-sm btn-link mr-1 float-left interview_transcript_upload ',
+                    class: 'btn-interview btn-sm btn-link interview_transcript_upload ',
                     style: transcripts_color(this_interview), id: 'interview_tupload_' + interview['id_is'].to_s, data: { id: "upload_#{interview['id_is']}", url: interviews_transcript_path(interview['id_is']) }
 
-    html += link_to 'Notes', 'javascript://', class: 'btn-sm btn-link mr-1 float-left interview_notes ' + notes_color(interview), id: 'interview_note_' + interview['id_is'].to_s, data: {
+    html += link_to 'Notes', 'javascript://', class: 'btn-interview btn-sm btn-link interview_notes ' + notes_color(interview), id: 'interview_note_' + interview['id_is'].to_s, data: {
       id: interview['id_is'], url: interviews_list_notes_path(interview['id_is'], 'json'), updateurl: interviews_update_note_path(interview['id_is'], 'json')
     }
-    html += link_to 'Index', interviews_interview_index_path(interview['id_is']), class: 'btn-sm btn-link mr-1 float-left', style: this_interview.color_grading_index[index_color_metadata.to_s], data: {
-    }
-    html += '<div class="dropdown float-left">'
-    html += ' <button type="button" class="btn btn-sm mr-2 btn-outline-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Export</button>'
+    html += '</div><div class="btn-interview-dropdown dropdown d-inline-block">'
+
+    html += ' <button type="button" class="btn btn-lg text-custom-dropdown btn-link text-primary" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-ellipsis-v"></i></button>'
     html += ' <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; transform: translate3d(137px, 33px, 0px); top: 0px; left: 0px; will-change: transform;">'
-    html += link_to 'XML', export_interviews_manager_path(interview['id_is'], 'xml'), class: 'dropdown-item export_btn'
-    html += link_to 'CSV', export_interviews_manager_path(interview['id_is'], 'csv'), class: 'dropdown-item export_btn'
+    html += link_to 'Export XML', export_interviews_manager_path(interview['id_is'], 'xml'), class: 'dropdown-item export_btn'
+    html += link_to 'Export CSV', export_interviews_manager_path(interview['id_is'], 'csv'), class: 'dropdown-item export_btn'
+    html += '<div class="dropdown-divider"></div>'
+    html += link_to 'Delete', 'javascript://', class: ' btn-interview-danger dropdown-item interview_delete', data: { url: interviews_manager_path(interview['id_is']), name: interview['title_ss'] }
     html += ' </div>'
     html += '</div>'
-    html += link_to 'Delete', 'javascript://', class: 'btn-sm btn-danger interview_delete', data: { url: interviews_manager_path(interview['id_is']), name: interview['title_ss'] }
+    html += "</div>"
     html
   end
 
+  
   def columns(resource_search_column = false)
     columns_allowed = ['id_is']
     if resource_search_column&.present?
