@@ -81,10 +81,11 @@
     </div>
   <% else %>
   <div class="col-md-12">
-  <% if @interview.present?%>
-      <div class="m-1"><strong class="no_text"><%=@interview.language_info %></strong></div>
+
+  <% if @interview.present? %>
+      <div class="m-1"><strong class="left_space"><%=@interview.language_info %></strong></div>
   <% else %>
-      <div class="m-1"><strong>English</strong></div>
+      <div class="m-1"><strong class="left_space">English</strong></div>
   <% end %>
 
 
@@ -112,5 +113,8 @@
 <script>
   $(document).ready(function(){
     $(".top-section-test-interview").sticky({topSpacing: 50});
+    if($('.left_space').text().length == 0){
+      $('.left_space').remove();
+    }
   })
 </script>

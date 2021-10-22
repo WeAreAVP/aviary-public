@@ -13,7 +13,7 @@
 }
 
 .custom-form-height {
-  height: 263px;
+  max-height: 263px;
   overflow: auto;
 
   .d-flex {
@@ -83,20 +83,54 @@
 }
 
 div#noAudio {
-  border: #000 1px solid;
-  padding: 5px;
-  width: 75%;
+  border: 1px solid #dee2e6;
+  width: 100%;
   font-size: 15px;
+  height: 164px;
+  border-radius: 4px 4px 0 0;
+  padding: 40px;
 }
 
 div#noMediaConnection {
   font-size: 21px;
-  color: white;
-  padding: 10px;
-  width: 75%;
-  margin-top: 20px;
-  background-color: #a0a0a0;
+  color: #808d98;
+  padding: 107px;
+  width: 100%;
+  background-color: #e3e9ee;
   float: left;
+  height: 244px;
+  font-weight: bold;
+  text-align: center;
+}
+
+#media_host {
+  iframe {
+    width: 100% !important;
+    height: 300px !important;
+  }
+
+  .audio-player {
+    margin-top: 0;
+
+    .video-js {
+      &.vjs-audio {
+        min-height: 25em;
+      }
+    }
+  }
+}
+
+#media_host[data-host="Brightcove"] {
+  .video-js {
+    height: 300px;
+  }
+}
+
+.interview-accordion {
+  button {
+    white-space: normal !important;
+    color: #000;
+  }
 }
 
 .interview-index {
@@ -156,6 +190,21 @@ div#noMediaConnection {
   #media_host {
     width: 80%;
     margin: 0 0 0 auto;
+
+    iframe {
+      width: 100% !important;
+      height: 244px !important;
+    }
+
+    .video-placeholder {
+      height: 244px;
+    }
+  }
+
+  #media_host[data-host="Brightcove"] {
+    .video-js {
+      height: 244px;
+    }
   }
 
   .language_name_row {
@@ -213,6 +262,38 @@ div#noMediaConnection {
 
     #media_host {
       width: 45%;
+
+      iframe {
+        width: 100% !important;
+        height: 164px !important;
+      }
+
+      .video-placeholder {
+        height: 164px;
+      }
+
+      .audio-player {
+        .video-js {
+          &.vjs-audio {
+            min-height: 164px !important;
+            height: 164px !important;
+          }
+        }
+      }
+    }
+
+    #media_host[data-host="Brightcove"] {
+      .video-js {
+        height: 164px !important;
+      }
+    }
+
+    #noMediaConnection {
+      width: 45%;
+      height: 100px;
+      padding: 39px;
+      font-size: 16px;
+      float: right;
     }
 
     .left-section {
@@ -244,6 +325,7 @@ div#noMediaConnection {
         background: #fff !important;
       }
     }
+
   }
 }
 
@@ -288,11 +370,6 @@ div#noMediaConnection {
 }
 
 .interview-accordion {
-  button {
-    white-space: normal !important;
-    color: #000;
-  }
-
   .card {
     overflow: hidden;
     border-radius: 0 4px 4px 0;
