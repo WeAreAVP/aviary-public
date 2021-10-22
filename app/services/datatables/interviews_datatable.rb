@@ -3,9 +3,8 @@
 # Aviary is an audiovisual content publishing platform with sophisticated features for search and permissions controls.
 # Copyright (C) 2019 Audio Visual Preservation Solutions, Inc.
 class InterviewsDatatable < ApplicationDatatable
-  delegate :can?, :interviews_manager_path, :interviews_list_notes_path, :interviews_update_note_path, :interviews_interview_index_path,
-           :edit_interviews_manager_path, :export_interviews_manager_path, :check_valid_array,
-           :bulk_resource_list_interviews_managers_path, :preview_interviews_manager_path, :interviews_transcript_path, to: :@view
+  delegate :can?, :interviews_manager_path, :interviews_list_notes_path, :interviews_update_note_path, :interviews_transcript_path,
+           :interviews_interview_index_path, :edit_interviews_manager_path, :preview_interviews_manager_path, :export_interviews_manager_path, :sync_interviews_manager_path, :check_valid_array, :bulk_resource_list_interviews_managers_path, to: :@view
 
   def initialize(view, current_organization = nil)
     @view = view
@@ -87,9 +86,16 @@ class InterviewsDatatable < ApplicationDatatable
     html += link_to 'Index', interviews_interview_index_path(interview['id_is']), class: 'btn-interview btn-sm btn-link', style: this_interview.color_grading_index[index_color_metadata.to_s], data: {
 
     }
-    html += link_to (this_interview.try(:interview_transcript).present? && this_interview.interview_transcript.associated_file_updated_at.present? ? 'Re-Upload Transcript' : 'Upload Transcript'), 'javascript:void(0);',
+
+    html += link_to (this_interview.try(:file_transcripts).present? && this_interview.file_transcripts.first.associated_file_updated_at.present? ? 'Re-Upload Transcript' : 'Upload Transcript'), 'javascript:void(0);',
                     class: 'btn-interview btn-sm btn-link interview_transcript_upload ',
                     style: transcripts_color(this_interview), id: 'interview_tupload_' + interview['id_is'].to_s, data: { id: "upload_#{interview['id_is']}", url: interviews_transcript_path(interview['id_is']) }
+
+    if this_interview.try(:file_transcripts).present?
+      html += link_to 'Sync', sync_interviews_manager_path(interview['id_is']), class: 'btn-interview btn-sm btn-link mr-1 float-left interview_transcript_sync ', id: 'interview_transcript_sync' + interview['id_is'].to_s, data: {
+        id: interview['id_is'], url: sync_interviews_manager_path(interview['id_is'], 'json'), updateurl: sync_interviews_manager_path(interview['id_is'])
+      }
+    end
 
     html += link_to 'Notes', 'javascript://', class: 'btn-interview btn-sm btn-link interview_notes ' + notes_color(interview), id: 'interview_note_' + interview['id_is'].to_s, data: {
       id: interview['id_is'], url: interviews_list_notes_path(interview['id_is'], 'json'), updateurl: interviews_update_note_path(interview['id_is'], 'json')
@@ -104,11 +110,10 @@ class InterviewsDatatable < ApplicationDatatable
     html += link_to 'Delete', 'javascript://', class: ' btn-interview-danger dropdown-item interview_delete', data: { url: interviews_manager_path(interview['id_is']), name: interview['title_ss'] }
     html += ' </div>'
     html += '</div>'
-    html += "</div>"
+    html += '</div>'
     html
   end
 
-  
   def columns(resource_search_column = false)
     columns_allowed = ['id_is']
     if resource_search_column&.present?
@@ -130,7 +135,8 @@ class InterviewsDatatable < ApplicationDatatable
   end
 
   def transcripts_color(interview)
-    interview_transcript = interview.try(:interview_transcript)
+    interview_transcript = interview.try(:file_transcripts)
+    interview_transcript = interview_transcript.first if interview_transcript.present?
     text_color = 'color: #1a1aff;'
     if interview_transcript.present?
       if interview_transcript.no_transcript

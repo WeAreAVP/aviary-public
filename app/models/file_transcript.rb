@@ -8,7 +8,8 @@
 class FileTranscript < ApplicationRecord
   include XMLFileHandler
   include ApplicationHelper
-  belongs_to :collection_resource_file
+  belongs_to :collection_resource_file, optional: true
+  belongs_to :interview, class_name: 'Interviews::Interview', optional: true
   has_one :annotation_set, dependent: :destroy
   has_many :file_transcript_points, dependent: :destroy
   belongs_to :user
@@ -25,7 +26,11 @@ class FileTranscript < ApplicationRecord
   after_destroy :update_solr
 
   def update_solr
-    collection_resource_file.collection_resource.reindex_collection_resource
+    collection_resource_file.collection_resource.reindex_collection_resource if should_index?
+  end
+
+  def should_index?
+    interview_id.blank?
   end
 
   def validate_file
@@ -143,7 +148,7 @@ class FileTranscript < ApplicationRecord
     RSolr.connect url: solr_path
   end
 
-  searchable do
+  searchable if: :should_index? do
     integer :id, stored: true
     integer :collection_resource_file_id, stored: true
     integer :user_id, stored: true

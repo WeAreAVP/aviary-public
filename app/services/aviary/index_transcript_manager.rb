@@ -175,7 +175,11 @@ module Aviary::IndexTranscriptManager
     try :transcript_with_sync_point
     try :parse_webvtt
     step :map_hash_to_db
+    attr_accessor :from_resource_file
 
+    def initialize
+      self.from_resource_file = true
+    end
     def process(file_transcript, remove_title = nil)
       file_path = ENV['RAILS_ENV'] == 'production' ? file_transcript.associated_file.url : file_transcript.associated_file.path
       if ['application/xml', 'text/xml'].include? file_transcript.associated_file_content_type
@@ -228,7 +232,7 @@ module Aviary::IndexTranscriptManager
       elsif output.size <= 1 # There is no timestamp in the text file
         single_hash = {}
         single_hash['start_time'] = 0
-        single_hash['end_time'] = file_transcript.collection_resource_file.duration
+        single_hash['end_time'] = file_transcript.collection_resource_file.duration if from_resource_file
         single_hash['duration'] = single_hash['end_time'].to_f - single_hash['start_time'].to_f
         single_hash['text'] = output[0]
         point_hash << single_hash
@@ -263,7 +267,7 @@ module Aviary::IndexTranscriptManager
           end
         end
         last_hash_index = point_hash.size - 1 # update the end time and duration of the last point using file duration
-        point_hash[last_hash_index]['end_time'] = file_transcript.collection_resource_file.duration
+        point_hash[last_hash_index]['end_time'] = file_transcript.collection_resource_file.duration if from_resource_file
         point_hash[last_hash_index]['duration'] = point_hash[last_hash_index]['end_time'].to_f - point_hash[last_hash_index]['start_time'].to_f
         point_hash
       end
@@ -324,7 +328,7 @@ module Aviary::IndexTranscriptManager
       else
         single_hash = {}
         single_hash['start_time'] = 0
-        single_hash['end_time'] = file_transcript.collection_resource_file.duration
+        single_hash['end_time'] = file_transcript.collection_resource_file.duration if from_resource_file
         single_hash['duration'] = single_hash['end_time'].to_f - single_hash['start_time'].to_f
         single_hash['text'] = transcript
         hash << single_hash
