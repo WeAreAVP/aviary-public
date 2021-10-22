@@ -100,7 +100,9 @@ module Interviews
 
       if interview_file_transcript.present?
         interview_file_transcript.each do |single_info|
-          @data_main << { id: single_info.id, text: single_info.text, start_time: single_info.start_time.present? ? Time.at(single_info.start_time).utc.strftime('%H:%M:%S') : '00:00:00', end_time: single_info.end_time.present? ? Time.at(single_info.end_time).utc.strftime('%H:%M:%S') : '00:00:00' }
+          @data_main << { id: single_info.id, text: single_info.text,
+                          start_time: single_info.start_time.present? ? Time.at(single_info.start_time).utc.strftime('%H:%M:%S') : '00:00:00',
+                          end_time: single_info.end_time.present? ? Time.at(single_info.end_time).utc.strftime('%H:%M:%S') : '00:00:00' }
         end
       end
 
@@ -111,7 +113,9 @@ module Interviews
 
       if interview_transcript_translation.present?
         interview_transcript_translation.each do |single_info|
-          @data_translation << { id: single_info.id, text: single_info.text, start_time: Time.at(single_info.start_time).utc.strftime('%H:%M:%S'), end_time: Time.at(single_info.end_time).utc.strftime('%H:%M:%S') }
+          @data_translation << { id: single_info.id, text: single_info.text,
+                                 start_time: single_info.start_time.present? ? Time.at(single_info.start_time).utc.strftime('%H:%M:%S') : '00:00:00',
+                                 end_time: single_info.end_time.present? ? Time.at(single_info.end_time).utc.strftime('%H:%M:%S') : '00:00:00' }
         end
       end
 
