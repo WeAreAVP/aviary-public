@@ -16,11 +16,48 @@ function InterviewManager() {
     let notesEventColor;
     that.ids_session_raw = [];
     that.ids_session = [];
+    that.current_interview_edit = 0;
+    that.has_error_update = false;
+    that.interview_transcript_id = 0;
     this.initialize = function () {
         bindEvents();
     };
 
+    this.initializeSync = function () {
+        $(".translation_transcript, .main_transcript").click(function(){
+            $('.'+$(this).data('opposite')).removeClass('d-none');
+            $(this).addClass('d-none');
+            $('.'+$(this).data('showdiv')).removeClass('d-none');
+            $('.'+$(this).data('hidediv')).addClass('d-none');
+        });
+
+        $('.single_word_transcript')
+            .mouseenter( function(){
+                $(this).addClass('text-dark');
+                $(this).addClass('bg-success');
+                $(this).addClass('border');
+                $(this).addClass('rounded');
+            }).mouseleave( function(){
+            $(this).removeClass('bg-success');
+            $(this).removeClass('text-dark');
+            $(this).removeClass('border');
+            $(this).removeClass('rounded');
+        });
+
+        $('.single_point_transcript')
+            .mouseenter( function(){
+                $(this).addClass('bg-light');
+                $(this).addClass('border');
+                $(this).addClass('rounded');
+            }).mouseleave( function(){
+            $(this).removeClass('bg-light');
+            $(this).removeClass('border');
+            $(this).removeClass('rounded');
+        });
+    };
+
     this.initializeTable = function () {
+
         let config = {
             responsive: true,
             processing: true,
@@ -56,8 +93,16 @@ function InterviewManager() {
             drawCallback: function (settings) {
                 try {
                     that.datatableInitDraw(settings);
+
                 } catch (e) {
 
+                }
+                if (typeof interviews_manager.interview_transcript_id != 'undefined' && interviews_manager.interview_transcript_id != 0) {
+                    appHelper.show_loader();
+                    setTimeout(function(){
+                        $('#interview_tupload_' + interviews_manager.interview_transcript_id ).click();
+                        appHelper.hide_loader();
+                    }, 2000);
                 }
             },
             initComplete: function (settings) {
@@ -94,6 +139,21 @@ function InterviewManager() {
         initNotesPopup();
         bulk_option_selection();
         initImportXmlFile();
+        updateTranscriptInfo();
+    };
+
+    const updateTranscriptInfo = function() {
+        let updateClass = '#update_transcript_inteviews';
+        $("#interview_transcript_translation, #interview_transcript_associated_file").change(function(){
+            if($(this).attr('id') == 'interview_transcript_associated_file') {
+                $('#selected_file_associated_file').text((this).files[0].name);
+                $('#selected_file_associated_file').removeClass('d-none');
+            } else {
+                $('#selected_file_translation').text((this).files[0].name);
+                $('#selected_file_translation').removeClass('d-none');
+
+            }
+        });
     };
 
     this.datatableInitDraw = function () {
@@ -250,6 +310,7 @@ function InterviewManager() {
             updateCount(that.ids_session.length);
             appHelper.classAction($('.select_all_checkbox_interview').data().url, data, 'JSON', 'GET', '', that, false);
         });
+
         $('#delete_all_selection').unbind('click');
         $('#delete_all_selection').bind('click', function () {
             appHelper.classAction($('.select_all_checkbox_interview').data().bulk_delete, {
@@ -442,8 +503,42 @@ function InterviewManager() {
         });
     };
 
+    this.transcriptSync = function (response) {
+
+        if (response.response != null && typeof response.response != 'undefined') {
+            $('#modalPopupSyncBody').html('');
+            $('#modalPopupSyncBody').append('<h1 style="color: red;"> Main Transcript </span>' );
+            if (typeof response.response.data_main != 'undefined' ) {
+                $.each(response.response.data_main, function(single_response, obj){
+                    $('#modalPopupSyncBody').append('<span style="color: blue;">' + obj.start_time + '</span>' );
+                    $('#modalPopupSyncBody').append('<br/>');
+                    $('#modalPopupSyncBody').append(obj.text);
+                    $('#modalPopupSyncBody').append('<br/>');
+                    $('#modalPopupSyncBody').append('<span style="color: blue;">' + obj.end_time + '</span>' );
+                    $('#modalPopupSyncBody').append('<hr/><hr/><hr/><hr/><hr/>');
+                });
+            }
+            if (typeof response.response.data_translation != 'undefined' ) {
+                $('#modalPopupSyncBody').append('<h1 style="color: red;"> Translation Transcript </span>' );
+                $.each(response.response.data_translation, function(single_response, obj){
+                    $('#modalPopupSyncBody').append('<span style="color: blue;">' + obj.start_time + '</span>' );
+                    $('#modalPopupSyncBody').append('<br/>');
+                    $('#modalPopupSyncBody').append(obj.text);
+                    $('#modalPopupSyncBody').append('<br/>');
+                    $('#modalPopupSyncBody').append('<span style="color: blue;">' + obj.end_time + '</span>' );
+                    $('#modalPopupSyncBody').append('<hr/><hr/><hr/><hr/><hr/>');
+                });
+            }
+            $('#modalPopupSync').modal('show');
+        }
+
+    };
+
     const initUploadPopup = function () {
         document_level_binding_element(".interview_transcript_upload", 'click', function (e) {
+            $('#selected_file_translation').text('');
+            $('#selected_file_associated_file').text('');
+            that.current_interview_edit = $(this).data().url;
             $("#interviewTranscriptForm").attr("action", $(this).data().url);
             let data = {
                 action: 'transcriptInformation',
@@ -454,26 +549,27 @@ function InterviewManager() {
     }
 
     this.transcriptInformation = function (response) {
-        if (typeof response.response != 'undefined') {
-            let associatedFileName = response.response['associated_file_file_name'];
+        if (response.response != null && typeof response.response != 'undefined' && typeof response.response[0] != 'undefined' && response.response[0]) {
+            let associatedFileName = response.response[0]['associated_file_file_name'];
             if (associatedFileName) {
                 $('#selected_file_associated_file').text(associatedFileName);
                 $('#selected_file_associated_file').removeClass('d-none');
             }
-
-            let translationFileName = response.response['translation_file_name'];
-            if (translationFileName) {
-                $('#selected_file_translation').text(translationFileName);
-                $('#selected_file_translation').removeClass('d-none');
+            if(typeof response.response[1] != 'undefined'){
+                let translationFileName = response.response[1]['associated_file_file_name'];
+                if (typeof translationFileName != 'undefined' && translationFileName ) {
+                    $('#selected_file_translation').text(translationFileName);
+                    $('#selected_file_translation').removeClass('d-none');
+                }
             }
+            let noTranscript = response.response[0]['no_transcript'];
 
-            let noTranscript = response.response['no_transcript'];
-            $('#interview_transcript_no_transcript').prop('checked', false)
+            $('#no-transcript-checkbox').prop('checked', false)
             if (noTranscript) {
-                $('#interview_transcript_no_transcript').prop('checked', noTranscript)
+                $('#no-transcript-checkbox').prop('checked', noTranscript)
             }
 
-            let timecodeIntervals = response.response['timecode_intervals']
+            let timecodeIntervals = response.response[0]['timecode_intervals']
             if (timecodeIntervals) {
                 $('#interview_transcript_timecode_intervals')[0].selectize.setValue(timecodeIntervals);
             } else {
@@ -482,8 +578,7 @@ function InterviewManager() {
         }
 
         $('#modalPopupUpload').modal('show');
-    }
-    ;
+    };
 
     const initNotesPopup = function () {
         document_level_binding_element(".interview_notes", 'click', function (e) {

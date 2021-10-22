@@ -19,15 +19,14 @@ module Aviary::IndexTranscriptManager
     step :process
     try :parse_webvtt
     try :parse_ohms_xml
-    step :map_hash_to_db
 
-    def process(file_index)
-      file_path = ENV['RAILS_ENV'] == 'production' ? file_index.associated_file.url : file_index.associated_file.path
+    def process(file_index, is_new = true, import = false)
+      file_path = ENV['RAILS_ENV'] == 'production' ? file_index.associated_file.expiring_url : file_index.associated_file.path
       if ['application/xml', 'text/xml'].include? file_index.associated_file_content_type
         doc = Nokogiri::XML(open(file_path))
         xml_hash = Hash.from_xml(doc.to_s)
         hash, alt_hash, language = parse_ohms_xml(xml_hash, file_index)
-        map_hash_to_db(file_index, hash, alt_hash, language)
+        map_hash_to_db(file_index, hash, is_new, alt_hash, language)
       else
         require 'webvtt'
         tmp = Tempfile.new("webvtt_#{Time.now.to_i}")
@@ -39,14 +38,28 @@ module Aviary::IndexTranscriptManager
         webvtt = WebVTT.read(file_path)
         tmp.close
         hash = parse_webvtt(webvtt)
-        map_hash_to_db(file_index, hash)
+        map_hash_to_db(file_index, hash, is_new)
       end
+    rescue StandardError => ex
+      import.import_error_manager(BulkImportManager.error_reporting("<strong> Unable to process Index file #{file_path}")) if import.present?
+      puts ex
     end
 
     def parse_webvtt(webvtt)
       index_hash = []
       webvtt.cues.each do |cue|
         single_hash = {}
+        json_array = [].to_json
+        single_hash['gps_latitude'] = json_array
+        single_hash['gps_longitude'] = json_array
+        single_hash['gps_zoom'] = json_array
+        single_hash['gps_description'] = json_array
+        single_hash['hyperlink'] = json_array
+        single_hash['hyperlink_description'] = json_array
+        single_hash['partial_script'] = ''
+        single_hash['subjects'] = ''
+        single_hash['keywords'] = ''
+
         single_hash['title'] = cue.identifier.present? ? cue.identifier : index_hash.size + 1
         single_hash['start_time'] = cue.start.to_f
         single_hash['end_time'] = cue.start.to_f
@@ -143,9 +156,30 @@ module Aviary::IndexTranscriptManager
       [hash, alt_hash, language]
     end
 
-    def map_hash_to_db(file_index, hash, alt_hash = nil, language = nil)
+    def update_existing_points(file_index, full_hash)
+      existing_index = file_index.file_index_points
+      existing_ids = existing_index.map(&:id)
+      update_ids = []
+      full_hash.each_with_index do |hash, index|
+        if existing_index[index].present?
+          existing_index[index].update(hash)
+          update_ids << existing_index[index].id
+        else
+          new_point = file_index.file_index_points.create(hash)
+          update_ids << new_point.id
+        end
+      end
+      deletable_ids = existing_ids - update_ids
+      file_index.file_index_points.where(id: deletable_ids).destroy_all if deletable_ids.present?
+    end
+
+    def map_hash_to_db(file_index, hash, is_new, alt_hash = nil, language = nil)
       FileIndexPoint.transaction do
-        raise ActiveRecord::Rollback unless file_index.file_index_points.create(hash)
+        if is_new
+          raise ActiveRecord::Rollback unless file_index.file_index_points.create(hash)
+        else
+          update_existing_points(file_index, hash)
+        end
       end
       if alt_hash.present?
         file_index_alt = FileIndex.new
@@ -166,6 +200,7 @@ module Aviary::IndexTranscriptManager
 
   # TranscriptManager Class for managing the index import of OHMS, WebVTT and Simple text files
   class TranscriptManager
+    attr_accessor :annotations
     include Dry::Transaction
     include ApplicationHelper
     step :process
@@ -174,16 +209,63 @@ module Aviary::IndexTranscriptManager
     try :parse_transcript
     try :transcript_with_sync_point
     try :parse_webvtt
+    try :parse_doc
     step :map_hash_to_db
+    step :map_hash_to_db
+    attr_accessor :from_resource_file
 
-    def process(file_transcript, remove_title = nil)
-      file_path = ENV['RAILS_ENV'] == 'production' ? file_transcript.associated_file.url : file_transcript.associated_file.path
+    def initialize
+      self.from_resource_file = true
+    end
+
+    def process(file_transcript, remove_title = nil, is_new = true, import = false)
+      file_path = ENV['RAILS_ENV'] == 'production' ? file_transcript.associated_file.expiring_url : file_transcript.associated_file.path
       if ['application/xml', 'text/xml'].include? file_transcript.associated_file_content_type
         doc = Nokogiri::XML(open(file_path))
         xml_hash = Hash.from_xml(doc.to_s)
         hash, alt_hash, language = parse_ohms_xml(xml_hash, file_transcript)
         return hash if hash.failure?
-        Success(map_hash_to_db(file_transcript, hash, alt_hash, language))
+        Success(map_hash_to_db(file_transcript, hash, is_new, alt_hash, language))
+      elsif file_transcript.associated_file_content_type == 'application/msword'
+        require 'yomu'
+        yomu = Yomu.new file_path
+        file_content = yomu.text
+        hash = parse_doc_text(file_content, file_transcript)
+        response = map_hash_to_db(file_transcript, hash, is_new)
+        Success(response)
+      elsif ['application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/msword'].include? file_transcript.associated_file_content_type
+        require 'docx'
+        doc = Docx::Document.open(open(file_path))
+        file_content = ''
+        doc.paragraphs.each do |p|
+          file_content = "#{file_content}\n\n#{p}"
+        end
+        hash = parse_doc_text(file_content, file_transcript)
+        if hash.value!.blank?
+          hash = parse_doc(doc, file_transcript)
+        end
+        if hash.value!.present?
+          Success(map_hash_to_db(file_transcript, hash, is_new))
+        else
+          Failure('No transcript point available.')
+        end
+      elsif ['application/zip'].include? file_transcript.associated_file_content_type
+        require 'docx'
+        doc = Docx::Document.open(open(file_path))
+        file_content = ''
+        doc.paragraphs.each do |p|
+          file_content = "#{file_content}\n#{p}"
+        end
+
+        hash = parse_doc_text(file_content, file_transcript)
+        if hash.value!.blank?
+          hash = parse_doc(doc, file_transcript)
+        end
+        if hash.value!.present?
+          Success(map_hash_to_db(file_transcript, hash, is_new))
+        else
+          Failure('No transcript point available.')
+        end
       elsif file_transcript.associated_file_content_type == 'text/vtt' || ['.vtt', '.webvtt'].include?(File.extname(file_transcript.associated_file_file_name).downcase)
         require 'webvtt'
         tmp = Tempfile.new("webvtt_#{Time.now.to_i}")
@@ -195,52 +277,274 @@ module Aviary::IndexTranscriptManager
         webvtt = WebVTT.read(file_path)
         tmp.close
         hash = parse_webvtt(webvtt, remove_title)
-        Success(map_hash_to_db(file_transcript, hash))
+        header_info = webvtt.header.split("\n")
+        language_index = header_info.index { |s| s.downcase =~ /language:/ }
+        if language_index.present?
+          language = header_info[language_index].downcase.gsub('language:', '').strip
+          language_code = ISO_639.find_by_code(language).try(:alpha2)
+          file_transcript.update(language: language_code) if language_code.present?
+        end
+        Success(map_hash_to_db(file_transcript, hash, is_new))
       else
         file_content = Rails.env.production? ? URI.parse(file_path).read : File.read(open(file_path))
-        hash = parse_simple_text(file_content, file_transcript)
-        Success(map_hash_to_db(file_transcript, hash))
+        hash = parse_text(file_content, file_transcript)
+        response = map_hash_to_db(file_transcript, hash, is_new)
+
+        parse_annotation(file_content, file_transcript) if annotations.present? && from_resource_file
+        Success(response)
       end
+    rescue StandardError => ex
+      import.import_error_manager(BulkImportManager.error_reporting("<strong> Unable to process transcript file </strong> #{file_path}")) if import.present?
+      puts ex
+    end
+
+    def parse_annotation(content, transcript)
+      transcript_points = transcript.file_transcript_points
+      transcript.annotation_set.destroy if transcript.annotation_set.present?
+      split_content = content.split("ANNOTATIONS BEGIN\n\n")[1].split("\n\nANNOTATIONS END")[0]
+      annotation_split = split_content.split("\n\n")
+      annotation_set_content = annotation_split[0].split("\n")
+      annotation_set_db = AnnotationSet.new
+      annotation_set_db.is_public = transcript.is_public
+      annotation_set_db.organization = transcript.collection_resource_file.collection_resource.collection.organization
+      annotation_set_db.collection_resource = transcript.collection_resource_file.collection_resource
+      annotation_set_db.created_by_id = transcript.user_id
+      annotation_set_db.updated_by_id = transcript.user_id
+      annotation_set_db.file_transcript_id = transcript.id
+      dublin_core = []
+
+      annotation_set_content.each do |annotation_set|
+        key_value = annotation_set.split(':', 2)
+        key = key_value[0].gsub('Annotation Set ', '')
+        value = key_value[1].strip
+        if key == 'Title'
+          annotation_set_db.title = value
+        else
+          dublin_core << { key: key, value: value }
+        end
+      end
+      annotation_set_db.dublin_core = dublin_core.to_json
+      annotation_set_db.save
+      counter = 0
+      annotations_content = annotation_split[1]
+      annotations_content_split = annotations_content.split(/\[[0-9]+\]/)
+      annotations_content_split.delete_at(0)
+      annotations.each_with_index do |value, index|
+        value.each do |target|
+          annotation_db = Annotation.new
+          annotation_db.annotation_set = annotation_set_db
+          annotation_db.sequence = counter + 1
+          annotation_db.body_type = :text
+          annotation_db.body_content = annotations_content_split[counter].strip
+          annotation_db.body_format = :html
+          annotation_db.target_type = :text
+          annotation_db.target_content = :FileTranscript
+          annotation_db.target_content_id = transcript.id
+          annotation_db.target_info = target.merge(pointId: transcript_points[index].id).to_json
+          annotation_db.created_by_id = annotation_set_db.created_by_id
+          annotation_db.updated_by_id = annotation_set_db.updated_by_id
+          annotation_db.target_sub_id = transcript_points[index].id
+          annotation_db.save
+          counter += 1
+        end
+      end
+    rescue StandardError
+      'failed to process annotations content'
+    end
+
+    def parse_doc(doc, file_transcript)
+      point_hash = []
+      counter = -1
+      doc.paragraphs.each_with_index do |p, _key|
+        regex = /\[([0-9:.]+)\]/ ## This is used when only start time is given in transcript
+        output = p.to_s.split(regex)
+        length = output.count
+        next if length < 2
+        single_hash = {}
+        speaker = length == 3 ? output[0].strip : ''
+        start_time = length == 3 ? output[1].strip : output[0].strip
+        text = length == 3 ? output[2].strip : output[1].strip
+        single_hash['speaker'] = speaker
+        single_hash['start_time'] = start_time.split(':').map(&:to_f).inject(0) { |a, b| a * 60 + b }
+
+        single_hash['text'] = text.strip
+        point_hash << single_hash
+        counter += 1
+        if counter != 0 # Set the end time for the previous point
+          point_hash[counter - 1]['end_time'] = single_hash['start_time']
+          point_hash[counter - 1]['duration'] = point_hash[counter - 1]['end_time'] - point_hash[counter - 1]['start_time']
+        end
+      end
+      unless point_hash.empty?
+        last_hash_index = point_hash.size - 1 # update the end time and duration of the last point using file duration
+
+        point_hash[last_hash_index]['end_time'] = file_transcript.collection_resource_file.duration if from_resource_file
+        point_hash[last_hash_index]['duration'] = point_hash[last_hash_index]['end_time'].to_f - point_hash[last_hash_index]['start_time'].to_f
+      end
+      Success(point_hash)
+    end
+
+    def parse_text(file_content, file_transcript)
+      if file_content.include?('AVIARY TRANSCRIPTION')
+        parse_aviary_text(file_content, file_transcript)
+      else
+        parse_simple_text(file_content, file_transcript)
+      end
+    end
+
+    def parse_aviary_text(file, file_transcript)
+      self.annotations = []
+      reg_ex = speaker_regex
+      file = file.delete("\r") # replace \r because it will create problem in parsing logic
+      split_content = file.split("TRANSCRIPTION BEGIN\n\n")[1].split('TRANSCRIPTION END')[0] ## Get only transcript data from the file
+      transcript_points_content = split_content.split("\n\n")
+      point_hash = []
+      counter = -1
+      transcript_points_content.each do |transcript_point_content|
+        regex = /\[([0-9:.]+)\]/ ## This is used when only start time is given in transcript
+        output = transcript_point_content.split(regex)
+        mix_content = output[2].blank? ? [''] : output[2].lstrip.split("\n")
+        single_hash = {}
+
+        single_hash['start_time'] = output[1].split(':').map(&:to_f).inject(0) { |a, b| a * 60 + b }
+        speaker_and_text = mix_content[0].split(reg_ex)
+        speaker_offset = 0
+        if speaker_and_text.size == 1
+          text = speaker_and_text[0]
+          speaker = ''
+        elsif speaker_and_text.size == 3
+          text = speaker_and_text.last.strip
+          speaker = speaker_and_text.second.delete(':').strip
+          speaker_offset += speaker.length + 2
+        else
+          speaker = ''
+          speaker_offset = 0
+          text = mix_content[0]
+        end
+        text = text.force_encoding('UTF-8')
+        single_hash['speaker'] = speaker
+        annotation_regex = %r{<annotation [^>]+>(.*?)<\/annotation>}
+        anno_output = text.split(annotation_regex)
+        final_text = ''
+        single_hash['annotation'] = []
+        anno_output.each_with_index do |value, index|
+          unless index.zero? || index.even?
+            start_offset = final_text.length + speaker_offset
+            single_hash['annotation'] << { time: single_hash['start_time'], text: value, startOffset: start_offset, endOffset: start_offset + value.length }
+          end
+          final_text += value
+        end
+        annotations << single_hash['annotation']
+        single_hash.delete('annotation')
+        single_hash['text'] = final_text
+        point_hash << single_hash
+        counter += 1
+        if counter != 0 # Set the end time for the previous point
+          point_hash[counter - 1]['end_time'] = single_hash['start_time']
+          point_hash[counter - 1]['duration'] = point_hash[counter - 1]['end_time'] - point_hash[counter - 1]['start_time']
+        end
+      end
+      last_hash_index = point_hash.size - 1 # update the end time and duration of the last point using file duration
+      point_hash[last_hash_index]['end_time'] = file_transcript.collection_resource_file.duration if from_resource_file
+      point_hash[last_hash_index]['duration'] = point_hash[last_hash_index]['end_time'].to_f - point_hash[last_hash_index]['start_time'].to_f
+      Success(point_hash)
     end
 
     def parse_simple_text(file, file_transcript)
       regex = /\[([0-9:.]+)\]/ ## This is used when only start time is given in transcript
       start_end_regex = /([0-9:.]+)\t([0-9:.]+)/ ## This is used when both start and end time is given in transcript
       time_regex = /(^[0-9:.]+)/
-      point_hash = []
+
       output = file.split(regex)
-      if output.size <= 1 && file.scan(start_end_regex).length > 1 ## checking if both timestamps present
+      point_hash = point_hash(file, file_transcript, regex, time_regex, start_end_regex, output)
+      Success(point_hash)
+    end
+
+    def parse_doc_text(file, file_transcript, regex = /\[([0-9]{2}:[0-9:.]+)\]|([0-9]{2}:[0-9:.]+)/)
+      start_end_regex = /([0-9:.]+)\t([0-9:.]+)/ ## This is used when both start and end time is given in transcript
+      time_regex = /(^[0-9:.]+)/
+      file = file.force_encoding('UTF-8')
+      output = file.split(regex)
+      output = output.drop(1) if output.size > 1 && output[0].scan(regex).blank? && from_resource_file ## check if header exists then drop it
+      # output = output.drop(output.size - 1) if output.size >= 1 && output[output.size - 1].scan(regex).blank? ## check if footer exists then drop it
+      point_hash = point_hash(file, file_transcript, regex, time_regex, start_end_regex, output)
+      Success(point_hash)
+    end
+
+    def reset_time(start_time)
+      time = start_time.split(':')
+      time.map(&:to_f).inject(0) { |a, b| a * 60 + b }
+    end
+
+    def point_hash(file, file_transcript, regex, time_regex, start_end_regex, output)
+      point_hash = []
+      if file.scan(start_end_regex).length > 1 ## checking if both timestamps present
         output = file.scan(start_end_regex)
-        output.each do |points|
+        total_hrs = 0
+        previous_timestamp = 0
+        reset_timecode = 0
+        output.each_with_index do |points, _point_key|
           start_time = points[0]
           end_time = points[1]
-          puts "TIME: #{start_time}\t#{end_time}"
+          start_time = setup_timestamp(start_time) if ENV['IS_ASJPA'].eql?('true')
+          end_time = setup_timestamp(end_time) if ENV['IS_ASJPA'].eql?('true')
           match_section = file.split("#{start_time}\t#{end_time}")
           text = match_section[1].split(time_regex)[0]
-          puts "TEXT: #{text}"
           single_hash = {}
           single_hash['start_time'] = start_time.split(':').map(&:to_f).inject(0) { |a, b| a * 60 + b } # convert time to seconds
           single_hash['end_time'] = end_time.split(':').map(&:to_f).inject(0) { |a, b| a * 60 + b }
+
+          total_hrs += 1 if previous_timestamp > single_hash['start_time']
+          previous_timestamp = single_hash['start_time']
+          single_hash['start_time'] = single_hash['start_time'] + (total_hrs * 3600)
+          single_hash['end_time'] = single_hash['end_time'] + (total_hrs * 3600)
+
+          if ENV['IS_ASJPA'].eql?('true') && reset_timecode == 0 && file_transcript.is_reset_timestamp == 1
+            reset_timecode = single_hash['start_time']
+            single_hash['start_time'] = 0
+            single_hash['end_time'] = single_hash['end_time'] - reset_timecode
+          elsif ENV['IS_ASJPA'].eql?('true') && reset_timecode > 0 && file_transcript.is_reset_timestamp == 1
+            single_hash['start_time'] = single_hash['start_time'] - reset_timecode
+            single_hash['end_time'] = single_hash['end_time'] - reset_timecode
+          end
           single_hash['duration'] = single_hash['end_time'] - single_hash['start_time']
-          single_hash['text'] = text
+          single_hash['text'] = text.lstrip.gsub(/:[\n]+/, ': ').gsub(/\n{3,5}/, "\n\n").strip
           point_hash << single_hash
         end
       elsif output.size <= 1 # There is no timestamp in the text file
         single_hash = {}
         single_hash['start_time'] = 0
-        single_hash['end_time'] = file_transcript.collection_resource_file.duration
+        single_hash['end_time'] = file_transcript.collection_resource_file.duration if from_resource_file
         single_hash['duration'] = single_hash['end_time'].to_f - single_hash['start_time'].to_f
-        single_hash['text'] = output[0]
+        single_hash['text'] = output[0].gsub(/:[\n]+/, ': ').gsub(/\n{3,5}/, "\n\n").strip
         point_hash << single_hash
       else
         counter = -1
-        output.each do |point|
+        total_hrs = 0
+        previous_timestamp = 0
+        reset_timecode = 0
+        output.each_with_index do |point, _index_key|
           unless point.empty?
             match_section = regex.match("[#{point}]")
             match_time = time_regex.match(point)
             if match_section.present? && match_time.present?
               single_hash = {}
+              point = setup_timestamp(point) if ENV['IS_ASJPA'].eql?('true')
+              if point.split(':').size == 4
+                point = point.sub(/.*\K:/, '.')
+              end
               single_hash['start_time'] = point.split(':').map(&:to_f).inject(0) { |a, b| a * 60 + b } # convert time to seconds
+              total_hrs += 1 if previous_timestamp > single_hash['start_time']
+              previous_timestamp = single_hash['start_time']
+              single_hash['start_time'] = single_hash['start_time'] + (total_hrs * 3600)
+
+              if ENV['IS_ASJPA'].eql?('true') && reset_timecode == 0 && file_transcript.is_reset_timestamp == 1
+                reset_timecode = single_hash['start_time']
+                single_hash['start_time'] = 0
+              elsif ENV['IS_ASJPA'].eql?('true') && reset_timecode > 0 && file_transcript.is_reset_timestamp == 1
+                single_hash['start_time'] = single_hash['start_time'] - reset_timecode
+              end
+
               single_hash['text'] = ''
               point_hash << single_hash
               counter += 1
@@ -257,17 +561,17 @@ module Aviary::IndexTranscriptManager
                 counter += 1
               end
               unless point_hash[counter].nil? # keep adding the Text to the same point until gets a new timestamp
-                point_hash[counter]['text'] = point_hash[counter]['text'] + point
+                point_hash[counter]['text'] = point_hash[counter]['text'].gsub(/\n{3,10}/, "\n\n").strip + point.gsub(/:[\n]+/, ': ').gsub(/\n{3,5}/, "\n\n").strip
               end
             end
           end
         end
         last_hash_index = point_hash.size - 1 # update the end time and duration of the last point using file duration
-        point_hash[last_hash_index]['end_time'] = file_transcript.collection_resource_file.duration
+
+        point_hash[last_hash_index]['end_time'] = file_transcript.collection_resource_file.duration if from_resource_file
         point_hash[last_hash_index]['duration'] = point_hash[last_hash_index]['end_time'].to_f - point_hash[last_hash_index]['start_time'].to_f
         point_hash
       end
-      Success(point_hash)
     end
 
     def parse_webvtt(webvtt, remove_title = nil)
@@ -324,7 +628,7 @@ module Aviary::IndexTranscriptManager
       else
         single_hash = {}
         single_hash['start_time'] = 0
-        single_hash['end_time'] = file_transcript.collection_resource_file.duration
+        single_hash['end_time'] = file_transcript.collection_resource_file.duration if from_resource_file
         single_hash['duration'] = single_hash['end_time'].to_f - single_hash['start_time'].to_f
         single_hash['text'] = transcript
         hash << single_hash
@@ -355,9 +659,37 @@ module Aviary::IndexTranscriptManager
       [hash, alt_hash, language]
     end
 
-    def map_hash_to_db(file_transcript, hash, alt_hash = nil, language = nil)
+    def update_existing_points(file_transcript, full_hash)
+      existing_transcript = file_transcript.file_transcript_points
+      existing_ids = existing_transcript.map(&:id)
+      update_ids = []
+      full_hash.each_with_index do |hash, index|
+        if existing_transcript[index].present?
+          existing_transcript[index].update(title: hash['title'].to_s,
+                                            start_time: hash['start_time'],
+                                            end_time: hash['end_time'],
+                                            duration: hash['duration'],
+                                            speaker: hash['speaker'].to_s,
+                                            text: hash['text'].to_s,
+                                            writing_direction: hash['writing_direction'],
+                                            word_timestamp: hash['word_timestamp'])
+          update_ids << existing_transcript[index].id
+        else
+          new_point = file_transcript.file_transcript_points.create(hash)
+          update_ids << new_point.id
+        end
+      end
+      deletable_ids = existing_ids - update_ids
+      file_transcript.file_transcript_points.where(id: deletable_ids).destroy_all if deletable_ids.present?
+    end
+
+    def map_hash_to_db(file_transcript, hash, is_new, alt_hash = nil, language = nil)
       FileTranscriptPoint.transaction do
-        raise ActiveRecord::Rollback unless file_transcript.file_transcript_points.create(hash.value!)
+        if is_new
+          raise ActiveRecord::Rollback unless file_transcript.file_transcript_points.create(hash.value!)
+        else
+          update_existing_points(file_transcript, hash.value!)
+        end
       end
       if alt_hash.present?
         file_transcript_alt = FileTranscript.new
@@ -373,6 +705,16 @@ module Aviary::IndexTranscriptManager
       end
       file_transcript.collection_resource_file.collection_resource.reindex_collection_resource
       Success
+    end
+
+    def setup_timestamp(point)
+      point = "00:#{point}" if point.split(':').size == 3
+      if point.split(':').size == 4
+        point = point.split(':')
+        point[0] = '00'
+        point = point.join(':')
+      end
+      point
     end
   end
 end

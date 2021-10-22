@@ -8,9 +8,10 @@ module Interviews
     belongs_to :organization
     validates :title, :media_format, presence: true
     has_many :interview_notes, dependent: :destroy
+    has_many :file_transcripts, dependent: :destroy
     has_many :file_indexes, dependent: :destroy
-    has_one :interview_transcript
     before_save :purify_value, :interview_status_info
+    validates_presence_of :language_for_translation, if: :include_language?
 
     def purify_value
       self.metadata_status = metadata_status.to_i
@@ -199,11 +200,11 @@ module Interviews
       end
 
       string :created_at, stored: true do
-        created_at.to_s if created_at.present?
+        Time.at(created_at.to_i).strftime('%Y-%m-%d') if created_at.present?
       end
 
       string :updated_at, stored: true do
-        updated_at.to_s if updated_at.present?
+        Time.at(updated_at.to_i).strftime('%Y-%m-%d') if updated_at.present?
       end
 
       text :title, stored: true
@@ -364,7 +365,9 @@ module Interviews
                            end
       query_params[:defType] = 'complexphrase' if complex_phrase_def_type
       query_params[:wt] = 'json'
+
       total_response = Curl.post(select_url, query_params)
+
       begin
         total_response = JSON.parse(total_response.body_str)
       rescue StandardError
