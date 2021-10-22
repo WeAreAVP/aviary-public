@@ -555,7 +555,7 @@ function InterviewManager() {
                 $('#selected_file_associated_file').text(associatedFileName);
                 $('#selected_file_associated_file').removeClass('d-none');
             }
-            if(typeof response.response[1] != 'undefined'){
+            if(typeof response.response[1] != 'undefined' && response.response[1] != null ){
                 let translationFileName = response.response[1]['associated_file_file_name'];
                 if (typeof translationFileName != 'undefined' && translationFileName ) {
                     $('#selected_file_translation').text(translationFileName);

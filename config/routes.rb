@@ -65,6 +65,7 @@ Rails.application.routes.draw do
       member do
         get 'export.:format', to: 'managers#export', as: :export
         get 'preview', to: 'managers#preview', as: :preview
+        match :sync, via: %i[get post]
       end
     end
     resources :transcripts do
