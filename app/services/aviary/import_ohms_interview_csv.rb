@@ -12,7 +12,7 @@ module Aviary
     class ImportOhmsInterviewCsv
       include XMLFileHandler
       include ApplicationHelper
-      def import(file, organization, user)
+      def import(file, organization, user, status)
         csv = CSV.new(open(file.path), headers: true, encoding: 'ISO8859-1:utf-8')
         csv_raw = trim_header_csv(csv)
         return unless csv_raw.length.positive?
@@ -62,7 +62,8 @@ module Aviary
         interview.miscellaneous_user_notes = csv_raw['User Notes'].present? ? csv_raw['User Notes'] : ''
         interview.created_by_id = user.id
         interview.updated_by_id = user.id
-        interview.metadata_status = -1
+        interview.metadata_status = status
+        interview.index_status = status
         interview.avalon_target_domain = csv_raw['Avalon Target Domain'].present? ? csv_raw['Avalon Target Domain'] : ''
         interview.media_host_account_id = csv_raw['Media Host Account ID'].present? ? csv_raw['Media Host Account ID'] : ''
         interview.media_host_player_id = csv_raw['Media Host Player ID'].present? ? csv_raw['Media Host Player ID'] : ''

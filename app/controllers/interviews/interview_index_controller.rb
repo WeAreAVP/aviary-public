@@ -61,7 +61,12 @@ module Interviews
       respond_to do |format|
         if @file_index_point.save
           if params[:file_index_point][:language].length > 1
-            @file_index_point_alt = FileIndexPoint.find(params[:file_index_point][:id_alt])
+            @file_index_point_alt = FileIndexPoint.find_by(id: params[:file_index_point][:id_alt])
+            if @file_index_point_alt.nil?
+              @file_index_point_alt = FileIndexPoint.new
+              file_index_alt = FileIndex.find_by(interview_id: @interview.id, language: interview_lang_info(@interview.language_for_translation.gsub(/(\w+)/, &:capitalize)))
+              @file_index_point_alt.file_index_id = file_index_alt.id
+            end
             @file_index_point_alt.update(file_index_point_params_alt.transform_keys { |key| key.gsub('_alt', '') })
             @file_index_point_alt.start_time = start_time.to_f
             @file_index_point_alt = set_custom_values(@file_index_point_alt, '_alt', params)

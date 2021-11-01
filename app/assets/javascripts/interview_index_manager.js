@@ -13,6 +13,7 @@ function InterviewIndexManager() {
     let that = this;
     let player_widget;
     let timeDiffInSec = 15;
+    let timeSubInSec = 5;
     let startTime = 0;
     let widget_soundcloud;
     let host = "";
@@ -369,17 +370,18 @@ function InterviewIndexManager() {
     }
     const updateStepBackward = function ()
     {
+        let time = humanToSeconds($('#file_index_point_start_time').val())
         if(host == "Kaltura")
         {
-            kdp.sendNotification('doSeek',  startTime);
+            kdp.sendNotification('doSeek',  time);
         }
         else if(host == "SoundCloud")
         {
-            widget_soundcloud.seekTo(startTime);
+            widget_soundcloud.seekTo(time/0.001);
         }
         else
         {
-            player_widget.currentTime(startTime);
+            player_widget.currentTime(time);
         }
     }
     const getTime = function ()
@@ -415,6 +417,8 @@ function InterviewIndexManager() {
         {
             widget_soundcloud.getPosition(function (pos) {
                 let time = Math.floor(pos * 0.001);
+                time = time - timeSubInSec;
+                if (time < 0) time = 0;
                 window.location = $('.add_tag').data().url+'?time='+time;
             })
         }
@@ -423,7 +427,13 @@ function InterviewIndexManager() {
             if($('.no-media').length > 0)
                 window.location = $('.add_tag').data().url;
             else
-                window.location = $('.add_tag').data().url+'?time='+getTime();
+            {
+                let time = getTime();
+                time = time - timeSubInSec;
+                if (time < 0) time = 0;
+                window.location = $('.add_tag').data().url+'?time='+time;
+            }
+                
         }
     };
     this.handlecallback = function (response, container, requestData) {

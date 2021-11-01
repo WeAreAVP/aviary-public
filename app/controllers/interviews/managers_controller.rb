@@ -220,9 +220,9 @@ module Interviews
       response_body = {}
       file_data.each do |data|
         response = if data.content_type.include? 'csv'
-                     Aviary::ImportOhmsInterviewCsv.new.import(data, current_organization, current_user)
+                     Aviary::ImportOhmsInterviewCsv.new.import(data, current_organization, current_user, params[:status].to_i)
                    else
-                     Aviary::ImportOhmsInterviewXml.new.import(data, current_organization, current_user)
+                     Aviary::ImportOhmsInterviewXml.new.import(data, current_organization, current_user, params[:status].to_i)
                    end
         response_body = if response.is_a?(Array)
                           { error: true, message: response.first.to_s.capitalize + ' ' + response.second.first }
