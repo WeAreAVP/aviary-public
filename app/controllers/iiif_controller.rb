@@ -163,14 +163,14 @@ class IiifController < ApplicationController
       annotation_set = transcript.annotation_set
       next unless annotation_set.is_public
       points = []
-      annotations = JSON.parse(annotation_set.annotations.to_json)
-      annotations.each_with_index do |v, i|
-        annotations[i]['target_info'] = JSON.parse(v['target_info'])
-        annotations[i]['time'] = annotations[i]['target_info']['time']
+      annotation_points = JSON.parse(annotation_set.annotations.to_json)
+      annotation_points.each_with_index do |v, i|
+        annotation_points[i]['target_info'] = JSON.parse(v['target_info'])
+        annotation_points[i]['time'] = annotation_points[i]['target_info']['time']
       end
-      annotations = annotations.sort_by { |a| a['time'].to_f }
+      annotation_points = annotation_points.sort_by { |a| a['time'].to_f }
 
-      annotations.each do |single_annotation|
+      annotation_points.each do |single_annotation|
         target_info = single_annotation['target_info']
         annotation_transcript_point = transcript.file_transcript_points.find(target_info['pointId'])
         points << {
