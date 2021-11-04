@@ -11,27 +11,112 @@ module Interviews
     def create
       authorize! :manage, current_organization
       interview = Interviews::Interview.find(params[:id])
-      if params['interview_transcript'].present?
-        if interview.interview_transcript.present?
-          interview_transcript = interview.interview_transcript
-          interview_transcript.update(interview_transcript_params)
-        else
-          interview_transcript = Interviews::InterviewTranscript.new(interview_transcript_params)
-          interview_transcript.inject_created_by(current_user)
-          interview_transcript.interview = interview
-        end
-        interview_transcript.inject_updated_by(current_user)
-        flash[:notice] = interview_transcript.save ? 'Interview Transcript Created Successfully.' : t('error_update')
-      else
-        interview_transcript = interview.interview_transcript
-      end
+      message = ''
+      response = if params['interview_transcript'].present?
+                   if params['interview_transcript']['associated_file'].present? || params['interview_transcript']['translation'].present?
+                     error_main_transcript = validate_transcript(params['interview_transcript']['associated_file'], params['interview_transcript']['timecode_intervals'])
+                     if error_main_transcript == 0 && params[:interview_transcript][:associated_file].present?
+                       interview_transcript = upload_transcript('main', params[:interview_transcript][:associated_file], interview)
+
+                       if interview_transcript.present? && interview_transcript.save
+                         begin
+                           remove_title = ''
+                           is_new = true
+                           transcript_manager = Aviary::IndexTranscriptManager::TranscriptManager.new
+                           transcript_manager.from_resource_file = false
+                           transcript_manager.process(interview_transcript, remove_title, is_new)
+                           message = if interview_transcript.save
+                                       "Interview Transcript #{params['interview_transcript']['associated_file'].present? ? 'Translation' : ''} Created Successfully."
+                                     else
+                                       t('error_update')
+                                     end
+                         rescue StandardError => ex
+                           Rails.logger.error ex
+                         end
+                       end
+                       message = ' Transcript information updated successfully '
+                     end
+                     error_translation_transcript = validate_transcript(params['interview_transcript']['translation'], params['interview_transcript']['timecode_intervals'])
+                     if error_translation_transcript == 0 && params[:interview_transcript][:translation].present?
+                       interview_transcript_translation = upload_transcript('translation', params[:interview_transcript][:translation], interview)
+                       if interview_transcript_translation.present? && interview_transcript_translation.save
+                         begin
+                           remove_title = ''
+                           is_new = true
+                           transcript_manager = Aviary::IndexTranscriptManager::TranscriptManager.new
+                           transcript_manager.from_resource_file = false
+                           transcript_manager.process(interview_transcript_translation, remove_title, is_new)
+                         rescue StandardError => ex
+                           Rails.logger.error ex
+                         end
+                       end
+                       message = ' Transcript information updated successfully '
+                     end
+                   end
+
+                   param = {}
+                   if error_translation_transcript == 1 || error_main_transcript == 1
+                     message = 'The format of the timecodes is invalid. Please upload a file with 30 seconds, 1, 2, 3, 4, or 5 minutes intervals. Only one time interval type is allowed per file.'
+                     param = { interview_transcript_id: interview.id, e: error_translation_transcript == 1 || error_main_transcript == 1 }
+                     flash[:error] = message
+                   else
+
+                     if interview.present?
+                       interview.file_transcripts.update(JSON.parse(params['interview_transcript'].to_json).except!('translation', 'associated_file'))
+                       message = ' Transcript information updated successfully '
+                     end
+                     flash[:notice] = message
+                   end
+                 else
+                   [interview.file_transcripts.where(interview_transcript_type: 'main').try(:first), interview.file_transcripts.where(interview_transcript_type: 'translation').try(:first)]
+                 end
       respond_to do |format|
-        format.json { render json: { response: interview_transcript.present? ? interview_transcript : '' } }
-        format.html { redirect_back(fallback_location: root_path) }
+        format.json { render json: { response: response } }
+        format.html { redirect_to interviews_managers_path(param) }
       end
     end
 
     private
+
+    def upload_transcript(type, file, interview)
+      interview.file_transcripts.where(interview_transcript_type: type).destroy_all if interview.file_transcripts.where(interview_transcript_type: type).present?
+      interview_transcript_translation = FileTranscript.new({ collection_resource_file_id: nil, user: current_user,
+                                                              title: file.original_filename, interview: interview,
+                                                              language: 'en', is_public: false, sort_order: 0, associated_file: file,
+                                                              is_caption: false, interview_transcript_type: type })
+      interview_transcript_translation
+    end
+
+    def validate_transcript(transcript, timecode_intervals)
+      error_translation_transcript = 0
+      if transcript.present?
+        file = transcript.tempfile.read
+        matches = file.scan(/\[(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)\]/)
+        sync_interval = timecode_intervals.to_f
+        if sync_interval.to_f < 1
+          interval_t = 30
+          'sec'
+        else
+          interval_t = sync_interval.to_f * 60
+          'min'
+        end
+
+        last_diff_time = 0
+        if matches.present?
+          matches.each do |single_slot|
+            if single_slot.present?
+              single_slot_seconds_t = single_slot.split(':').map(&:to_i).inject(0) { |a, b| a * 60 + b }
+              if single_slot_seconds_t > 0 && (single_slot_seconds_t - last_diff_time) != interval_t
+                error_translation_transcript = 1
+              end
+              last_diff_time = single_slot_seconds_t
+            end
+          end
+        end
+      end
+
+      error_translation_transcript
+    end
 
     def interview_transcript_params
       params.require(:interview_transcript).permit(:associated_file, :translation, :no_transcript, :timecode_intervals)

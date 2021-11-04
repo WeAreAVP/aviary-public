@@ -12,7 +12,7 @@
           <div class="file_index file_index_<%= file_index.id %> pb-10px" data-language="<%= file_index.language %>" data-title="<%= file_index.title %>" data-public="<%= file_index.is_public %>" data-description="<%= file_index.description %>">
             <% @index_count = @index_time_wise = {} %>
             <% @session_video_text_all = params['keywords'] %>
-            <% @file_index_points.each_with_index do |index_point, counter| %>
+            <% @file_index_points.sort_by {|t| t.start_time.to_f }.each_with_index do |index_point, counter| %>
               <% present(index_point) do |presenter| %>
                 <% index_time_start = !recorded.include?(index_point.start_time.to_i) ? "index_time_start_#{index_point.start_time.to_i}" : '' %>
                 <%== presenter.single_index_point_hanlder(index_time_start, @session_video_text_all) %>

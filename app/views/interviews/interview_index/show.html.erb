@@ -125,13 +125,13 @@
                         <% end %>
                         <% unless data.synopsis.blank?  %>
                         <li class="list-group-item d-flex justify-content-between">
-                          <div class="w-50"><strong>Segment Synopsis (Translation):</strong></div>
-                          <div class="w-50"><%= @file_index_point_alt.first.synopsis  %></div>
+                          <div class="w-50"><strong>Segment Synopsis:</strong></div>
+                          <div class="w-50"><%= data.synopsis  %></div>
                         </li>
                         <% end %>
                         <% if @file_index_point_alt.present? && !@file_index_point_alt.first.synopsis.blank? %>
                           <li class="list-group-item d-flex justify-content-between">
-                            <div class="w-50"><strong>Segment Synopsis:</strong></div>
+                            <div class="w-50"><strong>Segment Synopsis (Translation):</strong></div>
                             <div class="w-50"><%= @file_index_point_alt.first.synopsis  %></div>
                           </li>
                         <% end %>

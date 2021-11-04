@@ -11,7 +11,7 @@ module Interviews
     include Aviary::ZipperService
     before_action :authenticate_user!, except: :export
 
-    before_action :set_interview, only: %i[show edit update destroy]
+    before_action :set_interview, only: %i[show edit update destroy sync]
 
     # GET /interviews
     # GET /interviews.json
@@ -89,6 +89,42 @@ module Interviews
       end
     end
 
+    def sync
+      @data_main = []
+      @data_translation = []
+      interview_file_transcript = nil
+      file_transcripts_main = @interview.file_transcripts
+      if file_transcripts_main.present? && file_transcripts_main.where(interview_transcript_type: 'main').try(:first).present?
+        interview_file_transcript = file_transcripts_main.where(interview_transcript_type: 'main').try(:first).file_transcript_points.order('start_time asc')
+      end
+
+      if interview_file_transcript.present?
+        interview_file_transcript.each do |single_info|
+          @data_main << { id: single_info.id, text: single_info.text,
+                          start_time: single_info.start_time.present? ? Time.at(single_info.start_time).utc.strftime('%H:%M:%S') : '00:00:00',
+                          end_time: single_info.end_time.present? ? Time.at(single_info.end_time).utc.strftime('%H:%M:%S') : '00:00:00' }
+        end
+      end
+
+      interview_transcript_translation = nil
+      if file_transcripts_main.present? && file_transcripts_main.where(interview_transcript_type: 'translation').try(:first).present?
+        interview_transcript_translation = file_transcripts_main.where(interview_transcript_type: 'translation').try(:first).file_transcript_points.order('start_time asc')
+      end
+
+      if interview_transcript_translation.present?
+        interview_transcript_translation.each do |single_info|
+          @data_translation << { id: single_info.id, text: single_info.text,
+                                 start_time: single_info.start_time.present? ? Time.at(single_info.start_time).utc.strftime('%H:%M:%S') : '00:00:00',
+                                 end_time: single_info.end_time.present? ? Time.at(single_info.end_time).utc.strftime('%H:%M:%S') : '00:00:00' }
+        end
+      end
+
+      respond_to do |format|
+        format.html
+        format.json { render json: { response: { data_main: data_main, data_translation: data_translation } } }
+      end
+    end
+
     # GET /interviews/1/export.format
     def export
       authenticate_user! unless params[:viewer] == ENV['PREVIEW_KEY']
@@ -97,6 +133,7 @@ module Interviews
       export_text = Aviary::ExportOhmsInterviewXml.new.export(interview)
       doc = Nokogiri::XML(export_text.to_xml)
       error_messages = xml_validation(doc)
+
       if error_messages.any?
         respond_to do |format|
           format.any { redirect_to interviews_managers_path, notice: 'Something went wrong. Please try again later.' }
@@ -178,14 +215,15 @@ module Interviews
     end
 
     def import_metadata_xml
+      authorize! :manage, current_organization
       file_data = params[:importXML]
       response_body = {}
       file_data.each do |data|
         response = if data.content_type.include? 'csv'
-          Aviary::ImportOhmsInterviewCsv.new.import(data, current_organization, current_user)
-        else
-          Aviary::ImportOhmsInterviewXml.new.import(data, current_organization, current_user)
-        end
+                     Aviary::ImportOhmsInterviewCsv.new.import(data, current_organization, current_user)
+                   else
+                     Aviary::ImportOhmsInterviewXml.new.import(data, current_organization, current_user)
+                   end
         response_body = if response.is_a?(Array)
                           { error: true, message: response.first.to_s.capitalize + ' ' + response.second.first }
                         elsif response.is_a?(String)
