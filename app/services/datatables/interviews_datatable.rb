@@ -84,7 +84,7 @@ class InterviewsDatatable < ApplicationDatatable
       toggle: 'tooltip', placement: 'top', title: (this_interview.present? ? this_interview.listing_metadata_status[this_interview.metadata_status.to_s] : '')
     }
     html += link_to 'Index', interviews_interview_index_path(interview['id_is']), class: 'btn-interview btn-sm btn-link', style: this_interview.color_grading_index[index_color_metadata.to_s], data: {
-
+      toggle: 'tooltip', placement: 'top', title: (this_interview.present? ? this_interview.listing_metadata_index_status[this_interview.index_status.to_s] : '')
     }
 
     html += link_to (this_interview.try(:file_transcripts).present? && this_interview.file_transcripts.first.associated_file_updated_at.present? ? 'Re-Upload Transcript' : 'Upload Transcript'), 'javascript:void(0);',

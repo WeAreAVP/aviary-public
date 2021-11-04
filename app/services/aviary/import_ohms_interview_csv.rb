@@ -14,7 +14,17 @@ module Aviary
     include ApplicationHelper
     def import(file, organization, user, status)
       csv = CSV.new(open(file.path), headers: true, encoding: 'ISO8859-1:utf-8')
-      csv_raw = Aviary::BulkImportManager.trim_header_csv(csv)
+      csv_raw = []
+      return csv_raw unless csv.present?
+      csv.each do |unstriped_row|
+        row = {}
+        if unstriped_row.present?
+          unstriped_row.each do |k, v|
+            row[k.to_s.strip] = v.to_s.strip
+          end
+          csv_raw << row
+        end
+      end
       return unless csv_raw.length.positive?
       csv_raw = csv_raw.first
       interview = Interviews::Interview.find_by(id: csv_raw['rowid'])
