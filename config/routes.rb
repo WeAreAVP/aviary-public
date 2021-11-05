@@ -65,11 +65,12 @@ Rails.application.routes.draw do
       member do
         get 'export.:format', to: 'managers#export', as: :export
         get 'preview', to: 'managers#preview', as: :preview
-        match :sync, via: %i[get post]
+        match :sync, via: %i[get post patch]
       end
     end
     resources :transcripts do
       member do
+        get 'change_sync_interval', to: 'transcripts#change_sync_interval', as: 'change_sync_interval'
         match :create, via: %i[get post]
       end
     end

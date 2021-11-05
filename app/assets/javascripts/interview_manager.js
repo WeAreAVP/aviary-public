@@ -30,34 +30,34 @@ function InterviewManager() {
             $('.'+$(this).data('showdiv')).removeClass('d-none');
             $('.'+$(this).data('hidediv')).addClass('d-none');
         });
-
+      
         $('.single_word_transcript')
-            .mouseenter( function(){
-                $(this).addClass('text-dark');
-                $(this).addClass('bg-success');
-                $(this).addClass('border');
-                $(this).addClass('rounded');
-            }).mouseleave( function(){
+          .mouseenter( function(){
+            $(this).addClass('text-dark');
+            $(this).addClass('bg-success');
+            $(this).addClass('border');
+            $(this).addClass('rounded');
+          }).mouseleave( function(){
             $(this).removeClass('bg-success');
             $(this).removeClass('text-dark');
             $(this).removeClass('border');
             $(this).removeClass('rounded');
-        });
-
-        $('.single_point_transcript')
-            .mouseenter( function(){
-                $(this).addClass('bg-light');
-                $(this).addClass('border');
-                $(this).addClass('rounded');
-            }).mouseleave( function(){
+          });
+      
+          $('.single_point_transcript')
+          .mouseenter( function(){
+            $(this).addClass('bg-light');
+            $(this).addClass('border');
+            $(this).addClass('rounded');
+          }).mouseleave( function(){
             $(this).removeClass('bg-light');
             $(this).removeClass('border');
             $(this).removeClass('rounded');
-        });
+          });
     };
 
     this.initializeTable = function () {
-
+        
         let config = {
             responsive: true,
             processing: true,
@@ -93,14 +93,14 @@ function InterviewManager() {
             drawCallback: function (settings) {
                 try {
                     that.datatableInitDraw(settings);
-
+                   
                 } catch (e) {
 
                 }
                 if (typeof interviews_manager.interview_transcript_id != 'undefined' && interviews_manager.interview_transcript_id != 0) {
                     appHelper.show_loader();
                     setTimeout(function(){
-                        $('#interview_tupload_' + interviews_manager.interview_transcript_id ).click();
+                        $('#interview_tupload_' + interviews_manager.interview_transcript_id ).click();    
                         appHelper.hide_loader();
                     }, 2000);
                 }
@@ -146,16 +146,16 @@ function InterviewManager() {
         let updateClass = '#update_transcript_inteviews';
         $("#interview_transcript_translation, #interview_transcript_associated_file").change(function(){
             if($(this).attr('id') == 'interview_transcript_associated_file') {
-                $('#selected_file_associated_file').text((this).files[0].name);
-                $('#selected_file_associated_file').removeClass('d-none');
-            } else {
-                $('#selected_file_translation').text((this).files[0].name);
-                $('#selected_file_translation').removeClass('d-none');
-
-            }
+                    $('#selected_file_associated_file').text((this).files[0].name);
+                    $('#selected_file_associated_file').removeClass('d-none');
+                } else {
+                    $('#selected_file_translation').text((this).files[0].name);
+                    $('#selected_file_translation').removeClass('d-none');
+        
+                }
         });
     };
-
+    
     this.datatableInitDraw = function () {
         $('[data-toggle="tooltip"]').tooltip();
         setTimeout(function () {
@@ -459,6 +459,7 @@ function InterviewManager() {
         $('#import_xml_file').fileupload({
             url: $('#import_xml_file').data('url'),
             type: 'POST',
+            formData: {status: $('#status_complete').is(":checked")},
             sequentialUploads: true,
             singleFileUploads: false,
             acceptFileTypes: /^text\/(xml)$/i,
@@ -478,7 +479,6 @@ function InterviewManager() {
                     } else {
                         $("#import_file_name").append("Selected File: " + file.name + "<br/>");
                         $('.import-xml-file-section').hide();
-                        $('.import_csv_note').hide();
                         $('.import-file-confirmation').show();
                         $('#import_xml_btn').text('Yes');
                         $('.close-import-popup').removeAttr('data-dismiss').text('No');
@@ -523,34 +523,34 @@ function InterviewManager() {
     };
 
     this.transcriptSync = function (response) {
-
+    
         if (response.response != null && typeof response.response != 'undefined') {
-            $('#modalPopupSyncBody').html('');
+            $('#modalPopupSyncBody').html(''); 
             $('#modalPopupSyncBody').append('<h1 style="color: red;"> Main Transcript </span>' );
             if (typeof response.response.data_main != 'undefined' ) {
-                $.each(response.response.data_main, function(single_response, obj){
-                    $('#modalPopupSyncBody').append('<span style="color: blue;">' + obj.start_time + '</span>' );
-                    $('#modalPopupSyncBody').append('<br/>');
-                    $('#modalPopupSyncBody').append(obj.text);
-                    $('#modalPopupSyncBody').append('<br/>');
-                    $('#modalPopupSyncBody').append('<span style="color: blue;">' + obj.end_time + '</span>' );
-                    $('#modalPopupSyncBody').append('<hr/><hr/><hr/><hr/><hr/>');
-                });
-            }
-            if (typeof response.response.data_translation != 'undefined' ) {
-                $('#modalPopupSyncBody').append('<h1 style="color: red;"> Translation Transcript </span>' );
-                $.each(response.response.data_translation, function(single_response, obj){
-                    $('#modalPopupSyncBody').append('<span style="color: blue;">' + obj.start_time + '</span>' );
-                    $('#modalPopupSyncBody').append('<br/>');
-                    $('#modalPopupSyncBody').append(obj.text);
-                    $('#modalPopupSyncBody').append('<br/>');
-                    $('#modalPopupSyncBody').append('<span style="color: blue;">' + obj.end_time + '</span>' );
-                    $('#modalPopupSyncBody').append('<hr/><hr/><hr/><hr/><hr/>');
-                });
-            }
+            $.each(response.response.data_main, function(single_response, obj){
+                $('#modalPopupSyncBody').append('<span style="color: blue;">' + obj.start_time + '</span>' );    
+                $('#modalPopupSyncBody').append('<br/>');    
+                $('#modalPopupSyncBody').append(obj.text);    
+                $('#modalPopupSyncBody').append('<br/>');    
+                $('#modalPopupSyncBody').append('<span style="color: blue;">' + obj.end_time + '</span>' );    
+                $('#modalPopupSyncBody').append('<hr/><hr/><hr/><hr/><hr/>');    
+            });
+        }
+        if (typeof response.response.data_translation != 'undefined' ) {
+            $('#modalPopupSyncBody').append('<h1 style="color: red;"> Translation Transcript </span>' );
+            $.each(response.response.data_translation, function(single_response, obj){
+                $('#modalPopupSyncBody').append('<span style="color: blue;">' + obj.start_time + '</span>' );    
+                $('#modalPopupSyncBody').append('<br/>');    
+                $('#modalPopupSyncBody').append(obj.text);    
+                $('#modalPopupSyncBody').append('<br/>');    
+                $('#modalPopupSyncBody').append('<span style="color: blue;">' + obj.end_time + '</span>' );    
+                $('#modalPopupSyncBody').append('<hr/><hr/><hr/><hr/><hr/>');    
+            });
+        }
             $('#modalPopupSync').modal('show');
         }
-
+        
     };
 
     const initUploadPopup = function () {
@@ -582,8 +582,7 @@ function InterviewManager() {
                 }
             }
             let noTranscript = response.response[0]['no_transcript'];
-
-            $('#no-transcript-checkbox').prop('checked', false)
+            $('#no-transcript-checkbox').prop('checked', false);
             if (noTranscript) {
                 $('#no-transcript-checkbox').prop('checked', noTranscript)
             }

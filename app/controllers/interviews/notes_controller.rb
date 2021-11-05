@@ -43,8 +43,8 @@ module Interviews
       end
     end
 
-    # POST /interview/notes/update
-    # POST /interview/notes/update.json
+    # POST /interview/note/update
+    # POST /interview/note/update.json
     def update
       authorize! :manage, current_organization
       interview_notes = InterviewNote.find(params[:note_id])

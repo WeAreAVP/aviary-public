@@ -17,7 +17,10 @@ class FileTranscript < ApplicationRecord
   validates_inclusion_of :is_public, in: [true, false], message: 'is required.'
   validate :validate_file
   has_attached_file :associated_file, validate_media_type: false, default_url: ''
-  validates_attachment_content_type :associated_file, content_type: ['text/xml', 'application/xml', 'text/vtt', 'text/plain'], message: 'Only XML and WebVTT formats allowed.'
+  validates_attachment_content_type :associated_file, content_type: ['text/xml', 'application/xml', 'text/vtt', 'text/plain',
+                                                                     'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                                                                     'application/msword', 'application/zip'],
+                                    message: 'Only XML, WebVTT, TXT, Doc and Docx formats allowed.'
   attr_accessor :remove_title
   scope :order_transcript, -> { order('sort_order ASC') }
   scope :public_transcript, -> { where(is_public: true).order_transcript }
