@@ -81,10 +81,10 @@ class InterviewsDatatable < ApplicationDatatable
     html = '<div class="d-flex align-items-center"><div class="action-btn-holder btn-group">'
     html += link_to 'Preview', preview_interviews_manager_path(interview['id_is']), class: 'btn-interview btn-sm btn-link'
     html += link_to 'Metadata', edit_interviews_manager_path(interview['id_is']), class: 'btn-interview btn-sm btn-link', style: color_metadata.to_s, data: {
-        toggle: 'tooltip', placement: 'top', title: (this_interview.present? ? this_interview.listing_metadata_status[this_interview.metadata_status.to_s] : '')
+      toggle: 'tooltip', placement: 'top', title: (this_interview.present? ? this_interview.listing_metadata_status[this_interview.metadata_status.to_s] : '')
     }
     html += link_to 'Index', interviews_interview_index_path(interview['id_is']), class: 'btn-interview btn-sm btn-link', style: this_interview.color_grading_index[index_color_metadata.to_s], data: {
-        toggle: 'tooltip', placement: 'top', title: (this_interview.present? ? this_interview.listing_metadata_index_status[this_interview.index_status.to_s] : '')
+      toggle: 'tooltip', placement: 'top', title: (this_interview.present? ? this_interview.listing_metadata_index_status[this_interview.index_status.to_s] : '')
     }
 
     html += link_to (this_interview.try(:file_transcripts).present? && this_interview.file_transcripts.first.associated_file_updated_at.present? ? 'Re-Upload Transcript' : 'Upload Transcript'), 'javascript:void(0);',
@@ -93,13 +93,13 @@ class InterviewsDatatable < ApplicationDatatable
 
     if this_interview.try(:file_transcripts).present?
       html += link_to 'Sync', sync_interviews_manager_path(interview['id_is']), class: 'btn-interview btn-sm btn-link mr-1 float-left interview_transcript_sync ', id: 'interview_transcript_sync' + interview['id_is'].to_s, data: {
-          id: interview['id_is'], url: sync_interviews_manager_path(interview['id_is'], 'json'), updateurl: sync_interviews_manager_path(interview['id_is']),
-          toggle: 'tooltip', placement: 'top', title: this_interview.interview_sync_status.second
+        id: interview['id_is'], url: sync_interviews_manager_path(interview['id_is'], 'json'), updateurl: sync_interviews_manager_path(interview['id_is']),
+        toggle: 'tooltip', placement: 'top', title: this_interview.interview_sync_status.second
       }
     end
 
     html += link_to 'Notes', 'javascript://', class: 'btn-interview btn-sm btn-link interview_notes ' + notes_color(interview), id: 'interview_note_' + interview['id_is'].to_s, data: {
-        id: interview['id_is'], url: interviews_list_notes_path(interview['id_is'], 'json'), updateurl: interviews_update_note_path(interview['id_is'], 'json')
+      id: interview['id_is'], url: interviews_list_notes_path(interview['id_is'], 'json'), updateurl: interviews_update_note_path(interview['id_is'], 'json')
     }
     html += '</div><div class="btn-interview-dropdown dropdown d-inline-block">'
 

@@ -15,17 +15,14 @@ module Interviews
       response = if params['interview_transcript'].present?
                    if params['interview_transcript']['associated_file'].present? || params['interview_transcript']['translation'].present?
                      error_main_transcript = validate_transcript(params['interview_transcript']['associated_file'], params['interview_transcript']['timecode_intervals'])
-                     binding.pry
                      if error_main_transcript == 0 && params[:interview_transcript][:associated_file].present?
                        interview_transcript = upload_transcript('main', params[:interview_transcript][:associated_file], interview)
-                       binding.pry
                        if interview_transcript.present? && interview_transcript.save
                          begin
                            remove_title = ''
                            is_new = true
                            transcript_manager = Aviary::IndexTranscriptManager::TranscriptManager.new
                            transcript_manager.from_resource_file = false
-                           binding.pry
                            transcript_manager.process(interview_transcript, remove_title, is_new)
                            message = if interview_transcript.save
                                        "Interview Transcript #{params['interview_transcript']['associated_file'].present? ? 'Translation' : ''} Created Successfully."

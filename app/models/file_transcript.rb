@@ -20,7 +20,7 @@ class FileTranscript < ApplicationRecord
   validates_attachment_content_type :associated_file, content_type: ['text/xml', 'application/xml', 'text/vtt', 'text/plain',
                                                                      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
                                                                      'application/msword', 'application/zip'],
-                                    message: 'Only XML, WebVTT, TXT, Doc and Docx formats allowed.'
+                                                      message: 'Only XML, WebVTT, TXT, Doc and Docx formats allowed.'
   attr_accessor :remove_title
   scope :order_transcript, -> { order('sort_order ASC') }
   scope :public_transcript, -> { where(is_public: true).order_transcript }
