@@ -25,8 +25,8 @@ function InterviewManager() {
 
     this.initializeSync = function () {
         $(".translation_transcript, .main_transcript").click(function(){
-            $('.'+$(this).data('opposite')).removeClass('d-none');
-            $(this).addClass('d-none');
+            $('.'+$(this).data('opposite')).removeClass('btn-primary').addClass('btn-outline-secondary');
+            $(this).addClass('btn-primary').removeClass('btn-outline-secondary');
             $('.'+$(this).data('showdiv')).removeClass('d-none');
             $('.'+$(this).data('hidediv')).addClass('d-none');
         });
