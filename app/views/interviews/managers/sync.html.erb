@@ -2,8 +2,8 @@
   <div class="main_contain">
     <main>
       <div class=" ">
-        <%= simple_form_for @interview, :url => @interview.new_record? ? interviews_managers_path : interviews_manager_path(@interview), html: {class: "interview_manager"} do |f| %>
-          
+
+        <%= simple_form_for @interview, :url => sync_interviews_manager_path(@interview), html: {class: "interview_manager"} do |f| %>
           <div class="col-md-12 top-index-interview">
             <div class="border-bottom mb-4">
               <div class="row custom-order-level">
@@ -22,104 +22,121 @@
                     <div class="status d-flex align-items-center">
                       <span>Status</span>
                       <div class="ml-1">
-                        <%= f.select :metadata_status, options_for_select(@interview.listing_metadata_status.map { |key, index| [index, key] }, @interview.metadata_status), {}, required: false, label: false, class: 'custom-placeholder dont-apply-selectize form-control' %>
+                        <%= f.select :sync_status, options_for_select(@interview.listing_metadata_status.map { |key, index| [index, key] }, @interview.sync_status), {}, required: false, label: false, class: 'custom-placeholder dont-apply-selectize form-control'%>
                       </div>
                     </div>
                     <div class="d-flex align-items-center py-4">
-                      <%= link_to 'Edit Transcript', interviews_managers_path, class: 'btn btn-primary float-left ml-1 mr-1' %>
-                      <%= link_to 'Save', interviews_managers_path, class: 'btn btn-success float-left ml-1 mr-1' %>
+                      <%= link_to 'Edit Transcript', interviews_managers_path, class: 'btn btn-primary ml-3' %>
+                      <button class="btn btn-success ml-3">Save</button>
                     </div>
-                  </div>
+                  </div> 
                 </div>
               </div>
             </div>
-          </div>
+          <div>
 
-
-          <div class="row">
+          <div class="row ">
             <div class="col-xl-7 col-lg-4">
               <span class="mr-2">Language: </span>
               <div class="btn-group">
-                <%= link_to 'English', 'javascript:void(0)', class: 'btn btn-primary float-left ml-1 mr-1 main_transcript d-none', data: {opposite: 'translation_transcript', showdiv: 'main_transcript_for_edit', hidediv: 'translation_transcript_for_edit' }  %>
-                <%= link_to 'Franch', 'javascript:void(0)', class: 'btn btn-primary float-left ml-1 mr-1 translation_transcript ', data: {opposite: 'main_transcript', showdiv: 'translation_transcript_for_edit', hidediv: 'main_transcript_for_edit' } %>
+                <%= link_to 'English', 'javascript:void(0)', class: 'btn btn-primary main_transcript', data: {opposite: 'translation_transcript', showdiv: 'main_transcript_for_edit', hidediv: 'translation_transcript_for_edit'} %>
+                <%= link_to 'Franch', 'javascript:void(0)', class: 'btn btn-outline-secondary translation_transcript ', data: {opposite: 'main_transcript', showdiv: 'translation_transcript_for_edit', hidediv: 'main_transcript_for_edit'} %>
               </div>
             </div>
 
             <div class="col-xl-5 col-lg-8">
-              <div class="status d-flex align-items-center justify-content-end mb-3">
-                <div class="field-title"><%= f.label :syncing_time_interval %></div>
-                <%= f.select :timecode_intervals, [["30 seconds", '0.5'], ['1 minute (Default)', '1'], ['2 minute', '2'], ['3 minute', '3'], ['4 minutes', '4'], ['5 minutes', '5']], selected: '1' %>
+              <div class="status d-flex align-items-center justify-content-end mb-3" id="timecode_intervals_url" data-url="<%= change_sync_interval_interviews_transcript_path(@interview) %>">
+                <span class="mr-2"><%= f.label :syncing_time_interval %>:</span>
+                <%= f.select :timecode_intervals, [["30 seconds", '0.5'], ['1 minute (Default)', '1'], ['2 minute', '2'], ['3 minute', '3'], ['4 minutes', '4'], ['5 minutes', '5']], selected: @main_transcript.present? ? @main_transcript.timecode_intervals.to_i.to_s : '1' %>
               </div>
             </div>
           </div>
 
           <div class="row ">
-            <div class="col-xl-7 col-lg-6 main_transcript_for_edit" style='max-height: 500px;  overflow: scroll;'>
+            <textarea id="main_transcript_textarea" name="interviews_interview[main_transcript]" class="d-none"></textarea>
+            <textarea id="translation_transcript_textarea" class="d-none" name="interviews_interview[translation_transcript]"></textarea>
+            <div class="col-xl-7 col-lg-6 main_transcript_for_edit" style='max-height: 600px;  overflow: scroll;'>
               <% if @data_main.present? %>
+                <% counter = 1 %>
                 <% @data_main.each do |single_point| %>
                   <% list = single_point[:text].split %>
                   <div class='single_point_transcript p-1' style='color: gray;'>
                     <% if list.present? %>
-                      <% list.each do |single_word|%>
+                      <% list.each do |single_word| %>
                         <span class='single_word_transcript cursor-pointer'> <%= single_word %> </span>
                       <% end %>
                     <% end %>
                   </div>
-                  {<%= single_point[:end_time] %>}
+                  <% if @data_main.length > counter %>
+                    <span class="transcript_point_code text-dark transcript_point_code_<%= hms_to_number(single_point[:end_time]) %>" data-timecode="<%= hms_to_number(single_point[:end_time]) %>">[<%= single_point[:end_time] %>]</span>
+                  <% end %>
+                  <% counter = counter + 1 %>
+
                 <% end %>
               <% end %>
             </div>
-            <div class="col-xl-7 col-lg-6 translation_transcript_for_edit d-none" style='max-height: 500px;  overflow: scroll;'>
+            <div class="col-xl-7 col-lg-6 translation_transcript_for_edit d-none" style='max-height: 600px;  overflow: scroll;'>
               <% if @data_translation.present? %>
+                <% counter_translation = 1 %>
                 <% @data_translation.each do |single_point| %>
                   <% list = single_point[:text].split %>
                   <div class='single_point_transcript p-1' style='color: gray;'>
                     <% if list.present? %>
-                      <% list.each do |single_word|%>
+                      <% list.each do |single_word| %>
                         <span class='single_word_transcript cursor-pointer'> <%= single_word %> </span>
                       <% end %>
                     <% end %>
-                    </div>
-                  {<%= single_point[:end_time] %>}
+                  </div>
+                  <% if @data_translation.length > counter_translation %>
+                    <span class="transcript_point_code text-dark transcript_point_code_<%= hms_to_number(single_point[:end_time]) %>" data-timecode="<%= hms_to_number(single_point[:end_time]) %>">[<%= single_point[:end_time] %>]</span>
+                  <% end %>
+                  <% counter_translation = counter_translation + 1 %>
+
                 <% end %>
               <% end %>
             </div>
+
             <div class='col-xl-5 col-lg-6'>
               <div class="right-side-section">
-                <div class="top-section-test-interview rounded">
-                  <div class="buttons-box music_btn music-btn-holder text-center">
-                    <div class="btn-group mr-2">
-                      <a href="javascript:void(0);" class="btn btn-outline-dark update_backward"><i class="fa fa-fast-backward"></i></a>
-                      <input type="text" class="current_transcript_point w-100px form-control d-inline-block" value="00:00"/>
-                      <input type="hidden" class="player_state_transcript" value="0"/>
-                      <a href="javascript:void(0);" class="btn btn-outline-dark update_forward"><i class="fa fa-fast-forward"></i></a>
+              <%= render 'interviews/interview_index/top' %>
+
+              <div class="top-section-test-interview rounded">
+                <div class="buttons-box music_btn music-btn-holder text-center">
+                  <div class="btn-group mr-2">
+                    <a href="javascript:void(0);" class="btn btn-outline-dark update_backward"><i class="fa fa-fast-backward"></i></a>
+                    <input type="text" class="current_transcript_point w-100px form-control d-inline-block" value="00:00"/>
+                    <input type="hidden" class="player_state_transcript" value="0"/>
+                    <a href="javascript:void(0);" class="btn btn-outline-dark update_forward"><i class="fa fa-fast-forward"></i></a>
+                  </div>
+                  <a href="javascript:void(0);" class="btn btn-outline-dark update_pause mr-2"><i class="fa fa-stop"></i></a>
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text">±</span>
                     </div>
-                    <a href="javascript:void(0);" class="btn btn-outline-dark update_pause mr-2"><i class="fa fa-stop"></i></a>
-                    <div class="input-group">
-                      <div class="input-group-prepend">
-                        <span class="input-group-text">±</span>
-                      </div>
-                      <input type="text" class="video_player_delay form-control d-inline-block  " placeholder="0" value="10"/>
-                      <input type="text" class="current_player_time form-control d-inline-block" placeholder="00:00:00"/>
-                    </div>
+                    <input type="text" class="video_player_delay form-control d-inline-block  " placeholder="0" value="10"/>
+                    <input type="text" class="current_player_time form-control d-inline-block" placeholder="00:00:00"/>
                   </div>
                 </div>
+              </div>
               </div>
             </div>
           </div>
         <% end %>
-        </div>
+      </div>
     </main>
   </div>
 </div>
 <script>
-let interview_manager = new InterviewManager();
-$(function(){
-    interview_manager.initializeSync();
-});
-if ($(window).width() >= 992) {
-  $(".right-side-section").sticky({topSpacing: 50});
-} else {
-  $(".right-side-section").unstick();
-}
+    let interview_manager = new InterviewManager();
+    let interviews_transcript_manager = new InterviewTranscriptManager();
+    interviews_transcript_manager.timecode = '<%= @main_transcript.timecode_intervals %>';
+    $(function () {
+        interview_manager.initializeSync();
+        interviews_transcript_manager.initialize();
+    });
+    if ($(window).width() >= 992) {
+        $(".right-side-section").sticky({topSpacing: 50});
+    } else {
+        $(".right-side-section").unstick();
+    }
 </script>

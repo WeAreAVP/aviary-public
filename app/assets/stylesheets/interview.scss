@@ -11,11 +11,9 @@
 .container_subjects .container_subjects_inner:nth-of-type(1) .remove_icon_image {
   display: none;
 }
-
 .custom-form-height {
   max-height: 263px;
   overflow: auto;
-
   .d-flex {
     .form-group {
       flex: 1;
@@ -87,28 +85,16 @@
     }
   }
 }
-
-.border_title {
+.border_title
+{
   top: -35px !important;
   left: -15px !important;
 }
+.container_gps > .container_gps_inner:first-child .remove_gps {display: none}
+.container_gps > .container_gps_inner + .container_gps_inner {padding-top: 40px}
 
-.container_gps > .container_gps_inner:first-child .remove_gps {
-  display: none;
-}
-
-.container_gps > .container_gps_inner + .container_gps_inner {
-  padding-top: 40px;
-}
-
-.container_hyperlinks > .container_hyperlinks_inner:first-child .remove_hyperlinks {
-  display: none;
-}
-
-.container_hyperlinks > .container_hyperlinks_inner + .container_hyperlinks_inner {
-  padding-top: 40px;
-}
-
+.container_hyperlinks > .container_hyperlinks_inner:first-child .remove_hyperlinks {display: none}
+.container_hyperlinks > .container_hyperlinks_inner + .container_hyperlinks_inner {padding-top: 40px}
 .add_button_interview {
   width: 22px;
   height: 22px;
@@ -124,7 +110,6 @@
   text-align: center;
   padding: 0px;
 }
-
 .add_button_interview:hover {
   background: #003853;
   border-color: #003853;
@@ -138,7 +123,6 @@
 .field_container .remove_icon_image {
   top: 18px;
 }
-
 div#noAudio {
   border: 1px solid #dee2e6;
   width: 100%;
@@ -147,7 +131,6 @@ div#noAudio {
   border-radius: 4px 4px 0 0;
   padding: 40px;
 }
-
 div#noMediaConnection {
   font-size: 21px;
   color: #808d98;
@@ -165,10 +148,10 @@ div#noMediaConnection {
     width: 100% !important;
     height: 300px !important;
   }
-
   .audio-player {
     margin-top: 0;
-
+  }
+  .audio-player {
     .video-js {
       &.vjs-audio {
         min-height: 25em;
@@ -176,17 +159,53 @@ div#noMediaConnection {
     }
   }
 }
-
 #media_host[data-host="Brightcove"] {
   .video-js {
     height: 300px;
   }
 }
-
 .interview-accordion {
   button {
     white-space: normal !important;
     color: #000;
+  }
+}
+.top-section-test-interview {
+  background: #f9fafb;
+  padding: 0;
+  .buttons-box {
+    display: flex;
+    margin: 0 -5px;
+    .btn {
+      border-color: #e5ebed;
+      background: #e5ebed;
+      color: #222;
+      padding: 10px;
+      margin: 5px 5px 10px;
+      flex: 1;
+    }
+  }
+  .left-section {
+    height: 100%;
+    padding: 30px 30px 0;
+    position: relative;
+    .update_time {
+      position: absolute;
+      top: 52px;
+      right: 30px;
+      border: 1px solid #ced4da;
+      font-size: 14px;
+      height: 54px;
+      display: flex;
+      align-items: center;
+      border-radius: 0 4px 4px 0;
+    }
+    .field-title {
+      background: #f9fafb;
+    }
+    .form-control {
+      background: #f9fafb;
+    }
   }
 }
 
@@ -199,71 +218,22 @@ div#noMediaConnection {
     }
   }
 
-  .top-section-test-interview {
-    background: #f9fafb;
-    padding: 0;
-
-    .left-section {
-      height: 100%;
-      padding: 30px 30px 0;
-      position: relative;
-
-      .update_time {
-        position: absolute;
-        top: 52px;
-        right: 30px;
-        border: 1px solid #ced4da;
-        font-size: 14px;
-        height: 54px;
-        display: flex;
-        align-items: center;
-        border-radius: 0 4px 4px 0;
-      }
-
-      .field-title {
-        background: #f9fafb;
-      }
-
-      .form-control {
-        background: #f9fafb;
-      }
-
-      .buttons-box {
-        display: flex;
-        margin: 0 -5px;
-
-        .btn {
-          border-color: #e5ebed;
-          background: #e5ebed;
-          color: #222;
-          padding: 10px;
-          margin: 5px 5px 10px;
-          flex: 1;
-        }
-      }
-    }
-  }
-
   #media_host {
     width: 80%;
     margin: 0 0 0 auto;
-
     iframe {
       width: 100% !important;
       height: 244px !important;
     }
-
     .video-placeholder {
       height: 244px;
     }
   }
-
   #media_host[data-host="Brightcove"] {
     .video-js {
       height: 244px;
     }
   }
-
   .language_name_row {
     strong {
       border-bottom: 2px solid #000;
@@ -275,29 +245,24 @@ div#noMediaConnection {
       top: 13px;
       position: relative;
       left: -10px;
-
       &.left_space {
         left: 20px;
       }
-
       &.no_text {
         border: none;
         padding: 0;
       }
     }
   }
-
   .container_gps,
   .container_hyperlinks {
     margin-top: -30px;
-
     .container_gps_inner,
     .container_hyperlinks_inner {
       & + .container_gps_inner,
       & + .container_hyperlinks_inner {
         position: relative;
         margin-top: 25px;
-
         &:after {
           content: "";
           position: absolute;
@@ -311,24 +276,19 @@ div#noMediaConnection {
     }
   }
 }
-
 .sticky-wrapper.is-sticky {
   .top-section-test-interview {
     z-index: 99 !important;
     border-radius: 4px 4px 0 0 !important;
-
     #media_host {
       width: 45%;
-
       iframe {
         width: 100% !important;
         height: 164px !important;
       }
-
       .video-placeholder {
         height: 164px;
       }
-
       .audio-player {
         .video-js {
           &.vjs-audio {
@@ -338,13 +298,11 @@ div#noMediaConnection {
         }
       }
     }
-
     #media_host[data-host="Brightcove"] {
       .video-js {
         height: 164px !important;
       }
     }
-
     #noMediaConnection {
       width: 45%;
       height: 100px;
@@ -352,14 +310,11 @@ div#noMediaConnection {
       font-size: 16px;
       float: right;
     }
-
     .left-section {
       padding-top: 0;
-
       .update_time {
         top: 22px;
       }
-
       .buttons-box {
         .btn {
           padding: 4px;
@@ -368,7 +323,6 @@ div#noMediaConnection {
     }
   }
 }
-
 #interviews_data_table_wrapper {
   .DTFC_RightBodyLiner {
     tr {
@@ -377,14 +331,15 @@ div#noMediaConnection {
           background: #f9fafb !important;
         }
       }
-
+    }
+    tr {
       td {
         background: #fff !important;
       }
     }
-
   }
 }
+
 
 .status {
   span {
@@ -393,12 +348,10 @@ div#noMediaConnection {
     font-size: 14px;
   }
 }
-
 .custom-checkbox-holder {
   padding-top: 35px;
   padding-bottom: 29px;
 }
-
 .add_tag {
   padding: 10px;
   border-radius: 0 0 4px 4px;
@@ -407,7 +360,6 @@ div#noMediaConnection {
   background: #003853;
   color: #fff;
 }
-
 .top-index-interview {
   .btn-group {
     .btn {
@@ -423,7 +375,6 @@ div#noMediaConnection {
     color: #6d757d;
     height: 34px !important;
   }
-
   .btn-group {
     .btn {
       &:hover {
@@ -456,22 +407,18 @@ div#noMediaConnection {
     }
   }
 }
-
 .interview-accordion {
-  .card {
+  .card {    
     overflow: hidden;
     border-radius: 0 4px 4px 0;
     border-left: 3px solid #003853;
-
     & + .card {
       margin-top: 20px;
     }
-
     .card-header {
       background: #fff;
       border: none;
       padding: 0;
-
       .btn-collapse {
         font-size: 14px;
         font-weight: bold;
@@ -496,7 +443,6 @@ div#noMediaConnection {
         transition: 0.2s all ease;
         padding: 0;
         flex: 0 0 25px;
-
         i {
           font-size: 20px;
           position: relative;
@@ -507,7 +453,6 @@ div#noMediaConnection {
           transition: 0.2s all ease;
         }
       }
-
       .btn-collapse[aria-expanded="true"] {
         i {
           transform: rotate(-180deg);
@@ -515,57 +460,48 @@ div#noMediaConnection {
           transition: 0.2s all ease;
         }
       }
-
       h2 {
         & > div {
           flex: 0 0 68%;
           width: 100%;
         }
       }
-
       button {
         background: #fff;
         text-decoration: none;
         color: #000;
         padding: 10px 20px;
       }
-
       .d-flex {
         margin-right: 5px;
         padding: 10px;
       }
-
       .btn-group {
         position: absolute;
         top: -1px;
         right: -1px;
       }
-
       a {
         border: 1px solid #ddd;
         border-radius: 0;
         padding: 8px 15px;
       }
     }
-
     .list-group-item {
       padding: 5px 15px;
       font-size: 14px;
       font-weight: 600;
-
       strong {
         font-weight: 600;
         color: #828282;
       }
     }
   }
-
   .collapse {
     .card-body {
       padding: 10px;
     }
   }
-
   .segment-title {
     font-weight: 600;
     color: #000;
@@ -573,7 +509,6 @@ div#noMediaConnection {
     margin-bottom: 5px;
     width: 100%;
   }
-
   .segment-duration {
     font-size: 14px;
     font-weight: 600;
@@ -581,20 +516,17 @@ div#noMediaConnection {
     color: #336175;
   }
 }
-
 .action-btn-holder {
   margin-right: 10px;
   display: inline-flex;
   width: 200px;
   flex-wrap: wrap;
-
   .btn-interview {
     margin: 3px;
-    padding: 0.25rem 0.5rem;
+    padding: .25rem .5rem;
     border: 1px solid;
     flex: 1;
     text-align: center;
-
     &:hover {
       border: 1px solid;
       opacity: 0.6;
@@ -602,7 +534,6 @@ div#noMediaConnection {
     }
   }
 }
-
 .container_interviewer,
 .container_interviewee,
 .container_format {
@@ -612,19 +543,15 @@ div#noMediaConnection {
     }
   }
 }
-
 .text-custom-dropdown {
   font-size: 18px;
 }
-
 #interviews_data_table {
-  th,
-  td {
+  th, td {
     white-space: nowrap;
   }
 }
-
-#partial_script {
+#partial_script{
   resize: vertical !important;
 }
 .single_point_transcript {

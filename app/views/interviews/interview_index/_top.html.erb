@@ -92,7 +92,7 @@
   </div>
   <% end %>
   <% if params[:action] == "show" || params[:action] == "show_index"  %>
-  <%= link_to 'Add Tag', 'javascript://', class: 'btn btn-outline-dark btn-block btn-xs pull-left mt-2 add_tag', data: { url: interviews_interview_index_new_path } %>
+  <%= link_to 'Add Tag', 'javascript://', class: 'btn btn-outline-dark btn-block pull-left add_tag', data: { url: interviews_interview_index_new_path } %>
   <% end %>
 <% else %>
   <div id="media_host" data-host="" style="width: 75%;" >
