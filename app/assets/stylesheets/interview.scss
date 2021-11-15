@@ -182,9 +182,6 @@ div#noMediaConnection {
 
   .audio-player {
     margin-top: 0;
-  }
-
-  .audio-player {
     .video-js {
       &.vjs-audio {
         min-height: 25em;
@@ -387,15 +384,13 @@ div#noMediaConnection {
 
 #interviews_data_table_wrapper {
   .DTFC_RightBodyLiner {
+    
     tr {
       &:nth-of-type(odd) {
         td {
           background: #f9fafb !important;
         }
       }
-    }
-
-    tr {
       td {
         background: #fff !important;
       }
