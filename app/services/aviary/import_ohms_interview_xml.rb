@@ -12,7 +12,7 @@ module Aviary
   class ImportOhmsInterviewXml
     include XMLFileHandler
     include ApplicationHelper
-    def import(file, organization, user)
+    def import(file, organization, user, status)
       doc = Nokogiri::XML(File.read(file.path))
       error_messages = xml_validation(doc)
       if error_messages.any?
@@ -68,7 +68,8 @@ module Aviary
       interview.miscellaneous_user_notes = xml_data['user_notes'].present? ? xml_data['user_notes'] : ''
       interview.created_by_id = user.id
       interview.updated_by_id = user.id
-      interview.metadata_status = -1
+      interview.metadata_status = status
+      interview.index_status = status
       interview.avalon_target_domain = xml_data['mediafile']['avalon_target_domain'].present? ? xml_data['mediafile']['avalon_target_domain'] : ''
       interview.media_host_account_id = xml_data['mediafile']['host_account_id'].present? ? xml_data['mediafile']['host_account_id'] : ''
       interview.media_host_player_id = xml_data['mediafile']['host_player_id'].present? ? xml_data['mediafile']['host_player_id'] : ''

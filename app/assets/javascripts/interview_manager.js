@@ -440,7 +440,21 @@ function InterviewManager() {
         html = (response.length == 0 ? "There are currently no notes associated with this interview." : html);
         $('#listNotes').html(html);
     }
+    const clearImportXmlFile = function () {
+        $("#import_xml_file").val(null).trigger("change");
+        $('.import-xml-file-section').show();
+        $('.import-file-confirmation').hide();
+        $('#status_complete').prop("checked", false);
+        $('#import_file_name').html('');
+        $('#import_xml_btn').text('Import');
+        $('#import_xml_btn').unbind();
+    }
     const initImportXmlFile = function () {
+        $('#import_xml_modal').on('hidden.bs.modal', function () {
+            $('.close-import-popup').attr('data-dismiss','modal').text('Close');
+
+            clearImportXmlFile();
+        })
         $("#import_file_name").html("");
         $('#import_xml_file').fileupload({
             url: $('#import_xml_file').data('url'),
@@ -450,6 +464,10 @@ function InterviewManager() {
             acceptFileTypes: /^text\/(xml)$/i,
             dataType: 'json',
             autoUpload: false,
+            submit: function (e, data) {
+                data.formData = {status: ($('#status_complete').is(":checked") ? "3" : "-1")};
+                return true;
+            },
             add: function (e, data) {
                 $.each(data.files, function (index, file) {
                     let filename = file.name;
@@ -470,6 +488,7 @@ function InterviewManager() {
                             $(this).html("Processing...");
                         });
                         $('.close-import-popup').unbind("click").bind("click", function () {
+                            clearImportXmlFile();
                             $('.import-xml-file-section').show();
                         });
                     }

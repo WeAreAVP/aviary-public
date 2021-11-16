@@ -312,15 +312,15 @@
             <h3>Language</h3>
           </div>
           <div class="form-group">
-            <div class="field-title"><%= f.label :language_info %></div>
+            <div class="field-title"><%= f.label :language, 'Language' %></div>
             <%= f.input :language_info, label: false, input_html: { class: 'form-control language' } %>
           </div>
           <div class="custom-checkbox mt-4 mb-3">
             <%= f.check_box :include_language, label: false, id: "include_language", input_html: { class: 'include_language' } %>
-            <label for="include_language">Include Language</label>
+            <label for="include_language">Include Translation</label>
           </div>
           <div class="form-group">
-            <div class="field-title"><%= f.label :language_for_translation, 'Include For Translation' %></div>
+            <div class="field-title"><%= f.label :language_for_translation, 'Language For Translation' %></div>
             <%= f.input :language_for_translation, label: false, input_html: { class: 'form-control language_for_translation' } %>
           </div>
           <div class="text-headline jumbotron custom-title-headline">

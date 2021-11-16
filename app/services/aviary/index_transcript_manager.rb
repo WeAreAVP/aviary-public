@@ -180,6 +180,7 @@ module Aviary::IndexTranscriptManager
     def initialize
       self.from_resource_file = true
     end
+
     def process(file_transcript, remove_title = nil)
       file_path = ENV['RAILS_ENV'] == 'production' ? file_transcript.associated_file.url : file_transcript.associated_file.path
       if ['application/xml', 'text/xml'].include? file_transcript.associated_file_content_type

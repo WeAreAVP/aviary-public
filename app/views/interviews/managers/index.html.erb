@@ -25,7 +25,6 @@
                     Manage Table
                   </button>
                   <button class="dropdown-item bluk-edit-btn">Bulk Edit Options</button>
-                  <button class="dropdown-item import-xml-resource-columns-btn" data-target=".manage-interview-import-xml-modal" data-toggle="modal">Import XML</button>
                 </div>
               </div>
             </div>
@@ -241,23 +240,32 @@
           <ul class="import_csv_note">
             <li class="text-muted mb-2 font-size-14px">Select one or more valid OHMS XML or CSV files using the box below to upload.</li>
             </li>
+            <li class="text-muted mb-2 font-size-14px">Download a CSV import template <a href="/csvs/OHMS_Import_Template.csv" download>here</a></li>
           </ul>
-          <div id="progress_import" class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="background-color: #ffffff;">
+          
+                <div class="col-md-12 padding-left-30">
+                  <label for="status_complete" class="">
+                    <input type="checkbox" value="" id="status_complete" name="status_complete"> <strong class="text-sm-left">Automatically Mark Imported Records as “Completed”</strong>
+                  </label>
+                  <small class="form-text text-muted mb-3"><br/>Metadata, Index, and Transcript will be marked as completed.<br/>If no transcript is present, the "No Transcript" checkbox will be checked.</small>
+                </div>
+           <div id="progress_import" class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="background-color: #ffffff;">
             <div class="progress-bar progress-bar-success" style="width:0%;"></div>
-          </div>
+          </div>   
           <div class="import-file-confirmation" style="display: none;">
             <p class="text-muted mb-4">This process will create a new interview record for each valid OHMS XML or CSV file you uploaded.</p>
             <p class="text-muted">Do you want to proceed?
             </p>
           </div>
+          
           <div class="import-xml-file-section">
               <span class="fileinput-button single-upload-file-cus text-center">
                   Browse and upload XML or CSV files
                   <input type="file" name="importXML[]" id="import_xml_file" accept=".csv, text/xml" data-url="<%= import_metadata_xml_interviews_managers_path %>" multiple/>
-                </span>
-                <div>Download a CSV import template <a href="/assets/OHMS_Import_Template.csv" download>here</a></div>
+              </span>              
             <span id="import_file_name"></span>
           </div>
+          
         </div>
       </div>
       <div class="modal-footer">
