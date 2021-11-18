@@ -456,6 +456,28 @@ module Aviary::IndexTranscriptManager
       time_regex = /(^[0-9:.]+)/
 
       output = file.split(regex)
+
+      last_point = '00:00:00'
+      last_time = 0
+      time_different = 0
+      output.each_with_index do |points, _point_key|
+        if points.match(/(^[0-9:.]+)/).present?
+          time = points.split(':').map(&:to_f).inject(0) { |a, b| a * 60 + b } # convert time to seconds
+          time_different = time - last_time
+          last_time = time
+        end
+      end
+
+      output.each_with_index do |points, point_key|
+        if points.match(/(^[0-9:.]+)/).present?
+          time = last_point.split(':').map(&:to_f).inject(0) { |a, b| a * 60 + b } # convert time to seconds
+          time += time_different
+          time = Time.at(time).utc.strftime('%H:%M:%S')
+          output[point_key] = time
+          last_point = time
+        end
+      end
+
       point_hash = point_hash(file, file_transcript, regex, time_regex, start_end_regex, output)
       Success(point_hash)
     end
@@ -529,7 +551,7 @@ module Aviary::IndexTranscriptManager
             match_time = time_regex.match(point)
             if match_section.present? && match_time.present?
               single_hash = {}
-              point = setup_timestamp(point) if ENV['IS_ASJPA'].eql?('true')
+              point = setup_timestamp(point) if ENV['IS_ASJPA'].eql?('true') && from_resource_file
               if point.split(':').size == 4
                 point = point.sub(/.*\K:/, '.')
               end

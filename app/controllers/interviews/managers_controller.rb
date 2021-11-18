@@ -12,7 +12,7 @@ module Interviews
     include Aviary::ZipperService
     before_action :authenticate_user!, except: :export
 
-    before_action :set_interview, only: %i[show edit update destroy sync]
+    before_action :set_interview, only: %i[show edit update destroy sync preview]
 
     # GET /interviews
     # GET /interviews.json
@@ -47,7 +47,9 @@ module Interviews
       authorize! :manage, current_organization
     end
 
-    def preview; end
+    def preview
+      authorize! :manage, current_organization
+    end
 
     # GET /interviews/bulk_edit
     def bulk_edit; end
