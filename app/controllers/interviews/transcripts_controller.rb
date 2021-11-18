@@ -17,7 +17,6 @@ module Interviews
                      error_main_transcript = validate_transcript(params['interview_transcript']['associated_file'], params['interview_transcript']['timecode_intervals'])
                      if error_main_transcript == 0 && params[:interview_transcript][:associated_file].present?
                        interview_transcript = upload_transcript('main', params[:interview_transcript][:associated_file], interview)
-
                        if interview_transcript.present? && interview_transcript.save
                          begin
                            remove_title = ''
