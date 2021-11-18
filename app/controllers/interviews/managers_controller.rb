@@ -7,6 +7,7 @@ module Interviews
   # ManagerController
   class ManagersController < ApplicationController
     include XMLFileHandler
+
     include Aviary::BulkOperation
     include Aviary::ZipperService
     before_action :authenticate_user!, except: :export
@@ -90,32 +91,57 @@ module Interviews
     end
 
     def sync
+      if request.post? || request.patch?
+        @interview.update(sync_status: params['interviews_interview']['sync_status'])
+
+        file_transcripts_update = @interview.file_transcripts.where(interview_transcript_type: 'main').try(:first)
+        main_transcript = Sanitize.fragment(params['interviews_interview']['main_transcript'].gsub("\r\n", ''))
+        file = Tempfile.new('content')
+        file.path
+        file.write(main_transcript)
+        transcript_manager = Aviary::IndexTranscriptManager::TranscriptManager.new
+        transcript_manager.from_resource_file = false
+        hash = transcript_manager.parse_text(main_transcript, file_transcripts_update)
+        transcript_manager.map_hash_to_db(file_transcripts_update, hash, false)
+        file.close
+        file.unlink
+        main_transcript
+      end
       @data_main = []
       @data_translation = []
+      @secondary_transcript = nil
+      @main_transcript = nil
+
+      @data_main = []
+      @data_translation = []
+      @secondary_transcript = nil
+      @main_transcript = nil
       interview_file_transcript = nil
       file_transcripts_main = @interview.file_transcripts
       if file_transcripts_main.present? && file_transcripts_main.where(interview_transcript_type: 'main').try(:first).present?
-        interview_file_transcript = file_transcripts_main.where(interview_transcript_type: 'main').try(:first).file_transcript_points.order('start_time asc')
+        @main_transcript = file_transcripts_main.where(interview_transcript_type: 'main').try(:first)
+        interview_file_transcript = @main_transcript.file_transcript_points.order('start_time asc') if @main_transcript.present?
       end
 
       if interview_file_transcript.present?
         interview_file_transcript.each do |single_info|
           @data_main << { id: single_info.id, text: single_info.text,
-                          start_time: single_info.start_time.present? ? Time.at(single_info.start_time).utc.strftime('%H:%M:%S') : '00:00:00',
-                          end_time: single_info.end_time.present? ? Time.at(single_info.end_time).utc.strftime('%H:%M:%S') : '00:00:00' }
+                          start_time: single_info.start_time.present? ? time_to_duration(single_info.start_time) : '00:00:00',
+                          end_time: single_info.end_time.present? ? time_to_duration(single_info.end_time) : '00:00:00' }
         end
       end
 
       interview_transcript_translation = nil
       if file_transcripts_main.present? && file_transcripts_main.where(interview_transcript_type: 'translation').try(:first).present?
-        interview_transcript_translation = file_transcripts_main.where(interview_transcript_type: 'translation').try(:first).file_transcript_points.order('start_time asc')
+        @secondary_transcript = file_transcripts_main.where(interview_transcript_type: 'translation').try(:first)
+        interview_transcript_translation = @secondary_transcript.file_transcript_points.order('start_time asc')
       end
 
       if interview_transcript_translation.present?
         interview_transcript_translation.each do |single_info|
           @data_translation << { id: single_info.id, text: single_info.text,
-                                 start_time: single_info.start_time.present? ? Time.at(single_info.start_time).utc.strftime('%H:%M:%S') : '00:00:00',
-                                 end_time: single_info.end_time.present? ? Time.at(single_info.end_time).utc.strftime('%H:%M:%S') : '00:00:00' }
+                                 start_time: single_info.start_time.present? ? time_to_duration(single_info.start_time) : '00:00:00',
+                                 end_time: single_info.end_time.present? ? time_to_duration(single_info.end_time) : '00:00:00' }
         end
       end
 

@@ -1,4 +1,5 @@
 # Interviews Helper
+#
 # Aviary is an audiovisual content publishing platform with sophisticated features for search and permissions controls.
 # Copyright (C) 2019 Audio Visual Preservation Solutions, Inc.
 module InterviewsHelper
@@ -33,5 +34,19 @@ module InterviewsHelper
     else
       field.to_s.sub('_ss', '').sub('_sms', '').sub('_texts', '').sub('_text', '').sub('_is', '').sub('_bs', '').titleize
     end
+  end
+
+  def to_hms(time)
+    Time.at(time).utc.strftime('%H:%M:%S')
+  rescue StandardError => ex
+    Rails.logger.error ex.message
+    '00:00:00'
+  end
+
+  def hms_to_number(hms)
+    hms.split(':').map(&:to_i).inject(0) { |a, b| a * 60 + b }
+  rescue StandardError => ex
+    Rails.logger.error ex.message
+    0
   end
 end
