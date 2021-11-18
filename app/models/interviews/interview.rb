@@ -51,6 +51,19 @@ module Interviews
       [color, process_status]
     end
 
+    def interview_sync_status
+      color = color_grading['0']
+      case sync_status.to_s
+      when '4'
+        color = color_grading['4']
+      when '3'
+        color = color_grading['3']
+      when '-1', ''
+        color = ''
+      end
+      [color, listing_metadata_status[sync_status.to_s]]
+    end
+
     def interview_metadata_status
       color_grading[metadata_status.to_s]
     end

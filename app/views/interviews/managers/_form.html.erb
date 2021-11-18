@@ -21,7 +21,6 @@
             <div class="d-flex align-items-center py-4">
               <div class="btn-group">
                 <%= link_to 'Return To Interviews', interviews_managers_path, class: 'btn btn-outline-secondary' %>
-                
               </div>
               <%= f.submit 'Save', class: 'btn btn-success ml-3' %>
             </div>
@@ -317,7 +316,7 @@
           </div>
           <div class="custom-checkbox mt-4 mb-3">
             <%= f.check_box :include_language, label: false, id: "include_language", input_html: { class: 'include_language' } %>
-            <label for="include_language">Include Translation</label>
+            <label for="include_language">Include Translation </label>
           </div>
           <div class="form-group">
             <div class="field-title"><%= f.label :language_for_translation, 'Language For Translation' %></div>

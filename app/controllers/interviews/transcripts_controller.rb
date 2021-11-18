@@ -17,7 +17,6 @@ module Interviews
                      error_main_transcript = validate_transcript(params['interview_transcript']['associated_file'], params['interview_transcript']['timecode_intervals'])
                      if error_main_transcript == 0 && params[:interview_transcript][:associated_file].present?
                        interview_transcript = upload_transcript('main', params[:interview_transcript][:associated_file], interview)
-
                        if interview_transcript.present? && interview_transcript.save
                          begin
                            remove_title = ''
@@ -60,7 +59,6 @@ module Interviews
                      param = { interview_transcript_id: interview.id, e: error_translation_transcript == 1 || error_main_transcript == 1 }
                      flash[:error] = message
                    else
-
                      if interview.present?
                        interview.file_transcripts.update(JSON.parse(params['interview_transcript'].to_json).except!('translation', 'associated_file'))
                        message = ' Transcript information updated successfully '
@@ -76,14 +74,72 @@ module Interviews
       end
     end
 
+    def change_sync_interval
+      translation_transcript_text = ''
+      main_transcript_text = ''
+      interview = Interviews::Interview.find(params[:id])
+      timecode = params['timecode']
+      main = interview.file_transcripts.where(interview_transcript_type: 'main').try(:first)
+      translation = interview.file_transcripts.where(interview_transcript_type: 'translation').try(:first)
+
+      if main.present?
+        main.timecode_intervals = timecode
+        main.save
+      end
+
+      if translation.present?
+        translation.timecode_intervals = timecode
+        translation.save
+      end
+
+      if main.present? && main.file_transcript_points.present?
+        main.file_transcript_points.each do |single_transcript_point|
+          main_transcript_text += ' ' + single_transcript_point.text + ' '
+        end
+      end
+
+      if translation.present? && translation.file_transcript_points.present?
+        translation.file_transcript_points.each do |single_transcript_point|
+          translation_transcript_text += ' ' + single_transcript_point.text + ' '
+        end
+      end
+
+      if main_transcript_text.present?
+        file_transcripts_update = interview.file_transcripts.where(interview_transcript_type: 'main').try(:first)
+        content_manage(main_transcript_text, file_transcripts_update) if file_transcripts_update.present?
+      end
+
+      if translation_transcript_text.present?
+        file_transcripts_update = interview.file_transcripts.where(interview_transcript_type: 'translation').try(:first)
+        content_manage(translation_transcript_text, file_transcripts_update) if file_transcripts_update.present?
+      end
+
+      respond_to do |format|
+        format.html { redirect_to sync_interviews_manager_path(interview.id), notice: t('updated_successfully') }
+      end
+    end
+
     private
+
+    def content_manage(translation_transcript_text, file_transcripts_update)
+      main_transcript = Sanitize.fragment(translation_transcript_text)
+      file = Tempfile.new('content')
+      file.path
+      file.write(translation_transcript_text)
+      transcript_manager = Aviary::IndexTranscriptManager::TranscriptManager.new
+      transcript_manager.from_resource_file = false
+      hash = transcript_manager.parse_text(main_transcript, file_transcripts_update)
+      transcript_manager.map_hash_to_db(file_transcripts_update, hash, false)
+      file.close
+      file.unlink
+    end
 
     def upload_transcript(type, file, interview)
       interview.file_transcripts.where(interview_transcript_type: type).destroy_all if interview.file_transcripts.where(interview_transcript_type: type).present?
       interview_transcript_translation = FileTranscript.new({ collection_resource_file_id: nil, user: current_user,
                                                               title: file.original_filename, interview: interview,
                                                               language: 'en', is_public: false, sort_order: 0, associated_file: file,
-                                                              is_caption: false, interview_transcript_type: type })
+                                                              is_caption: false, auto_service_id: nil, interview_transcript_type: type })
       interview_transcript_translation
     end
 

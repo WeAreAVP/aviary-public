@@ -93,7 +93,8 @@ class InterviewsDatatable < ApplicationDatatable
 
     if this_interview.try(:file_transcripts).present?
       html += link_to 'Sync', sync_interviews_manager_path(interview['id_is']), class: 'btn-interview btn-sm btn-link mr-1 float-left interview_transcript_sync ', id: 'interview_transcript_sync' + interview['id_is'].to_s, data: {
-        id: interview['id_is'], url: sync_interviews_manager_path(interview['id_is'], 'json'), updateurl: sync_interviews_manager_path(interview['id_is'])
+        id: interview['id_is'], url: sync_interviews_manager_path(interview['id_is'], 'json'), updateurl: sync_interviews_manager_path(interview['id_is']),
+        toggle: 'tooltip', placement: 'top', title: this_interview.interview_sync_status.second
       }
     end
 

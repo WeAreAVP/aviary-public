@@ -20,7 +20,8 @@ module Aviary
 
     def check_and_extract(resource_file)
       video_id = resource_file.embed_code.split('?v=').last
-      languages = list_cc(video_id)
+      # languages = list_cc(video_id)
+      languages = nil
       check_alternative_cc(video_id, resource_file) unless languages.present?
       return unless languages.present?
       languages.each do |language|
