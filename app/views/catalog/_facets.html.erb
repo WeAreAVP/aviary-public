@@ -7,7 +7,7 @@
           <% unless key.blank? %>
             <div class="tags_applied" data-indentifier="<%= key %>">
               <%== advance_search_string(single_search) %>
-              <a class="badge badge-danger remove_tag_and_filter text-white pill-<%= key %>" data-start-over-url="<%== add_facet_params_to_url(search_catalog_url(q: '', search_field: 'all_fields', utf8: '✓', 'search_type': params.key?('search_type') ? params[:search_type] : 'simple'), session[:search_facets]) %>" data-is_main_element="<%== single_search['op'].blank? %>" href="javascript:void(0);" data-indentifier="<%= key %>">x</a>
+              <a class="badge badge-danger remove_tag_and_filter text-white pill-<%= key %>" data-start-over-url="<%== add_facet_params_to_url(search_catalog_url(sort: 'title_ss asc', q: '', search_field: 'all_fields', utf8: '✓', 'search_type': params.key?('search_type') ? params[:search_type] : 'simple'), session[:search_facets]) %>" data-is_main_element="<%== single_search['op'].blank? %>" href="javascript:void(0);" data-indentifier="<%= key %>">x</a>
             </div>
           <% end %>
         <% end %>
