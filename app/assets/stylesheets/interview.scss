@@ -602,12 +602,12 @@ div#noMediaConnection {
 .action-btn-holder {
   margin-right: 10px;
   display: inline-flex;
-  width: 200px;
+  width: 230px;
   flex-wrap: wrap;
 
   .btn-interview {
     margin: 3px;
-    padding: 0.25rem 0.5rem;
+    padding: 0.25rem;
     border: 1px solid;
     flex: 1;
     text-align: center;
@@ -638,6 +638,23 @@ div#noMediaConnection {
   th,
   td {
     white-space: nowrap;
+    .btn-interview-preview {
+      border: 2px solid #dee2e6;
+      color: #111;
+      display: block;
+      width: 60px;
+      text-decoration: none;
+      padding: 0px;
+      text-align: center;
+      margin: 3px 0px;
+      border-radius: 4px;
+      font-size: 12px;
+      line-height: 22px;
+      &:hover {
+        color: #000;
+        border-color: #999;
+      }
+    }
   }
 }
 
