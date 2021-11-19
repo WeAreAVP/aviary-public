@@ -397,13 +397,10 @@ class CollectionResource < ApplicationRecord
             global_status = true
           end
 
-          next if !global_status && export_and_current_organization[:called_from] != 'permission_group'
+          next unless global_status
 
-          if field_settings.should_search_on_resource_table || export_and_current_organization[:called_from] == 'permission_group'
+          if field_settings.should_search_on_resource_table
             field_name = field_settings.solr_search_column_name
-            if field_name.blank? && export_and_current_organization[:called_from] == 'permission_group'
-              field_name = single_collection_field['value']
-            end
 
             flag_added_filter = false
 
