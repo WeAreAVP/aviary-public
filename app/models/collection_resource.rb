@@ -528,11 +528,6 @@ class CollectionResource < ApplicationRecord
       response = { 'response' => { 'docs' => {} } }
     end
     count = total_response['response']['numFound'].to_i
-    begin
-      fetch_media_file_info_ids = fetch_media_file_info(response['response']['docs'].map { |element| element['id_is'] }, solr)
-    rescue StandardError => ex
-      Rails.logger.error ex
-    end
 
     [response['response']['docs'], count, collections, export_and_current_organization[:current_organization], fetch_media_file_info_ids]
   end
