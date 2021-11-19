@@ -104,10 +104,10 @@ function InterviewTranscriptManager() {
                     player_widget.on('constant-timeupdate', function (e) {
                         updateTime();
 
-                        let playerTime = parseInt(this.currentTime());
+                        let playerTime = parseInt(this.currentTime(), 10);
                         let playerState = false;
                         var minVal = getMinVal();
-                        let rangeVal = parseInt($('.video_player_delay').val());
+                        let rangeVal = parseInt($('.video_player_delay').val(), 10);
                         let hours = Math.floor(playerTime / 3600);
                         let minutes = Math.floor((playerTime - (hours * 3600)) / 60);
                         let seconds = playerTime - ((hours * 3600) + (minutes * 60));
@@ -175,10 +175,10 @@ function InterviewTranscriptManager() {
         var mSecs = 0;
         if (mtime.indexOf(':') !== -1) {
             var parts = mtime.split(":");
-            var minVal = parseInt(parts[1]);
-            mSecs = parseInt(parts[1]);
+            var minVal = parseInt(parts[1], 10);
+            mSecs = parseInt(parts[1], 10);
         } else {
-            var minVal = parseInt(mtime);
+            var minVal = parseInt(mtime, 10);
         }
         if (mSecs == 30) {
             minVal = minVal + 0.5;
@@ -194,8 +194,8 @@ function InterviewTranscriptManager() {
 
         if (mtime.indexOf(':') !== -1) {
             var parts = mtime.split(":");
-            minVal = parseInt(parts[0]);
-            mSecs = parseInt(parts[1]);
+            minVal = parseInt(parts[0], 10);
+            mSecs = parseInt(parts[1], 10);
             if (mSecs == 30) {
                 finalVal = minVal + 0.5;
             } else {
@@ -204,7 +204,7 @@ function InterviewTranscriptManager() {
 
 
         } else {
-            finalVal = parseInt(mtime);
+            finalVal = parseInt(mtime, 10);
         }
         var valToOperate = 0;
         if (intervalType == 'sec') {
@@ -225,7 +225,7 @@ function InterviewTranscriptManager() {
             if (finalVal % 1 != 0) {
                 secon = "30";
             }
-            finalVal = parseInt(finalVal) + ":" + secon;
+            finalVal = parseInt(finalVal, 10) + ":" + secon;
 
 
         }
