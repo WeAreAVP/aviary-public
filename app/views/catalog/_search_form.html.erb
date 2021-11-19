@@ -27,4 +27,17 @@
     <% end %>
   </div>
 <% end %>
+<script>
+  $(document).ready(function(){
+     $(".search-query-form").on("submit", function(){
+         if( $(".search_field_selector_main").val() == '' ){
+             $('<input>').attr({
+                 type: 'hidden',
+                 name: 'sort',
+                 value: 'title_ss asc'
+             }).appendTo(this);
+         }
+     });
+  });
+</script>
 
