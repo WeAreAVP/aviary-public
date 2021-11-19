@@ -95,13 +95,13 @@ module Interviews
     def sync
       if request.post? || request.patch?
         @interview.update(sync_status: params['interviews_interview']['sync_status'])
-
         file_transcripts_update = @interview.file_transcripts.where(interview_transcript_type: 'main').try(:first)
         main_transcript = Sanitize.fragment(params['interviews_interview']['main_transcript'].gsub("\r\n", ''))
         file = Tempfile.new('content')
         file.path
         file.write(main_transcript)
         transcript_manager = Aviary::IndexTranscriptManager::TranscriptManager.new
+        transcript_manager.sync_interval = params['interviews_interview']['timecode_intervals'].to_f
         transcript_manager.from_resource_file = false
         hash = transcript_manager.parse_text(main_transcript, file_transcripts_update)
         transcript_manager.map_hash_to_db(file_transcripts_update, hash, false)
