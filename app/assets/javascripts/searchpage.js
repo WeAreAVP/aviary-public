@@ -305,6 +305,13 @@ function SearchPage() {
         });
         $('.search_field_selector_single').keyup(function (event) {
             if (event.keyCode == 13) {
+                if( $(".search_field_selector_single").val() == '' ){
+                    $('<input>').attr({
+                        type: 'hidden',
+                        name: 'sort',
+                        value: 'title_ss asc'
+                    }).appendTo('.simple_search');
+                }
                 $('.simple_search').submit();
             }
         });
