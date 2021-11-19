@@ -182,9 +182,6 @@ div#noMediaConnection {
 
   .audio-player {
     margin-top: 0;
-  }
-
-  .audio-player {
     .video-js {
       &.vjs-audio {
         min-height: 25em;
@@ -393,8 +390,6 @@ div#noMediaConnection {
           background: #f9fafb !important;
         }
       }
-    }
-    tr {
       td {
         background: #fff !important;
       }
