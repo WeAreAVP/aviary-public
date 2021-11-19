@@ -529,7 +529,7 @@ class CollectionResource < ApplicationRecord
     end
     count = total_response['response']['numFound'].to_i
 
-    [response['response']['docs'], count, collections, export_and_current_organization[:current_organization], fetch_media_file_info_ids]
+    [response['response']['docs'], count, collections, export_and_current_organization[:current_organization]]
   end
 
   def self.simple_field_search_handler(value, fq_filters_inner, counter, query)
