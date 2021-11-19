@@ -286,12 +286,16 @@ function InterviewTranscriptManager() {
         });
 
         document_level_binding_element('.single_word_transcript', 'click', function () {
-            updateForward();
+
             let currentPoint = parseFloat($('.player_state_transcript').val());
-            $('.transcript_point_code_' + currentPoint).remove();
-            $(this).after(' <span class="transcript_point_code text-dark transcript_point_code_' + currentPoint + '" data-time="' + currentPoint + '">[' + secondsToHuman(currentPoint) + ']</span> ');
+            if (currentPoint > 0){
+                $('.transcript_point_code_' + currentPoint).remove();
+                $(this).after(' <span class="transcript_point_code text-dark transcript_point_code_' + currentPoint + '" data-time="' + currentPoint + '">[' + secondsToHuman(currentPoint) + ']</span> ');
+            }
+
             $(this).addClass('bg-success');
             $('#main_transcript_textarea').text($('.main_transcript_for_edit').html());
+            updateForward();
         });
     };
 

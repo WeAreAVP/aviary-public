@@ -24,6 +24,7 @@ module Interviews
       transcript_available = true
 
       color = color_grading['0']
+      process_status = 'In Progress'
 
       case metadata_status.to_s
       when '4'
@@ -203,14 +204,6 @@ module Interviews
         updated_by_id.present? ? updated_by_id : 'None'
       end
 
-      string :created_by, stored: true do
-        created_by_id.present? ? created_by_id : 'None'
-      end
-
-      string :updated_by, stored: true do
-        updated_by_id.present? ? updated_by_id : 'None'
-      end
-
       integer :created_at, stored: true do
         created_at.to_i if created_at.present?
       end
@@ -352,6 +345,16 @@ module Interviews
                 alter_search_wildcard_string = 'updated_at_ss'
               end
 
+              if alter_search_wildcard == 'updated_by_id_is'
+                alter_search_wildcard = 'updated_by_ss'
+                alter_search_wildcard_string = 'updated_by_ss'
+              end
+
+              if alter_search_wildcard == 'created_by_id_is'
+                alter_search_wildcard = 'created_by_id_ss'
+                alter_search_wildcard_string = 'created_by_id_ss'
+              end
+
               alter_search_wildcard.sub! '_ss', '_texts'
               alter_search_wildcard.sub! '_sms', '_texts'
               fq_filters_inner += if counter > 0
@@ -408,7 +411,12 @@ module Interviews
       rescue StandardError
         response = { 'response' => { 'docs' => {} } }
       end
-      count = total_response['response']['numFound'].to_i
+      count = if total_response.present? && total_response['response'].present? && total_response['response']['numFound'].present?
+                total_response['response']['numFound'].to_i
+              else
+                0
+              end
+
       [response['response']['docs'], count, {}, export_and_current_organization[:current_organization]]
     end
 
