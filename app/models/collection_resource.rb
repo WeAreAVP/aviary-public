@@ -363,7 +363,8 @@ class CollectionResource < ApplicationRecord
   end
 
   def self.fetch_resources(page, per_page, sort_column, sort_direction, params, limit_condition,
-                           export_and_current_organization = { export: false, current_organization: false, called_from: '', extra_conditions: [] })
+      export_and_current_organization = { export: false, current_organization: false, called_from: '', extra_conditions: [] })
+
     q = params[:search][:value] if params.present?
     solr = solr_connect
     solr_url = solr_path
@@ -388,30 +389,41 @@ class CollectionResource < ApplicationRecord
 
       if search_columns.present?
         search_columns.each_with_index do |(system_name, single_collection_field), _index|
+          Aviary::FieldManagement::OrganizationFieldManager.new
           field_settings = Aviary::FieldManagement::FieldManager.new(single_collection_field, system_name)
           global_status = field_settings.should_display_on_detail_page
+
           if field_settings.field_configuration.present? && field_settings.field_configuration['special_purpose'].present? && field_settings.field_configuration['special_purpose'].to_s.to_boolean?
             global_status = true
           end
+
           next unless global_status
+
           if field_settings.should_search_on_resource_table
             field_name = field_settings.solr_search_column_name
+
             flag_added_filter = false
+
             case field_name
             when 'index'
+
               SearchBuilder.index_search_fields.each do |single_field_index|
                 fq_filters_inner = fq_filters_inner + (counter != 0 ? ' OR ' : ' ') + " #{search_perp(q, single_field_index.to_s)} "
               end
               flag_added_filter = true
+              processed = true
             when 'transcript'
+
               SearchBuilder.transcript_search_fields.each do |single_field_transcript|
                 fq_filters_inner = fq_filters_inner + (counter != 0 ? ' OR ' : ' ') + " #{search_perp(q, single_field_transcript.to_s)} "
               end
               flag_added_filter = true
+              processed = true
             when 'collection_title'
               # if limit is organization then let it go but if limit is collection_is then change it to id_is to only get that specific collection
               fq_filters_inner, counter = CollectionResource.search_collection_column(limit_condition, solr, q, counter, fq_filters_inner)
               flag_added_filter = true
+              processed = true
             when 'id_ss', 'title_ss', 'id_is', 'title_text', 'custom_unique_identifier_texts', 'custom_unique_identifier_ss'
               fq_filters_inner += simple_field_search_handler(field_name, fq_filters_inner, counter, q)
               if field_name == 'title_ss'
@@ -420,9 +432,11 @@ class CollectionResource < ApplicationRecord
                 fq_filters_inner += " OR  #{straight_search_perp(q, alter_search_new)} "
               end
               flag_added_filter = true
+              processed = true
             when 'description_agent_search_texts', 'description_coverage_search_texts', 'description_description_search_texts', 'description_identifier_search_texts', 'description_keyword_search_texts',
-              'description_language_search_texts', 'description_preferred_citation_search_texts', 'description_publisher_search_texts', 'description_relation_search_texts', 'description_rights_statement_search_texts',
-              'description_source_metadata_uri_search_texts', 'description_source_search_texts', 'description_subject_search_texts', 'description_title_search_texts', 'description_type_search_texts', 'description_format_search_texts'
+                'description_language_search_texts', 'description_preferred_citation_search_texts', 'description_publisher_search_texts', 'description_relation_search_texts', 'description_rights_statement_search_texts',
+                'description_source_metadata_uri_search_texts', 'description_source_search_texts', 'description_subject_search_texts', 'description_title_search_texts', 'description_type_search_texts', 'description_format_search_texts'
+
               fq_filters_inner = fq_filters_inner + (counter != 0 ? ' OR ' : ' ') + " #{search_perp(q, field_name)} "
               alter_search = field_name.clone
               alter_search_wildcard = field_name.clone
@@ -447,7 +461,9 @@ class CollectionResource < ApplicationRecord
                 fq_filters_inner += " OR  #{straight_search_perp(q, alter_search_wildcard_string)} "
               end
               flag_added_filter = true
-            when field_name.include?('custom_field_values_')
+              processed = true
+            end
+            if !processed && field_name.include?('custom_field_values_') && !field_name.include?(' ')
               alter_search = field_name.clone
               alter_search_new = alter_search.sub(/.*\K_sms/, '_texts') unless alter_search.include?('_lms') && alter_search.include?('_text')
 
@@ -459,7 +475,8 @@ class CollectionResource < ApplicationRecord
               fq_filters_inner += " OR  #{straight_search_perp(q, alter_search_new)} "
               flag_added_filter = true
             end
-            counter += 1 if flag_added_filter
+
+            counter += 1 if flag_added_filter && fq_filters_inner.present?
           end
         end
       end
@@ -472,6 +489,7 @@ class CollectionResource < ApplicationRecord
     filters = ['-{!join from=collection_collection_id_i to=resource_collection_id_i}status_ss:deleted']
     filters << fq_filters
     filters << limiter
+
     query_params = { q: solr_q_condition, fq: filters.flatten }
     query_params[:defType] = 'complexphrase' if complex_phrase_def_type
     query_params[:wt] = 'json'
@@ -486,12 +504,13 @@ class CollectionResource < ApplicationRecord
                             CollectionResourceFile.collection_sorter(limit_condition, sort_direction, solr)
                           elsif sort_column.to_s == 'id_ss'
                             "id_is #{sort_direction}"
+                          elsif sort_column.to_s == 'updated_at_ss'
+                            "updated_at_is #{sort_direction}"
                           elsif sort_column.to_s == 'description_duration_ss'
                             "description_duration_ls #{sort_direction}"
                           elsif sort_column.present? && sort_direction.present?
                             "#{sort_column} #{sort_direction}"
                           end
-
     if export_and_current_organization[:export]
       query_params[:start] = 0
       query_params[:rows] = 100_000_000
@@ -506,6 +525,7 @@ class CollectionResource < ApplicationRecord
       response = { 'response' => { 'docs' => {} } }
     end
     count = total_response['response']['numFound'].to_i
+
     [response['response']['docs'], count, collections, export_and_current_organization[:current_organization]]
   end
 
