@@ -731,4 +731,3 @@ module Aviary::IndexTranscriptManager
     end
   end
 end
-def parse_simple_text(file, file_transcript)
