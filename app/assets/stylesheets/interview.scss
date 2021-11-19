@@ -108,19 +108,19 @@
 }
 
 .container_gps > .container_gps_inner:first-child .remove_gps {
-  display: none
+  display: none;
 }
 
 .container_gps > .container_gps_inner + .container_gps_inner {
-  padding-top: 40px
+  padding-top: 40px;
 }
 
 .container_hyperlinks > .container_hyperlinks_inner:first-child .remove_hyperlinks {
-  display: none
+  display: none;
 }
 
 .container_hyperlinks > .container_hyperlinks_inner + .container_hyperlinks_inner {
-  padding-top: 40px
+  padding-top: 40px;
 }
 
 .add_button_interview {
@@ -394,7 +394,6 @@ div#noMediaConnection {
         }
       }
     }
-
     tr {
       td {
         background: #fff !important;
@@ -641,7 +640,8 @@ div#noMediaConnection {
 }
 
 #interviews_data_table {
-  th, td {
+  th,
+  td {
     white-space: nowrap;
     .btn-interview-preview {
       border: 2px solid #dee2e6;
