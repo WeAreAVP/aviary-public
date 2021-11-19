@@ -24,6 +24,7 @@ module Interviews
       transcript_available = true
 
       color = color_grading['0']
+      process_status = 'In Progress'
 
       case metadata_status.to_s
       when '4'
@@ -200,14 +201,6 @@ module Interviews
       end
 
       integer :updated_by, stored: true do
-        updated_by_id.present? ? updated_by_id : 'None'
-      end
-
-      string :created_by, stored: true do
-        created_by_id.present? ? created_by_id : 'None'
-      end
-
-      string :updated_by, stored: true do
         updated_by_id.present? ? updated_by_id : 'None'
       end
 

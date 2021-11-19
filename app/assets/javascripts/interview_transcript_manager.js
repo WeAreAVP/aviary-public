@@ -19,8 +19,6 @@ function InterviewTranscriptManager() {
     let currentPoint = 0;
     let host = "";
     let appHelper = new App();
-    let audioBegin = null;
-    let audioEnd = null;
 
     this.initialize = function () {
         timeDiffInSec = parseFloat($('#interviews_interview_timecode_intervals').val()) * 60;
@@ -103,161 +101,19 @@ function InterviewTranscriptManager() {
                     }, 6000);
                     player_widget.on('constant-timeupdate', function (e) {
                         updateTime();
-
-                        let playerTime = parseInt(this.currentTime(), 10);
-                        let playerState = false;
-                        var minVal = getMinVal();
-                        let rangeVal = parseInt($('.video_player_delay').val(), 10);
-                        let hours = Math.floor(playerTime / 3600);
-                        let minutes = Math.floor((playerTime - (hours * 3600)) / 60);
-                        let seconds = playerTime - ((hours * 3600) + (minutes * 60));
-
-                        hours = pad(hours, 2, '0');
-                        minutes = pad(minutes, 2, '0');
-                        seconds = pad(seconds, 2, '0');
-
-                        if (isNaN(hours))
-                            hours = '00';
-                        if (isNaN(minutes))
-                            minutes = '00';
-                        if (isNaN(seconds))
-                            seconds = '00';
-                        if (isNaN(minVal))
-                            minVal = 0;
-                        if (isNaN(rangeVal))
-                            rangeVal = 10;
-                        if (playerState == false) {
-                            if (minVal == 0) {
-                                if (playerTime == 0) {
-                                    that.audioBegin.pause();
-                                    that.audioBegin.play();
-                                }
-                                if (playerTime == rangeVal / 2) {
-                                    that.audioEnd.pause();
-                                    that.audioEnd.play();
-                                }
-                                if (playerTime >= rangeVal) {
-                                    player_widget.currentTime(0);
-                                }
-                            } else {
-                                if (playerTime < ((minVal * 60) - rangeVal) || playerTime > ((minVal * 60) + rangeVal)) {
-                                    player_widget.currentTime((minVal * 60) - rangeVal);
-                                    that.audioBegin.pause();
-                                }
-
-                                if (playerTime == ((minVal * 60) - rangeVal)) {
-                                    that.audioBegin.pause();
-                                    that.audioBegin.play();
-                                }
-                                if (playerTime == (minVal * 60)) {
-                                    that.audioEnd.pause();
-                                    that.audioEnd.play();
-                                }
-
-                                if (playerTime >= ((minVal * 60) + rangeVal)) {
-                                    player_widget.currentTime((minVal * 60) - rangeVal);
-                                }
-                            }
-                        }
                     });
                     $('.player-section').css('visibility', 'unset');
                 });
 
             }
         }
-        setTimeout(function () {
-            $('#main_transcript_textarea').text($('.main_transcript_for_edit').html());
-        }, 2000);
+        setTimeout(function () { $('#main_transcript_textarea').text($('.main_transcript_for_edit').html()); }, 2000);
     };
 
-    const getMinVal = function () {
-        var mtime = $('.current_transcript_point').val();
-        var mSecs = 0;
-        if (mtime.indexOf(':') !== -1) {
-            var parts = mtime.split(":");
-            var minVal = parseInt(parts[1], 10);
-            mSecs = parseInt(parts[1], 10);
-        } else {
-            var minVal = parseInt(mtime, 10);
-        }
-        if (mSecs == 30) {
-            minVal = minVal + 0.5;
-        }
-
-        return minVal;
-    };
-
-    const getMinValToDisplay = function (type) {
-        var mtime = jQuery('#txtMinute').val();
-        var mSecs = 0;
-        var finalVal = 0;
-
-        if (mtime.indexOf(':') !== -1) {
-            var parts = mtime.split(":");
-            minVal = parseInt(parts[0], 10);
-            mSecs = parseInt(parts[1], 10);
-            if (mSecs == 30) {
-                finalVal = minVal + 0.5;
-            } else {
-                finalVal = minVal;
-            }
-
-
-        } else {
-            finalVal = parseInt(mtime, 10);
-        }
-        var valToOperate = 0;
-        if (intervalType == 'sec') {
-            valToOperate = 0.5;
-        } else {
-            valToOperate = intervalIncrement;
-        }
-
-        if (type == "back") {
-            finalVal = finalVal - valToOperate;
-        }
-        if (type == "forward") {
-            finalVal = finalVal + valToOperate;
-        }
-
-        if (intervalType == 'sec') {
-            var secon = "00";
-            if (finalVal % 1 != 0) {
-                secon = "30";
-            }
-            finalVal = parseInt(finalVal, 10) + ":" + secon;
-
-
-        }
-
-
-        return finalVal;
-    };
-
-    const convertMinsToHrs = function (time) {
-        var hours = '00';
-        var minutes = '00';
-        if (time > 0) {
-            hours = Math.floor(time / 60) + "";
-            minutes = (time % 60) + "";
-            if (hours < 10) {
-                hours = "0" + hours;
-            }
-            if (minutes < 10) {
-                minutes = "0" + minutes;
-            }
-        }
-        let timeObj = {
-            hours: hours,
-            minutes: minutes
-
-        }
-        return timeObj;
-    };
     const bindEvents = function () {
 
         document_level_binding_element('#interviews_interview_timecode_intervals', 'change', function () {
-            if ($(this).val() != interviews_transcript_manager.timecode) {
+            if( $(this).val() != interviews_transcript_manager.timecode ) {
                 $('#general_modal_close_cust_success').attr('href', $('#timecode_intervals_url').data('url') + '?timecode=' + $(this).val());
                 $('#general_modal_close_cust_success').removeClass('d-none');
                 appHelper.show_modal_message('Confirmation', '<strong>Changing the sync interval will delete all previously added sync points. Are you sure you want to continue?</strong><br/><br/>', 'danger', null);
@@ -278,11 +134,6 @@ function InterviewTranscriptManager() {
 
         document_level_binding_element('.update_forward', 'click', function () {
             updateForward();
-        });
-
-        document_level_binding_element('.transcript_point_code', 'dblclick', function () {
-            $(this).remove();
-            $('#main_transcript_textarea').text($('.main_transcript_for_edit').html());
         });
 
         document_level_binding_element('.single_word_transcript', 'click', function () {
