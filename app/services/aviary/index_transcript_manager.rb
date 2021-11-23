@@ -455,6 +455,19 @@ module Aviary::IndexTranscriptManager
       start_end_regex = /([0-9:.]+)\t([0-9:.]+)/ ## This is used when both start and end time is given in transcript
       time_regex = /(^[0-9:.]+)/
 
+      unless from_resource_file
+        last_point = '00:00:00'
+        time_different = sync_interval.to_f * 60
+        output.each_with_index do |points, point_key|
+          if points.match(/(^[0-9:.]+)/).present?
+            time = last_point.split(':').map(&:to_f).inject(0) { |a, b| a * 60 + b } # convert time to seconds
+            time += time_different
+            time = Time.at(time).utc.strftime('%H:%M:%S')
+            output[point_key] = time
+            last_point = time
+          end
+        end
+      end
       output = file.split(regex)
       point_hash = point_hash(file, file_transcript, regex, time_regex, start_end_regex, output)
       Success(point_hash)

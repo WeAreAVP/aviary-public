@@ -384,7 +384,6 @@ div#noMediaConnection {
 
 #interviews_data_table_wrapper {
   .DTFC_RightBodyLiner {
-    
     tr {
       &:nth-of-type(odd) {
         td {
@@ -688,4 +687,5 @@ div#noMediaConnection {
   color: #000 !important;
   font-size: 14px;
   font-weight: bold;
+  cursor: pointer;
 }
