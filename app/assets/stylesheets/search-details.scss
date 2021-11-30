@@ -21,6 +21,10 @@
   height: auto;
   display: block;
 }
+.single_value_non_tombstone > *,
+.single_value_non_tombstone p * {
+  padding: 0 4px;
+}
 
 .search-detail-main .video .hold {
   width: 100%;
@@ -2176,8 +2180,11 @@ dl.form textarea.text {
 }
 
 .video-placeholder.embed .title {
-  padding: 20px 30px 60px;
-  background: linear-gradient(to top, transparent 0%, rgba(0, 0, 0, 0.7) 36%);
+  padding: 25px 130px 200px 30px;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.7) 60%);
+}
+.video-js .vjs-big-play-button {
+  z-index: 222;
 }
 
 .play_replay_option:hover .title,

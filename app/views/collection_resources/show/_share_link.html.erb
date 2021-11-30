@@ -19,7 +19,7 @@
       <% if can_access %>
         <% if @resource_file.is_downloadable && @resource_file.embed_type.nil? && @resource_file.resource_file_file_name.present? %>
           <form method="get" class="<%= share_btn_cls %>" action="<%= download_media_path(@resource_file.id) %>">
-            <button href="" class="btn" title="Download">
+            <button href="" class="btn btn-download-with-icon" title="Download">
               <i class="material-icons">get_app</i> Download
             </button>
           </form>
