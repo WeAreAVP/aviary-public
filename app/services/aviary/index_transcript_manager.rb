@@ -458,7 +458,6 @@ module Aviary::IndexTranscriptManager
       time_regex = /(^[0-9:.]+)/
 
       output = file.split(regex)
-
       unless from_resource_file
         last_point = '00:00:00'
         time_different = sync_interval.to_f * 60
@@ -472,7 +471,6 @@ module Aviary::IndexTranscriptManager
           end
         end
       end
-
       point_hash = point_hash(file, file_transcript, regex, time_regex, start_end_regex, output)
       Success(point_hash)
     end
