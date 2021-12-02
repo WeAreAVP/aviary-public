@@ -213,9 +213,11 @@ module Aviary::IndexTranscriptManager
     step :map_hash_to_db
     step :map_hash_to_db
     attr_accessor :from_resource_file
+    attr_accessor :sync_interval
 
     def initialize
       self.from_resource_file = true
+      self.sync_interval = 0
     end
 
     def process(file_transcript, remove_title = nil, is_new = true, import = false)
@@ -455,6 +457,8 @@ module Aviary::IndexTranscriptManager
       start_end_regex = /([0-9:.]+)\t([0-9:.]+)/ ## This is used when both start and end time is given in transcript
       time_regex = /(^[0-9:.]+)/
 
+      output = file.split(regex)
+
       unless from_resource_file
         last_point = '00:00:00'
         time_different = sync_interval.to_f * 60
@@ -468,7 +472,7 @@ module Aviary::IndexTranscriptManager
           end
         end
       end
-      output = file.split(regex)
+
       point_hash = point_hash(file, file_transcript, regex, time_regex, start_end_regex, output)
       Success(point_hash)
     end
