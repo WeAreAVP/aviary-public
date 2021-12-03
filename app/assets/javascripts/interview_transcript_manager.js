@@ -104,10 +104,10 @@ function InterviewTranscriptManager() {
                     player_widget.on('constant-timeupdate', function (e) {
                         updateTime();
 
-                        let playerTime = parseInt(this.currentTime());
+                        let playerTime = parseInt(this.currentTime(), 10);
                         let playerState = false;
                         var minVal = getMinVal();
-                        let rangeVal = parseInt($('.video_player_delay').val());
+                        let rangeVal = parseInt($('.video_player_delay').val(), 10);
                         let hours = Math.floor(playerTime / 3600);
                         let minutes = Math.floor((playerTime - (hours * 3600)) / 60);
                         let seconds = playerTime - ((hours * 3600) + (minutes * 60));
@@ -183,11 +183,11 @@ function InterviewTranscriptManager() {
         var mhours = 0;
         if (mtime.indexOf(':') !== -1) {
             var parts = mtime.split(":");
-            var minVal = parseInt(parts[1]);
-            mSecs = parseInt(parts[2]);
-            mhours = parseInt(parts[0]);
+            var minVal = parseInt(parts[1], 10);
+            mSecs = parseInt(parts[2], 10);
+            mhours = parseInt(parts[0], 10);
         } else {
-            var minVal = parseInt(mtime);
+            var minVal = parseInt(mtime, 10);
         }
 
         if (mhours > 0) {
