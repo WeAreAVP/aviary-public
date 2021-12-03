@@ -127,11 +127,14 @@ function InterviewTranscriptManager() {
                         if (isNaN(rangeVal))
                             rangeVal = 10;
                         if (playerState == false) {
+
+
                             if (minVal == 0) {
                                 if (playerTime == 0) {
                                     that.audioBegin.pause();
                                     that.audioBegin.play();
                                 }
+
                                 if (playerTime == rangeVal / 2) {
                                     that.audioEnd.pause();
                                     that.audioEnd.play();
@@ -139,7 +142,10 @@ function InterviewTranscriptManager() {
                                 if (playerTime >= rangeVal) {
                                     player_widget.currentTime(0);
                                 }
+
                             } else {
+
+
                                 if (playerTime < ((minVal * 60) - rangeVal) || playerTime > ((minVal * 60) + rangeVal)) {
                                     player_widget.currentTime((minVal * 60) - rangeVal);
                                     that.audioBegin.pause();
@@ -149,6 +155,7 @@ function InterviewTranscriptManager() {
                                     that.audioBegin.pause();
                                     that.audioBegin.play();
                                 }
+
                                 if (playerTime == (minVal * 60)) {
                                     that.audioEnd.pause();
                                     that.audioEnd.play();
@@ -173,13 +180,20 @@ function InterviewTranscriptManager() {
     const getMinVal = function () {
         var mtime = $('.current_transcript_point').val();
         var mSecs = 0;
+        var mhours = 0;
         if (mtime.indexOf(':') !== -1) {
             var parts = mtime.split(":");
             var minVal = parseInt(parts[1], 10);
-            mSecs = parseInt(parts[1], 10);
+            mSecs = parseInt(parts[2], 10);
+            mhours = parseInt(parts[0], 10);
         } else {
             var minVal = parseInt(mtime, 10);
         }
+
+        if (mhours > 0) {
+            minVal = minVal + (mhours * 60) ;
+        }
+
         if (mSecs == 30) {
             minVal = minVal + 0.5;
         }
@@ -187,73 +201,7 @@ function InterviewTranscriptManager() {
         return minVal;
     };
 
-    const getMinValToDisplay = function (type) {
-        var mtime = jQuery('#txtMinute').val();
-        var mSecs = 0;
-        var finalVal = 0;
 
-        if (mtime.indexOf(':') !== -1) {
-            var parts = mtime.split(":");
-            minVal = parseInt(parts[0], 10);
-            mSecs = parseInt(parts[1], 10);
-            if (mSecs == 30) {
-                finalVal = minVal + 0.5;
-            } else {
-                finalVal = minVal;
-            }
-
-
-        } else {
-            finalVal = parseInt(mtime, 10);
-        }
-        var valToOperate = 0;
-        if (intervalType == 'sec') {
-            valToOperate = 0.5;
-        } else {
-            valToOperate = intervalIncrement;
-        }
-
-        if (type == "back") {
-            finalVal = finalVal - valToOperate;
-        }
-        if (type == "forward") {
-            finalVal = finalVal + valToOperate;
-        }
-
-        if (intervalType == 'sec') {
-            var secon = "00";
-            if (finalVal % 1 != 0) {
-                secon = "30";
-            }
-            finalVal = parseInt(finalVal, 10) + ":" + secon;
-
-
-        }
-
-
-        return finalVal;
-    };
-
-    const convertMinsToHrs = function (time) {
-        var hours = '00';
-        var minutes = '00';
-        if (time > 0) {
-            hours = Math.floor(time / 60) + "";
-            minutes = (time % 60) + "";
-            if (hours < 10) {
-                hours = "0" + hours;
-            }
-            if (minutes < 10) {
-                minutes = "0" + minutes;
-            }
-        }
-        let timeObj = {
-            hours: hours,
-            minutes: minutes
-
-        }
-        return timeObj;
-    };
     const bindEvents = function () {
 
         document_level_binding_element('#interviews_interview_timecode_intervals', 'change', function () {
