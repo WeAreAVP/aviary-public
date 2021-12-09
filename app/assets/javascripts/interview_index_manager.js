@@ -12,9 +12,10 @@
 function InterviewIndexManager() {
     let that = this;
     let player_widget;
-    let timeDiffInSec = 15;
+    let timeDiffInSec = 10;
     let timeSubInSec = 5;
     let startTime = 0;
+    let formChange = 0;
     let widget_soundcloud;
     let host = "";
     this.initialize = function () {
@@ -301,6 +302,24 @@ function InterviewIndexManager() {
             $('#modalPopupBody').html(message);
             $('#modalPopupTitle').html('Delete "' + $(this).data().name + '"');
             $('#modalPopup').modal('show');
+        });
+        document_level_binding_element('.simple_form', 'change', function () {
+            formChange = 1;
+        });
+        document_level_binding_element('.edit_warning', 'click', function () {
+            if (formChange == 1){
+                $('#modalPopupFooterYes').attr('href', $(this).data().url);
+                let message = 'Are you sure you want to leave with unsaved changes?';
+                $('#modalPopupBody').html(message);
+                $('#modalPopupTitle').html('Warning Message');
+                $('#modalPopupFooterYes').attr("data-method","get");
+                $('#modalPopup').modal('show');
+            }
+            else
+            {
+                setTimeout(window.location.href = $(this).data('url'), 500);
+
+            }
         });
         
     };

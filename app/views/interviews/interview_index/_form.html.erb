@@ -11,8 +11,8 @@
         <div class="button-holder text-right pt-2">
           <div class="btn-group">
             <% if @interview.present? %>
-              <%= link_to 'Return To Interviews', interviews_managers_path, class: 'btn btn-outline-secondary ' %>
-              <%= link_to 'Return To Index', interviews_interview_index_path(@interview.id), class: 'btn btn-outline-secondary' %>
+              <%= link_to 'Return To Interviews', 'javascript://', class: 'btn btn-outline-secondary edit_warning', data: { url: interviews_managers_path } %>
+              <%= link_to 'Return To Index', 'javascript://', class: 'btn btn-outline-secondary edit_warning', data: { url: interviews_interview_index_path(@interview.id) } %>
             <% else %>
               <%= link_to 'Return To Resource', "#{collection_collection_resource_details_url(@collection_resource.collection, @collection_resource, @resource_file)}/index?", class: 'btn btn-primary' %>
               <% if @file_index.present? %>
@@ -54,10 +54,10 @@
         </div>
         <div class="buttons-box music_btn">
           <a href="javascript:void(0);" class="btn btn-outline-dark update_step_backward"><i class="fa fa-step-backward"></i></a>
-          <a href="javascript:void(0);" class="btn btn-outline-dark update_backward"><i class="fa fa-fast-backward"></i></a>
+          <a href="javascript:void(0);" class="btn btn-outline-dark update_backward"><%= image_tag("rewind.png", :alt => "Rewind 10 sec") %></a>
           <a href="javascript:void(0);" class="btn btn-outline-dark update_play"><i class="fa fa-play"></i></a>
           <a href="javascript:void(0);" class="btn btn-outline-dark update_pause"><i class="fa fa-stop"></i></a>
-          <a href="javascript:void(0);" class="btn btn-outline-dark update_forward"><i class="fa fa-fast-forward"></i></a>
+          <a href="javascript:void(0);" class="btn btn-outline-dark update_forward"><%= image_tag("fast-forward.png", :alt => "Forward 10 sec") %></a>
         </div>
       </div>
     </div>
