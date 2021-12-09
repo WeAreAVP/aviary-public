@@ -363,7 +363,7 @@ class CollectionResource < ApplicationRecord
   end
 
   def self.fetch_resources(page, per_page, sort_column, sort_direction, params, limit_condition,
-      export_and_current_organization = { export: false, current_organization: false, called_from: '', extra_conditions: [] })
+                           export_and_current_organization = { export: false, current_organization: false, called_from: '', extra_conditions: [] })
 
     q = params[:search][:value] if params.present?
     solr = solr_connect
