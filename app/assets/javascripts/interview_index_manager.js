@@ -306,23 +306,17 @@ function InterviewIndexManager() {
         document_level_binding_element('.simple_form', 'change', function () {
             formChange = 1;
         });
-        document_level_binding_element('.edit_warning', 'click', function () {
-            if (formChange == 1){
-                $('#modalPopupFooterYes').attr('href', $(this).data().url);
-                let message = 'Are you sure you want to leave with unsaved changes?';
-                $('#modalPopupBody').html(message);
-                $('#modalPopupTitle').html('Warning Message');
-                $('#modalPopupFooterYes').attr("data-method","get");
-                $('#modalPopup').modal('show');
-            }
-            else
-            {
-                setTimeout(window.location.href = $(this).data('url'), 500);
-
-            }
+        document_level_binding_element('.btn-success', 'click', function () {
+            formChange = 0;
         });
         
     };
+    function unloadPage(){ 
+        if(formChange == 1){
+            return "Are you sure you want to leave with unsaved changes?";
+        }
+    }
+    window.onbeforeunload = unloadPage;
     const updatePause = function ()
     {
         if(host == "Kaltura")
