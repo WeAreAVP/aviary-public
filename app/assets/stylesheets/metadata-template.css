@@ -535,7 +535,18 @@
     overflow: hidden;
     text-overflow: ellipsis;
 }
-
+@media screen and (max-width: 767px) {
+    .not-collapsed .main_sidebar {
+        height: auto;
+        width: 240px;
+    }
+    .main_collapsed .main_sidebar {
+        overflow: hidden;
+    }
+    .main_sidebar .storage {
+        margin: 0 10px;
+    }
+}
 @media screen and (max-width: 992px) {
     .main_collapsed {
         position: fixed;
@@ -543,7 +554,7 @@
     }
 
     .not-collapsed {
-        overflow-y: scroll;
+        overflow-y: auto;
         position: fixed;
         top: 0;
         bottom: 0;
@@ -560,9 +571,5 @@
 
     .not-collapsed .main_sidebar .scroll {
         padding: 10px;
-    }
-
-    .side-nav-logo {
-        padding-top: 20px;
     }
 }
