@@ -17,6 +17,7 @@
               </div>
               <div class="button-holder">
                 <% if @interview.present? %>
+                  <%= link_to 'Preview', preview_interviews_manager_path(@interview.id), class: 'btn btn-outline-secondary' %>
                   <%= link_to 'Return To Interviews', interviews_managers_path, class: 'btn btn-outline-secondary' %>
                 <% else %>
                   <%= link_to 'Return To Resource', "#{collection_collection_resource_details_url(@collection_resource.collection, @collection_resource, @resource_file)}/index?", class: 'btn btn-outline-secondary mr-1' %>

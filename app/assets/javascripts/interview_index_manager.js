@@ -12,9 +12,10 @@
 function InterviewIndexManager() {
     let that = this;
     let player_widget;
-    let timeDiffInSec = 15;
+    let timeDiffInSec = 10;
     let timeSubInSec = 5;
     let startTime = 0;
+    let formChange = 0;
     let widget_soundcloud;
     let host = "";
     this.initialize = function () {
@@ -302,8 +303,20 @@ function InterviewIndexManager() {
             $('#modalPopupTitle').html('Delete "' + $(this).data().name + '"');
             $('#modalPopup').modal('show');
         });
+        document_level_binding_element('.simple_form', 'change', function () {
+            formChange = 1;
+        });
+        document_level_binding_element('.btn-success', 'click', function () {
+            formChange = 0;
+        });
         
     };
+    function unloadPage(){ 
+        if(formChange == 1){
+            return "Are you sure you want to leave with unsaved changes?";
+        }
+    }
+    window.onbeforeunload = unloadPage;
     const updatePause = function ()
     {
         if(host == "Kaltura")
