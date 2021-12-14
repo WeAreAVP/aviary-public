@@ -106,7 +106,6 @@ class InterviewsDatatable < ApplicationDatatable
     html += ' <button type="button" class="btn btn-lg text-custom-dropdown btn-link text-primary" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-ellipsis-v"></i></button>'
     html += ' <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; transform: translate3d(137px, 33px, 0px); top: 0px; left: 0px; will-change: transform;">'
     html += link_to 'Export XML', export_interviews_manager_path(interview['id_is'], 'xml'), class: 'dropdown-item export_btn'
-    html += link_to 'Export CSV', export_interviews_manager_path(interview['id_is'], 'csv'), class: 'dropdown-item export_btn'
     html += '<div class="dropdown-divider"></div>'
     html += link_to 'Delete', 'javascript://', class: ' btn-interview-danger dropdown-item interview_delete', data: { url: interviews_manager_path(interview['id_is']), name: interview['title_ss'] }
     html += ' </div>'

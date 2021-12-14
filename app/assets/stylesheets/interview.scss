@@ -233,6 +233,13 @@ div#noMediaConnection {
       margin: 5px 5px 10px;
       flex: 1;
     }
+    img {
+      width: 18px;
+      height: 18px;
+      display: block;
+      margin: auto;
+      padding: 1px;
+    }
   }
 
   .left-section {
@@ -485,6 +492,7 @@ div#noMediaConnection {
       padding-bottom: 20px;
     }
   }
+  
   @media screen and (max-width: 767px) {
     .border-bottom {
       border: none !important;
@@ -521,7 +529,7 @@ div#noMediaConnection {
         display: block !important;
         text-align: left;
         padding: 0 !important;
-        button, 
+        button,
         a {
           margin-left: 0 !important;
           margin-right: 10px;
