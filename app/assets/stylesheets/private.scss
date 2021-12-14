@@ -257,7 +257,7 @@
     background-color: #fff !important;
     border: 1px solid rgba(0, 0, 0, 0.15) !important;
     padding: 10px 0;
-    min-width: 10rem !important;
+    min-width: 7rem !important;
     margin: 3px;
     top: 50% !important;
   }
@@ -269,7 +269,7 @@
   .shareHolder .dropdown-toggle:after {
     display: none;
   }
-
+  .shareHolder a,
   .shareHolder .dropdown-item button,
   .shareHolder .dropdown-item {
     color: #222 !important;
@@ -277,7 +277,13 @@
     padding: 3px 10px !important;
     text-align: left;
   }
-
+  .shareHolder .dropdown-menu i { display: none; }
+  .shareHolder .btn {
+      padding: 5px 15px !important;
+  }
+  .shareHolder .playlist-btn {
+      margin: 0 !important;
+  }
   .shareHolder form.dropdown-item {
     padding: 0 !important;
   }
