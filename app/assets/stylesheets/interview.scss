@@ -89,6 +89,7 @@
       }
     }
   }
+
   @media screen and (max-width: 767px) {
     .top-section-test-interview {
       .music-btn-holder {
@@ -520,7 +521,8 @@ div#noMediaConnection {
         display: block !important;
         text-align: left;
         padding: 0 !important;
-        button, a {
+        button, 
+        a {
           margin-left: 0 !important;
           margin-right: 10px;
         }

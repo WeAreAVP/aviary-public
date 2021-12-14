@@ -535,6 +535,7 @@
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
 @media screen and (max-width: 767px) {
     .not-collapsed .main_sidebar {
         height: auto;
@@ -547,6 +548,7 @@
         margin: 0 10px;
     }
 }
+
 @media screen and (max-width: 992px) {
     .main_collapsed {
         position: fixed;
