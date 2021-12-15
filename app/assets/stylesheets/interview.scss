@@ -492,7 +492,7 @@ div#noMediaConnection {
       padding-bottom: 20px;
     }
   }
-  
+
   @media screen and (max-width: 767px) {
     .border-bottom {
       border: none !important;
@@ -529,6 +529,7 @@ div#noMediaConnection {
         display: block !important;
         text-align: left;
         padding: 0 !important;
+
         button,
         a {
           margin-left: 0 !important;
