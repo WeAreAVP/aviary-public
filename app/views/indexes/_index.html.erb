@@ -12,10 +12,20 @@
           <div class="file_index file_index_<%= file_index.id %> pb-10px" data-language="<%= file_index.language %>" data-title="<%= file_index.title %>" data-public="<%= file_index.is_public %>" data-description="<%= file_index.description %>">
             <% @index_count = @index_time_wise = {} %>
             <% @session_video_text_all = params['keywords'] %>
+            <% parent_id = 0 %>
             <% @file_index_points.sort_by {|t| t.start_time.to_f }.each_with_index do |index_point, counter| %>
               <% present(index_point) do |presenter| %>
+                <% parent = FileIndexPoint.find_by(parent_id: index_point.id).present? %>
+                <% if parent %>
+                  <% parent_id = index_point.id %>
+                  <div class="parent_section">
+                <% end %>
+                <% if parent_id != 0 && parent_id != index_point.id && index_point.parent_id == 0 %>
+                  </div>
+                  <% parent_id = 0 %>
+                <% end %>
                 <% index_time_start = !recorded.include?(index_point.start_time.to_i) ? "index_time_start_#{index_point.start_time.to_i}" : '' %>
-                <%== presenter.single_index_point_hanlder(index_time_start, @session_video_text_all) %>
+                <%== presenter.single_index_point_hanlder(index_time_start, @session_video_text_all, parent) %>
                 <% @index_time_wise = index_page_wise_time_range(@index_time_wise, index_point, counter) %>
                 <% @index_count = count_occurrence(index_point, @session_video_text_all, @index_count, 'index', false, counter) %>
               <% end %>

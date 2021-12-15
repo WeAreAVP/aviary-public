@@ -62,7 +62,7 @@ module Aviary::IndexTranscriptManager
 
         single_hash['title'] = cue.identifier.present? ? cue.identifier : index_hash.size + 1
         single_hash['start_time'] = cue.start.to_f
-        single_hash['end_time'] = cue.start.to_f
+        single_hash['end_time'] = cue.end.to_f
         single_hash['duration'] = single_hash['end_time'] - single_hash['start_time']
         single_hash['synopsis'] = cue.text.present? ? cue.text.gsub(%r{/<\/?[^>]*>}, '') : ''
         index_hash << single_hash
@@ -181,6 +181,7 @@ module Aviary::IndexTranscriptManager
           update_existing_points(file_index, hash)
         end
       end
+      update_parents(file_index)
       if alt_hash.present?
         file_index_alt = FileIndex.new
         file_index_alt.title = "#{file_index.title} Alt"
@@ -192,9 +193,21 @@ module Aviary::IndexTranscriptManager
         file_index_alt.sort_order = file_index.sort_order + 1
         file_index_alt.save
         file_index_alt.file_index_points.create(alt_hash)
+        update_parents(file_index_alt)
       end
       file_index.collection_resource_file.collection_resource.reindex_collection_resource
       Success
+    end
+
+    def update_parents(file_index)
+      file_index.file_index_points.each do |x1|
+        file_index.file_index_points.each do |x2|
+          if x1.id != x2.id && (x1.start_time.to_f >= x2.start_time.to_f && x1.end_time.to_f <= x2.end_time.to_f)
+            x1.parent_id = x2.id
+            x1.save
+          end
+        end
+      end
     end
   end
 
