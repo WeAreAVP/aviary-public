@@ -160,16 +160,12 @@
   vertical-align: middle;
   width: 21px;
   height: 14px;
-  position: relative;
-  top: -2px;
-  left: 2px;
+  top: 4px;
+  left: -23px;
 }
 
 .shareHolder .playlist-btn i {
   font-size: 21px;
-  top: 5px;
-  left: 1px;
-  position: relative;
 }
 
 .shareHolder form {
@@ -195,9 +191,15 @@
   background: transparent !important;
   color: #fff !important;
   border: none;
+  line-height: 1;
   padding: 0 !important;
   font-weight: 500;
+  line-height: 25px !important;
+  height: 25px;
   text-align: left;
+  position: relative;
+  margin: 0 !important;
+  font-size: 14px;
 }
 
 .shareHolder a:hover,
@@ -207,14 +209,13 @@
   background: transparent !important;
 }
 
-.shareHolder a i
+.shareHolder a i,
 .shareHolder button i {
-  font-size: 16px;
-  position: relative;
   top: 0;
-  width: 20px;
-  height: 20px;
-  margin-right: 5px;
+  font-size: 17px;
+  position: absolute !important;
+  width: 21px;
+  left: -25px;
 }
 
 .shareHolder button:hover {
