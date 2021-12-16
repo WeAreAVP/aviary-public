@@ -89,8 +89,22 @@
       }
     }
   }
+  
+  @media screen and (max-width: 767px) {
+    .top-section-test-interview {
+      .music-btn-holder {
+        .input-group {
+          margin: 10px;
+          width: auto;
+        }
+      }
+    }
+    .buttons-box {
+      display: block;
+      padding: 20px 15px 10px !important;
+    }
+  }
 }
-
 .interview-index-form {
   .form-group {
     flex: 1;
@@ -218,6 +232,13 @@ div#noMediaConnection {
       padding: 10px;
       margin: 5px 5px 10px;
       flex: 1;
+    }
+    img {
+      width: 18px;
+      height: 18px;
+      display: block;
+      margin: auto;
+      padding: 1px;
     }
   }
 
@@ -471,8 +492,62 @@ div#noMediaConnection {
       padding-bottom: 20px;
     }
   }
-}
 
+  @media screen and (max-width: 767px) {
+    .border-bottom {
+      border: none !important;
+      margin-bottom: 0 !important;
+    }
+    .col-xl-7.col-lg-4 {
+      span {
+        display: none;
+      }
+      .btn-group {
+        margin-bottom: 20px;
+      }
+    }
+    .col-xl-5.col-lg-6:not(.video-box-section) {
+      padding: 20px;
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    .col-xl-5.col-lg-8 {
+      .status {
+        display: block !important;
+      }
+    }
+    .custom-order-level {
+      margin-top: 20px;
+      .text-headline {
+        margin: 20px 0;
+        h1 {
+          font-size: 22px;
+        }
+      }
+      .d-flex:not(.heading-holder) {
+        display: block !important;
+        text-align: left;
+        padding: 0 !important;
+
+        button,
+        a {
+          margin-left: 0 !important;
+          margin-right: 10px;
+        }
+      }
+      .status {
+        margin-bottom: 20px;
+        span {
+          margin-bottom: 10px;
+        }
+        .ml-1 {
+          margin: 0 !important;
+        }
+      }
+    }
+  }
+}
 .interview-accordion {
   .card {
     overflow: hidden;

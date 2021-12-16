@@ -5,7 +5,7 @@ services:
   - redis-server
   - mysql
 jdk:
-  - oraclejdk9
+  - openjdk8
 rvm:
   - 2.6.8
 addons:

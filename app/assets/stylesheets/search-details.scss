@@ -2172,6 +2172,10 @@ dl.form textarea.text {
   z-index: 999;
 }
 
+.video-box-section .video-placeholder .title {
+  padding: 25px 60px 30px 30px;
+}
+
 .video-placeholder.youtube .title {
   transition-delay: 3s;
 }
@@ -2286,6 +2290,9 @@ dl.form textarea.text {
 }
 
 @media screen and (max-width: 767px) {
+  .video-placeholder .title {
+    padding: 25px 60px 30px 30px;
+  }
   .two-col .col-lg-7:first-child:after,
   .one-col .col-lg-7:first-child:after {
     display: none;

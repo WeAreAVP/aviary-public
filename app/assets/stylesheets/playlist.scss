@@ -208,13 +208,15 @@
   .playlist-list .image {
     width: 20%;
     border-radius: 6px;
-    height: 43px;
+    height: 5043px;
     overflow: hidden;
     float: right;
   }
 
   .playlist-list .image img {
     width: 100%;
+    height: 100%;
+    object-position: center;
     object-fit: cover;
   }
 

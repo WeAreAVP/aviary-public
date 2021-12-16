@@ -20,3 +20,36 @@
   padding-top: 0;
   padding-bottom: 15px;
 }
+
+.parent_section {
+  background: #eee;
+  padding-bottom: 20px;
+  margin: 15px 0 0;
+}
+
+.parent_index.pt-20px:first-child {
+  background: #eee;
+  padding: 15px 15px 0 !important;
+}
+
+.parent_index .play-timecode {
+  color: #000;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.parent_index .timecode_section {
+  display: none;
+}
+
+.parent_index .content_section .file_index_mark_custom {
+  display: none;
+}
+
+.parent_index .content_section .file_index_mark_custom:first-child {
+  display: block;
+}
+
+.child_index {
+  padding-left: 20px;
+}

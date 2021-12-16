@@ -6,12 +6,14 @@
       <div id="accordion" class="main_sidebar">
         <div class="scroll">
           <div class="hold">
+            <div class="close-button-holder">
+              <a href="javascript://" id="close-button">Close <i class="fa fa-times"></i></a>
+            </div>
             <div class="side-nav-logo">
               <div class="img-holder">
                 <%= image_tag organization_logo %>
               </div>
               <div class="title"><%= current_organization.name %></div>
-              <a href="javascript://" id="close-button"><i class="fa fa-times"></i></a>
             </div>
             <div class="card <%= disabled_organization_cls %>">
               <div class="card-header" id="headingTwo">
