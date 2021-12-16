@@ -62,7 +62,7 @@ module Aviary::IndexTranscriptManager
 
         single_hash['title'] = cue.identifier.present? ? cue.identifier : index_hash.size + 1
         single_hash['start_time'] = cue.start.to_f
-        single_hash['end_time'] = cue.start.to_f
+        single_hash['end_time'] = cue.end.to_f
         single_hash['duration'] = single_hash['end_time'] - single_hash['start_time']
         single_hash['synopsis'] = cue.text.present? ? cue.text.gsub(%r{/<\/?[^>]*>}, '') : ''
         index_hash << single_hash
@@ -181,6 +181,7 @@ module Aviary::IndexTranscriptManager
           update_existing_points(file_index, hash)
         end
       end
+      update_parents(file_index)
       if alt_hash.present?
         file_index_alt = FileIndex.new
         file_index_alt.title = "#{file_index.title} Alt"
@@ -192,9 +193,21 @@ module Aviary::IndexTranscriptManager
         file_index_alt.sort_order = file_index.sort_order + 1
         file_index_alt.save
         file_index_alt.file_index_points.create(alt_hash)
+        update_parents(file_index_alt)
       end
       file_index.collection_resource_file.collection_resource.reindex_collection_resource
       Success
+    end
+
+    def update_parents(file_index)
+      file_index.file_index_points.each do |x1|
+        file_index.file_index_points.each do |x2|
+          if x1.id != x2.id && (x1.start_time.to_f >= x2.start_time.to_f && x1.end_time.to_f <= x2.end_time.to_f)
+            x1.parent_id = x2.id
+            x1.save
+          end
+        end
+      end
     end
   end
 
@@ -213,9 +226,11 @@ module Aviary::IndexTranscriptManager
     step :map_hash_to_db
     step :map_hash_to_db
     attr_accessor :from_resource_file
+    attr_accessor :sync_interval
 
     def initialize
       self.from_resource_file = true
+      self.sync_interval = 0
     end
 
     def process(file_transcript, remove_title = nil, is_new = true, import = false)
@@ -455,6 +470,7 @@ module Aviary::IndexTranscriptManager
       start_end_regex = /([0-9:.]+)\t([0-9:.]+)/ ## This is used when both start and end time is given in transcript
       time_regex = /(^[0-9:.]+)/
 
+      output = file.split(regex)
       unless from_resource_file
         last_point = '00:00:00'
         time_different = sync_interval.to_f * 60
@@ -468,7 +484,6 @@ module Aviary::IndexTranscriptManager
           end
         end
       end
-      output = file.split(regex)
       point_hash = point_hash(file, file_transcript, regex, time_regex, start_end_regex, output)
       Success(point_hash)
     end

@@ -197,17 +197,6 @@
             <div class="field-title"><%= f.label :thesaurus_titles, "Thesaurus (Titles)" %></div>
             <%= f.select :thesaurus_titles, ::Thesaurus::Thesaurus.list_thesaurus(current_organization), {}, required: false, label: false, class: 'custom-placeholder' %>
           </div>
-          <div class="text-headline jumbotron custom-title-headline">
-            <h3>Transcript</h3>
-          </div>
-          <div class="form-group">
-            <div class="field-title"><%= f.label :transcript_sync_data, "Transcript Sync Data" %></div>
-            <%= f.input :transcript_sync_data, label: false, input_html: { class: 'form-control transcript_sync_data' } %>
-          </div>
-          <div class="form-group">
-            <div class="field-title"><%= f.label :transcript_sync_data_translation, "Transcript Sync Data Translation" %></div>
-            <%= f.input :transcript_sync_data_translation, label: false, input_html: { class: 'form-control transcript_sync_data_translation' } %>
-          </div>
         </div>
       </div>
     </div>
@@ -336,10 +325,6 @@
           <div class="custom-checkbox mt-4 mb-3">
             <%= f.check_box :miscellaneous_use_restrictions, label: false, id: "miscellaneous_use_restrictions" , input_html: { class: 'form-control miscellaneous_use_restrictions' } %>
             <label for="miscellaneous_use_restrictions">Use Restrictions*</label>
-          </div>
-          <div class="form-group">
-            <div class="field-title"><%= f.label :miscellaneous_sync_url, "Alt Sync URL (Legacy Field)" %></div>
-            <%= f.input :miscellaneous_sync_url, label: false, input_html: { class: 'form-control miscellaneous_sync_url' } %>
           </div>
           <div class="form-group">
             <div class="field-title"><%= f.label :miscellaneous_user_notes, "User Notes" %></div>
