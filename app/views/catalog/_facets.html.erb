@@ -76,7 +76,7 @@
 <a class="btn-adv bold font-weight-bold simple_start_over <%= params[:search_type] == 'advance' ? 'd-none' : '' %> float-right text-white font-size-13px mx-2" href="<%= add_facet_params_to_url(search_catalog_url(q: '', search_field: 'all_fields', utf8: '✓'), session[:search_facets]) %>">Clear
   Search Terms </a>
 <span class="simple_start_over  <%= params[:search_type] == 'advance' ? 'd-none' : '' %> float-right" style="margin-top: -4px;"> </span>
-<a class='btn-adv theme_font_color float-right text-white font-size-13px font-weight-bold' href="<%= search_catalog_url(q: '', search_field: 'all_fields', utf8: '✓') %>">
+<a class='btn-adv theme_font_color float-right text-white font-size-13px font-weight-bold' href="<%= search_catalog_url(q: '', search_field: 'all_fields', utf8: '✓', start_over_search: true) %>">
   Start Over </a>
 
 
