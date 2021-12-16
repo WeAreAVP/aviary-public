@@ -9,7 +9,7 @@ class CatalogController < ApplicationController
   include BlacklightRangeLimit::ControllerOverride
   include Blacklight::Catalog
   include ApplicationHelper
-  before_action :mutiple_keyword_handler, :session_param_update
+  before_action :mutiple_keyword_handler, :session_param_update, :select_sort_and_view
   before_action :update_facets, except: %i[assign_to_playlist update_selected_playlist]
 
   def index
@@ -185,6 +185,17 @@ class CatalogController < ApplicationController
     current_uri_params = current_uri_params.gsub('update_advance_search=update_advance_search', '')
     session[:solr_params] = current_uri_params
     record_last_bread_crumb("/catalog?#{current_uri_params}", 'Back to Search')
+  end
+
+  def select_sort_and_view
+    session[:selected_sort_key] = params[:sort] if params.key?(:sort)
+    session[:selected_search_result_view] = params[:view] if params.key?(:view)
+    if params[:start_over_search]
+      session[:selected_sort_key] = nil
+      session[:selected_search_result_view] = nil
+    end
+    @selected_sort_key = session[:selected_sort_key]
+    params[:view] = session[:selected_search_result_view]
   end
 
   configure_blacklight do |config|

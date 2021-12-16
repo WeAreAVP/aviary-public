@@ -36,7 +36,7 @@
       <% elsif @collection_resource.playlist_resources.present? %>
         <input type="hidden" id="type_of_playlist_view" value="only_playlist_view">
         <button type="button" class="<%= share_btn_cls %> btn playlist-btn" data-toggle="modal" data-target="#resourcePlaylistModel">
-          <i class="fa fa-th-list playlist_added"></i> Playlist
+          <i class="material-icons playlist_added">playlist_add_check</i> Playlist
         </button>
       <% end %>
       <% unless is_audio_only %>
