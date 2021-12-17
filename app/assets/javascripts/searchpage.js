@@ -229,7 +229,7 @@ function SearchPage() {
 
         var sPageURL = decodeURIComponent(window.location.search.substring(1)), sURLVariables = sPageURL.split('&');
         for (var i = 0; i < sURLVariables.length; i++) {
-            if (sURLVariables[i] === 'update_advance_search=update_advance_search' || sURLVariables[i] === 'reset_facets=true' || sURLVariables[i] === 'update_facets=true') {
+            if (sURLVariables[i] === 'update_advance_search=update_advance_search' || sURLVariables[i] === 'reset_facets=true' || sURLVariables[i] === 'update_facets=true' || sURLVariables[i] === 'start_over_search=true') {
                 sURLVariables.splice(i, 1);
             }
         }
@@ -305,7 +305,7 @@ function SearchPage() {
         });
         $('.search_field_selector_single').keyup(function (event) {
             if (event.keyCode == 13) {
-                if( $(".search_field_selector_single").val() == '' ){
+                if ($(".search_field_selector_single").val() == '') {
                     $('<input>').attr({
                         type: 'hidden',
                         name: 'sort',
