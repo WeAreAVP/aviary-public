@@ -253,7 +253,7 @@ div#noMediaConnection {
       right: 30px;
       border: 1px solid #ced4da;
       font-size: 14px;
-      height: 54px;
+      height: 55px;
       display: flex;
       align-items: center;
       border-radius: 0 4px 4px 0;
@@ -289,6 +289,10 @@ div#noMediaConnection {
 
     .video-placeholder {
       height: 244px;
+      .video-js {
+        height: 244px;
+        padding: 0;
+      }
     }
   }
 
@@ -361,6 +365,10 @@ div#noMediaConnection {
 
       .video-placeholder {
         height: 164px;
+        .video-js {
+          height: 164px;
+          padding: 0;
+        }
       }
 
       .audio-player {
