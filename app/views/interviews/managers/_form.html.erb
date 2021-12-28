@@ -197,6 +197,7 @@
             <div class="field-title"><%= f.label :thesaurus_titles, "Thesaurus (Titles)" %></div>
             <%= f.select :thesaurus_titles, ::Thesaurus::Thesaurus.list_thesaurus(current_organization), {}, required: false, label: false, class: 'custom-placeholder' %>
           </div>
+          
         </div>
       </div>
     </div>
@@ -326,6 +327,7 @@
             <%= f.check_box :miscellaneous_use_restrictions, label: false, id: "miscellaneous_use_restrictions" , input_html: { class: 'form-control miscellaneous_use_restrictions' } %>
             <label for="miscellaneous_use_restrictions">Use Restrictions*</label>
           </div>
+          
           <div class="form-group">
             <div class="field-title"><%= f.label :miscellaneous_user_notes, "User Notes" %></div>
             <%= f.input :miscellaneous_user_notes, label: false, input_html: { class: 'form-control miscellaneous_user_notes' } %>

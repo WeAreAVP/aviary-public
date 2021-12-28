@@ -8,6 +8,53 @@ module Interviews
   class TranscriptsController < ApplicationController
     before_action :authenticate_user!
 
+    def edit
+      @file_transcript = FileTranscript.find(params[:id])
+      if request.patch? && params['file_transcript'].present? && params['file_transcript']['text'].present?
+        time = 0.0
+        time_different = @file_transcript.timecode_intervals.to_f * 60
+        @text = params['file_transcript']['text']
+        raw_point = @text.split("\n")
+        @file_transcript.file_transcript_points.each do |single_transcript_point|
+          single = single_transcript_point.point_info.split('(')
+          row = single[0].to_i
+          column = single[1].to_i
+          if row > 0 && column > 0
+            time += time_different
+            if raw_point[row][column] != ' '
+              start = 1
+              found = false
+              if raw_point[row].length > column
+                found, column, start = find_forward(found, start, raw_point, row, column)
+                if raw_point[row][column] != ' '
+                  _found, column, _start = find_backward(found, start, raw_point, row, column)
+                end
+              else
+                found, column, start = find_backward(found, start, raw_point, row, column)
+                if raw_point[row][column] != ' '
+                  _found, column, _start = find_forward(found, start, raw_point, row, column)
+                end
+              end
+            end
+            raw_point[row].insert(column, " [#{Time.at(time).utc.strftime('%H:%M:%S')}] ")
+          end
+        end
+        @text = raw_point.join("\n")
+        main_transcript = Sanitize.fragment(@text)
+        file = Tempfile.new('content')
+        file.path
+        file.write(main_transcript)
+        transcript_manager = Aviary::OhmsTranscriptManager.new
+        transcript_manager.sync_interval = @file_transcript.timecode_intervals.to_f
+        transcript_manager.from_resource_file = false
+        hash = transcript_manager.parse_text(main_transcript, @file_transcript)
+        transcript_manager.map_hash_to_db(@file_transcript, hash, false)
+        file.close
+        file.unlink
+      end
+      @text = @file_transcript.file_transcript_points.pluck(:text).join(' ')
+    end
+
     def create
       authorize! :manage, current_organization
       interview = Interviews::Interview.find(params[:id])
@@ -21,8 +68,9 @@ module Interviews
                          begin
                            remove_title = ''
                            is_new = true
-                           transcript_manager = Aviary::IndexTranscriptManager::TranscriptManager.new
+                           transcript_manager = Aviary::OhmsTranscriptManager.new
                            transcript_manager.from_resource_file = false
+                           transcript_manager.sync_interval = params['interview_transcript']['timecode_intervals'].to_f
                            transcript_manager.process(interview_transcript, remove_title, is_new)
                            message = if interview_transcript.save
                                        "Interview Transcript #{params['interview_transcript']['associated_file'].present? ? 'Translation' : ''} Created Successfully."
@@ -42,7 +90,7 @@ module Interviews
                          begin
                            remove_title = ''
                            is_new = true
-                           transcript_manager = Aviary::IndexTranscriptManager::TranscriptManager.new
+                           transcript_manager = Aviary::OhmsTranscriptManager.new
                            transcript_manager.from_resource_file = false
                            transcript_manager.process(interview_transcript_translation, remove_title, is_new)
                          rescue StandardError => ex
@@ -121,12 +169,35 @@ module Interviews
 
     private
 
+    def find_forward(found, start, raw_point, row, column)
+      while found == false
+        found = true if raw_point[row][column + start].nil?
+        if raw_point[row][column + start] == ' '
+          found = true
+          column += start
+        end
+        start += 1
+      end
+      [found, column, start]
+    end
+
+    def find_backward(found, start, raw_point, row, column)
+      while found == false
+        if raw_point[row][column - start] == ' '
+          found = true
+          column += start
+        end
+        start += 1
+      end
+      [found, column, start]
+    end
+
     def content_manage(translation_transcript_text, file_transcripts_update)
       main_transcript = Sanitize.fragment(translation_transcript_text)
       file = Tempfile.new('content')
       file.path
       file.write(translation_transcript_text)
-      transcript_manager = Aviary::IndexTranscriptManager::TranscriptManager.new
+      transcript_manager = Aviary::OhmsTranscriptManager.new
       transcript_manager.from_resource_file = false
       hash = transcript_manager.parse_text(main_transcript, file_transcripts_update)
       transcript_manager.map_hash_to_db(file_transcripts_update, hash, false)
