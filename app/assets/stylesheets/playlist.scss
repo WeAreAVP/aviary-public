@@ -208,7 +208,7 @@
   .playlist-list .image {
     width: 20%;
     border-radius: 6px;
-    height: 5043px;
+    height: 50px;
     overflow: hidden;
     float: right;
   }
@@ -784,12 +784,6 @@
 
 .loader-details.playlist-custom {
   margin-top: 100px;
-}
-
-.playlist_added {
-  font-size: 15px !important;
-  top: 0 !important;
-  padding-left: 2px !important;
 }
 
 .playlists-show .mejs__time-current {

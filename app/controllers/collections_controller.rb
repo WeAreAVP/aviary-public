@@ -48,6 +48,9 @@ class CollectionsController < ApplicationController
       render json: { partial: render_to_string(partial: 'home/resources_home_inner', locals: { from_lazy_load: params[:from_lazy_load].present?, featured_resources: @featured_collection_resources,
                                                                                                collection_wise_resources: [], featured: false }) }
     else
+      @organization_field_manager = Aviary::FieldManagement::OrganizationFieldManager.new
+      @collection_fields = @organization_field_manager.organization_field_settings(organization, nil, 'collection_fields', 'sort_order')
+      @collection_fields_and_value = @collection.collection_fields_and_value
       render 'show'
     end
   end

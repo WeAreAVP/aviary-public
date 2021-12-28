@@ -23,19 +23,20 @@
       <p><%== description @collection.about %></p>
       <div class="search-detail-main">
         <ul class="tab">
-          <% @collection.all_fields['Collection'].each do |single_field| %>
-            <% display_label = false %>
-            <% single_field['values'].each_with_index do |single_value, single_key| %>
-              <% if single_value.present? && (single_value['value'].present? || single_value['vocab_value'].present?) %>
-                <% unless display_label %>
-                  <li>
-                    <strong><%= single_field['field'].label %>:</strong>
-                    <div class="details">
-                      <% display_label = true %>
+          <% if @collection_fields.present? %>
+            <% @collection_fields.each_with_index do |(_system_name, single_collection_field), _index| %>
+              <% next unless single_collection_field['display'].to_s.to_boolean? %>
+              <% if @collection_fields_and_value.present? && @collection_fields_and_value.collection_field_values.present? && @collection_fields_and_value.collection_field_values[single_collection_field['system_name']].present? && @collection_fields_and_value.collection_field_values[single_collection_field['system_name']]['values'].present? %>
+                <% value = '' %>
+                <% @collection_fields_and_value.collection_field_values[single_collection_field['system_name']]['values'].each do |single_value| %>
+                  <% value += single_value['value'] %>
                 <% end %>
-                <span><%== single_value['value'] %></span>
-                <% if single_key + 1 == single_field['values'].count %>
-                  </div>
+                <% if value.present? %>
+                  <li>
+                    <strong><%= single_collection_field['label'] %>:</strong>
+                    <div class="details">
+                      <span> <%= value.html_safe %> </span>
+                    </div>
                   </li>
                 <% end %>
               <% end %>
