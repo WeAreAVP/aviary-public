@@ -133,6 +133,7 @@ module Interviews
       file.close
       file.unlink
     end
+    OhmsBreadcrumbPresenter.new(@file_transcript, view_context).breadcrumb_manager("edit",@file_transcript,'sync')
 
     def upload_transcript(type, file, interview)
       interview.file_transcripts.where(interview_transcript_type: type).destroy_all if interview.file_transcripts.where(interview_transcript_type: type).present?
