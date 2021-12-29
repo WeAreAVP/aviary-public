@@ -19,6 +19,7 @@ module Aviary::IndexTranscriptManager
     step :process
     try :parse_webvtt
     try :parse_ohms_xml
+    step :map_hash_to_db
 
     def process(file_index, is_new = true, import = false)
       file_path = ENV['RAILS_ENV'] == 'production' ? file_index.associated_file.expiring_url : file_index.associated_file.path
@@ -59,7 +60,6 @@ module Aviary::IndexTranscriptManager
         single_hash['partial_script'] = ''
         single_hash['subjects'] = ''
         single_hash['keywords'] = ''
-
         single_hash['title'] = cue.identifier.present? ? cue.identifier : index_hash.size + 1
         single_hash['start_time'] = cue.start.to_f
         single_hash['end_time'] = cue.end.to_f
@@ -224,14 +224,6 @@ module Aviary::IndexTranscriptManager
     try :parse_webvtt
     try :parse_doc
     step :map_hash_to_db
-    step :map_hash_to_db
-    attr_accessor :from_resource_file
-    attr_accessor :sync_interval
-
-    def initialize
-      self.from_resource_file = true
-      self.sync_interval = 0
-    end
 
     def process(file_transcript, remove_title = nil, is_new = true, import = false)
       file_path = ENV['RAILS_ENV'] == 'production' ? file_transcript.associated_file.expiring_url : file_transcript.associated_file.path
@@ -255,6 +247,7 @@ module Aviary::IndexTranscriptManager
         doc.paragraphs.each do |p|
           file_content = "#{file_content}\n\n#{p}"
         end
+
         hash = parse_doc_text(file_content, file_transcript)
         if hash.value!.blank?
           hash = parse_doc(doc, file_transcript)
@@ -304,8 +297,7 @@ module Aviary::IndexTranscriptManager
         file_content = Rails.env.production? ? URI.parse(file_path).read : File.read(open(file_path))
         hash = parse_text(file_content, file_transcript)
         response = map_hash_to_db(file_transcript, hash, is_new)
-
-        parse_annotation(file_content, file_transcript) if annotations.present? && from_resource_file
+        parse_annotation(file_content, file_transcript) if annotations.present?
         Success(response)
       end
     rescue StandardError => ex
@@ -392,8 +384,7 @@ module Aviary::IndexTranscriptManager
       end
       unless point_hash.empty?
         last_hash_index = point_hash.size - 1 # update the end time and duration of the last point using file duration
-
-        point_hash[last_hash_index]['end_time'] = file_transcript.collection_resource_file.duration if from_resource_file
+        point_hash[last_hash_index]['end_time'] = file_transcript.collection_resource_file.duration
         point_hash[last_hash_index]['duration'] = point_hash[last_hash_index]['end_time'].to_f - point_hash[last_hash_index]['start_time'].to_f
       end
       Success(point_hash)
@@ -460,7 +451,7 @@ module Aviary::IndexTranscriptManager
         end
       end
       last_hash_index = point_hash.size - 1 # update the end time and duration of the last point using file duration
-      point_hash[last_hash_index]['end_time'] = file_transcript.collection_resource_file.duration if from_resource_file
+      point_hash[last_hash_index]['end_time'] = file_transcript.collection_resource_file.duration
       point_hash[last_hash_index]['duration'] = point_hash[last_hash_index]['end_time'].to_f - point_hash[last_hash_index]['start_time'].to_f
       Success(point_hash)
     end
@@ -471,19 +462,6 @@ module Aviary::IndexTranscriptManager
       time_regex = /(^[0-9:.]+)/
 
       output = file.split(regex)
-      unless from_resource_file
-        last_point = '00:00:00'
-        time_different = sync_interval.to_f * 60
-        output.each_with_index do |points, point_key|
-          if points.match(/(^[0-9:.]+)/).present?
-            time = last_point.split(':').map(&:to_f).inject(0) { |a, b| a * 60 + b } # convert time to seconds
-            time += time_different
-            time = Time.at(time).utc.strftime('%H:%M:%S')
-            output[point_key] = time
-            last_point = time
-          end
-        end
-      end
       point_hash = point_hash(file, file_transcript, regex, time_regex, start_end_regex, output)
       Success(point_hash)
     end
@@ -493,7 +471,7 @@ module Aviary::IndexTranscriptManager
       time_regex = /(^[0-9:.]+)/
       file = file.force_encoding('UTF-8')
       output = file.split(regex)
-      output = output.drop(1) if output.size > 1 && output[0].scan(regex).blank? && from_resource_file ## check if header exists then drop it
+      output = output.drop(1) if output.size > 1 && output[0].scan(regex).blank? ## check if header exists then drop it
       # output = output.drop(output.size - 1) if output.size >= 1 && output[output.size - 1].scan(regex).blank? ## check if footer exists then drop it
       point_hash = point_hash(file, file_transcript, regex, time_regex, start_end_regex, output)
       Success(point_hash)
@@ -542,7 +520,7 @@ module Aviary::IndexTranscriptManager
       elsif output.size <= 1 # There is no timestamp in the text file
         single_hash = {}
         single_hash['start_time'] = 0
-        single_hash['end_time'] = file_transcript.collection_resource_file.duration if from_resource_file
+        single_hash['end_time'] = file_transcript.collection_resource_file.duration
         single_hash['duration'] = single_hash['end_time'].to_f - single_hash['start_time'].to_f
         single_hash['text'] = output[0].gsub(/:[\n]+/, ': ').gsub(/\n{3,5}/, "\n\n").strip
         point_hash << single_hash
@@ -595,8 +573,7 @@ module Aviary::IndexTranscriptManager
           end
         end
         last_hash_index = point_hash.size - 1 # update the end time and duration of the last point using file duration
-
-        point_hash[last_hash_index]['end_time'] = file_transcript.collection_resource_file.duration if from_resource_file
+        point_hash[last_hash_index]['end_time'] = file_transcript.collection_resource_file.duration
         point_hash[last_hash_index]['duration'] = point_hash[last_hash_index]['end_time'].to_f - point_hash[last_hash_index]['start_time'].to_f
         point_hash
       end
@@ -605,6 +582,7 @@ module Aviary::IndexTranscriptManager
     def parse_webvtt(webvtt, remove_title = nil)
       points_hash = []
       webvtt.cues.each do |cue|
+        next if cue.text.match(%r{<c>.+?</c>}).present?
         regex = /<v(.*?)>/ # regex to match the speaker tag in the text of webvtt
         match_result = regex.match(cue.text)
         speaker = match_result.present? ? match_result[1] : ''
@@ -656,7 +634,7 @@ module Aviary::IndexTranscriptManager
       else
         single_hash = {}
         single_hash['start_time'] = 0
-        single_hash['end_time'] = file_transcript.collection_resource_file.duration if from_resource_file
+        single_hash['end_time'] = file_transcript.collection_resource_file.duration
         single_hash['duration'] = single_hash['end_time'].to_f - single_hash['start_time'].to_f
         single_hash['text'] = transcript
         hash << single_hash
@@ -731,7 +709,7 @@ module Aviary::IndexTranscriptManager
         file_transcript_alt.save
         file_transcript_alt.file_transcript_points.create(alt_hash.value!)
       end
-      file_transcript.collection_resource_file.collection_resource.reindex_collection_resource if from_resource_file
+      file_transcript.collection_resource_file.collection_resource.reindex_collection_resource
       Success
     end
 
