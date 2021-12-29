@@ -53,7 +53,7 @@ module Interviews
         file.unlink
       end
       @text = @file_transcript.file_transcript_points.pluck(:text).join(' ')
-      OhmsBreadcrumbPresenter.new(@file_transcript, view_context).breadcrumb_manager("edit", @file_transcript,'sync')
+      OhmsBreadcrumbPresenter.new(@file_transcript, view_context).breadcrumb_manager('edit', @file_transcript, 'sync')
     end
 
     def create
