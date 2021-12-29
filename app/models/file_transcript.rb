@@ -39,7 +39,7 @@ class FileTranscript < ApplicationRecord
   def validate_file
     return if associated_file.present? && associated_file.queued_for_write[:original].nil?
     file_content_type = associated_file.queued_for_write[:original].content_type
-    if !['text/plain', 'application/xml'].include?(file_content_type)
+    if ['text/plain', 'application/xml'].include?(file_content_type)
       doc = Nokogiri::XML(File.read(associated_file.queued_for_write[:original].path))
       error_messages = xml_validation(doc, 'transcript')
       if error_messages.any?
