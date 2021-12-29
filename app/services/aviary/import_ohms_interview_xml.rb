@@ -14,7 +14,7 @@ module Aviary
     include ApplicationHelper
     def import(file, organization, user, status)
       doc = Nokogiri::XML(File.read(file.path))
-    
+
       error_messages = xml_validation(doc)
       if error_messages.any?
         return 'Invalid File, please select a valid OHMS XML file.'
