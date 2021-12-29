@@ -39,7 +39,10 @@ class FileTranscript < ApplicationRecord
   def validate_file
     return if associated_file.present? && associated_file.queued_for_write[:original].nil?
     file_content_type = associated_file.queued_for_write[:original].content_type
-    if ['text/plain', 'application/xml'].include?(file_content_type)
+    if interview_id.present? && !['text/plain', 'application/xml', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/msword'].include?(file_content_type)
+      errors.add(:associated_file, 'Only TXT, Doc and Docx formats allowed.')
+    end
+    if ['application/xml', 'text/xml'].include? file_content_type
       doc = Nokogiri::XML(File.read(associated_file.queued_for_write[:original].path))
       error_messages = xml_validation(doc, 'transcript')
       if error_messages.any?
@@ -59,7 +62,6 @@ class FileTranscript < ApplicationRecord
       end
     end
   end
-
   def self.fetch_transcript_list(page, per_page, sort_column, sort_direction, params, limit_condition, export_and_current_organization = { export: false, current_organization: false })
     q = params[:search][:value] if params.present? && params.key?(:search) && params[:search].key?(:value)
     solr = FileTranscript.solr_connect
