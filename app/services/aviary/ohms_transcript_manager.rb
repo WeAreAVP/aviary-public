@@ -14,7 +14,6 @@ module Aviary
   POINTS_PER_PAGE = 7000.to_f
   # TranscriptManager Class for managing the index import of OHMS, WebVTT and Simple text files
   class OhmsTranscriptManager
-    attr_accessor :annotations
     include Dry::Transaction
     include ApplicationHelper
     step :process
@@ -22,7 +21,6 @@ module Aviary
     try :parse_simple_text
     try :parse_transcript
     try :transcript_with_sync_point
-    try :parse_webvtt
     try :parse_doc
     step :map_hash_to_db
     step :map_hash_to_db
@@ -83,89 +81,15 @@ module Aviary
         else
           Failure('No transcript point available.')
         end
-      elsif file_transcript.associated_file_content_type == 'text/vtt' || ['.vtt', '.webvtt'].include?(File.extname(file_transcript.associated_file_file_name).downcase)
-        require 'webvtt'
-        tmp = Tempfile.new("webvtt_#{Time.now.to_i}")
-        if ENV['RAILS_ENV'] == 'production'
-          tmp << URI.parse(file_path).read.force_encoding('UTF-8')
-          tmp.flush
-          file_path = tmp.path
-        end
-        webvtt = WebVTT.read(file_path)
-        tmp.close
-        hash = parse_webvtt(webvtt, remove_title)
-        header_info = webvtt.header.split("\n")
-        language_index = header_info.index { |s| s.downcase =~ /language:/ }
-        if language_index.present?
-          language = header_info[language_index].downcase.gsub('language:', '').strip
-          language_code = ISO_639.find_by_code(language).try(:alpha2)
-          file_transcript.update(language: language_code) if language_code.present?
-        end
-        Success(map_hash_to_db(file_transcript, hash, is_new))
       else
         file_content = Rails.env.production? ? URI.parse(file_path).read : File.read(open(file_path))
         hash = parse_text(file_content, file_transcript)
         response = map_hash_to_db(file_transcript, hash, is_new)
-        parse_annotation(file_content, file_transcript) if annotations.present? && from_resource_file
         Success(response)
       end
     rescue StandardError => ex
       import.import_error_manager(BulkImportManager.error_reporting("<strong> Unable to process transcript file </strong> #{file_path}")) if import.present?
       puts ex
-    end
-
-    def parse_annotation(content, transcript)
-      transcript_points = transcript.file_transcript_points
-      transcript.annotation_set.destroy if transcript.annotation_set.present?
-      split_content = content.split("ANNOTATIONS BEGIN\n\n")[1].split("\n\nANNOTATIONS END")[0]
-      annotation_split = split_content.split("\n\n")
-      annotation_set_content = annotation_split[0].split("\n")
-      annotation_set_db = AnnotationSet.new
-      annotation_set_db.is_public = transcript.is_public
-      annotation_set_db.organization = transcript.collection_resource_file.collection_resource.collection.organization
-      annotation_set_db.collection_resource = transcript.collection_resource_file.collection_resource
-      annotation_set_db.created_by_id = transcript.user_id
-      annotation_set_db.updated_by_id = transcript.user_id
-      annotation_set_db.file_transcript_id = transcript.id
-      dublin_core = []
-
-      annotation_set_content.each do |annotation_set|
-        key_value = annotation_set.split(':', 2)
-        key = key_value[0].gsub('Annotation Set ', '')
-        value = key_value[1].strip
-        if key == 'Title'
-          annotation_set_db.title = value
-        else
-          dublin_core << { key: key, value: value }
-        end
-      end
-      annotation_set_db.dublin_core = dublin_core.to_json
-      annotation_set_db.save
-      counter = 0
-      annotations_content = annotation_split[1]
-      annotations_content_split = annotations_content.split(/\[[0-9]+\]/)
-      annotations_content_split.delete_at(0)
-      annotations.each_with_index do |value, index|
-        value.each do |target|
-          annotation_db = Annotation.new
-          annotation_db.annotation_set = annotation_set_db
-          annotation_db.sequence = counter + 1
-          annotation_db.body_type = :text
-          annotation_db.body_content = annotations_content_split[counter].strip
-          annotation_db.body_format = :html
-          annotation_db.target_type = :text
-          annotation_db.target_content = :FileTranscript
-          annotation_db.target_content_id = transcript.id
-          annotation_db.target_info = target.merge(pointId: transcript_points[index].id).to_json
-          annotation_db.created_by_id = annotation_set_db.created_by_id
-          annotation_db.updated_by_id = annotation_set_db.updated_by_id
-          annotation_db.target_sub_id = transcript_points[index].id
-          annotation_db.save
-          counter += 1
-        end
-      end
-    rescue StandardError
-      'failed to process annotations content'
     end
 
     def parse_doc(doc, file_transcript)
@@ -209,7 +133,6 @@ module Aviary
     end
 
     def parse_aviary_text(file, file_transcript)
-      self.annotations = []
       reg_ex = speaker_regex
       file = file.delete("\r") # replace \r because it will create problem in parsing logic
       split_content = file.split("TRANSCRIPTION BEGIN\n\n")[1].split('TRANSCRIPTION END')[0] ## Get only transcript data from the file
@@ -240,19 +163,6 @@ module Aviary
         end
         text = text.force_encoding('UTF-8')
         single_hash['speaker'] = speaker
-        annotation_regex = %r{<annotation [^>]+>(.*?)<\/annotation>}
-        anno_output = text.split(annotation_regex)
-        final_text = ''
-        single_hash['annotation'] = []
-        anno_output.each_with_index do |value, index|
-          unless index.zero? || index.even?
-            start_offset = final_text.length + speaker_offset
-            single_hash['annotation'] << { time: single_hash['start_time'], text: value, startOffset: start_offset, endOffset: start_offset + value.length }
-          end
-          final_text += value
-        end
-        annotations << single_hash['annotation']
-        single_hash.delete('annotation')
         final_text = final_text.gsub('<br>', "\n").gsub('<br/>', "\n")
         single_hash['text'] = final_text
         unless single_hash.nil? # keep adding the Text to the same point until gets a new timestamp
@@ -476,26 +386,6 @@ module Aviary
         point_hash[last_hash_index]['duration'] = point_hash[last_hash_index]['end_time'].to_f - point_hash[last_hash_index]['start_time'].to_f
         point_hash
       end
-    end
-
-    def parse_webvtt(webvtt, remove_title = nil)
-      points_hash = []
-      webvtt.cues.each do |cue|
-        regex = /<v(.*?)>/ # regex to match the speaker tag in the text of webvtt
-        match_result = regex.match(cue.text)
-        speaker = match_result.present? ? match_result[1] : ''
-        speaker = speaker
-        single_hash = {}
-        single_hash['title'] = cue.identifier.present? ? cue.identifier : '' unless remove_title.present?
-        single_hash['start_time'] = cue.start.to_f
-        single_hash['end_time'] = cue.end.to_f
-        single_hash['duration'] = single_hash['end_time'] - single_hash['start_time']
-        single_hash['text'] = cue.text.gsub(%r{<\/?[^>]*>}, '')
-        single_hash['speaker'] = speaker
-        single_hash['writing_direction'] = cue.style.present? ? cue.style : ''
-        points_hash << single_hash
-      end
-      Success(points_hash)
     end
 
     def transcript_with_sync_point(transcript, sync_points)
