@@ -280,7 +280,7 @@
 
 .main_sidebar .card-header button {
     font-size: 14px !important;
-    color: #5f5f5f;
+    color: #000;
     display: block;
     text-decoration: none;
     width: 100%;
@@ -302,11 +302,11 @@
 }
 
 .main_sidebar .card-header button[aria-expanded="true"] .nav-box {
-    background: rgba(51, 97, 117, 0.10);
-    color: #336175;
+    background: #fff;
+    color: #000;
     font-weight: 600;
     padding: 10px 15px;
-    border: 1px solid #336175;
+    border: 1px solid #000;
     border-radius: 4px;
     font-weight: 600;
 }
