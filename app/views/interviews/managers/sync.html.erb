@@ -30,8 +30,8 @@
                       </div>
                     </div>
                     <div class="d-flex align-items-center">
-                      <%= link_to 'Edit Transcript', interviews_managers_path, class: 'btn btn-primary ml-3' %>
-                      <button class="btn btn-success ml-3">Save</button>
+                      <%= link_to 'Edit Transcript', edit_interviews_transcript_path(@interview.file_transcripts.where(interview_transcript_type: 'main').try(:first)), class: 'btn btn-primary ml-3' %>
+                      <button class="btn btn-success ml-3" id='save_transcript_information'>Save</button>
                     </div>
                   </div>
                 </div>
@@ -65,14 +65,19 @@
                   <% if @data_main.present? %>
                     <% counter = 1 %>
                     <% @data_main.each do |single_point| %>
-                      <% list = single_point[:text].split %>
-                      <div class='single_point_transcript p-1' style='color: gray;'>
+                     
+                      <% list_line = single_point[:text].split("\n") %>
+                      <% list_line.each do |single_list_line| %>
+                        <% list = single_list_line.split %>
                         <% if list.present? %>
+                          <div class='single_point_transcript p-1' style='color: gray;'>
                           <% list.each do |single_word| %>
-                            <span class='single_word_transcript cursor-pointer'> <%= single_word %> </span>
+                            <span class='single_word_transcript cursor-pointer'> <%= single_word.html_safe %> </span>
                           <% end %>
+                          </div>
                         <% end %>
-                      </div>
+                      <% end %>
+                      
                       <% if @data_main.length > counter %>
                         <span class="transcript_point_code text-dark transcript_point_code_<%= hms_to_number(single_point[:end_time]) %>" data-timecode="<%= hms_to_number(single_point[:end_time]) %>">[<%= single_point[:end_time] %>]</span>
                       <% end %>
