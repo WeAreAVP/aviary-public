@@ -2,13 +2,17 @@
   <div class="main_contain">
     <main>
       <div class=" ">
-
+        <div class="px-3">
+            <div class="breadcrumb resources-details">
+            <%= render_breadcrumbs %>
+          </div>
+        </div>
         <%= simple_form_for @interview, :url => sync_interviews_manager_path(@interview), html: {class: "interview_manager"} do |f| %>
           <div class="col-md-12 top-index-interview">
             <div class="border-bottom mb-4">
               <div class="row custom-order-level">
                 <div class="col-xl-7 col-lg-6">
-                  <div class="text-headline jumbotron">
+                  <div class="text-headline jumbotron my-3">
                     <div class="heading-holder d-flex align-items-center">
                       <a id="back-to-search-btn" href="<%= interviews_managers_path() %>">
                         <span class="fa fa-angle-left "></span> <small>Return to interviews</small>
@@ -25,7 +29,7 @@
                         <%= f.select :sync_status, options_for_select(@interview.listing_metadata_status.map { |key, index| [index, key] }, @interview.sync_status), {}, required: false, label: false, class: 'custom-placeholder dont-apply-selectize form-control' %>
                       </div>
                     </div>
-                    <div class="d-flex align-items-center py-4">
+                    <div class="d-flex align-items-center">
                       <%= link_to 'Edit Transcript', edit_interviews_transcript_path(@interview.file_transcripts.where(interview_transcript_type: 'main').try(:first)), class: 'btn btn-primary ml-3' %>
                       <button class="btn btn-success ml-3" id='save_transcript_information'>Save</button>
                     </div>
