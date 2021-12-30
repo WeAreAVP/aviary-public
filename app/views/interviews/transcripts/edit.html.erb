@@ -1,0 +1,29 @@
+<div id="main_container" class="container-fluid">
+  <div class="main_contain">
+  <h1>
+    <main>
+    <div class="heading-holder table-head mt-2">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="d-flex align-items-center">
+              <a id="back-to-search-btn" class="collection_resource_edit_title" >
+                <span class="fa fa-angle-left "></span> <small class="mx-3">Back to <%= @file_transcript.interview.title %> </small>
+              </a>
+              <h1 class="h3 text-left m-0"> <%= @file_transcript.interview.title %> - Edit Transcript </h1>
+            </div>          
+          </div>
+        </div>
+      </div>
+      <%= simple_form_for @file_transcript, :url => edit_interviews_transcript_path(@file_transcript), html: { class: "interview_manager" } do |f| %>
+        <%= f.input :text, :as => :text, :input_html => { style: 'height: 650px;width:500px;', value: @text, class: 'form-control' } %>
+        <button class="btn btn-success" href=''> Save</button>
+        <button class="btn btn-danger"> Cancel</button>
+        <br/>
+      <% end %>
+      <br/>
+    </main>
+  </div>
+</div>
+<script type="text/javascript">
+    let interviews_index_manager = new InterviewIndexManager();
+</script>

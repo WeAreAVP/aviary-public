@@ -14,6 +14,7 @@ module Aviary
     include ApplicationHelper
     def import(file, organization, user, status)
       doc = Nokogiri::XML(File.read(file.path))
+
       error_messages = xml_validation(doc)
       if error_messages.any?
         return 'Invalid File, please select a valid OHMS XML file.'
@@ -75,9 +76,9 @@ module Aviary
       interview.media_host_player_id = xml_data['mediafile']['host_player_id'].present? ? xml_data['mediafile']['host_player_id'] : ''
       interview.media_host_item_id = xml_data['mediafile']['host_clip_id'].present? ? xml_data['mediafile']['host_clip_id'] : ''
       interview.embed_code = xml_data['kembed'].present? ? xml_data['kembed'] : ''
-
       if interview.valid?
         interview.save
+        process_transcript(file, user, interview, xml_data)
         unless xml_data['index'].nil?
           set_points(xml_data, interview, user)
         end
@@ -85,6 +86,27 @@ module Aviary
       else
         interview.errors.messages.first
       end
+    end
+
+    def process_transcript(file, user, interview, xml_data)
+      return unless file.present?
+      file_transcript = { title: file.original_filename,
+                          is_public: true,
+                          language: 'en',
+                          associated_file: file,
+                          sort_order: interview.file_transcripts.length + 1,
+                          user: user,
+                          interview_transcript_type: 'main',
+                          timecode_intervals: xml_data['sync'].present? ? xml_data['sync'].split(':')[0] : '1',
+                          interview_id: interview.id }
+      return if interview.nil?
+      transcript = interview.file_transcripts.build(file_transcript)
+      return unless transcript.valid?
+      transcript.save
+      ohms_transcript_manager = Aviary::OhmsTranscriptManager.new
+      ohms_transcript_manager.from_resource_file = false
+      result = ohms_transcript_manager.process(transcript, '', true)
+      transcript.destroy if result.failure?
     end
 
     def set_points(xml_data, interview, user)
@@ -102,9 +124,6 @@ module Aviary
         file_index_alt.user_id = user.id
         file_index_alt.save(validate: false)
         FileIndexPoint.where(file_index_id: file_index_alt.id).destroy_all
-      end
-      if xml_data['index']['point'].is_a?(Hash)
-        xml_data['index']['point'] = [xml_data['index']['point']]
       end
       xml_data['index']['point'].each do |point|
         file_index_point = FileIndexPoint.new

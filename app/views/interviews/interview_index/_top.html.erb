@@ -18,6 +18,9 @@
           <div id="kaltura_player_embed"></div>
           <script src="<%= video_info['kaltura_url'] %>/p/<%= video_info['partner_id'] %>/sp/<%= video_info['partner_id'] %>00/embedIframeJs/uiconf_id/<%= video_info['uiconf_id'] %>/partner_id/<%= video_info['partner_id'] %>"></script>
           <script>
+              let interviewTranscriptManagerKaltura = new InterviewTranscriptManager()
+              interviewTranscriptManagerKaltura.audioBegin = new Audio("<%= root_url %>/sounds/site_swf_startBeep.mp3");
+              interviewTranscriptManagerKaltura.audioEnd = new Audio("<%= root_url %>/sounds/site_swf_midBeep.mp3");
               kWidget.embed({
                   'targetId': 'kaltura_player_embed',
                   'wid': '_<%= video_info['partner_id'] %>',
@@ -33,8 +36,14 @@
                               'wmode': 'transparent'
                           },
                   readyCallback: function (playerId) {
-                      console.log('Player:' + playerId + ' is ready ');
                       window.kdp = document.getElementById(playerId);
+                      setInterval( function () {
+                        if(!$('.largePlayBtnBorder').is(":visible")){
+                          interviewTranscriptManagerKaltura.kalturaManager(kdp);
+                        } else {
+                          interviewTranscriptManagerKaltura.audioBegin.pause();
+                        }
+                      }, 900);
                   }
               });
           </script>

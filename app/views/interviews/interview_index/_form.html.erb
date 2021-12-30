@@ -1,6 +1,9 @@
 <div class="interview-index">
+  <div class="breadcrumb resources-details">
+    <%= render_breadcrumbs %>
+  </div>
 <%= simple_form_for @file_index_point, :url => @file_index_point.new_record? ? @interview.present? ? interviews_interview_index_create_path(@interview.id) : create_index_path(@resource_file.id) : @interview.present? ? interviews_interview_index_path(@file_index_point.id) : update_index_file_path(@resource_file.id,@file_index.id,@file_index_point.id), html: { class: "interview_index_manager" } do |f| %>
-<div class="text-headline jumbotron">
+<div class="text-headline jumbotron mt-3">
   <div class="heading-holder table-head">
     <div class="row">
       <div class="col-md-6">
@@ -11,7 +14,7 @@
         <div class="button-holder text-right pt-2">
           <div class="btn-group">
             <% if @interview.present? %>
-              <%= link_to 'Return To Interviews', interviews_managers_path , class: 'btn btn-outline-secondary' %>
+              <%= link_to 'Return To Interviews', interviews_managers_path, class: 'btn btn-outline-secondary' %>
               <%= link_to 'Return To Index', interviews_interview_index_path(@interview.id), class: 'btn btn-outline-secondary' %>
             <% else %>
               <%= link_to 'Return To Resource', "#{collection_collection_resource_details_url(@collection_resource.collection, @collection_resource, @resource_file)}/index?", class: 'btn btn-primary' %>
