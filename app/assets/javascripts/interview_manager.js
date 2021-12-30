@@ -473,7 +473,7 @@ function InterviewManager() {
                 $.each(data.files, function (index, file) {
                     let filename = file.name;
                     let fileExt = filename.split('.').pop();
-                    if ((file.type != '' && file.type != 'text/xml' && file.type != 'text/csv' && file.type != 'application/vnd.ms-excel') || (file.type == '' && fileExt != 'xml')) {
+                    if ((file.type != '' && file.type != 'text/xml' && file.type != 'text/csv' && file.type != 'application/xml' && file.type != 'application/vnd.ms-excel') || (file.type == '' && fileExt != 'xml')) {
                         jsMessages('danger', 'Only XML or CSV file allowed.');
                         return false;
                     } else {
