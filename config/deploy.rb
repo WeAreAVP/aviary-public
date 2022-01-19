@@ -25,6 +25,6 @@ namespace :deploy do
   before :deploy, 'copy:env_file'
   after :deploy, 'restart:nginx'
   after :deploy, 'sidekiq:restart'
-  before 'deploy:assets:precompile', 'deploy:yarn_install'
+  # before 'deploy:assets:precompile', 'deploy:yarn_install'
   after :deploy, 'copy:create_symbolic_links'
 end

@@ -69,21 +69,27 @@ Sample Login
 Requirements
 ===
 
-*  **OS**: CentOS 6.x
-*  **Ruby**: 2.5.1
-*  **Rails**: 5.1.6
-*  **Nginx with Passenger**: 1.14.0
+*  **OS**: Ubuntu 20.04
+*  **Ruby**: 3.1.0
+*  **Rails**: 6.1.4.4
+*  **Nginx**
+*  **Puma**
 *  **MySQL**: >=5.7.x
 *  **imagick**: >=6.7.2
 *  **ffmpeg**: >=2.6.8
 *  **git**: >=1.7.1
 *  **7z**
 *  **Apache Solr** >= 7.6.x
-*  **Redis** 
+*  **Redis**
+*  **Youtube-dl**
+*  **exiftool**
+
 
 Third Party Services
 ===
-*  AWS S3, Cloudfront and SES
+*  AWS S3,
+*  AWS Cloudfront
+*  AWS SES
 *  Wasabi Storage
 
 Helpful Links
@@ -110,6 +116,8 @@ Contributors
 
  *  Nouman Tayyab nouman@weareavp.com
  *  Furqan Wasi furqan@weareavp.com
+ *  Zaheer Abdul Wajid zaheer@weareavp.com
+ *  Raza Saleem raza@weareavp.com
 
   
 
