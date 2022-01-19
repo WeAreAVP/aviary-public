@@ -17,7 +17,7 @@ gem 'sass-rails', '>= 6'
 gem 'sprockets', '~> 4'
 gem 'sprockets-rails', :require => 'sprockets/railtie'
 # Transpile app-like JavaScript. Read more: https://github.com/rails/webpacker
-gem 'webpacker', '~> 5.0'
+# gem 'webpacker', '~> 5.0'
 # Turbolinks makes navigating your web application faster. Read more: https://github.com/turbolinks/turbolinks
 gem 'turbolinks', '~> 5'
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
