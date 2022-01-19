@@ -7,11 +7,11 @@ class String
   def to_boolean?
     ActiveModel::Type::Boolean.new.cast(self.to_s.downcase)
   end
-  
+
   def is_i?
     !!(self =~ /\A[-+]?[0-9]+\z/)
   end
-  
+
   def match_all(regex, value_for_occurrences = 1)
     prev_offset = -1
     offset = 0
@@ -22,5 +22,10 @@ class String
       offset = z.offset(0)[1] + offset
     end
     matches
+  end
+
+  def to_filename
+    filename = self.gsub(/\s|"|'/, '')
+    filename.gsub(/[^0-9A-Za-z_.]/, '')
   end
 end

@@ -1,6 +1,220 @@
+#
+# Aviary is an audiovisual content publishing platform with sophisticated features for search and permissions controls.
+# Copyright (C) 2019 Audio Visual Preservation Solutions, Inc.
 fields:
   resource_file:
-
+  # dublin_core
+    contributor:
+      label: 'Contributor'
+      is_searchable_at_media_table: true
+      field_purpose: 'dublin_core'
+      parent: agent
+      resource_file_description_display: true
+      resource_file_table_display: true
+      resource_file_description_sort_order: 0
+      resource_file_table_sort_order: 0
+    coverage:
+      label: 'Coverage'
+      is_searchable_at_media_table: true
+      field_purpose: 'dublin_core'
+      parent: coverage
+      resource_file_description_display: true
+      resource_file_table_display: true
+      resource_file_description_sort_order: 1
+      resource_file_table_sort_order: 1
+    creator:
+      label: 'Creator'
+      is_searchable_at_media_table: true
+      field_purpose: 'dublin_core'
+      parent: agent
+      resource_file_description_display: true
+      resource_file_table_display: true
+      resource_file_description_sort_order: 2
+      resource_file_table_sort_order: 2
+    date:
+      label: 'Date'
+      is_searchable_at_media_table: true
+      field_purpose: 'dublin_core'
+      parent: date
+      resource_file_description_display: true
+      resource_file_table_display: true
+      resource_file_description_sort_order: 3
+      resource_file_table_sort_order: 3
+    description:
+      label: 'Description'
+      is_searchable_at_media_table: true
+      field_purpose: 'dublin_core'
+      parent: description
+      resource_file_description_display: true
+      resource_file_table_display: true
+      resource_file_description_sort_order: 4
+      resource_file_table_sort_order: 4
+    format:
+      label: 'Format'
+      is_searchable_at_media_table: true
+      field_purpose: 'dublin_core'
+      parent: format
+      resource_file_description_display: true
+      resource_file_table_display: true
+      resource_file_description_sort_order: 5
+      resource_file_table_sort_order: 5
+    identifier:
+      label: 'Identifier'
+      is_searchable_at_media_table: true
+      field_purpose: 'dublin_core'
+      parent: identifier
+      resource_file_description_display: true
+      resource_file_table_display: true
+      resource_file_description_sort_order: 6
+      resource_file_table_sort_order: 6
+    publisher:
+      label: 'Publisher'
+      is_searchable_at_media_table: true
+      field_purpose: 'dublin_core'
+      parent: publisher
+      resource_file_description_display: true
+      resource_file_table_display: true
+      resource_file_description_sort_order: 7
+      resource_file_table_sort_order: 7
+    relation:
+      label: 'Relation'
+      is_searchable_at_media_table: true
+      field_purpose: 'dublin_core'
+      parent: relation
+      resource_file_description_display: true
+      resource_file_table_display: true
+      resource_file_description_sort_order: 8
+      resource_file_table_sort_order: 8
+    rights_statement:
+      label: 'Rights'
+      is_searchable_at_media_table: true
+      field_purpose: 'dublin_core'
+      parent: rights_statement
+      resource_file_description_display: true
+      resource_file_table_display: true
+      resource_file_description_sort_order: 9
+      resource_file_table_sort_order: 9
+    source:
+      label: 'Source'
+      is_searchable_at_media_table: true
+      field_purpose: 'dublin_core'
+      parent: source
+      resource_file_description_display: true
+      resource_file_table_display: true
+      resource_file_description_sort_order: 10
+      resource_file_table_sort_order: 10
+    subject:
+      label: 'Subject'
+      is_searchable_at_media_table: true
+      field_purpose: 'dublin_core'
+      parent: subject
+      resource_file_description_display: true
+      resource_file_table_display: true
+      resource_file_description_sort_order: 11
+      resource_file_table_sort_order: 11
+    type:
+      label: 'Type'
+      is_searchable_at_media_table: true
+      field_purpose: 'dublin_core'
+      parent: type
+      resource_file_description_display: true
+      resource_file_table_display: true
+      resource_file_description_sort_order: 12
+      resource_file_table_sort_order: 12
+    language:
+      label: 'Language'
+      is_searchable_at_media_table: true
+      field_purpose: 'dublin_core'
+      parent: language
+      resource_file_description_display: true
+      resource_file_table_display: true
+      resource_file_description_sort_order: 13
+      resource_file_table_sort_order: 13
+    #special_purpose
+    id_is:
+      label: 'ID'
+      is_searchable_at_media_table: true
+      field_purpose: 'special_purpose'
+    resource_file_file_name_ss:
+      label: 'File Name'
+      is_searchable_at_media_table: true
+      field_purpose: 'special_purpose'
+    access_ss:
+      label: 'Public'
+      is_searchable_at_media_table: false
+      field_purpose: 'special_purpose'
+    resource_file_content_type_ss:
+      label: 'Media Type'
+      is_searchable_at_media_table: true
+      field_purpose: 'special_purpose'
+    resource_file_file_size_ss:
+      label: 'File Size'
+      is_searchable_at_media_table: false
+      field_purpose: 'special_purpose'
+    updated_at_ds:
+      label: 'Date Updated'
+      is_searchable_at_media_table: false
+      field_purpose: 'special_purpose'
+    created_at_ds:
+      label: 'Date Added'
+      is_searchable_at_media_table: false
+      field_purpose: 'special_purpose'
+    count_of_transcripts_ss:
+      label: 'Count of Transcripts'
+      is_searchable_at_media_table: false
+      field_purpose: 'special_purpose'
+    count_of_indexes_ss:
+      label: 'Count of Indexes'
+      is_searchable_at_media_table: false
+      field_purpose: 'special_purpose'
+    collection_resource_id_ss:
+      label: 'Linked Resource Id'
+      is_searchable_at_media_table: false
+      field_purpose: 'special_purpose'
+    collection_resource_title_ss:
+      label: 'Linked Resource Title'
+      is_searchable_at_media_table: true
+      field_purpose: 'special_purpose'
+    thumbnail_ss:
+      label: 'Thumbnail'
+      is_searchable_at_media_table: false
+      field_purpose: 'special_purpose'
+    file_display_name_ss:
+      label: 'Display Name'
+      is_searchable_at_media_table: false
+      field_purpose: 'special_purpose'
+    aviary_url_path_ss:
+      label: 'Aviary URL'
+      is_searchable_at_media_table: false
+      field_purpose: 'special_purpose'
+    aviary_purl_ss:
+      label: 'Aviary PURL'
+      is_searchable_at_media_table: false
+      field_purpose: 'special_purpose'
+    media_embed_url_ss:
+      label: 'Media Embed URL'
+      is_searchable_at_media_table: false
+      field_purpose: 'special_purpose'
+    player_embed_html_ss:
+      label: 'Player Embed HTML'
+      is_searchable_at_media_table: false
+      field_purpose: 'special_purpose'
+    resource_detail_embed_html_ss:
+      label: 'Resource Detail Embed HTML'
+      is_searchable_at_media_table: false
+      field_purpose: 'special_purpose'
+    target_domain_ss:
+      label: 'Target Domain'
+      is_searchable_at_media_table: true
+      field_purpose: 'special_purpose'
+    duration_ss:
+      label: 'Duration'
+      is_searchable_at_media_table: false
+      field_purpose: 'special_purpose'
+    collection_title_text:
+      label: 'Collection Title'
+      is_searchable_at_media_table: true
+      field_purpose: 'special_purpose'
   resource:
     id:
       label: 'Aviary Resource ID'
@@ -67,7 +281,7 @@ fields:
       solr_display_column: 'description_preferred_citation_ss'
       solr_search_column: 'description_preferred_citation_search_texts'
       resource_table_sort_order: 27
-      search_display: ture
+      search_display: true
       search_sort_order: 2
     source_metadata_uri:
       label: 'Source Metadata URI'
@@ -90,7 +304,7 @@ fields:
       solr_display_column: 'description_source_metadata_uri_ss'
       solr_search_column: 'description_source_metadata_uri_search_texts'
       resource_table_sort_order: 2
-      search_display: ture
+      search_display: true
       search_sort_order: 3
     duration:
       label: 'Duration'
@@ -113,7 +327,7 @@ fields:
       solr_display_column: 'description_duration_ss'
       solr_search_column: ''
       resource_table_sort_order: 3
-      search_display: ture
+      search_display: true
       search_sort_order: 4
     publisher:
       label: 'Publisher'
@@ -136,7 +350,7 @@ fields:
       solr_display_column: 'description_publisher_sms'
       solr_search_column: 'description_publisher_search_texts'
       resource_table_sort_order: 4
-      search_display: ture
+      search_display: true
       search_sort_order: 4
     rights_statement:
       label: 'Rights Statement'
@@ -159,7 +373,7 @@ fields:
       solr_display_column: 'description_rights_statement_sms'
       solr_search_column: 'description_rights_statement_search_texts'
       resource_table_sort_order: 5
-      search_display: ture
+      search_display: true
       search_sort_order: 5
     source:
       label: 'Source'
@@ -182,7 +396,7 @@ fields:
       solr_display_column: 'description_source_sms'
       solr_search_column: 'description_source_search_texts'
       resource_table_sort_order: 6
-      search_display: ture
+      search_display: true
       search_sort_order: 6
     agent:
       label: 'Agent'
@@ -474,7 +688,7 @@ fields:
       solr_display_column: 'description_agent_sms'
       solr_search_column: 'description_agent_search_texts'
       resource_table_sort_order: 7
-      search_display: ture
+      search_display: true
       search_sort_order: 7
     date:
       label: 'Date'
@@ -497,7 +711,7 @@ fields:
       solr_display_column: 'description_date_sms'
       solr_search_column: ''
       resource_table_sort_order: 8
-      search_display: ture
+      search_display: true
       search_sort_order: 8
     coverage:
       label: 'Coverage'
@@ -520,7 +734,7 @@ fields:
       solr_display_column: 'description_coverage_sms'
       solr_search_column: 'description_coverage_search_texts'
       resource_table_sort_order: 9
-      search_display: ture
+      search_display: true
       search_sort_order: 9
     language:
       label: 'Language'
@@ -543,7 +757,7 @@ fields:
       solr_display_column: 'description_language_sms'
       solr_search_column: 'description_language_search_texts'
       resource_table_sort_order: 10
-      search_display: ture
+      search_display: true
       search_sort_order: 10
     description:
       label: 'Description'
@@ -566,7 +780,7 @@ fields:
       solr_display_column: 'description_description_sms'
       solr_search_column: 'description_description_search_texts'
       resource_table_sort_order: 11
-      search_display: ture
+      search_display: true
       search_sort_order: 11
     format:
       label: 'Format'
@@ -589,7 +803,7 @@ fields:
       solr_display_column: 'description_format_sms'
       solr_search_column: 'description_format_search_texts'
       resource_table_sort_order: 12
-      search_display: ture
+      search_display: true
       search_sort_order: 12
     identifier:
       label: 'Identifier'
@@ -632,7 +846,7 @@ fields:
       solr_display_column: 'description_identifier_sms'
       solr_search_column: 'description_identifier_search_texts'
       resource_table_sort_order: 13
-      search_display: ture
+      search_display: true
       search_sort_order: 13
     relation:
       label: 'Relation'
@@ -655,7 +869,7 @@ fields:
       solr_display_column: 'description_relation_sms'
       solr_search_column: 'description_relation_search_texts'
       resource_table_sort_order: 14
-      search_display: ture
+      search_display: true
       search_sort_order: 14
     subject:
       label: 'Subject'
@@ -678,7 +892,7 @@ fields:
       solr_display_column: 'description_subject_sms'
       solr_search_column: 'description_subject_search_texts'
       resource_table_sort_order: 15
-      search_display: ture
+      search_display: true
       search_sort_order: 15
     keyword:
       label: 'Keyword'
@@ -701,7 +915,7 @@ fields:
       solr_display_column: 'description_keyword_sms'
       solr_search_column: 'description_keyword_search_texts'
       resource_table_sort_order: 16
-      search_display: ture
+      search_display: true
       search_sort_order: 16
     type:
       label: 'Type'
@@ -724,7 +938,7 @@ fields:
       solr_display_column: 'description_type_sms'
       solr_search_column: 'description_type_search_texts'
       resource_table_sort_order: 17
-      search_display: ture
+      search_display: true
       search_sort_order: 17
     resource_file_count:
       label: 'Resource File Count'

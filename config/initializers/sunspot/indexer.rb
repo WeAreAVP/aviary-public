@@ -13,7 +13,7 @@ module Sunspot
     end
 
     def custom_field_handler(model, documents)
-      if model.class == Array && model.first.present? && model.first.class.name == 'CollectionResource' && model.first.custom_description_solr.present?
+      if model.class == Array && model.first.present? && (model.first.class.name == 'CollectionResource' || model.first.class.name == 'CollectionResourceFile') && model.first.custom_description_solr.present?
         model.first.custom_description_solr.each do |key, single|
           single['value'].each do |single_value|
             type_field = Aviary::SolrIndexer.field_type_finder(single['type'])
