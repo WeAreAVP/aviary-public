@@ -1,193 +1,268 @@
 source 'https://rubygems.org'
+git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-git_source(:github) do |repo_name|
-  repo_name = "#{repo_name}/#{repo_name}" unless repo_name.include?("/")
-  "https://github.com/#{repo_name}.git"
+ruby '3.1.0'
+
+# Bundle edge Rails instead: gem 'rails', github: 'rails/rails', branch: 'main'
+gem 'rails', '~> 6.1.4', '>= 6.1.4.4'
+group :development, :production do
+  # Use mysql as the database for Active Record
+  gem 'mysql2', '~> 0.5'
 end
-
-# Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '~> 5.2.6'
+# Use Puma as the app server
+gem 'puma', '~> 5.0'
 # Use SCSS for stylesheets
-gem 'sass-rails', '~> 5.0'
-# Use Uglifier as compressor for JavaScript assets
-gem 'uglifier', '>= 1.3.0'
-# Use CoffeeScript for .coffee assets and views
-gem 'coffee-rails', '~> 4.2'
+
+gem 'sass-rails', '>= 6'
+gem 'sprockets', '~> 4'
+gem 'sprockets-rails', :require => 'sprockets/railtie'
+# Transpile app-like JavaScript. Read more: https://github.com/rails/webpacker
+gem 'webpacker', '~> 5.0'
 # Turbolinks makes navigating your web application faster. Read more: https://github.com/turbolinks/turbolinks
 gem 'turbolinks', '~> 5'
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
-gem 'jbuilder', '~> 2.5'
-gem 'nokogiri', '>= 1.12.5'
+gem 'jbuilder', '~> 2.7'
+# Use Redis adapter to run Action Cable in production
+gem 'redis', '~> 4.0'
+gem 'hiredis'
+# Use Active Model has_secure_password
+# gem 'bcrypt', '~> 3.1.7'
 
-gem "puma"
+# Use Active Storage variant
+# gem 'image_processing', '~> 1.2'
+
+# Reduces boot times through caching; required in config/boot.rb
+gem 'bootsnap', '>= 1.4.4', require: false
+
 group :development, :test do
-  gem 'sqlite3'
+  # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
+
   gem 'pry-rails'
-  gem 'solr_wrapper', '>= 0.3'
 end
 
 group :development do
-  # Access an IRB console on exception pages or by using <%= console %> anywhere in the code.
-  gem 'web-console', '>= 3.3.0'
+  # Access an interactive console on exception pages or by calling 'console' anywhere in the code.
+  gem 'web-console', '>= 4.1.0'
+  # Display performance information such as SQL time and flame graphs for each request in your browser.
+  # Can be configured to work on production as well see: https://github.com/MiniProfiler/rack-mini-profiler/blob/master/README.md
+  gem 'rack-mini-profiler', '~> 2.0'
+  gem 'listen', '~> 3.3'
+  # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
+  gem 'spring'
   gem 'letter_opener'
   gem 'pry'
   gem 'meta_request'
   gem 'better_errors'
   gem 'binding_of_caller'
-  gem 'awesome_print', require: 'ap'
-  gem 'rubocop', '= 0.83'
-  gem 'rubocop-ast', '< 0.7.0'
-  # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
-  gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
   gem 'rails-erd'
-  gem 'xray-rails'
-  gem 'bullet'
+  # gem 'xray-rails'
+
+  gem 'pry-stack_explorer'
+
+  gem 'rubocop', '= 0.83', require: false
+  gem 'rubocop-rails', require: false
+  gem 'rubocop-ast', '< 0.7.0', require: false
 end
 
 group :test do
+  # Adds support for Capybara system testing and selenium driver
+  gem 'capybara', '>= 3.26'
+  gem 'selenium-webdriver'
+  # Easy installation and use of web drivers to run system tests with browsers
+  gem 'webdrivers'
+  # sqlite db
+  gem 'sqlite3'
+
   gem 'rspec', '~> 3.7'
   gem 'rspec-rails', '~> 3.7'
   gem 'rspec-activemodel-mocks'
   gem 'rspec-its'
   gem 'factory_bot_rails', '~> 4.0'
   gem 'shoulda-matchers'
-  # Use Puma as the app server
-
-  # Adds support for Capybara system testing and selenium driver
-  gem 'capybara'
-  gem 'selenium-webdriver'
-  gem 'chromedriver-helper' # <- New!
-  gem 'capybara-screenshot'
   gem 'database_cleaner'
-  gem 'listen', '>= 3.0.5', '< 3.2'
   gem 'rails-controller-testing'
-  # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
-  gem 'spring'
-  gem 'spring-watcher-listen', '~> 2.0.0'
   gem 'with_model'
 end
 
-gem 'mysql2'
-gem "devise", ">= 4.7.1"
-gem 'devise_invitable', '~> 1.7.0'
-gem 'jquery-rails', '~> 4.3', '>= 4.3.1'
-gem 'dotenv-rails'
+# Windows does not include zoneinfo files, so bundle the tzinfo-data gem
+gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
+
+# Add additional after this line those are needed for this project
 
 # capistrano for deployment
-gem 'capistrano', '~> 3.10', require: false
-gem 'capistrano-rails', '~> 1.3', require: false
-gem 'capistrano-passenger', '~> 0.2.0', require: false
-gem 'capistrano-rbenv', '~> 2.1', require: false
-gem 'capistrano3-puma', '~> 5.0'
-# Datatables https://www.driftingruby.com/episodes/datatables
-gem 'rails-assets-jquery', source: 'https://rails-assets.org'
-gem 'kaminari'
+gem 'capistrano', require: false
+gem 'capistrano-rails', require: false
+# gem 'capistrano-passenger', '~> 0.2.0', require: false
+gem 'capistrano-rbenv', require: false
+gem 'capistrano3-puma', require: false
 
-# Draper adds an object-oriented layer of presentation logic to your Rails application.
-gem 'draper'
+gem "aws-sdk-s3"
+gem 'mini_magick'
+gem 'nokogiri'
 
+gem "devise"
+gem 'devise_invitable'
+#
 gem "simple_form", ">= 5.0.0"
 gem 'country_select'
 gem 'city-state'
-
-# file attachment library
-gem 'paperclip', '~> 6.0.0'
-gem 'paperclip-compression'
-gem 'aws-sdk-s3'
-
-# Rails JQuery
+#
+# # Draper adds an object-oriented layer of presentation logic to your Rails application.
+gem 'draper'
+#
+# # Datatables https://www.driftingruby.com/episodes/datatables
+gem 'rails-assets-jquery', source: 'https://rails-assets.org'
+gem 'kaminari'
+#
+#
+# # Rails JQuery
 gem 'jquery-ui-rails'
-gem 'autocomplete_rails'
+gem 'rails-autocomplete'
 gem 'cocoon'
 gem 'jquery-fileupload-rails'
-
-# Attr Encrypted
+#
 gem 'attr_encrypted', '~> 3.0.0'
 gem 'bootstrap-tagsinput-rails'
 gem 'bootstrap-datepicker-rails'
 gem "rack-cors", ">= 1.0.4"
-gem 'best_in_place'
+gem "best_in_place", git: "https://github.com/mmotherwell/best_in_place"
 gem 'cancancan'
-gem 'rack', '>= 2.0.6'
-gem 'loofah', '>= 2.2.3'
-
-# Color Picker https://labs.abeautifulsite.net/jquery-minicolors/
+#
+# # Color Picker https://labs.abeautifulsite.net/jquery-minicolors/
 gem 'jquery-minicolors-rails'
-
+#
 gem 'client_side_validations'
-
-# Code Coverage and publish on Codacy Gem
-gem 'codacy-coverage', :require => false
-gem 'simplecov', require: false
-
-# Cron
+#
 gem 'sidekiq'
+#
 
-gem 'redis-rails'
-# Process WebVTT file
+# # Process WebVTT file
 gem 'webvtt-ruby'
-
-# Getting info of a video
+#
+# # Getting info of a video
 gem 'soundcloud'
 gem 'streamio-ffmpeg'
 gem 'video_info'
-
-# run the business logic in a transaction
+#
+# # run the business logic in a transaction
 gem 'dry-transaction'
-
-gem 'blacklight_advanced_search'
-gem 'blacklight_range_limit'
-gem 'sunspot_rails'
-gem 'sunspot_solr' # optional pre-packaged Solr distribution for use in development. Please find a section below explaining other options for running Solr in production '
-gem 'rsolr', '>= 1.0'
+#
 gem 'jquery-datatables'
-
+#
 gem 'momentjs-rails'
 gem 'bootstrap-daterangepicker-rails'
-
-gem 'bootsnap', require: false
-
+#
+gem 'stripe'
+gem 'stripe_event'
 gem 'noid-rails'
 gem 'clipboard-rails'
-
-
-# Analystics
+#
+#
+# # Analystics
 gem 'ahoy_matey'
-
+#
 gem 'tinymce-rails'
 gem 'open_uri_redirections'
-
-
+#
+gem 'ibm_watson'
+gem 'taxjar-ruby', require: 'taxjar'
+#
 gem 'iso-639'
-
+#
 gem 'curb'
 gem 'countries'
-
+#
 gem 'geoip'
 gem 'ip2location_ruby'
 gem 'maxminddb'
 gem 'breadcrumbs_on_rails'
 gem 'rack-attack'
-
+gem 'simple_uuid'
+gem 'omniauth-multi-provider-saml'
 gem 'activerecord_json_validator'
-
-
+gem 'rails-letsencrypt'
+gem 'aws-sdk-glacier', '~> 1.0.0.rc1'
 gem 'treehash'
-# Airbrake lib/platform for Error/Performance Monitoring and Reporting
-gem 'airbrake', '>= 10.0.3'
-
-# Caching helper .new(Rails.application.secrets.secret_key_base[0..31], Rails.application.secrets.secret_key_base)gems
+# # Airbrake lib/platform for Error/Performance Monitoring and Reporting
+gem 'airbrake'
+# # DNS verification
+# gem 'dnsruby'
+# # Nginx conf generator
+gem 'nginx-conf'
+#
+#
+# # Caching helper .new(Rails.application.secrets.secret_key_base[0..31], Rails.application.secrets.secret_key_base)gems
 gem 'actionpack-page_caching'
 gem 'actionpack-action_caching'
-
-
-# SEO GEM
+gem 'fog-aws'
+#
+# # SEO GEM
 gem 'sitemap_generator'
 gem 'meta-tags'
-
+#
+#
 gem "rubyzip", ">= 1.3.0"
 gem 'sanitize'
+#
+gem 'aws-sdk-elastictranscoder', '~> 1.0.0.rc1'
+#
+gem 'recaptcha'
+gem 'invisible_captcha'
+#
+#
+# # API
+gem 'devise_token_auth'
+gem "paranoia", "~> 2.2"
+gem 'rails_same_site_cookie'
+#
+gem 'docx'
+gem 'rest-client'
+#
+gem 'remove_emoji'
+#
+gem 'htmlentities'
+gem 'yomu'
+gem 'sidekiq-limit_fetch'
+#
+gem 'devise-two-factor'
+gem 'rqrcode'
+#
+gem 'pry-remote'
+#
+gem 'turnout'
+#
+gem 'simple_hubspot'
+gem 'social-share-button'
+#
+gem 'down', require: false
 gem 'bootstrap_tokenfield_rails'
 gem 'jquery_mask_rails', '~> 0.1.0'
-gem 'docx'
+#
+gem 'browser'
+gem 'wkhtmltopdf-binary'
+gem 'wicked_pdf'
+gem 'net-sftp'
+#
+gem 'blacklight_advanced_search'
+gem 'blacklight_range_limit'
+gem 'sunspot_rails'
+gem 'sunspot_solr' # optional pre-packaged Solr distribution for use in development. Please find a section below explaining other options for running Solr in production '
+
+gem 'kt-paperclip'
+gem 'paperclip-compression', git: 'https://github.com/smntb/paperclip-compression'
+
+gem 'dotenv-rails'
+gem 'jquery-rails'
+
+gem 'net-smtp', require: false
+
+gem 'rsolr', '>= 1.0', '< 3'
+gem 'net-pop', require: false
+gem 'net-imap', require: false
+# gem 'bigdecimal', '1.4.2'
+group :development, :test do
+  gem 'solr_wrapper', '>= 0.3'
+end
+
+
