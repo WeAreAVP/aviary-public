@@ -74,7 +74,7 @@ class CollectionResourceFilePresenter < BasePresenter
 
   def avalon_m3u8
     source_tags = ''
-    doc = Nokogiri::HTML(open(media_url, read_timeout: 10, ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE))
+    doc = Nokogiri::HTML(open(media_url, read_timeout: 10))
     video_src_nodes = doc.search("//source[@type='application/x-mpegURL']")
     video_src_nodes.each do |node|
       source_tags = format('<source src="%s" type="application/x-mpegURL" label="%s"/>', node.attributes['src'].value, node.attributes['data-quality'].value) if node.attributes['data-quality'].value == 'auto'

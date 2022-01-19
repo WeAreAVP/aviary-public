@@ -225,7 +225,7 @@ gem 'htmlentities'
 gem 'yomu'
 gem 'sidekiq-limit_fetch'
 #
-gem 'devise-two-factor'
+# gem 'devise-two-factor'
 gem 'rqrcode'
 #
 gem 'pry-remote'

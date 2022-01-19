@@ -73,7 +73,10 @@ class Collection < ApplicationRecord
     end
 
     string :tombstone_fields, multiple: true, stored: true do
-      collection_resources.first.tombstone_fields unless collection_resources.empty?
+      Aviary::FieldManagement::OrganizationFieldManager.new
+      collection_field_manager = Aviary::FieldManagement::CollectionFieldManager.new
+      resource_columns_collection = collection_field_manager.sort_fields(collection_field_manager.collection_resource_field_settings(self, 'resource_fields').resource_fields, 'sort_order')
+      collection_resources.first.tombstone_fields(resource_columns_collection) unless collection_resources.empty?
     end
     string :organization_name, multiple: false, stored: true do
       if organization.present?

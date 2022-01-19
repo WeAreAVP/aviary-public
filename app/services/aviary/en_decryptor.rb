@@ -4,8 +4,8 @@
 # Copyright (C) 2019 Audio Visual Preservation Solutions, Inc.
 class EnDecryptor
   @alg = 'aes-128-cbc'
-  @key = Rails.application.secrets.secret_key_base[0..15] ## 32 Characters
-  @iv = Rails.application.secrets.secret_key_base[0..15] ## 16 characters
+  @key = Rails.application.secrets.secret_key_base[0..15] if Rails.application.secrets.secret_key_base.present? ## 32 Characters
+  @iv = Rails.application.secrets.secret_key_base[0..15] if Rails.application.secrets.secret_key_base.present? ## 16 characters
 
   def self.encrypt(des_text)
     des = OpenSSL::Cipher::Cipher.new(@alg)

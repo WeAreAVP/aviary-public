@@ -19,7 +19,7 @@ class SearchTracking < ApplicationRecord
 
     sort_direction = sort_direction.upcase
     unless export_type[:export]
-      search_tracking = search_tracking.order(AnalyticsReportsExtended.order_by_handler(sort_column, sort_direction))
+      search_tracking = search_tracking.order(Arel.sql(AnalyticsReportsExtended.order_by_handler(sort_column, sort_direction)))
     end
 
     search_tracking = search_tracking.group(:search_keyword)
