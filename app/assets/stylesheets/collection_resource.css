@@ -11,20 +11,22 @@
     background-color: #eee !important;
     border: 1px solid #979da5 !important;
     color: #6e7684 !important;
-    width: 20px;
+    min-width: 20px;
     height: 20px;
-    padding: 0;
+    line-height: 20px;
+    width: auto;
 }
 
 .page-item.active .page-link {
     background-color: #fff !important;
     border: 1px solid #000 !important;
     color: #000 !important;
-    width: 20px;
+    min-width: 20px;
     height: 20px;
     padding: 1px;
-    font-size: 12px;
-    line-height: 17px;
+    font-size: 14px;
+    line-height: 20px;
+    width: auto;
 }
 
 .page-item.active .page-link:hover {
@@ -270,6 +272,26 @@ h5.MsoNormal span {
 .heading-holder .collection_resource_edit_title {
     vertical-align: middle;
     text-decoration: none;
+}
+
+.thumbnail-snip-cam:before {
+    font-family: FontAwesome;
+    content: "\f030";
+    font-size: medium;
+}
+
+.clip-cut-cam:before{
+    font-family: FontAwesome;
+    content: "\f0c4";
+    font-size: medium;
+}
+
+.padding-left-30{
+    padding-left: 30px !important;
+}
+
+#av-clip-selection {
+    margin-right: 15px;
 }
 
 .private_resource_file {

@@ -1,15 +1,15 @@
 // Aviary is an audiovisual content publishing platform with sophisticated features for search and permissions controls.
 // Copyright (C) 2019 Audio Visual Preservation Solutions, Inc.
 .edit-playlist {
-  #playlist_resources_count {
+
+  #playlist_resources_count{
     display: inline-block !important;
   }
-
   #slider-range {
     position: relative;
     width: 80%;
-  }
 
+  }
   .manage_resource_list {
     padding: 6px;
     margin-top: 15px;
@@ -91,6 +91,20 @@
     }
   }
 
+  .close-clip-btn {
+    background: #e12c10;
+    padding: 5px 10px;
+    font-size: 12px;
+    color: #ffffff;
+    border: none;
+
+    &:hover {
+      color: #fff !important;
+      background: #e12c10 !important;
+      opacity: .85;
+    }
+  }
+
   .playlist .content-box .form-control {
     border: 1px solid #eee;
   }
@@ -149,7 +163,6 @@
     border: 1px solid #e0e0e0;
     border-radius: 4px;
   }
-
   .playlist-list .box.not-playing {
     padding: 25px 25px 15px;
     border: 1px solid #e0e0e0;
@@ -572,6 +585,7 @@
 
   #search_playlist_resource {
     border: 1px solid lightgray !important;
+
   }
 
   .playlist_tombstone {
@@ -584,6 +598,10 @@
     margin-left: 10px;
     z-index: 9;
     position: absolute;
+  }
+
+  .title_description {
+    width: 80%;
   }
 
   .playlist_operations_actions {
@@ -659,6 +677,7 @@
   }
 
   .input.playlist_name {
+    
   }
 
   .breadcrumb.resources-details {
@@ -701,7 +720,6 @@
   }
 
   .title_description {
-    width: 80%;
     &:hover {
       .edit-description-resource {
         opacity: 1;
@@ -729,7 +747,6 @@
     color: #111;
     border-radius: 4px 0 0 4px !important;
   }
-
   .set_clip_end_time_custom {
     width: 17%;
     font-size: 14px;

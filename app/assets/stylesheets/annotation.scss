@@ -1,6 +1,5 @@
 // Aviary is an audiovisual content publishing platform with sophisticated features for search and permissions controls.
 // Copyright (C) 2019 Audio Visual Preservation Solutions, Inc.
-
 .add-annotation-box span,
 .show-annotation-box span {
   font-size: 14px;
@@ -51,10 +50,10 @@
   margin-right: -2px;
 }
 
+
 .remove_dublin_core {
   padding-top: 10px;
   position: relative;
-
   i {
     position: absolute;
     right: -17px;
@@ -203,11 +202,13 @@
 .enable_annotation .annotation_marker.active {
   border: 1px solid #2B785A;
   background: #7EFBC74D;
+
 }
 
 .enable_annotation .annotation_marker.active.delete {
   border: 1px solid #B6001D;
   background: #FFD7D4;
+
 }
 
 .annotation-box .text-box.delete {
@@ -336,8 +337,7 @@
   color: inherit;
   font-size: inherit;
 }
-
-.editable-text .tox-tinymce {
+.editable-text .tox-tinymce{
   height: 160px !important;
 }
 
@@ -348,28 +348,24 @@
 .playlists-show .enable_annotation .file_transcript_mark_custom .flag {
   left: -91px;
 }
-
 @media screen and (max-width: 1700px) {
   .annotation-box-holder {
     left: 5px;
   }
 }
-
 @media screen and (max-width: 1500px) {
   .annotation-box .floating-box {
     right: -17px;
   }
 }
-
 @media screen and (max-width: 1300px) {
   .annotation-box .floating-box {
     right: -16px;
   }
 }
-
 @media screen and (max-width: 992px) {
   .transcript_point_container {
-    margin-bottom: 230px;
+    margin-bottom: 230px; 
     padding-bottom: 0 !important;
   }
   .annotation-box {
@@ -382,7 +378,6 @@
     bottom: -132px;
   }
 }
-
 @media screen and (max-width: 767px) {
   .annotation-box-holder {
     left: -11px !important;
