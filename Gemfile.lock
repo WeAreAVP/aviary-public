@@ -100,10 +100,6 @@ GEM
       activesupport (>= 5.2)
       device_detector
       safely_block (>= 0.2.1)
-    airbrake (12.0.0)
-      airbrake-ruby (~> 6.0)
-    airbrake-ruby (6.0.2)
-      rbtree3 (~> 0.5)
     airbrussh (1.4.0)
       sshkit (>= 1.6.1, != 1.7.0)
     ansi (1.5.0)
@@ -619,7 +615,6 @@ GEM
     rb-inotify (0.10.1)
       ffi (~> 1.0)
     rbtree (0.4.4)
-    rbtree3 (0.7.0)
     recaptcha (5.8.1)
       json
     redis (4.5.1)
@@ -850,7 +845,6 @@ DEPENDENCIES
   actionpack-page_caching
   activerecord_json_validator
   ahoy_matey
-  airbrake
   attr_encrypted (~> 3.0.0)
   aws-sdk-elastictranscoder (~> 1.0.0.rc1)
   aws-sdk-glacier (~> 1.0.0.rc1)

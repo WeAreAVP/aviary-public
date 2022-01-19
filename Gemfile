@@ -185,7 +185,7 @@ gem 'rails-letsencrypt'
 gem 'aws-sdk-glacier', '~> 1.0.0.rc1'
 gem 'treehash'
 # # Airbrake lib/platform for Error/Performance Monitoring and Reporting
-gem 'airbrake'
+# gem 'airbrake'
 # # DNS verification
 # gem 'dnsruby'
 # # Nginx conf generator
