@@ -265,4 +265,5 @@ group :development, :test do
   gem 'solr_wrapper', '>= 0.3'
 end
 
-
+gem 'bootstrap', '~> 4.0'
+gem 'twitter-typeahead-rails', '0.11.1.pre.corejavascript'

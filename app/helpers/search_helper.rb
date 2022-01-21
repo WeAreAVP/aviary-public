@@ -70,6 +70,7 @@ module SearchHelper
                         else
                           Organization.exists?(document['organization_id_is']) ? Organization.find(document['organization_id_is']) : ''
                         end
+                        binding.pry
     begin
       resource_url = collection_collection_resource_details_url(collection_id: document['collection_id_is'], collection_resource_id: document['id_is'], host: Utilities::AviaryDomainHandler.subdomain_handler(this_organization))
       keywords = AdvanceSearchHelper.advance_search_query_only(session[:searched_keywords], true, session['solr_params'], stopwords)

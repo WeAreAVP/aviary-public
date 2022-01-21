@@ -305,13 +305,14 @@ function SearchPage() {
         });
         $('.search_field_selector_single').keyup(function (event) {
             if (event.keyCode == 13) {
-                if ($(".search_field_selector_single").val() == '') {
-                    $('<input>').attr({
-                        type: 'hidden',
-                        name: 'sort',
-                        value: 'title_ss asc'
-                    }).appendTo('.simple_search');
-                }
+                // Following code is commented to give user sort choice preference. 'title_ss asc' is now the default choice
+                // if ($(".search_field_selector_single").val() == '') {
+                //     $('<input>').attr({
+                //         type: 'hidden',
+                //         name: 'sort',
+                //         value: 'title_ss asc'
+                //     }).appendTo('.simple_search');
+                // }
                 $('.simple_search').submit();
             }
         });

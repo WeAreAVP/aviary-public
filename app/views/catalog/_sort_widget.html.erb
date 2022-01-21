@@ -2,7 +2,7 @@
 <% if defined? show_sort_and_per_page && show_sort_and_per_page? and active_sort_fields.many? %>
   <div id="sort-dropdown" class="" >
     <button type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown">
-      <%= t('blacklight.search.sort.label', :field => sort_field_label(@selected_sort_key.present? ? @selected_sort_key : current_sort_field.key)) %>
+      <%= t('blacklight.search.sort.label', :field => sort_field_label(@selected_sort_key)) %>
 
     </button>
     <style>

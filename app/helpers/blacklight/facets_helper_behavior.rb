@@ -3,6 +3,7 @@
 #
 # Aviary is an audiovisual content publishing platform with sophisticated features for search and permissions controls.
 # Copyright (C) 2019 Audio Visual Preservation Solutions, Inc.
+# TODO: Please review this class thouroughly. The new facet_helper_behaviour.rb has some changes that we might need to bring over here as well. (Refer to the blacklight-7.22.2 smae file)
 module Blacklight::FacetsHelperBehavior
   include Blacklight::Facet
 
@@ -276,5 +277,21 @@ module Blacklight::FacetsHelperBehavior
     else
       item
     end
+  end
+
+  # TODO: A new method from the same class (blacklight-7.22.2). Please review this method thouroughly to make sure it dosen't change the desired behaviour in any way
+  def facet_item_presenter(facet_config, facet_item, facet_field)
+    (facet_config.item_presenter || Blacklight::FacetItemPresenter).new(facet_item, facet_config, self, facet_field)
+  end
+
+  # TODO: A new method from the same class (blacklight-7.22.2). Please review this method thouroughly to make sure it dosen't change the desired behaviour in any way
+  def facet_item_component(facet_config, facet_item, facet_field, **args)
+    facet_item_component_class(facet_config).new(facet_item: facet_item_presenter(facet_config, facet_item, facet_field), **args).with_view_context(self)
+  end
+
+  # TODO: A new method from the same class (blacklight-7.22.2). Please review this method thouroughly to make sure it dosen't change the desired behaviour in any way
+  def facet_item_component_class(facet_config)
+    default_component = facet_config.pivot ? Blacklight::FacetItemPivotComponent : Blacklight::FacetItemComponent
+    facet_config.fetch(:item_component, default_component)
   end
 end

@@ -94,7 +94,7 @@ module AdvanceSearchHelper
                     'has'
                   end
         query_string += if query_params[single_facet.to_s].include?('*')
-                          " #{query_params['op'].present? ? '<i>' + query_params['op'].upcase + '</i>' : ''} <span style='color: #444;font-size:14px;'>wildcard search on</span>
+                          " #{query_params['op'].present? ? '<i>' + query_params['op'].upcase + '</i>' : ''} <span style='color: #fff;padding: 0 5px;font-size:14px;'>wildcard search on</span>
                              <strong>#{SearchBuilder.search_field_labels[single_facet.to_s].titleize}</strong> <i> USING </i> <strong class='title'>#{query_params['keyword_searched']}</strong>  "
                         else
                           " #{query_params['op'].present? ? '<i>' + query_params['op'].upcase + '</i>' : ''} <strong>#{SearchBuilder.search_field_labels[single_facet.to_s].titleize}</strong> <i>#{limiter}</i>

@@ -106,6 +106,8 @@ GEM
     ast (2.4.2)
     attr_encrypted (3.0.3)
       encryptor (~> 3.0.0)
+    autoprefixer-rails (10.4.2.0)
+      execjs (~> 2)
     aws-eventstream (1.2.0)
     aws-partitions (1.543.0)
     aws-sdk-core (3.125.0)
@@ -154,6 +156,10 @@ GEM
     block-is-hash (0.0.3)
     bootsnap (1.9.3)
       msgpack (~> 1.0)
+    bootstrap (4.6.1)
+      autoprefixer-rails (>= 9.1.0)
+      popper_js (>= 1.14.3, < 2)
+      sassc-rails (>= 2.0.0)
     bootstrap-datepicker-rails (1.9.0.1)
       railties (>= 3.0)
     bootstrap-daterangepicker-rails (3.0.4)
@@ -505,10 +511,6 @@ GEM
     noid-rails (3.0.3)
       actionpack (>= 5.0.0, < 7)
       noid (~> 0.9)
-    nokogiri (1.13.0-arm64-darwin)
-      racc (~> 1.4)
-    nokogiri (1.13.0-x86_64-darwin)
-      racc (~> 1.4)
     nokogiri (1.13.0-x86_64-linux)
       racc (~> 1.4)
     oga (3.3)
@@ -534,6 +536,7 @@ GEM
     parser (3.0.2.0)
       ast (~> 2.4.1)
     parslet (2.0.0)
+    popper_js (1.16.0)
     pr_geohash (1.0.0)
     pry (0.14.1)
       coderay (~> 1.1)
@@ -793,6 +796,10 @@ GEM
       rack (>= 1.3, < 3)
       rack-accept (~> 0.4)
       tilt (>= 1.4, < 3)
+    twitter-typeahead-rails (0.11.1.pre.corejavascript)
+      actionpack (>= 3.1)
+      jquery-rails
+      railties (>= 3.1)
     tzinfo (2.0.4)
       concurrent-ruby (~> 1.0)
     unf (0.1.4)
@@ -855,6 +862,7 @@ DEPENDENCIES
   blacklight_advanced_search
   blacklight_range_limit
   bootsnap (>= 1.4.4)
+  bootstrap (~> 4.0)
   bootstrap-datepicker-rails
   bootstrap-daterangepicker-rails
   bootstrap-tagsinput-rails
@@ -977,6 +985,7 @@ DEPENDENCIES
   treehash
   turbolinks (~> 5)
   turnout
+  twitter-typeahead-rails (= 0.11.1.pre.corejavascript)
   tzinfo-data
   video_info
   web-console (>= 4.1.0)

@@ -15,7 +15,32 @@ class CatalogController < ApplicationController
   def index
     response.headers['Cache-Control'] = 'no-cache, no-store'
     response.headers['Pragma'] = 'no-cache'
+    search_state.params['current_user'] = current_user
+    search_state.params['current_organization'] = current_organization
+    search_state.params['session_solr'] = session[:searched_keywords]
+    search_state.params['user_ip'] = request.ip
+    search_state.params['request_is_xhr'] = request.xhr?
     super
+  end
+
+  # when a method throws a Blacklight::Exceptions::InvalidRequest, this method is executed.
+  def handle_request_error(exception)
+    # Rails own code will catch and give usual Rails error page with stack trace
+    raise exception if Rails.env.development? || Rails.env.test?
+
+    flash_notice = I18n.t('blacklight.search.errors.request_error')
+
+    # If there are errors coming from the index page, we want to trap those sensibly
+
+    if flash[:notice] == flash_notice
+      logger&.error "Cowardly aborting rsolr_request_error exception handling, because we redirected to a page that raises another exception"
+      raise exception
+    end
+
+    logger&.error exception
+
+    flash[:notice] = flash_notice
+    redirect_to search_action_url(q:'', search_field: 'all_fields', utf8: '✓')
   end
 
   def update_facets
@@ -193,8 +218,9 @@ class CatalogController < ApplicationController
     if params[:start_over_search]
       session[:selected_sort_key] = nil
       session[:selected_search_result_view] = nil
+      search_state.params.delete(:start_over_search) # remove start_over_search after its no longer needed
     end
-    @selected_sort_key = session[:selected_sort_key]
+    @selected_sort_key = session[:selected_sort_key].present? ? session[:selected_sort_key] : 'title_ss asc'
     params[:view] = session[:selected_search_result_view]
   end
 
