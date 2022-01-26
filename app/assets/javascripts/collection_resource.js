@@ -293,7 +293,7 @@ function CollectionResource() {
         $('.mCustomScrollbar_description').mCustomScrollbar();
         $('#view_edit_media_metadata_custom').mCustomScrollbar();
 
-
+        removeScrollMobile();
         initEvents();
         initCreateTranscription();
         selfCR.manageTabs(selfCR.edit_description);
