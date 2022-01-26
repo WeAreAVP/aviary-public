@@ -1475,9 +1475,12 @@ dl.form textarea.text {
 }
 
 .edit_form form {
-  height: 380px;
+  height: calc(100vh - 330px);
   overflow: hidden;
   overflow-y: auto;
+}
+.form_edit_custom_media_file form {
+  height: calc(100vh - 270px);
 }
 
 .edit_form .nested-fields {
