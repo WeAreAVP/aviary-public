@@ -1,3 +1,6 @@
+#
+# Aviary is an audiovisual content publishing platform with sophisticated features for search and permissions controls.
+# Copyright (C) 2019 Audio Visual Preservation Solutions, Inc.
 STORAGE_FOR_ATTACHMENTS = {
   storage: :s3,
   s3_region: ENV['WASABI_REGION'],

@@ -1,5 +1,3 @@
-// Aviary is an audiovisual content publishing platform with sophisticated features for search and permissions controls.
-// Copyright (C) 2019 Audio Visual Preservation Solutions, Inc.
 /*
  * This is a manifest file that'll be compiled into application.css, which will include all the files
  * listed below.
@@ -11,6 +9,8 @@
  * compiled file so the styles you add here take precedence over styles defined in any other CSS/SCSS
  * files in this directory. Styles in this file should be added after the last require_* statement.
  * It is generally better to create a new file per style scope.
+ * Aviary is an audiovisual content publishing platform with sophisticated features for search and permissions controls.
+ * Copyright (C) 2019 Audio Visual Preservation Solutions, Inc.
  *= require datatables
  *
  * For bootstrap support
@@ -23,16 +23,10 @@
  *= require datatables
  *= require jquery.minicolors
  *= require daterangepicker
+ *= require social-share-button
  *= require bootstrap-tokenfield
  *= require_tree .
  *= require_self
- *
- *
- * Used by blacklight_range_limit
- *= require  'blacklight_range_limit'
- *
-
- *= require 'blacklight_advanced_search'
 
 */
 
@@ -201,7 +195,6 @@
   color: #383838;
   background: #e6e6e6;
   margin-right: 3px;
-  text-transform: capitalize;
 }
 
 .cursor_not-allowed {
@@ -295,6 +288,26 @@
 
 .w-125px {
   width: 125px !important;
+}
+
+.w-95percent {
+  width: 95% !important;
+}
+
+.w-90percent {
+  width: 90% !important;
+}
+
+.w-92percent {
+  width: 92% !important;
+}
+
+.top10px {
+  top: 10px;
+}
+
+.top45px {
+  top: 45px !important;
 }
 
 .p-10-0-10-0px {
@@ -511,4 +524,14 @@ th.table-head-id {
   padding: 10px;
   border-radius: 0 0 6px 6px;
   font-size: 13px;
+}
+
+$size: 24px;
+
+.social-share-button {
+  .ssb-icon {
+    background-size: $size $size;
+    height: $size;
+    width: $size;
+  }
 }

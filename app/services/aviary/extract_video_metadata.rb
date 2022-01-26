@@ -24,7 +24,7 @@ module Aviary::ExtractVideoMetadata
     end
 
     def metadata
-      klass_obj = self.class.parent.const_get(embed_type).new
+      klass_obj = self.class.module_parent.const_get(embed_type).new
       klass_obj.metadata(video_embed)
     end
   end
@@ -80,6 +80,7 @@ module Aviary::ExtractVideoMetadata
   # Vimeo Class helps to get the url and metadata of the video
   # Make sure to set VIMEO_API_KEY variable in your environment
   class Vimeo < VideoEmbed
+    include DeprecatedHelper
     mattr_accessor :host
 
     def initialize
@@ -182,6 +183,7 @@ module Aviary::ExtractVideoMetadata
 
   # Avalon Class helps to get the metadata of the video
   class Avalon < VideoEmbed
+    include DeprecatedHelper
     def initialize; end
 
     def url_from_embed(video_embed)
@@ -202,7 +204,7 @@ module Aviary::ExtractVideoMetadata
       return false unless video_url
       metadata = {}
       begin
-        doc = Nokogiri::HTML(open(video_url, read_timeout: 10, ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE))
+        doc = Nokogiri::HTML(open(video_url, read_timeout: 10))
         title_node = doc.search("//meta[@itemprop='name']")
         thumbnail_node = doc.search("//meta[@itemprop='image']")
         duration_node = doc.search("//meta[@itemprop='duration']")

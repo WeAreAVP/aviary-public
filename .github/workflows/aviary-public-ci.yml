@@ -1,0 +1,73 @@
+name: AVIARY CI
+on:
+  pull_request:
+    branches: [ dev ]
+
+jobs:
+  push_event:
+    runs-on: ubuntu-20.04
+    services:
+      solr:
+        image: solr:7.6.0
+        ports:
+          - 2010:8983
+
+    steps:
+    - uses: actions/setup-java@v2
+      with:
+        distribution: 'zulu'
+        java-version: '11'
+
+
+    - uses: actions/checkout@v2
+      with:
+        ref: dev
+    - uses: actions/setup-node@v1
+      with:
+        node-version: '14'
+
+    - uses: supercharge/redis-github-action@1.4.0
+      with:
+        redis-version: 6
+
+    - name: Libs Installation
+      run: sudo apt-get install libcurl4 libcurl4-openssl-dev
+    - uses: ruby/setup-ruby@v1
+      env:
+        RAILS_ENV: test
+      with:
+        ruby-version: 3.1.0
+        bundler-cache: true
+
+    - name: Build and run test
+      env:
+        RAILS_ENV: test
+        APP_HOST: ${{ secrets.APP_HOST }}
+        DEFAULT_SUBDOMAIN: ${{ secrets.DEFAULT_SUBDOMAIN }}
+        FROM_EMAIL: ${{ secrets.FROM_EMAIL }}
+        YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+        VIMEO_API_KEY: ${{ secrets.VIMEO_API_KEY }}
+        SOUNDCLOUD_CLIENT_ID: ${{ secrets.SOUNDCLOUD_CLIENT_ID }}
+        SUPPORT_EMAIL: ${{ secrets.SUPPORT_EMAIL }}
+        TLD_LENGTH: ${{ secrets.TLD_LENGTH }}
+        FORTUNEOFF_ARCHIVE_HOST: ${{ secrets.FORTUNEOFF_ARCHIVE_HOST }}
+        FORTUNEOFF_ARCHIVE_USER: ${{ secrets.FORTUNEOFF_ARCHIVE_USER }}
+        FORTUNEOFF_ARCHIVE_PASSWORD: ${{ secrets.FORTUNEOFF_ARCHIVE_PASSWORD }}
+        YALE_ARCHIVE_HOST: ${{ secrets.YALE_ARCHIVE_HOST }}
+        YALE_ARCHIVE_USER: ${{ secrets.YALE_ARCHIVE_USER }}
+        YALE_ARCHIVE_PASSWORD: ${{ secrets.YALE_ARCHIVE_PASSWORD }}
+        YALE_PRESERV_ARCHIVE_HOST: ${{ secrets.YALE_PRESERV_ARCHIVE_HOST }}
+        YALE_PRESERV_ARCHIVE_USER: ${{ secrets.YALE_PRESERV_ARCHIVE_USER }}
+        YALE_PRESERV_ARCHIVE_PASSWORD: ${{ secrets.YALE_PRESERV_ARCHIVE_PASSWORD }}
+        FORTUNEOFF_COLLECTION_ID: ${{ secrets.FORTUNEOFF_COLLECTION_ID }}
+        MSSA_COLLECTION_ID: ${{ secrets.MSSA_COLLECTION_ID }}
+        HSR_COLLECTION_ID: ${{ secrets.HSR_COLLECTION_ID }}
+        OHAM_COLLECTION_ID: ${{ secrets.OHAM_COLLECTION_ID }}
+      run:
+        |
+        sudo apt-get -yqq install libpq-dev
+        RAILS_ENV=test bundle exec rake db:create
+        RAILS_ENV=test bundle exec rake db:migrate
+
+    #    - name: Run tests
+    #      run: bundle exec rspec

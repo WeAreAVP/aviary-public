@@ -1735,3 +1735,10 @@ video::-webkit-media-text-track-display {
     background-color: #336075;
     width: 4px;
 }
+
+.vjs-icon-custombutton {
+    font-family: VideoJS;
+    font-weight: normal;
+    font-style: normal; }
+.vjs-icon-custombutton:before {
+    content: "\f11f"; }

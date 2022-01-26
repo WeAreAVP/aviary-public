@@ -25,7 +25,6 @@ class CreateInterviewsTables < ActiveRecord::Migration[5.2]
       t.integer :thesaurus_titles, null: false, default: 0
       t.text :transcript_sync_data, null: true
       t.text :transcript_sync_data_translation, null: true
-      t.json :subjects, null: true
       t.integer :media_host, null: true
       t.text :media_url, null: true
       t.string :media_duration, null: true, default: '00:00:00'

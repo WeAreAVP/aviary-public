@@ -502,7 +502,7 @@
   /*Time to finalise the cloud shape*/
   .cloud {
     width: 200px; height: 60px;
-    position: relative;
+    position: relative; 
   }
   .cloud1 {
     -webkit-animation: moveclouds 40s linear infinite;
@@ -523,7 +523,7 @@
     -o-animation: moveclouds 35s linear infinite;
     width: 400px;
     height: 117px;
-    background-size: 400px;
+    background-size: 400px;   
     position: relative;
     top: -70px;
   }
@@ -624,7 +624,7 @@
       background: #F2F5F6;
       padding: 2em 1.5em;
       margin: 0 0 1.5em;
-      width: 100%;
+      width: 100%;    
       font-size: 14px;
       line-height: 1.4;
       box-sizing: border-box;
@@ -657,6 +657,9 @@
   position: relative;
   margin: 0 auto;
   z-index: 2;
+}
+
+.featured-top {
   display: none;
 }
 
@@ -1133,12 +1136,12 @@ footer .nav {
 }
 
 footer .nav strong {
-  font-size: 14px;
-  text-transform: uppercase;
-  color: #CCD7DD;
-  font-weight: normal;
-  margin-bottom: 15px;
-  display: block;
+    font-size: 14px;
+    text-transform: uppercase;
+    color: #CCD7DD;
+    font-weight: normal;
+    margin-bottom: 15px;
+    display: block;
 }
 
 .social-icon-section {
@@ -2374,7 +2377,7 @@ footer .nav strong {
 
   .all-resources .item .image,
   .collection-landing.details .item {
-    height: 80px;
+      height: 80px;
   }
   .left-round-image.content-placeholder {
     width: 30px !important;

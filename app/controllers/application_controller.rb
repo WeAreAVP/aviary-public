@@ -27,6 +27,16 @@ class ApplicationController < ActionController::Base
     session[:add_visitor] = {} unless params[:controller] == 'home' && %w[index featured_collections featured_resources record_tracking].include?(params[:action])
   end
 
+  def open(url, allow_redirections = "")
+    res = url =~ URI::regexp 
+    if res.nil?
+      return File.open(url, allow_redirections: :all, ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE)
+
+    else
+      return URI.open(url, allow_redirections: :all, ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE)
+    end
+  end
+
   def record_last_bread_crumb(path, title)
     path_raw = path.dup
     path_raw[0] = ''
