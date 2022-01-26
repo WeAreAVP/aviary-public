@@ -2426,12 +2426,10 @@ footer .nav strong {
   }
   .carousel-wrap .total-files {
     display: none !important;
+    padding: 0 !important;
   }
   #sub_nav .navbar-nav .nav-item + .nav-item {
     margin-left: 10px;
-  }
-  .carousel-wrap .total-files {
-    padding: 0 !important;
   }
   .search-nav { margin: 5px;}
   .search-detail-main {
@@ -2447,7 +2445,7 @@ footer .nav strong {
   .carousel-wrap .image img {
     height: 60px !important;
   }
-  #back-to-search-btn { display: none !important;}
+  #back-to-search-btn { display: none !important; }
   .search_details_bar {
     width: 93% !important;
     margin: auto;
@@ -2534,7 +2532,7 @@ footer .nav strong {
     width: 100%;
     border-bottom: 1px solid #ddd !important;
     background: transparent !important;
-    padding: 15px 0 0!important;
+    padding: 15px 0 0 !important;
   }
 
   .search-detail-main .tab dt {
