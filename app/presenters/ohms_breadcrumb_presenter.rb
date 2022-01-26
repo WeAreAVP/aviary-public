@@ -24,7 +24,7 @@ class OhmsBreadcrumbPresenter < BasePresenter
           add_breadcrumb "<a href='#{interviews_interview_index_path(interview.id)}'>Index</a>".html_safe
           add_breadcrumb "<a #{active_link}>Index Editor</a>".html_safe
         elsif option == "sync"
-          add_breadcrumb "<a href='#{sync_interviews_manager_path(interview.interview.id)}'>Transcript</a>".html_safe
+          add_breadcrumb "<a href='#{sync_interviews_manager_path(interview.interview.id)}'>Transcript Sync</a>".html_safe
           add_breadcrumb "<a #{active_link}>Transcript Editor</a>".html_safe
         else
           add_breadcrumb "<a #{active_link}>Metadata Editor</a>".html_safe
@@ -35,7 +35,7 @@ class OhmsBreadcrumbPresenter < BasePresenter
         if option == "index"
           add_breadcrumb "<a #{active_link}>Index</a>".html_safe
         elsif option == "sync"
-          add_breadcrumb "<a #{active_link}>Sync</a>".html_safe
+          add_breadcrumb "<a #{active_link}>Transcript Sync</a>".html_safe
   
         end
       end

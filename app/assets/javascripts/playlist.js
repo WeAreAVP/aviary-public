@@ -271,7 +271,7 @@ function Playlist() {
         document_level_binding_element('.edit_description_playlist', 'click', function () {
             $('.update_description').data('url', $(this).data('url'));
             $('.update_description').data('playlist_resource_id', $(this).data('playlist_resource_id'));
-            tinyMCE.get("description_text").setContent($('.playlist_resource_description_' + $(this).data('playlist_resource_id')).html())
+            tinyMCE.get("description_text").setContent($('.playlist_resource_description_' + $(this).data('playlist_resource_id') + ' .full-description').html());
         }, true);
     };
 
@@ -352,7 +352,8 @@ function Playlist() {
                 $('.lessToMore').click(function () {
                     $(this).addClass('d-none');
                     $(this).closest('.playlist_description_full').children('.less-description').addClass('d-none');
-
+                    $(this).closest('.playlist_description_full').children('.less-description').removeClass('d-inline');
+                    
                     $(this).closest('.playlist_description_full').children('.full-description').removeClass('d-none');
                     $(this).closest('.playlist_description_full').children('.moreToLess').removeClass('d-none');
                 });

@@ -1,6 +1,10 @@
 <div id="main_container" class="container-fluid">
   <div class="main_contain">
-  <h1>
+    <div class="mb-3">
+      <div class="breadcrumb resources-details">
+        <%= render_breadcrumbs %>
+      </div>
+    </div>
     <main>
     <div class="heading-holder table-head mt-2">
         <div class="row">
@@ -15,10 +19,13 @@
         </div>
       </div>
       <%= simple_form_for @file_transcript, :url => edit_interviews_transcript_path(@file_transcript), html: { class: "interview_manager" } do |f| %>
-        <%= f.input :text, :as => :text, :input_html => { style: 'height: 650px;width:500px;', value: @text, class: 'form-control' } %>
-        <button class="btn btn-success" href=''> Save</button>
-        <button class="btn btn-danger"> Cancel</button>
-        <br/>
+        <div class="form-group">
+          <%= f.input :text, :as => :text, :input_html => { style: 'height: 300px;border-radius: 6px !important;padding: 20px;', value: @text, class: 'form-control' } %>
+        </div>
+        <div class="mt-4">
+          <button class="btn btn-outline-dark"> Cancel</button>
+          <button class="btn btn-primary"> Save</button>
+        </div>
       <% end %>
       <br/>
     </main>
