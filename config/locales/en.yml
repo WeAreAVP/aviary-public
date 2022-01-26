@@ -30,6 +30,7 @@
 # available at http://guides.rubyonrails.org/i18n.html.
 
 en:
+  schedule_successfully: "Sync scheduled successfully."
   updated_successfully: "Information successfully updated!"
   file_successfully_uploaded: "File successfully uploaded."
   error_update_again: "We're sorry, but something went wrong and we were unable to complete your request. Please contact us at aviary@weareavp.com and we'll investigate the error for you."
@@ -82,9 +83,15 @@ en:
   media_file_deleted_successfully: 'The media file you selected has been deleted successfully from Avairy.'
   transcript_deleted: 'The transcript was deleted successfully.'
   Import_successfully_undo: 'The import was rolled-back successfully.'
+  status_successfully_updated: 'Status Successfully Updated.'
+  downloadable_successfully_updated: 'Downloadable Successfully Updated.'
+  delete_success: 'information Successfully Deleted.'
+  access_information_not_available: ' Information is not Accessible'
   transcription_deleted_successfully: 'The record of the selected transcription request has been deleted successfully.'
   request_access_success: 'Your permission request has been successfully submitted. An organization administrator will contact you shortly.'
   request_access_duplicate: 'Please check your email to see if the organization has approved or denied your request.'
   allowed_permission_group: 'You have already submitted an access request for a resource in this collection. Once you have been approved to access a resource in this collection, you will gain access to the entire collection. Please check your email to see if the organization has approved or denied your request.'
-  status_successfully_updated: 'Status Successfully Updated.'
-  delete_success: 'information Successfully Deleted.'
+  recaptcha:
+    errors:
+      verification_failed: 'Our automated captcha algorithm has detected an issue with the communication between your browser and our application. Please contact us using our <a href="%{support_url}">Support page</a>.'
+      recaptcha_unreachable: 'reCAPTCHA verification server error, please try again.'

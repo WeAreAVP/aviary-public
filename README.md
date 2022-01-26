@@ -3,6 +3,9 @@ aviary
 [![Build Status](https://travis-ci.com/WeAreAVP/aviary-public.svg?branch=master)](https://travis-ci.com/WeAreAVP/aviary-public)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/4c72e65fb35047cdae145e68f6290f45)](https://www.codacy.com/gh/WeAreAVP/aviary-public?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=WeAreAVP/aviary-public&amp;utm_campaign=Badge_Grade)
 [![Codacy Badge](https://api.codacy.com/project/badge/Coverage/04d2794961e745e595003ffe5aaa11f0)](https://www.codacy.com?utm_source=github.com&utm_medium=referral&utm_content=WeAreAVP/aviary&utm_campaign=Badge_Coverage)
+![CI workflow](https://github.com/weAreAVP/aviary-public/actions/workflows/aviary-public-ci.yml/badge.svg)
+
+
 
 Description
 ===
@@ -69,21 +72,27 @@ Sample Login
 Requirements
 ===
 
-*  **OS**: CentOS 6.x
-*  **Ruby**: 2.5.1
-*  **Rails**: 5.1.6
-*  **Nginx with Passenger**: 1.14.0
+*  **OS**: Ubuntu 20.04
+*  **Ruby**: 3.1.0
+*  **Rails**: 6.1.4.4
+*  **Nginx**
+*  **Puma**
 *  **MySQL**: >=5.7.x
 *  **imagick**: >=6.7.2
 *  **ffmpeg**: >=2.6.8
 *  **git**: >=1.7.1
 *  **7z**
 *  **Apache Solr** >= 7.6.x
-*  **Redis** 
+*  **Redis**
+*  **Youtube-dl**
+*  **exiftool**
+
 
 Third Party Services
 ===
-*  AWS S3, Cloudfront and SES
+*  AWS S3,
+*  AWS Cloudfront
+*  AWS SES
 *  Wasabi Storage
 
 Helpful Links
@@ -110,6 +119,8 @@ Contributors
 
  *  Nouman Tayyab nouman@weareavp.com
  *  Furqan Wasi furqan@weareavp.com
+ *  Zaheer Abdul Wajid zaheer@weareavp.com
+ *  Raza Saleem raza@weareavp.com
 
   
 

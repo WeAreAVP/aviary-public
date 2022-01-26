@@ -1,3 +1,5 @@
+// Aviary is an audiovisual content publishing platform with sophisticated features for search and permissions controls.
+// Copyright (C) 2019 Audio Visual Preservation Solutions, Inc.
 @import 'datatables/dataTables.bootstrap4';
 @import 'webfonts';
 
@@ -27,7 +29,6 @@ div.dataTables_wrapper div.dataTables_filter {
   padding: 0 0 0 10px;
   border-radius: 4px;
 }
-
 #billing_history_table_length select {
   font-size: 12px;
   height: 30px !important;
@@ -65,11 +66,9 @@ table.dataTable {
   background: #fff;
   border-bottom: none;
 }
-
 .dataTables_wrapper .row:last-child {
   border-top: 1px solid #dfe4ea;
 }
-
 .dataTables_wrapper .row:last-child .dataTables_paginate {
   margin: 20px 0 !important;
 }
@@ -265,15 +264,12 @@ div.dataTables_wrapper div.dataTables_info {
 #collection_resource_datatable thead th {
   border-bottom: 0px solid #dee2e6 !important
 }
-
 .DTFC_RightBodyLiner thead th {
   border-bottom: 0px solid #dee2e6 !important
 }
-
 #playlist_data_table_wrapper thead th {
   border-bottom: 1px solid #dee2e6 !important
 }
-
 .dataTables_scrollBody thead th,
 .collections-datatable .dataTables_scrollBody th {
   border: none !important;

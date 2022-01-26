@@ -5,6 +5,7 @@
 module ApplicationHelper
   include ApplicationHelperExtended
   include InterviewIndexHelper
+  include DeprecatedHelper
   require 'securerandom'
 
   def organization_layout?

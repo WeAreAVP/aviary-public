@@ -99,7 +99,10 @@ function CollectionResourceFileTable() {
                 ],
                 ajax: {
                     url: dataTableElement.data('url'),
-                    type: 'POST'
+                    type: 'POST',
+                    beforeSend(xhr) {
+                        xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'))
+                    }
                 },
                 drawCallback: function (settings) {
                     initDeletePopup();

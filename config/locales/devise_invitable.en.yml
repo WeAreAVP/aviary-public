@@ -1,3 +1,6 @@
+#
+# Aviary is an audiovisual content publishing platform with sophisticated features for search and permissions controls.
+# Copyright (C) 2019 Audio Visual Preservation Solutions, Inc.
 en:
   devise:
     failure:
@@ -13,7 +16,7 @@ en:
         header: "Send invitation"
         submit_button: "Send an invitation"
       edit:
-        header: "Confirm Sign Up"
+        header: "Aviary Account Confirmation"
         submit_button: "Confirm and Join!"
     mailer:
       invitation_instructions:

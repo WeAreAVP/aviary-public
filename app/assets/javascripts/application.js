@@ -12,7 +12,6 @@
 //
 //= require rails-ujs
 //= require jquery
-//= require 'blacklight_advanced_search'
 
 
 //= require popper.min
@@ -30,7 +29,6 @@
 //= require owl.carousel.min
 //= require moment
 //= require daterangepicker
-//= require 'blacklight_range_limit'
 //= require clipboard
 //= require ahoy
 //= require aviary_app
