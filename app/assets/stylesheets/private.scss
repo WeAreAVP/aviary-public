@@ -114,25 +114,46 @@
     text-align: right;
 }
 
-.shareHolder.audioPlayer button {
+.shareHolder.audioPlayer button,
+.shareHolder.audioPlayer a {
     color: #000 !important;
     text-align: right;
 }
 
-.shareHolder.audioPlayer button:hover {
+.shareHolder.audioPlayer button:hover,
+.shareHolder.audioPlayer a:hover {
     color: #000 !important;
     opacity: 0.7;
 }
 
-.shareHolder.audioPlayer button:focus {
+.shareHolder.audioPlayer button:focus,
+.shareHolder.audioPlayer a:focus {
     outline-style: none;
     box-shadow: none;
     border-color: transparent;
 }
+.shareHolder.audioPlayer .btn {
+    margin-left: 40px !important;
+}
 
 .shareHolder.audioPlayer button i {
     margin-right: 0;
-    margin-left: 10px;
+    margin-left: 0;
+    line-height: 1;
+    font-size: 16px;
+    margin-top: 3px;
+    top: 0;
+}
+.shareHolder.audioPlayer .icon-manifest {
+    background: image-url(iiif-black) no-repeat;
+    background-size: 14px;
+    font-size: none;
+    display: inline-block;
+    vertical-align: middle;
+    width: 17px;
+    height: 14px;
+    top: 5px;
+    left: -21px;
 }
 
 .shareHolder .share-btn i {
@@ -309,9 +330,12 @@
 }
 
 @media screen and (max-width: 767px) {
-    #back-to-search-btn small {
-        display: none;
-    }
+  #back-to-search-btn small {
+    display: none;
+  }
+  .shareHolder.audioPlayer .btn {
+    padding: 0 !important;
+  }
 }
 
 .time-share {
