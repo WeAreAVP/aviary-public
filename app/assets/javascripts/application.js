@@ -698,6 +698,14 @@ const getSearchKeywordsAsString = function () {
     return keywords;
 }
 
+function removeScrollMobile() {
+    if ($(window).width() < 767) {
+        $("*").mCustomScrollbar("destroy");
+        $('.mCustomScrollbar_description').attr('style', 'height:auto!important;max-height:inherit !important;');
+        $('#view_edit_media_metadata_custom').attr('style', 'height:auto!important;max-height:inherit !important;');
+    }
+}
+
 function removeImageCustom() {
     let appHandler = new App();
     document_level_binding_element('.remove_image_custom', 'click', function () {
