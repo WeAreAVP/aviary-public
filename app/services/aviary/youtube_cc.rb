@@ -20,24 +20,9 @@ module Aviary
 
     def check_and_extract(resource_file)
       video_id = resource_file.embed_code.split('?v=').last
-      # languages = list_cc(video_id)
       languages = nil
       check_alternative_cc(video_id, resource_file) unless languages.present?
       return unless languages.present?
-      languages.each do |language|
-        cc_hash = cc_text(video_id, language, resource_file)
-        next unless cc_hash.present?
-        create_transcript(resource_file, cc_hash, language)
-      end
-    end
-
-    def list_cc(video_id)
-      doc = Nokogiri::XML(open("#{youtube_cc_host}?type=list&v=#{video_id}", read_timeout: 10))
-      xml_hash = Hash.from_xml(doc.to_s)
-      return false unless xml_hash['transcript_list']['track'].present?
-      tracks = xml_hash['transcript_list']['track']
-      tracks = [tracks] if tracks.class == Hash
-      tracks.map { |track| track['lang_code'] }
     end
 
     def check_alternative_cc(video_id, resource_file)
@@ -53,22 +38,6 @@ module Aviary
       end
     rescue StandardError
       'Failed to process'
-    end
-
-    def cc_text(video_id, language_code, resource_file, url = nil)
-      request_url = url.present? ? url : "#{youtube_cc_host}?lang=#{language_code}&v=#{video_id}"
-      doc = Nokogiri::XML(open(request_url, read_timeout: 10))
-      return if doc.child.children.count.zero?
-      cc_hash = []
-      doc.child.children.each_with_index do |text_cc, index|
-        start_time = text_cc.attribute('start').value.to_f
-        end_time = doc.child.children[index + 1].present? ? doc.child.children[index + 1].attribute('start').value.to_f : resource_file.duration.to_f
-        cc_hash << { start_time: start_time,
-                     end_time: end_time,
-                     duration: end_time - start_time,
-                     text: text_cc.children.text }
-      end
-      cc_hash
     end
 
     def create_transcript(resource_file, cc_hash, language, file = '')
