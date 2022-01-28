@@ -83,6 +83,9 @@ group :test do
   gem 'database_cleaner'
   gem 'rails-controller-testing'
   gem 'with_model'
+  gem 'simplecov'
+  gem 'codacy-coverage'
+  gem 'capybara-screenshot'
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem

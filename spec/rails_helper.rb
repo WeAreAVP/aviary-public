@@ -2,29 +2,6 @@
 require 'simplecov'
 require 'codacy-coverage'
 
-Codacy::Reporter.start
-SimpleCov.start 'rails' do
-  add_filter 'app/helpers/devise_helper.rb'
-  add_filter 'app/helpers/contents_helper.rb'
-  add_filter 'app/channels/application_cable/channel.rb'
-  add_filter 'app/channels/application_cable/connection.rb'
-  add_filter 'app/controllers/subscriptions_controller.rb'
-  add_filter 'lib/tasks/aviary.rake'
-  add_filter 'app/services/datatables/*'
-  add_filter 'app/models/ability.rb'
-  add_filter 'app/jobs/application_job.rb'
-  add_filter 'app/mailers/error_mailer.rb'
-  add_filter 'app/services/datatables/admin/application_datatable.rb'
-  add_filter 'app/services/datatables/admin/users_datatable.rb'
-  add_filter 'app/services/datatables/resources_listing_datatable.rb'
-  add_filter 'app/services/datatables/users_datatable.rb'
-  add_filter 'app/services/datatables/sync_progress_datatable.rb'
-  add_filter 'app/mailers/organization_mailer.rb'
-  add_filter 'app/workers/delete_collections_worker.rb'
-  add_filter 'app/controllers/concerns/aviary/sidekiq_management.rb'
-  add_filter 'app/helpers/blacklight/facets_helper_behavior.rb'
-  
-end
 # This file is copied to spec/ when you run 'rails generate rspec:install'
 ENV['RAILS_ENV'] ||= 'test'
 require File.expand_path('../../config/environment', __FILE__)
