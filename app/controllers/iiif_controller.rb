@@ -158,7 +158,7 @@ class IiifController < ApplicationController
       annotations << { id: media_url + "/transcript/#{transcript.id}", type: 'AnnotationPage', label: { en: [transcript.title] }, items: points }
       counter += 1
     end
-    media_file.file_transcripts.each do |transcript|
+    media_file.file_transcripts.public_transcript.each do |transcript|
       next unless transcript.annotation_set.present?
       annotation_set = transcript.annotation_set
       next unless annotation_set.is_public
@@ -215,12 +215,13 @@ class IiifController < ApplicationController
               format: 'text/plain'
             }
           end
+          time = point.start_time == point.end_time ? point.start_time.to_f.to_s : "#{point.start_time.to_f},#{point.end_time.to_f}"
           points << {
             id: "#{media_url}/index/#{single_index.id}/annotation/#{annotation_counter}",
             type: 'Annotation',
             motivation: 'supplementing',
             body: body,
-            target: "#{media_url}#t=#{point.start_time.to_f},#{point.end_time.to_f}"
+            target: "#{media_url}#t=#{time}"
           }
           annotation_counter += 1
         end
