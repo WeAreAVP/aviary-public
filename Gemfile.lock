@@ -630,7 +630,7 @@ GEM
     rbtree (0.4.4)
     recaptcha (5.8.1)
       json
-    redis (4.5.1)
+    redis (4.6.0)
     regexp_parser (2.2.0)
     regexp_property_values (1.2.0)
     remove_emoji (3.0.1)
@@ -726,7 +726,7 @@ GEM
     set (1.0.2)
     shoulda-matchers (5.1.0)
       activesupport (>= 5.2.0)
-    sidekiq (6.3.1)
+    sidekiq (6.4.1)
       connection_pool (>= 2.2.2)
       rack (~> 2.0)
       redis (>= 4.2.0)
