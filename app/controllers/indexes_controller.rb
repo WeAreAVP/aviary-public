@@ -14,7 +14,7 @@ class IndexesController < ApplicationController
   before_action :authenticate_user!
   def index
     authorize! :manage, current_organization
-    session[:file_index_bulk_edit] = []
+    session[:file_index_bulk_edit] = [] unless request.xhr?
     respond_to do |format|
       format.html
       format.json { render json: IndexesDatatable.new(view_context, current_organization, params['called_from'], params[:additionalData]) }
