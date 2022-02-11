@@ -14,7 +14,7 @@ class TranscriptsController < ApplicationController
   before_action :authenticate_user!, except: :export
   def index
     authorize! :manage, current_organization
-    session[:file_transcript_bulk_edit] = []
+    session[:file_transcript_bulk_edit] = [] unless request.xhr?
     respond_to do |format|
       format.html
       format.json { render json: TranscriptsDatatable.new(view_context, current_organization, params['called_from'], params[:additionalData]) }
