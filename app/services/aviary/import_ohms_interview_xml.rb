@@ -106,7 +106,7 @@ module Aviary
       ohms_transcript_manager = Aviary::OhmsTranscriptManager.new
       ohms_transcript_manager.from_resource_file = false
       result = ohms_transcript_manager.process(transcript, '', true)
-      transcript.destroy if result.failure?
+      transcript.destroy if result.present? && result.failure?
     end
 
     def set_points(xml_data, interview, user)

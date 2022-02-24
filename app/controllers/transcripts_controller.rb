@@ -30,6 +30,10 @@ class TranscriptsController < ApplicationController
         FileTranscript.where(id: session[:file_transcript_bulk_edit]).each do |transcript|
           transcript.update(is_public: params['access_type'] == 'yes')
         end
+      elsif params['check_type'] == 'transcript_caption'
+        FileTranscript.where(id: session[:file_transcript_bulk_edit]).each do |transcript|
+          transcript.update(is_caption: params['access_type'] == 'yes')
+        end
       end
       render json: { message: t('updated_successfully'),
                      errors: false,
@@ -76,7 +80,7 @@ class TranscriptsController < ApplicationController
       params[:cc] ||= []
       params[:sort_list].each_with_index do |id, index|
         is_caption = params[:cc].include? id
-        FileTranscript.where(id: id).update_all(sort_order: index + 1, is_caption: is_caption)
+        FileTranscript.where(id: id).update(sort_order: index + 1, is_caption: is_caption)
       end
     end
     respond_to do |format|

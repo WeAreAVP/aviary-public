@@ -119,10 +119,11 @@ class IndexesController < ApplicationController
     @file_index_point = FileIndexPoint.new(file_index_point_params)
     @file_index_point.file_index_id = @file_index.id
     @file_index_point.start_time = human_to_seconds(params[:file_index_point][:start_time]).to_f
+    start_time = @file_index_point.start_time
     @file_index_point = set_custom_values(@file_index_point, '', params)
     respond_to do |format|
       if @file_index_point.save
-        format.html { redirect_to show_index_file_path(@resource_file.id, @file_index.id), notice: 'Resource Index was successfully created.' }
+        format.html { redirect_to "#{show_index_file_path(@resource_file.id, @file_index.id)}?time=#{start_time}", notice: 'Resource Index was successfully created.' }
         format.json { render :show_index, status: :created, location: @file_index_point }
       else
         format.html { render template: 'interviews/interview_index/new' }
@@ -139,10 +140,11 @@ class IndexesController < ApplicationController
     @file_index_point = FileIndexPoint.find(params[:file_index_point_id])
     @file_index_point.update(file_index_point_params)
     @file_index_point.start_time = human_to_seconds(params[:file_index_point][:start_time]).to_f
+    start_time = @file_index_point.start_time
     @file_index_point = set_custom_values(@file_index_point, '', params)
     respond_to do |format|
       if @file_index_point.save
-        format.html { redirect_to show_index_file_path(@resource_file.id, @file_index.id), notice: 'Resource Index was successfully created.' }
+        format.html { redirect_to "#{show_index_file_path(@resource_file.id, @file_index.id)}?time=#{start_time}", notice: 'Resource Index was successfully created.' }
         format.json { render :show_index, status: :created, location: @file_index_point }
       else
         format.html { render template: 'interviews/interview_index/edit' }
