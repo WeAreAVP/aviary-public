@@ -375,7 +375,7 @@ GEM
       ffi-compiler (>= 1.0, < 2.0)
     httparty (0.16.2)
       multi_xml (>= 0.5.2)
-    i18n (1.8.11)
+    i18n (1.10.0)
       concurrent-ruby (~> 1.0)
     i18n_data (0.15.0)
       simple_po_parser (~> 1.1)
@@ -829,7 +829,7 @@ GEM
       iso8601 (~> 0.9.1)
       net_http_timeout_errors (~> 0.3.0)
       oga (~> 3.0)
-    view_component (2.47.0)
+    view_component (2.49.1)
       activesupport (>= 5.0.0, < 8.0)
       method_source (~> 1.0)
     warden (1.2.9)
@@ -855,7 +855,7 @@ GEM
     xpath (3.2.0)
       nokogiri (~> 1.8)
     yomu (0.1.5)
-    zeitwerk (2.5.3)
+    zeitwerk (2.5.4)
 
 PLATFORMS
   arm64-darwin-21
