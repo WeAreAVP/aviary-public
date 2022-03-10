@@ -14,6 +14,9 @@
       <% else %>
         <td><%=h truncate(single_resource.title, :length => 158) %></td>
       <% end %>
+      <% if params[:type] == 'collection_resource_file_list' %>
+        <td><input type="hidden" name="crfl_id[]" value="<%= single_resource.id %>"> <textarea name="crfl_note[]" class="form-controls" cols="35"></textarea></td>
+      <% end %>
     </tr>
   <% end %>
 <% end %>

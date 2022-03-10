@@ -10,6 +10,7 @@ Rails.application.routes.draw do
     collection do
       post :update_selected_playlist
       post :assign_to_playlist
+      post :assign_resources_to_list
     end
   end
   devise_for :admins

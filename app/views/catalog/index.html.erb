@@ -59,6 +59,9 @@
               <a href="javascript:void(0)" id="add_to_playlist" class="btn btn-light playlist_actions ml-2" data-url="<%= fetch_bulk_edit_resource_list_collections_path %>">
                 Add Selected Resource to Playlist
                 (<span id="number_of_selected_resources" class="grey"><%= session['search_playlist_id'].present? ? session['search_playlist_id'].size : 0 %></span>)</a>
+              <a href="javascript:void(0)" id="add_to_resource_list" class="btn btn-light playlist_actions ml-2" data-url="<%= fetch_bulk_edit_resource_list_collections_path %>">
+                <span class="fa fa-save"></span> Save Resources
+                (<span id="number_of_selected_resource_list" class="grey"><%= session['search_playlist_id'].present? ? session['search_playlist_id'].size : 0 %></span>)</a>
             <% end %>
           </div>
         </div>
@@ -110,7 +113,7 @@
   </div>
 </div>
 <% track_params = params.clone.except('controller').except('action').to_json %>
-
+<%= render 'resource_list_modal' %>
 <script type="text/javascript">
     let search_obj = new SearchPage();
 

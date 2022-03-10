@@ -10,7 +10,7 @@ class CatalogController < ApplicationController
   include Blacklight::Catalog
   include ApplicationHelper
   before_action :mutiple_keyword_handler, :session_param_update, :select_sort_and_view
-  before_action :update_facets, except: %i[assign_to_playlist update_selected_playlist]
+  before_action :update_facets, except: %i[assign_to_playlist update_selected_playlist assign_resources_to_list]
 
   def index
     response.headers['Cache-Control'] = 'no-cache, no-store'
@@ -151,6 +151,25 @@ class CatalogController < ApplicationController
     end
   end
 
+  def assign_resources_to_list
+    JSON.parse(params[:payload]).each do |resource|
+      resource_list = ResourceList.find_by( user_id: current_user.id, resource_id: resource['resource_id'] )
+      unless resource_list.nil?
+        resource_list.note = resource['note']
+      else
+        resource_list = ResourceList.new( resource )
+        resource_list.user_id = current_user.id
+        resource_list.save
+      end
+    end
+    render json: { notice: 'Resources Successfully updated', status: :accepted.to_s  }
+
+  rescue StandardError => e
+    Rails.logger.error e
+    render json: { notice: t('error_update_again'), status: :unprocessable_entity.to_s  }
+
+  end
+
   def update_selected_playlist
     session[:search_playlist_id] = {} if params['type'] == 'bulk'
     if params[:playlist_resource_id].present?
@@ -222,6 +241,24 @@ class CatalogController < ApplicationController
     end
     @selected_sort_key = session[:selected_sort_key].present? ? session[:selected_sort_key] : 'title_ss asc'
     params[:view] = session[:selected_search_result_view]
+  end
+
+  def assign_resources_to_list
+    JSON.parse(params[:payload]).each do |resource|
+      resource_list = ResourceList.find_by(user_id: current_user.id, resource_id: resource['resource_id'])
+      if resource_list.nil?
+        resource_list = ResourceList.new(resource)
+        resource_list.user_id = current_user.id
+      else
+        resource_list.note = resource['note']
+      end
+      resource_list.save
+    end
+    session[:search_playlist_id] = {}
+    render json: { notice: 'Resources Successfully updated', status: :accepted.to_s }
+  rescue StandardError => e
+    Rails.logger.error e
+    render json: { notice: t('error_update_again'), status: :unprocessable_entity.to_s }
   end
 
   configure_blacklight do |config|

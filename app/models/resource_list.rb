@@ -1,0 +1,2 @@
+class ResourceList < ApplicationRecord
+end
