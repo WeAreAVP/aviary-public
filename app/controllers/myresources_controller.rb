@@ -51,7 +51,7 @@ class MyresourcesController < ApplicationController
                resource[item]
              end
     end
-    info
+    info.delete("\n")
   end
 
   def get_ris_lable_data(org_field_manager_info, item, default)
