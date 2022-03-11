@@ -163,8 +163,17 @@ function SearchPage() {
         document_level_binding_element('#select_all, #deselect_all ', 'click', function () {
             if ($(this).data('type') === 'select') {
                 $('.bulk_add_to_playlist').prop('checked', true);
+                $('#number_of_selected_resources').html($('.bulk_add_to_playlist').length);
+                $('#number_of_selected_resource_list').html($('.bulk_add_to_playlist').length);
+                let ids = []
+                $('.bulk_add_to_playlist').each(function(i,v){
+                    ids.push( $(v).data('id') );
+                });
+                callSelectedPlaylist(ids, 'bulk', 'all');
             } else {
                 $('.bulk_add_to_playlist').prop('checked', false);
+                $('#number_of_selected_resources').html(0);
+                $('#number_of_selected_resource_list').html(0);
             }
             if ($(this).data('type') === 'select') {
                 let getAllIds = {
