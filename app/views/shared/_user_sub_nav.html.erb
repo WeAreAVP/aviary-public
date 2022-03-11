@@ -58,6 +58,7 @@
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
               <%= link_to "Profile", profile_path, class: "dropdown-item #{'active' if request.path.include?("profile_settings")}" %>
+              <%= link_to "My Resources", listing_for_my_resources_path, class: "dropdown-item #{'active' if request.path.include?("myresources/listing")}" %>
               <%= link_to 'Logout', destroy_user_session_path, method: :delete, class: 'dropdown-item' %>
             </div>
           </li>

@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # FacetsHelperBehavior
 #
 # Aviary is an audiovisual content publishing platform with sophisticated features for search and permissions controls.
@@ -34,10 +35,10 @@ module Blacklight::FacetsHelperBehavior
     user_ip = request.ip
     if type == 'organization'
       org_facet_manager = SearchPresenter.organization_facet_manager(current_organization, current_user, user_ip, params, has_facet_values?, session[:last_fq])
-      render partial: 'catalog/limited_facets', locals: {org_n_collection_facet_manager: org_facet_manager} if current_organization.blank?
+      render partial: 'catalog/limited_facets', locals: { org_n_collection_facet_manager: org_facet_manager } if current_organization.blank?
     elsif type == 'collection'
       collection_facet_manager = SearchPresenter.collection_facet_manager(current_organization, current_user, user_ip, params, has_facet_values?, session[:last_fq])
-      render partial: 'catalog/limited_facets', locals: {org_n_collection_facet_manager: collection_facet_manager}
+      render partial: 'catalog/limited_facets', locals: { org_n_collection_facet_manager: collection_facet_manager }
     end
   end
 
@@ -142,7 +143,7 @@ module Blacklight::FacetsHelperBehavior
     path = path_for_facet(facet_field, item)
 
     "<input type='checkbox' class='checked-facets m-r ' data-linkremove='#{path}&update_facets=true'/>".html_safe + content_tag(:span, class: 'facet-label facet_value_custom') do
-      if ['access_restricted', 'access_public', 'access_private', 'public_resource_restricted_content'].include?(facet_display_value(facet_field, item))
+      if %w[access_restricted access_public access_private public_resource_restricted_content].include?(facet_display_value(facet_field, item))
         case facet_display_value(facet_field, item).to_s
         when 'access_restricted'
           'Restricted Resource'
@@ -183,14 +184,13 @@ module Blacklight::FacetsHelperBehavior
   def render_selected_facet_value(facet_field, item)
     remove_href = search_action_path(search_state.remove_facet_params(facet_field, item))
     "<input type='checkbox' checked='checked' class='checked-facets mr-3 ' data-linkremove='#{remove_href}'/>".html_safe + content_tag(:span, class: 'facet-label 2') do
-
       content_tag(:span, facet_display_value(facet_field, item).to_s, class: 'selected facet_value_custom') +
-          # remove link
-          # link_to(remove_href, class: "remove") do
-          #   content_tag(:span, '', class: "glyphicon glyphicon-remove") +
-          #       content_tag(:span, '[remove]', class: 'sr-only')
-          # end
-          ''
+        # remove link
+        # link_to(remove_href, class: "remove") do
+        #   content_tag(:span, '', class: "glyphicon glyphicon-remove") +
+        #       content_tag(:span, '[remove]', class: 'sr-only')
+        # end
+        ''
     end + render_facet_count(item.hits, classes: ['selected'])
   end
 

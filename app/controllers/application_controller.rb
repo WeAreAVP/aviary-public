@@ -28,13 +28,13 @@ class ApplicationController < ActionController::Base
     session[:add_visitor] = {} unless params[:controller] == 'home' && %w[index featured_collections featured_resources record_tracking].include?(params[:action])
   end
 
-  def open(url, allow_redirections = "")
-    res = url =~ URI::regexp 
+  def open(url, _allow_redirections = '')
+    res = url =~ URI::DEFAULT_PARSER.make_regexp
     if res.nil?
-      return File.open(url, allow_redirections: :all, ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE)
+      File.open(url, allow_redirections: :all, ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE)
 
     else
-      return URI.open(url, allow_redirections: :all, ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE)
+      URI.open(url, allow_redirections: :all, ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE)
     end
   end
 

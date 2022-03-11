@@ -56,7 +56,7 @@ class Playlist < ApplicationRecord
       access_public_status = 1 if 'yes'.include? query
       access_public_status = 0 if 'no'.include? query
       query_string_name = 'playlists.name LIKE (?)'
-      query_string_playlist_resources_count = query.is_i? ? 'playlists.playlist_resources_count = ? ' : ' "' + Time.now.to_i .to_s + '" = ? '
+      query_string_playlist_resources_count = query.is_i? ? 'playlists.playlist_resources_count = ? ' : ' "' + Time.now.to_i.to_s + '" = ? '
       query_string_organizations = 'organizations.id =?'
       playlists = if status.nil? && access_public_status.nil?
                     playlists.where("(#{query_string_name} OR #{query_string_playlist_resources_count}) AND #{query_string_organizations}", "%#{query}%", query, organization_id)

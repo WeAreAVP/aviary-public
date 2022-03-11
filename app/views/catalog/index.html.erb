@@ -1,4 +1,4 @@
-<% title 'Search' %>
+<% title request.path.include?("myresources/listing") ? 'My Resources' : 'Search' %>
 <% description 'Search the content' %>
 <style type="text/css">
   <% if organization_layout? %>
@@ -6,7 +6,16 @@
   <%== search_panel_font_color.html_safe %>
   <% end %>
 </style>
-<div class="search-result-visual">
+<% if request.path.include?("myresources/listing") %>
+<div class="heading-holder table-head">
+          <div class="row">
+          <div class="col-md-12 ml-5 mt-3 mb-3">
+<h1><%="#{current_user.full_name}'s"%> Saved Resources</h1>
+</div>
+</div>
+</div>
+<% end %>
+<div class="<%= request.path.include?("myresources/listing") ? 'd-none' : 'search-result-visual' %>">
   <div class="container">
     <div class="row">
       <div class="col-md-12">
@@ -22,7 +31,7 @@
 </div>
 <div class="container">
   <div class="row">
-    <div class="col-md-3">
+    <div class="<%= request.path.include?("myresources/listing") ? 'd-none' : 'col-md-3' %>">
 
       <div id="facets" class="facets sidenav">
         <div class="reset">
@@ -39,7 +48,7 @@
       </div>
 
     </div>
-    <div id="sidebar" class="col-md-9">
+    <div id="sidebar" class="<%= request.path.include?("myresources/listing") ? 'col-md-12' : 'col-md-9' %>">
 
       <div id="content">
         <div class="row">
@@ -53,12 +62,22 @@
         </div>
         <div class="row">
           <div class="col-md-12 text-right add_bulk_playlist_actions">
-            <% if current_organization.present? && current_user_is_org_user?(current_organization) %>
+            <% if (current_organization.present? && current_user_is_org_user?(current_organization)) || request.path.include?("myresources/listing") %>
               <span id="select_all" class="playlist_actions" data-type="select"> Select All</span>
               <span id="deselect_all" class="playlist_actions" data-type="deselect"> Deselect All</span>
-              <a href="javascript:void(0)" id="add_to_playlist" class="btn btn-light playlist_actions ml-2" data-url="<%= fetch_bulk_edit_resource_list_collections_path %>">
-                Add Selected Resource to Playlist
-                (<span id="number_of_selected_resources" class="grey"><%= session['search_playlist_id'].present? ? session['search_playlist_id'].size : 0 %></span>)</a>
+              <% if request.path.include?("myresources/listing") %>
+                <a href="javascript:void(0)" id="export_to_resource_list" class="btn btn-light playlist_actions ml-2" data-url="<%= download_myresources_path %>">
+                    <span class="fa fa-download"></span> Export Resources
+                    (<span id="number_of_selected_resources" class="grey"><%= session['search_playlist_id'].present? ? session['search_playlist_id'].size : 0 %></span>)</a>
+              <% end %>
+              <% if current_organization.present? && current_user_is_org_user?(current_organization) && !request.path.include?("myresources/listing") %>
+                <a href="javascript:void(0)" id="add_to_playlist" class="btn btn-light playlist_actions ml-2" data-url="<%= fetch_bulk_edit_resource_list_collections_path %>">
+                  Add Selected Resource to Playlist
+                  (<span id="number_of_selected_resources" class="grey"><%= session['search_playlist_id'].present? ? session['search_playlist_id'].size : 0 %></span>)</a>
+                <a href="javascript:void(0)" id="add_to_resource_list" class="btn btn-light playlist_actions ml-2" data-url="<%= fetch_bulk_edit_resource_list_collections_path %>">
+                  <span class="fa fa-save"></span> Save Resources
+                  (<span id="number_of_selected_resource_list" class="grey"><%= session['search_playlist_id'].present? ? session['search_playlist_id'].size : 0 %></span>)</a>
+              <% end %>
             <% end %>
           </div>
         </div>
@@ -110,7 +129,7 @@
   </div>
 </div>
 <% track_params = params.clone.except('controller').except('action').to_json %>
-
+<%= render 'resource_list_modal' %>
 <script type="text/javascript">
     let search_obj = new SearchPage();
 
@@ -118,4 +137,10 @@
         search_obj.initialize();
 
     });
+    <% if request.path.include?("myresources/listing") %>
+      let myresources = new MyResources();
+      $(function () {
+        myresources.initialize();
+      });
+    <% end %>
 </script>

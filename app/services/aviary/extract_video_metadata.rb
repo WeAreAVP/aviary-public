@@ -89,7 +89,7 @@ module Aviary::ExtractVideoMetadata
     end
 
     def url_from_embed(video_embed)
-      regex = %r{https?:\/\/(?:[\w]+\.)*vimeo\.com(?:[\/\w]*\/?)?\/(?<id>[0-9]+)[^\s]*}
+      regex = %r{https?:\/\/(?:\w+\.)*vimeo\.com(?:[\/\w]*\/?)?\/(?<id>[0-9]+)[^\s]*}
       match = regex.match(video_embed)
       return if match.nil?
       return if match.size < 2

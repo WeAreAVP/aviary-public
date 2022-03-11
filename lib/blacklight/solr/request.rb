@@ -58,7 +58,6 @@ class Blacklight::Solr::Request < ActiveSupport::HashWithIndifferentAccess
     self[:json][:query][:bool][bool_operator] << query
   end
 
-
   def append_filter_query(query)
     if query.present? && (query.include?('collection_id_is') || query.include?('organization_id_is'))
       skippers = %w[description_date_search_lms description_language_search_facet_sms description_coverage_search_facet_sms has_transcript_ss has_index_ss

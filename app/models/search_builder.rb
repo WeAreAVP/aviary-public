@@ -9,8 +9,9 @@ class SearchBuilder < Blacklight::SearchBuilder
   include ApplicationHelper
   include DocumentHelper
   include SearchHelper
-  attr_accessor :session_solr, :current_params, :request_is_xhr
+  attr_accessor :session_solr, :current_params, :request_is_xhr, :resource_list, :myresources
   attr_accessor :current_organization, :current_user, :user_ip
+
   self.default_processor_chain += %i[add_advanced_parse_q_to_solr add_advanced_search_to_solr]
   self.default_processor_chain += [:show_only_public_records]
 
@@ -200,23 +201,23 @@ class SearchBuilder < Blacklight::SearchBuilder
     FileUtils.mkdir_p(path) unless File.exist?(path)
     query_string = query_string.strip
     count = 0
-    formatted_query = ""
-    query_string = query_string.gsub(/(\(\s*)/, "(").gsub(/(\s*\))/, ")")
+    formatted_query = ''
+    query_string = query_string.gsub(/(\(\s*)/, '(').gsub(/(\s*\))/, ')')
     query_string = "(((#{query_string})))"
-    query_string.split("").each_with_index do |ch, i|
+    query_string.split('').each_with_index do |ch, i|
       if ch == '(' && ("#{query_string[i - 3]}#{query_string[i - 2]}" != 'OR')
         count += 1
         ch = "(\n"
         count.times { ch += "\t" }
-      elsif ch == ')' && ("#{query_string[i+2]}#{query_string[i + 3]}" != 'OR')
+      elsif ch == ')' && ("#{query_string[i + 2]}#{query_string[i + 3]}" != 'OR')
         count -= 1
         ch = "\n"
         count.times { ch += "\t" }
-        ch += ")"
+        ch += ')'
       end
-      if %w[AND NOT].include?("#{query_string[i - 5]}#{query_string[i - 4]}#{query_string[i - 3]}") && ch == "("
+      if %w[AND NOT].include?("#{query_string[i - 5]}#{query_string[i - 4]}#{query_string[i - 3]}") && ch == '('
         tabs = "\n"
-        (count - 1).times { tabs += "\t"} 
+        (count - 1).times { tabs += "\t" }
         ch = tabs + ch
       end
       formatted_query += ch
@@ -224,7 +225,7 @@ class SearchBuilder < Blacklight::SearchBuilder
     File.open(path + '/query_strings.rb', 'a') do |f|
       f.puts("'Time': '#{Time.now.floor}'\n".gsub!('+0500', ''))
       f.puts("'Search Query': '#{session_solr[session_solr.keys.first][:keyword_searched]}'\n")
-      f.puts("'Solr Query String':\n" )
+      f.puts("'Solr Query String':\n")
       f.puts(formatted_query)
       f.puts("\n\n")
     end
@@ -331,7 +332,7 @@ class SearchBuilder < Blacklight::SearchBuilder
         single_param[filed_name] = single_term
         solr_parameters, query_string = single_search_term_handler(single_param, solr_parameters, query_string, 'simple', filed_name) if single_term.present?
       end
-      # Uncomment below line if you want to read the formulated solr query string. Refer to the method documentation 
+      # Uncomment below line if you want to read the formulated solr query string. Refer to the method documentation
       # save_query_string_to_file(query_string)
       solr_parameters['q'] += ' ( ' + query_string + ' ) ' if query_string.present?
     end
@@ -380,7 +381,7 @@ class SearchBuilder < Blacklight::SearchBuilder
 
     # End Date Range setup
     resultant_fields_manager(solr_parameters) unless request_is_xhr
-    solr_parameters = SearchBuilder.default_fqs(current_organization, user_ip, current_user, solr_parameters)
+    solr_parameters = SearchBuilder.default_fqs(current_organization, user_ip, current_user, solr_parameters, myresources, resource_list)
     solr_parameters[:fq] << "organization_id_is:(#{current_params[:f][:organization_id_is].join(' OR ')})" if current_params[:f].present? && current_params[:f][:organization_id_is].present?
     solr_parameters[:fq] << "collection_id_is:(#{current_params[:f][:collection_id_is].join(' OR ')})" if current_params[:f].present? && current_params[:f][:collection_id_is].present?
     solr_parameters['q'] ||= '*:*'
@@ -391,7 +392,16 @@ class SearchBuilder < Blacklight::SearchBuilder
     solr_parameters['facet'] = false
   end
 
-  def self.default_fqs(current_organization, _user_ip, current_user, solr_parameters)
+  def self.default_fqs(current_organization, _user_ip, current_user, solr_parameters, myresources = 0, resource_list = [])
+    if myresources.present? && myresources == 1
+      solr_parameters[:fq] << 'document_type_ss:collection_resource'
+      solr_parameters[:fq] << if resource_list.length.positive?
+                                "id_is:(#{resource_list.join(' OR ')})"
+                              else
+                                'id_is'
+                              end
+      return solr_parameters
+    end
     resource_id_fq = ''
     collection_id_fq = ''
     private_where =  ''

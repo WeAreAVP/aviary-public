@@ -24,7 +24,7 @@ module AdvanceSearchHelper
             query_string = query_string.delete('"').strip
             # Adding all qouted phrase to keywords
             quotes_string.each do |single_quotes|
-              all_keywords[OpenSSL::Digest::SHA256.new.hexdigest(single_quotes)] = single_quotes.delete('"').delete("'")
+              all_keywords[OpenSSL::Digest.new('SHA256').hexdigest(single_quotes)] = single_quotes.delete('"').delete("'")
             end
             # If has multiple keywords/terms in searched split and treated each term separately
             if query_string.include? ' '
@@ -32,18 +32,18 @@ module AdvanceSearchHelper
                 # ignore stopwords
                 unless stopwords.include?(single_query.to_s.downcase)
                   # remove quotes and wild card search from terms
-                  all_keywords[OpenSSL::Digest::SHA256.new.hexdigest(single_query)] = single_query.delete('"').delete("'").delete('*')
+                  all_keywords[OpenSSL::Digest.new('SHA256').hexdigest(single_query)] = single_query.delete('"').delete("'").delete('*')
                 end
               end
             else
               unless stopwords.include?(query_string.to_s.downcase)
-                all_keywords[OpenSSL::Digest::SHA256.new.hexdigest(query_string)] = query_string.delete('"').delete("'")
+                all_keywords[OpenSSL::Digest.new('SHA256').hexdigest(query_string)] = query_string.delete('"').delete("'")
               end
             end
           else
             # If Search conducted is Advance hence expecting single search arguments
             unless stopwords.include?(single_search[single_facet.to_s].to_s.downcase)
-              all_keywords[OpenSSL::Digest::SHA256.new.hexdigest(single_search[single_facet.to_s])] = single_search[single_facet.to_s].delete('"').delete("'")
+              all_keywords[OpenSSL::Digest.new('SHA256').hexdigest(single_search[single_facet.to_s])] = single_search[single_facet.to_s].delete('"').delete("'")
             end
           end
         end

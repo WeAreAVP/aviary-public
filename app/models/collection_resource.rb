@@ -3,6 +3,7 @@
 # Copyright (C) 2019 Audio Visual Preservation Solutions, Inc.
 class CollectionResource < ApplicationRecord
   attr_accessor :can_edit, :can_view
+
   include Aviary::SolrIndexer
 
   belongs_to :collection, counter_cache: ENV['RAILS_ENV'] != 'test'
@@ -16,6 +17,7 @@ class CollectionResource < ApplicationRecord
   validate :unique_custom_unique_identifier
   accepts_nested_attributes_for :collection_resource_files, reject_if: :all_blank, allow_destroy: true
   attr_accessor :tab_resource_file, :sort_order, :file_url, :embed_code, :embed_type, :target_domain, :trans_points_solr, :index_points_solr, :description_values_solr, :collection_values_solr, :resource_file_id, :custom_description_solr
+
   scope :featured, -> { where(access: accesses[:access_public], is_featured: true) }
   scope :public_visible, -> { where(access: accesses[:access_public]) }
   enum access: %i[access_restricted access_public access_private]
@@ -373,7 +375,7 @@ class CollectionResource < ApplicationRecord
     solr_q_condition = '*:*'
     complex_phrase_def_type = false
     fq_filters = ' document_type_ss:collection_resource  '
-    if q.present? && q.match(/([\w]+\.)+[\w]+(?=[\s]|$)/).present?
+    if q.present? && q.match(/(\w+\.)+\w+(?=\s|$)/).present?
       # for this kind of pattern (hvt.1021.232)
       solr_q_condition = "keywords:\"#{q}\""
       complex_phrase_def_type = true

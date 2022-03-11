@@ -15,15 +15,14 @@ module Interviews
       authorize! :manage, current_organization
       @interview = Interview.find(params[:id])
       @file_index_point = FileIndexPoint.where(file_index_id: @interview.file_indexes&.first&.id)
-      OhmsBreadcrumbPresenter.new(@interview, view_context).breadcrumb_manager("show",@interview,'index')
+      OhmsBreadcrumbPresenter.new(@interview, view_context).breadcrumb_manager('show', @interview, 'index')
     end
 
     def new
       authorize! :manage, current_organization
       @interview = Interview.find(params[:id])
       @file_index_point = FileIndexPoint.new
-      OhmsBreadcrumbPresenter.new(@interview, view_context).breadcrumb_manager("edit",@interview,'index')
-
+      OhmsBreadcrumbPresenter.new(@interview, view_context).breadcrumb_manager('edit', @interview, 'index')
     end
 
     def edit
@@ -31,7 +30,7 @@ module Interviews
       @file_index_point = FileIndexPoint.find(params[:id])
       @file_index = FileIndex.find(@file_index_point.file_index_id)
       @interview = Interview.find(@file_index.interview_id)
-      OhmsBreadcrumbPresenter.new(@interview, view_context).breadcrumb_manager("edit",@interview,'index')
+      OhmsBreadcrumbPresenter.new(@interview, view_context).breadcrumb_manager('edit', @interview, 'index')
       return unless @interview.include_language
       file_index_alt = FileIndex.find_by(interview_id: @interview.id, language: interview_lang_info(@interview.language_for_translation.gsub(/(\w+)/, &:capitalize)))
       @file_index_point_alt = FileIndexPoint.where(file_index_id: file_index_alt.id).where(start_time: @file_index_point.start_time.to_f).where.not(id: params[:id])

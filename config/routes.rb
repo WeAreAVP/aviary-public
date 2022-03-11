@@ -10,6 +10,7 @@ Rails.application.routes.draw do
     collection do
       post :update_selected_playlist
       post :assign_to_playlist
+      post :assign_resources_to_list
     end
   end
   devise_for :admins
@@ -230,6 +231,11 @@ Rails.application.routes.draw do
       post :data_table, to: 'collection_resources#index'
     end
   end
+  get 'myresources/listing', to: 'catalog#index', as: :listing_for_my_resources
+  post 'myresources/list/update_note/:id', to: 'myresources#update_note', as: :my_resources_list_update_note
+  delete 'myresources/list/delete_note/:id', to: 'myresources#delete_note', as: :my_resources_list_delete_note
+  get 'myresources/download', to: 'myresources#download_myresources', as: :download_myresources
+
   resources :indexes, only: %i[index] do
     collection do
       post :data_table, to: 'indexes#index'

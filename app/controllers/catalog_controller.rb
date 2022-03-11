@@ -10,7 +10,7 @@ class CatalogController < ApplicationController
   include Blacklight::Catalog
   include ApplicationHelper
   before_action :mutiple_keyword_handler, :session_param_update, :select_sort_and_view
-  before_action :update_facets, except: %i[assign_to_playlist update_selected_playlist]
+  before_action :update_facets, except: %i[assign_to_playlist update_selected_playlist assign_resources_to_list]
 
   def index
     response.headers['Cache-Control'] = 'no-cache, no-store'
@@ -20,6 +20,22 @@ class CatalogController < ApplicationController
     search_state.params['session_solr'] = session[:searched_keywords]
     search_state.params['user_ip'] = request.ip
     search_state.params['request_is_xhr'] = request.xhr?
+    search_state.params['resource_list'] = []
+    search_state.params['myresources'] = 0
+    @myresource_list = {}
+    if request.path.include?('myresources/listing')
+      params['search_field'] = 'all_fields'
+      params['utf8'] = '✓'
+      params['view'] = 'list'
+      resource_list = ResourceList.where(user_id: current_user.id)
+      resource_list.each do |resource|
+        @myresource_list[resource.resource_id] = {
+          'id' => resource.id, 'note' => resource.note, 'updated_at' => date_time_format(resource.updated_at)
+        }
+      end
+      search_state.params['resource_list'] = resource_list.collect(&:resource_id)
+      search_state.params['myresources'] = 1
+    end
     super
   end
 
@@ -33,14 +49,14 @@ class CatalogController < ApplicationController
     # If there are errors coming from the index page, we want to trap those sensibly
 
     if flash[:notice] == flash_notice
-      logger&.error "Cowardly aborting rsolr_request_error exception handling, because we redirected to a page that raises another exception"
+      logger&.error 'Cowardly aborting rsolr_request_error exception handling, because we redirected to a page that raises another exception'
       raise exception
     end
 
     logger&.error exception
 
     flash[:notice] = flash_notice
-    redirect_to search_action_url(q:'', search_field: 'all_fields', utf8: '✓')
+    redirect_to search_action_url(q: '', search_field: 'all_fields', utf8: '✓')
   end
 
   def update_facets
@@ -87,11 +103,11 @@ class CatalogController < ApplicationController
           range_start = "['' TO *]"
           range_start = '[0 TO *]' if single_collection_field['type'].to_s == 'date'
           response = begin
-                       solr_search_management.select_query(q: '*:*', fq: ['document_type_ss:collection_resource', "#{solr_filed}:#{range_start}"], fl: 'id_is', rows: 1)
-                     rescue StandardError => e
-                       puts e
-                       false
-                     end
+            solr_search_management.select_query(q: '*:*', fq: ['document_type_ss:collection_resource', "#{solr_filed}:#{range_start}"], fl: 'id_is', rows: 1)
+          rescue StandardError => e
+            puts e
+            false
+          end
           field_info = { label: single_collection_field['label'], single: false }
           if single_collection_field['type'].to_s == 'date'
             field_info = { label: single_collection_field['label'], single: true, partial: 'blacklight_range_limit/range_limit_panel', range: { segments: false }, tag: "#{solr_filed}-tag", ex: "#{solr_filed}-tag" }
@@ -187,7 +203,7 @@ class CatalogController < ApplicationController
           current_params['keyword_searched'] = params[single_facet.to_s][key]
         end
       end
-      current_params_index = OpenSSL::Digest::SHA256.new.hexdigest(current_params_index_raw).strip
+      current_params_index = OpenSSL::Digest.new('SHA256').hexdigest(current_params_index_raw).strip
       if has_value
         session[:searched_keywords][current_params_index] = nil unless session[:searched_keywords].key?(current_params_index)
         session[:searched_keywords][current_params_index] = current_params if current_params_index.present?
@@ -222,6 +238,24 @@ class CatalogController < ApplicationController
     end
     @selected_sort_key = session[:selected_sort_key].present? ? session[:selected_sort_key] : 'title_ss asc'
     params[:view] = session[:selected_search_result_view]
+  end
+
+  def assign_resources_to_list
+    JSON.parse(params[:payload]).each do |resource|
+      resource_list = ResourceList.find_by(user_id: current_user.id, resource_id: resource['resource_id'])
+      if resource_list.nil?
+        resource_list = ResourceList.new(resource)
+        resource_list.user_id = current_user.id
+      else
+        resource_list.note = resource['note']
+      end
+      resource_list.save
+    end
+    session[:search_playlist_id] = {}
+    render json: { notice: 'Resources Successfully updated', status: :accepted.to_s }
+  rescue StandardError => e
+    Rails.logger.error e
+    render json: { notice: t('error_update_again'), status: :unprocessable_entity.to_s }
   end
 
   configure_blacklight do |config|
