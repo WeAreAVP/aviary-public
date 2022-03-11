@@ -60,9 +60,12 @@ group :development do
 
   gem 'pry-stack_explorer'
 
-  gem 'rubocop', '= 0.83', require: false
+  gem 'rubocop', '>= 1.25', require: false
   gem 'rubocop-rails', require: false
-  gem 'rubocop-ast', '< 0.7.0', require: false
+  gem 'rubocop-ast', '>= 1.15.1', require: false
+  gem 'rubocop-performance', require: false
+  gem 'rubocop-rspec', require: false
+  gem 'rubocop-rake', require: false
 end
 
 group :test do

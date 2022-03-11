@@ -1,4 +1,4 @@
-require "active_support/core_ext/integer/time"
+require 'active_support/core_ext/integer/time'
 
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
@@ -57,8 +57,8 @@ Rails.application.configure do
 
   # Use a different cache store in production.
 
-  config.cache_store = :redis_cache_store, { url: ENV['ACTION_CABLE_REDIS'] || "localhost" }
-  config.session_store :cache_store, key: ENV['SESSION_KEY']  || '_aviary_key' , domain: :all
+  config.cache_store = :redis_cache_store, { url: ENV['ACTION_CABLE_REDIS'] || 'localhost' }
+  config.session_store :cache_store, key: ENV['SESSION_KEY'] || '_aviary_key', domain: :all
   # Use a real queuing backend for Active Job (and separate queues per environment).
   # config.active_job.queue_adapter     = :resque
   # config.active_job.queue_name_prefix = "aviary_production"
@@ -101,7 +101,7 @@ Rails.application.configure do
   # require "syslog/logger"
   # config.logger = ActiveSupport::TaggedLogging.new(Syslog::Logger.new 'app-name')
 
-  if ENV["RAILS_LOG_TO_STDOUT"].present?
+  if ENV['RAILS_LOG_TO_STDOUT'].present?
     logger           = ActiveSupport::Logger.new(STDOUT)
     logger.formatter = config.log_formatter
     config.logger    = ActiveSupport::TaggedLogging.new(logger)
@@ -140,5 +140,5 @@ Rails.application.configure do
                                                   secret_access_key: ENV['AWS_SECRET_ACCESS_KEY'],
                                                   s3_region: ENV['S3_REGION'],
                                                   s3_host_name: ENV['S3_HOST_NAME'] } }
-  config.action_dispatch.tld_length = ENV['TLD_LENGTH'].to_i || 2 
+  config.action_dispatch.tld_length = ENV['TLD_LENGTH'].to_i || 2
 end

@@ -8,8 +8,14 @@
      collection = document_collection.present? ? document_collection.second : nil
   %>
   <li class="<%= can_access ? '' : 'locked' %>">
-    <% if current_user_is_org_user?(document_organization)  %>
-      <input type="checkbox" class="bulk_add_to_playlist" data-id="<%= collection_resource.id %>" <%= session['search_playlist_id'].present? && session['search_playlist_id'].include?(collection_resource.id.to_s) ? 'checked="true"' : '' %>/>
+    <% if current_user_is_org_user?(document_organization) || request.path.include?("myresources/listing") %>
+      <div class="bulk_add_to_playlist-holder">
+        <input type="checkbox" class="bulk_add_to_playlist" data-id="<%= collection_resource.id %>" <%= session['search_playlist_id'].present? && session['search_playlist_id'].include?(collection_resource.id.to_s) ? 'checked="true"' : '' %>/>
+        <% if request.path.include?("myresources/listing") %>
+          <a class="ico ml-1 myresources_edit" data-id="<%=document['id_is']%>" data-url="<%= my_resources_list_update_note_path(document['id_is']) %>" data-title="<%=document['title_ss']%>" data-id="<%=document['id_is']%>"><span data-toggle="tooltip" data-placement="top" title="Edit My Resource" aria-hidden="true"><i class="fa fa-edit"></i></span></a>
+          <a class="ico ml-1 myresources_delete" data-id="<%=document['id_is']%>" data-url="<%= my_resources_list_delete_note_path(document['id_is']) %>"><span data-toggle="tooltip" data-placement="top" title="Delete My Resource" aria-hidden="true"><i class="fa fa-remove"></i></span></a>
+        <% end %>
+      </div>
     <% end %>
 
     <div class="hold">
@@ -47,6 +53,11 @@
             </div>
           </div>
         </div>
+        <% if @myresource_list.present? && !@myresource_list[document['id_is']].blank? %>
+          <div style="display: block;vertical-align: middle;height: 30px;" class="main-hold">
+          <strong>Note:</strong> <span id="myresource_list_note_<%=document['id_is']%>" data-update="<%= @myresource_list[document['id_is']]['updated_at'] %>"><%= @myresource_list[document['id_is']]['note'] %></span>
+          </div>
+        <% end %>
         <% if !document_collection.blank? && solr_tombstone_values(document_collection.first).present? %>
           <% solr_tombstone_values(document_collection.first).each do |single_tomb| %>
             <% unless :description_duration_ss == single_tomb

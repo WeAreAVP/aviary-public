@@ -15,7 +15,11 @@
 <h2 class="sr-only"><%= t('blacklight.search.search_results') %></h2>
 
 <%- if @response.empty? %>
-  <%= render "zero_results" %>
+   <% if request.path.include?("myresources/listing") %>
+    <h2>No results found for your my resources</h2>
+   <% else %>
+    <%= render "zero_results" %>
+  <% end %>
 <%- elsif render_grouped_response? %>
   <%= render_grouped_document_index %>
 <%- else

@@ -19,6 +19,7 @@ class Collection < ApplicationRecord
   enum banner_type: %i[banner_image featured_resources_slider]
   enum default_tab_selection: %i[resources about]
   attr_accessor :collection_values_solr
+
   before_save :collection_values_fetch, :update_default_values
   after_destroy :remove_from_solr
   after_save :solr_index
@@ -153,7 +154,7 @@ class Collection < ApplicationRecord
       status = false if 'no'.include? query
       query_string_collections = 'collections.title LIKE (?)'
 
-      query_string_collection_resources_count = query.is_i? ? 'collections.collection_resources_count = ? ' : ' "' + Time.now.to_i .to_s + '" = ? '
+      query_string_collection_resources_count = query.is_i? ? 'collections.collection_resources_count = ? ' : ' "' + Time.now.to_i.to_s + '" = ? '
       query_string_organizations = 'organizations.id =?'
       collections = if status.nil?
                       collections.where("(#{query_string_collections} OR #{query_string_collection_resources_count}) AND #{query_string_organizations}", "%#{query}%", query, organization_id)

@@ -96,10 +96,10 @@ module DetailPageHelper
       transcript_count[:total_transcript_wise][transcript_point.file_transcript_id][hash_keyword] += transcript_point_sum
       all_marker_occurrences_point = transcript_point.text.match_all(single_keyword, "transcript_timecode_#{transcript_point.id}")
       all_hits = begin
-                   all_marker_occurrences_annotation.merge(all_marker_occurrences_point) { |_key, a_val, b_val| a_val.merge b_val }.sort.to_h
-                 rescue StandardError
-                   all_marker_occurrences_point
-                 end
+        all_marker_occurrences_annotation.merge(all_marker_occurrences_point) { |_key, a_val, b_val| a_val.merge b_val }.sort.to_h
+      rescue StandardError
+        all_marker_occurrences_point
+      end
       x = 0
       all_hits.each do |_key, single_hit|
         if single_hit.class == Array
