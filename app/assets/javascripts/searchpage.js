@@ -120,7 +120,7 @@ function SearchPage() {
         $('.review_resources-list').DataTable().destroy();
         $('.bulk-edit-review-resource-list-content').html(response);
         $('.review_resources-list').DataTable({
-            pageLength: 10,
+            pageLength: 12,
             bLengthChange: false,
             destroy: true,
             bInfo: true,
