@@ -55,7 +55,7 @@ class SearchBuilder < Blacklight::SearchBuilder
     condition_limiter = ["document_type_ss:#{type}", status_condition]
     condition_limiter << "organization_id_is:#{current_organization.id}" unless current_organization.blank?
     solr = CollectionResource.solr_connect
-    collections_raw = solr.get 'select', params: { q: query_collection, defType: 'lucene', fq: condition_limiter, fl: title_field }
+    collections_raw = solr.post "select?#{URI.encode_www_form({ q: query_collection, defType: 'lucene', fq: condition_limiter, fl: title_field })}"
     counter = 0
     fq_filters_inner = ''
     collections_raw['response']['docs'].each do |single_collection|
@@ -68,6 +68,10 @@ class SearchBuilder < Blacklight::SearchBuilder
   def handle_wild_search(term)
     return "*#{term}*" if !term.include?('*') && !term.include?('"')
     term
+  end
+
+  def self.term_divider(term)
+    term.split(' ')
   end
 
   def values_auto_wildcard_search(search_keyword, search_string)

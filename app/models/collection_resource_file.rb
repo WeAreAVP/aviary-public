@@ -327,7 +327,7 @@ class CollectionResourceFile < ApplicationRecord
     end
     if sort_column.to_s == 'collection_title_text'
 
-      collections_raw = solr.get 'select', params: { q: '*:*', fq: ['document_type_ss:collection', 'status_ss:active', limit_condition], fl: %w[id_is], sort: 'title_ss desc' }
+      collections_raw = solr.post "select?#{URI.encode_www_form({ q: '*:*', fq: ['document_type_ss:collection', 'status_ss:active', limit_condition], fl: %w[id_is], sort: 'title_ss desc' })}"
       response = collections_raw['response'].present? && collections_raw['response']['docs'].present? ? collections_raw['response']['docs'] : nil
       query_params[:sort] = if response.present? && !response.size.zero?
                               sort = ''
@@ -412,7 +412,7 @@ class CollectionResourceFile < ApplicationRecord
   end
 
   def self.collection_sorter(limit_condition, sort_direction, solr)
-    collections_raw = solr.get 'select', params: { q: '*:*', fq: ['document_type_ss:collection', 'status_ss:active', limit_condition], fl: %w[id_is], sort: 'title_ss desc' }
+    collections_raw = solr.post "select?#{URI.encode_www_form({ q: '*:*', fq: ['document_type_ss:collection', 'status_ss:active', limit_condition], fl: %w[id_is], sort: 'title_ss desc' })}"
     response = collections_raw['response'].present? && collections_raw['response']['docs'].present? ? collections_raw['response']['docs'] : nil
     if response.present? && !response.size.zero?
       sort = ''
