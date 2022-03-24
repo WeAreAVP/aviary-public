@@ -294,6 +294,13 @@ function IndexTranscript() {
             $('.mCustomScrollbar_description').mCustomScrollbar();
             $('#view_edit_media_metadata_custom').mCustomScrollbar();
         }
+        if ($(window).width() < 767) {
+            $("*").mCustomScrollbar("destroy");
+            $('.transcript_point_container').attr('style', 'height:auto!important;max-height:inherit !important;');
+            $('.index_point_container').attr('style', 'height:auto!important;max-height:inherit !important;');
+            $('.mCustomScrollbar_description').attr('style', 'height:auto!important;max-height:inherit !important;');
+            $('#view_edit_media_metadata_custom').attr('style', 'height:auto!important;max-height:inherit !important;');
+        }
         if (request['first_call'] == true)
             that.call_type = 'toggle';
         else

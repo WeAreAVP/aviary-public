@@ -28,7 +28,7 @@ module InterviewIndexHelper
       match = regex.match(interview.embed_code)
 
       source_tags = ''
-      doc = Nokogiri::HTML(open(match[1], read_timeout: 10, ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE))
+      doc = Nokogiri::HTML(open(match[1], read_timeout: 10))
       video_src_nodes = doc.search("//source[@type='application/x-mpegURL']")
       video_src_nodes.each do |node|
         source_tags = format('<source src="%s" type="application/x-mpegURL" label="%s"/>', node.attributes['src'].value, node.attributes['data-quality'].value) if node.attributes['data-quality'].value == 'auto'
@@ -46,7 +46,7 @@ module InterviewIndexHelper
 
     elsif interview.media_host == 'Aviary'
       source_tags = ''
-      doc = Nokogiri::HTML(open(interview.media_url, read_timeout: 10, ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE))
+      doc = Nokogiri::HTML(open(interview.media_url, read_timeout: 10))
       video_src_nodes = doc.search('//source')
       video_src_nodes.each do |node|
         source_tags = format('<source src="%s" type="%s"/>', node.attributes['src'].value, video_src_nodes.first.attributes['type'].value)
@@ -63,7 +63,7 @@ module InterviewIndexHelper
     elsif interview.media_host == 'YouTube'
       data['src'] = interview.media_url
     elsif interview.media_host == 'Vimeo'
-      regex = %r{https?:\/\/(?:[\w]+\.)*vimeo\.com(?:[\/\w]*\/?)?\/(?<id>[0-9]+)[^\s]*}
+      regex = %r{https?:\/\/(?:\w+\.)*vimeo\.com(?:[\/\w]*\/?)?\/(?<id>[0-9]+)[^\s]*}
       match = regex.match(interview.embed_code)
       data['src'] = "https://player.vimeo.com/video/#{match[1]}"
     end

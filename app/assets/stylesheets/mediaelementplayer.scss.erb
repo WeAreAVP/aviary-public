@@ -774,4 +774,59 @@ Reference: http://blog.rrwd.nl/2015/04/04/the-screen-reader-text-class-why-and-h
   width: 100%;
 }
 
-/* End: Error */
+/* Airplay CSS Start */
+
+.mejs__airplay-button > button,
+.mejs-airplay-button > button {
+  background: url('https://<%= ENV['S3_HOST_CDN'] %>/public/images/airplay.svg') no-repeat 0 4px;
+}
+
+.mejs__airplay-button > button .fill,
+.mejs-airplay-button > button .fill {
+  fill: #fff;
+}
+
+.mejs__airplay-button > button.active .fill,
+.mejs-airplay-button > button.active .fill {
+  fill: #66a8cc;
+}
+
+/* Airplay CSS End */
+
+/* Chromcast CSS Start */
+
+.mejs__chromecast-button > button,
+.mejs-chromecast-button > button {
+  --disconnected-color: #fff;
+  background: none;
+  display: inline-block;
+}
+.mejs__chromecast-container,
+.mejs-chromecast-container {
+  background: #000;
+  color: #fff;
+  font-size: 10px;
+  left: 0;
+  padding: 5px;
+  position: absolute;
+  top: 0;
+  z-index: 1;
+}
+
+.mejs__chromecast-layer > img,
+.mejs-chromecast-layer > img {
+  left: 0;
+  position: absolute;
+  top: 0;
+  z-index: 0;
+}
+
+.mejs__chromecast-icon,
+.mejs-chromecast-icon {
+  background: url('https://<%= ENV['S3_HOST_CDN'] %>/public/images/chromecast.svg') no-repeat 0 0;
+  display: inline-block;
+  height: 14px;
+  margin-right: 5px;
+  width: 17px;
+}
+/* Chromcast CSS Start */

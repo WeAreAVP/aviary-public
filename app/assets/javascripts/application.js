@@ -10,9 +10,9 @@
 // Read Sprockets README (https://github.com/rails/sprockets#sprockets-directives) for details
 // about supported directives.
 //
+//= require jquery3
 //= require rails-ujs
 //= require jquery
-//= require 'blacklight_advanced_search'
 
 
 //= require popper.min
@@ -30,7 +30,6 @@
 //= require owl.carousel.min
 //= require moment
 //= require daterangepicker
-//= require 'blacklight_range_limit'
 //= require clipboard
 //= require ahoy
 //= require aviary_app
@@ -698,6 +697,14 @@ const getSearchKeywordsAsString = function () {
         });
     }
     return keywords;
+}
+
+function removeScrollMobile() {
+    if ($(window).width() < 767) {
+        $("*").mCustomScrollbar("destroy");
+        $('.mCustomScrollbar_description').attr('style', 'height:auto!important;max-height:inherit !important;');
+        $('#view_edit_media_metadata_custom').attr('style', 'height:auto!important;max-height:inherit !important;');
+    }
 }
 
 function removeImageCustom() {

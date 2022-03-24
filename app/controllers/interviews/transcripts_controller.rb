@@ -206,7 +206,6 @@ module Interviews
       file.unlink
     end
 
-
     def upload_transcript(type, file, interview)
       interview.file_transcripts.where(interview_transcript_type: type).destroy_all if interview.file_transcripts.where(interview_transcript_type: type).present?
       interview_transcript_translation = FileTranscript.new({ collection_resource_file_id: nil, user: current_user,

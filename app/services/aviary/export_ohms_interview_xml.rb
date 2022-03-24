@@ -86,7 +86,8 @@ module Aviary
             xml.index {
               if file_index.present?
                 file_index.file_index_points.sort_by { |t| t.start_time.to_f }.each_with_index do |data, _index|
-                  file_index_point_alt = FileIndexPoint.where(file_index_id: file_index_alt.id).where(start_time: data.start_time.to_f).where.not(id: data.id)
+                  file_index_point_alt = []
+                  file_index_point_alt = FileIndexPoint.where(file_index_id: file_index_alt.id).where(start_time: data.start_time.to_f).where.not(id: data.id) if file_index_alt.present?
                   xml.point {
                     xml.time data.start_time.to_i
                     xml.title data.title

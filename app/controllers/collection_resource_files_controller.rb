@@ -6,7 +6,7 @@ class CollectionResourceFilesController < ApplicationController
   before_action :authenticate_user!
   def index
     authorize! :manage, current_organization
-    session[:resource_file_list_bulk_edit] = []
+    session[:resource_file_list_bulk_edit] = [] unless request.xhr?
     respond_to do |format|
       format.html
       format.json { render json: ResourceFilesDatatable.new(view_context, current_organization) }

@@ -5,6 +5,7 @@
 class ApplicationController < ActionController::Base
   # Adds a few additional behaviors into the application controller
   include Blacklight::Controller
+  # layout :determine_layout if respond_to? :layout
   # Adds a few additional behaviors into the application controller
   include ApplicationHelper
   include Aviary::CheckOrganization
@@ -25,6 +26,16 @@ class ApplicationController < ActionController::Base
 
   def clear_session_data
     session[:add_visitor] = {} unless params[:controller] == 'home' && %w[index featured_collections featured_resources record_tracking].include?(params[:action])
+  end
+
+  def open(url, _allow_redirections = '')
+    res = url =~ URI::DEFAULT_PARSER.make_regexp
+    if res.nil?
+      File.open(url, allow_redirections: :all, ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE)
+
+    else
+      URI.open(url, allow_redirections: :all, ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE)
+    end
   end
 
   def record_last_bread_crumb(path, title)

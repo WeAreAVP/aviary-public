@@ -1,5 +1,4 @@
 /*
-* @author Nouman Tayyab <nouman@weareavp.com>
 * Aviary is an audiovisual content publishing platform with sophisticated features for search and permissions controls.
 * Copyright (C) 2019 Audio Visual Preservation Solutions, Inc.
 */
@@ -8,27 +7,20 @@
     padding-left: 0;
     position: relative;
 }
-
-.form-check .input {
-    display: inline-block;
-}
-
+.form-check .input { display: inline-block;}
 .form-check label {
     position: relative;
     font-size: 14px;
     font-weight: 500 !important;
     padding-left: 30px;
 }
-
 .form-check label label {
     display: none;
 }
-
-.form-check input[type="checkbox"] {
-    display: none;
+.form-check input[type="checkbox"]{
+	display: none;
 }
-
-.form-check .icon-check {
+.form-check .icon-check{
     position: absolute;
     display: inline-block;
     height: 17px;
@@ -40,8 +32,7 @@
     border-radius: 3px;
     transition: .2s all ease-in-out;
 }
-
-.form-check .icon-check:before {
+.form-check .icon-check:before{
     width: 10px;
     height: 6px;
     content: '';
@@ -55,8 +46,7 @@
     transform: rotate(-45deg);
     display: none;
 }
-
-.form-check input[type="checkbox"]:checked + .icon-check:before {
+.form-check input[type="checkbox"]:checked + .icon-check:before{
     display: block;
 }
 
@@ -310,10 +300,7 @@
     border-radius: 4px;
     font-weight: 600;
 }
-
-.main_sidebar .card-header button[aria-expanded="true"] .nav-box .ico {
-    opacity: 1;
-}
+.main_sidebar .card-header button[aria-expanded="true"] .nav-box .ico { opacity: 1;}
 
 .main_collapsed .main_sidebar .card-header button[aria-expanded="true"] img,
 .main_sidebar .card-header button[aria-expanded="true"] img {
@@ -445,7 +432,6 @@
 .file_index .pt-20px:first-child {
     padding-top: 0 !important;
 }
-
 .file_index .row:hover {
     background: #faf9fb;
 }
@@ -535,7 +521,6 @@
     overflow: hidden;
     text-overflow: ellipsis;
 }
-
 @media screen and (max-width: 767px) {
     .not-collapsed .main_sidebar {
         height: auto;
@@ -548,7 +533,6 @@
         margin: 0 10px;
     }
 }
-
 @media screen and (max-width: 992px) {
     .main_collapsed {
         position: fixed;

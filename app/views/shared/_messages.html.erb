@@ -1,4 +1,4 @@
-<script>
+<script type="text/javascript">
     window.setTimeout(function () {
         $("#alert_message").fadeIn(1500, function () {
             $(this).addClass("backToTop");
@@ -7,7 +7,7 @@
 </script>
 <%
   flash.each do |name, msg| %>
-  <% if msg.is_a?(String) %>
+  <% if msg.is_a?(String) && flash[name].present? %>
     <div id="alert_message" class="alert animated fadeInDown alert-<%= name.to_s == 'notice' ? "success" : "danger" %>">
       <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
       <%== flash[name] %>

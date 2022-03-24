@@ -1,0 +1,38 @@
+#
+# Aviary is an audiovisual content publishing platform with sophisticated features for search and permissions controls.
+# Copyright (C) 2019 Audio Visual Preservation Solutions, Inc.
+organization:
+  # List of variables for Invitation Email Template feature
+  email_invitation_template:
+    variable:
+      email: '{{email}}'
+      first_name: '{{first_name}}'
+      last_name: '{{last_name}}'
+      invitation_link: '{{invitation_link}}'
+      invitation_link_plaintext: '{{invitation_link_plaintext}}'
+
+collection:
+  # Customize text on Access Request display for users
+  access_request_template:
+    default_template: "The organization that is providing access to this resource has set restrictions on its accessibility. Please use the button below to request access to the content directly from the organization that owns it."
+    default_button_text: "Request Access"
+
+  # List of variables for Configure Access Request Approval Email Template Feature
+  email_access_request_approval:
+    variable:
+      name_of_requester: '{{name_of_requester}}'
+      email_address_of_requester: '{{email_address_of_requester}}'
+      title_of_requested_resource: '{{title_of_requested_resource}}'
+      duration_of_permission: '{{duration_of_permission}}'
+      link_to_resource:  '{{link_to_resource}}'
+      collection_name:  '{{collection_name}}'
+      optional_note:  '{{optional_note}}'
+    default_template: "<p>Dear {{name_of_requester}} {{email_address_of_requester}},</p>
+                        <p style=\"padding-left: 40px;\">Your request for access to {{title_of_requested_resource}} in the <b>{{collection_name}}</b> has been approved by the organization administrator.</p>
+                        <p style=\"padding-left: 40px;\">You can access the resource directly at the following link: {{link_to_resource}}.</p>
+                        <p style=\"padding-left: 40px;\">You have been granted View access to the resource for the following time period: {{duration_of_permission}}.</p>
+                      <p>Best,</p>
+                      <p>The Aviary Team</p>"
+
+
+

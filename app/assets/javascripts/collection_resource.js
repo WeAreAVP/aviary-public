@@ -293,7 +293,7 @@ function CollectionResource() {
         $('.mCustomScrollbar_description').mCustomScrollbar();
         $('#view_edit_media_metadata_custom').mCustomScrollbar();
 
-
+        removeScrollMobile();
         initEvents();
         initCreateTranscription();
         selfCR.manageTabs(selfCR.edit_description);
@@ -1271,6 +1271,30 @@ function CollectionResource() {
                     clearInterval(loading_resources);
             }
         }, 500);
+    }
+
+    this.add_my_resource = function(id, note, url){
+        $('.loader').show();
+        let payload = [
+            {
+                resource_id: id,
+                note: $("#"+ note).val()
+            }
+        ];
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: {payload: JSON.stringify(payload)},
+            success: function (response) {
+                $('.loader').hide();
+                jsMessages('success', 'Resource added to list successfully.');
+
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                $('.loader').hide();
+                jsMessages('dangers', "We're sorry, the update failed.");
+            }
+        });
     }
 
 }

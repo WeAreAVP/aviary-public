@@ -40,13 +40,13 @@ module Interviews
     def new
       authorize! :manage, current_organization
       @interview = Interviews::Interview.new
-      OhmsBreadcrumbPresenter.new(@interview, view_context).breadcrumb_manager("edit",@interview)
+      OhmsBreadcrumbPresenter.new(@interview, view_context).breadcrumb_manager('edit', @interview)
     end
 
     # GET /interviews/1/edit
     def edit
       authorize! :manage, current_organization
-      OhmsBreadcrumbPresenter.new(@interview, view_context).breadcrumb_manager("edit",@interview)
+      OhmsBreadcrumbPresenter.new(@interview, view_context).breadcrumb_manager('edit', @interview)
     end
 
     def preview
@@ -82,9 +82,7 @@ module Interviews
         if dos_xml.present?
           dos_xml.each do |single_dos_xml|
             file_name = single_dos_xml[:ohms_xml_filename].present? ? single_dos_xml[:ohms_xml_filename] : 'interview' + single_dos_xml[:id].to_s + '.xml'
-            File.open(File.join(tmp_user_folder, file_name), 'wb') do |file|
-              file.write(single_dos_xml[:xml])
-            end
+            File.binwrite(File.join(tmp_user_folder, file_name), single_dos_xml[:xml])
             dos_xml_files << file_name
           end
         end
@@ -149,7 +147,7 @@ module Interviews
                                  end_time: single_info.end_time.present? ? time_to_duration(single_info.end_time) : '00:00:00' }
         end
       end
-      OhmsBreadcrumbPresenter.new(@interview, view_context).breadcrumb_manager("show",@interview,'sync')
+      OhmsBreadcrumbPresenter.new(@interview, view_context).breadcrumb_manager('show', @interview, 'sync')
       respond_to do |format|
         format.html
         format.json { render json: { response: { data_main: data_main, data_translation: data_translation } } }

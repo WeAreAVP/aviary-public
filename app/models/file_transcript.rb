@@ -22,6 +22,7 @@ class FileTranscript < ApplicationRecord
                                                                      'application/msword', 'application/zip'],
                                                       message: 'Only XML, WebVTT, TXT, Doc and Docx formats allowed.'
   attr_accessor :remove_title
+
   scope :order_transcript, -> { order('sort_order ASC') }
   scope :public_transcript, -> { where(is_public: true).order_transcript }
   scope :cc, -> { where(is_caption: true) }
@@ -62,6 +63,7 @@ class FileTranscript < ApplicationRecord
       end
     end
   end
+
   def self.fetch_transcript_list(page, per_page, sort_column, sort_direction, params, limit_condition, export_and_current_organization = { export: false, current_organization: false })
     q = params[:search][:value] if params.present? && params.key?(:search) && params[:search].key?(:value)
     solr = FileTranscript.solr_connect
@@ -140,6 +142,7 @@ class FileTranscript < ApplicationRecord
       'file_display_name_ss' => 'Media File',
       'collection_resource_title_ss' => 'Resource Title',
       'annotation_count_is' => 'Annotation Set Count',
+      'is_caption_ss' => 'Caption',
       'updated_at_ds' => 'Date Updated',
       'created_at_ds' => 'Date Added'
     }
@@ -180,6 +183,9 @@ class FileTranscript < ApplicationRecord
     end
     string :collection_resource_title, stored: true do
       collection_resource_file.collection_resource.title
+    end
+    string :is_caption, stored: true do
+      is_caption == true ? 'Yes' : 'No'
     end
     string :document_type, stored: true do
       'file_transcript'

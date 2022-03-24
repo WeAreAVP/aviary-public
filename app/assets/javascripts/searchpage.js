@@ -93,8 +93,10 @@ function SearchPage() {
     this.fetchResourceList = function (response) {
         try {
             $('#number_of_selected_resources').html(response);
+            $('#number_of_selected_resource_list').html(response);
         } catch (e) {
             $('#number_of_selected_resources').html(0);
+            $('#number_of_selected_resource_list').html(0);
         }
 
     };
@@ -111,6 +113,20 @@ function SearchPage() {
             bInfo: true,
         });
     };
+
+    this.fetchBulkEditResourceListExp = function (response) {
+        $('.bulk-edit-review-resource-list-content').html('');
+        $('.bulk-edit-review-resource-list-modal').modal();
+        $('.review_resources-list').DataTable().destroy();
+        $('.bulk-edit-review-resource-list-content').html(response);
+        $('.review_resources-list').DataTable({
+            pageLength: 12,
+            bLengthChange: false,
+            destroy: true,
+            bInfo: true,
+        });
+    };
+
     const searchFacets = function () {
         document_level_binding_element('.search_facet', 'keyup', function () {
             var targetid = $(this).data('target');
@@ -147,8 +163,17 @@ function SearchPage() {
         document_level_binding_element('#select_all, #deselect_all ', 'click', function () {
             if ($(this).data('type') === 'select') {
                 $('.bulk_add_to_playlist').prop('checked', true);
+                $('#number_of_selected_resources').html($('.bulk_add_to_playlist').length);
+                $('#number_of_selected_resource_list').html($('.bulk_add_to_playlist').length);
+                let ids = []
+                $('.bulk_add_to_playlist').each(function(i,v){
+                    ids.push( $(v).data('id') );
+                });
+                callSelectedPlaylist(ids, 'bulk', 'all');
             } else {
                 $('.bulk_add_to_playlist').prop('checked', false);
+                $('#number_of_selected_resources').html(0);
+                $('#number_of_selected_resource_list').html(0);
             }
             if ($(this).data('type') === 'select') {
                 let getAllIds = {
@@ -170,6 +195,48 @@ function SearchPage() {
             $(this).val(new_value);
             $('.hidden_advance_search_single').val('');
             $('.search-query-form').find('.' + $('.type_of_field_selector_single').val() + '_single').val($(this).val());
+        });
+
+        document_level_binding_element('#add_to_resource_list ', 'click', function () {
+            if ($('#number_of_selected_resources').html().trim() === '' || $('#number_of_selected_resources').html().trim() === '0') {
+                jsMessages('danger', 'Please select atleast one resource.');
+            } else {
+                let resourceListing = {
+                    action: 'fetchBulkEditResourceListExp',
+                };
+                selfSearchPage.appHelper.classAction($(this).data('url') + '?type=collection_resource_file_list', resourceListing, 'HTML', 'GET', '', selfSearchPage, true);
+            }
+        });
+
+        document_level_binding_element('.bulk-add-to-resource_list', 'click', function () {
+            selfApp.show_loader();
+            var notes = document.getElementsByName('crfl_note[]');
+            var ids = document.getElementsByName('crfl_id[]');
+            var payload = []
+            for (var i = 0; i < notes.length; i++) {
+                if( ids[i] != undefined )
+                    payload.push( {resource_id: ids[i].value, note: notes[i].value} )
+            }
+
+            $.ajax({
+                url: $(this).data('url'),
+                data: {payload: JSON.stringify(payload)},
+                error: function (response) {
+                    console.log( 'payload: ', payload );
+                    console.log( 'response: ', response );
+                    selfApp.hide_loader();
+                    jsMessages('danger', "We're sorry, something went wrong.");
+                    setTimeout(function(){ window.location.reload(); }, 1000);
+                },
+                success: function (response) {
+                    selfApp.hide_loader();
+                    jsMessages('success', 'Resource list updated successfully.');
+                    $('.bulk-edit-review-resource-list-modal').modal('hide');
+                    setTimeout(function(){ window.location.reload(); }, 1000);
+                },
+                type: 'POST'
+            });
+
         });
 
         $('.range_duration').on('click', function () {
@@ -305,13 +372,14 @@ function SearchPage() {
         });
         $('.search_field_selector_single').keyup(function (event) {
             if (event.keyCode == 13) {
-                if ($(".search_field_selector_single").val() == '') {
-                    $('<input>').attr({
-                        type: 'hidden',
-                        name: 'sort',
-                        value: 'title_ss asc'
-                    }).appendTo('.simple_search');
-                }
+                // Following code is commented to give user sort choice preference. 'title_ss asc' is now the default choice
+                // if ($(".search_field_selector_single").val() == '') {
+                //     $('<input>').attr({
+                //         type: 'hidden',
+                //         name: 'sort',
+                //         value: 'title_ss asc'
+                //     }).appendTo('.simple_search');
+                // }
                 $('.simple_search').submit();
             }
         });

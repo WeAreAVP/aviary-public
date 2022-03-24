@@ -27,17 +27,18 @@
     <% end %>
   </div>
 <% end %>
-<script>
+<script type="text/javascript">
   $(document).ready(function(){
-     $(".search-query-form").on("submit", function(){
-         if( $(".search_field_selector_main").val() == '' ){
-             $('<input>').attr({
-                 type: 'hidden',
-                 name: 'sort',
-                 value: 'title_ss asc'
-             }).appendTo(this);
-         }
-     });
+    // Following code is commented to give user sort choice preference. 'title_ss asc' is now the default choice
+    //  $(".search-query-form").on("submit", function(){
+    //      if( $(".search_field_selector_main").val() == '' ){
+    //          $('<input>').attr({
+    //              type: 'hidden',
+    //              name: 'sort',
+    //              value: 'title_ss asc'
+    //          }).appendTo(this);
+    //      }
+    //  });
   });
 </script>
 

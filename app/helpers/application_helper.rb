@@ -5,6 +5,7 @@
 module ApplicationHelper
   include ApplicationHelperExtended
   include InterviewIndexHelper
+  include DeprecatedHelper
   require 'securerandom'
 
   def organization_layout?
@@ -66,7 +67,7 @@ module ApplicationHelper
   end
 
   def clean_uri(query)
-    query.to_s.gsub(%r{[/?!*'();:@&=+\]\[$,/?%# ]}, '')
+    query.to_s.gsub(%r{[/?!*'();:@&=+\]\[$,%# ]}, '')
   rescue StandardError
     ''
   end
@@ -226,7 +227,7 @@ module ApplicationHelper
   end
 
   def generate_random_password
-    OpenSSL::Digest::SHA256.new.hexdigest(SecureRandom.hex(8)) + '@AvIry'
+    OpenSSL::Digest.new('SHA256').hexdigest(SecureRandom.hex(8)) + '@AvIry'
   end
 
   def nunncenter_ohms_xsd
@@ -274,7 +275,7 @@ module ApplicationHelper
   end
 
   def key_hash_manager(string)
-    key = OpenSSL::Digest::SHA256.new.hexdigest(string)
+    key = OpenSSL::Digest.new('SHA256').hexdigest(string)
     %w[ɷ ʇ ʊ ʚ ʎ ʚ ʛ ɸ ʝ ʇ].each_with_index { |index, single_character| key = key.gsub(single_character.to_s, index) }
     key
   end

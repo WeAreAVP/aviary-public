@@ -46,6 +46,11 @@
         </div>
         </div>
       <% end %>
+      <% if current_user_is_current_org_user? %>
+        <button class="btn" title="My Resources" data-toggle="modal" data-target="#resourceListModel">
+          <i class="material-icons list_added">playlist_add_check</i> My Resources
+        </button>
+      <% end %>
     </div>
 
     <!-- Modal -->
@@ -172,4 +177,49 @@
         });
     </script>
   <% end %>
+<% end %>
+
+<% if current_user.present?
+     resource_list = ResourceList.find_by(user_id: current_user.id, resource_id: @collection_resource.id)
+%>
+  <div class="resource_list_container" id="resource_list_container" data-listonly="true" data-organizationid="<%= @collection_resource.collection.organization.id %>" data-resourceid="<%= @collection_resource.id %>">
+    <div class="modal fade" id="resourceListModel" tabindex="-1" role="dialog" aria-labelledby="resourceListModelCenterTitle" aria-hidden="true">
+      <div class="modal-dialog modal-lg  modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title h3" id="exampleModalLabel">My Resources</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div id="" class="modal-body">
+            <table class="table table-hover table-striped table-bordered">
+              <thead>
+              <tr>
+                <th>ID</th>
+                <th>Resource title</th>
+                <th>Note</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr>
+                <td id="my_resource_id"><%= @collection_resource.id %></td>
+                <td id="my_resource_title"><%= @collection_resource.title %></td>
+                <td id="">
+                  <textarea class="form-controls" cols="36" id="my_resource_note"><%= resource_list.try(:note) %></textarea>
+                  <br/>
+                  <%= !resource_list.nil? ? "Previously updated: #{resource_list.try(:updated_at)}" : '' %>
+                </td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger" data-dismiss="modal">No</button>
+            <button onclick="collectionResource.add_my_resource('<%= @collection_resource.id %>', 'my_resource_note', '<%= assign_resources_to_list_catalog_path %>')" type="button" class="btn btn-primary"  data-dismiss="modal">Save</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 <% end %>

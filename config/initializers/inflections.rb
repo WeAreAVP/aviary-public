@@ -16,5 +16,5 @@
 # end
 
 ActiveSupport::Inflector.inflections do |inflect|
-  inflect.irregular 'index', 'indexes'
+    inflect.irregular 'index', 'indexes'
 end

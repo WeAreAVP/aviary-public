@@ -32,7 +32,7 @@ module Aviary
       self.sync_interval = 0.0
     end
 
-    def process(file_transcript, remove_title = nil, is_new = true, import = false)
+    def process(file_transcript, _remove_title = nil, is_new = true, import = false)
       file_path = ENV['RAILS_ENV'] == 'production' ? file_transcript.associated_file.expiring_url : file_transcript.associated_file.path
 
       if ['application/xml', 'text/xml'].include? file_transcript.associated_file_content_type
@@ -266,7 +266,7 @@ module Aviary
           end
 
           single_hash['duration'] = single_hash['end_time'] - single_hash['start_time']
-          single_hash['text'] = text.lstrip.gsub(/:[\n]+/, ': ').gsub(/\n{3,5}/, "\n\n").strip
+          single_hash['text'] = text.lstrip.gsub(/:\n+/, ': ').gsub(/\n{3,5}/, "\n\n").strip
           unless single_hash.nil? # keep adding the Text to the same point until gets a new timestamp
             text_raw = single_hash['text']
             row = 0
@@ -290,7 +290,7 @@ module Aviary
         single_hash['start_time'] = 0
         single_hash['end_time'] = file_transcript.collection_resource_file.duration if from_resource_file
         single_hash['duration'] = single_hash['end_time'].to_f - single_hash['start_time'].to_f
-        single_hash['text'] = output[0].gsub(/:[\n]+/, ': ').gsub(/\n{3,5}/, "\n\n").strip if output.present?
+        single_hash['text'] = output[0].gsub(/:\n+/, ': ').gsub(/\n{3,5}/, "\n\n").strip if output.present?
         unless single_hash.nil? # keep adding the Text to the same point until gets a new timestamp
           text_raw = single_hash['text']
           row = 0

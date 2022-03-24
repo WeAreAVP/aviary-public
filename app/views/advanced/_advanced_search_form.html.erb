@@ -45,7 +45,7 @@
     }
 </style>
 
-<script>
+<script type="text/javascript">
     var multiple_search_simplifier = <%== multiple_search_simplifier(session[:searched_keywords]).present? ? multiple_search_simplifier(session[:searched_keywords]).to_json : '[]' %> ;
     document.addEventListener("DOMContentLoaded", function () {
         var advance_search_handler = new AdvanceSearchHandler();

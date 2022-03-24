@@ -1,3 +1,7 @@
+#
+# Aviary is an audiovisual content publishing platform with sophisticated features for search and permissions controls.
+# Copyright (C) 2019 Audio Visual Preservation Solutions, Inc.
+
 # Load DSL and set up stages
 require 'capistrano/setup'
 
@@ -6,7 +10,7 @@ require 'capistrano/deploy'
 
 require 'capistrano/rbenv'
 set :rbenv_type, :user
-set :rbenv_ruby, '2.6.8'
+set :rbenv_ruby, '3.1.0'
 
 require 'capistrano/scm/git'
 
