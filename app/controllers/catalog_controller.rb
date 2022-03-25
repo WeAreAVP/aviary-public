@@ -36,6 +36,7 @@ class CatalogController < ApplicationController
       search_state.params['resource_list'] = resource_list.collect(&:resource_id)
       search_state.params['myresources'] = 1
     end
+    byebug
     super
   end
 
@@ -125,6 +126,7 @@ class CatalogController < ApplicationController
           @blacklight_config.add_facet_field(solr_filed.to_s, field_info) if response.present? && response['response'].present? && response['response']['numFound'] > 0
         end
       end
+      byebug
     else
       Organization.field_list_with_options.each do |_index, single_field|
         if single_field[:key] == 'description_duration_ls' || single_field[:key] == 'description_date_search_lms'

@@ -169,7 +169,7 @@ class ApplicationController < ActionController::Base
           elsif Organization.first.class.name == 'Collection' && attribute == 'image'
             open("#{Rails.root}/public/aviary_default_collection.png")
           end
-    model_object.update_attributes(attribute.to_s => val)
+    model_object.update(attribute.to_s => val)
   end
 
   def store_user_location!
