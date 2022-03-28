@@ -31,10 +31,7 @@ class IndexesController < ApplicationController
           index.update(is_public: params['access_type'] == 'yes')
         end
       end
-      render json: { message: t('updated_successfully'),
-                     errors: false,
-                     status: 'success',
-                     action: 'bulk_file_index_edit' }
+      format.json { render json: { message: t('updated_successfully'), errors: false, status: 'success', action: 'bulk_file_index_edit' } }
     end
   end
 
