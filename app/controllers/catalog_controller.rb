@@ -70,32 +70,41 @@ class CatalogController < ApplicationController
         global_status = true if field_conf.present? && field_conf['special_purpose'].present? && boolean_value(field_conf['special_purpose']) && !%w[collection_title has_transcript has_index duration access].include?(system_name)
         next if !global_status && !%w[collection_title has_transcript has_index duration access].include?(system_name)
         if system_name == 'collection_title'
-          @blacklight_config.add_facet_field('collection_id_is', Organization.field_list_with_options[:collection_id_is])
+          field_settings = Organization.field_list_with_options[:collection_id_is]
+          field_settings[:label] = @resource_fields[system_name]['label'] if @resource_fields[system_name].present?
+          @blacklight_config.add_facet_field('collection_id_is', field_settings)
           next
         end
         if system_name == 'duration'
-          @blacklight_config.add_facet_field('description_duration_ls', Organization.field_list_with_options[:description_duration_ls])
+          field_settings = Organization.field_list_with_options[:description_duration_ls]
+          field_settings[:label] = @resource_fields[system_name]['label'] if @resource_fields[system_name].present?
+          @blacklight_config.add_facet_field('description_duration_ls', field_settings)
           next
         end
 
         if system_name == 'access'
-          @blacklight_config.add_facet_field('access_ss', Organization.field_list_with_options[:access_ss])
+          field_settings = Organization.field_list_with_options[:access_ss]
+          field_settings[:label] = @resource_fields[system_name]['label'] if @resource_fields[system_name].present?
+          @blacklight_config.add_facet_field('access_ss', field_settings)
           next
         end
         if system_name == 'has_transcript'
-          @blacklight_config.add_facet_field('has_transcript_ss', Organization.field_list_with_options[:has_transcript_ss])
+          field_settings = Organization.field_list_with_options[:has_transcript_ss]
+          field_settings[:label] = @resource_fields[system_name]['label'] if @resource_fields[system_name].present?
+          @blacklight_config.add_facet_field('has_transcript_ss', field_settings)
           next
         end
         if system_name == 'has_index'
-          @blacklight_config.add_facet_field('has_index_ss', Organization.field_list_with_options[:has_index_ss])
+          field_settings = Organization.field_list_with_options[:has_index_ss]
+          field_settings[:label] = @resource_fields[system_name]['label'] if @resource_fields[system_name].present?
+          @blacklight_config.add_facet_field('has_index_ss', field_settings)
           next
         end
         if single_collection_field['is_default'].to_s.to_boolean?
-
           default_field_info = Organization.field_list_with_options[system_name.to_sym]
           next unless default_field_info.present?
           field_settings = default_field_info.slice(:label, :single, :helper_method, :tag, :ex, :partial, :range)
-
+          field_settings[:label] = @resource_fields[system_name]['label'] if @resource_fields[system_name].present?
           @blacklight_config.add_facet_field(default_field_info[:key], field_settings)
         else
           solr_search_management = SolrSearchManagement.new

@@ -35,10 +35,7 @@ class TranscriptsController < ApplicationController
           transcript.update(is_caption: params['access_type'] == 'yes')
         end
       end
-      render json: { message: t('updated_successfully'),
-                     errors: false,
-                     status: 'success',
-                     action: 'bulk_file_transcript_edit' }
+      format.json { render json: { message: t('updated_successfully'), errors: false, status: 'success', action: 'bulk_file_transcript_edit' } }
     end
   end
 

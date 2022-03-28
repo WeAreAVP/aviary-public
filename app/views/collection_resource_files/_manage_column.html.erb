@@ -73,8 +73,8 @@
                         <% if CollectionResourceFile.fields_values[value['value']].present? %>
                           <li id="<%= value['value'] %>" class="sortable-li">
                             <div class="form-check m-0 d-inline-block">
-                              <label for="<%= value['value'] %>">
-                                <input id="<%= value['value'] %>" data-value='' class=" all_fields_search_identifier ml-5px" type="checkbox" <%= !value['status'].blank? && value['status'] == 'true' ? 'checked' : '' %>/>
+                              <label for="<%= value['value'] %>_search_status">
+                                <input id="<%= value['value'] %>_search_status" data-value='<%= value['value'] %>' class=" all_fields_search_identifier ml-5px" type="checkbox" <%= !value['status'].blank? && value['status'] == 'true' ? 'checked' : '' %>/>
                                 <%= CollectionResourceFile.fields_values[value['value']] %>
                                 <span class="icon-check"></span>
                               </label>

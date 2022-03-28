@@ -71,6 +71,8 @@ height='400' width='1200' style='width: 100%;'></iframe>"
                               " #{button} <textarea class='hide-copy-textarea' id='resource_detail_embed_html_#{resource['id_is']}'>#{iframe}</textarea>"
                             elsif value['value'] == 'duration_ss'
                               resource[value['value']].present? ? time_to_duration(resource[value['value']]) : '00:00:00'
+                            elsif value['value'] == 'collection_title_text'
+                              collection_resource.collection.title
                             else
                               resource[value['value']].present? ? resource[value['value']] : ''
                             end

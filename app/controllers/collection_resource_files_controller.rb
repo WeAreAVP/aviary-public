@@ -27,7 +27,7 @@ class CollectionResourceFilesController < ApplicationController
           file.update(access: params['access_type'])
         end
       end
-      render json: { message: t('updated_successfully'), errors: false, status: 'success' }
+      format.json { render json: { message: t('updated_successfully'), errors: false, status: 'success' } }
     end
   end
 

@@ -15,6 +15,6 @@ class SolrSearchManagement
 
   def select_query(params)
     connect
-    solr_connection.get solr_select_url, params: params
+    solr_connection.post "#{solr_select_url}?#{URI.encode_www_form(params)}"
   end
 end

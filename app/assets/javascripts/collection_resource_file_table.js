@@ -175,7 +175,7 @@ function CollectionResourceFileTable() {
         });
 
         $.each($('.all_fields_search_identifier'), function (index) {
-            data['columns_search_status'][index] = {value: $(this).attr('id'), status: $(this).prop('checked')};
+            data['columns_search_status'][index] = {value: $(this).data('value'), status: $(this).prop('checked')};
         });
 
         that.app_helper.classAction($('#manage_resource_columns_modal').data('url'), data, 'JSON', 'POST', '', that);
