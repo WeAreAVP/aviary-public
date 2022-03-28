@@ -411,24 +411,4 @@ class CollectionResourceFile < ApplicationRecord
       "collection_id_is #{sort_direction}"
     end
   end
-
-  def self.collection_sorter(limit_condition, sort_direction, solr)
-    collections_raw = solr.post "select?#{URI.encode_www_form({ q: '*:*', fq: ['document_type_ss:collection', 'status_ss:active', limit_condition], fl: %w[id_is], sort: 'title_ss desc' })}"
-    response = collections_raw['response'].present? && collections_raw['response']['docs'].present? ? collections_raw['response']['docs'] : nil
-    if response.present? && !response.size.zero?
-      sort = ''
-      total = response.size
-      response.each do |testing|
-        sort += "if(eq(collection_id_is,#{testing['id_is']}), #{total} ,"
-        total -= 1
-      end
-      sort += '0'
-      (1..response.size).each do |_i|
-        sort += ')'
-      end
-      sort.present? ? "#{sort} #{sort_direction}" : "collection_id_is #{sort_direction}"
-    else
-      "collection_id_is #{sort_direction}"
-    end
-  end
 end
