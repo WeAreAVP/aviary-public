@@ -1,13 +1,13 @@
 sudo: true
-dist: bionic
+dist: focal
 language: ruby
 services:
   - redis-server
   - mysql
 jdk:
-  - openjdk8
+  - openjdk11
 rvm:
-  - 2.6.8
+  - 3.1.0
 addons:
   apt:
     packages:
@@ -28,6 +28,5 @@ env:
   - secure: vzd+BkkXxRcLdz9pCVtP03lvbq6QXfAhXFfNb3Aso8gWhvWKJf+15NJ/9RAZsQHFvXjYr3XbdcQLeJlONOEkSbmKCMSadQ/s8jrXkVdF3q8meArIZgGKaMAz/9bfVjPxEjHYIKCqGT67K4STVVl5HYxwheCJ9qaL1V/i/r+L8pzhTdYJNetBTiKl34UiU+kv1a4F6GkgvrjJiD5b7B6t77yuYvoigxqCAv3SHzZwDWcGSLg35Cu1sopPW+VTUy+CaUXvAzG3GD8EYOzTd2aDDG/+HNgl8tPPDWfsJtyEHfGxYuAgXTXmD8qSmKYpHbd4WwDN5XJGcmCTuUwWzQ9seSCMPi88G78W+pU6UWe3FikuKuUKF8NCxUUVhsrqARuBp3NrLIWcZbNLTKFsgzju3yfZmQvHTtdbsOYahW2MXfpz7y4eGChMoaiUfsql7RTxOlTGx0XHVdFe7rR6yum5SWyXGfrN0l6gUmq/Jb4iWJnWdfp4ndETtwwMVylL+9BBNf7Mg9agisq3XOvEC9jMNR74lDecHC3R54XqGiUVKSyF887+AwTMpkmA+lzR7mVr+kuWmtmD0kksZhtQ4a8wx75SsDZpiZeJHTN+wzZ2UVXfFQnzXXV/B4sfhwbwSDtfr+TACUVCxmOUW6oh9VQmKQWlJnTX6iNmGVtqc8QXfGs=
 branches:
   only:
-  - master
-  - staging
-  - development
+  - main
+  - dev
