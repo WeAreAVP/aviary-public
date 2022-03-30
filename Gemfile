@@ -10,7 +10,7 @@ group :development, :production do
   gem 'mysql2', '~> 0.5'
 end
 # Use Puma as the app server
-gem 'puma', '~> 5.0'
+gem 'puma', '~> 5.6'
 # Use SCSS for stylesheets
 
 gem 'sass-rails', '>= 6'
