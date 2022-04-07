@@ -67,7 +67,7 @@
               <span id="deselect_all" class="playlist_actions" data-type="deselect"> Deselect All</span>
               <% if request.path.include?("myresources/listing") %>
                 <a href="javascript:void(0)" id="export_to_resource_list" class="btn btn-light playlist_actions ml-2" data-url="<%= download_myresources_path %>">
-                    <span class="fa fa-download"></span> Export Resources
+                    <span class="fa fa-download"></span> Export Citations
                     (<span id="number_of_selected_resources" class="grey"><%= session['search_playlist_id'].present? ? session['search_playlist_id'].size : 0 %></span>)</a>
               <% end %>
               <% if current_organization.present? && current_user_is_org_user?(current_organization) && !request.path.include?("myresources/listing") %>
