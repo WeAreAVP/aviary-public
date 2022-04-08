@@ -2,7 +2,7 @@
   <div class="custom-checkbox">
     <% checked = @collection_resource.collection.enable_itc_autoscroll ? 'checked="checked"' : '' %>
     <input type="checkbox" class="checkbox index-trance-checkbox" id="index-auto-scroll" <%= checked %>/>
-    <label for="index-auto-scroll">Auto Scroll with Media</label>
+    <label tabindex="0" for="index-auto-scroll">Auto Scroll with Media</label>
   </div>
 </div>
 <div class="grey-box custom_form">
