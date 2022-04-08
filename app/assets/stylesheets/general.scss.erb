@@ -489,6 +489,11 @@ a:hover,
   opacity: 0;
 }
 
+[type="checkbox"]:checked:focus + label,
+[type="checkbox"]:not(:checked):focus + label {
+  outline: -webkit-focus-ring-color auto 1px;
+}
+
 .custom-checkbox label {
   display: inline-block;
   vertical-align: middle;
