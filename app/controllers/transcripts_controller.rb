@@ -28,17 +28,14 @@ class TranscriptsController < ApplicationController
         FileTranscript.where(id: session[:file_transcript_bulk_edit]).each(&:destroy)
       elsif params['check_type'] == 'change_status'
         FileTranscript.where(id: session[:file_transcript_bulk_edit]).each do |transcript|
-          transcript.update(is_public: params['access_type'] == 'yes')
+          transcript.update(is_public: params['access_type'].to_i)
         end
       elsif params['check_type'] == 'transcript_caption'
         FileTranscript.where(id: session[:file_transcript_bulk_edit]).each do |transcript|
-          transcript.update(is_caption: params['access_type'] == 'yes')
+          transcript.update(is_caption: params['caption'].to_i)
         end
       end
-      render json: { message: t('updated_successfully'),
-                     errors: false,
-                     status: 'success',
-                     action: 'bulk_file_transcript_edit' }
+      format.json { render json: { message: t('updated_successfully'), errors: false, status: 'success', action: 'bulk_file_transcript_edit' } }
     end
   end
 

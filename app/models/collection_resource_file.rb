@@ -325,6 +325,7 @@ class CollectionResourceFile < ApplicationRecord
     rescue StandardError
       total_response = { 'response' => { 'numFound' => 0 } }
     end
+<<<<<<< HEAD
     if sort_column.to_s == 'collection_title_text'
 
       collections_raw = solr.post "select?#{URI.encode_www_form({ q: '*:*', fq: ['document_type_ss:collection', 'status_ss:active', limit_condition], fl: %w[id_is], sort: 'title_ss desc' })}"
@@ -349,6 +350,13 @@ class CollectionResourceFile < ApplicationRecord
     end
 
     query_params[:sort] = "#{sort_column} #{sort_direction}" if sort_column.present? && sort_direction.present?
+=======
+    query_params[:sort] = if sort_column.to_s == 'collection_title_text'
+                            CollectionResourceFile.collection_sorter(limit_condition, sort_direction, solr)
+                          elsif sort_column.present? && sort_direction.present?
+                            "#{sort_column} #{sort_direction}"
+                          end
+>>>>>>> 6af51ce883d0d9e88fa2ca2cc5568df30efb82a9
     if export_and_current_organization[:export]
       query_params[:start] = 0
       query_params[:rows] = 100_000_000

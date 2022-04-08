@@ -1,6 +1,9 @@
 <% if featured_collections.present? %>
   <div class="home-featured-collections row">
     <% featured_collections.includes([:organization]).each do |collection| %>
+      <% organization_field_manager = Aviary::FieldManagement::OrganizationFieldManager.new
+         collection_fields = organization_field_manager.organization_field_settings(collection.organization, nil, 'collection_fields', 'sort_order')
+         collection_fields_and_value = collection.collection_fields_and_value %>
       <div class="col-lg-4 col-md-6 col-sm-6 col-xs-12">
         <div class="box <%= 'featured' if collection.is_featured %>">
 
@@ -31,31 +34,24 @@
                     <li><strong>Description</strong>
                       <div><%= collection.about.try(:html_safe) %></div>
                     </li>
-                    <%
-                      is_recorded = [] %>
-                    <% collection.all_fields["Collection"].each do |single_value| %>
-                      <% init_is_recorded = false %>
-                      <% single_value['values'].each do |value|  %>
-                        <% if value['value'].present? %>
-                          <% unless init_is_recorded %>
-                            <% is_recorded[single_value['field'].id] ||= { label: nil, value: [] } %>
-                            <% is_recorded[single_value['field'].id][:label] = single_value['field'].label %>
-                          <% init_is_recorded = true
-                             end %>
-                          <% is_recorded[single_value['field'].id][:value] << value['value'].html_safe %>
+                    <% if collection_fields.present? %>
+                      <% collection_fields.each_with_index do |(_system_name, single_collection_field), _index| %>
+                        <% next unless single_collection_field['display'].to_s.to_boolean? %>
+                        <% value = '' %>
+
+                        <% if collection_fields_and_value.present? && collection_fields_and_value.collection_field_values.present? && collection_fields_and_value.collection_field_values[single_collection_field['system_name']].present? && collection_fields_and_value.collection_field_values[single_collection_field['system_name']]['values'].present? %>
+                          <% collection_fields_and_value.collection_field_values[single_collection_field['system_name']]['values'].each do |single_value| %>
+                            <% value += single_value['value'] %>
+                          <% end %>
+                          <% if value.present? %>
+                            <li>
+                              <strong><%= single_collection_field['label'] %></strong>
+                              <div class="main">
+                                <div> <%= value.html_safe %>  </div>
+                              </div>
+                            </li>
+                          <% end %>
                         <% end %>
-                      <% end %>
-                    <% end %>
-                    <% is_recorded.each do |single_values| %>
-                      <% if single_values.present? %>
-                        <li>
-                          <strong><%= single_values[:label] %></strong>
-                          <div class="main">
-                            <% single_values[:value].each do |single_values| %>
-                              <div><%= single_values.html_safe %></div>
-                            <% end %>
-                          </div>
-                        </li>
                       <% end %>
                     <% end %>
                   </ul>
