@@ -63,7 +63,7 @@
           </div>
         </div>
         <% if @myresource_list.present? && !@myresource_list[document['id_is']].blank? %>
-          <div style="display: block;vertical-align: middle;height: 30px;" class="main-hold">
+          <div style="display: block;vertical-align: middle;height: 30px;margin-bottom: 5px;vertical-align: middle;" class="main-hold">
           <strong>Note:</strong> <span id="myresource_list_note_<%=document['id_is']%>" data-update="<%= @myresource_list[document['id_is']]['updated_at'] %>"><%= @myresource_list[document['id_is']]['note'] %></span>
           </div>
         <% end %>
