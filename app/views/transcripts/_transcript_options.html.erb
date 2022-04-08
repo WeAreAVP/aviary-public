@@ -2,7 +2,7 @@
   <div class="custom-checkbox custom-checkbox d-inline-block mr-3">
     <% checked = @collection_resource.collection.enable_itc_autoscroll ? 'checked="checked"' : '' %>
     <input type="checkbox" class="checkbox index-trance-checkbox" id="transcript-auto-scroll" <%= checked %>/>
-    <label for="transcript-auto-scroll">Auto Scroll with Media</label>
+    <label tabindex="0" for="transcript-auto-scroll">Auto Scroll with Media</label>
   </div>
   <div class="custom-checkbox custom-checkbox mr-3 transcript_enable_annotation_section d-none">
 
