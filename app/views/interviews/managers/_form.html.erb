@@ -1,4 +1,4 @@
-<%= simple_form_for @interview, :url => @interview.new_record? ? interviews_managers_path : interviews_manager_path(@interview), html: { class: "interview_manager" } do |f| %>
+<%= simple_form_for @interview, :url => @interview.new_record? ? ohms_records_path : interviews_manager_path(@interview), html: { class: "interview_manager" } do |f| %>
   <div class="row ">
     <div class="breadcrumb mt-4 mb-3">
       <%= render_breadcrumbs %>
@@ -23,7 +23,7 @@
             </div>
             <div class="d-flex align-items-center">
               <div class="btn-group">
-                <%= link_to 'Return To Interviews', interviews_managers_path, class: 'btn btn-outline-secondary' %>
+                <%= link_to 'Return To OHMS Studio', ohms_records_path, class: 'btn btn-outline-secondary' %>
               </div>
               <%= f.submit 'Save', class: 'btn btn-success ml-3' %>
             </div>
@@ -344,7 +344,7 @@
 
   <div class="row mt-4">
     <div class="col-md-12 text-right">
-      <%= link_to 'Return To Interviews', interviews_managers_path, class: 'btn btn-outline-secondary mr-2' %>
+      <%= link_to 'Return To OHMS Studio', ohms_records_path, class: 'btn btn-outline-secondary mr-2' %>
       <%= f.submit 'Save', class: 'btn btn-success' %>
     </div>
   </div>

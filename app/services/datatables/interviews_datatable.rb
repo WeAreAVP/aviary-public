@@ -4,7 +4,7 @@
 # Copyright (C) 2019 Audio Visual Preservation Solutions, Inc.
 class InterviewsDatatable < ApplicationDatatable
   delegate :can?, :interviews_manager_path, :interviews_list_notes_path, :interviews_update_note_path, :interviews_transcript_path,
-           :interviews_interview_index_path, :edit_interviews_manager_path, :preview_interviews_manager_path, :export_interviews_manager_path, :sync_interviews_manager_path, :check_valid_array, :bulk_resource_list_interviews_managers_path, to: :@view
+           :ohms_index_path, :ohms_records_edit_path, :preview_interviews_manager_path, :export_interviews_manager_path, :sync_interviews_manager_path, :check_valid_array, :bulk_resource_list_interviews_managers_path, to: :@view
 
   def initialize(view, current_organization = nil)
     @view = view
@@ -46,6 +46,9 @@ class InterviewsDatatable < ApplicationDatatable
         'none'
       end
     elsif value['value'] == 'interview_status_ss'
+      if resource['interview_status_ss'] == 'In Progress'
+        resource['interview_status_ss'] = 'In Process'
+      end
       "<span style='#{resource['interview_color_ss']}'>  #{resource['interview_status_ss'].present? ? resource['interview_status_ss'] : ' None '}</span>"
     elsif value['value'] == 'created_at_is'
       Time.at(resource[value['value']]).to_date
@@ -81,10 +84,10 @@ class InterviewsDatatable < ApplicationDatatable
     color_metadata = this_interview.try(:interview_metadata_status)
     index_color_metadata = this_interview.try(:index_status)
     html = '<div class="d-flex align-items-center"><div class="action-btn-holder btn-group">'
-    html += link_to 'Metadata', edit_interviews_manager_path(interview['id_is']), class: 'btn-interview btn-sm btn-link', style: color_metadata.to_s, data: {
+    html += link_to 'Metadata', ohms_records_edit_path(interview['id_is']), class: 'btn-interview btn-sm btn-link', style: color_metadata.to_s, data: {
       toggle: 'tooltip', placement: 'top', title: (this_interview.present? ? this_interview.listing_metadata_status[this_interview.metadata_status.to_s] : '')
     }
-    html += link_to 'Index', interviews_interview_index_path(interview['id_is']), class: 'btn-interview btn-sm btn-link', style: this_interview.color_grading_index[index_color_metadata.to_s], data: {
+    html += link_to 'Index', ohms_index_path(interview['id_is']), class: 'btn-interview btn-sm btn-link', style: this_interview.color_grading_index[index_color_metadata.to_s], data: {
       toggle: 'tooltip', placement: 'top', title: (this_interview.present? ? this_interview.listing_metadata_index_status[this_interview.index_status.to_s] : '')
     }
 
