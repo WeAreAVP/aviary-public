@@ -24,7 +24,7 @@ module Interviews
       transcript_available = true
 
       color = color_grading['0']
-      process_status = 'In Progress'
+      process_status = 'In Process'
 
       case metadata_status.to_s
       when '4'
@@ -35,7 +35,7 @@ module Interviews
           color = color_grading['3']
           process_status = 'Completed'
         else
-          process_status = 'In Progress'
+          process_status = 'In Process'
           color = color_grading['0']
         end
       when '-1', ''

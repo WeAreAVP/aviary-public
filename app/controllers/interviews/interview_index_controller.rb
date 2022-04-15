@@ -73,14 +73,14 @@ module Interviews
             @file_index_point_alt.start_time = start_time.to_f
             @file_index_point_alt = set_custom_values(@file_index_point_alt, '_alt', params)
             if @file_index_point_alt.save
-              format.html { redirect_to "#{interviews_interview_index_path(@file_index.interview_id)}?time=#{start_time}", notice: 'Interview Index was successfully updated.' }
+              format.html { redirect_to "#{ohms_records_path(@file_index.interview_id)}?time=#{start_time}", notice: 'Interview Index was successfully updated.' }
               format.json { render :show, status: :created, location: @file_index }
             else
               format.html { render :new }
               format.json { render json: @file_index_point.errors, status: :unprocessable_entity }
             end
           else
-            format.html { redirect_to "#{interviews_interview_index_path(@file_index.interview_id)}?time=#{start_time}", notice: 'Interview Index was successfully updated.' }
+            format.html { redirect_to "#{ohms_records_path(@file_index.interview_id)}?time=#{start_time}", notice: 'Interview Index was successfully updated.' }
             format.json { render :show, status: :created, location: @file_index }
           end
         else
@@ -103,7 +103,7 @@ module Interviews
       end
       file_index = FileIndex.find(file_index_point.file_index_id)
       respond_to do |format|
-        format.html { redirect_to interviews_interview_index_path(file_index.interview_id), notice: 'The interview index you selected has been deleted successfully.' }
+        format.html { redirect_to ohms_records_path(file_index.interview_id), notice: 'The interview index you selected has been deleted successfully.' }
       end
     end
 
@@ -134,7 +134,7 @@ module Interviews
             @file_index_point_alt.start_time = start_time.to_f
             @file_index_point_alt = set_custom_values(@file_index_point_alt, '_alt', params)
             if @file_index_point_alt.save
-              format.html { redirect_to "#{interviews_interview_index_path(@file_index.interview_id)}?time=#{start_time}", notice: 'Interview Index was successfully created.' }
+              format.html { redirect_to "#{ohms_records_path(@file_index.interview_id)}?time=#{start_time}", notice: 'Interview Index was successfully created.' }
               format.json { render :show, status: :created, location: @file_index_point }
             else
               format.html { render :new }
@@ -142,7 +142,7 @@ module Interviews
             end
 
           else
-            format.html { redirect_to "#{interviews_interview_index_path(@file_index.interview_id)}?time=#{start_time}", notice: 'Interview Index was successfully created.' }
+            format.html { redirect_to "#{ohms_records_path(@file_index.interview_id)}?time=#{start_time}", notice: 'Interview Index was successfully created.' }
             format.json { render :show, status: :created, location: @file_index_point }
           end
 

@@ -54,6 +54,13 @@ Rails.application.routes.draw do
 
     get '/', to: 'users#index'
   end
+  get 'ohms_records', to: 'interviews/managers#index', as: :ohms_records
+  post 'ohms_records', to: 'interviews/managers#create', as: :ohms_records_create
+  get 'ohms_records/:id/edit', to: 'interviews/managers#edit', as: :ohms_records_edit
+  get 'ohms_records/new', to: 'interviews/managers#new', as: :ohms_records_new
+  get 'ohms_records/ohms_index/:id', to: 'interviews/interview_index#show', as: :ohms_index
+  get 'ohms_records/ohms_index/:id/edit', to: 'interviews/interview_index#edit', as: :ohms_index_edit
+  get 'ohms_records/ohms_index/new/:id', to: 'interviews/interview_index#new', as: :ohms_index_new
   namespace :interviews do
     resources :managers do
       collection do

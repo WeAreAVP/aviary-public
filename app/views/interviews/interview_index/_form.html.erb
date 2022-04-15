@@ -14,7 +14,7 @@
         <div class="button-holder text-right pt-2">
           <div class="btn-group">
             <% if @interview.present? %>
-              <%= link_to 'Return To Interviews', interviews_managers_path, class: 'btn btn-outline-secondary' %>
+              <%= link_to 'Return To OHMS Studio', ohms_records_path, class: 'btn btn-outline-secondary' %>
               <%= link_to 'Return To Index', interviews_interview_index_path(@interview.id), class: 'btn btn-outline-secondary' %>
             <% else %>
               <%= link_to 'Return To Resource', "#{collection_collection_resource_details_url(@collection_resource.collection, @collection_resource, @resource_file)}/index?", class: 'btn btn-primary' %>
@@ -25,7 +25,6 @@
               <% end %>
             <% end %>
           </div>
-          <%= f.submit 'Save', class: 'btn btn-success ml-2' %>
         </div>
       </div>
     </div>
@@ -65,6 +64,9 @@
       </div>
     </div>
   <div class="col-md-6 video-box-section">
+    <div class="save_btn">
+      <%= f.submit 'Save', class: 'btn btn-success' %>
+    </div>
     <%= render 'interviews/interview_index/top' %>
   </div>
   </div>

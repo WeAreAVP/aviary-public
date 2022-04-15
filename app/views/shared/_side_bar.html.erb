@@ -120,7 +120,7 @@
                         <div class="card <%= disabled_organization_cls %>">
                           <div class="card-header headingOne">
                             <h5 class="mb-0">
-                              <button onclick="document.location.href='<%= interviews_managers_path %>'" class="btn btn-link  no_sub_colaps" data-toggle="collapse" aria-expanded="<%= (params[:controller] == 'ohms_integrations' ? 'active' : '') != '' ? 'true' : '' %>" aria-controls="collapse">
+                              <button onclick="document.location.href='<%= ohms_records_path %>'" class="btn btn-link  no_sub_colaps" data-toggle="collapse" aria-expanded="<%= (params[:controller] == 'ohms_integrations' ? 'active' : '') != '' ? 'true' : '' %>" aria-controls="collapse">
                                 <div class="nav-box">
                                   <span class="ico" data-toggle="tooltip" data-placement="right" title="Authentication Configuration"><%= image_tag 'icons/integration.png' %></span>
                                   <span class="title">OHMS Studio</span>
