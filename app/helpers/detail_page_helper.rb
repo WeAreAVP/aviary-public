@@ -314,7 +314,7 @@ module DetailPageHelper
       counts[query_string] ||= {}
       counts[query_string]['Title'] ||= 0
       [description_search_fields, index_search_fields, transcript_search_fields].reduce([], :concat).each do |values|
-        title = values.to_s.sub(/^description_/, '').sub(/(_search|_text)/, '').sub(/_(texts|lms|is|ds|sms|ss)$/, '')
+        title = values.to_s.sub(/^description_/, '').sub(/_(texts|lms|is|ds|sms|ss)$/, '').sub(/_(search|text|search_|text_)/, '')
         if current_organization.present?
           resource_field_settings = current_organization.organization_field.resource_fields
           title = resource_field_settings[title].present? ? resource_field_settings[title]['label'] : regular_title(title)
