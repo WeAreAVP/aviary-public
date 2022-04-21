@@ -1,5 +1,11 @@
 <div class="public_access custom_form">
-
+  <div class='shareModal'>
+    <div class="content p-0">
+      <span class="public-access-url text-info w-100">
+      <b>Warning:</b> Anyone on the Internet with a Resource Public Access link will be able to view this resource, its media files, indexes, transcripts, and supplemental files.
+      </span>
+    </div>
+  </div>
   <input type='hidden' data-resoruceid=<%= collection_resource.id %> data-url='<%= encrypted_info_url %>' id='url_encryption' class='form-control'/>
 
   <% if @public_access_url.present? %>
