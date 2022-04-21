@@ -346,7 +346,7 @@ module DetailPageHelper
 
   def regular_title(title)
     title = title.titleize
-    %w[Description Keywords Subjects Synopsis Subjects Speaker Script Partial Point Body Content].each do |single_word|
+    %w[Keywords Subjects Synopsis Subjects Speaker Script Partial Point Body Content].each do |single_word|
       title = title.sub! single_word, '' if title.include?(single_word)
     end
     title
