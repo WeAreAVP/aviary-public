@@ -3038,20 +3038,57 @@ ul {
 }
 
 .main_sidebar .sidebar-logo {
-  text-align: center;
-  margin-top: 25px;
-  margin-bottom: 25px;
-
-  img {
-    height: 35px;
+  text-align: left;
+  padding: 13px 29px 5px 25px;
+  margin: 0 0 15px -15px;
+  background: #ffffff;
+  border-radius: 0 25px 25px 0;
+  display: inline-block;
+  box-shadow: 0 2px 20px #e6eaed;
+  a {
+    display: inline-block;
+    height: 25px;
   }
-}
-
-.main_collapsed .sidebar-logo {
   img {
     height: 25px;
   }
 }
+
+.not-collapsed {
+  .main_sidebar {
+    .ohms-nav-top {
+      .card-header {
+        button {
+          padding: 0 !important;
+          &:after {
+            top: 15px !important
+          }
+          .nav-box {
+            border: 1px solid #ddd;
+            margin: 0;
+            border-radius: 4px !important;
+            padding: 10px 15px !important;
+          }
+          &.collapsed {
+            .nav-box {
+              margin-bottom: 15px;
+            }
+          }
+        }
+      }
+    }
+    .ohms-nav-body {
+      #accordion {
+        .nav-box {
+          margin: 0;
+          padding: 5px 0 !important;
+        }
+      }
+    }
+  }
+}
+
+
 
 .nav-overlay {
   position: absolute;

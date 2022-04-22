@@ -349,6 +349,7 @@
 .not-collapsed .main_sidebar {
     width: 250px;
     height: 100%;
+    padding-bottom: 30px;
 }
 
 .main_sidebar .card-header button.collapsed:after {
