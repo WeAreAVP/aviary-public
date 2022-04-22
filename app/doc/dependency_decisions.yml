@@ -1,0 +1,116 @@
+---
+- - :permit
+  - MIT
+  - :who:
+    :why:
+    :versions: []
+    :when: 2022-04-19 12:19:34.791861000 Z
+- - :permit
+  - BSD 3-Clause
+  - :who:
+    :why:
+    :versions: []
+    :when: 2022-04-19 12:38:22.853019000 Z
+- - :permit
+  - Apache 2.0
+  - :who:
+    :why:
+    :versions: []
+    :when: 2022-04-19 12:39:08.974532000 Z
+- - :permit
+  - Simplified BSD
+  - :who:
+    :why:
+    :versions: []
+    :when: 2022-04-19 12:39:49.097267000 Z
+- - :permit
+  - New BSD
+  - :who:
+    :why:
+    :versions: []
+    :when: 2022-04-19 12:40:46.670483000 Z
+- - :permit
+  - 2-clause BSDL
+  - :who:
+    :why:
+    :versions: []
+    :when: 2022-04-19 12:40:57.584682000 Z
+- - :permit
+  - Mozilla Public License 2.0
+  - :who:
+    :why:
+    :versions: []
+    :when: 2022-04-19 12:41:10.209102000 Z
+- - :permit
+  - Unlicense
+  - :who:
+    :why:
+    :versions: []
+    :when: 2022-04-19 12:41:59.453563000 Z
+- - :permit
+  - Apache
+  - :who:
+    :why:
+    :versions: []
+    :when: 2022-04-19 12:44:01.213695000 Z
+- - :permit
+  - Apache License (2.0)
+  - :who:
+    :why:
+    :versions: []
+    :when: 2022-04-19 12:44:15.566247000 Z
+- - :permit
+  - ruby
+  - :who:
+    :why:
+    :versions: []
+    :when: 2022-04-19 12:45:01.564668000 Z
+- - :permit
+  - GPL-2.0
+  - :who:
+    :why:
+    :versions: []
+    :when: 2022-04-20 07:24:04.540771000 Z
+- - :permit
+  - LGPL
+  - :who:
+    :why:
+    :versions: []
+    :when: 2022-04-20 07:24:11.695842000 Z
+- - :permit
+  - WTFPL
+  - :who:
+    :why:
+    :versions: []
+    :when: 2022-04-20 07:24:16.833293000 Z
+- - :permit
+  - ISC
+  - :who:
+    :why:
+    :versions: []
+    :when: 2022-04-20 07:24:22.129760000 Z
+- - :permit
+  - LGPL-2.1
+  - :who:
+    :why:
+    :versions: []
+    :when: 2022-04-20 07:24:27.048130000 Z
+- - :permit
+  - zlib/libpng license
+  - :who:
+    :why:
+    :versions: []
+    :when: 2022-04-20 07:24:44.620315000 Z
+- - :license
+  - bootstrap-daterangepicker-rails
+  - Apache License (2.0)
+  - :who:
+    :why:
+    :versions: []
+    :when: 2022-04-20 08:44:22.419768000 Z
+- - :ignore
+  - best_in_place
+  - :who:
+    :why:
+    :versions: []
+    :when: 2022-04-20 08:44:46.528467000 Z
