@@ -3,7 +3,7 @@
 # Aviary is an audiovisual content publishing platform with sophisticated features for search and permissions controls.
 # Copyright (C) 2019 Audio Visual Preservation Solutions, Inc.
 class CollectionsController < ApplicationController
-  before_action :set_collection, only: %I[edit update destroy]
+  before_action :set_collection, only: %I[edit update destroy reset_default_tombstone_fields]
   before_action :authenticate_user!, except: :show
   load_and_authorize_resource except: :show
   include Aviary::BulkOperation
@@ -165,6 +165,24 @@ class CollectionsController < ApplicationController
   def update_sort_fields
     FieldSettingsJob.perform_later(@collection, params['collection_resource_field'].values, 'CollectionResource')
     render json: { status: 'success' }
+  end
+
+  def reset_default_tombstone_fields
+    authorize! :manage, @collection
+    fields = {}
+    @collection.collection_fields_and_value.resource_fields.each do |system_name, single_collection_field|
+      single_collection_field['tombstone'] = if %w[date agent description].include?(system_name)
+                                               true
+                                             else
+                                               false
+                                             end
+      fields[system_name] = single_collection_field
+    end
+    if @collection.collection_fields_and_value.update!({ resource_fields: fields })
+      render json: { status: 'success', msg: 'Tombstone fields updated successfully' }
+    else
+      render json: { status: 'danger', msg: 'Unable to update tombstone fields' }
+    end
   end
 
   def delete_custom_meta_fields

@@ -36,26 +36,30 @@
                     <%= data_hash["organization_title"] %>
                   </span>
                 </dd>
-                <% data_hash["fields"].compact.each do |key, value| %>
-                  <% value.each do |h_k, h_v| %>
-                    <% if h_v.first["is_tombstone"] && h_v.first["is_visible"] %>
-                      <dt><%= h_k.titleize %>:</dt>
-                      <dd class="with-select">
-                        <div class="tombstone-main_cus">
-                          <% h_v.last.each do |k, v| %>
-                            <div class="single-value single-tombstone">
-                              <% if k["is_vocabulary"] %>
-                                <span class="badge badge-secondary"><%= k["vocabulary_value"] %></span>
-                              <% end %>
-                              <% if h_k == 'language' %>
-                                <span class="single_value"><%= languages_array_simple[0][k["value"]] %> </span>
-                              <% else %>
-                                <span class="single_value"><%= k["value"] %> </span>
-                              <% end %>
-                            </div>
-                          <% end %>
-                        </div>
-                      </dd>
+                <% if data_hash.present? && data_hash["fields"].present? %>
+                  <% data_hash["fields"].compact.each do |key, value| %>
+                    <% next if value.is_a?(String) %>
+                    <% value.each do |h_k, h_v| %>
+                      <% byebug %>
+                      <% if h_v.first["is_tombstone"] && h_v.first["is_visible"] %>
+                        <dt><%= h_k.titleize %>:</dt>
+                        <dd class="with-select">
+                          <div class="tombstone-main_cus">
+                            <% h_v.last.each do |k, v| %>
+                              <div class="single-value single-tombstone">
+                                <% if k["is_vocabulary"] %>
+                                  <span class="badge badge-secondary"><%= k["vocabulary_value"] %></span>
+                                <% end %>
+                                <% if h_k == 'language' %>
+                                  <span class="single_value"><%= languages_array_simple[0][k["value"]] %> </span>
+                                <% else %>
+                                  <span class="single_value"><%== k["value"] %> </span>
+                                <% end %>
+                              </div>
+                            <% end %>
+                          </div>
+                        </dd>
+                      <% end %>
                     <% end %>
                   <% end %>
                 <% end %>

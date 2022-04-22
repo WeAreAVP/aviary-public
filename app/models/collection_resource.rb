@@ -295,7 +295,7 @@ class CollectionResource < ApplicationRecord
     resource_columns_collection.each_with_index do |(system_name, single_collection_field), _index|
       fields << system_name if single_collection_field['tombstone'].to_s.to_boolean?
     end
-    fields = %w[agent date duration] if fields.length.zero?
+    fields = %w[agent date description] if fields.length.zero?
     fields
   end
 
