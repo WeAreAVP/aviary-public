@@ -108,7 +108,7 @@ module Interviews
       end
       file_index = FileIndex.find(file_index_point.file_index_id)
       respond_to do |format|
-        format.html { redirect_to ohms_records_path(file_index.interview_id), notice: 'The interview index you selected has been deleted successfully.' }
+        format.html { redirect_to ohms_index_path(file_index.interview_id), notice: 'The interview index you selected has been deleted successfully.' }
       end
     end
 
