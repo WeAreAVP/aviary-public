@@ -60,7 +60,7 @@ module Interviews
       if params['check_type'] == 'bulk_delete'
         Interviews::Interview.where(id: session[:interview_bulk]).each(&:destroy) if session[:interview_bulk].present?
         respond_to do |format|
-          format.html { redirect_to interviews_managers_path, notice: t('updated_successfully') }
+          format.html { redirect_to ohms_records_path, notice: t('updated_successfully') }
         end
       elsif params['check_type'] == 'download_xml'
         self.tmp_user_folder = "tmp/archive_#{current_user.id}_#{Time.now.to_i}"
@@ -165,14 +165,14 @@ module Interviews
 
       if error_messages.any?
         respond_to do |format|
-          format.any { redirect_to interviews_managers_path, notice: 'Something went wrong. Please try again later.' }
+          format.any { redirect_to ohms_records_path, notice: 'Something went wrong. Please try again later.' }
         end
       else
         file_name = interview.miscellaneous_ohms_xml_filename.empty? ? interview.title : interview.miscellaneous_ohms_xml_filename
 
         respond_to do |format|
           format.xml { send_data(export_text.to_xml, filename: "#{file_name}.xml") }
-          format.any { redirect_to interviews_managers_path, notice: 'Not a valid URL.' }
+          format.any { redirect_to ohms_records_path, notice: 'Not a valid URL.' }
         end
       end
     end
@@ -185,7 +185,7 @@ module Interviews
       @interview.organization = current_organization
       respond_to do |format|
         if @interview.save
-          format.html { redirect_to interviews_managers_path, notice: 'Interview was successfully created.' }
+          format.html { redirect_to ohms_records_path, notice: 'Interview was successfully created.' }
           format.json { render :show, status: :created, location: @interview }
         else
           format.html { render :new }
@@ -200,7 +200,7 @@ module Interviews
       authorize! :manage, current_organization
       respond_to do |format|
         if @interview.update(interview_params)
-          format.html { redirect_to interviews_managers_path, notice: 'Interview was successfully updated.' }
+          format.html { redirect_to ohms_records_path, notice: 'Interview was successfully updated.' }
           format.json { render :show, status: :ok, location: @interview }
         else
           format.html { render :edit }
@@ -215,7 +215,7 @@ module Interviews
       authorize! :manage, current_organization
       @interview.destroy
       respond_to do |format|
-        format.html { redirect_to interviews_managers_path, notice: 'Interview was successfully destroyed.' }
+        format.html { redirect_to ohms_records_path, notice: 'Interview was successfully destroyed.' }
         format.json { head :no_content }
       end
     end

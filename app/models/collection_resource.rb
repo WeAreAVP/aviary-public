@@ -348,7 +348,7 @@ class CollectionResource < ApplicationRecord
   end
 
   def self.fetch_collections(export_and_current_organization, solr)
-    collections_raw = solr.get 'select', params: { q: '*:*',  start: 0, rows: 1000, fq: ['document_type_ss:collection', 'status_ss:active', "organization_id_is:#{export_and_current_organization[:current_organization].id}"], fl: %w[id_is title_ss] }
+    collections_raw = solr.post "select?#{URI.encode_www_form({ q: '*:*', start: 0, rows: 1000, fq: ['document_type_ss:collection', 'status_ss:active', "organization_id_is:#{export_and_current_organization[:current_organization].id}"], fl: %w[id_is title_ss] })}"
     collections = {}
     collections_raw['response']['docs'].each do |single_collection|
       collections[single_collection['id_is'].to_s] = single_collection['title_ss']
@@ -495,7 +495,7 @@ class CollectionResource < ApplicationRecord
     query_params = { q: solr_q_condition, fq: filters.flatten }
     query_params[:defType] = 'complexphrase' if complex_phrase_def_type
     query_params[:wt] = 'json'
-    total_response = Curl.post(select_url, query_params)
+    total_response = Curl.post(select_url, URI.encode_www_form(query_params))
 
     begin
       total_response = JSON.parse(total_response.body_str)
@@ -520,7 +520,7 @@ class CollectionResource < ApplicationRecord
       query_params[:start] = (page - 1) * per_page
       query_params[:rows] = per_page
     end
-    response = Curl.post(select_url, query_params)
+    response = Curl.post(select_url, URI.encode_www_form(query_params))
     begin
       response = JSON.parse(response.body_str)
     rescue StandardError
@@ -605,7 +605,7 @@ class CollectionResource < ApplicationRecord
     collection_limiter = limit_condition.clone
     collection_limiter.sub! 'collection_id_is', 'id_is'
     collection_title_condition = CollectionResource.search_perp(query, 'collection_title_text')
-    collections_raw = solr.get 'select', params: { q: '*:*', fq: ['document_type_ss:collection', 'status_ss:active', collection_limiter, collection_title_condition], fl: %w[id_is title_ss] }
+    collections_raw = solr.post "select?#{URI.encode_www_form({ q: '*:*', fq: ['document_type_ss:collection', 'status_ss:active', collection_limiter, collection_title_condition], fl: %w[id_is title_ss] })}"
     collections_raw['response']['docs'].each do |single_collection|
       fq_filters_inner = fq_filters_inner + (counter != 0 ? ' OR ' : ' ') + "collection_id_is: #{single_collection['id_is']}"
       counter += 1

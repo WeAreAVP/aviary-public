@@ -19,9 +19,9 @@ class OrganizationsController < ApplicationController
     respond_to do |format|
       format.html
       if current_organization.update(resource_table_column_detail: { number_of_column_fixed: params[:number_of_column_fixed], columns_status: params[:columns_status] }.to_json, resource_table_search_columns: params[:columns_search_status].to_json)
-        render json: { message: t('updated_successfully'), errors: false }
+        format.json { render json: { message: t('updated_successfully'), errors: false } }
       else
-        render json: { message: t('error_update'), errors: true }
+        format.json { render json: { message: t('error_update'), errors: true } }
       end
     end
   end
@@ -31,9 +31,9 @@ class OrganizationsController < ApplicationController
     respond_to do |format|
       format.html
       if current_organization.update(resource_file_display_column: { number_of_column_fixed: params[:number_of_column_fixed], columns_status: params[:columns_status] }.to_json, resource_file_search_column: params[:columns_search_status].to_json)
-        render json: { message: t('updated_successfully'), errors: false, status: 'success' }
+        format.json { render json: { message: t('updated_successfully'), errors: false, status: 'success' } }
       else
-        render json: { message: t('error_update'), errors: true, status: 'danger' }
+        format.json { render json: { message: t('error_update'), errors: true, status: 'danger' } }
       end
     end
   end
@@ -44,9 +44,9 @@ class OrganizationsController < ApplicationController
     respond_to do |format|
       format.html
       if current_organization.update(file_index_display_column: { number_of_column_fixed: params[:number_of_column_fixed], columns_status: params[:columns_status] }.to_json, file_index_search_column: params[:columns_search_status].to_json)
-        render json: { message: t('updated_successfully'), errors: false, status: 'success' }
+        format.json { render json: { message: t('updated_successfully'), errors: false, status: 'success' } }
       else
-        render json: { message: t('error_update'), errors: true, status: 'danger' }
+        format.json { render json: { message: t('error_update'), errors: true, status: 'danger' } }
       end
     end
   end
@@ -56,9 +56,9 @@ class OrganizationsController < ApplicationController
     respond_to do |format|
       format.html
       if current_organization.update(transcript_display_column: { number_of_column_fixed: params[:number_of_column_fixed], columns_status: params[:columns_status] }.to_json, transcript_search_column: params[:columns_search_status].to_json)
-        render json: { message: t('updated_successfully'), errors: false, status: 'success' }
+        format.json { render json: { message: t('updated_successfully'), errors: false, status: 'success' } }
       else
-        render json: { message: t('error_update'), errors: true, status: 'danger' }
+        format.json { render json: { message: t('error_update'), errors: true, status: 'danger' } }
       end
     end
   end

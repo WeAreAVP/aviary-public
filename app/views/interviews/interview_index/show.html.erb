@@ -21,7 +21,7 @@
               <div class="button-holder">
                 <% if @interview.present? %>
                   <%= link_to 'Preview', preview_interviews_manager_path(@interview.id), class: 'btn btn-outline-secondary' %>
-                  <%= link_to 'Return To Interviews', interviews_managers_path, class: 'btn btn-outline-secondary' %>
+                  <%= link_to 'Return To OHMS Studio', ohms_records_path, class: 'btn btn-outline-secondary' %>
                 <% else %>
                   <%= link_to 'Return To Resource', "#{collection_collection_resource_details_url(@collection_resource.collection, @collection_resource, @resource_file)}/index?", class: 'btn btn-outline-secondary mr-1' %>
                 <% end %>
@@ -49,13 +49,13 @@
                         <i class="fa fa-angle-down"></i>
                       </button>
                       <div>
-                        <div class="segment-title"><%= data.title  %> | <%= @file_index_point_alt.present? && !@file_index_point_alt.first.title.blank? ? " #{@file_index_point_alt.first.title}" : "" %></div>
+                        <div class="segment-title"><%= data.title  %> <%= @file_index_point_alt.present? && !@file_index_point_alt.first.title.blank? ? " | #{@file_index_point_alt.first.title}" : "" %></div>
                         <div class="segment-duration"><%= time_to_duration(data.start_time)  %></div>
                       </div>
                       <div class="d-flex">
                         <div class="btn-group">
-                          <a href="<%= @interview.present? ? edit_interviews_interview_index_path(data.id) : edit_index_file_path(@resource_file.id,@file_index.id,data.id) %>?time=<%= data.start_time%>" class="btn btn-outline-dark" ><i class="fa fa-edit"></i></a>
-                          <a href="javascript:void(0);" class="btn btn-outline-danger btn-outline-danger delete_index" data-url= "<%= @interview.present? ? interviews_interview_index_path(data.id) : destroy_index_path(data.id) %>" data-name="<%= data.title%>"><i class="fa fa-trash"></i></a>
+                          <a href="<%= @interview.present? ? ohms_index_edit_path(data.id) : edit_index_file_path(@resource_file.id,@file_index.id,data.id) %>?time=<%= data.start_time%>" class="btn btn-outline-dark" ><i class="fa fa-edit"></i></a>
+                          <a href="javascript:void(0);" class="btn btn-outline-danger btn-outline-danger delete_index" data-url= "<%= @interview.present? ? ohms_index_path(data.id) : destroy_index_path(data.id) %>" data-name="<%= data.title%>"><i class="fa fa-trash"></i></a>
                         </div>
                       </div>
                     </h2>

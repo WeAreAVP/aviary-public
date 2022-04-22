@@ -119,7 +119,7 @@ module Interviews
                  end
       respond_to do |format|
         format.json { render json: { response: response } }
-        format.html { redirect_to interviews_managers_path(param) }
+        format.html { redirect_to ohms_records_path(param) }
       end
     end
 

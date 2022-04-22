@@ -10,8 +10,8 @@ end
 # class Blacklight::Solr::Request
 # TODO: Please review this class thouroughly. The new request.rb has some changes that we might need to bring over here as well. (Refer to the blacklight-7.22.2 request.rb)
 class Blacklight::Solr::Request < ActiveSupport::HashWithIndifferentAccess
-  SINGULAR_KEYS = %w(facet fl q qt rows start spellcheck spellcheck.q sort per_page wt hl group defType).freeze
-  ARRAY_KEYS = %w(facet.field facet.query facet.pivot fq hl.fl).freeze
+  SINGULAR_KEYS = %w[facet fl q qt rows start spellcheck spellcheck.q sort per_page wt hl group defType].freeze
+  ARRAY_KEYS = %w[facet.field facet.query facet.pivot fq hl.fl].freeze
 
   def initialize(constructor = {})
     if constructor.is_a?(Hash)

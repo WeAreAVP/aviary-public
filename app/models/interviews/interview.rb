@@ -24,7 +24,7 @@ module Interviews
       transcript_available = true
 
       color = color_grading['0']
-      process_status = 'In Progress'
+      process_status = 'In Process'
 
       case metadata_status.to_s
       when '4'
@@ -35,7 +35,7 @@ module Interviews
           color = color_grading['3']
           process_status = 'Completed'
         else
-          process_status = 'In Progress'
+          process_status = 'In Process'
           color = color_grading['0']
         end
       when '-1', ''
@@ -389,7 +389,7 @@ module Interviews
       query_params[:defType] = 'complexphrase' if complex_phrase_def_type
       query_params[:wt] = 'json'
 
-      total_response = Curl.post(select_url, query_params)
+      total_response = Curl.post(select_url, URI.encode_www_form(query_params))
 
       begin
         total_response = JSON.parse(total_response.body_str)
@@ -405,7 +405,7 @@ module Interviews
         query_params[:start] = (page - 1) * per_page
         query_params[:rows] = per_page
       end
-      response = Curl.post(select_url, query_params)
+      response = Curl.post(select_url, URI.encode_www_form(query_params))
       begin
         response = JSON.parse(response.body_str)
       rescue StandardError

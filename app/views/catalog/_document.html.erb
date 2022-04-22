@@ -41,20 +41,29 @@
             </div>
           <% end %>
           <div class="collection-org-info">
-            <div class='text-primary mb-0px org-label-search' style="">  <%= document_organization.present? ? document_organization.name : '' %>   </div>
-
+            <div class='text-primary mb-0px org-label-search' style="">
+              <% if document_organization.present? %>
+                <% if request.path.include?("myresources/listing")%>
+                  <a target="_blank" href="<%=root_url(host: Utilities::AviaryDomainHandler.subdomain_handler(document_organization)) %>"> <%= document_organization.name %></a>
+                <% else %>
+                  <%= document_organization.name %>
+                <% end %>
+              <% end %>
+            </div>
 
             <div class='text-primary mb-0px collection-label-search' style="">
               <div class="img-hold d-inline-block float-left mr-5px">
                 <% icon_src = (collection.present? && collection.favicon.present?) ? collection.favicon.url(:small) : image_url('collection_folder_icon.svg') %>
                 <img src="<%= icon_src %>" style="object-fit:contain;width: 18px; height: 18px; -webkit-border-radius: 100%;-moz-border-radius: 100%;border-radius: 100%; overflow: hidden;" alt="collection">
               </div>
-              <%= collection.present? ? collection.title : '' %>
+              <% if collection.present? %>
+                <a target="_blank" href="<%=collection_url(collection, host: Utilities::AviaryDomainHandler.subdomain_handler(collection.organization)) %>"> <%= collection.title %></a>
+              <% end %>
             </div>
           </div>
         </div>
         <% if @myresource_list.present? && !@myresource_list[document['id_is']].blank? %>
-          <div style="display: block;vertical-align: middle;height: 30px;" class="main-hold">
+          <div style="display: block;margin-bottom: 5px;vertical-align: middle;" class="main-hold">
           <strong>Note:</strong> <span id="myresource_list_note_<%=document['id_is']%>" data-update="<%= @myresource_list[document['id_is']]['updated_at'] %>"><%= @myresource_list[document['id_is']]['note'] %></span>
           </div>
         <% end %>

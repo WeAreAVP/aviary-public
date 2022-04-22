@@ -238,7 +238,11 @@ div#noMediaConnection {
       margin-top: 10px;
     }
   }
-
+  .save_btn {
+    position: absolute;
+    bottom: 10px;
+    left: 40px;
+  }
   #media_host {
     width: 80%;
     margin: 0 0 0 auto;
@@ -305,6 +309,10 @@ div#noMediaConnection {
   .top-section-test-interview {
     z-index: 99 !important;
     border-radius: 4px 4px 0 0 !important;
+    .save_btn {
+      left: auto;
+      right: 270px;
+    }
     #media_host {
       width: 45%;
       iframe {
