@@ -164,6 +164,7 @@ Rails.application.routes.draw do
       post :list_resources
       get 'collection_resources/new', to: 'collection_resources#new'
       post :import, to: 'collections#import'
+      get :reset_default_tombstone_fields
     end
     collection do
       get '(/:collection_id)/export', to: 'collections#export', as: :export

@@ -450,6 +450,13 @@ GEM
       addressable (~> 2.7)
     letter_opener (1.7.0)
       launchy (~> 2.2)
+    license_finder (7.0.1)
+      bundler
+      rubyzip (>= 1, < 3)
+      thor (~> 1.2)
+      tomlrb (>= 1.3, < 2.1)
+      with_env (= 1.1.0)
+      xml-simple (~> 1.1.9)
     listen (3.7.0)
       rb-fsevent (~> 0.10, >= 0.10.3)
       rb-inotify (~> 0.9, >= 0.9.10)
@@ -811,6 +818,7 @@ GEM
     timeout (0.2.0)
     tinymce-rails (5.10.2)
       railties (>= 3.1.1)
+    tomlrb (2.0.1)
     treehash (0.0.2)
     turbolinks (5.2.1)
       turbolinks-source (~> 5.2)
@@ -857,9 +865,12 @@ GEM
     webvtt-ruby (0.3.2)
     wicked_pdf (2.1.0)
       activesupport
+    with_env (1.1.0)
     with_model (2.1.5)
       activerecord (>= 5.2)
     wkhtmltopdf-binary (0.12.6.5)
+    xml-simple (1.1.9)
+      rexml
     xpath (3.2.0)
       nokogiri (~> 1.8)
     yomu (0.1.5)
@@ -937,6 +948,7 @@ DEPENDENCIES
   kaminari
   kt-paperclip
   letter_opener
+  license_finder
   listen (~> 3.3)
   maxminddb
   meta-tags

@@ -1766,10 +1766,20 @@ a:hover,
 .search-details .details .text-holder .img-hold {
   width: 18px;
   height: 18px;
+  flex: 0 0 18px;
   -webkit-border-radius: 100%;
   -moz-border-radius: 100%;
   border-radius: 100%;
   overflow: hidden;
+}
+
+.search-details .details .text-holder a.title-link {
+  background: image-url(img/link);
+  background-size: 16px;
+  background-repeat: no-repeat;
+  background-position: right;
+  padding-right: 22px;
+  height: 18px;
 }
 
 .search-details .details .text-holder .alllist strong {
@@ -8102,4 +8112,9 @@ Copyright (c) 2013 Daniel Eden
     left: 0;
     top: 0;
   }
+}
+
+.collection-org-info {
+  height: 20px;
+  overflow: hidden;
 }

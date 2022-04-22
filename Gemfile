@@ -68,6 +68,8 @@ group :development do
   gem 'rubocop-rake', require: false
 end
 
+gem 'license_finder'
+
 group :test do
   # Adds support for Capybara system testing and selenium driver
   gem 'capybara', '>= 3.26'

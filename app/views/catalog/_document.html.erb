@@ -41,7 +41,7 @@
             </div>
           <% end %>
           <div class="collection-org-info">
-            <div class='text-primary mb-0px org-label-search' style="">
+            <div class='text-primary mb-0px' style="">
               <% if document_organization.present? %>
                 <% if request.path.include?("myresources/listing")%>
                   <a target="_blank" href="<%=root_url(host: Utilities::AviaryDomainHandler.subdomain_handler(document_organization)) %>"> <%= document_organization.name %></a>
@@ -50,7 +50,8 @@
                 <% end %>
               <% end %>
             </div>
-
+          </div>
+          <div class="collection-org-info">
             <div class='text-primary mb-0px collection-label-search' style="">
               <div class="img-hold d-inline-block float-left mr-5px">
                 <% icon_src = (collection.present? && collection.favicon.present?) ? collection.favicon.url(:small) : image_url('collection_folder_icon.svg') %>

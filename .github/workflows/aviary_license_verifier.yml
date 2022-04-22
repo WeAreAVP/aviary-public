@@ -1,0 +1,33 @@
+name: Update License Information
+on: push
+
+jobs:
+  run:    
+    name: Update License Information
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Checkout Project Directory
+        run: cd /home/runner/work/aviary-public/aviary-public
+
+      - name: Libs Installation
+        run: sudo apt-get install libcurl4 libcurl4-openssl-dev
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.1.0
+
+      - name: Install license_finder gem
+        run: bundle install
+
+      - name: Run license_finder
+        run: license_finder report --format=html --save=license_info.html
+
+      - name: Add & Commit changes
+        uses: EndBug/add-and-commit@v9.0.0
+        with:
+          author_name: Muhammad Furqan
+          author_email: furqan@weareavp.com
+          message: 'updated license infomation'
+          add: './license_info.html'
