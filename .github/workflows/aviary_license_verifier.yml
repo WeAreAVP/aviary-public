@@ -21,6 +21,9 @@ jobs:
       - name: Install license_finder gem
         run: bundle install
 
+      - name: Pull the branch
+        run: git pull origin ${GITHUB_REF_NAME}
+
       - name: Run license_finder
         run: license_finder report --format=html --save=license_info.html
 
