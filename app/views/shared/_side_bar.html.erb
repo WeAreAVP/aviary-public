@@ -15,6 +15,11 @@
               </div>
               <div class="title"><%= current_organization.name %></div>
             </div>
+            <div class="sidebar-logo">
+              <%= link_to root_url(host: ENV['APP_HOST']) do %>
+                <%= image_tag 'homepage/main-logo.png' %>
+              <% end %>
+            </div>
             <div class="card <%= disabled_organization_cls %>">
               <div class="card-header" id="headingTwo">
                 <h5 class="mb-0">
@@ -265,11 +270,6 @@
               <% end %>
             </div>
           <% end %>
-          <div class="sidebar-logo">
-            <%= link_to root_url(host: ENV['APP_HOST']) do %>
-              <%= image_tag 'homepage/main-logo.png' %>
-            <% end %>
-          </div>
         </div>
       </div>
     </div>

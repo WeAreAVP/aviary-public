@@ -588,6 +588,20 @@ div#noMediaConnection {
         color: #828282;
       }
     }
+    .delete_index_holder {
+      border-top: 1px solid #dfdfdf;
+      padding: 10px 15px;
+      text-align: right;
+      border-bottom: 1px solid #dfdfdf;
+      background: #f9fafb;
+      .delete_index {
+        padding: 4px 12px;
+        font-size: 12px;
+        border: 1px solid #ddd;
+        color: #000;
+        background: #fff;
+      }
+    }
   }
   .collapse {
     .card-body {
