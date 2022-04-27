@@ -40,7 +40,6 @@
                   <% data_hash["fields"].compact.each do |key, value| %>
                     <% next if value.is_a?(String) %>
                     <% value.each do |h_k, h_v| %>
-                      <% byebug %>
                       <% if h_v.first["is_tombstone"] && h_v.first["is_visible"] %>
                         <dt><%= h_k.titleize %>:</dt>
                         <dd class="with-select">

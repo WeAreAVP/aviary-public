@@ -34,7 +34,8 @@ class CollectionResourceFile < ApplicationRecord
     string :resource_file_content_type, stored: true
     string :resource_file_file_size, stored: true
     string :file_display_name, stored: true
-
+    string :sort_order, stored: true
+    integer :sort_order, stored: true
     begin
       time :resource_file_updated_at, stored: true
       time :created_at, stored: true
@@ -84,6 +85,7 @@ class CollectionResourceFile < ApplicationRecord
     end
     string :target_domain, stored: true
     string :duration, stored: true
+    string :is_downloadable, stored: true
   end
 
   def self.fields_values
@@ -107,7 +109,10 @@ class CollectionResourceFile < ApplicationRecord
       'resource_detail_embed_html_ss' => 'Resource Detail Embed HTML',
       'target_domain_ss' => 'Target Domain',
       'duration_ss' => 'Duration',
-      'collection_title_text' => 'Collection Title' }
+      'collection_title_text' => 'Collection Title',
+      'sort_order_ss' => 'Sequence #',
+      'sort_order_is' => 'Sequence #',
+      'is_downloadable_ss' => 'Downloadable?' }
   end
 
   def self.date_time_format(date_time)
