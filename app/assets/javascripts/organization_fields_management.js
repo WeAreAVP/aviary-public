@@ -399,4 +399,15 @@ function OrganizationFieldsManagement() {
             console.log(err);
         }
     };
+
+    this.show_reset_tombstone_feilds_status = function (response, container, requestData) {
+        jsMessages(response.status, response.msg);
+    }
+
+    this.resetTombstoneFields = function () {
+        data = {
+            action: 'show_reset_tombstone_feilds_status'
+        }
+        appHelper.classAction($('.resetTombstoneFields').data('url'), data, 'JSON', 'GET', '', that, true)
+    }
 }

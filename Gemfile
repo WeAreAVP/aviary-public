@@ -4,7 +4,7 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 ruby '3.1.0'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails', branch: 'main'
-gem 'rails', '~> 6.1.5'
+gem 'rails', '>= 6.1.5'
 group :development, :production do
   # Use mysql as the database for Active Record
   gem 'mysql2', '~> 0.5'
@@ -67,6 +67,8 @@ group :development do
   gem 'rubocop-rspec', require: false
   gem 'rubocop-rake', require: false
 end
+
+gem 'license_finder'
 
 group :test do
   # Adds support for Capybara system testing and selenium driver

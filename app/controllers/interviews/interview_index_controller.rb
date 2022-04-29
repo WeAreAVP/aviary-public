@@ -33,7 +33,8 @@ module Interviews
       OhmsBreadcrumbPresenter.new(@interview, view_context).breadcrumb_manager('edit', @interview, 'index')
       return unless @interview.include_language
       file_index_alt = FileIndex.find_by(interview_id: @interview.id, language: interview_lang_info(@interview.language_for_translation.gsub(/(\w+)/, &:capitalize)))
-      @file_index_point_alt = FileIndexPoint.where(file_index_id: file_index_alt.id).where(start_time: @file_index_point.start_time.to_f).where.not(id: params[:id])
+      @file_index_point_alt = []
+      @file_index_point_alt = FileIndexPoint.where(file_index_id: file_index_alt.id).where(start_time: @file_index_point.start_time.to_f).where.not(id: params[:id]) if file_index_alt.present?
       return unless @file_index_point_alt.length.positive?
       @file_index_point_alt = @file_index_point_alt.first
       @file_index_point.title_alt = @file_index_point_alt.title
@@ -66,21 +67,25 @@ module Interviews
             @file_index_point_alt = FileIndexPoint.find_by(id: params[:file_index_point][:id_alt])
             if @file_index_point_alt.nil?
               @file_index_point_alt = FileIndexPoint.new
-              file_index_alt = FileIndex.find_by(interview_id: @interview.id, language: interview_lang_info(@interview.language_for_translation.gsub(/(\w+)/, &:capitalize)))
+              file_index_alt = FileIndex.find_or_create_by(interview_id: @interview.id, language: interview_lang_info(@interview.language_for_translation.gsub(/(\w+)/, &:capitalize)))
+              if file_index_alt.id.nil?
+                file_index_alt.title = ''
+                file_index_alt.save(validate: false)
+              end
               @file_index_point_alt.file_index_id = file_index_alt.id
             end
             @file_index_point_alt.update(file_index_point_params_alt.transform_keys { |key| key.gsub('_alt', '') })
             @file_index_point_alt.start_time = start_time.to_f
             @file_index_point_alt = set_custom_values(@file_index_point_alt, '_alt', params)
             if @file_index_point_alt.save
-              format.html { redirect_to "#{ohms_records_path(@file_index.interview_id)}?time=#{start_time}", notice: 'Interview Index was successfully updated.' }
+              format.html { redirect_to "#{ohms_index_path(@file_index.interview_id)}?time=#{start_time}", notice: 'Ohms Index was successfully updated.' }
               format.json { render :show, status: :created, location: @file_index }
             else
               format.html { render :new }
               format.json { render json: @file_index_point.errors, status: :unprocessable_entity }
             end
           else
-            format.html { redirect_to "#{ohms_records_path(@file_index.interview_id)}?time=#{start_time}", notice: 'Interview Index was successfully updated.' }
+            format.html { redirect_to "#{ohms_index_path(@file_index.interview_id)}?time=#{start_time}", notice: 'Ohms Index was successfully updated.' }
             format.json { render :show, status: :created, location: @file_index }
           end
         else
@@ -103,7 +108,7 @@ module Interviews
       end
       file_index = FileIndex.find(file_index_point.file_index_id)
       respond_to do |format|
-        format.html { redirect_to ohms_records_path(file_index.interview_id), notice: 'The interview index you selected has been deleted successfully.' }
+        format.html { redirect_to ohms_index_path(file_index.interview_id), notice: 'The interview index you selected has been deleted successfully.' }
       end
     end
 
@@ -142,7 +147,7 @@ module Interviews
             end
 
           else
-            format.html { redirect_to "#{ohms_records_path(@file_index.interview_id)}?time=#{start_time}", notice: 'Interview Index was successfully created.' }
+            format.html { redirect_to "#{ohms_index_path(@file_index.interview_id)}?time=#{start_time}", notice: 'Interview Index was successfully created.' }
             format.json { render :show, status: :created, location: @file_index_point }
           end
 
