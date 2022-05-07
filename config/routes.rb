@@ -1,4 +1,9 @@
 Rails.application.routes.draw do
+  resources :saved_searches, except: [:index] do
+    collection do
+      match :datatable, to: 'saved_searches#index', via: %i[get post]
+    end
+  end
   concern :range_searchable, BlacklightRangeLimit::Routes::RangeSearchable.new
   mount Blacklight::Engine => '/'
   mount BlacklightAdvancedSearch::Engine => '/'
