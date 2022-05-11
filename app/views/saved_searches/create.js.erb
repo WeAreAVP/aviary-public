@@ -1,0 +1,10 @@
+$('.modal-backdrop.fade.show').remove();
+$('#save_search_form').modal('hide');
+<% if @response[:status] == 'success' %>
+  jsMessages('<%= @response[:status] %>', '<%= @response[:msg] %>');
+<% else %>
+  jsMessages('<%= @response[:status] %>', '<%= @response[:msg] %>');
+  $('#saved_search_modal').html('<%= j render partial: 'form', locals: { url: request.original_url, user_id: current_user.id, organization_id: current_organization.present? ? current_organization.id : nil, update: @update, saved_search: @saved_search } %>');
+  $('#saved_search_modal #saved_search_url').val(window.location.href)
+  $('#save_search_form').modal('show');
+<% end %> 
