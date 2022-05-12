@@ -54,4 +54,3 @@ class SavedSearchDatatable < ApplicationDatatable
     %w(id title note organization created_at updated_at url)
   end
 end
-
