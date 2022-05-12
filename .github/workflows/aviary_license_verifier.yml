@@ -64,3 +64,12 @@ jobs:
           author_email: noumantayyab@gmail.com
           message: 'updated license infomation'
           add: './license_info.html'
+
+  delete_branch:
+      name: Delete Branch After Merge Is Complete
+      if: always() && github.event.pull_request.head.ref != 'main' && github.event.pull_request.head.ref != 'dev'
+      needs: [verify_conditions, update_license]
+      runs-on: ubuntu-20.04
+      steps:
+        - uses: actions/checkout@v2
+        - run: git push origin --delete ${{ github.event.pull_request.head.ref }}
