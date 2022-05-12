@@ -178,10 +178,13 @@ class CollectionsController < ApplicationController
                                              end
       fields[system_name] = single_collection_field
     end
-    if @collection.collection_fields_and_value.update!({ resource_fields: fields })
-      render json: { status: 'success', msg: 'Tombstone fields updated successfully' }
-    else
-      render json: { status: 'danger', msg: 'Unable to update tombstone fields' }
+    @response = if @collection.collection_fields_and_value.update!({ resource_fields: fields })
+                  { status: 'success', msg: 'Tombstone fields updated successfully' }
+                else
+                  { status: 'danger', msg: 'Unable to update tombstone fields' }
+                end
+    respond_to do |format|
+      format.js
     end
   end
 
