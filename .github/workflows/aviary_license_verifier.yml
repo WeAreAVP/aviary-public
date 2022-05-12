@@ -65,7 +65,7 @@ jobs:
 
   delete_branch:
       name: Delete Branch After Merge Is Complete
-      if: always() && github.event.pull_request.base.ref != main && github.event.pull_request.base.ref != dev
+      if: always() && github.event.pull_request.base.ref != 'main' && github.event.pull_request.base.ref != 'dev'
       needs: [verify_conditions, update_license]
       runs-on: ubuntu-20.04
       steps:
