@@ -130,6 +130,10 @@
 </div>
 <% track_params = params.clone.except('controller').except('action').to_json %>
 <%= render 'resource_list_modal' %>
+<% if user_signed_in? %>
+  <div id="saved_search_modal">
+  </div>
+<% end %>
 <script type="text/javascript">
     let search_obj = new SearchPage();
 

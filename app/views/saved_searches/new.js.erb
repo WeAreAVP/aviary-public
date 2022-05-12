@@ -1,0 +1,3 @@
+$('#saved_search_modal').html('<%= j render partial: 'form', locals: { url: request.original_url, user_id: current_user.id, organization_id: current_organization.present? ? current_organization.id : nil, update: false } %>');
+$('#saved_search_modal #saved_search_url').val(window.location.href);
+$('#save_search_form').modal('show');

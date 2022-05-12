@@ -57,6 +57,9 @@
             </div>
           </div>
           <div class="footer-area text-right">
+            <% if can? :manage, @collection %>
+              <%= link_to "Reset Default Tombstone Fields", reset_default_tombstone_fields_collection_url(@collection.id), class: "resetTombstoneFields btn btn-primary mr-2 float-left d-none",  remote: true %>
+            <% end %>
             <%= link_to "Update", 'javascript://', class: "update-collection-forms-btn btn btn-primary mr-2" %>
             <%= link_to "Cancel", collections_path, class: "btn btn-light" %>
           </div>
