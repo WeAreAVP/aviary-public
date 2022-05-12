@@ -139,7 +139,10 @@ module Aviary
             xml.type interview.media_type
             xml.description interview.summary
             xml.rel interview.try('rel').present? ? interview.rel : ''
-            xml.transcript 'No transcript.'
+            file_transcript = FileTranscript.find_by(interview_id: interview.id)
+            transcript_manager = Aviary::OhmsTranscriptManager.new
+
+            xml.transcript transcript_manager.read_notes_info(file_transcript)
             xml.transcript_alt ''
             xml.rights interview.right_statement
             xml.fmt interview.media_format

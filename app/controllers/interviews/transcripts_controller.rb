@@ -13,6 +13,11 @@ module Interviews
       if request.patch? && params['file_transcript'].present? && params['file_transcript']['text'].present?
         time = 0.0
         time_different = @file_transcript.timecode_intervals.to_f * 60
+
+        params['file_transcript']['text'] = params['file_transcript']['text'].gsub("\r", '')
+        transcript_manager = Aviary::OhmsTranscriptManager.new
+        params['file_transcript']['text'] = transcript_manager.parse_notes_info(params['file_transcript']['text'], @file_transcript)
+
         @text = params['file_transcript']['text']
         raw_point = @text.split("\n")
         @file_transcript.file_transcript_points.each do |single_transcript_point|
@@ -53,6 +58,8 @@ module Interviews
         file.unlink
       end
       @text = @file_transcript.file_transcript_points.pluck(:text).join(' ')
+      transcript_manager = Aviary::OhmsTranscriptManager.new
+      @text =  transcript_manager.read_notes_info(@file_transcript, @text)
       OhmsBreadcrumbPresenter.new(@file_transcript, view_context).breadcrumb_manager('edit', @file_transcript, 'sync')
     end
 
