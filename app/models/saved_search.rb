@@ -30,3 +30,4 @@ class SavedSearch < ApplicationRecord
     [saved_searches, count]
   end
 end
+
