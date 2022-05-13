@@ -178,7 +178,7 @@ class CollectionsController < ApplicationController
                                              end
       fields[system_name] = single_collection_field
     end
-    @response = if @collection.collection_fields_and_value.update!({ resource_fields: fields })
+    @response = if @collection.collection_fields_and_value.update!({ resource_fields: fields }) && @collection.save
                   { status: 'success', msg: 'Tombstone fields updated successfully' }
                 else
                   { status: 'danger', msg: 'Unable to update tombstone fields' }
