@@ -74,12 +74,12 @@ class IiifController < ApplicationController
           type: 'Agent',
           label: { en: [organization.name] },
           homepage: [{
-            id: root_url,
-            type: 'Text',
-            label: { en: [organization.name] },
-            format: 'text/html'
+                       id: root_url,
+                       type: 'Text',
+                       label: { en: [organization.name] },
+                       format: 'text/html'
 
-          }],
+                     }],
           logo: [org_logo]
         }
       ]
@@ -109,20 +109,21 @@ class IiifController < ApplicationController
           height: height,
           thumbnail: [{ id: media_file.thumbnail_image, type: 'Image', format: content_type }],
           items: [{ id: media_url + '/content/1', type: 'AnnotationPage',
-                    metadata: metadata, items: [{
-                      id: media_url + "/content/#{count}/annotation/1",
-                      type: 'Annotation',
-                      motivation: 'painting',
-                      body: {
-                        id: media_file.media_direct_url,
-                        type: media_type,
-                        format: media_file.media_content_type,
-                        duration: media_file.duration.to_f,
-                        width: width,
-                        height: height
-                      },
-                      target: media_url
-                    }] }],
+                    items: [{
+                              id: media_url + "/content/#{count}/annotation/1",
+                              type: 'Annotation',
+                              motivation: 'painting',
+                              body: {
+                                id: media_file.media_direct_url,
+                                type: media_type,
+                                format: media_file.media_content_type,
+                                duration: media_file.duration.to_f,
+                                width: width,
+                                height: height
+                              },
+                              target: media_url,
+                              metadata: metadata
+                            }] }],
           annotations: annotations(media_file, media_url)
         }
       end
@@ -163,17 +164,17 @@ class IiifController < ApplicationController
 
       if transcript.is_caption?
         points = [{
-          id: "#{media_url}/transcript/#{transcript.id}/annotation/#{annotation_counter}",
-          type: 'Annotation',
-          motivation: 'subtitling',
-          body: {
-            type: 'TextualBody',
-            value: transcript.associated_file.url,
-            format: 'text/vtt',
-            language: transcript.language
-          },
-          target: transcript.associated_file.url
-        }]
+                    id: "#{media_url}/transcript/#{transcript.id}/annotation/#{annotation_counter}",
+                    type: 'Annotation',
+                    motivation: 'subtitling',
+                    body: {
+                      type: 'TextualBody',
+                      value: transcript.associated_file.url,
+                      format: 'text/vtt',
+                      language: transcript.language
+                    },
+                    target: transcript.associated_file.url
+                  }]
         annotation_counter += 1
         annotations << { id: media_url + "/transcript/#{transcript.id}", type: 'AnnotationPage', label: { en: [languages_array_simple[0][transcript.language]] }, items: points }
         counter += 1
