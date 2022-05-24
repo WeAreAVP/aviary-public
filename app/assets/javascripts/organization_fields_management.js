@@ -79,8 +79,8 @@ function OrganizationFieldsManagement() {
         document_level_binding_element('.delete_field', 'click', function () {
             $('#general_modal_close_cust_success').attr('href', $(this).data('url'));
             $('#general_modal_close_cust_success').removeClass('d-none');
-            appHelper.show_modal_message('Confirmation', '<strong>Are you sure you want to remove this field from the this organization?</strong><br/><br/>' +
-                '\'<p class=" text-muted">Note: Removing this field will remove its availability from your organization. If any resources/collection in this organization use this field currently, then any existing metadata for this field will be deleted from the resources of current organization. This will not affect resources in other collections that use this field currently.</p>\'', 'danger', null);
+            appHelper.show_modal_message('Confirmation', '<strong>Are you sure you want to remove this field from this organization?</strong><br/><br/>' +
+                '\'<p class=" text-muted">Note: Removing this field will remove its availability from your organization. If any resources/collection in this organization uses this field currently, then any existing metadata for this field will be deleted from the resources of current organization. This will not affect resources in other collections that use this field currently.</p>\'', 'danger', null);
         });
     };
 
