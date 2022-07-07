@@ -5,7 +5,6 @@ module Thesaurus
   # Thesaurus
   class Thesaurus < ApplicationRecord
     include UserTrackable
-    enum status: %w[is_active inactive]
     default_scope { where('thesaurus.status' => Thesaurus.statuses[:active]) }
     belongs_to :organization
     has_many :thesaurus_thesaurus_terms, class_name: 'Thesaurus::ThesaurusTerms'
