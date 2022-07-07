@@ -1,7 +1,7 @@
 <%= simple_form_for @collection, :url => @collection.new_record? ? collections_path : collection_path, html: { novalidate: true } do |c| %>
   <div class="row org-collection-form">
     <div class="col-md-6">
-      <div class="form-group banner-image">
+      <div class="form-group banner-image small-upload small-title">
         <div class="field-title">
           <label for="">Collection Banner</label>
         </div>
@@ -19,7 +19,7 @@
       </div>
     </div>
     <div class="col-md-6">
-      <div class="form-group favicon-image">
+      <div class="form-group favicon-image small-upload small-title">
         <div class="field-title">
           <label for="">Collection Favicon</label>
         </div>

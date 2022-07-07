@@ -233,6 +233,8 @@
     position: absolute;
     right: 30px;
     top: 15px;
+    z-index: 2;
+    border: none;
 }
 #organization_url {
     border-radius: 4px 0 0 4px !important;
@@ -244,7 +246,7 @@
     background-size: 22px;
     width: 22px;
     height: 22px;
-    right: 150px;
+    right: 185px;
     top: 36px;
     z-index: 2;
 }
@@ -265,15 +267,9 @@
 }
 .enable-click-through label {
     font-size: 16px;
-    font-weight: bold !important;
-    cursor: pointer;
-    color: #000000;
-    padding-left: 23px;
+    color: #000;
 }
-.enable-click-through label .icon-check {
-    top: 2px;
-    left: -5px;
-}
+
 .add-domain-btn,
 .add_badge_default_value {
     cursor: pointer;
