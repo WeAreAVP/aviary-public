@@ -599,7 +599,19 @@ $(function () {
             }
         });
     }
+    function toggleMenu()
+    {
+        if($('#sidebar-main').hasClass("not-collapsed"))
+        {
+            $('#sub_nav').find('nav').attr("aria-expanded","true");
+        }
+        else
+        {
+            $('#sub_nav').find('nav').attr("aria-expanded","false");
+        }
+    }
     if ($('#menu-bar').length > 0) {
+        toggleMenu();
         $('#menu-bar').click(function () {
             let url = $(this).data('url');
             $('#sidebar-main').toggleClass('main_collapsed');
@@ -607,6 +619,7 @@ $(function () {
             $('.main-content').toggleClass('open');
             layout = $('#sidebar-main').hasClass('main_collapsed') ? 'main_collapsed' : 'not-collapsed';
             checkMenuType(layout);
+            toggleMenu();
             $.ajax({
                 url: url,
                 data: {layout: layout},

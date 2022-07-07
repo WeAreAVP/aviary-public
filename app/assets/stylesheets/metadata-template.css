@@ -20,6 +20,12 @@
 .form-check input[type="checkbox"]{
 	display: none;
 }
+.form-check input[type="checkbox"]{
+	position: absolute;
+    height: 1px;
+    width: 1px;
+    overflow: hidden;
+}
 .form-check .icon-check{
     position: absolute;
     display: inline-block;
@@ -309,12 +315,12 @@
 
 .main_sidebar .card-header button[aria-expanded="true"] {
     color: #000;
-    padding: 5px 0;
+    padding: 0;
     font-weight: 600;
 }
 
 .main_collapsed .main_sidebar .card-header button:hover .collapse.show {
-    display: block;
+    display: none;
 }
 
 .main_sidebar .card-body button[aria-expanded="true"] {
