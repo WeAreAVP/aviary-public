@@ -707,3 +707,11 @@ div#noMediaConnection {
   font-weight: bold;
   cursor: pointer;
 }
+
+.video-box-section {
+  #media_host {
+    iframe {
+      height: 100% !important;
+    }
+  }
+}
