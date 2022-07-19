@@ -1085,6 +1085,14 @@ footer p a {
   font-weight: 500;
 }
 
+footer a:focus {
+  outline: 1px solid #0b709c;
+}
+
+.btn-light.focus, .btn-light:focus {
+  box-shadow: 0 0 0 0.2rem #d4d4d4 !important;
+}
+
 footer .get-subscription {
   background: #002D42;
   padding: 30px;

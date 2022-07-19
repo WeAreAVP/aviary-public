@@ -21,15 +21,15 @@
             <div class="hold">
               <ul class="nav nav-tabs" id="collectionTabs" role="tablist">
                 <li class="nav-item">
-                  <a class="nav-link active" id="general_settings_tab" data-tab="general_settings" data-toggle="tab" href="#general_settings" role="tab" aria-controls="general_settings" aria-selected="true">General
+                  <a class="nav-link active" tabindex="0" id="general_settings_tab" data-tab="general_settings" data-toggle="tab" href="#general_settings" role="tab" aria-controls="general_settings" aria-selected="true">General
                     Settings</a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link" id="collection_description_tab" data-tab="collection_description" data-toggle="tab" href="#collection_description" role="tab" aria-controls="collection_description" aria-selected="false">Collection
+                  <a class="nav-link" tabindex="0" id="collection_description_tab" data-tab="collection_description" data-toggle="tab" href="#collection_description" role="tab" aria-controls="collection_description" aria-selected="false">Collection
                     Description</a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link" id="resource_description_tab" data-tab="resource_description" data-toggle="tab" href="#custom_preview" role="tab" aria-controls="custom_preview" aria-selected="false" data-path="<%= edit_collection_path(@collection) %>">Resource
+                  <a class="nav-link" tabindex="0" id="resource_description_tab" data-tab="resource_description" data-toggle="tab" href="#custom_preview" role="tab" aria-controls="custom_preview" aria-selected="false" data-path="<%= edit_collection_path(@collection) %>">Resource
                     Description</a>
                 </li>
 
@@ -57,6 +57,9 @@
             </div>
           </div>
           <div class="footer-area text-right">
+            <% if can? :manage, @collection %>
+              <%= link_to "Reset Default Tombstone Fields", reset_default_tombstone_fields_collection_url(@collection.id), class: "resetTombstoneFields btn btn-primary mr-2 float-left d-none",  remote: true %>
+            <% end %>
             <%= link_to "Update", 'javascript://', class: "update-collection-forms-btn btn btn-primary mr-2" %>
             <%= link_to "Cancel", collections_path, class: "btn btn-light" %>
           </div>

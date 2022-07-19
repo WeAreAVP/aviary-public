@@ -76,6 +76,10 @@ input:-webkit-autofill:active {
   -webkit-box-shadow: 0 0 0 30px white inset !important;
 }
 
+a:not([href]):not([tabindex]):focus {
+  outline: 1px ;
+}
+
 a {
   text-decoration: none;
 }
@@ -84,10 +88,8 @@ a:hover {
   opacity: 0.8;
 }
 
-a:focus,
-a:active {
-  text-decoration: none;
-  outline: none;
+.main_sidebar .card-header button:focus {
+  outline: 1px auto -webkit-focus-ring-color;
 }
 
 ol, ul {
@@ -128,10 +130,6 @@ table {
 
 button:hover, input[type=submit]:hover {
   cursor: pointer;
-}
-
-button:focus, input[type=submit]:focus {
-  outline: none;
 }
 
 ::-webkit-input-placeholder {
@@ -770,6 +768,10 @@ a:hover,
   position: relative;
 }
 
+.nav-link:focus {
+  border: 1px solid #333;
+}
+
 #header .nav-item.active .dropdown-toggle:after {
   border-top-color: #cb6151;
 }
@@ -1057,6 +1059,10 @@ a:hover,
 .adminary\/users #sub_nav .dropdown-menu {
   left: 0;
   right: auto;
+}
+#sub_nav .dropdown-menu.dropdown-left {
+  right: auto !important;
+  left: 0 !important;
 }
 #sub_nav .dropdown-menu.dropdown-right {
   right: 0 !important;
@@ -2116,6 +2122,7 @@ ul {
 
 .toggle-switch__input {
   border: 0;
+  height: 2px;
   clip: rect(0 0 0 0);
   clip-path: inset(50%);
   height: 1px;
@@ -2123,7 +2130,7 @@ ul {
   overflow: hidden;
   padding: 0;
   position: absolute;
-  width: 1px;
+  width: 2px;
   white-space: nowrap;
 }
 
@@ -2771,6 +2778,11 @@ ul {
   z-index: 9;
   padding: 10px;
   background: #f7f9fa;
+  display: none;
+}
+
+.dt-buttons.btn-group.flex-wrap {
+  flex-wrap: nowrap !important;
 }
 
 .main_sidebar .card {
@@ -3221,6 +3233,7 @@ ul {
   right: 22px;
   left: auto !important;
   top: 27px !important;
+  width: 150px;
 }
 
 .tooltip {
@@ -3275,6 +3288,10 @@ ul {
 
 #sub_nav .navbar-nav .nav-item form {
   width: 260px;
+}
+
+.upload-main li a:focus {
+    outline: 1px solid;
 }
 
 @media screen and (max-width: 992px) {
@@ -3632,12 +3649,17 @@ ul {
 }
 
 .create-feed-holder a {
+  background: transparent;
   position: relative;
   padding-top: 60px;
   font-size: 18px;
   color: #333;
   font-family: var(--aviary-font-family);
   text-decoration: none;
+}
+
+.pagination li a:focus {
+  border: 2px solid #ccc !important;
 }
 
 .create-feed-holder a:before {

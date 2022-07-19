@@ -1,6 +1,6 @@
 <header id="header">
   <div class="container-fluid">
-    <nav class="navbar navbar-expand-sm navbar-light bg-light">
+    <nav role="navigation" aria-label="Main menu" class="navbar navbar-expand-sm navbar-light bg-light">
       <% unless current_organization.nil? %>
         <%= link_to root_path, class: 'navbar-brand' do %>
           <%= image_tag organization_logo %>

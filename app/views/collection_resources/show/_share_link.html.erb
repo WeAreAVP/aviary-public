@@ -43,14 +43,14 @@
         <a class="btn" href="<%= iiif_manifest_url(@collection_resource.noid) %>" target="_blank">
           <i class="icon-manifest"></i> Manifest
         </a>
-        </div>
-        </div>
       <% end %>
       <% if current_user_is_current_org_user? %>
         <button class="btn" title="My Resources" data-toggle="modal" data-target="#resourceListModel">
           <i class="material-icons list_added">playlist_add_check</i> My Resources
         </button>
       <% end %>
+      </div>
+      </div>
     </div>
 
     <!-- Modal -->

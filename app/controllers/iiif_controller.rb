@@ -109,7 +109,7 @@ class IiifController < ApplicationController
           height: height,
           thumbnail: [{ id: media_file.thumbnail_image, type: 'Image', format: content_type }],
           items: [{ id: media_url + '/content/1', type: 'AnnotationPage',
-                    metadata: metadata, items: [{
+                    items: [{
                       id: media_url + "/content/#{count}/annotation/1",
                       type: 'Annotation',
                       motivation: 'painting',
@@ -121,7 +121,8 @@ class IiifController < ApplicationController
                         width: width,
                         height: height
                       },
-                      target: media_url
+                      target: media_url,
+                      metadata: metadata
                     }] }],
           annotations: annotations(media_file, media_url)
         }

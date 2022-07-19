@@ -61,12 +61,23 @@
           <a href="javascript:void(0);" class="btn btn-outline-dark update_pause"><i class="fa fa-stop"></i></a>
           <a href="javascript:void(0);" class="btn btn-outline-dark update_forward"><%= image_tag("fast-forward.png", :alt => "Forward 10 sec") %></a>
         </div>
+        <div class="cancel_btn">
+          <% if @interview.present? %>
+              <%= link_to 'Cancel', ohms_index_path(@interview.id), class: 'btn btn-outline-secondary' %>
+            <% else %>
+              <% if @file_index.present? %>
+              <%= link_to 'Cancel', show_index_file_path(@resource_file.id,@file_index.id), class: 'btn btn-outline-secondary' %>
+              <% else %>
+              <%= link_to 'Cancel', show_index_path(@resource_file.id), class: 'btn btn-outline-secondary' %>
+              <% end %>
+            <% end %>
+        </div>
+        <div class="save_btn">
+          <%= f.submit 'Save', class: 'btn btn-success' %>
+        </div>
       </div>
     </div>
   <div class="col-md-6 video-box-section">
-    <div class="save_btn">
-      <%= f.submit 'Save', class: 'btn btn-success' %>
-    </div>
     <%= render 'interviews/interview_index/top' %>
   </div>
   </div>

@@ -9,9 +9,8 @@
           <div class="holder">
             <img id="logo" src="<%= @organization.new_record? ? '#' : (image_url @organization.logo_image) %>" alt="">
           </div>
-          <div class="file-upload">
-            <%= f.label @organization.new_record? ? 'Add Image' : 'Upload Logo', for: 'organization_logo_image' %>
-            <%= f.input :logo_image, as: :file, error: false, label: false, input_html: { onchange: "readURL(this, 'logo');", accept: 'image/*' } %>
+          <div class="file-upload org-field-file-input">
+            <%= f.input :logo_image, as: :file, error: false, label: "#{@organization.new_record? ? 'Add Image' : 'Upload Logo'}", input_html: { onchange: "readURL(this, 'logo');", accept: 'image/*' } %>
           </div>
         </div>
         <%= f.error :logo_image %>
@@ -26,9 +25,8 @@
           <div class="holder">
             <%= image_tag(@organization.favicon.url, id: 'favicon', alt: 'favicon') %>
           </div>
-          <div class="file-upload">
-            <%= f.label 'Upload Favicon', for: 'organization_favicon' %>
-            <%= f.input :favicon, as: :file, error: false, label: false, input_html: { onchange: "readURL(this, 'favicon');", accept: 'image/*' } %>
+          <div class="file-upload org-field-file-input">
+            <%= f.input :favicon, as: :file, label: "Upload Favicon", error: false, input_html: { onchange: "readURL(this, 'favicon');", accept: 'image/*' } %>
           </div>
         </div>
 

@@ -63,3 +63,20 @@
 <% end %>
 </tbody>
 </table>
+<% if can? :manage, @collection %>
+  <script>
+    $('#collectionTabs a.nav-link').on('click', function () {
+      setTimeout(() => {
+        toggleResetDefaultTombstoneFieldsButton()
+      }, 100);
+    })
+
+    const toggleResetDefaultTombstoneFieldsButton = () => {
+      if ($('#resource_description_tab').hasClass('active')) {
+        $('a.resetTombstoneFields').removeClass('d-none')
+      } else {
+        $('a.resetTombstoneFields').addClass('d-none')
+      }
+    }
+  </script>
+<% end %>

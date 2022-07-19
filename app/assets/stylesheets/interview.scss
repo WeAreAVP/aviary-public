@@ -238,11 +238,17 @@ div#noMediaConnection {
       margin-top: 10px;
     }
   }
+  
   .save_btn {
-    position: absolute;
-    bottom: 10px;
-    left: 40px;
+    float: right;
+    margin-bottom: 10px;
   }
+
+  .cancel_btn {
+    float: left;
+    margin-bottom: 10px;
+  }
+
   #media_host {
     width: 80%;
     margin: 0 0 0 auto;
@@ -700,4 +706,12 @@ div#noMediaConnection {
   font-size: 14px;
   font-weight: bold;
   cursor: pointer;
+}
+
+.video-box-section {
+  #media_host {
+    iframe {
+      height: 100% !important;
+    }
+  }
 }

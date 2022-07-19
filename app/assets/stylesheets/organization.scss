@@ -42,6 +42,27 @@
   margin: 0;
 }
 
+.org-field-file-input {
+  height: 50px !important;
+  top: -50px;
+  position: relative;
+}
+
+.org-field-file-input .file {
+  height: 40px !important;
+  bottom: 0;
+  margin-left: auto;
+  width: 140px;
+} 
+
+.org-field-file-input input[type="file"] {
+  position: absolute !important;
+  bottom: -7px !important;
+  right: 2px !important;
+  width: 146px !important;
+  height: 45px !important;
+}
+
 .organization-section .form small {
   font-weight: 600;
   color: #8c8c8c;
@@ -52,10 +73,14 @@
 }
 
 .file-upload {
+  height: 109px;
   display: block;
   text-align: center;
   font-family: var(--aviary-font-family);
   font-size: 12px;
+  .file {
+    height: 100%;
+  }
 }
 
 .file-upload .file-select {
@@ -314,19 +339,27 @@
 
 .file-upload {
   input[type="file"] {
-    display: none;
+    position: absolute;
+    bottom: -8px;
+    right: 0;
+    height: auto;
+    z-index: 0;
+    width: 150px;
+    height: 50px;
+    margin: 0;
 
   }
 
   label {
     color: #336175 !important;
     font-size: 16px;
-    background: rgba(51, 97, 117, 0.1) !important;
+    background: #eaeff1;
     padding: 10px !important;
     border: 1px solid #336175;
     border-radius: 4px;
     margin: 0;
     text-align: center;
+    z-index: 2;
     cursor: pointer;
     position: absolute !important;
     right: 5px;
@@ -337,6 +370,28 @@
     &:hover {
       color: #fff !important;
       background: #336175 !important;
+    }
+  }
+}
+
+.small-upload {
+  .file-upload {
+    height: auto;
+    .file {
+      position: absolute;
+      right: 2px;
+      width: 152px;
+      height: 43px;
+      bottom: -4px;
+    }
+  }
+  &.small-title {
+    .file {
+      position: absolute;
+      right: 11px;
+      width: 152px;
+      height: 46px;
+      bottom: 7px;
     }
   }
 }
@@ -407,12 +462,20 @@
       border-radius: 6px;
       overflow: hidden;
       background: #ffffff;
+      position: absolute;
       display: block;
+      left: 50%;
+      transform: translateX(-50%);
+      top: 0;
     }
     .file-upload {
       label {
         bottom: 4px !important;
         top: auto !important;
+        right: 5px;
+        &:focus {
+          border-color: #f00;
+        }
       }
     }
   }
@@ -471,6 +534,19 @@
 
 .all-organizations .head {
   background: #f1f3f6;
+}
+
+.form-check .form-check-input {
+  margin: 0 !important;
+}
+
+.form-check input[type="checkbox"] {
+  position: absolute;
+  height: 17px;
+  width: 17px;
+  left: 0;
+  overflow: hidden;
+  top: 0;
 }
 
 .all-organizations .form-head {

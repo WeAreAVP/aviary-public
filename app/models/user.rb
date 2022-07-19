@@ -19,6 +19,7 @@ class User < ApplicationRecord
 
   has_many :organizations, dependent: :nullify
   has_many :organization_users, dependent: :destroy
+  has_many :saved_searches, dependent: :destroy
   belongs_to :created_by, class_name: 'User', foreign_key: 'created_by', optional: true
   belongs_to :updated_by, class_name: 'User', foreign_key: 'updated_by', optional: true
 
