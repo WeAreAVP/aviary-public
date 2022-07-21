@@ -22,14 +22,29 @@ module Interviews
       authorize! :manage, current_organization
       @interview = Interview.find(params[:id])
       @file_index_point = FileIndexPoint.new
+      set_thesaurus
       OhmsBreadcrumbPresenter.new(@interview, view_context).breadcrumb_manager('edit', @interview, 'index')
     end
 
+    def set_thesaurus
+      thesaurus_settings = ThesaurusSetting.where(organization_id: current_organization.id, is_global: true).try(:first)
+      if @interview.thesaurus_keywords == 0
+        if thesaurus_settings.present?
+          @interview.thesaurus_keywords = thesaurus_settings.thesaurus_keywords
+        end
+      elsif @interview.thesaurus_subjects == 0
+        if thesaurus_settings.present?
+          @interview.thesaurus_subjects = thesaurus_settings.thesaurus_subjects
+        end
+      end
+    end
+    
     def edit
       authorize! :manage, current_organization
       @file_index_point = FileIndexPoint.find(params[:id])
       @file_index = FileIndex.find(@file_index_point.file_index_id)
       @interview = Interview.find(@file_index.interview_id)
+      set_thesaurus
       OhmsBreadcrumbPresenter.new(@interview, view_context).breadcrumb_manager('edit', @interview, 'index')
       return unless @interview.include_language
       file_index_alt = FileIndex.find_by(interview_id: @interview.id, language: interview_lang_info(@interview.language_for_translation.gsub(/(\w+)/, &:capitalize)))

@@ -82,7 +82,11 @@ module Thesaurus
       columns.each do |term|
         search_string << "#{term} like :search"
       end
-      thesaurus, count = ::Thesaurus::Thesaurus.fetch_list(page, per_page, params[:search][:value], @current_organization.id)
+      ohms = false
+      if params[:type].present? && params[:type] == 'ohms'
+        ohms = true
+      end
+      thesaurus, count = ::Thesaurus::Thesaurus.fetch_list(page, per_page, params[:search][:value], @current_organization.id, false, ohms)
       thesaurus = thesaurus.order(sort_column => sort_direction)
 
       [thesaurus, count]

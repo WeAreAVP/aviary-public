@@ -135,14 +135,16 @@ module Aviary
     def parse_aviary_text(file, file_transcript)
       reg_ex = speaker_regex
       file = file.delete("\r") # replace \r because it will create problem in parsing logic
+      regex = /\[([0-9:.]+)\]/ ## This is used when only start time is given in transcript
+
       file = parse_notes_info(file, file_transcript, regex)
+      file.squeeze("TRANSCRIPTION BEGIN\n\n")
       split_content = file.split("TRANSCRIPTION BEGIN\n\n")[1].split('TRANSCRIPTION END')[0] ## Get only transcript data from the file
       transcript_points_content = split_content.split("\n\n")
       point_hash = []
       counter = -1
       last_row = 0
       transcript_points_content.each do |transcript_point_content|
-        regex = /\[([0-9:.]+)\]/ ## This is used when only start time is given in transcript
         output = transcript_point_content.split(regex)
         mix_content = output[2].blank? ? [''] : output[2].lstrip.split("\n")
         single_hash = {}
@@ -492,6 +494,7 @@ module Aviary
 
     def parse_transcript(transcript, sync_points, file_transcript, interval)
       hash = []
+      last_row = 0
       if sync_points.present?
         transcript = transcript_with_sync_point(transcript, sync_points)
         return transcript if transcript.failure?
@@ -503,6 +506,20 @@ module Aviary
           single_hash['end_time'] = single_hash['start_time'] + (interval * 60)
           single_hash['duration'] = single_hash['end_time'].to_f - single_hash['start_time'].to_f
           single_hash['text'] = transcript[index]
+          unless single_hash.nil? # keep adding the Text to the same point until gets a new timestamp
+            text_raw = single_hash['text']
+            row = 0
+            column = 0
+            if text_raw.present?
+              text = text_raw.split("\n")
+              unless text.empty?
+                row = text.length
+                column = text.last.length
+              end
+            end
+            last_row += row
+            single_hash['point_info'] = "#{last_row}(#{column})"
+          end
           hash << single_hash
         end
       else

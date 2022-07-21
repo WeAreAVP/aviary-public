@@ -67,6 +67,7 @@
         <%= c.input :description, label: false, input_html: { class: 'form-control apply_tinymce_to_it' } %>
       </div>
     </div>
+    <%= c.hidden_field :thesaurus_type, value: request.GET["type"].nil? ? 'aviary' : 'ohms' %>
   </div>
   <div class="row pt-4 mt-5 border-top">
     <div class="col-md-12 text-right">
