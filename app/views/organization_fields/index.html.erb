@@ -4,7 +4,11 @@
       <div class="text-headline jumbotron">
         <div class="heading-holder table-head">
           <div class="row">
-            <div class="col-md-6"><h1> Fields Configuration </h1></div>
+            <% if request.GET["type"].nil? %>
+             <div class="col-md-6"><h1> Fields Configuration </h1></div>
+            <% else %>
+             <div class="col-md-6"><h1> OHMS Thesaurus Manager </h1></div>
+            <% end %>
             <div class="col-md-6"></div>
           </div>
         </div>
@@ -13,28 +17,32 @@
         <div class="col-md-12">
           <div id="wrapper">
             <div class="org-metadata">
-              <div class="text-headline jumbotron">
-                <p>In this configuration page, you can select which of which metadata fields appear as facets for your
-                  organization search page. You can also select in which order (from top to bottom on the page) they
-                  will appear for your users.</p>
-              </div>
+              <% if request.GET["type"].nil? %>
+                <div class="text-headline jumbotron">
+                  <p>In this configuration page, you can select which of which metadata fields appear as facets for your
+                    organization search page. You can also select in which order (from top to bottom on the page) they
+                    will appear for your users.</p>
+                </div>
+              <% end %>
               <div class="sort_update_fields" data-url="<%= update_information_organization_fields_path %>">
                 <div class="row">
                   <div class="col-md-12">
                     <div class="organization_field_settings">
                       <div class="hold">
                         <ul class="nav nav-tabs" id="organization_field_settings" role="tablist">
-                          <li class="nav-item">
-                            <a class="nav-link parent_menu" id="collection_field_settings" data-tab="collection_field_settings_content" data-toggle="tab" href="#collection_field_settings_content" role="tab" aria-controls="collection_field_settings_content" aria-selected="true">Collection
-                              Fields Settings</a>
-                          </li>
-                          <li class="nav-item">
-                            <a class="nav-link parent_menu" id="resource_field_settings" data-tab="organization_field_settings_content" data-toggle="tab" href="#organization_field_settings_content" role="tab" aria-controls="organization_field_settings_content" aria-selected="false">Resource
-                              Fields Settings</a>
-                          </li>
+                          <% if request.GET["type"].nil? %>
+                            <li class="nav-item">
+                              <a class="nav-link parent_menu" id="collection_field_settings" data-tab="collection_field_settings_content" data-toggle="tab" href="#collection_field_settings_content" role="tab" aria-controls="collection_field_settings_content" aria-selected="false">Collection
+                                Fields Settings</a>
+                            </li>
+                            <li class="nav-item">
+                              <a class="nav-link parent_menu" id="resource_field_settings" data-tab="organization_field_settings_content" data-toggle="tab" href="#organization_field_settings_content" role="tab" aria-controls="organization_field_settings_content" aria-selected="false">Resource
+                                Fields Settings</a>
+                            </li>
+                          <% end %>
                           <% if ENV['OHMS_DEVELOPMENT_ONLY'].to_s == '1' %>
                             <li class="nav-item">
-                              <a class="nav-link parent_menu" id="organization_thesaurus_settings" data-tab="organization_thesaurus_content" data-toggle="tab" href="#organization_thesaurus_content" role="tab" aria-controls="organization_thesaurus_content" aria-selected="false">Thesaurus</a>
+                              <a class="nav-link parent_menu" id="organization_thesaurus_settings" data-tab="organization_thesaurus_content" data-toggle="tab" href="#organization_thesaurus_content" role="tab" aria-controls="organization_thesaurus_content" aria-selected="true">Thesaurus</a>
                             </li>
                           <% end %>
                         </ul>
@@ -99,7 +107,7 @@
                             </div>
                           </div>
 
-                          <div class="tab-pane fade active w-100" style="z-index: 999999" id="organization_field_settings_content" role="tabpanel" aria-labelledby="organization_field_settings_content">
+                          <div class="tab-pane fade w-100" style="z-index: 999999" id="organization_field_settings_content" role="tabpanel" aria-labelledby="organization_field_settings_content">
                             <ul class="nav nav-tabs bg-white" id="manage_fields_options" role="tablist">
                               <li class="nav-item">
                                 <a class="nav-link active show field_config_menu" id="display_settings" data-tab="display_settings_content" data-toggle="tab" href="#display_settings_content" role="tab" aria-controls="display_settings_content" aria-selected="true">Global
@@ -121,7 +129,7 @@
                                   <div class="row">
                                     <div class="col-12 p-5">
                                       <div class="add-new-field-holder">
-                                        <a class="btn btn-light btn-sm edit-custom-field-button edit-custom-field-button-new-custom-spec" data-method-type="new" data-url="<%= new_edit_custom_field_organization_fields_path(methodtype: 'new') %>">Add
+                                        <a class="btn btn-light btn-sm edit-custom-field-button edit-custom-field-button-new-custom-spec" data-method-type="new" data-url="<%= request.GET["type"].nil? ? new_edit_custom_field_organization_fields_path(methodtype: 'new') : "#{new_edit_custom_field_organization_fields_path(methodtype: 'new')}?type=ohms" %>">Add
                                           Custom Fields</a>
                                       </div>
                                       <div class="holder custom_fields_container border">
@@ -273,14 +281,14 @@
 
                                 <div class="col-md-6 "></div>
                                 <div class="col-md-6  pt-2 pr-5">
-                                  <a class="btn btn-primary btn-xs pull-right float-right" href="<%= new_thesaurus_manager_path %>">Add
+                                  <a class="btn btn-primary btn-xs pull-right float-right" href="<%= request.GET["type"].nil? ? new_thesaurus_manager_path : "#{new_thesaurus_manager_path}?type=ohms" %>">Add
                                     New
                                     Thesaurus</a>
                                 </div>
                                 <div class="col-12 p-5">
                                   <div class="data-table custom_fields_container border data-table  mb-4">
                                     <div>
-                                      <table class="table table-striped table-bordered" id='thesaurus_list_table' data-url="<%= datatable_thesaurus_manager_index_path %>">
+                                      <table class="table table-striped table-bordered" id='thesaurus_list_table' data-url="<%= request.GET["type"].nil? ? datatable_thesaurus_manager_index_path : "#{datatable_thesaurus_manager_index_path}?type=ohms" %>">
                                         <thead>
                                         <tr>
                                           <th style="width: 12% !important;">Title</th>
@@ -344,6 +352,7 @@
           <div class="col-12" id='list_of_collections'>
           </div>
         </div>
+        
         <br/><br/>
       </div>
       <div class="modal-footer">
@@ -484,6 +493,7 @@
             </div>
           </div>
           <input type="hidden" id='selected_file_t' name='selected_file'>
+          <% if request.GET["type"].nil? %>
           <div class="row mt-3">
             <div class="col-12">
               <div class="field-title">
@@ -510,7 +520,21 @@
               </div>
             </div>
           </div>
-
+          <% else %>
+            <div class="row">
+              <div class="col-12">
+                <div class="field-title">
+                  <label> OHMS Index Metadata Field 
+                  <button type="button" class="info-btn" data-toggle="tooltip" data-placement="right" title="Selecting a thesaurus here will apply that thesaurus to that metadata field in the OHMS Index Editor for all OHMS records, unless overridden at for any particular record when a thesaurus is applied in the OHMS Studio Metadata Editor."></button></label>
+                </div>
+                <select id='assignment_option_custom_thesaurus_index' name='assignment_option_custom_thesaurus_index' placeholder=" Select Index" data-url="<%= assignment_management_thesaurus_manager_index_path %>">
+                  <option value="">Select option</option>
+                  <option value="keywords">Keywords</option>
+                  <option value="subjects">Subjects</option>
+                </select>
+              </div>
+            </div>
+          <% end %>
           <br/>
           <br/>
           <div class="row pt-3 border-top">
@@ -538,6 +562,9 @@
         organization_fields_management.initialize();
         <% if ENV['OHMS_DEVELOPMENT_ONLY'].to_s == '1' %>
         ohms_manager.initialize();
+          $('[data-toggle="tooltip"]').tooltip()
+
+
         <% end %>
     });
 </script>

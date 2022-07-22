@@ -11,7 +11,17 @@ module Interviews
     has_many :file_transcripts, dependent: :destroy
     has_many :file_indexes, dependent: :destroy
     before_save :purify_value, :interview_status_info
+    before_create :update_thesaurus
     validates_presence_of :language_for_translation, if: :include_language?
+
+    def update_thesaurus
+      thesaurus_settings = ThesaurusSetting.where(organization_id: organization_id, is_global: true).try(:first)
+      if thesaurus_settings.present?
+        self.thesaurus_keywords = thesaurus_settings.thesaurus_keywords
+        self.thesaurus_subjects = thesaurus_settings.thesaurus_subjects
+      end
+      thesaurus_settings
+    end
 
     def purify_value
       self.metadata_status = metadata_status.to_i

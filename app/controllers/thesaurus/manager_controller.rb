@@ -78,6 +78,24 @@ module Thesaurus
           return
         end
       end
+      if params['assignment_option_custom_thesaurus_index'].present?
+        thesaurus_settings = ThesaurusSetting.find_or_create_by(organization_id: current_organization.id, is_global: true)
+        if params['assignment_option_custom_thesaurus'].to_i.positive?
+          if params['assignment_option_custom_thesaurus_index'] == 'keywords'
+            thesaurus_settings.thesaurus_keywords = 0
+          else
+            thesaurus_settings.thesaurus_subjects = 0
+          end
+        elsif params['assignment_option_custom_thesaurus_index'] == 'keywords'
+          thesaurus_settings.thesaurus_keywords = params['selected_file'].to_i
+        else
+          thesaurus_settings.thesaurus_subjects = params['selected_file'].to_i
+        end
+        thesaurus_settings.save
+        flash[:notice] = t('updated_successfully')
+        redirect_back(fallback_location: root_path)
+        return
+      end
       respond_to do |format|
         format.html { render 'thesaurus/manager/assignment_management', layout: false }
         format.json { render json: {} }
@@ -91,7 +109,9 @@ module Thesaurus
       @thesaurus.organization_id = current_organization.id
       @thesaurus.organization = current_organization
       @thesaurus.number_of_terms = 0
-
+      if params[:thesaurus_thesaurus][:thesaurus_type].present?
+        @thesaurus.thesaurus_type = params[:thesaurus_thesaurus][:thesaurus_type]
+      end
       @thesaurus.inject_created_by(current_user)
       @thesaurus.inject_updated_by(current_user)
       respond_to do |format|

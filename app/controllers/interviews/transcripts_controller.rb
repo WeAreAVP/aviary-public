@@ -24,7 +24,7 @@ module Interviews
           single = single_transcript_point.point_info.split('(')
           row = single[0].to_i
           column = single[1].to_i
-          if row > 0 && column > 0
+          if row > 0 && column > 0 && row <= raw_point.length && raw_point[row].present?
             time += time_different
             if raw_point[row][column] != ' '
               start = 1
@@ -41,7 +41,11 @@ module Interviews
                 end
               end
             end
-            raw_point[row].insert(column, " [#{Time.at(time).utc.strftime('%H:%M:%S')}] ")
+            if raw_point[row].length.zero? || raw_point[row][column].nil?
+              raw_point[row] = "[#{Time.at(time).utc.strftime('%H:%M:%S')}] "
+            else
+              raw_point[row].insert(column, " [#{Time.at(time).utc.strftime('%H:%M:%S')}] ")
+            end
           end
         end
         @text = raw_point.join("\n")
@@ -179,7 +183,7 @@ module Interviews
 
     def find_forward(found, start, raw_point, row, column)
       while found == false
-        found = true if raw_point[row][column + start].nil?
+        break if raw_point[row].length.zero? || raw_point[row][column + start].nil?
         if raw_point[row][column + start] == ' '
           found = true
           column += start
@@ -191,6 +195,7 @@ module Interviews
 
     def find_backward(found, start, raw_point, row, column)
       while found == false
+        break if raw_point[row].length.zero? || raw_point[row][column + start].nil?
         if raw_point[row][column - start] == ' '
           found = true
           column += start

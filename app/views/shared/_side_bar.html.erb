@@ -149,6 +149,20 @@
                           </div>
                         </div>
                       <% end %>
+                      <% if current_user.current_org_owner_admin(current_organization).present? %>
+                        <div class="card <%= disabled_organization_cls %>">
+                          <div class="card-header headingOne">
+                            <h5 class="mb-0">
+                              <button onclick="document.location.href='<%= "#{organization_fields_path}?type=ohms" %>'" class="btn btn-link  no_sub_colaps" data-toggle="collapse" aria-expanded="<%= params[:type] == "ohms" ? 'true' : '' %>" aria-controls="collapse">
+                                <div class="nav-box">
+                                  <span class="ico" data-toggle="tooltip" data-placement="right" title="" data-original-title="Trint"><i class="fa fa-file font-size-16px" style="color: dimgray;"></i></span>
+                                  <span class="title">OHMS Thesaurus Manager</span>
+                                </div>
+                              </button>
+                            </h5>
+                          </div>
+                        </div>
+                      <% end %>
                     </div>
                   </div>
                 </div>
