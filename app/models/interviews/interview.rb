@@ -22,7 +22,7 @@ module Interviews
       end
       thesaurus_settings
     end
-    
+
     def purify_value
       self.metadata_status = metadata_status.to_i
       self.media_host = Interviews::Interview.media_hosts[media_host] if media_host == 'Host'

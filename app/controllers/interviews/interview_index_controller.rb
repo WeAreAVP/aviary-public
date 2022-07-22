@@ -38,7 +38,7 @@ module Interviews
         end
       end
     end
-    
+
     def edit
       authorize! :manage, current_organization
       @file_index_point = FileIndexPoint.find(params[:id])

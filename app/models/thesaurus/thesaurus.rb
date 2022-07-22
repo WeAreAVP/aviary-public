@@ -25,10 +25,10 @@ module Thesaurus
       thesaurus = Thesaurus.joins(%i[organization updated_by]) if organization_id.present?
       thesaurus = thesaurus.where('thesaurus.organization_id = ? ', organization_id)
       thesaurus = if ohms
-        thesaurus.where('thesaurus.thesaurus_type = ? ', 'ohms')
-      else
-        thesaurus.where('thesaurus.thesaurus_type = ? ', 'aviary')
-      end
+                    thesaurus.where('thesaurus.thesaurus_type = ? ', 'ohms')
+                  else
+                    thesaurus.where('thesaurus.thesaurus_type = ? ', 'aviary')
+                  end
       if query.present?
         query = query.downcase.strip
         query_string_name = 'thesaurus.title LIKE (?)'
