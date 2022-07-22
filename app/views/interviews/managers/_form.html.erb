@@ -186,7 +186,9 @@
             </div>
           </div>
           <div class="text-headline jumbotron custom-title-headline">
-            <h3>Thesaurus <button type="button" class="info-btn" data-toggle="tooltip" data-placement="right" title="Assigning thesauri to OHMS index fields in the section below will apply only to this OHMS record and will override any global settings made in the OHMS Thesaurus Manager."></button></h3>
+            <h3>Thesaurus 
+
+            <button type="button" class="info-btn" data-toggle="tooltip" data-placement="right" title="Assigning thesauri to OHMS index fields in the section below will apply only to this OHMS record and will override any global settings made in the OHMS Thesaurus Manager."></button></h3>
           </div>
           <div class="form-group">
             <div class="field-title"><%= f.label :thesaurus_keywords, "Thesaurus (Keywords)" %></div>
@@ -357,5 +359,8 @@
     let interviews_manager = new InterviewManager();
     $(function () {
         interviews_manager.initialize();
+        $('[data-toggle="tooltip"]').tooltip()
+
+
     })
 </script>
