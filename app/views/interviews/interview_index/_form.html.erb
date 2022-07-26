@@ -132,5 +132,18 @@
     if($('.left_space').text().length == 0){
       $('.left_space').remove();
     }
-  })
+   $('.info-btn').popover({
+        html: true,
+        trigger: "click",
+        placement: "top"
+      });
+
+   $(document).on('click', function(e) {
+        $('.info-btn').each(function() {
+          if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0) {
+            $(this).popover('hide');
+          }
+        });
+      });
+  });
 </script>
