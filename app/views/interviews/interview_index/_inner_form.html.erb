@@ -8,38 +8,54 @@
     <% end %>
   <% end %>
 
-  <div class="d-flex">
+ <div class="d-flex">
     <div class="form-group">
-      <div class="field-title"><%= f.label :title, "Segment Title*" %></div>
-      <%= f.input :title, required: true, label: false, input_html: { class: 'form-control title' } %>
-      <small class="form-text text-muted mt-1">WebVTT cue identifier field in VTT export.</small>
-
-    </div>
-    <% if @interview.present? &&  @interview.include_language %>
-      <div class="form-group">
-        <div class="field-title"><%= f.label :title, "Segment Title*" %></div>
-          <%= f.input :title_alt, required: true, label: false, input_html: { class: 'form-control title' } %>
-          <small class="form-text text-muted mt-1">WebVTT cue identifier field in VTT export.</small>
+      <div class="field-title">
+        <%= f.label :title do %>
+          Segment Title*
+          <button type="button" class="info-btn" data-content="WebVTT cue identifier field in VTT export."></button>
+        <% end %>
       </div>
-    <% end %>
-  </div>
-
-  <div class="d-flex">
-    <div class="form-group">
-      <div class="field-title"><%= f.label :synopsis, "Segment Synopsis" %></div>
-      <%= f.text_area :synopsis, required: false, label: false, class: 'form-control synopsis' %>
-      <small class="form-text text-muted mt-1">WebVTT cue payload field in VTT export.</small>
-
+      <%= f.input :title, required: true, label: false, input_html: { class: 'form-control title' } %>
     </div>
     <% if @interview.present? &&  @interview.include_language %>
     <div class="form-group">
-      <div class="field-title"><%= f.label :synopsis, "Segment Synopsis" %></div>
-      <%= f.text_area :synopsis_alt, required: false, label: false, class: 'form-control synopsis' %>
-      <small class="form-text text-muted mt-1">WebVTT cue payload field in VTT export.</small>
-
+      <div class="field-title">
+        <%= f.label :title do %>
+          Segment Title*
+          <button type="button" class="info-btn" data-content="WebVTT cue identifier field in VTT export."></button>
+        <% end %>
+      </div>
+      <%= f.input :title_alt, required: true, label: false, input_html: { class: 'form-control title' } %>
     </div>
+      
     <% end %>
   </div>
+
+   <div class="d-flex">
+    <div class="form-group">
+      <div class="field-title">
+        <%= f.label :title do %>
+          Segment Synopsis*
+          <button type="button" class="info-btn" data-content="WebVTT cue payload field in VTT export."></button>
+        <% end %>
+      </div>
+      <%= f.input :synopsis, required: false, label: false, input_html: { class: 'form-control title' } %>
+    </div>
+    <% if @interview.present? &&  @interview.include_language %>
+    <div class="form-group">
+      <div class="field-title">
+        <%= f.label :title do %>
+          Segment Synopsis*
+          <button type="button" class="info-btn" data-content="WebVTT cue payload field in VTT export."></button>
+        <% end %>
+      </div>
+      <%= f.input :synopsis_alt, required: false, label: false, input_html: { class: 'form-control title' } %>
+    </div>
+    
+    <% end %>
+  </div>
+  
   
   <div class="d-flex">
     <div class="form-group">
