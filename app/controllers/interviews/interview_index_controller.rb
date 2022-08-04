@@ -27,7 +27,7 @@ module Interviews
     end
 
     def set_thesaurus
-      thesaurus_settings = ThesaurusSetting.where(organization_id: current_organization.id, is_global: true).try(:first)
+      thesaurus_settings = ThesaurusSetting.where(organization_id: current_organization.id, is_global: true, thesaurus_type: 'index').try(:first)
       if @interview.thesaurus_keywords == 0
         if thesaurus_settings.present?
           @interview.thesaurus_keywords = thesaurus_settings.thesaurus_keywords

@@ -1,3 +1,6 @@
+<%
+thesaurus_settings = ThesaurusSetting.where(organization_id: current_organization.id, is_global: true, thesaurus_type: 'record').try(:first)
+%>
 <%= simple_form_for @interview, :url => @interview.new_record? ? ohms_records_path : interviews_manager_path(@interview), html: { class: "interview_manager" } do |f| %>
   <div class="row ">
     <div class="breadcrumb mt-4 mb-3">
@@ -137,51 +140,31 @@
           </div>
           <div class="form-group">
             <div class="field-title"><%= f.label :keywords %>
-              <a href="javascript:void(0);" class="add_keywords add_button_interview text-decoration-none"> +</a>
             </div>
             <div class="container_keywords">
-              <% if @interview.keywords.present? && @interview.keywords.size > 0 %>
-                <% @interview.keywords.each do |single_keywords| %>
-                  <div class="row container_keywords_inner field_container">
-                    <div class="col-12 mb-2">
-                      <input type='text' name='interviews_interview[keywords][]' id="interviews_interview_keywords" value="<%= single_keywords %>" class="json optional form-control keywords"/>
-                      <a href="javascript://" class="remove_keywords" title="Remove keywords"><i class="remove_icon_image"></i></a>
-                    </div>
-                  </div>
+              <% @interview.keywords = @interview.keywords.join(';')%>
+              <%= f.text_area :keywords, required: false, label: false, class: 'form-control keywords tokenfield tokenfield_keywords', data: { items: thesaurus_settings.present? ? Thesaurus::ThesaurusTerms.where(thesaurus_information_id: thesaurus_settings.thesaurus_keywords).sort_by(&:term).map(&:term) : [] } %>
+              <small class="form-text text-muted mt-1">Keywords should be separated by a semi-colon.</small>
+              <% if thesaurus_settings.present? && thesaurus_settings.thesaurus_keywords.positive? %>
+                <% thesaurus = Thesaurus::Thesaurus.where(id: thesaurus_settings.thesaurus_keywords) %>
+                <% if thesaurus.length.positive? %>
+                  <small class="form-text text-muted mt-1">Current Thesaurus: <strong><%= thesaurus.first.title %></strong></small>
                 <% end %>
-              <% else %>
-
-                <div class="row container_keywords_inner field_container">
-                  <div class="col-12 mb-2">
-                    <input type='text' name='interviews_interview[keywords][]' id="interviews_interview_keywords" class="json optional form-control keywords "/>
-                    <a href="javascript://" class="remove_keywords" title="Remove keywords"><i class="remove_icon_image"></i></a>
-                  </div>
-                </div>
               <% end %>
             </div>
           </div>
           <div class="form-group">
             <div class="field-title"><%= f.label :subjects %>
-              <a href="javascript:void(0);" class="add_subjects add_button_interview text-decoration-none"> +
-              </a>
             </div>
             <div class="container_subjects">
-              <% if @interview.subjects.present? && @interview.subjects.size > 0 %>
-                <% @interview.subjects.each do |single_subjects| %>
-                  <div class="row container_subjects_inner field_container">
-                    <div class="col-12 mb-2">
-                      <input type='text' name='interviews_interview[subjects][]' id="interviews_interview_subjects" value='<%= single_subjects %>' class="json optional form-control subjects "/>
-                      <a href="javascript://" class="remove_subjects" title="Remove subjects"><i class="remove_icon_image"></i></a>
-                    </div>
-                  </div>
-                <% end %>
-              <% else %>
-                <div class="row container_subjects_inner field_container">
-                  <div class="col-12 mb-2">
-                    <input type='text' name='interviews_interview[subjects][]' id="interviews_interview_subjects" class="json optional form-control subjects "/>
-                    <a href="javascript://" class="remove_subjects" title="Remove subjects"><i class="remove_icon_image"></i></a>
-                  </div>
-                </div>
+              <% @interview.subjects = @interview.subjects.join(';')%>
+              <%= f.text_area :subjects, required: false, label: false, class: 'form-control subjects tokenfield tokenfield_subjects', data: { items: thesaurus_settings.present? ? Thesaurus::ThesaurusTerms.where(thesaurus_information_id: thesaurus_settings.thesaurus_subjects).sort_by(&:term).map(&:term) : [] } %>
+              <small class="form-text text-muted mt-1">Subjects should be separated by a semi-colon.</small>
+              <% if thesaurus_settings.present? && thesaurus_settings.thesaurus_subjects.positive? %>
+                <% thesaurus = Thesaurus::Thesaurus.where(id: thesaurus_settings.thesaurus_subjects) %>
+                <% if thesaurus.length.positive? %>
+                  <small class="form-text text-muted mt-1">Current Thesaurus: <strong><%= thesaurus.first.title %></strong></small>
+                 <% end %>
               <% end %>
             </div>
           </div>
