@@ -276,6 +276,8 @@ module Interviews
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def interview_params
+      params[:interviews_interview][:keywords] = params[:interviews_interview][:keywords].split('; ')
+      params[:interviews_interview][:subjects] = params[:interviews_interview][:subjects].split('; ')
       params.require(:interviews_interview).permit(:title, :accession_number, :interview_date, :date_non_preferred_format, :collection_id, :collection_name, :collection_link, :series_id, :series, :series_link,
                                                    :summary, :thesaurus_keywords, :thesaurus_subjects, :thesaurus_titles, :transcript_sync_data, :transcript_sync_data_translation, :media_format, :media_host, :media_url,
                                                    :media_duration, :media_filename, :media_type, :right_statement, :usage_statement, :acknowledgment, :language_info, :include_language, :language_for_translation, :miscellaneous_cms_record_id,
