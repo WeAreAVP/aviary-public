@@ -142,7 +142,7 @@ thesaurus_settings = ThesaurusSetting.where(organization_id: current_organizatio
             <div class="field-title"><%= f.label :keywords %>
             </div>
             <div class="container_keywords">
-              <% @interview.keywords = @interview.keywords.join(';')%>
+              <% @interview.keywords = @interview.keywords.join(';') if @interview.keywords.present? %>
               <%= f.text_area :keywords, required: false, label: false, class: 'form-control keywords tokenfield tokenfield_keywords', data: { items: thesaurus_settings.present? ? Thesaurus::ThesaurusTerms.where(thesaurus_information_id: thesaurus_settings.thesaurus_keywords).sort_by(&:term).map(&:term) : [] } %>
               <small class="form-text text-muted mt-1">Keywords should be separated by a semi-colon.</small>
               <% if thesaurus_settings.present? && thesaurus_settings.thesaurus_keywords.positive? %>
@@ -157,7 +157,7 @@ thesaurus_settings = ThesaurusSetting.where(organization_id: current_organizatio
             <div class="field-title"><%= f.label :subjects %>
             </div>
             <div class="container_subjects">
-              <% @interview.subjects = @interview.subjects.join(';')%>
+              <% @interview.subjects = @interview.subjects.join(';') if @interview.subjects.present? %>
               <%= f.text_area :subjects, required: false, label: false, class: 'form-control subjects tokenfield tokenfield_subjects', data: { items: thesaurus_settings.present? ? Thesaurus::ThesaurusTerms.where(thesaurus_information_id: thesaurus_settings.thesaurus_subjects).sort_by(&:term).map(&:term) : [] } %>
               <small class="form-text text-muted mt-1">Subjects should be separated by a semi-colon.</small>
               <% if thesaurus_settings.present? && thesaurus_settings.thesaurus_subjects.positive? %>
