@@ -29,6 +29,9 @@ thesaurus_settings = ThesaurusSetting.where(organization_id: current_organizatio
                 <%= link_to 'Return To OHMS Studio', ohms_records_path, class: 'btn btn-outline-secondary' %>
               </div>
               <%= f.submit 'Save', class: 'btn btn-success ml-3' %>
+              <% if @interview.id.present? %>
+              <%= render partial: 'shared/ohms/buttons', locals: { interview: @interview } %>
+              <% end %>
             </div>
           </div>
         </div>

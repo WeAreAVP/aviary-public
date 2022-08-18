@@ -112,6 +112,7 @@ module Interviews
         'interview'
       end
       string :status, stored: true
+      string :record_status, multiple: false, stored: true
       string :interviewee, multiple: true, stored: true
       string :interviewer, multiple: true, stored: true
       string :interview_date, stored: true
@@ -186,7 +187,7 @@ module Interviews
         miscellaneous_ohms_xml_filename.present? ? miscellaneous_ohms_xml_filename : 'None'
       end
       boolean :miscellaneous_use_restrictions, stored: true do
-        miscellaneous_use_restrictions.present? ? miscellaneous_use_restrictions : 'None'
+        miscellaneous_use_restrictions.nil? ? false : miscellaneous_use_restrictions
       end
       text :miscellaneous_sync_url, stored: true do
         miscellaneous_sync_url.present? ? miscellaneous_sync_url : 'None'

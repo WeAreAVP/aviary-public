@@ -102,7 +102,8 @@ class Organization < ApplicationRecord
           '33' => { status: 'true', value: 'created_by_id_is', sort_name: true },
           '34' => { status: 'true', value: 'updated_by_id_is', sort_name: true },
           '35' => { status: 'true', value: 'created_at_is', sort_name: true },
-          '36' => { status: 'true', value: 'updated_at_is', sort_name: true }
+          '36' => { status: 'true', value: 'updated_at_is', sort_name: true },
+          '37' => { status: 'true', value: 'record_status_is', sort_name: true }
         }
     }.to_json
 

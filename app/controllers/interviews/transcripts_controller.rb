@@ -10,6 +10,7 @@ module Interviews
 
     def edit
       @file_transcript = FileTranscript.find(params[:id])
+      @interview = Interview.where(id: @file_transcript.interview_id).try(:first)
       if request.patch? && params['file_transcript'].present? && params['file_transcript']['text'].present?
         time = 0.0
         time_different = @file_transcript.timecode_intervals.to_f * 60

@@ -22,6 +22,9 @@
                 <% if @interview.present? %>
                   <%= link_to 'Preview', preview_interviews_manager_path(@interview.id), class: 'btn btn-outline-secondary' %>
                   <%= link_to 'Return To OHMS Studio', ohms_records_path, class: 'btn btn-outline-secondary' %>
+                  <% if @interview.id.present? %>
+                  <%= render partial: 'shared/ohms/buttons', locals: { interview: @interview } %>
+                  <% end %>
                 <% else %>
                   <%= link_to 'Return To Resource', "#{collection_collection_resource_details_url(@collection_resource.collection, @collection_resource, @resource_file)}/index?", class: 'btn btn-outline-secondary mr-1' %>
                 <% end %>

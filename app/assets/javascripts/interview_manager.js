@@ -298,7 +298,18 @@ function InterviewManager() {
             $('.bulk_delete_content').removeClass('d-none');
             $('#bulk_edit_type_of_bulk_operation').val('bulk_delete');
             $('#confirm_msg_pop_bulk').html(' delete the interviews listed below.');
-
+        }
+        else if (selected_type == 'mark_restricted' || selected_type == 'mark_not_restricted') {
+            $('.export_xml_content').addClass('d-none');
+            $('.bulk_delete_content').addClass('d-none');
+            $('#bulk_edit_type_of_bulk_operation').val(selected_type);
+            $('#confirm_msg_pop_bulk').html(' change the use restrictions for the interviews listed below');
+        }
+        else if (selected_type == 'mark_online' || selected_type == 'mark_ofline') {
+            $('.export_xml_content').addClass('d-none');
+            $('.bulk_delete_content').addClass('d-none');
+            $('#bulk_edit_type_of_bulk_operation').val(selected_type);
+            $('#confirm_msg_pop_bulk').html(' change the online status for the interviews listed below');
         }
     };
 
