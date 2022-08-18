@@ -108,8 +108,7 @@ module Thesaurus
         end
         thesaurus_settings.save
         flash[:notice] = t('updated_successfully')
-        redirect_back(fallback_location: root_path)
-        return
+        
       end
       if params['assignment_option_custom_thesaurus_record'].present?
         thesaurus_settings = ThesaurusSetting.find_or_create_by(organization_id: current_organization.id, is_global: true, thesaurus_type: 'record')
@@ -126,6 +125,8 @@ module Thesaurus
         end
         thesaurus_settings.save
         flash[:notice] = t('updated_successfully')
+      end
+      if flash[:notice].present?
         redirect_back(fallback_location: root_path)
         return
       end
@@ -202,7 +203,7 @@ module Thesaurus
     end
 
     def thesaurus_params
-      params.require(:thesaurus_thesaurus).permit(:title, :description, :status, :thesaurus_terms, :ohms_integrations_vocabulary, :operation_type)
+      params.require(:thesaurus_thesaurus).permit(:title, :description, :status, :thesaurus_terms, :ohms_integrations_vocabulary, :operation_type, :thesaurus_type)
     end
 
     def autocomplete
@@ -263,22 +264,22 @@ module Thesaurus
 
     def over_write_terms(file, thesaurus)
       thesaurus_terms = if file.present?
-                          file.respond_to?(:read) ? CSV.foreach(file.path).map { |row| row[0] } : []
+                          file.respond_to?(:read) ? CSV.foreach(file.path, encoding: 'iso-8859-1:utf-8').map { |row| row[0] } : []
                         else
                           []
                         end
       all_terms = ::Thesaurus::ThesaurusTerms.where(thesaurus_information_id: thesaurus.id)
       all_terms.destroy_all if all_terms.present?
-      manage_terms(thesaurus_terms, thesaurus)
+      manage_terms(thesaurus_terms.compact, thesaurus)
     end
 
     def append_terms(file, thesaurus)
       thesaurus_terms = if file.present?
-                          file.respond_to?(:read) ? CSV.foreach(file.path).map { |row| row[0] } : []
+                          file.respond_to?(:read) ? CSV.foreach(file.path, encoding: 'iso-8859-1:utf-8').map { |row| row[0] } : []
                         else
                           []
                         end
-      manage_terms(thesaurus_terms, thesaurus)
+      manage_terms(thesaurus_terms.compact, thesaurus)
     end
 
     def manage_terms(thesaurus_terms, thesaurus)
