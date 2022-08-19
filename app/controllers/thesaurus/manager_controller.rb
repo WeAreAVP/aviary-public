@@ -184,12 +184,12 @@ module Thesaurus
                     thesaurus_id = thesaurus_information.present? && thesaurus_information.parent_id.present? && thesaurus_information.parent_id > 0 ? thesaurus_information.parent_id : t_id
                     thesaurus = if term.present?
                                   terms_all = term.split(' ')
-                                  terms_all = terms_all.map { |item| "*#{item}*" }
+                                  terms_all = terms_all.map { |item| "*#{item.gsub(/[^0-9a-zA-Z ]/i, '')}*" }
                                   ::Thesaurus::ThesaurusTerms.select('id, CONVERT(CONVERT(CONVERT(term USING latin1) USING binary) USING utf8) AS term_mod ')
                                                              .where('MATCH(term) AGAINST(? IN BOOLEAN MODE)', terms_all.join(' ').to_s)
-                                                             .where(thesaurus_information_id: thesaurus_id).order('term asc').limit(10)
+                                                             .where(thesaurus_information_id: thesaurus_id).order('term asc').limit(50)
                                 else
-                                  ::Thesaurus::ThesaurusTerms.select('id, CONVERT(CONVERT(CONVERT(term USING latin1) USING binary) USING utf8) AS term_mod ').where(thesaurus_information_id: thesaurus_id).order('term asc').limit(10)
+                                  ::Thesaurus::ThesaurusTerms.select('id, CONVERT(CONVERT(CONVERT(term USING latin1) USING binary) USING utf8) AS term_mod ').where(thesaurus_information_id: thesaurus_id).order('term asc').limit(50)
                                 end
                     thesaurus.map { |e| { id: e.id, label: e.term_mod, value: e.term_mod } } if thesaurus.present?
                   elsif %w[dropdown vocabulary].include? type_of_list
