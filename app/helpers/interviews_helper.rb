@@ -27,6 +27,8 @@ module InterviewsHelper
       'OHMS XML Filename'
     when 'miscellaneous_use_restrictions'
       'Use Restrictions'
+    when 'miscellaneous_use_restrictions_bs'
+      'Use Restrictions'
     when 'miscellaneous_sync_url'
       'Alt Sync URL (Legacy Field)'
     when 'miscellaneous_user_notes'

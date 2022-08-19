@@ -64,6 +64,21 @@ module Thesaurus
       @selected_file = params['thesaurus_id']
       @action_type = params['action_type']
       if params['list_of_fields_dropdown'].present?
+        if params['assignment_option_custom_thesaurus_resource'].present?
+          thesaurus_settings = ThesaurusSetting.find_or_create_by(organization_id: current_organization.id, is_global: true, thesaurus_type: 'resource')
+          if params['assignment_option_custom_thesaurus'].to_i.positive?
+            if params['assignment_option_custom_thesaurus_resource'] == 'keywords'
+              thesaurus_settings.thesaurus_keywords = 0
+            else
+              thesaurus_settings.thesaurus_subjects = 0
+            end
+          elsif params['assignment_option_custom_thesaurus_resource'] == 'keywords'
+            thesaurus_settings.thesaurus_keywords = params['selected_file'].to_i
+          else
+            thesaurus_settings.thesaurus_subjects = params['selected_file'].to_i
+          end
+          thesaurus_settings.save
+        end
         system_name, option_selected = params['list_of_fields_dropdown'].split('||-@||')
         if @resource_fields_settings[system_name].present?
           if params['assignment_option_custom_thesaurus'].to_s == '0'
@@ -79,7 +94,7 @@ module Thesaurus
         end
       end
       if params['assignment_option_custom_thesaurus_index'].present?
-        thesaurus_settings = ThesaurusSetting.find_or_create_by(organization_id: current_organization.id, is_global: true)
+        thesaurus_settings = ThesaurusSetting.find_or_create_by(organization_id: current_organization.id, is_global: true, thesaurus_type: 'index')
         if params['assignment_option_custom_thesaurus'].to_i.positive?
           if params['assignment_option_custom_thesaurus_index'] == 'keywords'
             thesaurus_settings.thesaurus_keywords = 0
@@ -93,6 +108,25 @@ module Thesaurus
         end
         thesaurus_settings.save
         flash[:notice] = t('updated_successfully')
+        
+      end
+      if params['assignment_option_custom_thesaurus_record'].present?
+        thesaurus_settings = ThesaurusSetting.find_or_create_by(organization_id: current_organization.id, is_global: true, thesaurus_type: 'record')
+        if params['assignment_option_custom_thesaurus'].to_i.positive?
+          if params['assignment_option_custom_thesaurus_record'] == 'keywords'
+            thesaurus_settings.thesaurus_keywords = 0
+          else
+            thesaurus_settings.thesaurus_subjects = 0
+          end
+        elsif params['assignment_option_custom_thesaurus_record'] == 'keywords'
+          thesaurus_settings.thesaurus_keywords = params['selected_file'].to_i
+        else
+          thesaurus_settings.thesaurus_subjects = params['selected_file'].to_i
+        end
+        thesaurus_settings.save
+        flash[:notice] = t('updated_successfully')
+      end
+      if flash[:notice].present?
         redirect_back(fallback_location: root_path)
         return
       end
@@ -159,19 +193,17 @@ module Thesaurus
 
     def export
       authorize! :manage, current_organization
-      row = []
       all_terms = ::Thesaurus::ThesaurusTerms.where(thesaurus_information_id: @thesaurus.id)
       thesaurus = CSV.generate do |csv|
         all_terms.each do |single_term|
-          row << single_term.term.strip
+          csv << [single_term.term]
         end
-        csv << row
       end
       send_data thesaurus, filename: "#{@thesaurus.title.delete(' ')}_thesaurus_#{Date.today}.csv", type: 'csv'
     end
 
     def thesaurus_params
-      params.require(:thesaurus_thesaurus).permit(:title, :description, :status, :thesaurus_terms, :ohms_integrations_vocabulary, :operation_type)
+      params.require(:thesaurus_thesaurus).permit(:title, :description, :status, :thesaurus_terms, :ohms_integrations_vocabulary, :operation_type, :thesaurus_type)
     end
 
     def autocomplete
@@ -232,22 +264,22 @@ module Thesaurus
 
     def over_write_terms(file, thesaurus)
       thesaurus_terms = if file.present?
-                          file.respond_to?(:read) ? file.read.parse_csv.map(&:strip) : []
+                          file.respond_to?(:read) ? CSV.foreach(file.path, encoding: 'iso-8859-1:utf-8').map { |row| row[0] } : []
                         else
                           []
                         end
       all_terms = ::Thesaurus::ThesaurusTerms.where(thesaurus_information_id: thesaurus.id)
       all_terms.destroy_all if all_terms.present?
-      manage_terms(thesaurus_terms, thesaurus)
+      manage_terms(thesaurus_terms.compact, thesaurus)
     end
 
     def append_terms(file, thesaurus)
       thesaurus_terms = if file.present?
-                          file.respond_to?(:read) ? file.read.parse_csv.map(&:strip) : []
+                          file.respond_to?(:read) ? CSV.foreach(file.path, encoding: 'iso-8859-1:utf-8').map { |row| row[0] } : []
                         else
                           []
                         end
-      manage_terms(thesaurus_terms, thesaurus)
+      manage_terms(thesaurus_terms.compact, thesaurus)
     end
 
     def manage_terms(thesaurus_terms, thesaurus)

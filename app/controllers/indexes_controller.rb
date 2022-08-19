@@ -166,7 +166,14 @@ class IndexesController < ApplicationController
     @collection_resource = CollectionResource.find(@resource_file.collection_resource_id)
     @file_index = FileIndex.find(params[:file_index_id])
     @file_index_point = FileIndexPoint.find(params[:file_index_point_id])
+    set_thesaurus
     render template: 'interviews/interview_index/edit'
+  end
+
+  def set_thesaurus
+    thesaurus_settings = ThesaurusSetting.where(organization_id: current_organization.id, is_global: true, thesaurus_type: 'resource').try(:first)
+    @thesaurus_keywords = thesaurus_settings.thesaurus_keywords if thesaurus_settings.present?
+    @thesaurus_subjects = thesaurus_settings.thesaurus_subjects if thesaurus_settings.present?
   end
 
   # Never trust parameters from the scary internet, only allow the white list through.

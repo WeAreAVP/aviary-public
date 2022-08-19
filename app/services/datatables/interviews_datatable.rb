@@ -45,6 +45,14 @@ class InterviewsDatatable < ApplicationDatatable
       else
         'none'
       end
+    elsif value['value'] == 'record_status_is'
+      resource['record_status_ss']
+    elsif value['value'] == 'miscellaneous_use_restrictions_bs' || value['value'] == 'use_restrictions_bs'
+      if resource['miscellaneous_use_restrictions_bs']
+        'Restricted'
+      else
+        'Not Restricted'
+      end
     elsif value['value'] == 'interview_status_ss'
       if resource['interview_status_ss'] == 'In Progress'
         resource['interview_status_ss'] = 'In Process'

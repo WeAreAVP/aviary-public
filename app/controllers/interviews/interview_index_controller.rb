@@ -27,12 +27,12 @@ module Interviews
     end
 
     def set_thesaurus
-      thesaurus_settings = ThesaurusSetting.where(organization_id: current_organization.id, is_global: true).try(:first)
-      if @interview.thesaurus_keywords == 0
+      thesaurus_settings = ThesaurusSetting.where(organization_id: current_organization.id, is_global: true, thesaurus_type: 'index').try(:first)
+      if Thesaurus::Thesaurus.where(id: @interview.thesaurus_keywords).length.zero?
         if thesaurus_settings.present?
           @interview.thesaurus_keywords = thesaurus_settings.thesaurus_keywords
         end
-      elsif @interview.thesaurus_subjects == 0
+      elsif Thesaurus::Thesaurus.where(id: @interview.thesaurus_subjects).length.zero?
         if thesaurus_settings.present?
           @interview.thesaurus_subjects = thesaurus_settings.thesaurus_subjects
         end

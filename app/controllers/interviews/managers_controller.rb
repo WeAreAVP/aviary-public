@@ -62,6 +62,38 @@ module Interviews
         respond_to do |format|
           format.html { redirect_to ohms_records_path, notice: t('updated_successfully') }
         end
+      elsif params['check_type'] == 'mark_online'
+        Interviews::Interview.where(id: session[:interview_bulk]).each do |interview|
+          interview.update(record_status: 'Online')
+          interview.reindex
+        end
+        respond_to do |format|
+          format.html { redirect_to ohms_records_path, notice: t('updated_successfully') }
+        end
+      elsif params['check_type'] == 'mark_not_restricted'
+        Interviews::Interview.where(id: session[:interview_bulk]).each do |interview|
+          interview.update(miscellaneous_use_restrictions: false)
+          interview.reindex
+        end
+        respond_to do |format|
+          format.html { redirect_to ohms_records_path, notice: t('updated_successfully') }
+        end
+      elsif params['check_type'] == 'mark_restricted'
+        Interviews::Interview.where(id: session[:interview_bulk]).each do |interview|
+          interview.update(miscellaneous_use_restrictions: true)
+          interview.reindex
+        end
+        respond_to do |format|
+          format.html { redirect_to ohms_records_path, notice: t('updated_successfully') }
+        end
+      elsif params['check_type'] == 'mark_ofline'
+        Interviews::Interview.where(id: session[:interview_bulk]).each do |interview|
+          interview.update(record_status: 'Offline')
+          interview.reindex
+        end
+        respond_to do |format|
+          format.html { redirect_to ohms_records_path, notice: t('updated_successfully') }
+        end
       elsif params['check_type'] == 'download_xml'
         self.tmp_user_folder = "tmp/archive_#{current_user.id}_#{Time.now.to_i}"
         dos_xml = []
@@ -276,6 +308,8 @@ module Interviews
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def interview_params
+      params[:interviews_interview][:keywords] = params[:interviews_interview][:keywords].split('; ') if params[:interviews_interview][:keywords].present?
+      params[:interviews_interview][:subjects] = params[:interviews_interview][:subjects].split('; ') if params[:interviews_interview][:subjects].present?
       params.require(:interviews_interview).permit(:title, :accession_number, :interview_date, :date_non_preferred_format, :collection_id, :collection_name, :collection_link, :series_id, :series, :series_link,
                                                    :summary, :thesaurus_keywords, :thesaurus_subjects, :thesaurus_titles, :transcript_sync_data, :transcript_sync_data_translation, :media_format, :media_host, :media_url,
                                                    :media_duration, :media_filename, :media_type, :right_statement, :usage_statement, :acknowledgment, :language_info, :include_language, :language_for_translation, :miscellaneous_cms_record_id,
