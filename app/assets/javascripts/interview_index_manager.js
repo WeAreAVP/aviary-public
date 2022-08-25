@@ -19,6 +19,7 @@ function InterviewIndexManager() {
     let widget_soundcloud;
     let host = "";
     this.initialize = function () {
+        $('[data-toggle="tooltip"]').tooltip();
         bindEvents();
         let searchParams = new URLSearchParams(window.location.search)
         host = $('#media_host').data('host')
