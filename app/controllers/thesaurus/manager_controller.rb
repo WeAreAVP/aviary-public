@@ -108,7 +108,7 @@ module Thesaurus
         end
         thesaurus_settings.save
         flash[:notice] = t('updated_successfully')
-        
+
       end
       if params['assignment_option_custom_thesaurus_record'].present?
         thesaurus_settings = ThesaurusSetting.find_or_create_by(organization_id: current_organization.id, is_global: true, thesaurus_type: 'record')

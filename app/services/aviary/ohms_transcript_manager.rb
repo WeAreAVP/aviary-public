@@ -221,11 +221,11 @@ module Aviary
     end
 
     def read_notes_info(file_transcript, text = '')
-      if text.blank?
+      if text.blank? && file_transcript.present? && file_transcript.file_transcript_points.present?
         text = file_transcript.file_transcript_points.pluck(:text).join(' ')
       end
       text_list = text.split("\n")
-      if file_transcript.point_notes_info.present?
+      if file_transcript.present? && file_transcript.point_notes_info.present?
         notes_info = file_transcript.point_notes_info
         text_list.each_with_index do |_single_point, single_index|
           if notes_info[single_index.to_s].present?

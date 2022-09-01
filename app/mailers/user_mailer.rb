@@ -40,4 +40,16 @@ class UserMailer < ApplicationMailer
     team_list = 'furqan@weareavp.com,nouman@weareavp.com,bertram@weareavp.com'
     mail(to: team_list, subject: 'Update in OHMS XSD')
   end
+
+  def notification_alert(user, notification, from_resource_import_export = false, zipfile = '')
+    @user = user
+    @notification = notification
+    @from_resource_import_export = from_resource_import_export
+    @download_link = ''
+    if zipfile.present?
+      protocol = ENV.fetch('RAILS_ENV') == 'production' ? 'https' : 'http'
+      @download_link = "#{protocol}://#{ENV.fetch('APP_HOST')}/#{zipfile.gsub('public/', '')}"
+    end
+    mail(to: @user.email, subject: notification[:subject].to_s)
+  end
 end

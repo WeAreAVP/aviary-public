@@ -36,5 +36,12 @@ function Accessibility() {
             var timerId = setInterval(adjustLocation, 10);
             setTimeout(function() {clearInterval(timerId)}, 500);
         });
+        document_level_binding_element('.search_field_selector_main', 'focus', function () {
+            $('.keyboard_virtual_custom').addClass('mt-30px');
+            $('.keyboard_virtual_custom').removeClass('mt-0');
+            $('.search_field_selector_main').addClass('advanced-search-on')
+            $('.buttons-search').show();
+
+        });
     }
 }
