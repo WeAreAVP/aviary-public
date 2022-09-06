@@ -93,7 +93,7 @@ class ApplicationController < ActionController::Base
   end
 
   def search_param_handler
-    methods = %w[load_resource_details_template show load_head_and_tombstone_template search_text record_tracking list_playlist_items]
+    methods = %w[load_resource_details_template show search_text record_tracking list_playlist_items]
     controllers = %w[playlists transcripts indexes playlist_resources]
     session[:solr_params] = '' if params[:controller] != 'collection_resources' && !methods.include?(params[:action]) && params[:controller] != 'catalog'
     session[:search_text] = {} if !controllers.include?(params[:controller]) && !%w[upload].include?(params[:action]) && (params[:controller] != 'collection_resources' && !methods.include?(params[:action]))

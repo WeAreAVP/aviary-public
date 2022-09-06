@@ -37,6 +37,10 @@ class CatalogController < ApplicationController
       search_state.params['myresources'] = 1
     end
     super
+    respond_to do |format|
+      format.html
+      format.json { render json: {}, format: format }
+    end
   end
 
   # when a method throws a Blacklight::Exceptions::InvalidRequest, this method is executed.

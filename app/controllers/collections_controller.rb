@@ -13,8 +13,9 @@ class CollectionsController < ApplicationController
   def index
     authorize! :manage, current_organization
     respond_to do |format|
-      format.html
-      format.json { render json: CollectionsDatatable.new(view_context, current_organization) }
+      format.html { render :template => "collections/index", format: format, locals:{format: format}  }
+      # format.html { render 'index', locals: {format: format} }
+      format.json { render json: CollectionsDatatable.new(view_context, current_organization), format: format }
     end
   end
 
