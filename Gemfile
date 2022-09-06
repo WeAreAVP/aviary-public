@@ -4,7 +4,7 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 ruby '3.1.0'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails', branch: 'main'
-gem 'rails', '>= 6.1.5'
+gem 'rails', '>= 6.1.6.1'
 group :development, :production do
   # Use mysql as the database for Active Record
   gem 'mysql2', '~> 0.5'
@@ -17,7 +17,7 @@ gem 'sass-rails', '>= 6'
 gem 'sprockets', '~> 4'
 gem 'sprockets-rails', :require => 'sprockets/railtie'
 # Transpile app-like JavaScript. Read more: https://github.com/rails/webpacker
-# gem 'webpacker', '~> 5.0'
+#gem 'webpacker', '~> 5.0'
 # Turbolinks makes navigating your web application faster. Read more: https://github.com/turbolinks/turbolinks
 gem 'turbolinks', '~> 5'
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
@@ -37,7 +37,7 @@ gem 'bootsnap', '>= 1.4.4', require: false
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
-
+  gem 'pry'
   gem 'pry-rails'
 end
 
@@ -51,7 +51,7 @@ group :development do
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   gem 'spring'
   gem 'letter_opener'
-  gem 'pry'
+
   gem 'meta_request'
   gem 'better_errors'
   gem 'binding_of_caller'
@@ -60,16 +60,15 @@ group :development do
 
   gem 'pry-stack_explorer'
 
-  gem 'rubocop', '>= 1.25', require: false
+  gem 'rubocop', require: false
   gem 'rubocop-rails', require: false
-  gem 'rubocop-ast', '>= 1.15.1', require: false
+  gem 'rubocop-ast', require: false
   gem 'rubocop-performance', require: false
   gem 'rubocop-rspec', require: false
   gem 'rubocop-rake', require: false
 end
 
 gem 'license_finder'
-
 group :test do
   # Adds support for Capybara system testing and selenium driver
   gem 'capybara', '>= 3.26'
@@ -79,20 +78,25 @@ group :test do
   # sqlite db
   gem 'sqlite3'
 
-  gem 'rspec', '~> 3.7'
-  gem 'rspec-rails', '~> 3.7'
+  gem 'rspec'
+  gem 'rspec-rails'
   gem 'rspec-activemodel-mocks'
   gem 'rspec-its'
-  gem 'factory_bot_rails', '~> 4.0'
-  gem 'shoulda-matchers'
+  gem 'factory_bot_rails'
+
   gem 'database_cleaner'
   gem 'rails-controller-testing'
   gem 'with_model'
   gem 'simplecov'
   gem 'codacy-coverage'
+  # Adds support for Capybara system testing and selenium driver
+
+  gem 'chromedriver-helper' # <- New!
   gem 'capybara-screenshot'
+  gem 'shoulda-matchers'
 end
 
+gem 'bigdecimal'
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
@@ -104,8 +108,11 @@ gem 'capistrano-rails', require: false
 # gem 'capistrano-passenger', '~> 0.2.0', require: false
 gem 'capistrano-rbenv', require: false
 gem 'capistrano3-puma', require: false
+gem 'ed25519', '~> 1.2'
+gem 'bcrypt_pbkdf', '~> 1'
 
 gem "aws-sdk-s3"
+
 gem 'mini_magick'
 gem 'nokogiri'
 
@@ -145,8 +152,6 @@ gem 'client_side_validations'
 gem 'sidekiq'
 #
 
-# # Process WebVTT file
-gem 'webvtt-ruby'
 #
 # # Getting info of a video
 gem 'soundcloud'
@@ -188,12 +193,12 @@ gem 'breadcrumbs_on_rails'
 gem 'rack-attack'
 gem 'simple_uuid'
 gem 'omniauth-multi-provider-saml'
+gem "omniauth-rails_csrf_protection"
 gem 'activerecord_json_validator'
 gem 'rails-letsencrypt'
 gem 'aws-sdk-glacier', '~> 1.0.0.rc1'
 gem 'treehash'
-# # Airbrake lib/platform for Error/Performance Monitoring and Reporting
-# gem 'airbrake'
+
 # # DNS verification
 # gem 'dnsruby'
 # # Nginx conf generator
@@ -233,7 +238,6 @@ gem 'htmlentities'
 gem 'yomu'
 gem 'sidekiq-limit_fetch'
 #
-# gem 'devise-two-factor'
 gem 'rqrcode'
 #
 gem 'pry-remote'
@@ -273,5 +277,4 @@ group :development, :test do
   gem 'solr_wrapper', '>= 0.3'
 end
 
-gem 'bootstrap', '~> 4.0'
-gem 'twitter-typeahead-rails', '0.11.1.pre.corejavascript'
+

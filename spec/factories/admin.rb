@@ -4,9 +4,9 @@ FactoryBot.define do
     sequence(:first_name) { |n| "first#{n}" }
     sequence(:last_name) { |n| "last#{n}" }
     sequence(:username) { |n| "username#{n}" }
-    password 'password'
-    password_confirmation 'password'
-    agreement '1'
-    preferred_language 'en'
+    password { "Thisis@password" }
+    password_confirmation { 'Thisis@password' }
+    agreement { '1' }
+    preferred_language { 'en' }
   end
 end
