@@ -277,4 +277,5 @@ group :development, :test do
   gem 'solr_wrapper', '>= 0.3'
 end
 
-
+# # Process WebVTT file
+gem 'webvtt-ruby', git: 'https://github.com/smntb/webvtt-ruby'

@@ -14,6 +14,12 @@ GIT
       kt-paperclip (>= 7.0.1)
       os (~> 1.0.0)
 
+GIT
+  remote: https://github.com/smntb/webvtt-ruby
+  revision: e0541eaebe5f6e1ad94383041cb711a36e1d560c
+  specs:
+    webvtt-ruby (0.3.3)
+
 GEM
   remote: https://rails-assets.org/
   specs:
@@ -1041,6 +1047,7 @@ DEPENDENCIES
   video_info
   web-console (>= 4.1.0)
   webdrivers
+  webvtt-ruby!
   wicked_pdf
   with_model
   wkhtmltopdf-binary

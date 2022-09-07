@@ -41,7 +41,7 @@ RSpec.describe OrganizationsController, type: :controller do
 
     it "has a 200 status code when open edit organization with incorrect info and empty body" do
       allow(controller).to receive(:current_organization).and_return(organization)
-      post :update_resource_column_sort, xhr: true, params: { id: organization.id }
+      post :update_resource_column_sort, xhr: true, params: { id: organization.id }, format: :json
       expect(JSON(response.body)['errors']).to eq(false)
     end
 
