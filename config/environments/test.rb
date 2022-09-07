@@ -58,5 +58,5 @@ Rails.application.configure do
   # Annotate rendered view with file names.
   # config.action_view.annotate_rendered_view_with_filenames = true
 
-  config.action_mailer.default_url_options = { host: ENV['APP_HOST'] }
+  config.action_mailer.default_url_options = { host: ENV.fetch('APP_HOST') }
 end
