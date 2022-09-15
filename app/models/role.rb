@@ -26,7 +26,7 @@ class Role < ApplicationRecord
   end
 
   def self.organization_roles
-    where(system_name: %w'organization_admin organization_owner organization_user')
+    where(system_name: %w'organization_admin organization_owner organization_user ohms_assigned_user')
   end
 
   def self.role_organization_owner
