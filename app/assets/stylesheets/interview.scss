@@ -675,6 +675,17 @@ div#noMediaConnection {
       }
     }
   }
+  .interview_td {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    white-space: normal;
+    min-width: 250px;
+    &.title_accession_number_ss {
+      white-space: nowrap;
+    }
+  }
 }
 #partial_script{
   resize: vertical !important;
