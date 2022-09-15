@@ -655,6 +655,10 @@ div#noMediaConnection {
   font-size: 18px;
 }
 #interviews_data_table {
+  td {
+    padding-top: 0px !important;
+    vertical-align: unset !important;
+  }
   th, td {
     white-space: nowrap;
     .btn-interview-preview {
