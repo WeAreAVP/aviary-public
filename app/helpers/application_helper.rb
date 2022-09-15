@@ -267,13 +267,13 @@ module ApplicationHelper
                     else
                       value
                     end
-                    if %w(title_ss collection_title).include?(attribute)
-                      strip_tags(value_current.to_s.strip).gsub('::', ' ')
-                    elsif length > 50
-                      "<div class='interview_td #{attribute}'>#{truncate(strip_tags(value_current.to_s.strip).gsub('::', ' '), length: length)}</div>"
-                    else
-                      truncate(strip_tags(value_current.to_s.strip).gsub('::', ' '), length: length)
-                    end
+    if %w(title_ss collection_title).include?(attribute)
+      strip_tags(value_current.to_s.strip).gsub('::', ' ')
+    elsif length > 50
+      "<div class='interview_td #{attribute}'>#{truncate(strip_tags(value_current.to_s.strip).gsub('::', ' '), length: length)}</div>"
+    else
+      truncate(strip_tags(value_current.to_s.strip).gsub('::', ' '), length: length)
+    end
   end
 
   def lock_image(classes = '')
