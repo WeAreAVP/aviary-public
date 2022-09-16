@@ -42,5 +42,6 @@ module Aviary
     config.time_zone = 'America/New_York' # Your local time zone
     config.active_record.default_timezone = :local
     config.active_record.time_zone_aware_attributes = false
+    config.active_record.use_yaml_unsafe_load = true
   end
 end

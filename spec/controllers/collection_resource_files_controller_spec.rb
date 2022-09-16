@@ -27,14 +27,14 @@ RSpec.describe CollectionResourceFilesController, type: :controller do
   end
   describe "GET bulk_resource_file_edit" do
     it "has a 200 status code" do
-      get :bulk_resource_file_edit, params: { collection_id: collection_resource.collection.id, collection_resource_id: collection_resource.id.to_s, collection_resource_file_id: collection_resource_file_vimeo.id, check_type: 'bulk_delete'  }
+      get :bulk_resource_file_edit, params: { collection_id: collection_resource.collection.id, collection_resource_id: collection_resource.id.to_s, collection_resource_file_id: collection_resource_file_vimeo.id, check_type: 'bulk_delete'  }, format: :json
       expect(response.status).to eq(200)
     end
   end
   
   describe "GET bulk_resource_file_edit" do
     it "has a 200 status code" do
-      get :bulk_resource_file_edit, params: { collection_id: collection_resource.collection.id, collection_resource_id: collection_resource.id.to_s, collection_resource_file_id: collection_resource_file_vimeo.id, check_type: 'bulk'  }
+      get :bulk_resource_file_edit, params: { collection_id: collection_resource.collection.id, collection_resource_id: collection_resource.id.to_s, collection_resource_file_id: collection_resource_file_vimeo.id, check_type: 'bulk'  }, format: :json
       expect(response.status).to eq(200)
     end
   end

@@ -1,5 +1,5 @@
 require 'rails_helper'
-
+require 'action_view'
 RSpec.describe OrganizationsController, type: :controller do
   let(:organization) { create(:organization) }
   let(:organization_user) { create(:organization_user, token: 'fsdhfabkjahdf') }
@@ -7,7 +7,7 @@ RSpec.describe OrganizationsController, type: :controller do
   let!(:yearly) { create(:plan, frequency: 2) }
   before do
     allow(controller).to receive(:current_organization).and_return(organization)
-    request[:subdomain] = organization.url
+    @request.host = "#{organization.url}.test.host"
     allow(controller).to receive(:current_user).and_return(organization.user)
     sign_in(organization.user)
     allow(controller).to receive(:authenticate_user!).and_return(true)
@@ -41,7 +41,7 @@ RSpec.describe OrganizationsController, type: :controller do
 
     it "has a 200 status code when open edit organization with incorrect info and empty body" do
       allow(controller).to receive(:current_organization).and_return(organization)
-      post :update_resource_column_sort, xhr: true, params: { id: organization.id }
+      post :update_resource_column_sort, xhr: true, params: { id: organization.id }, format: :json
       expect(JSON(response.body)['errors']).to eq(false)
     end
 
