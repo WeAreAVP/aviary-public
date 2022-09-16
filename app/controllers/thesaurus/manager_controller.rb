@@ -108,7 +108,7 @@ module Thesaurus
         end
         thesaurus_settings.save
         flash[:notice] = t('updated_successfully')
-        
+
       end
       if params['assignment_option_custom_thesaurus_record'].present?
         thesaurus_settings = ThesaurusSetting.find_or_create_by(organization_id: current_organization.id, is_global: true, thesaurus_type: 'record')
@@ -217,11 +217,20 @@ module Thesaurus
                     thesaurus = if term.present?
                                   terms_all = term.split(' ')
                                   terms_all = terms_all.map { |item| "*#{item.gsub(/[^0-9a-zA-Z ]/i, '')}*" }
-                                  ::Thesaurus::ThesaurusTerms.select('id, CONVERT(CONVERT(CONVERT(term USING latin1) USING binary) USING utf8) AS term_mod ')
-                                                             .where('MATCH(term) AGAINST(? IN BOOLEAN MODE)', terms_all.join(' ').to_s)
-                                                             .where(thesaurus_information_id: thesaurus_id).order('term asc').limit(50)
+                                  if !Rails.env.test?
+                                    ::Thesaurus::ThesaurusTerms.select('id, CONVERT(CONVERT(CONVERT(term USING latin1) USING binary) USING utf8) AS term_mod ')
+                                                               .where('MATCH(term) AGAINST(? IN BOOLEAN MODE)', terms_all.join(' ').to_s)
+                                                               .where(thesaurus_information_id: thesaurus_id).order('term asc').limit(50)
+                                  else
+                                    ::Thesaurus::ThesaurusTerms.select('id, term AS term_mod ')
+                                                               .where('term Like ?', terms_all.join(' ').to_s)
+                                                               .where(thesaurus_information_id: thesaurus_id).order('term asc').limit(50)
+                                  end
+
+                                elsif !Rails.env.test?
+                                  ::Thesaurus::ThesaurusTerms.select('id, CONVERT(CONVERT(CONVERT(term USING latin1) USING binary) USING utf8) AS term_mod ').where(thesaurus_information_id: thesaurus_id).order('term asc').limit(10)
                                 else
-                                  ::Thesaurus::ThesaurusTerms.select('id, CONVERT(CONVERT(CONVERT(term USING latin1) USING binary) USING utf8) AS term_mod ').where(thesaurus_information_id: thesaurus_id).order('term asc').limit(50)
+                                  ::Thesaurus::ThesaurusTerms.select('id, term AS term_mod ').where(thesaurus_information_id: thesaurus_id).order('term asc').limit(10)
                                 end
                     thesaurus.map { |e| { id: e.id, label: e.term_mod, value: e.term_mod } } if thesaurus.present?
                   elsif %w[dropdown vocabulary].include? type_of_list

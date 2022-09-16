@@ -70,9 +70,9 @@ RSpec.describe CatalogController, type: :controller do
 
     it 'keyword search (dora AND salo) OR (new AND resource )' do
       get :index, params: { utf8: '✓', update_advance_search: 'update_advance_search', search_type: 'simple', search_field: 'advanced', commit: 'Search', type_of_field_selector_single: 'keywords',
-                            keywords: ['dora AND salo OR new AND resource '], title_text: [''], resource_description: [''], indexes: [''], transcript: [''], op: [''], type_of_search: ['simple'] }, format: :json
+                            keywords: ['(dora AND salo) OR (new AND resource) '], title_text: [''], resource_description: [''], indexes: [''], transcript: [''], op: [''], type_of_search: ['simple'] }, format: :json
       expect(response.status).to eq(200)
-      expect(assigns(:document_list).size).to eq(1)
+      expect(assigns(:document_list).size).to eq(3)
     end
 
     it 'keyword search dora OR salo OR new AND resource AND "new resource 1" ' do

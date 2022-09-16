@@ -1,9 +1,9 @@
 FactoryBot.define do
   factory :file_transcript_point do
     sequence(:title) { |n| "Title#{n}" }
-    start_time 6
-    end_time 97
-    duration 91
+    start_time { 6 }
+    end_time { 97 }
+    duration { 91 }
     sequence(:text) { |n| "text#{n}" }
     sequence(:speaker) { |n| "text#{n}" }
     sequence(:writing_direction) { |n| "text#{n}" }
@@ -11,7 +11,7 @@ FactoryBot.define do
   end
 
   trait :empty_speaker do
-    text 'SPEAKER: Hi'
-    speaker nil
+    text { 'SPEAKER: Hi' }
+    speaker { nil }
   end
 end
