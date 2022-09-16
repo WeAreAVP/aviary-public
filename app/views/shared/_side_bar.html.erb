@@ -1,5 +1,7 @@
 <% unless admin_signed_in? %>
-  <% if current_user.organization_users.active.present? && current_organization.present? %>
+
+  <% role_user = current_user.organization_users.where(organization_id: current_organization.id) %>
+  <% if current_user.organization_users.active.present? && current_organization.present? && role_user.first.role.present? &&  role_user.first.role.system_name != "ohms_assigned_user" %>
     <% organization_users = current_user.organization_users.where(organization_id: current_organization.id).try(:first) %>
     <% disabled_organization_cls = current_organization.status ? '' : 'd-none' %>
     <div id="sidebar-main" class="<%= session[:layout] %>">

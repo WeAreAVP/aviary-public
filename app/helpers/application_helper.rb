@@ -248,7 +248,7 @@ module ApplicationHelper
     raw_params.to_json
   end
 
-  def check_valid_array(value, attribute)
+  def check_valid_array(value, attribute, length = 50)
     value_current = 'none'
     return value_current unless value.present?
     value_current = if value.class == Array
@@ -267,7 +267,13 @@ module ApplicationHelper
                     else
                       value
                     end
-    %w(title_ss collection_title).include?(attribute) ? strip_tags(value_current.to_s.strip).gsub('::', ' ') : truncate(strip_tags(value_current.to_s.strip).gsub('::', ' '), length: 50)
+    if %w(title_ss collection_title).include?(attribute)
+      strip_tags(value_current.to_s.strip).gsub('::', ' ')
+    elsif length > 50
+      "<div class='interview_td #{attribute}'>#{truncate(strip_tags(value_current.to_s.strip).gsub('::', ' '), length: length)}</div>"
+    else
+      truncate(strip_tags(value_current.to_s.strip).gsub('::', ' '), length: length)
+    end
   end
 
   def lock_image(classes = '')

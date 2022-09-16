@@ -655,6 +655,10 @@ div#noMediaConnection {
   font-size: 18px;
 }
 #interviews_data_table {
+  td {
+    padding-top: 0px !important;
+    vertical-align: unset !important;
+  }
   th, td {
     white-space: nowrap;
     .btn-interview-preview {
@@ -673,6 +677,17 @@ div#noMediaConnection {
         color: #000;
         border-color: #999;
       }
+    }
+  }
+  .interview_td {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    white-space: normal;
+    min-width: 250px;
+    &.title_accession_number_ss {
+      white-space: nowrap;
     }
   }
 }

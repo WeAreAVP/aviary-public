@@ -65,7 +65,7 @@ class InterviewsDatatable < ApplicationDatatable
     elsif value['value'] == 'updated_at_is'
       Time.at(resource[value['value']]).to_date
     else
-      check_valid_array(resource[value['value']], value['value'])
+      check_valid_array(resource[value['value']], value['value'], 100)
     end
   end
 
