@@ -55,10 +55,10 @@ class InterviewsDatatable < ApplicationDatatable
       end
     elsif value['value'] == 'media_url_texts'
       media_url_val = check_valid_array(resource[value['value']], value['value'])
-      if media_url_val != "None"
-        "#{link_to 'Media URL', check_valid_array(resource[value['value']], value['value']), target: '_blank', class: 'btn btn-default'}"
+      if media_url_val != 'None'
+        link_to 'Media URL', check_valid_array(resource[value['value']], value['value']), target: '_blank', class: 'btn btn-default'
       else
-        ""
+        ''
       end
     elsif value['value'] == 'interview_status_ss'
       if resource['interview_status_ss'] == 'In Progress'
