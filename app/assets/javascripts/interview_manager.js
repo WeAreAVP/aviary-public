@@ -123,6 +123,9 @@ function InterviewManager() {
                     }, 2000);
                 }
             },
+            headerCallback: function( thead, data, start, end, display ) {
+                $(thead).find('th').eq(29).html( 'Media URL' );
+            },
             initComplete: function (settings) {
                 try {
                     that.datatableInitComplete(settings);
