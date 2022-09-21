@@ -19,6 +19,21 @@ module Thesaurus
       all_thesaurus, count = thesaurus
       thesaurus_data = all_thesaurus.map do |thesauru|
         [].tap do |column|
+          labels = []
+          if params['type'].present? && params['type'] == "ohms"
+            thesaurus_settings = @current_organization.thesaurus_settings
+            i = 0
+            thesaurus_settings.each do |setting|
+              if setting.thesaurus_keywords == thesauru.id
+                labels[i] = 'Keywords: '+setting.thesaurus_type
+                i = i + 1
+              end
+              if setting.thesaurus_subjects == thesauru.id
+                labels[i] = 'Subjects: '+setting.thesaurus_type
+                i = i + 1
+              end
+            end
+          end
           column << thesauru.title
           column << truncate(strip_tags(thesauru.description.to_s).gsub('::', ''), length: 50)
           column << (thesauru.number_of_terms.present? ? thesauru.number_of_terms : 0)
@@ -27,7 +42,7 @@ module Thesaurus
           fields = if @field_has_thesaurus[thesauru.id.to_s].present? && @field_has_thesaurus[thesauru.id.to_s].present?
                      @field_has_thesaurus[thesauru.id.to_s]
                    else
-                     []
+                    labels.present? ? labels : []
                    end
           html_link = if fields.present?
                         link_to 'Field Listing', 'javascript:void(0)', class: 'btn-sm btn-default field_listing_popup', data: { toggle: 'modal', list_of_fields: fields.join(','), target: '#field_listing_theasurus_popup',
