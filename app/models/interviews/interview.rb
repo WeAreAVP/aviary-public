@@ -15,7 +15,7 @@ module Interviews
     validates_presence_of :language_for_translation, if: :include_language?
 
     def update_thesaurus
-      thesaurus_settings = ThesaurusSetting.where(organization_id: organization_id, is_global: true).try(:first)
+      thesaurus_settings = ::Thesaurus::ThesaurusSetting.where(organization_id: organization_id, is_global: true).try(:first)
       if thesaurus_settings.present?
         self.thesaurus_keywords = thesaurus_settings.thesaurus_keywords
         self.thesaurus_subjects = thesaurus_settings.thesaurus_subjects
