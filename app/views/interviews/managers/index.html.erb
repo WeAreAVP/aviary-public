@@ -43,11 +43,12 @@
               <% JSON.parse(@display_columns)['columns_status'].each_with_index do |(_field, status), _index| %>
                 <% field_status = status['status'] %>
                 <% field_key = status['value'] %>
-                <% if field_status.to_s.to_boolean? %>
+                <% if field_status.to_s.to_boolean? && field_key != 'ohms_assigned_user_id_is' %>
                   <th><%= InterviewsHelper.display_field_title_interview(field_key) %></th>
                 <% end %>
               <% end %>
             <% end %>
+            <th>Assignments</th>
             <th>Action</th>
           </tr>
           </thead>

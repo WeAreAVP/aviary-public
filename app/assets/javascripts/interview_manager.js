@@ -89,7 +89,7 @@ function InterviewManager() {
             scrollCollapse: false,
             fixedColumns:   {
                 leftColumns: 0,
-                rightColumns: 1
+                rightColumns: 2
             },
             pagingType: 'simple_numbers',
             'dom': "<'row'<'col-md-6 d-flex'f><'col-md-6'p>>" +
@@ -122,9 +122,6 @@ function InterviewManager() {
                         appHelper.hide_loader();
                     }, 2000);
                 }
-            },
-            headerCallback: function( thead, data, start, end, display ) {
-                $(thead).find('th').eq(29).html( 'Media URL' );
             },
             initComplete: function (settings) {
                 try {
