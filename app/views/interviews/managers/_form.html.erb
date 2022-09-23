@@ -1,5 +1,5 @@
 <%
-thesaurus_settings = ThesaurusSetting.where(organization_id: current_organization.id, is_global: true, thesaurus_type: 'record').try(:first)
+thesaurus_settings = ::Thesaurus::ThesaurusSetting.where(organization_id: current_organization.id, is_global: true, thesaurus_type: 'record').try(:first)
 %>
 <%= simple_form_for @interview, :url => @interview.new_record? ? ohms_records_path : interviews_manager_path(@interview), html: { class: "interview_manager" } do |f| %>
   <div class="row ">

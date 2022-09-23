@@ -171,7 +171,7 @@ class IndexesController < ApplicationController
   end
 
   def set_thesaurus
-    thesaurus_settings = ThesaurusSetting.where(organization_id: current_organization.id, is_global: true, thesaurus_type: 'resource').try(:first)
+    thesaurus_settings = ::Thesaurus::ThesaurusSetting.where(organization_id: current_organization.id, is_global: true, thesaurus_type: 'resource').try(:first)
     @thesaurus_keywords = thesaurus_settings.thesaurus_keywords if thesaurus_settings.present?
     @thesaurus_subjects = thesaurus_settings.thesaurus_subjects if thesaurus_settings.present?
   end

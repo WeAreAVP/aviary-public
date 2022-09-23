@@ -65,7 +65,7 @@ module Thesaurus
       @action_type = params['action_type']
       if params['list_of_fields_dropdown'].present?
         if params['assignment_option_custom_thesaurus_resource'].present?
-          thesaurus_settings = ThesaurusSetting.find_or_create_by(organization_id: current_organization.id, is_global: true, thesaurus_type: 'resource')
+          thesaurus_settings = ::Thesaurus::ThesaurusSetting.find_or_create_by(organization_id: current_organization.id, is_global: true, thesaurus_type: 'resource')
           if params['assignment_option_custom_thesaurus'].to_i.positive?
             if params['assignment_option_custom_thesaurus_resource'] == 'keywords'
               thesaurus_settings.thesaurus_keywords = 0
@@ -94,7 +94,7 @@ module Thesaurus
         end
       end
       if params['assignment_option_custom_thesaurus_index'].present?
-        thesaurus_settings = ThesaurusSetting.find_or_create_by(organization_id: current_organization.id, is_global: true, thesaurus_type: 'index')
+        thesaurus_settings = ::Thesaurus::ThesaurusSetting.find_or_create_by(organization_id: current_organization.id, is_global: true, thesaurus_type: 'index')
         if params['assignment_option_custom_thesaurus'].to_i.positive?
           if params['assignment_option_custom_thesaurus_index'] == 'keywords'
             thesaurus_settings.thesaurus_keywords = 0
@@ -111,7 +111,7 @@ module Thesaurus
 
       end
       if params['assignment_option_custom_thesaurus_record'].present?
-        thesaurus_settings = ThesaurusSetting.find_or_create_by(organization_id: current_organization.id, is_global: true, thesaurus_type: 'record')
+        thesaurus_settings = ::Thesaurus::ThesaurusSetting.find_or_create_by(organization_id: current_organization.id, is_global: true, thesaurus_type: 'record')
         if params['assignment_option_custom_thesaurus'].to_i.positive?
           if params['assignment_option_custom_thesaurus_record'] == 'keywords'
             thesaurus_settings.thesaurus_keywords = 0

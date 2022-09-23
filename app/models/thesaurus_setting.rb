@@ -1,2 +1,0 @@
-class ThesaurusSetting < ApplicationRecord
-end
