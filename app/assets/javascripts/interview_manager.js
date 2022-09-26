@@ -158,6 +158,7 @@ function InterviewManager() {
         bulk_option_selection();
         initImportXmlFile();
         updateTranscriptInfo();
+        assignUser();
     };
 
     const updateTranscriptInfo = function() {
@@ -428,7 +429,7 @@ function InterviewManager() {
             manageFieldsMedia($(this).val());
         });
         manageFieldsMedia($('#interviews_interview_media_host').val());
-
+        assignUser();
     };
 
     const manageFieldsMedia = function (value) {
@@ -705,4 +706,25 @@ function InterviewManager() {
             console.log(err);
         }
     };
+
+    const assignUser = () => {
+        document_level_binding_element(".assign_user", 'change', function (e) {
+            let userId = e.target.value
+            let callUrl = $(e.target).attr('data-call_url')
+            if(userId){
+                $.ajax({
+                    url: callUrl +'/' + e.target.value,
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function (response) {
+                        if (response.success) {
+                            jsMessages('success', response.message);
+                        } else {
+                            jsMessages('error', response.message);
+                        }
+                    },
+                });
+            }
+        });
+    }
 }

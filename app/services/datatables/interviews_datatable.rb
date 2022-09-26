@@ -36,7 +36,7 @@ class InterviewsDatatable < ApplicationDatatable
   def assignment(resource)
     ohms_assigned_user_id_val = resource['ohms_assigned_user_id_is']
     users = @current_organization.organization_ohms_assigned_users.includes(:user).joins(:user).order('users.first_name')
-    select_html = '<select class="assign_user" data-interview_id="' + resource['id_is'].to_s + '" name="ohms_assigned_user_id"><option value="">Assign User</option>'
+    select_html = '<select class="assign_user" data-call_url="ohms_records/user_assignments/' + resource['id_is'].to_s + '" name="ohms_assigned_user_id"><option value="">Assign User</option>'
     users.each do |user|
       ohms_user = user.user
       is_selected = ' selected="selected"' if ohms_assigned_user_id_val.to_i == ohms_user.id
