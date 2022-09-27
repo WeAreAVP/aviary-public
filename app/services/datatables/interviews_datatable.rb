@@ -84,6 +84,16 @@ class InterviewsDatatable < ApplicationDatatable
       "#{check_valid_array(resource[value['value']], value['value'])} #{link_to 'Preview', preview_interviews_manager_path(resource['id_is']), class: 'btn-interview-preview'}"
     elsif value['value'] == 'updated_at_is'
       Time.at(resource[value['value']]).to_date
+    elsif value['value'] == 'keywords_sms'
+      keyword_ids = check_valid_array(resource[value['value']], value['value'])
+      if keyword_ids != 'None'
+        Thesaurus::ThesaurusTerms.where(id: keyword_ids.split(',')).pluck(:term)
+      end
+    elsif value['value'] == 'subjects_sms'
+      subject_ids = check_valid_array(resource[value['value']], value['value'])
+      if subject_ids != 'None'
+        Thesaurus::ThesaurusTerms.where(id: subject_ids.split(',')).pluck(:term)
+      end
     else
       check_valid_array(resource[value['value']], value['value'], 100)
     end

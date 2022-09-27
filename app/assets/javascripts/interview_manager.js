@@ -21,24 +21,6 @@ function InterviewManager() {
     that.interview_transcript_id = 0;
     this.initialize = function () {
         bindEvents();
-        if($('.tokenfield').length > 0){
-            $('.tokenfield_keywords').tokenfield({
-                delimiter: ';',
-                autocomplete: {
-                source: $(".tokenfield_keywords").data().items,
-                delay: 100
-                },
-                showAutocompleteOnFocus: false
-            });
-            $('.tokenfield_subjects').tokenfield({
-                delimiter: ';',
-                autocomplete: {
-                source: $('.tokenfield_subjects').data().items,
-                delay: 100
-                },
-                showAutocompleteOnFocus: false
-            });
-        }
     };
 
     this.initializeSync = function () {

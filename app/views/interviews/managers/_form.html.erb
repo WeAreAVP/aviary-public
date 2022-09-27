@@ -146,7 +146,7 @@ thesaurus_settings = ::Thesaurus::ThesaurusSetting.where(organization_id: curren
             </div>
             <div class="container_keywords">
               <% @interview.keywords = @interview.keywords.join(';') if @interview.keywords.present? %>
-              <%= f.text_area :keywords, required: false, label: false, class: 'form-control keywords tokenfield tokenfield_keywords', data: { items: thesaurus_settings.present? ? Thesaurus::ThesaurusTerms.where(thesaurus_information_id: thesaurus_settings.thesaurus_keywords).sort_by(&:term).map(&:term) : [] } %>
+              <%= f.text_area :keywords, required: false, label: false, class: 'form-control keywords tokenfield tokenfield_keywords' %>
               <small class="form-text text-muted mt-1">Keywords should be separated by a semi-colon.</small>
               <% if thesaurus_settings.present? && thesaurus_settings.thesaurus_keywords.positive? %>
                 <% thesaurus = Thesaurus::Thesaurus.where(id: thesaurus_settings.thesaurus_keywords) %>
@@ -161,7 +161,7 @@ thesaurus_settings = ::Thesaurus::ThesaurusSetting.where(organization_id: curren
             </div>
             <div class="container_subjects">
               <% @interview.subjects = @interview.subjects.join(';') if @interview.subjects.present? %>
-              <%= f.text_area :subjects, required: false, label: false, class: 'form-control subjects tokenfield tokenfield_subjects', data: { items: thesaurus_settings.present? ? Thesaurus::ThesaurusTerms.where(thesaurus_information_id: thesaurus_settings.thesaurus_subjects).sort_by(&:term).map(&:term) : [] } %>
+              <%= f.text_area :subjects, required: false, label: false, class: 'form-control subjects tokenfield tokenfield_subjects' %>
               <small class="form-text text-muted mt-1">Subjects should be separated by a semi-colon.</small>
               <% if thesaurus_settings.present? && thesaurus_settings.thesaurus_subjects.positive? %>
                 <% thesaurus = Thesaurus::Thesaurus.where(id: thesaurus_settings.thesaurus_subjects) %>
@@ -346,7 +346,23 @@ thesaurus_settings = ::Thesaurus::ThesaurusSetting.where(organization_id: curren
     $(function () {
         interviews_manager.initialize();
         $('[data-toggle="tooltip"]').tooltip()
-
-
     })
+    new Tokenfield({
+      el: document.querySelector('.tokenfield_keywords'), // Attach Tokenfield to the input element with class "text-input"
+      items: <%= raw @keys %>,
+      matchStart: true,
+      minChars: 1,
+      newItems: false,
+      itemName: 'keywords',
+      setItems: <%= raw @selected_keyword_ids %>
+    });
+    new Tokenfield({
+      el: document.querySelector('.tokenfield_subjects'), // Attach Tokenfield to the input element with class "text-input"
+      items: <%= raw @subjects %>,
+      matchStart: true,
+      minChars: 1,
+      newItems: false,
+      itemName: 'subjects',
+      setItems: <%= raw @selected_subjects_ids %>
+    });
 </script>

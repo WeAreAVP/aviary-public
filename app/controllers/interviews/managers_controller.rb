@@ -41,12 +41,34 @@ module Interviews
       authorize! :manage, current_organization
       @interview = Interviews::Interview.new
       OhmsBreadcrumbPresenter.new(@interview, view_context).breadcrumb_manager('edit', @interview)
+      thesaurus_settings = ::Thesaurus::ThesaurusSetting.where(organization_id: current_organization.id, is_global: true, thesaurus_type: 'record').try(:first)
+      thesaurus_keys = thesaurus_settings.present? ? Thesaurus::ThesaurusTerms.where(thesaurus_information_id: thesaurus_settings.thesaurus_keywords).sort_by(&:term) : []
+      @keys = get_thesaurus_terms_as_json(thesaurus_keys)
+
+      thesaurus_subs = thesaurus_settings.present? ? Thesaurus::ThesaurusTerms.where(thesaurus_information_id: thesaurus_settings.thesaurus_subjects).sort_by(&:term) : []
+      @subjects = get_thesaurus_terms_as_json(thesaurus_subs)
+      @selected_keyword_ids = []
+      @selected_subjects_ids = []
     end
 
     # GET /interviews/1/edit
     def edit
       authorize! :manage, current_organization
       OhmsBreadcrumbPresenter.new(@interview, view_context).breadcrumb_manager('edit', @interview)
+      thesaurus_settings = ::Thesaurus::ThesaurusSetting.where(organization_id: current_organization.id, is_global: true, thesaurus_type: 'record').try(:first)
+      thesaurus_keys = thesaurus_settings.present? ? Thesaurus::ThesaurusTerms.where(thesaurus_information_id: thesaurus_settings.thesaurus_keywords).sort_by(&:term) : []
+      @keys = get_thesaurus_terms_as_json(thesaurus_keys)
+
+      thesaurus_subs = thesaurus_settings.present? ? Thesaurus::ThesaurusTerms.where(thesaurus_information_id: thesaurus_settings.thesaurus_subjects).sort_by(&:term) : []
+      @subjects = get_thesaurus_terms_as_json(thesaurus_subs)
+
+      selected_keyword_ids = @interview[:keywords].present? ? @interview[:keywords] : []
+      selected_keyword_ids = Thesaurus::ThesaurusTerms.where(id: selected_keyword_ids)
+      @selected_keyword_ids = selected_keyword_ids.present? ? get_thesaurus_terms_as_json(selected_keyword_ids) : []
+
+      selected_subjects_ids = @interview[:keywords].present? ? @interview[:subjects] : []
+      selected_subjects_ids = Thesaurus::ThesaurusTerms.where(id: selected_subjects_ids)
+      @selected_subjects_ids = selected_subjects_ids.present? ? get_thesaurus_terms_as_json(selected_subjects_ids) : []
     end
 
     def preview
@@ -323,13 +345,26 @@ module Interviews
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def interview_params
-      params[:interviews_interview][:keywords] = params[:interviews_interview][:keywords].split('; ') if params[:interviews_interview][:keywords].present?
-      params[:interviews_interview][:subjects] = params[:interviews_interview][:subjects].split('; ') if params[:interviews_interview][:subjects].present?
+      params[:interviews_interview][:keywords] = params[:keywords] if params[:keywords].present?
+      params[:interviews_interview][:subjects] = params[:subjects] if params[:subjects].present?
       params.require(:interviews_interview).permit(:title, :accession_number, :interview_date, :date_non_preferred_format, :collection_id, :collection_name, :collection_link, :series_id, :series, :series_link,
                                                    :summary, :thesaurus_keywords, :thesaurus_subjects, :thesaurus_titles, :transcript_sync_data, :transcript_sync_data_translation, :media_format, :media_host, :media_url,
                                                    :media_duration, :media_filename, :media_type, :right_statement, :usage_statement, :acknowledgment, :language_info, :include_language, :language_for_translation, :miscellaneous_cms_record_id,
                                                    :miscellaneous_ohms_xml_filename, :miscellaneous_use_restrictions, :miscellaneous_sync_url, :miscellaneous_user_notes, :interview_status, :status, :avalon_target_domain, :metadata_status,
                                                    :embed_code, :media_host_account_id, :media_host_player_id, :media_host_item_id, interviewee: [], interviewer: [], keywords: [], subjects: [], format_info: [])
+    end
+
+    def get_thesaurus_terms_as_json(thesauru_terms)
+      keys = []
+      i = 0
+      thesauru_terms.each do |thesaurus|
+        keys << {
+          id: thesaurus.id,
+          name: thesaurus.term
+        }
+        i += 1
+      end
+      keys.to_json
     end
   end
 end
