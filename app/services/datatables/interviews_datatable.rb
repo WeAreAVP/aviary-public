@@ -22,14 +22,27 @@ class InterviewsDatatable < ApplicationDatatable
         if @current_organization.interview_display_column.present? && JSON.parse(@current_organization.interview_display_column).present?
           JSON.parse(@current_organization.interview_display_column)['columns_status'].each do |_, value|
             field_status = value['status']
-            column << manage(value, resource) if field_status.to_s.to_boolean?
+            column << manage(value, resource) if field_status.to_s.to_boolean? && value['value'] != 'ohms_assigned_user_id_is'
           end
         end
+        column << assignment(resource)
         column << links(resource)
       end
     end
 
     [users_data, interviews_count]
+  end
+
+  def assignment(resource)
+    ohms_assigned_user_id_val = resource['ohms_assigned_user_id_is']
+    users = @current_organization.organization_ohms_assigned_users.includes(:user).joins(:user).order('users.first_name')
+    select_html = '<select class="assign_user" data-call_url="ohms_records/user_assignments/' + resource['id_is'].to_s + '" name="ohms_assigned_user_id"><option value="">Assign User</option>'
+    users.each do |user|
+      ohms_user = user.user
+      is_selected = ' selected="selected"' if ohms_assigned_user_id_val.to_i == ohms_user.id
+      select_html += '<option value="' + ohms_user.id.to_s + '" ' + is_selected.to_s + '>' + ohms_user.first_name + ' ' + ohms_user.last_name + '</option>'
+    end
+    select_html += '</select>'
   end
 
   def manage(value, resource)

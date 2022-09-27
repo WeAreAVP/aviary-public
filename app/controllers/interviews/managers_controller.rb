@@ -299,6 +299,21 @@ module Interviews
       render json: response_body
     end
 
+    def ohms_assignments
+      authorize! :manage, current_organization
+      user_id = params[:user_id]
+      interview_id = params[:interview_id]
+      interview = Interview.find(interview_id)
+      msg = if interview.update(ohms_assigned_user_id: user_id)
+              { success: true, message: t('updated_successfully') }
+            else
+              { success: false, message: t('error_update') }
+            end
+      respond_to do |format|
+        format.json { render json: msg, status: :accepted }
+      end
+    end
+
     private
 
     # Use callbacks to share common setup or constraints between actions.
