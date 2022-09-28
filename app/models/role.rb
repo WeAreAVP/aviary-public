@@ -36,4 +36,8 @@ class Role < ApplicationRecord
   def self.organization_admin_or_user
     where(system_name: %w'organization_admin organization_user').map(&:id)
   end
+
+  def self.organization_ohms_assigned_user
+    where(system_name: %w'ohms_assigned_user').map(&:id)
+  end
 end

@@ -275,6 +275,9 @@ module Interviews
       text :miscellaneous_ohms_xml_filename, stored: true do
         miscellaneous_ohms_xml_filename.present? ? miscellaneous_ohms_xml_filename : 'None'
       end
+      integer :ohms_assigned_user_id, stored: true do
+        ohms_assigned_user_id.present? ? ohms_assigned_user_id : 'None'
+      end
     end
 
     def self.solr_path

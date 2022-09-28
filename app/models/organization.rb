@@ -103,7 +103,8 @@ class Organization < ApplicationRecord
           '34' => { status: 'true', value: 'updated_by_id_is', sort_name: true },
           '35' => { status: 'true', value: 'created_at_is', sort_name: true },
           '36' => { status: 'true', value: 'updated_at_is', sort_name: true },
-          '37' => { status: 'true', value: 'record_status_is', sort_name: true }
+          '37' => { status: 'true', value: 'record_status_is', sort_name: true },
+          '38' => { status: 'true', value: 'ohms_assigned_user_id_is', sort_name: true }
         }
     }.to_json
 
@@ -511,6 +512,10 @@ class Organization < ApplicationRecord
 
   def current_user_org_owner(user)
     organization_users.where(role_id: Role.org_owner_id, user_id: user.id)
+  end
+
+  def organization_ohms_assigned_users
+    organization_users.where(role_id: Role.organization_ohms_assigned_user).where(status: true)
   end
 
   def resource_count
