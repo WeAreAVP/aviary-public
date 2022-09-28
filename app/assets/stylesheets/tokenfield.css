@@ -57,7 +57,7 @@
 .tokenfield.tokenfield-mode-tokens[disabled],
 .tokenfield.tokenfield-mode-tokens[readonly],
 fieldset[disabled] .tokenfield.tokenfield-mode-tokens {
-  background-color: #eeeeee;
+  background-color: #eee;
   opacity: 1;
 }
 
@@ -74,13 +74,13 @@ fieldset[disabled] .tokenfield.tokenfield-mode-tokens {
   background: rgba(0, 0, 0, 0.1);
 }
 
-.tokenfield .tokenfield-set>ul {
+.tokenfield .tokenfield-set > ul {
   margin: 0;
   padding: 0;
   list-style-type: none;
 }
 
-.tokenfield .tokenfield-set>ul>li {
+.tokenfield .tokenfield-set > ul > li {
   float: left;
   margin-right: 5px;
   margin-bottom: 5px;
@@ -92,12 +92,12 @@ fieldset[disabled] .tokenfield.tokenfield-mode-tokens {
   background: rgba(0, 0, 0, 0.08);
 }
 
-.tokenfield .tokenfield-set>ul>li:hover {
+.tokenfield .tokenfield-set > ul > li:hover {
   color: black;
   background: rgba(0, 0, 0, 0.16);
 }
 
-.tokenfield .tokenfield-set>ul>li .item-remove {
+.tokenfield .tokenfield-set > ul > li .item-remove {
   display: inline-block;
   font-weight: bold;
   font-size: 0.9285em;
@@ -126,15 +126,13 @@ fieldset[disabled] .tokenfield.tokenfield-mode-tokens {
   box-sizing: content-box;
 }
 
-.tokenfield .tokenfield-suggest>ul {
+.tokenfield .tokenfield-suggest > ul {
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
-.tokenfield .tokenfield-suggest>ul>li {
+.tokenfield .tokenfield-suggest > ul > li {
   padding: 6px 10px;
   cursor: pointer;
 }
-
-/*# sourceMappingURL=tokenfield.css.map */
