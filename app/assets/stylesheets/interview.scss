@@ -726,7 +726,7 @@ div#noMediaConnection {
     }
   }
 }
-td:has(> select.assign_user){
+td:has(> select.assign_user) {
   display: flex;
 }
 .tokenfield .tokenfield-set > ul > li {
