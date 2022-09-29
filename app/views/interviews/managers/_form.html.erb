@@ -346,23 +346,7 @@ thesaurus_settings = ::Thesaurus::ThesaurusSetting.where(organization_id: curren
     $(function () {
         interviews_manager.initialize();
         $('[data-toggle="tooltip"]').tooltip()
+        interviews_manager.keywordField(<%= raw @keys %>, <%= raw @selected_keyword_ids %>);
+        interviews_manager.searchField(<%= raw @subjects %>, <%= raw @selected_subjects_ids %>);
     })
-    new Tokenfield({
-      el: document.querySelector('.tokenfield_keywords'), // Attach Tokenfield to the input element with class "text-input"
-      items: <%= raw @keys %>,
-      matchStart: true,
-      minChars: 1,
-      newItems: false,
-      itemName: 'keywords',
-      setItems: <%= raw @selected_keyword_ids %>
-    });
-    new Tokenfield({
-      el: document.querySelector('.tokenfield_subjects'), // Attach Tokenfield to the input element with class "text-input"
-      items: <%= raw @subjects %>,
-      matchStart: true,
-      minChars: 1,
-      newItems: false,
-      itemName: 'subjects',
-      setItems: <%= raw @selected_subjects_ids %>
-    });
 </script>

@@ -709,4 +709,28 @@ function InterviewManager() {
             }
         });
     }
+
+    this.keywordField = (keys, selectedKeys) => {
+        new Tokenfield({
+            el: document.querySelector('.tokenfield_keywords'), // Attach Tokenfield to the input element with class "text-input"
+            items: keys,
+            matchStart: true,
+            minChars: 1,
+            newItems: false,
+            itemName: 'keywords',
+            setItems: selectedKeys
+          });
+    }
+
+    this.searchField = (keys, selectedKeys) => {
+        new Tokenfield({
+            el: document.querySelector('.tokenfield_subjects'), // Attach Tokenfield to the input element with class "text-input"
+            items: keys,
+            matchStart: true,
+            minChars: 1,
+            newItems: false,
+            itemName: 'subjects',
+            setItems: selectedKeys
+        });
+    }
 }
