@@ -89,7 +89,7 @@ function InterviewManager() {
             scrollCollapse: false,
             fixedColumns:   {
                 leftColumns: 0,
-                rightColumns: 2
+                rightColumns: $('#interviews_data_table').data('rightrow')
             },
             pagingType: 'simple_numbers',
             'dom': "<'row'<'col-md-6 d-flex'f><'col-md-6'p>>" +

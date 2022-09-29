@@ -12,14 +12,14 @@ module Interviews
     # GET /interview_index
     # GET /interview_index
     def show
-      authorize! :manage, current_organization
+      authorize! :manage, Interviews::Interview
       @interview = Interview.find(params[:id])
       @file_index_point = FileIndexPoint.where(file_index_id: @interview.file_indexes&.first&.id)
       OhmsBreadcrumbPresenter.new(@interview, view_context).breadcrumb_manager('show', @interview, 'index')
     end
 
     def new
-      authorize! :manage, current_organization
+      authorize! :manage, Interviews::Interview
       @interview = Interview.find(params[:id])
       @file_index_point = FileIndexPoint.new
       set_thesaurus
@@ -40,7 +40,7 @@ module Interviews
     end
 
     def edit
-      authorize! :manage, current_organization
+      authorize! :manage, Interviews::Interview
       @file_index_point = FileIndexPoint.find(params[:id])
       @file_index = FileIndex.find(@file_index_point.file_index_id)
       @interview = Interview.find(@file_index.interview_id)
@@ -68,7 +68,7 @@ module Interviews
     end
 
     def update
-      authorize! :manage, current_organization
+      authorize! :manage, Interviews::Interview
       @file_index_point = FileIndexPoint.find(params[:id])
       @file_index_point.update(file_index_point_params)
       start_time = human_to_seconds(params[:file_index_point][:start_time])
@@ -111,7 +111,7 @@ module Interviews
     end
 
     def destroy
-      authorize! :manage, current_organization
+      authorize! :manage, Interviews::Interview
       file_index_point = FileIndexPoint.find(params[:id])
       file_index = FileIndex.find(file_index_point.file_index_id)
       interview = Interview.find(file_index.interview_id)
@@ -128,7 +128,7 @@ module Interviews
     end
 
     def create
-      authorize! :manage, current_organization
+      authorize! :manage, Interviews::Interview
       @interview = Interview.find(params[:file_index_point][:interview_id])
       @file_index = FileIndex.find_by(interview_id: file_index_params[:interview_id], language: params[:file_index_point][:language].first)
       @file_index = FileIndex.new(file_index_params) if @file_index.nil?
@@ -174,7 +174,7 @@ module Interviews
     end
 
     def status_update
-      authorize! :manage, current_organization
+      authorize! :manage, Interviews::Interview
       interview = Interview.find(params[:id])
       interview.index_status = params[:index_status].to_i
       interview.save

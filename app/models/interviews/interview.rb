@@ -332,7 +332,7 @@ module Interviews
       limiter
     end
 
-    def self.fetch_interview_list(page, per_page, sort_column, sort_direction, params, limit_condition, export_and_current_organization = { export: false, current_organization: false })
+    def self.fetch_interview_list(page, per_page, sort_column, sort_direction, params, limit_condition, export_and_current_organization = { export: false, current_organization: false, organization_user: false, use_organization: true })
       q = params[:search][:value] if params.present? && params.key?(:search) && params[:search].key?(:value)
       solr_url = Interviews::Interview.solr_path
       select_url = "#{solr_url}/select"
@@ -391,12 +391,16 @@ module Interviews
         end
         fq_filters += " AND (#{fq_filters_inner}) " unless fq_filters_inner.blank?
       end
+      if export_and_current_organization[:organization_user].present? && export_and_current_organization[:organization_user].role.system_name == 'ohms_assigned_user'
+        fq_filters += " AND ohms_assigned_user_id_is:#{export_and_current_organization[:organization_user]['user_id']} "
+      end
       filters = []
       filters << fq_filters
       filters << limit_condition if limit_condition.present?
       query_params = { q: solr_q_condition, fq: filters.flatten }
+
       query_params[:fq] << if export_and_current_organization[:current_organization].present?
-                             "organization_id_is:#{export_and_current_organization[:current_organization].id}"
+                             (export_and_current_organization[:use_organization] ? "organization_id_is:#{export_and_current_organization[:current_organization].id}" : '')
                            else
                              'id_is:0'
                            end

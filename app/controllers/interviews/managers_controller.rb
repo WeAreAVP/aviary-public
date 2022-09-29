@@ -17,18 +17,42 @@ module Interviews
     # GET /interviews
     # GET /interviews.json
     def index
-      authorize! :manage, current_organization
-      session[:interview_bulk] = [] unless request.xhr?
-      @interviews = Interviews::Interview.all
-      @search_columns = current_organization.interview_search_column
-      @display_columns = current_organization.interview_display_column
+      if request.path.include?('my_ohms_assignment')
+        @organization_user = OrganizationUser.find_by_user_id(current_user.id)
+        user_current_organization = @organization_user.organization
+        @search_columns = user_current_organization.interview_search_column
+        @display_columns = user_current_organization.interview_display_column
+        @collections = Collection.where(organization_id: user_current_organization.id)
+      else
+        authorize! :manage, Interviews::Interview
+        session[:interview_bulk] = [] unless request.xhr?
+        @search_columns = current_organization.interview_search_column
+        @display_columns = current_organization.interview_display_column
+        @collections = Collection.where(organization_id: current_organization.id)
+        @organization_user = OrganizationUser.find_by user_id: current_user.id, organization_id: current_organization.id
+
+      end
     end
 
     def listing
-      authorize! :manage, current_organization
-      respond_to do |format|
-        format.html
-        format.json { render json: InterviewsDatatable.new(view_context, current_organization) }
+      authorize! :manage, Interviews::Interview unless request.path.include?('my_assignment_listing')
+      if request.path.include?('my_assignment_listing')
+        organization_user = if current_organization.nil?
+                              OrganizationUser.find_by user_id: current_user.id
+                            else
+                              OrganizationUser.find_by user_id: current_user.id, organization_id: current_organization.id
+                            end
+        user_current_organization = organization_user.organization
+        respond_to do |format|
+          format.html
+          format.json { render json: InterviewsDatatable.new(view_context, user_current_organization, organization_user, (current_organization.nil? ? false : true)) }
+        end
+      else
+        organization_user = OrganizationUser.find_by user_id: current_user.id, organization_id: current_organization.id
+        respond_to do |format|
+          format.html
+          format.json { render json: InterviewsDatatable.new(view_context, current_organization, '', organization_user, true) }
+        end
       end
     end
 
@@ -38,7 +62,7 @@ module Interviews
 
     # GET /interviews/new
     def new
-      authorize! :manage, current_organization
+      authorize! :manage, Interviews::Interview
       @interview = Interviews::Interview.new
       OhmsBreadcrumbPresenter.new(@interview, view_context).breadcrumb_manager('edit', @interview)
     end
@@ -50,7 +74,7 @@ module Interviews
     end
 
     def preview
-      authorize! :manage, current_organization
+      authorize! :manage, Interviews::Interview
     end
 
     # GET /interviews/bulk_edit
@@ -189,7 +213,7 @@ module Interviews
     # GET /interviews/1/export.format
     def export
       authenticate_user! unless params[:viewer] == ENV['PREVIEW_KEY']
-      authorize! :manage, current_organization unless params[:viewer] == ENV['PREVIEW_KEY']
+      authorize! :manage, Interviews::Interview unless params[:viewer] == ENV['PREVIEW_KEY']
       interview = Interviews::Interview.find(params[:id])
       export_text = Aviary::ExportOhmsInterviewXml.new.export(interview)
       doc = Nokogiri::XML(export_text.to_xml)
@@ -212,7 +236,7 @@ module Interviews
     # POST /interviews
     # POST /interviews.json
     def create
-      authorize! :manage, current_organization
+      authorize! :manage, Interviews::Interview
       @interview = Interviews::Interview.new(interview_params)
       @interview.organization = current_organization
       respond_to do |format|
@@ -229,7 +253,7 @@ module Interviews
     # PATCH/PUT /interviews/1
     # PATCH/PUT /interviews/1.json
     def update
-      authorize! :manage, current_organization
+      authorize! :manage, Interviews::Interview
       respond_to do |format|
         if @interview.update(interview_params)
           format.html { redirect_to ohms_records_path, notice: 'Interview was successfully updated.' }
@@ -244,7 +268,7 @@ module Interviews
     # DELETE /interviews/1
     # DELETE /interviews/1.json
     def destroy
-      authorize! :manage, current_organization
+      authorize! :manage, Interviews::Interview
       @interview.destroy
       respond_to do |format|
         format.html { redirect_to ohms_records_path, notice: 'Interview was successfully destroyed.' }
@@ -253,7 +277,7 @@ module Interviews
     end
 
     def update_column_info
-      authorize! :manage, current_organization
+      authorize! :manage, Interviews::Interview
       search_columns = {}
       display_columns = { 'number_of_column_fixed' => 0, 'columns_status' => {} }
       respond_to do |format|
@@ -276,7 +300,7 @@ module Interviews
     end
 
     def import_metadata_xml
-      authorize! :manage, current_organization
+      authorize! :manage, Interviews::Interview
       file_data = params[:importXML]
       response_body = {}
       file_data.each do |data|
