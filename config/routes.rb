@@ -60,6 +60,8 @@ Rails.application.routes.draw do
     get '/', to: 'users#index'
   end
   get 'ohms_records', to: 'interviews/managers#index', as: :ohms_records
+  get 'my_ohms_assignment', to: 'interviews/managers#index', as: :my_ohms_assignment
+  post 'my_assignment_listing', to: 'interviews/managers#listing', as: :my_assignment_listing
   post 'ohms_records', to: 'interviews/managers#create', as: :ohms_records_create
   get 'ohms_records/:id/edit', to: 'interviews/managers#edit', as: :ohms_records_edit
   get 'ohms_records/new', to: 'interviews/managers#new', as: :ohms_records_new

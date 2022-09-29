@@ -4,9 +4,13 @@
       <div class="text-headline jumbotron">
         <div class="heading-holder table-head">
           <div class="row">
-            <div class="col-md-6"><h1>OHMS Records</h1></div>
             <div class="col-md-6">
-
+            
+            <h1> <%= @organization_user.role.system_name == "ohms_assigned_user" ? "#{current_user.full_name}'s OHMS Assignments" : 'OHMS Records' %></h1>
+            
+            </div>
+            <div class="col-md-6">
+              <% unless @organization_user.role.system_name == "ohms_assigned_user" %>
               <div class="dropdown float-right  ml-2 ">
                 <button type="button" class="btn mr-2 btn-outline-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                   Add OHMS Record
@@ -18,6 +22,7 @@
               </div>
 
               <div class="dropdown float-right  ml-2 ">
+              
                 <button type="button" class="btn mr-2 btn-outline-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                   Table Options
                 </button>
@@ -28,17 +33,20 @@
                   <button class="dropdown-item bluk-edit-btn">Bulk Edit Options</button>
                 </div>
               </div>
+              <% end %>
             </div>
           </div>
         </div>
       </div>
       <div class="data-table collections-datatable">
-        <%= content_tag :table, role: :datatable, class: ["table", "table-striped", 'table-bordered'], id: 'interviews_data_table', data: { url: listing_interviews_managers_path(format: :json) } do %>
+        <%= content_tag :table, role: :datatable, class: ["table", "table-striped", 'table-bordered'], id: 'interviews_data_table', data: { url: (params[:collection_id].present? ? interview_lists_of_collections_path(params[:collection_id]) : ( @organization_user.role.system_name == "ohms_assigned_user" ? my_assignment_listing_path(format: :json) : listing_interviews_managers_path(format: :json))), rightrow: (@organization_user.role.system_name == "ohms_assigned_user" ? 1 : 2) } do %>
           <thead>
           <tr>
+            <% unless @organization_user.role.system_name == "ohms_assigned_user" %>
             <th>
               <input type="checkbox" class="select_all_checkbox_interview" data-url="<%= bulk_resource_list_interviews_managers_path %>" data-bulk_delete="<%= fetch_bulk_edit_resource_list_collections_path %>"/>
             </th>
+            <% end %>
             <% if @display_columns.present? %>
               <% JSON.parse(@display_columns)['columns_status'].each_with_index do |(_field, status), _index| %>
                 <% field_status = status['status'] %>
@@ -48,7 +56,9 @@
                 <% end %>
               <% end %>
             <% end %>
+            <% unless @organization_user.role.system_name == "ohms_assigned_user" %>
             <th>Assignments</th>
+            <% end %>
             <th>Action</th>
           </tr>
           </thead>
@@ -282,9 +292,66 @@
   </div>
 </div>
 
+<div class="modal fade manage-interview-export-sync-modal" id="export_sync_modal" tabindex="-1" role="dialog" aria-labelledby="ipPopupLabel" aria-hidden="true">
+  <div class="modal-lg modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title h5">Sync with Aviary Resource</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form method="post" class="export_sync_form" id="export_sync_form" action="">
+        <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <div class="field-title">
+                  <label for="collection_id">Collection</label>
+                </div>
+                <%= select_tag 'collection_id', options_from_collection_for_select(@collections,'id','title',@collections&.first&.id), required: true %>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <div class="field-title">
+                  <label for="title">Display Title</label>
+                </div>
+                <%= text_field_tag "title", "", class: 'form-control', required: true %>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <div class="field-title">
+                  <label for="is_featured">Featured</label>
+                </div>
+                <%= select_tag 'is_featured', options_for_select([['Yes', true], ['No', false]], false), required: true %>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <div class="field-title">
+                  <label for="access">Access</label>
+                </div>
+                <%= select_tag 'access', options_for_select(CollectionResource.accesses.map { |key, value| [key.split('_').second.humanize, value] }) %>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <%= submit_tag 'Sync', class: 'btn btn-primary ' %>
+          <button type="button" class="btn btn-light close-export-popup" data-dismiss="modal">Close</button>
+        </div>
+      </form>
 
-<%= render 'notes' %>
-<%= render 'upload' %>
+    </div>
+  </div>
+</div>
+<%= render 'interviews/managers/notes' %>
+<%= render 'interviews/managers/upload' %>
 <script type="text/javascript">
     let interviews_manager = new InterviewManager();
     <% if params[:e].present? %>

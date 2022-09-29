@@ -69,7 +69,7 @@ module Interviews
     end
 
     def create
-      authorize! :manage, current_organization
+      authorize! :manage, Interviews::Interview
       interview = Interviews::Interview.find(params[:id])
       message = ''
       response = if params['interview_transcript'].present?

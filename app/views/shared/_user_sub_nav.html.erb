@@ -45,7 +45,7 @@
               </a>
               <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                 <% current_user.organization_users.active.each do |organization_user| %>
-                  <% home_url = organization_user.organization.status ? collections_url(host: Utilities::AviaryDomainHandler.subdomain_handler(organization_user.organization)) : account_organization_url(host: Utilities::AviaryDomainHandler.subdomain_handler(organization_user.organization)) %>
+                  <% home_url = organization_user.organization.status ? ( organization_user.role.system_name == "ohms_assigned_user" ? root_url(host: Utilities::AviaryDomainHandler.subdomain_handler(organization_user.organization))+'ohms_records' : collections_url(host: Utilities::AviaryDomainHandler.subdomain_handler(organization_user.organization))) : account_organization_url(host: Utilities::AviaryDomainHandler.subdomain_handler(organization_user.organization)) %>
                   <%= link_to organization_user.organization.name.truncate(55, omission: '...'), home_url, class: "dropdown-item" %>
                 <% end %>
               </div>
@@ -58,6 +58,10 @@
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
               <%= link_to "Profile", profile_path, class: "dropdown-item #{'active' if request.path.include?("profile_settings")}" %>
+              <% organization_user = OrganizationUser.find_by_user_id(current_user.id) %>
+              <% if organization_user.role.system_name == 'ohms_assigned_user' %>
+              <%= link_to "My OHMS Assignments", my_ohms_assignment_url(subdomain: false), class: "dropdown-item #{'active' if request.path.include?("ohms_records")}" %>
+              <% end %>
               <%= link_to "My Resources", listing_for_my_resources_path, class: "dropdown-item #{'active' if request.path.include?("myresources/listing")}" %>
               <%= link_to "My Saved Searches", datatable_saved_searches_url(subdomain: false), class: "dropdown-item #{'active' if request.path.include?("/saved_searches")}" %>
               <%= link_to 'Logout', destroy_user_session_path, method: :delete, class: 'dropdown-item' %>

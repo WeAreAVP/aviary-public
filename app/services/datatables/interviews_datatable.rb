@@ -6,9 +6,11 @@ class InterviewsDatatable < ApplicationDatatable
   delegate :can?, :interviews_manager_path, :interviews_list_notes_path, :interviews_update_note_path, :interviews_transcript_path,
            :ohms_index_path, :ohms_records_edit_path, :preview_interviews_manager_path, :export_interviews_manager_path, :sync_interviews_manager_path, :check_valid_array, :bulk_resource_list_interviews_managers_path, to: :@view
 
-  def initialize(view, current_organization = nil)
+  def initialize(view, current_organization = nil, organization_user = '', use_organization = true)
     @view = view
     @current_organization = current_organization
+    @organization_user = organization_user
+    @use_organization = use_organization
   end
 
   private
@@ -17,15 +19,19 @@ class InterviewsDatatable < ApplicationDatatable
     all_interviews, interviews_count = interviews
     users_data = all_interviews.map do |resource|
       [].tap do |column|
-        column << "<input type='checkbox' class='interviews_selections interviews_selections-#{resource['id_is']}'
-                    data-url='#{bulk_resource_list_interviews_managers_path(id: resource['id_is'])}' data-id='#{resource['id_is']}' />"
+        unless @organization_user.role.system_name == 'ohms_assigned_user'
+          column << "<input type='checkbox' class='interviews_selections interviews_selections-#{resource['id_is']}'
+                      data-url='#{bulk_resource_list_interviews_managers_path(id: resource['id_is'])}' data-id='#{resource['id_is']}' />"
+        end
         if @current_organization.interview_display_column.present? && JSON.parse(@current_organization.interview_display_column).present?
           JSON.parse(@current_organization.interview_display_column)['columns_status'].each do |_, value|
             field_status = value['status']
             column << manage(value, resource) if field_status.to_s.to_boolean? && value['value'] != 'ohms_assigned_user_id_is'
           end
         end
-        column << assignment(resource)
+        unless @organization_user.role.system_name == 'ohms_assigned_user'
+          column << assignment(resource)
+        end
         column << links(resource)
       end
     end
@@ -100,7 +106,7 @@ class InterviewsDatatable < ApplicationDatatable
     columns.each do |term|
       search_string << "#{term} like :search"
     end
-    Interviews::Interview.fetch_interview_list(page, per_page, sort_column, sort_direction, params, {}, export: false, current_organization: @current_organization)
+    Interviews::Interview.fetch_interview_list(page, per_page, sort_column, sort_direction, params, {}, export: false, current_organization: @current_organization, organization_user: @organization_user, use_organization: @use_organization)
   end
 
   def sort_column
@@ -112,9 +118,11 @@ class InterviewsDatatable < ApplicationDatatable
     color_metadata = this_interview.try(:interview_metadata_status)
     index_color_metadata = this_interview.try(:index_status)
     html = '<div class="d-flex align-items-center"><div class="action-btn-holder btn-group">'
-    html += link_to 'Metadata', ohms_records_edit_path(interview['id_is']), class: 'btn-interview btn-sm btn-link', style: color_metadata.to_s, data: {
-      toggle: 'tooltip', placement: 'top', title: (this_interview.present? ? this_interview.listing_metadata_status[this_interview.metadata_status.to_s] : '')
-    }
+    unless @organization_user.role.system_name == 'ohms_assigned_user'
+      html += link_to 'Metadata', ohms_records_edit_path(interview['id_is']), class: 'btn-interview btn-sm btn-link', style: color_metadata.to_s, data: {
+        toggle: 'tooltip', placement: 'top', title: (this_interview.present? ? this_interview.listing_metadata_status[this_interview.metadata_status.to_s] : '')
+      }
+    end
     html += link_to 'Index', ohms_index_path(interview['id_is']), class: 'btn-interview btn-sm btn-link', style: this_interview.color_grading_index[index_color_metadata.to_s], data: {
       toggle: 'tooltip', placement: 'top', title: (this_interview.present? ? this_interview.listing_metadata_index_status[this_interview.index_status.to_s] : '')
     }
@@ -122,25 +130,29 @@ class InterviewsDatatable < ApplicationDatatable
     html += link_to 'Notes', 'javascript://', class: 'btn-interview btn-sm btn-link interview_notes ' + notes_color(interview), id: 'interview_note_' + interview['id_is'].to_s, data: {
       id: interview['id_is'], url: interviews_list_notes_path(interview['id_is'], 'json'), updateurl: interviews_update_note_path(interview['id_is'], 'json')
     }
-    html += link_to (this_interview.try(:file_transcripts).present? && this_interview.file_transcripts.first.associated_file_updated_at.present? ? 'Re-Upload Transcript' : 'Upload Transcript'), 'javascript:void(0);',
-                    class: 'btn-interview btn-sm btn-link interview_transcript_upload ',
-                    style: transcripts_color(this_interview), id: 'interview_tupload_' + interview['id_is'].to_s, data: { id: "upload_#{interview['id_is']}", url: interviews_transcript_path(interview['id_is']) }
-
+    unless @organization_user.role.system_name == 'ohms_assigned_user'
+      html += link_to (this_interview.try(:file_transcripts).present? && this_interview.file_transcripts.first.associated_file_updated_at.present? ? 'Re-Upload Transcript' : 'Upload Transcript'), 'javascript:void(0);',
+                      class: 'btn-interview btn-sm btn-link interview_transcript_upload ',
+                      style: transcripts_color(this_interview), id: 'interview_tupload_' + interview['id_is'].to_s, data: { id: "upload_#{interview['id_is']}", url: interviews_transcript_path(interview['id_is']) }
+    end
     if this_interview.try(:file_transcripts).present?
       html += link_to 'Sync', sync_interviews_manager_path(interview['id_is']), class: 'btn-interview btn-sm btn-link mr-1 float-left interview_transcript_sync ', id: 'interview_transcript_sync' + interview['id_is'].to_s, data: {
         id: interview['id_is'], url: sync_interviews_manager_path(interview['id_is'], 'json'), updateurl: sync_interviews_manager_path(interview['id_is']),
         toggle: 'tooltip', placement: 'top', title: this_interview.interview_sync_status.second
       }
     end
-    html += '</div><div class="btn-interview-dropdown dropdown d-inline-block">'
-
-    html += ' <button type="button" class="btn btn-lg text-custom-dropdown btn-link text-primary" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-ellipsis-v"></i></button>'
-    html += ' <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; transform: translate3d(137px, 33px, 0px); top: 0px; left: 0px; will-change: transform;">'
-    html += link_to 'Export XML', export_interviews_manager_path(interview['id_is'], 'xml'), class: 'dropdown-item export_btn'
-    html += '<div class="dropdown-divider"></div>'
-    html += link_to 'Delete', 'javascript://', class: ' btn-interview-danger dropdown-item interview_delete', data: { url: interviews_manager_path(interview['id_is']), name: interview['title_ss'] }
-    html += ' </div>'
     html += '</div>'
+    unless @organization_user.role.system_name == 'ohms_assigned_user'
+      html += '<div class="btn-interview-dropdown dropdown d-inline-block">'
+
+      html += ' <button type="button" class="btn btn-lg text-custom-dropdown btn-link text-primary" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-ellipsis-v"></i></button>'
+      html += ' <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; transform: translate3d(137px, 33px, 0px); top: 0px; left: 0px; will-change: transform;">'
+      html += link_to 'Export XML', export_interviews_manager_path(interview['id_is'], 'xml'), class: 'dropdown-item export_btn'
+      html += '<div class="dropdown-divider"></div>'
+      html += link_to 'Delete', 'javascript://', class: ' btn-interview-danger dropdown-item interview_delete', data: { url: interviews_manager_path(interview['id_is']), name: interview['title_ss'] }
+      html += ' </div>'
+      html += '</div>'
+    end
     html += '</div>'
     html
   end
