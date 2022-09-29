@@ -51,7 +51,7 @@ module Interviews
         organization_user = OrganizationUser.find_by user_id: current_user.id, organization_id: current_organization.id
         respond_to do |format|
           format.html
-          format.json { render json: InterviewsDatatable.new(view_context, current_organization, '', organization_user, true) }
+          format.json { render json: InterviewsDatatable.new(view_context, current_organization, organization_user, true) }
         end
       end
     end
