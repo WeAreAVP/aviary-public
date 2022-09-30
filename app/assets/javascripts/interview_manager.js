@@ -21,24 +21,6 @@ function InterviewManager() {
     that.interview_transcript_id = 0;
     this.initialize = function () {
         bindEvents();
-        if($('.tokenfield').length > 0){
-            $('.tokenfield_keywords').tokenfield({
-                delimiter: ';',
-                autocomplete: {
-                source: $(".tokenfield_keywords").data().items,
-                delay: 100
-                },
-                showAutocompleteOnFocus: false
-            });
-            $('.tokenfield_subjects').tokenfield({
-                delimiter: ';',
-                autocomplete: {
-                source: $('.tokenfield_subjects').data().items,
-                delay: 100
-                },
-                showAutocompleteOnFocus: false
-            });
-        }
     };
 
     this.initializeSync = function () {
@@ -725,6 +707,30 @@ function InterviewManager() {
                     },
                 });
             }
+        });
+    }
+
+    this.keywordField = (keys, selectedKeys) => {
+        new Tokenfield({
+            el: document.querySelector('.tokenfield_keywords'), // Attach Tokenfield to the input element with class "text-input"
+            items: keys,
+            matchStart: true,
+            minChars: 1,
+            newItems: false,
+            itemName: 'keywords',
+            setItems: selectedKeys
+          });
+    }
+
+    this.searchField = (keys, selectedKeys) => {
+        new Tokenfield({
+            el: document.querySelector('.tokenfield_subjects'), // Attach Tokenfield to the input element with class "text-input"
+            items: keys,
+            matchStart: true,
+            minChars: 1,
+            newItems: false,
+            itemName: 'subjects',
+            setItems: selectedKeys
         });
     }
 }
