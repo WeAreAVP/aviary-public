@@ -23,6 +23,7 @@ module Interviews
         @search_columns = user_current_organization.interview_search_column
         @display_columns = user_current_organization.interview_display_column
         @collections = Collection.where(organization_id: user_current_organization.id)
+        @users = user_current_organization.organization_ohms_assigned_users
       else
         authorize! :manage, Interviews::Interview
         session[:interview_bulk] = [] unless request.xhr?
@@ -30,7 +31,7 @@ module Interviews
         @display_columns = current_organization.interview_display_column
         @collections = Collection.where(organization_id: current_organization.id)
         @organization_user = OrganizationUser.find_by user_id: current_user.id, organization_id: current_organization.id
-
+        @users = current_organization.organization_ohms_assigned_users
       end
     end
 
@@ -139,6 +140,22 @@ module Interviews
         end
         respond_to do |format|
           format.html { redirect_to ohms_records_path, notice: t('updated_successfully') }
+        end
+      elsif params['check_type'] == 'ohms_assigned_users'
+        if params[:assigned_users].present?
+          user_id = params[:assigned_users]
+
+          Interviews::Interview.where(id: session[:interview_bulk]).each do |interview|
+            interview.update(ohms_assigned_user_id: user_id)
+            interview.reindex
+          end
+          respond_to do |format|
+            format.html { redirect_to ohms_records_path, notice: t('updated_successfully') }
+          end
+        else
+          respond_to do |format|
+            format.html { redirect_to ohms_records_path, notice: t('error_update_again') }
+          end
         end
       elsif params['check_type'] == 'download_xml'
         self.tmp_user_folder = "tmp/archive_#{current_user.id}_#{Time.now.to_i}"

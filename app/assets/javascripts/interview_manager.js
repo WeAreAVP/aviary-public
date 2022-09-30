@@ -141,6 +141,7 @@ function InterviewManager() {
         initImportXmlFile();
         updateTranscriptInfo();
         assignUser();
+        bulkAssignUser();
     };
 
     const updateTranscriptInfo = function() {
@@ -273,6 +274,7 @@ function InterviewManager() {
 
     const update_bulk_edit_view = function (selected_type) {
         $('.operation_content').addClass('d-none');
+        $('.bulk-edit-submit').prop('disabled', false)
         if (selected_type == 'download_xml') {
             $('.export_xml_content').removeClass('d-none');
             $('#bulk_edit_type_of_bulk_operation').val('download_xml');
@@ -293,6 +295,13 @@ function InterviewManager() {
             $('.bulk_delete_content').addClass('d-none');
             $('#bulk_edit_type_of_bulk_operation').val(selected_type);
             $('#confirm_msg_pop_bulk').html(' change the online status for the interviews listed below');
+        }
+        else if (selected_type == 'ohms_assigned_users') {
+            $('.bulk-edit-submit').prop('disabled', true)
+            $('.ohms_assign_users_content').removeClass('d-none');
+            $('.export_xml_content').addClass('d-none');
+            $('#bulk_edit_type_of_bulk_operation').val(selected_type);
+            $('#confirm_msg_pop_bulk').html(' assign OHMS user for the interviews listed below');
         }
     };
 
@@ -412,6 +421,7 @@ function InterviewManager() {
         });
         manageFieldsMedia($('#interviews_interview_media_host').val());
         assignUser();
+        bulkAssignUser();
     };
 
     const manageFieldsMedia = function (value) {
@@ -731,6 +741,17 @@ function InterviewManager() {
             newItems: false,
             itemName: 'subjects',
             setItems: selectedKeys
+        });
+    }
+
+    const bulkAssignUser = () => {
+        document_level_binding_element(".bulk_assign_user", 'change', function (e) {
+            let userId = e.target.value
+            if (userId) {
+                $('.bulk-edit-submit').prop('disabled', false)
+            } else {
+                $('.bulk-edit-submit').prop('disabled', true)
+            }
         });
     }
 }
