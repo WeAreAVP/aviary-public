@@ -42,12 +42,10 @@ function Accessibility() {
 
     const tabChanges = () => {
         document_level_binding_element('.vjs-big-play-button', 'focus', function () {
-            console.log("from file")
             $(".shareHolder").css({"visibility": "visible", "opacity": 1});
         });
 
         $(window).on('load', function () {
-            console.log("from file on load")
             $("#player_section iframe").attr("tabindex", -1)
         });
     }
