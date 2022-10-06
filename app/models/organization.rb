@@ -516,7 +516,7 @@ class Organization < ApplicationRecord
   end
 
   def organization_ohms_assigned_users
-    organization_users.where(role_id: Role.organization_ohms_assigned_user).where(status: true)
+    organization_users.where(role_id: Role.organization_ohms_assigned_user).where(status: true).includes(:user).order('users.first_name')
   end
 
   def resource_count
