@@ -91,10 +91,18 @@ module Aviary::ResourceFileManagement
         video_metadata = Aviary::ExtractVideoMetadata::VideoEmbed.new(embed_name, param_collection_resource[:embed_code], param_collection_resource).metadata
         return flash[:danger] = t('resource_file_error') unless video_metadata
         thumbnail = video_metadata['thumbnail'].present? ? open(video_metadata['thumbnail'], allow_redirections: :all, ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE) : ''
-
-        embed_code_hash = { embed_code: video_metadata['url'], embed_type: param_collection_resource[:embed_type], target_domain: param_collection_resource[:target_domain],
-                            resource_file_file_name: video_metadata['title'], embed_content_type: video_metadata['content_type'], thumbnail: thumbnail, duration: video_metadata['duration'] }
+        content_type = video_metadata['content_type']
+        output, errors = Aviary::MediaManager.new.ffmpeg_info(video_metadata['url'])
+        stream = output.select { |c| c.include?('Stream #0:0') }
+        embed_type = param_collection_resource[:embed_type]
+        if stream.length.positive? && stream.first.include?('Audio') && errors.blank? && content_type.include?("video")
+          content_type = "audio/mp4"
+          embed_type = 1
+        end
+        embed_code_hash = { embed_code: video_metadata['url'], embed_type: embed_type, target_domain: param_collection_resource[:target_domain],
+                            resource_file_file_name: video_metadata['title'], resource_file_content_type: content_type, embed_content_type: content_type, thumbnail: thumbnail, duration: video_metadata['duration'] }
         embed_code_hash[:file_display_name] = video_metadata['title'] if param_collection_resource[:embed_type].to_i.zero?
+
         if resource_file_id.present?
           resource_file = collection_resource.collection_resource_files.where(id: resource_file_id).first
           resource_file.update(embed_code_hash.merge!(sort_order: update_sort)) if resource_file.present?
