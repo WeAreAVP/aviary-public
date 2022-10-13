@@ -17,7 +17,7 @@
       <div class="player-section video-placeholder audio <%= 'audio-player' if is_audio_only %>" id="player_section" oncontextmenu="return false;">
         <div class="audio">
           <audio id="player" class="video-js" controls playsinline preload="auto" poster="<%= presenter.audio_poster(is_audio_only) %>">
-            <%== presenter.audio_source_tag %>
+            <%== presenter.audio_source_tag(presenter.resource_file_content_type) %>
             <%== presenter.tracks unless is_audio_only %>
           </audio>
           <% unless is_audio_only %>

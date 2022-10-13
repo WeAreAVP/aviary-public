@@ -53,8 +53,8 @@ class CollectionResourceFilePresenter < BasePresenter
     @model.embed_code.present? ? @model.thumbnail.url : "https://#{ENV['S3_HOST_CDN']}/public/images/audio-default.png"
   end
 
-  def audio_source_tag
-    media_type.include?('audio/avalon') ? avalon_m3u8 : format('<source src="%s" type="audio/mp3" />', media_url)
+  def audio_source_tag(audio_source_type = 'audio/mp3')
+    media_type.include?('audio/avalon') ? avalon_m3u8 : format('<source src="%s" type="%s" />', media_url, audio_source_type)
   end
 
   def video_poster

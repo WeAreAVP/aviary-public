@@ -33,9 +33,14 @@ module ApplicationHelper
     %w(a an and are as at be but by for if in into is it no not of on or such that the their then there these they this to was will with)
   end
 
-  def count_em(string, substring)
+  def count_em(string, substring, quote = 0)
     substring = substring.delete(')').delete('(')
-    string.present? && substring.present? ? string.to_s.scan(/#{Regexp.escape(substring)}/i).count : 0
+    count = if quote.positive?
+              string.present? && substring.present? ? string.to_s.downcase.scan(/((?<=[\W_])(#{Regexp.escape(substring)})(?=[\W_])|(\b#{Regexp.escape(substring)}\b))/).count : 0
+            else
+              string.present? && substring.present? ? string.to_s.scan(/#{Regexp.escape(substring)}/i).count : 0
+            end
+    count
   end
 
   # pass path to get current page active link

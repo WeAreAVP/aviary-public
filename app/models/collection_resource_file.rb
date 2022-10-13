@@ -19,7 +19,7 @@ class CollectionResourceFile < ApplicationRecord
   validate :generate_thumbnail
   scope :order_file, -> { order('sort_order ASC') }
   after_create :update_storage
-  after_save :update_duration, :update_object_permissions, :reindex_collection_resource, if: :partial_change?
+  after_save :update_duration, :update_object_permissions, :reindex_collection_resource, :update_content_type, if: :partial_change?
   after_destroy :update_duration, :reindex_collection_resource
   before_save :default_values
   before_update :set_total_time_enabled
@@ -137,6 +137,20 @@ class CollectionResourceFile < ApplicationRecord
 
   def update_duration
     collection_resource.update_duration
+  end
+
+  def update_content_type
+    Rails.logger.info 'Updating Content Type'
+    return unless resource_file.present?
+    output, errors = Aviary::MediaManager.new.ffmpeg_info(resource_file.url)
+    stream = output.select { |c| c.include?('Stream #0:0') }
+    if stream.length.positive? && stream.first.include?('Audio') && errors.blank?
+      unless resource_file_content_type.include?('audio')
+        self.resource_file_content_type = 'audio/mp4'
+        save
+      end
+    end
+    output
   end
 
   def update_object_permissions

@@ -22,6 +22,16 @@ class UserMailer < ApplicationMailer
     mail(to: @user.email, subject: "#{@organization.name} has invited you to join Aviary!")
   end
 
+  def ohms_invite_message(user, organization)
+    @user = user
+    @organization = organization
+    @token = user.raw_invitation_token
+    protocol = ENV.fetch('RAILS_ENV') == 'production' ? 'https' : 'http'
+    @invitation_link = accept_user_invitation_url(protocol: protocol, host: Utilities::AviaryDomainHandler.subdomain_handler(@organization), invitation_token: @token)
+    @email_subject = "#{@organization.name} has invited you to join Aviary!"
+    mail(to: @user.email, subject: @email_subject)
+  end
+
   def admin_invite_message(user)
     @user = user
     @token = user.confirmation_token

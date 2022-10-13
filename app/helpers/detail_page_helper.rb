@@ -284,14 +284,17 @@ module DetailPageHelper
   def ready_keyword_for_count(searched_keywords, document_current, description_search_fields, index_search_fields, transcript_search_fields)
     special_keywords = []
     all_keywords = searched_keywords
+    quote = 0
+    quote_keywords = []
     if all_keywords
       considered = []
       all_keywords.each do |query_string|
-        qoutes_string = query_string.scan(/"([^"]*)"/).flatten
-        qoutes_string.each do |single_qouted_string|
-          query_string = query_string.gsub('"' + single_qouted_string + '"', '')
+        quote_keywords << query_string.downcase if query_string.count('"') >= 2
+        quotes_string = query_string.scan(/"([^"]*)"/).flatten
+        quotes_string.each do |single_quoted_string|
+          query_string = query_string.gsub('"' + single_quoted_string + '"', '')
         end
-        special_keywords << qoutes_string if qoutes_string.present?
+        special_keywords << quotes_string if quotes_string.present?
         query_string = query_string.delete('"').strip
         special_keywords << query_string if query_string.include? '*'
         if !query_string.include?('"') && query_string.include?(' ')
@@ -310,6 +313,7 @@ module DetailPageHelper
     special_keywords = special_keywords.flatten
     counts = {}
     special_keywords.each do |query_string|
+      quote = 1 if quote_keywords.include?("\"#{query_string}\"")
       query_string = query_string.delete('"').delete('*').strip
       counts[query_string] ||= {}
       counts[query_string]['Title'] ||= 0
@@ -328,17 +332,17 @@ module DetailPageHelper
         unless title.blank?
           if document_current[values].is_a?(Array)
             document_current[values].each do |single_value|
-              counts[query_string][title] += count_em(single_value, query_string)
-              counts[query_string]['total_custom_keyword'] += count_em(single_value, query_string)
+              counts[query_string][title] += count_em(single_value, query_string, quote)
+              counts[query_string]['total_custom_keyword'] += count_em(single_value, query_string, quote)
             end
           else
-            counts[query_string][title] += count_em(document_current[values], query_string)
-            counts[query_string]['total_custom_keyword'] += count_em(document_current[values], query_string)
+            counts[query_string][title] += count_em(document_current[values], query_string, quote)
+            counts[query_string]['total_custom_keyword'] += count_em(document_current[values], query_string, quote)
           end
         end
       end
       if document_current['title_ss'].present?
-        counts[query_string]['Title'] += count_em(document_current['title_ss'], query_string)
+        counts[query_string]['Title'] += count_em(document_current['title_ss'], query_string, quote)
       end
     end
     counts

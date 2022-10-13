@@ -142,6 +142,12 @@ function InterviewManager() {
         updateTranscriptInfo();
         assignUser();
         bulkAssignUser();
+        this.datatableInitComplete = function (settings) {
+            setTimeout(function () {
+                window.dispatchEvent(new Event('resize'));
+                $('#interviews_data_table_wrapper .DTFC_ScrollWrapper').css('opacity', '1')
+            },100);
+        };
     };
 
     const updateTranscriptInfo = function() {

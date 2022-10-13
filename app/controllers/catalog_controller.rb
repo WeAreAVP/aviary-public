@@ -22,6 +22,10 @@ class CatalogController < ApplicationController
     search_state.params['request_is_xhr'] = request.xhr?
     search_state.params['resource_list'] = []
     search_state.params['myresources'] = 0
+    if params[:sort].nil?
+      params[:sort] = 'title_ss asc'
+      search_state.params['sort'] = 'title_ss asc'
+    end
     @myresource_list = {}
     if request.path.include?('myresources/listing')
       params['search_field'] = 'all_fields'

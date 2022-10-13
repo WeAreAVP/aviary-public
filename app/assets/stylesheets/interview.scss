@@ -363,6 +363,9 @@ div#noMediaConnection {
   }
 }
 #interviews_data_table_wrapper {
+  .DTFC_ScrollWrapper {
+    opacity: 0;
+  }
   .DTFC_RightBodyLiner {
     tr {
       &:nth-of-type(odd) {

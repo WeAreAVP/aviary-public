@@ -71,7 +71,11 @@ class UsersController < ApplicationController
         invited_user = User.invite!(email: search, username: search, created_by_id: current_user.id, updated_by_id: current_user.id) do |u|
           u.skip_invitation = true
         end
-        UserMailer.invite_message(invited_user, organization).deliver_now
+        if user_role.to_i == 4
+          UserMailer.ohms_invite_message(invited_user, organization).deliver_now
+        else
+          UserMailer.invite_message(invited_user, organization).deliver_now
+        end
         organization.organization_users.create(user_id: invited_user.id, role_id: user_role)
         hash[:invitation_sent] << search
         next

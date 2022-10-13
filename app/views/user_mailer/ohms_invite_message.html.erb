@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta content='text/html; charset=UTF-8' http-equiv='Content-Type'/>
+</head>
+<body>
+<p>Dear <%= @user.email %>,</p>
+<p>
+  You have been invited to join the Aviary OHMS organization named <b><%= @organization.name %></b> as an assigned user. In order to accept the invitation and confirm your identity, please click on the link below:
+</p>
+<p><%= @invitation_link %></p>
+<p>Best,</p>
+<p>The Aviary Team</p>
+</body>
+</html>
