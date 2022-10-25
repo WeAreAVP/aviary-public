@@ -377,6 +377,9 @@ function CollectionResource() {
                 responsive: true,
                 techOrder: ['chromecast', 'html5', 'youtube', 'vimeo'],
                 youtube: {autohide: 1},
+                html5: {
+                    nativeTextTracks: false
+                },
                 plugins: {
                     airplayButton: {},
                     constantTimeupdate: {
