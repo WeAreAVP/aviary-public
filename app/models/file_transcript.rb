@@ -143,6 +143,7 @@ class FileTranscript < ApplicationRecord
       'collection_resource_title_ss' => 'Resource Title',
       'annotation_count_is' => 'Annotation Set Count',
       'is_caption_ss' => 'Caption',
+      'is_downloadable_ss' => 'Is Downloadable',
       'updated_at_ds' => 'Date Updated',
       'created_at_ds' => 'Date Added'
     }
@@ -186,6 +187,9 @@ class FileTranscript < ApplicationRecord
     end
     string :is_caption, stored: true do
       is_caption == true ? 'Yes' : 'No'
+    end
+    string :is_downloadable, stored: true do
+      is_downloadable.positive? ? 'Yes' : 'No'
     end
     string :document_type, stored: true do
       'file_transcript'

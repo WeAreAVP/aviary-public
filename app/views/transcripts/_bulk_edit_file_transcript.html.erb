@@ -49,6 +49,7 @@
                   <select class="bulk_operation_collection_file" name="check_type">
                     <option value="change_status">Change Status</option>
                     <option value="transcript_caption">Change Transcript Caption Status</option>
+                    <option value="transcript_download">Change Transcript Download Status</option>
                     <option value="bulk_delete">Bulk Delete</option>
                   </select>
                 </div>
@@ -73,6 +74,13 @@
               <div class="transcript_caption_content operation_content">
                 <h1 class="font-size-18px text-left"> Set the selected transcript files as captions</h1>
                 <select name="caption" class="transcript_caption_select_option">
+                  <option value="0"> No</option>
+                  <option value="1"> Yes</option>
+                </select>
+              </div>
+              <div class="transcript_download_content operation_content">
+                <h1 class="font-size-18px text-left"> Set the selected transcript files as downloadable</h1>
+                <select name="is_download" class="transcript_download_select_option">
                   <option value="0"> No</option>
                   <option value="1"> Yes</option>
                 </select>

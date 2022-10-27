@@ -578,7 +578,8 @@ class Organization < ApplicationRecord
           '7' => { status: 'true', value: 'file_display_name_ss', sort_name: true },
           '8' => { status: 'true', value: 'collection_resource_title_ss', sort_name: true },
           '9' => { status: 'true', value: 'annotation_count_is', sort_name: true },
-          '10' => { status: 'true', value: 'is_caption_ss', sort_name: true }
+          '10' => { status: 'true', value: 'is_caption_ss', sort_name: true },
+          '11' => { status: 'true', value: 'is_downloadable_ss', sort_name: true }
         }
     }.to_json
 
