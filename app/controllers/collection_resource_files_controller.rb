@@ -14,6 +14,7 @@ class CollectionResourceFilesController < ApplicationController
   end
 
   def bulk_resource_file_edit
+    
     respond_to do |format|
       format.html
       if params['check_type'] == 'bulk_delete'
