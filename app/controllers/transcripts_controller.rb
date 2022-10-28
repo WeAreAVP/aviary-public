@@ -124,6 +124,9 @@ class TranscriptsController < ApplicationController
 
   # Never trust parameters from the scary internet, only allow the white list through.
   def file_transcript_params
-    params.require(:file_transcript).permit(:title, :is_caption, :associated_file, :is_public, :language, :is_edit, :draftjs, :description)
+    if params[:is_downloadable].present? && params[:is_downloadable].is_a?(String)
+      params[:is_downloadable] = (params[:is_downloadable].downcase == 'yes' ? 1 : 0)
+    end
+    params.require(:file_transcript).permit(:title, :is_caption, :associated_file, :is_public, :language, :is_edit, :draftjs, :description, :is_downloadable)
   end
 end
