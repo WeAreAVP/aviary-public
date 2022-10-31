@@ -75,6 +75,18 @@
         </div>
       </div>
     </div>
+    <div class="row d-none is_downloadable_section">
+      <div class="col-md-6">
+        <div class="form-check m-0">
+          <label>
+            <%= form.input_field :is_downloadable, as: :boolean, boolean_style: :inline, class: 'form-control' %>
+            Is Downloadable?
+            <span class="icon-check"></span>
+            </label>
+        </div>
+      </div>
+
+    </div>
     <div class="row">
       <div class="col-md-12">
         <p class="text-success text-center p-2" id="transcript_upload_success"></p>

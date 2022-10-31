@@ -819,6 +819,16 @@ function IndexTranscript() {
             $('#file_' + that.cuePointType + '_is_public')[0].selectize.setValue($('.file_' + that.cuePointType + '_' + current.val()).data().public.toString());
             $('#file_' + that.cuePointType + '_description').val($('.file_' + that.cuePointType + '_' + current.val()).data().description.toString());
             if (that.cuePointType == 'transcript') {
+                $('.is_downloadable_section').removeClass('d-none');
+                let download = $('.file_' + that.cuePointType + '_' + current.val()).data().downloadable;
+                if(download == 1)
+                {
+                    $('#file_' + that.cuePointType + '_is_downloadable').prop('checked', true)
+                }
+                else
+                {
+                    $('#file_' + that.cuePointType + '_is_downloadable').prop('checked', false)
+                }
                 let current_transcript = $('.file_' + that.cuePointType + '_' + current.val());
                 if (current_transcript.data('webvtt')) {
                     $('.is_caption_section').removeClass('d-none');
