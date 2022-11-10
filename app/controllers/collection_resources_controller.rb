@@ -148,7 +148,7 @@ class CollectionResourcesController < ApplicationController
     body_response = view_context.render 'transcripts/index', locals: { size: params[:tabs_size], xray: false }
 
     respond_to do |format|
-      format.json { render json: { body_response: body_response, listing_transcripts: @listing_transcripts } }
+      format.json { render json: { body_response: body_response, listing_transcripts: @listing_transcripts, is_downloadable: @file_transcript.is_downloadable } }
     end
   end
 

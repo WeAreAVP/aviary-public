@@ -57,6 +57,7 @@ class FileTranscript < ApplicationRecord
     elsif file_content_type == 'text/vtt' || ['.vtt', '.webvtt'].include?(File.extname(associated_file.queued_for_write[:original].original_filename).downcase)
       require 'webvtt'
       begin
+        associated_file.instance_write(:content_type, 'text/vtt') unless file_content_type == 'text/vtt'
         WebVTT.read(associated_file.queued_for_write[:original].path)
       rescue StandardError => ex
         errors.add(:associated_file, ex.message)
