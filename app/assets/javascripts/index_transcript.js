@@ -554,6 +554,9 @@ function IndexTranscript() {
     this.load_resource_transcript = function (response_raw, container, request) {
         let response = response_raw.body_response;
         let listing_transcripts = response_raw.listing_transcripts;
+        let is_downloadable = response_raw.is_downloadable;
+        if(is_downloadable === 1) $('.download_transcript_menu').show();
+        else $('.download_transcript_menu').hide();
 
         if (response && (response.includes('index_html_information') || response.includes('file_transcript'))) {
             response_handler(request, 'transcript', container, response, listing_transcripts);
@@ -1055,6 +1058,8 @@ function IndexTranscript() {
                 });
                 var fileExtension = ['text/vtt', 'text/webvtt', 'vtt', 'webvtt'];
                 if (that.cuePointType == 'transcript') {
+                    $('.is_downloadable_section').removeClass('d-none');
+                    $('#file_' + that.cuePointType + '_is_downloadable').prop('checked', false)
                     if ($.inArray($('#file_name_transcript').text().split('.').pop().toLowerCase(), fileExtension) == -1) {
                         $('.is_caption_section').addClass('d-none');
                         $('.remove_title_section').addClass('d-none');
