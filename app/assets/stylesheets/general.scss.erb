@@ -8140,3 +8140,10 @@ Copyright (c) 2013 Daniel Eden
   height: 20px;
   overflow: hidden;
 }
+
+.video_player .vjs-audio.vjs-has-started.vjs-user-inactive.vjs-playing .vjs-control-bar, .video_player .vjs-audio-only-mode.vjs-has-started.vjs-user-inactive.vjs-playing .vjs-control-bar {
+    visibility: visible !important;
+    opacity: 0 !important;
+    pointer-events: none;
+    transition: visibility 1s, opacity 1s;	
+}
