@@ -13,16 +13,19 @@
             <% @index_count = @index_time_wise = {} %>
             <% @session_video_text_all = params['keywords'] %>
             <% parent_id = 0 %>
+            <% parent_in = 0 %>
             <% @file_index_points.sort_by {|t| t.start_time.to_f }.each_with_index do |index_point, counter| %>
               <% present(index_point) do |presenter| %>
-                <% parent = FileIndexPoint.find_by(parent_id: index_point.id).present? %>
-                <% if parent %>
-                  <% parent_id = index_point.id %>
+                <% parent = index_point.parent_id.positive? %>
+                <% if parent && parent_in == 0 %>
+                  <% parent_in = 1 %>
+                  <% parent_id = index_point.parent_id %>
                   <div class="parent_section">
                 <% end %>
-                <% if parent_id != 0 && parent_id != index_point.id && index_point.parent_id == 0 %>
+              <% else %>
+                <% if parent_in == 1 %>
                   </div>
-                  <% parent_id = 0 %>
+                  <% parent_in = 0 %>
                 <% end %>
                 <% index_time_start = !recorded.include?(index_point.start_time.to_i) ? "index_time_start_#{index_point.start_time.to_i}" : '' %>
                 <%== presenter.single_index_point_hanlder(index_time_start, @session_video_text_all, parent) %>
