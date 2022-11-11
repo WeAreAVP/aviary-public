@@ -169,7 +169,7 @@ class CollectionResource < ApplicationRecord
     end
     # resource_file_file_name
     string :thumbnail_link, multiple: false, stored: true do
-      file =  CollectionResourceFile.where(collection_resource_id: id)
+      file = CollectionResourceFile.where(collection_resource_id: id)
       if file.present?
         url = file.order('sort_order ASC').first.thumbnail.url
         if url.present?
