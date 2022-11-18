@@ -211,6 +211,10 @@ fields:
       label: 'Duration'
       is_searchable_at_media_table: false
       field_purpose: 'special_purpose'
+    embed_code:
+      label: 'Media Embed Code'
+      is_searchable_at_media_table: false
+      field_purpose: 'special_purpose'
     collection_title_text:
       label: 'Collection Title'
       is_searchable_at_media_table: true

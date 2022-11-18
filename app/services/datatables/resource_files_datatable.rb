@@ -5,7 +5,7 @@
 class ResourceFilesDatatable < ApplicationDatatable
   delegate :time_to_duration, :number_to_human_size, :options_for_select, :select_tag, :content_tag, :noid_url, :embeded_url, :collection_resource_url, :embed_file_url,
            :current_organization, :bulk_resource_list_collections_path, :user_change_org_status_path, :collection_collection_resource_add_resource_file_path,
-           :user_remove_user_path, :collection_collection_resource_details_path, :collection_collection_resource_details_url, :can?, to: :@view
+           :user_remove_user_path, :collection_collection_resource_details_path, :collection_collection_resource_details_url, :check_valid_array, :can?, to: :@view
 
   def initialize(view, caller)
     @view = view
@@ -69,6 +69,14 @@ height='400' width='1200' style='width: 100%;'></iframe>"
 
                               button = "<button #{common_classes} data-clipboard-target='#resource_detail_embed_html_#{resource['id_is']}'  >Click to Copy</button>"
                               " #{button} <textarea class='hide-copy-textarea' id='resource_detail_embed_html_#{resource['id_is']}'>#{iframe}</textarea>"
+                            elsif value['value'] == 'embed_code_texts'
+                              if resource[value['value']]
+                                embed_code = check_valid_array(resource[value['value']], value['value'])
+                                button = "<button #{common_classes} data-clipboard-target='#embed_code_texts_#{resource['id_is']}'  >Click to Copy</button>"
+                                " #{button} <textarea class='hide-copy-textarea' id='embed_code_texts_#{resource['id_is']}'>#{embed_code}</textarea>"
+                              else
+                                'none'
+                              end
                             elsif value['value'] == 'duration_ss'
                               resource[value['value']].present? ? time_to_duration(resource[value['value']]) : '00:00:00'
                             elsif value['value'] == 'collection_title_text'
