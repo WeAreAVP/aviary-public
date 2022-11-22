@@ -73,6 +73,8 @@ height='400' width='1200' style='width: 100%;'></iframe>"
                               resource[value['value']].present? ? time_to_duration(resource[value['value']]) : '00:00:00'
                             elsif value['value'] == 'collection_title_text'
                               collection_resource.collection.title
+                            elsif value['value'] == 'is_cc_on_ss'
+                              resource[value['value']] ? 'Yes' : 'No'
                             elsif value['value'] == 'is_downloadable_ss'
                               resource[value['value']] ? 'Yes' : 'No'
                             else

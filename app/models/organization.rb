@@ -329,7 +329,8 @@ class Organization < ApplicationRecord
               '19' => { status: 'true', value: 'created_at_ds', sort_name: true },
               '20' => { status: 'true', value: 'collection_title_text', sort_name: true },
               '21' => { status: 'true', value: 'sort_order_is', sort_name: true },
-              '22' => { status: 'true', value: 'is_downloadable_ss', sort_name: true }
+              '22' => { status: 'true', value: 'is_downloadable_ss', sort_name: true },
+              '23' => { status: 'true', value: 'is_cc_on_ss', sort_name: true }
             }
     }.to_json
 

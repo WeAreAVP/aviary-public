@@ -111,6 +111,7 @@ function ResourceBulkFileEdit(ids_session_raw) {
         bulk_option_selection();
         binding_single_checkbox();
         binding_select_all();
+        onChangeDD();
         $('.bluk-edit-btn').on('click', function () {
             if (selfRBE.ids_session.length <= 0) {
                 jsMessages('danger', 'Please select resources before doing bulk operations.');
@@ -302,4 +303,15 @@ function ResourceBulkFileEdit(ids_session_raw) {
         $('#number_of_bulk_selected_popup').html('');
         $('#clear_all_selection').remove();
     };
+
+    const onChangeDD = function () {
+        document_level_binding_element('.bulk_operation_collection_file', 'change',function () {
+            if($(this).val() == "change_is_cc_on")
+            {                
+                $('.change_status_content').addClass('d-none');
+                $('.change_downloadable_status').addClass('d-none');
+                $('.change_is_cc_on_content').removeClass('d-none');  
+            }
+        });
+    }
 }
