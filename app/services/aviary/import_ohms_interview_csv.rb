@@ -83,11 +83,44 @@ module Aviary
 
       if interview.valid?
         interview.save
+        process_transcript(csv_raw, user, interview)
         set_points(csv_raw, interview, user)
         true
       else
         interview.errors.messages.first
       end
+    end
+
+    def process_transcript(csv_raw, user, interview)
+      transcripts = []
+      csv_raw.each do |item|
+        transcripts << item[1] if item[0].include?('Transcript_')
+      end
+      main_transcript = Sanitize.fragment(transcripts.join("\n"))
+      file = Tempfile.new('content')
+      file.path
+      file.write(main_transcript)
+      return unless transcripts.length.positive?
+      file_transcript = { title: csv_raw['Title'],
+                          is_public: true,
+                          associated_file: file,
+                          language: 'en',
+                          sort_order: interview.file_transcripts.length + 1,
+                          user: user,
+                          interview_transcript_type: 'main',
+                          timecode_intervals: csv_raw['Transcript Sync Data'].present? ? csv_raw['Transcript Sync Data'].split(':')[0] : '1',
+                          interview_id: interview.id }
+      return if interview.nil?
+
+      transcript = interview.file_transcripts.build(file_transcript)
+      return unless transcript.valid?
+      transcript.save
+      ohms_transcript_manager = Aviary::OhmsTranscriptManager.new
+      ohms_transcript_manager.from_resource_file = false
+      result = ohms_transcript_manager.process(transcript, '', true, false, csv_raw)
+      transcript.destroy if result.present? && result.failure?
+      file.close
+      file.unlink
     end
 
     def set_points(csv_raw, interview, user)

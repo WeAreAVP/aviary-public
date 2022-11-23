@@ -71,7 +71,7 @@
                     <% @main_transcript.point_notes_info = "" if @main_transcript.point_notes_info.nil? %>
                     <% notes_info = @main_transcript.point_notes_info %>
                     <% @data_main.each do |single_point| %>
-                     
+                      <% if single_point[:text].present? %>
                       <% list_line = single_point[:text].split("\n") %>
                       <% list_line.each_with_index do |single_list_line, line_index| %>
                         <% 
@@ -105,6 +105,7 @@
                         <span class="transcript_point_code text-dark transcript_point_code_<%= hms_to_number(single_point[:end_time]) %>" data-timecode="<%= hms_to_number(single_point[:end_time]) %>">[<%= single_point[:end_time] %>]</span>
                       <% end %>
                       <% counter = counter + 1 %>
+                      <% end %>
                     <% end %>
                     <% if @main_transcript.notes_info.present? %>
                       <% JSON.parse(@main_transcript.notes_info).each_with_index do |note, note_index| %>
