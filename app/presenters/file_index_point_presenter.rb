@@ -34,9 +34,9 @@ class FileIndexPointPresenter < BasePresenter
   end
 
   def single_index_point_hanlder(index_time_start, session_video_text_all, parent = false)
-    item_class = if parent
+    item_class = if parent == 0
                    'parent_index'
-                 elsif parent_id != 0
+                 elsif parent.positive?
                    'child_index'
                  else
                    ''
