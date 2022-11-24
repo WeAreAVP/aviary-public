@@ -86,6 +86,7 @@ class CollectionResourceFile < ApplicationRecord
     string :target_domain, stored: true
     string :duration, stored: true
     string :is_downloadable, stored: true
+    text :embed_code, stored: true
   end
 
   def self.fields_values
@@ -112,7 +113,8 @@ class CollectionResourceFile < ApplicationRecord
       'collection_title_text' => 'Collection Title',
       'sort_order_ss' => 'Sequence #',
       'sort_order_is' => 'Sequence #',
-      'is_downloadable_ss' => 'Downloadable?' }
+      'is_downloadable_ss' => 'Downloadable?',
+      'embed_code_texts' => 'Media Embed Code' }
   end
 
   def self.date_time_format(date_time)
