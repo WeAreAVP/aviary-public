@@ -84,10 +84,10 @@ module Aviary
       else
         file_content = Rails.env.production? ? URI.parse(file_path).read : File.read(open(file_path))
         hash = if ohms_data.length.positive?
-          parse_ohms_text(file_content, file_transcript, ohms_data)
-        else
-          parse_text(file_content, file_transcript)
-        end
+                 parse_ohms_text(file_content, file_transcript, ohms_data)
+               else
+                 parse_text(file_content, file_transcript)
+               end
         response = map_hash_to_db(file_transcript, hash, is_new)
         Success(response)
       end
@@ -513,10 +513,10 @@ module Aviary
       last_row = 0
       if sync_points.present?
         transcript = if ohms
-          transcript_with_ohms_sync_point(transcript, sync_points)
-        else
-          transcript_with_sync_point(transcript, sync_points)
-        end
+                       transcript_with_ohms_sync_point(transcript, sync_points)
+                     else
+                       transcript_with_sync_point(transcript, sync_points)
+                     end
         return transcript if transcript.failure?
         transcript = transcript.value!.split('[smntb]')
         sync_points << 'last' # need to store last additional text as well.
@@ -561,7 +561,7 @@ module Aviary
       sync_points = sync_info.present? ? sync_info[1].split('|') : nil
       parse_transcript(transcript, sync_points, file_transcript, interval.to_f, true)
     end
-    
+
     def parse_ohms_xml(xml_hash, file_transcript)
       transcript = xml_hash['ROOT']['record']['transcript']
       transcript = parse_notes_info(transcript, file_transcript)
