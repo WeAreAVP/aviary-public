@@ -36,6 +36,7 @@ class CollectionResourceFile < ApplicationRecord
     string :file_display_name, stored: true
     string :sort_order, stored: true
     integer :sort_order, stored: true
+    string :is_cc_on, stored: true
     begin
       time :resource_file_updated_at, stored: true
       time :created_at, stored: true
@@ -114,6 +115,7 @@ class CollectionResourceFile < ApplicationRecord
       'sort_order_ss' => 'Sequence #',
       'sort_order_is' => 'Sequence #',
       'is_downloadable_ss' => 'Downloadable?',
+      'is_cc_on_ss' => 'Turn on CC?',
       'embed_code_texts' => 'Media Embed Code' }
   end
 
