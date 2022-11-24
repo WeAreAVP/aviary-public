@@ -93,6 +93,7 @@ function InterviewManager() {
             drawCallback: function (settings) {
                 try {
                     that.datatableInitDraw(settings);
+                    that.datatableInitComplete(settings);
                    
                 } catch (e) {
 

@@ -167,10 +167,11 @@ class InterviewsDatatable < ApplicationDatatable
     html
   end
 
-  def columns(resource_search_column = false)
+  def columns(_resource_search_column = false)
     columns_allowed = ['id_is']
-    if resource_search_column&.present?
-      resource_search_column.each do |_, value|
+    if @current_organization&.interview_search_column&.present?
+      resource_search_column_list = JSON.parse(@current_organization.interview_search_column).collect { |_k, v| v }
+      resource_search_column_list.each do |value|
         if !value['status'].blank? && value['status'].to_s.to_boolean?
           columns_allowed << value['value']
         end

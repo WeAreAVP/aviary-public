@@ -343,7 +343,7 @@ module Interviews
         counter = 0
         fq_filters_inner = ''
         JSON.parse(export_and_current_organization[:current_organization][:interview_search_column]).each do |_, value|
-          if value['status'] == 'true' || value['status'].to_s.to_boolean?
+          if !value['value'].to_s.include?('_bs') && (value['status'] == 'true' || value['status'].to_s.to_boolean?)
             unless value['value'].to_s == 'id_is' && q.to_i <= 0
 
               alter_search_wildcard = value['value']
