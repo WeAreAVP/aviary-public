@@ -35,7 +35,7 @@ module Aviary
       interview.accession_number = csv_raw['Accession Number'].present? ? csv_raw['Accession Number'] : ''
       interview.interviewee = csv_raw['Interviewee'].present? ? csv_raw['Interviewee'].split(';') : []
       interview.interviewer = csv_raw['Interviewer'].present? ? csv_raw['Interviewer'].split(';') : []
-      interview.interview_date = if csv_raw['Day'].present? && !csv_raw['Day'].empty?
+      interview.interview_date = if csv_raw['Day'].present? && !csv_raw['Day'].empty? && Date.valid_date?(csv_raw['Year'].to_i, csv_raw['Month'].to_i, csv_raw['Day'].to_i)
                                    DateTime.new(csv_raw['Year'].to_i, csv_raw['Month'].to_i, csv_raw['Day'].to_i).strftime('%m/%d/%Y')
                                  else
                                    ''

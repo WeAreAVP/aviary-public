@@ -39,8 +39,12 @@ module Aviary::ExtractVideoMetadata
       metadata['url'] = video_embed
       metadata['title'] = params[:title].present? ? params[:title] : File.basename(uri.path)
       metadata['duration'] = params[:duration].to_d
-      metadata['thumbnail'] = params[:thumbnail].present? ? params[:thumbnail] : Rails.root.to_s + '/app/assets/images/video.png'
       metadata['content_type'] = Rack::Mime::MIME_TYPES[File.extname(uri.path)].present? ? Rack::Mime::MIME_TYPES[File.extname(uri.path)] : 'video/mp4'
+      metadata['thumbnail'] = if params[:thumbnail].present?
+                                params[:thumbnail]
+                              else
+                                metadata['content_type'].include?('audio') ? "https://#{ENV.fetch('S3_HOST_CDN')}/public/images/audio-default.png" : "https://#{ENV.fetch('S3_HOST_CDN')}/public/images/video-default.png"
+                              end
       metadata
     end
   end
