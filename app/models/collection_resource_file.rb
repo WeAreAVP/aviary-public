@@ -19,13 +19,11 @@ class CollectionResourceFile < ApplicationRecord
   validate :generate_thumbnail
   scope :order_file, -> { order('sort_order ASC') }
   after_create :update_storage
-  after_save :update_duration, :update_object_permissions, :reindex_collection_resource, if: :partial_change?
+  after_save :update_duration, :update_object_permissions, :reindex_collection_resource
   after_destroy :update_duration, :reindex_collection_resource
   before_save :default_values
   before_update :set_total_time_enabled
   after_find :check_downloadable
-
-  def partial_change?; end
 
   searchable do
     integer :id, stored: true
