@@ -87,6 +87,7 @@ class CollectionResourceFile < ApplicationRecord
     string :target_domain, stored: true
     string :duration, stored: true
     string :is_downloadable, stored: true
+    text :embed_code, stored: true
   end
 
   def self.fields_values
@@ -114,7 +115,8 @@ class CollectionResourceFile < ApplicationRecord
       'sort_order_ss' => 'Sequence #',
       'sort_order_is' => 'Sequence #',
       'is_downloadable_ss' => 'Downloadable?',
-      'is_cc_on_ss' => 'Turn on CC?' }
+      'is_cc_on_ss' => 'Turn on CC?',
+      'embed_code_texts' => 'Media Embed Code' }
   end
 
   def self.date_time_format(date_time)
@@ -306,6 +308,9 @@ class CollectionResourceFile < ApplicationRecord
           unless value['value'].to_s == 'id_is' && q.to_i <= 0
             fq_filters_inner = fq_filters_inner + (counter != 0 ? ' OR ' : ' ') + " #{CollectionResource.search_perp(q, value['value'].to_s)} "
             counter += 1
+            if value['value'].to_s == 'id_is'
+              fq_filters_inner = fq_filters_inner + (counter != 0 ? ' OR ' : ' ') + " #{CollectionResource.search_perp(q, 'id')} "
+            end
             if value['value'].to_s == 'collection_title_text'
               fq_filters_inner, counter = CollectionResource.search_collection_column(limit_condition, solr, q, counter, fq_filters_inner)
             end
