@@ -32,7 +32,7 @@ module Aviary
       self.sync_interval = 0.0
     end
 
-    def process(file_transcript, _remove_title = nil, is_new = true, import = false)
+    def process(file_transcript, _remove_title = nil, is_new = true, import = false, ohms_data = {})
       file_path = ENV['RAILS_ENV'] == 'production' ? file_transcript.associated_file.expiring_url : file_transcript.associated_file.path
 
       if ['application/xml', 'text/xml'].include? file_transcript.associated_file_content_type
@@ -83,7 +83,11 @@ module Aviary
         end
       else
         file_content = Rails.env.production? ? URI.parse(file_path).read : File.read(open(file_path))
-        hash = parse_text(file_content, file_transcript)
+        hash = if ohms_data.length.positive?
+                 parse_ohms_text(file_content, file_transcript, ohms_data)
+               else
+                 parse_text(file_content, file_transcript)
+               end
         response = map_hash_to_db(file_transcript, hash, is_new)
         Success(response)
       end
@@ -492,11 +496,27 @@ module Aviary
       end
     end
 
-    def parse_transcript(transcript, sync_points, file_transcript, interval)
+    def transcript_with_ohms_sync_point(transcript, sync_points)
+      transcript = transcript.split("\n")
+      begin
+        sync_points.each_with_index do |_sync, index|
+          transcript[index] = "#{transcript[index]}[smntb]"
+        end
+        Success(transcript.join("\n"))
+      rescue StandardError => ex
+        Failure(ex.message)
+      end
+    end
+
+    def parse_transcript(transcript, sync_points, file_transcript, interval, ohms = false)
       hash = []
       last_row = 0
       if sync_points.present?
-        transcript = transcript_with_sync_point(transcript, sync_points)
+        transcript = if ohms
+                       transcript_with_ohms_sync_point(transcript, sync_points)
+                     else
+                       transcript_with_sync_point(transcript, sync_points)
+                     end
         return transcript if transcript.failure?
         transcript = transcript.value!.split('[smntb]')
         sync_points << 'last' # need to store last additional text as well.
@@ -531,6 +551,15 @@ module Aviary
         hash << single_hash
       end
       Success(hash)
+    end
+
+    def parse_ohms_text(file_content, file_transcript, ohms_data)
+      transcript = parse_notes_info(file_content, file_transcript)
+      sync = ohms_data['Transcript Sync Data']
+      sync_info = sync.present? ? sync.split(':|') : nil
+      interval = sync_info.present? ? sync_info[0] : nil
+      sync_points = sync_info.present? ? sync_info[1].split('|') : nil
+      parse_transcript(transcript, sync_points, file_transcript, interval.to_f, true)
     end
 
     def parse_ohms_xml(xml_hash, file_transcript)
