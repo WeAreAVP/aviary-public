@@ -304,6 +304,9 @@ class CollectionResourceFile < ApplicationRecord
           unless value['value'].to_s == 'id_is' && q.to_i <= 0
             fq_filters_inner = fq_filters_inner + (counter != 0 ? ' OR ' : ' ') + " #{CollectionResource.search_perp(q, value['value'].to_s)} "
             counter += 1
+            if value['value'].to_s == 'id_is'
+              fq_filters_inner = fq_filters_inner + (counter != 0 ? ' OR ' : ' ') + " #{CollectionResource.search_perp(q, 'id')} "
+            end
             if value['value'].to_s == 'collection_title_text'
               fq_filters_inner, counter = CollectionResource.search_collection_column(limit_condition, solr, q, counter, fq_filters_inner)
             end
