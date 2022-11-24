@@ -169,11 +169,16 @@ class CollectionResource < ApplicationRecord
     end
     # resource_file_file_name
     string :thumbnail_link, multiple: false, stored: true do
-      if CollectionResourceFile.where(collection_resource_id: id).present?
-        url = CollectionResourceFile.where(collection_resource_id: id).order('sort_order ASC').first.thumbnail.url
-        url.present? ? url.gsub("'", "\\\\'") : "https://#{ENV['S3_HOST_CDN']}/public/images/video-default.png"
+      file = CollectionResourceFile.where(collection_resource_id: id)
+      if file.present?
+        url = file.order('sort_order ASC').first.thumbnail.url
+        if url.present?
+          url.gsub("'", "\\\\'")
+        else
+          (file.order('sort_order ASC').first.resource_file_content_type.present? && file.order('sort_order ASC').first.resource_file_content_type.include?('audio') ? "https://#{ENV.fetch('S3_HOST_CDN')}/public/images/audio-default.png" : "https://#{ENV.fetch('S3_HOST_CDN')}/public/images/video-default.png")
+        end
       else
-        "https://#{ENV['S3_HOST_CDN']}/public/images/video-default.png"
+        "https://#{ENV.fetch('S3_HOST_CDN')}/public/images/video-default.png"
       end
     end
 
