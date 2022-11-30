@@ -67,20 +67,21 @@
   </div>
 
 </div>
-<%= render partial: 'shared/search_info', locals: {from: 'search_page', classes: 'float-right ml-2 '} %>
-<a class="btn-adv simple_option_search float-right text-white font-size-13px ml-2 <%= params[:search_type] == 'advance' ? '' : 'd-none' %>" data-type="simple" href="javascript:void(0)">
-  Simple Search </a>
-<a class="btn-adv advance_option_search <%= params[:search_type] == 'advance' ? 'd-none' : '' %> float-right text-white font-size-13px" data-type="advance" href="javascript:void(0)">Advanced
-  Search </a>
-<span class="simple_start_over  <%= params[:search_type] == 'advance' ? 'd-none' : '' %> float-right" style="margin-top: -4px;"></span>
-<a class="btn-adv bold font-weight-bold simple_start_over <%= params[:search_type] == 'advance' ? 'd-none' : '' %> float-right text-white font-size-13px mx-2" href="<%= add_facet_params_to_url(search_catalog_url(q: '', search_field: 'all_fields', utf8: '✓'), session[:search_facets]) %>">Clear
-  Search Terms </a>
-<span class="simple_start_over  <%= params[:search_type] == 'advance' ? 'd-none' : '' %> float-right" style="margin-top: -4px;"> </span>
-<a class='btn-adv theme_font_color float-right text-white font-size-13px font-weight-bold' href="<%= search_catalog_url(q: '', search_field: 'all_fields', utf8: '✓', start_over_search: true) %>">
-  Start Over </a>
+<div class="pull-right">
+  <% if user_signed_in? %>
+    <%= link_to 'Save Search', new_saved_search_path, class: 'btn-adv theme_font_color float-left text-white font-size-13px font-weight-bold mr-md-2 mr-sm-1', id: 'saved_search', remote: true %>
+  <% end %>
+  <span class="simple_start_over  <%= params[:search_type] == 'advance' ? 'd-none' : '' %> float-left" style="margin-top: -4px;"> </span>
+  <a class='btn-adv theme_font_color float-left text-white font-size-13px font-weight-bold' href="<%= search_catalog_url(q: '', search_field: 'all_fields', utf8: '✓', start_over_search: true) %>">
+    Start Over </a>
 
-<% if user_signed_in? %>
-  <%= link_to 'Save Search', new_saved_search_path, class: 'btn-adv theme_font_color float-right text-white font-size-13px font-weight-bold mr-2', id: 'saved_search', remote: true %>
-<% end %>
-
+  <span class="simple_start_over  <%= params[:search_type] == 'advance' ? 'd-none' : '' %> float-left" style="margin-top: -4px;"></span>
+  <a class="btn-adv bold font-weight-bold simple_start_over <%= params[:search_type] == 'advance' ? 'd-none' : '' %> float-left text-white font-size-13px mx-md-2 mx-xs-0" href="<%= add_facet_params_to_url(search_catalog_url(q: '', search_field: 'all_fields', utf8: '✓'), session[:search_facets]) %>">Clear
+    Search Terms </a>
+  <a class="btn-adv advance_option_search <%= params[:search_type] == 'advance' ? 'd-none' : '' %> float-left text-white font-size-13px" data-type="advance" href="javascript:void(0)">Advanced
+    Search </a>
+  <a class="btn-adv simple_option_search float-left text-white font-size-13px ml-2 <%= params[:search_type] == 'advance' ? '' : 'd-none' %>" data-type="simple" href="javascript:void(0)">
+    Simple Search </a>
+  <%= render partial: 'shared/search_info', locals: {from: 'search_page', classes: 'float-right ml-2 '} %>
+</div>
 <div class="clearfix"></div>
