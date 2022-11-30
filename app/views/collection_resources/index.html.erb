@@ -6,8 +6,10 @@
           <div class="row">
             <div class="col-md-7"><h1>Resources</h1></div>
             <div class="col-md-5 ">
-              <%= link_to "Add Resource", new_collection_resource_path, class: "btn btn-primary float-right" %>
-              <%= render partial: 'collection_resources/show/collection_resource_buttons', locals: {from: 'collection_resource'} %>
+              <div class="pull-right">
+                <%= render partial: 'collection_resources/show/collection_resource_buttons', locals: {from: 'collection_resource'} %>
+                <%= link_to "Add Resource", new_collection_resource_path, class: "btn btn-primary float-left" %>
+              </div>
             </div>
           </div>
         </div>
