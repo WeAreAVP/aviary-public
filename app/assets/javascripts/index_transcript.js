@@ -293,6 +293,7 @@ function IndexTranscript() {
             $('#view_edit_media_metadata_custom').attr('style', 'height:' + (max_height) + 'px!important;max-height:650px !important;');
             $('.mCustomScrollbar_description').mCustomScrollbar();
             $('#view_edit_media_metadata_custom').mCustomScrollbar();
+            $('.index_point_container').mCustomScrollbar();
         }
         if ($(window).width() < 767) {
             $("*").mCustomScrollbar("destroy");
