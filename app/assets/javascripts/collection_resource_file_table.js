@@ -102,6 +102,11 @@ function CollectionResourceFileTable() {
                     type: 'POST',
                     beforeSend(xhr) {
                         xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'))
+                    },
+                    dataSrc: function ( json ) {
+                        //Make your callback here.
+                        that.resource_bulk_edit.getTotalCount(json.recordsTotal)
+                        return json.data;
                     }
                 },
                 drawCallback: function (settings) {

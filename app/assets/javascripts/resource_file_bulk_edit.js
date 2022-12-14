@@ -111,6 +111,7 @@ function ResourceBulkFileEdit(ids_session_raw) {
         bulk_option_selection();
         binding_single_checkbox();
         binding_select_all();
+        binging_select_all_records();
         onChangeDD();
         $('.bluk-edit-btn').on('click', function () {
             if (selfRBE.ids_session.length <= 0) {
@@ -167,6 +168,46 @@ function ResourceBulkFileEdit(ids_session_raw) {
             });
         }
     ;
+      
+    const binging_select_all_records = function () {
+        $('#select_all_records').unbind('click');
+        document_level_binding_element('#select_all_records', 'click',function (e) {
+            selfRBE.app_helper.show_loader();
+            e.preventDefault();
+            $('#select_all_records').unbind('click');
+
+            $(".resources_selections").prop('checked', false);
+            $(".select_all_checkbox_resources").prop('checked', false);
+            const searchval = $('#collection_resource_datatable_filter label input').val()
+            var data = {
+                action: 'bulk_resource_list',
+                ids: 'all',
+                type: 'collection_resource_files',
+                bulk: 1,
+                searchValue: searchval
+            };
+            
+            data.status = 'add';
+            const res = selfRBE.app_helper.classAction($(this).data().url, data, 'JSON', 'GET', '', selfRBE, false);
+            res.then((response) => {
+                if(response[0]?.is_selected_all == true) {
+                    var ids = response[0]['ids'].split(',');
+                    if (ids != '' && ids.length > 0) {
+                        updateCount(selfRBE.total_records)
+                        ids.forEach((id) => {
+                            var index = selfRBE.ids_session.indexOf(id);
+                            if($(".resources_selections-"+id).prop('checked') == false){
+                                $(".resources_selections-"+id).prop('checked', true);
+                            }
+                            if (index < 0) {
+                                selfRBE.ids_session.push(id);
+                            }
+                        })
+                    }
+                }
+            })
+        })
+    }
 
     const binding_select_all = function () {
         $('.select_all_checkbox_resources').unbind('click');
@@ -267,8 +308,10 @@ function ResourceBulkFileEdit(ids_session_raw) {
     const updateCount = function (number_selected) {
         emptyCount();
         if (number_selected > 0) {
+            $('#collection_resource_datatable_filter label').append('')
             $('#collection_resource_datatable_filter label').append('<span style="color:#f05c1f" class="ml-10px font-weight-bold" id="resource_selected">  ( <strong  class="font-size-16px ">' + number_selected + '</strong> resource selected ) </span>  ');
             $('#collection_resource_datatable_filter label').append('<a href="javascript://" id="clear_all_selection">Clear selected</a>');
+            $('#collection_resource_datatable_filter label').append('<span style="color:#204f92" class="ml-10px font-weight-bold" id="select_all_records_span">| <a href="javascript://" class="font-weight-bold" id="select_all_records" data-url="/collections/bulk_resource_list">Select All (' + selfRBE.total_records +' records)</a> </span>');
             $('#number_of_bulk_selected_popup').html('<span style="color:#f05c1f" class="ml-10px font-weight-bold" id="resource_selected">  ( <strong  class="font-size-16px ">' + number_selected + '</strong> resource(s) will be affected ) </span>');
         }
         $('#clear_all_selection').unbind('click');
@@ -302,6 +345,7 @@ function ResourceBulkFileEdit(ids_session_raw) {
         $('#resource_selected').remove();
         $('#number_of_bulk_selected_popup').html('');
         $('#clear_all_selection').remove();
+        $('#select_all_records_span').remove();
     };
 
     const onChangeDD = function () {
@@ -313,5 +357,9 @@ function ResourceBulkFileEdit(ids_session_raw) {
                 $('.change_is_cc_on_content').removeClass('d-none');  
             }
         });
+    }
+
+    this.getTotalCount = function (total) {
+        selfRBE.total_records = total
     }
 }
