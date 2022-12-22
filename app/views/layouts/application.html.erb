@@ -32,6 +32,7 @@
   <%#= javascript_pack_tag 'transcript-bundle' %>
 </head>
 <body class="<%= "#{params[:controller]} #{params[:action]} #{params[:controller]}-#{params[:action]}" %>">
+<div id="skiptocontent" class="skiptocontent"><a href="<%= user_signed_in? ? '#content' : '#sub_nav' %>">Skip to main content</a></div>
 <span class='d-none' id="record_tracking_path" href="<%== record_tracking_path %>"> </span>
 
 <% if !modern_browser?(browser) && cookies[:alert_bypass].blank? %>

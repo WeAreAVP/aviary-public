@@ -8147,3 +8147,24 @@ Copyright (c) 2013 Daniel Eden
     pointer-events: none;
     transition: visibility 1s, opacity 1s;	
 }
+
+.skiptocontent a {
+  position:absolute;
+  left:-10000px;
+  top:auto;
+  width:1px;
+  height:1px;
+  overflow:hidden;
+  color: white;
+  border-right: 1px solid white;
+  border-bottom: 1px solid white;
+  border-bottom-right-radius: 8px;
+  background: #c65a1d;
+  padding: 5px;
+}
+
+.skiptocontent a:focus {
+  position:static;
+  width:auto;
+  height:auto;
+}
