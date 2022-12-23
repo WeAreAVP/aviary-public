@@ -40,9 +40,9 @@ RSpec.describe CollectionResourceFilesController, type: :controller do
   end
 
   describe "GET export_resource_file" do
-    it "has a 200 status code" do
+    it "has a 302 status code" do
       get :export_resource_file, params: { search: {value: ''}, collection_id: collection_resource.collection.id, collection_resource_id: collection_resource.id.to_s, collection_resource_file_id: collection_resource_file_vimeo.id, check_type: 'bulk'  }
-      expect(response.status).to eq(200)
+      expect(response.status).to eq(302)
     end
   end
 end

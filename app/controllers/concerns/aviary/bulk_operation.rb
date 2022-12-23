@@ -18,13 +18,27 @@ module Aviary::BulkOperation
     collection_resource_file_id = params['collection_resource_file_id'] if [:file_index_bulk_edit.to_s, :file_transcript_bulk_edit.to_s, :interview_bulk.to_s].include?(params['type'])
     collection_resource_file_id = params['id'] if [:interview_bulk.to_s].include?(params['type'])
     session[current_key] ||= []
+    session['is_selected_all'] ||= false
     if params[:status] == 'add'
       if params[:bulk] == '1' && params[:ids].present?
-        params[:ids].each do |single_id|
-          session[current_key] << single_id unless session[current_key].include? single_id
+        if params[:ids] == 'all'
+          session['is_selected_all'] = true
+          search_info = { search: { value: params[:searchValue].present? ? params[:searchValue] : '' } }
+          table_of_caller = 'organization_id_is'
+          limit_resource = "#{table_of_caller}:#{current_organization.id}"
+          data = CollectionResourceFile.fetch_file_list(0, 0, 'id_is', 'desc', search_info, limit_resource, { export: true, current_organization: current_organization })
+          records_ids = data.first.present? ? data.first.pluck('id_is') : []
+          records_ids.each do |single_id|
+            session[current_key] << single_id.to_s unless session[current_key].include? single_id.to_s
+          end
+        else
+          params[:ids].each do |single_id|
+            session[current_key] << single_id unless session[current_key].include? single_id
+          end
         end
       elsif params[:bulk] != '1'
         session[current_key] << collection_resource_file_id unless session[current_key].include? collection_resource_file_id
+        session['is_selected_all'] = false
       end
     elsif params[:status] == 'remove'
       if params[:bulk] == '1'
@@ -34,9 +48,10 @@ module Aviary::BulkOperation
       elsif session[current_key].include? collection_resource_file_id
         session[current_key].delete(collection_resource_file_id)
       end
+      session['is_selected_all'] = false
     end
     respond_to do |format|
-      format.json { render json: [ids: session[current_key].join(','), status: :created, error: flash[:danger] ||= '', message: 'clear'] }
+      format.json { render json: [ids: session[current_key].join(','), status: :created, is_selected_all: session['is_selected_all'], error: flash[:danger] ||= '', message: 'clear'] }
     end
   end
 
