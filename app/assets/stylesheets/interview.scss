@@ -663,8 +663,8 @@ div#noMediaConnection {
   th, td {
     white-space: nowrap;
     .btn-interview-preview {
-      border: 2px solid #dee2e6;
-      color: #111;
+      border: 1px solid #1a1aff;
+      color: #1a1aff;
       display: block;
       width: 60px;
       text-decoration: none;
@@ -675,8 +675,8 @@ div#noMediaConnection {
       font-size: 12px;
       line-height: 22px;
       &:hover {
-        color: #000;
-        border-color: #999;
+        color: #7374FF;
+        border-color: #7374FF;
       }
     }
   }
