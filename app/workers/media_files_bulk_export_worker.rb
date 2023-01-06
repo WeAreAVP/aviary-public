@@ -11,7 +11,9 @@ class MediaFilesBulkExportWorker
     @notification = Notification.new
     org = Organization.find(args[4])
     base_url = args[5]
-    search_info = { search: { value: args[3].present? && JSON.parse(args[3]).present? && JSON.parse(args[3])['search'].present? ? JSON.parse(args[3])['search']['value'] : '' } }
+    params = {}
+    params = JSON.parse(args[3].gsub('=>', ':')) if args[3].present?
+    search_info = { search: { value: args[3].present? && params.present? && params['search'].present? ? params['search']['value'] : '' } }
     job = Aviary::ResourceFilesExportCsv.new.process_resource(args[1], search_info, org, base_url)
     if job
       @notification.subject = 'Media Files Export Completed Successfully'
