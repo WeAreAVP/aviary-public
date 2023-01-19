@@ -233,8 +233,10 @@ function scroll_to(target_element, time) {
  */
 function jsMessages(type, text) {
     html = '<div id="alert_message" class="alert animated fadeInDown alert-' + type + '">' +
+    '<div id="alert">' + 
+    '<span role="alert" aria-live="polite" aria-atomic="true">' + 
         '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' +
-        text + '</div>';
+        text + '</span></div></div>';
     $('body').append(html);
     window.setTimeout(function () {
         $("#alert_message").fadeIn(1500, function () {
