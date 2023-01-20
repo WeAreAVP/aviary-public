@@ -9,10 +9,12 @@ class MediaFilesBulkExportWorker
     puts 'Media files bulk export process started'
     @from_resource_import_export = true
     @notification = Notification.new
-    org = Organization.find(args[5])
-    base_url = args[6]
-    search_info = { search: { value: args[4].present? && JSON.parse(args[4]).present? && JSON.parse(args[4])['search'].present? ? JSON.parse(args[4])['search']['value'] : '' } }
-    job = Aviary::ResourceFilesExportCsv.new.process_resource(args[2], search_info, org, base_url)
+    org = Organization.find(args[4])
+    base_url = args[5]
+    params = {}
+    params = JSON.parse(args[3].gsub('=>', ':')) if args[3].present?
+    search_info = { search: { value: args[3].present? && params.present? && params['search'].present? ? params['search']['value'] : '' } }
+    job = Aviary::ResourceFilesExportCsv.new.process_resource(args[1], search_info, org, base_url)
     if job
       @notification.subject = 'Media Files Export Completed Successfully'
       @notification.heading = 'Media Files Export Completed Successfully'
