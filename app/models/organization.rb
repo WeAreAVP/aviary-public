@@ -460,14 +460,14 @@ class Organization < ApplicationRecord
     bucket_exist = proc do |url|
       self.class.where(bucket_name: url).first
     end
-    bucket_name = ENV['WASABI_PREFIX'] + '_' + url
+    bucket_name = ENV.fetch('WASABI_PREFIX') + '_' + url
 
     1.step do |i|
       break unless bucket_exist.call(bucket_name).present?
       bucket_name = bucket_name + '_' + i.to_s
     end
 
-    if ENV['RAILS_ENV'] == 'production'
+    if ENV.fetch('RAILS_ENV') == 'production'
       s3 = s3_client
       s3.create_bucket(bucket: bucket_name)
       begin
@@ -483,10 +483,10 @@ class Organization < ApplicationRecord
 
   def s3_client
     Aws::S3::Client.new(
-      access_key_id: ENV['WASABI_KEY'],
-      secret_access_key: ENV['WASABI_SECRET'],
-      region: ENV['WASABI_REGION'],
-      endpoint: ENV['WASABI_ENDPOINT']
+      access_key_id: ENV.fetch('WASABI_KEY'),
+      secret_access_key: ENV.fetch('WASABI_SECRET'),
+      region: ENV.fetch('WASABI_REGION'),
+      endpoint: ENV.fetch('WASABI_ENDPOINT')
     )
   end
 
@@ -581,7 +581,8 @@ class Organization < ApplicationRecord
           '8' => { status: 'true', value: 'collection_resource_title_ss', sort_name: true },
           '9' => { status: 'true', value: 'annotation_count_is', sort_name: true },
           '10' => { status: 'true', value: 'is_caption_ss', sort_name: true },
-          '11' => { status: 'true', value: 'is_downloadable_ss', sort_name: true }
+          '11' => { status: 'true', value: 'is_downloadable_ss', sort_name: true },
+          '12' => { status: 'true', value: 'associated_file_content_type_ss', sort_name: true }
         }
     }.to_json
 
@@ -593,7 +594,8 @@ class Organization < ApplicationRecord
       '4' => { status: 'true', value: 'description_ss', sort_name: true },
       '5' => { status: 'true', value: 'file_display_name_ss', sort_name: true },
       '6' => { status: 'true', value: 'collection_resource_title_ss', sort_name: true },
-      '7' => { status: 'true', value: 'is_caption_ss', sort_name: true }
+      '7' => { status: 'true', value: 'is_caption_ss', sort_name: true },
+      '8' => { status: 'true', value: 'associated_file_content_type_ss', sort_name: true }
     }.to_json
     update(transcript_display_column: display_columns_update, transcript_search_column: search_columns_update) if transcript_display_column.blank?
   end

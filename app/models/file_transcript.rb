@@ -130,7 +130,8 @@ class FileTranscript < ApplicationRecord
                         '1' => { value: 'title_ss', status: 'true' },
                         '2' => { value: 'is_public_ss', status: 'true' },
                         '3' => { value: 'file_display_name_ss', status: 'true' },
-                        '4' => { value: 'collection_resource_title_ss', status: 'true' } } }
+                        '4' => { value: 'collection_resource_title_ss', status: 'true' },
+                        '5' => { value: 'associated_file_content_type_ss', status: 'true' } } }
   end
 
   def self.fields_values
@@ -141,6 +142,7 @@ class FileTranscript < ApplicationRecord
       'language_ss' => 'Language',
       'description_ss' => 'Notes',
       'file_display_name_ss' => 'Media File',
+      'associated_file_content_type_ss' => 'File Type',
       'collection_resource_title_ss' => 'Resource Title',
       'annotation_count_is' => 'Annotation Set Count',
       'is_caption_ss' => 'Caption',
@@ -195,5 +197,6 @@ class FileTranscript < ApplicationRecord
     string :document_type, stored: true do
       'file_transcript'
     end
+    string :associated_file_content_type, stored: true
   end
 end
