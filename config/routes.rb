@@ -123,8 +123,8 @@ Rails.application.routes.draw do
   get 'pricing', to: 'home#pricing', as: :pricing
   get 'terms_of_service', to: 'home#terms_of_service', as: :terms_of_service
   get 'privacy_policy', to: 'home#privacy_policy', as: :privacy_policy
-  get 'contact_us', to: 'home#contact_us', as: :contact_us
-  get 'support', to: 'home#support', as: :support
+  # get 'contact_us', to: 'home#contact_us', as: :contact_us
+  # get 'support', to: 'home#support', as: :support
   get 'about', to: 'home#about', as: :about
   get 'features', to: 'home#features', as: :features
   post 'submit_request', to: 'home#submit_request', as: :submit_request
