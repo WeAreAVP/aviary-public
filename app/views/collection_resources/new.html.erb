@@ -45,15 +45,7 @@
                   <div class="field-title">
                     <%= f.label 'Access', for: 'collection_resource_public' %>
                   </div>
-                  <%= f.select :access, CollectionResource.accesses.map { |key, value| 
-                  if key == 'access_restricted'
-                    [key.split('_').second.humanize + ' - Public and logged-in users will see “Request Access” button', key]
-                  elsif key == 'access_public'
-                    [key.split('_').second.humanize + ' - Visible to all', key]
-                  else
-                    [key.split('_').second.humanize + ' - Only organization users and those granted direct access will see these resources', key]
-                  end
-                  }, {}, required: false, label: false, class: 'custom-placeholder' %>
+                  <%= f.select :access, CollectionResource.accesses.map { |key, _| [CollectionResource.readable_status(key), key] }, {}, required: false, label: false, class: 'custom-placeholder' %>
                 </div>
               </div>
             </div>

@@ -31,6 +31,16 @@ class CollectionResource < ApplicationRecord
   # custom_fields?
   attr_accessor :dynamic_initializer
 
+  def self.readable_status(status)
+    readable_status = status.split('_').second.humanize
+    readable_statuses = {
+      access_restricted: readable_status + ' - Public and logged-in users will see “Request Access” button',
+      access_public: readable_status + ' - Visible to all',
+      access_private: readable_status + ' - Only organization users and those granted direct access will see these resources'
+    }
+    readable_statuses[status.to_sym]
+  end
+
   def update_attributes_solr
     self.collection_resource_files_list = collection_resource_files
     self.file_indexes_list = collection_resource_files.map(&:file_indexes).flatten
@@ -441,8 +451,8 @@ class CollectionResource < ApplicationRecord
               flag_added_filter = true
               processed = true
             when 'description_agent_search_texts', 'description_coverage_search_texts', 'description_description_search_texts', 'description_identifier_search_texts', 'description_keyword_search_texts',
-                'description_language_search_texts', 'description_preferred_citation_search_texts', 'description_publisher_search_texts', 'description_relation_search_texts', 'description_rights_statement_search_texts',
-                'description_source_metadata_uri_search_texts', 'description_source_search_texts', 'description_subject_search_texts', 'description_title_search_texts', 'description_type_search_texts', 'description_format_search_texts'
+              'description_language_search_texts', 'description_preferred_citation_search_texts', 'description_publisher_search_texts', 'description_relation_search_texts', 'description_rights_statement_search_texts',
+              'description_source_metadata_uri_search_texts', 'description_source_search_texts', 'description_subject_search_texts', 'description_title_search_texts', 'description_type_search_texts', 'description_format_search_texts'
 
               fq_filters_inner = fq_filters_inner + (counter != 0 ? ' OR ' : ' ') + " #{search_perp(q, field_name)} "
               alter_search = field_name.clone
