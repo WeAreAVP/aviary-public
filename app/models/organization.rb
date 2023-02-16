@@ -345,6 +345,8 @@ class Organization < ApplicationRecord
       '6' => { status: 'true', value: 'sort_order_ss', sort_name: true }
     }.to_json
     update(resource_file_display_column: display_columns_update, resource_file_search_column: search_columns_update) if resource_file_display_column.blank?
+    update_transcript_fields
+    update_file_index_fields
   end
 
   def update_search_configuration(force_update = false)
@@ -549,7 +551,8 @@ class Organization < ApplicationRecord
           '5' => { status: 'true', value: 'updated_at_ds', sort_name: true },
           '6' => { status: 'true', value: 'created_at_ds', sort_name: true },
           '7' => { status: 'true', value: 'file_display_name_ss', sort_name: true },
-          '8' => { status: 'true', value: 'collection_resource_title_ss', sort_name: true }
+          '8' => { status: 'true', value: 'collection_resource_title_ss', sort_name: true },
+          '9' => { status: 'true', value: 'associated_file_content_type_ss', sort_name: true }
         }
     }.to_json
 
@@ -560,7 +563,8 @@ class Organization < ApplicationRecord
       '3' => { status: 'true', value: 'language_ss', sort_name: true },
       '4' => { status: 'true', value: 'description_ss', sort_name: true },
       '5' => { status: 'true', value: 'file_display_name_ss', sort_name: true },
-      '6' => { status: 'true', value: 'collection_resource_title_ss', sort_name: true }
+      '6' => { status: 'true', value: 'collection_resource_title_ss', sort_name: true },
+      '7' => { status: 'true', value: 'associated_file_content_type_ss', sort_name: true }
     }.to_json
     update(file_index_display_column: display_columns_update, file_index_search_column: search_columns_update) if file_index_display_column.blank?
   end
