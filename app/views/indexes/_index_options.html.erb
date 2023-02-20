@@ -36,13 +36,13 @@
               <a href="javascript:void(0);" data-toggle="modal" data-target="#index_upload" class="dropdown-item upload_popup_index_transcript_supplemental" title="Add"><i class="fa fa-plus-circle" aria-hidden="true"></i>
                 Upload another index</a>
               <a href="<%= show_index_path(@resource_file.id) %>"  class="dropdown-item" id="sort_index"><i class="fa fa-indent" aria-hidden="true"></i>
-                Create new index <div class="badge-item ml-1">Beta</div></a>
+                Create new index</a>
               <% if @resource_file.file_indexes.present? %>
                 <div class="dropdown-divider"></div>
                 <a href="javascript:void(0);" data-toggle="modal" data-target="#index_sort_popup" class="dropdown-item" id="sort_index"><i class="material-icons custom-transcript-icon">menu</i>
                   Manage indexes</a>
                 <a href="javascript:void(0);" data-url="<%= show_index_path(@resource_file.id)%>" class="dropdown-item edit_index_url" id="sort_index"><i class="material-icons custom-transcript-icon">edit</i>
-                  Edit this index <div class="badge-item ml-1">Beta</div></a>
+                  Edit this index</a>
                 <a href="javascript:void(0);" data-toggle="modal" id="index_update_btn" data-target="#index_upload" class="dropdown-item" title="Update"><i class="fa fa-refresh"></i>
                   Update this index
                 </a>
