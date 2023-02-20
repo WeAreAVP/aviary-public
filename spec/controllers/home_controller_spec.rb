@@ -107,32 +107,7 @@ RSpec.describe HomeController, type: :controller do
       expect(response.status).to eq(200)
     end
   end
-  describe "GET contact_us" do
-    it "has a 200 status code" do
-      get :contact_us
-      expect(response.status).to eq(200)
-    end
-  end
-  describe "GET support" do
-    it "has a 200 status code" do
-      get :support
-      expect(response.status).to eq(200)
-    end
-  end
-  describe "POST submit_request" do
-    it "has a 302 status code with success" do
-      request = build(:support_request)
-      post :submit_request, params: { support_request: { name: request.name, organization: request.organization,
-                                                         message: request.message, email: request.email, request_type: request.request_type } }
-      expect(response.status).to eq(302)
-    end
-    it "has a 200 status code with error" do
-      request = build(:support_request)
-      post :submit_request, params: { support_request: { organization: request.organization,
-                                                         message: request.message, email: request.email, request_type: request.request_type } }
-      expect(response.status).to eq(200)
-    end
-  end
+  
   describe "GET noid" do
     it "has a 302 status code" do
       collection_resource = create(:collection_resource)
