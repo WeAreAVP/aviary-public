@@ -5,199 +5,205 @@
         <%= render_breadcrumbs %>
       </div>
       <div class="text-headline jumbotron m-0">
-      <div class="mb-4 border-bottom pb-4 top-index-interview">
-        <div class="row">
-          <div class="col-md-6">
-            <div class="heading-holder table-head m-0">
+        <div class="mb-4 border-bottom pb-4 top-index-interview">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="heading-holder table-head m-0">
                 <h1><%= @interview.present? ? @interview.title : @collection_resource.title %></h1>
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="d-flex justify-content-between">
-              <div class="status d-flex align-items-center">
-                <span>Status</span>
-                <%= render 'interviews/interview_index/status' %>
               </div>
-              <div class="button-holder">
-                <% if @interview.present? %>
-                  <%= link_to 'Preview', preview_interviews_manager_path(@interview.id), class: 'btn btn-outline-secondary' %>
-                  <%= link_to 'Return To OHMS Studio', ohms_records_path, class: 'btn btn-outline-secondary' %>
-                  <% if @interview.id.present? %>
-                  <%= render partial: 'shared/ohms/buttons', locals: { interview: @interview } %>
+            </div>
+            <div class="col-md-6">
+              <div class="d-flex justify-content-between">
+                <div class="status d-flex align-items-center">
+                  <% if @interview.present? %>
+                    <span>Status</span>
+                    <%= render 'interviews/interview_index/status' %>
                   <% end %>
-                <% else %>
-                  <%= link_to 'Return To Resource', "#{collection_collection_resource_details_url(@collection_resource.collection, @collection_resource, @resource_file)}/index?", class: 'btn btn-outline-secondary mr-1' %>
-                <% end %>
+                </div>
+                <div class="button-holder">
+                  <% if @interview.present? %>
+                    <%= link_to 'Preview', preview_interviews_manager_path(@interview.id), class: 'btn btn-outline-secondary' %>
+                    <%= link_to 'Return To OHMS Studio', ohms_records_path, class: 'btn btn-outline-secondary' %>
+                    <% if @interview.id.present? %>
+                      <%= render partial: 'shared/ohms/buttons', locals: { interview: @interview } %>
+                    <% end %>
+                  <% else %>
+                    <%= link_to 'Return To Resource', "#{collection_collection_resource_details_url(@collection_resource.collection, @collection_resource, @resource_file)}/index?", class: 'btn btn-outline-secondary mr-1' %>
+                  <% end %>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-      <div class="row">
-        <div class="col-md-6">
+        <div class="row">
+          <div class="col-md-6">
             <div class="accordion interview-accordion" id="accordionIndex">
-              <%  @file_index_point.sort_by {|t| t.start_time.to_f }.each_with_index do |data, index| %>
-              <% if @interview.present? %>
-                <% 
-                  file_index_alt = FileIndex.find_by(interview_id: @interview.id, language: interview_lang_info(@interview.language_for_translation.gsub(/(\w+)/, &:capitalize))) 
-                  if file_index_alt.present?
-                    @file_index_point_alt = FileIndexPoint.where(file_index_id: file_index_alt.id).where(start_time: data.start_time.to_f).where.not(id: data.id)
-                  end
-                %>
-              <% end %>
+              <% @file_index_point.sort_by { |t| t.start_time.to_f }.each_with_index do |data, index| %>
+                <% if @interview.present? %>
+                  <%
+                    file_index_alt = FileIndex.find_by(interview_id: @interview.id, language: interview_lang_info(@interview.language_for_translation.gsub(/(\w+)/, &:capitalize)))
+                    if file_index_alt.present?
+                      @file_index_point_alt = FileIndexPoint.where(file_index_id: file_index_alt.id).where(start_time: data.start_time.to_f).where.not(id: data.id)
+                    end
+                  %>
+                <% end %>
                 <div class="card">
-                  <div class="card-header" id="heading_<%=index%>">
+                  <div class="card-header" id="heading_<%= index %>">
                     <h2 class="mb-0 d-flex align-items-start">
-                      <button class="btn btn-link btn-collapse text-left" type="button" data-toggle="collapse" data-target="#collapse_<%=index%>" aria-expanded="false" aria-controls="collapse_<%=index%>">
+                      <button class="btn btn-link btn-collapse text-left" type="button" data-toggle="collapse" data-target="#collapse_<%= index %>" aria-expanded="false" aria-controls="collapse_<%= index %>">
                         <i class="fa fa-angle-down"></i>
                       </button>
                       <div>
-                        <div class="segment-title"><%= data.title  %> <%= @file_index_point_alt.present? && !@file_index_point_alt.first.title.blank? ? " | #{@file_index_point_alt.first.title}" : "" %></div>
-                        <div class="segment-duration play-timecode" data-timecode="<%= data.start_time %>"><%= time_to_duration(data.start_time)  %></div>
+                        <div class="segment-title"><%= data.title %> <%= @file_index_point_alt.present? && !@file_index_point_alt.first.title.blank? ? " | #{@file_index_point_alt.first.title}" : "" %></div>
+                        <div class="segment-duration play-timecode" data-timecode="<%= data.start_time %>"><%= time_to_duration(data.start_time) %></div>
                       </div>
                       <div class="d-flex">
                         <div class="btn-group">
-                          <a href="<%= @interview.present? ? ohms_index_edit_path(data.id) : edit_index_file_path(@resource_file.id,@file_index.id,data.id) %>?time=<%= data.start_time%>" class="btn btn-outline-dark" ><i class="fa fa-edit"></i></a>
+                          <a href="<%= @interview.present? ? ohms_index_edit_path(data.id) : edit_index_file_path(@resource_file.id, @file_index.id, data.id) %>?time=<%= data.start_time %>" class="btn btn-outline-dark"><i class="fa fa-edit"></i></a>
                         </div>
                       </div>
                     </h2>
                   </div>
 
-                  <div id="collapse_<%=index%>" class="collapse" aria-labelledby="heading_<%=index%>" data-parent="#accordionIndex">
+                  <div id="collapse_<%= index %>" class="collapse" aria-labelledby="heading_<%= index %>" data-parent="#accordionIndex">
                     <div class="delete_index_holder">
-                      <a href="javascript:void(0);" class="btn btn-outline-light btn-outline-light delete_index" data-url= "<%= @interview.present? ? interviews_interview_index_path(data.id) : destroy_index_path(data.id) %>" data-name="<%= data.title%>">Delete Index</a>
+                      <a href="javascript:void(0);" class="btn btn-outline-light btn-outline-light delete_index" data-url="<%= @interview.present? ? interviews_interview_index_path(data.id) : destroy_index_path(data.id) %>" data-name="<%= data.title %>">Delete
+                        Index</a>
                     </div>
                     <div class="custom-form-height">
                       <ul class="list-group list-group-flush">
                         <li class="list-group-item d-flex justify-content-between">
                           <div class="w-50"><strong>Segment Title:</strong></div>
-                          <div class="w-50"><%= data.title  %></div>
+                          <div class="w-50"><%= data.title %></div>
                         </li>
                         <% if @file_index_point_alt.present? && !@file_index_point_alt.first.title.blank? %>
                           <li class="list-group-item d-flex justify-content-between">
                             <div class="w-50"><strong>Segment Title (Translation):</strong></div>
-                            <div class="w-50"><%= @file_index_point_alt.first.title  %></div>
+                            <div class="w-50"><%= @file_index_point_alt.first.title %></div>
                           </li>
                         <% end %>
-                        <% unless data.partial_script.blank?  %>
-                        <li class="list-group-item d-flex justify-content-between">
-                          <div class="w-50"><strong>Partial Transcript:</strong></div>
-                          <div class="w-50"><%= data.partial_script  %></div>
-                        </li>
+                        <% unless data.partial_script.blank? %>
+                          <li class="list-group-item d-flex justify-content-between">
+                            <div class="w-50"><strong>Partial Transcript:</strong></div>
+                            <div class="w-50"><%= data.partial_script %></div>
+                          </li>
                         <% end %>
-                        <% if @file_index_point_alt.present? && !@file_index_point_alt.first.partial_script.blank?  %>
+                        <% if @file_index_point_alt.present? && !@file_index_point_alt.first.partial_script.blank? %>
                           <li class="list-group-item d-flex justify-content-between">
                             <div class="w-50"><strong>Partial Transcript (Translation):</strong></div>
-                            <div class="w-50"><%= @file_index_point_alt.first.partial_script  %></div>
+                            <div class="w-50"><%= @file_index_point_alt.first.partial_script %></div>
                           </li>
                         <% end %>
-                        <% unless data.subjects.blank?  %>
-                        <li class="list-group-item d-flex justify-content-between">
-                          <div class="w-50"><strong>Subjects:</strong></div>
-                          <div class="w-50">
-                            <%  data.subjects.split(/;(?=(?:(?:[^"]*"){2})*[^"]*$)/).each do |subject| %>
-                              <span class="badge badge-secondary single_value_non_tombstone"><%= subject.strip %></span>
-                            <% end %>
-                          </div>
-                        </li>
+                        <% unless data.subjects.blank? %>
+                          <li class="list-group-item d-flex justify-content-between">
+                            <div class="w-50"><strong>Subjects:</strong></div>
+                            <div class="w-50">
+                              <% data.subjects.split(/;(?=(?:(?:[^"]*"){2})*[^"]*$)/).each do |subject| %>
+                                <span class="badge badge-secondary single_value_non_tombstone"><%= subject.strip %></span>
+                              <% end %>
+                            </div>
+                          </li>
                         <% end %>
                         <% if @file_index_point_alt.present? && !@file_index_point_alt.first.subjects.blank? %>
                           <li class="list-group-item d-flex justify-content-between">
                             <div class="w-50"><strong>Subjects (Translation):</strong></div>
                             <div class="w-50">
-                              <%  @file_index_point_alt.first.subjects.split(/;(?=(?:(?:[^"]*"){2})*[^"]*$)/).each do |subject| %>
+                              <% @file_index_point_alt.first.subjects.split(/;(?=(?:(?:[^"]*"){2})*[^"]*$)/).each do |subject| %>
                                 <span class="badge badge-secondary single_value_non_tombstone"><%= subject.strip %></span>
                               <% end %>
                             </div>
                           </li>
                         <% end %>
 
-                        <% unless data.keywords.blank?  %>      
-                        <li class="list-group-item d-flex justify-content-between">
-                          <div class="w-50"><strong>Keywords:</strong></div>
-                          <div class="w-50">
-                            <%  data.keywords.split(/;(?=(?:(?:[^"]*"){2})*[^"]*$)/).each do |keyword| %>
-                              <span class="badge badge-secondary single_value_non_tombstone"><%= keyword.strip %></span>
-                            <% end %>
-                          </div>
-                        </li>
-                        <% end %>
-                        <% if @file_index_point_alt.present? && !@file_index_point_alt.first.keywords.blank? %>
+                        <% unless data.keywords.blank? %>
                           <li class="list-group-item d-flex justify-content-between">
-                            <div class="w-50"><strong>Keywords (Translation):</strong></div>
+                            <div class="w-50"><strong>Keywords:</strong></div>
                             <div class="w-50">
-                              <%  @file_index_point_alt.first.keywords.split(/;(?=(?:(?:[^"]*"){2})*[^"]*$)/).each do |keyword| %>
+                              <% data.keywords.split(/;(?=(?:(?:[^"]*"){2})*[^"]*$)/).each do |keyword| %>
                                 <span class="badge badge-secondary single_value_non_tombstone"><%= keyword.strip %></span>
                               <% end %>
                             </div>
                           </li>
                         <% end %>
-                        <% unless data.synopsis.blank?  %>
-                        <li class="list-group-item d-flex justify-content-between">
-                          <div class="w-50"><strong>Segment Synopsis:</strong></div>
-                          <div class="w-50"><%= data.synopsis  %></div>
-                        </li>
+                        <% if @file_index_point_alt.present? && !@file_index_point_alt.first.keywords.blank? %>
+                          <li class="list-group-item d-flex justify-content-between">
+                            <div class="w-50"><strong>Keywords (Translation):</strong></div>
+                            <div class="w-50">
+                              <% @file_index_point_alt.first.keywords.split(/;(?=(?:(?:[^"]*"){2})*[^"]*$)/).each do |keyword| %>
+                                <span class="badge badge-secondary single_value_non_tombstone"><%= keyword.strip %></span>
+                              <% end %>
+                            </div>
+                          </li>
+                        <% end %>
+                        <% unless data.synopsis.blank? %>
+                          <li class="list-group-item d-flex justify-content-between">
+                            <div class="w-50"><strong>Segment Synopsis:</strong></div>
+                            <div class="w-50"><%= data.synopsis %></div>
+                          </li>
                         <% end %>
                         <% if @file_index_point_alt.present? && !@file_index_point_alt.first.synopsis.blank? %>
                           <li class="list-group-item d-flex justify-content-between">
                             <div class="w-50"><strong>Segment Synopsis (Translation):</strong></div>
-                            <div class="w-50"><%= @file_index_point_alt.first.synopsis  %></div>
+                            <div class="w-50"><%= @file_index_point_alt.first.synopsis %></div>
                           </li>
                         <% end %>
                         <% if JSON.parse(data.gps_points).length.positive? %>
-                        <li class="list-group-item ">
-                          <div class="w-100"><strong>GPS</strong></div>
-                          <div class="w-100">
-                            <div class="card-box">
-                              <% JSON.parse(data.gps_points).each_with_index do |gps, g_index| %>
-                                <ul class="list-group list-group-flush border mb-2">
-                                  <li class="list-group-item d-flex justify-content-between">
-                                    <div class="w-50"><strong>GPS:</strong></div><div class="w-50"><%= gps["lat"] %>, <%= gps["long"] %></div>
-                                  </li>
-                                  <li class="list-group-item d-flex justify-content-between">
-                                    <div class="w-50"><strong>GPS Description:</strong></div>
-                                    <div class="w-50"><%= gps["description"] %></div>
-                                  </li>
-                                  <% if @file_index_point_alt.present? && !@file_index_point_alt.first.gps_description.blank? %>
+                          <li class="list-group-item ">
+                            <div class="w-100"><strong>GPS</strong></div>
+                            <div class="w-100">
+                              <div class="card-box">
+                                <% JSON.parse(data.gps_points).each_with_index do |gps, g_index| %>
+                                  <ul class="list-group list-group-flush border mb-2">
                                     <li class="list-group-item d-flex justify-content-between">
-                                      <div class="w-50"><strong>GPS Description (Translation):</strong></div>
-                                      <div class="w-50"><%= JSON.parse(@file_index_point_alt.first.gps_description)[g_index] %></div>
+                                      <div class="w-50"><strong>GPS:</strong></div>
+                                      <div class="w-50"><%= gps["lat"] %>, <%= gps["long"] %></div>
                                     </li>
-                                  <% end %>
-                                  <li class="list-group-item d-flex justify-content-between">
-                                    <div class="w-50"><strong>Zoom:</strong></div><div class="w-50"><%= gps["zoom"] %></div>
-                                  </li>
-                                </ul>
-                              <% end %>
+                                    <li class="list-group-item d-flex justify-content-between">
+                                      <div class="w-50"><strong>GPS Description:</strong></div>
+                                      <div class="w-50"><%= gps["description"] %></div>
+                                    </li>
+                                    <% if @file_index_point_alt.present? && !@file_index_point_alt.first.gps_description.blank? %>
+                                      <li class="list-group-item d-flex justify-content-between">
+                                        <div class="w-50"><strong>GPS Description (Translation):</strong></div>
+                                        <div class="w-50"><%= JSON.parse(@file_index_point_alt.first.gps_description)[g_index] %></div>
+                                      </li>
+                                    <% end %>
+                                    <li class="list-group-item d-flex justify-content-between">
+                                      <div class="w-50"><strong>Zoom:</strong></div>
+                                      <div class="w-50"><%= gps["zoom"] %></div>
+                                    </li>
+                                  </ul>
+                                <% end %>
+                              </div>
                             </div>
-                          </div>
-                        </li>
+                          </li>
                         <% end %>
-                        <% if  JSON.parse(data.hyperlinks).length.positive? %>
-                        <li class="list-group-item ">
-                          <div class="w-100"><strong>Hyperlinks</strong></div>
-                          <div class="w-100">
-                            <div class="card-box">
-                              <% JSON.parse(data.hyperlinks).each_with_index do |hyperlink, h_index| %>
-                                <ul class="list-group list-group-flush border mb-2">
-                                  <li class="list-group-item d-flex justify-content-between">
-                                    <div class="w-50"><strong>Hyperlink:</strong></div><div class="w-50"><%= hyperlink["hyperlink"] %></div>
-                                  </li>
-                                  <li class="list-group-item d-flex justify-content-between">
-                                    <div class="w-50"><strong>Hyperlink Description:</strong></div>
-                                    <div class="w-50"><%= hyperlink["description"] %></div>
-                                  </li>
-                                  <% if @file_index_point_alt.present? && !@file_index_point_alt.first.hyperlink_description.blank? %>
+                        <% if JSON.parse(data.hyperlinks).length.positive? %>
+                          <li class="list-group-item ">
+                            <div class="w-100"><strong>Hyperlinks</strong></div>
+                            <div class="w-100">
+                              <div class="card-box">
+                                <% JSON.parse(data.hyperlinks).each_with_index do |hyperlink, h_index| %>
+                                  <ul class="list-group list-group-flush border mb-2">
                                     <li class="list-group-item d-flex justify-content-between">
-                                      <div class="w-50"><strong>Hyperlink Description (Translation):</strong></div>
-                                      <div class="w-50"><%= JSON.parse(@file_index_point_alt.first.hyperlink_description)[h_index] %></div>
+                                      <div class="w-50"><strong>Hyperlink:</strong></div>
+                                      <div class="w-50"><%= hyperlink["hyperlink"] %></div>
                                     </li>
-                                  <% end %>
-                                </ul>
-                              <% end %>
+                                    <li class="list-group-item d-flex justify-content-between">
+                                      <div class="w-50"><strong>Hyperlink Description:</strong></div>
+                                      <div class="w-50"><%= hyperlink["description"] %></div>
+                                    </li>
+                                    <% if @file_index_point_alt.present? && !@file_index_point_alt.first.hyperlink_description.blank? %>
+                                      <li class="list-group-item d-flex justify-content-between">
+                                        <div class="w-50"><strong>Hyperlink Description (Translation):</strong></div>
+                                        <div class="w-50"><%= JSON.parse(@file_index_point_alt.first.hyperlink_description)[h_index] %></div>
+                                      </li>
+                                    <% end %>
+                                  </ul>
+                                <% end %>
+                              </div>
                             </div>
-                          </div>
-                        </li>
+                          </li>
                         <% end %>
                       </ul>
                     </div>
@@ -211,15 +217,15 @@
             <%= render 'interviews/interview_index/top' %>
           </div>
         </div>
-        
+
       </div>
-     
+
     </main>
   </div>
 </div>
 <script type="text/javascript">
     let interviews_index_manager = new InterviewIndexManager();
     $(function () {
-      interviews_index_manager.initialize();
+        interviews_index_manager.initialize();
     });
 </script>
