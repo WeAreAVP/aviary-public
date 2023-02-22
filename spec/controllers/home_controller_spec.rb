@@ -107,7 +107,7 @@ RSpec.describe HomeController, type: :controller do
       expect(response.status).to eq(200)
     end
   end
-  
+
   describe "GET noid" do
     it "has a 302 status code" do
       collection_resource = create(:collection_resource)
