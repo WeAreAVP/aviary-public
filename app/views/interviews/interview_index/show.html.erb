@@ -9,27 +9,33 @@
           <div class="row">
             <div class="col-md-6">
               <div class="heading-holder table-head m-0">
-                <h1><%= @interview.present? ? @interview.title : @collection_resource.title %></h1>
-                <%= link_to 'Preview', preview_interviews_manager_path(@interview.id), class: 'btn-interview-preview' %>
+                <div class="heading-box">
+                  <% if @interview.present? %>
+                    <%= link_to '', ohms_records_path, id: 'back-to-search-btn', class: 'btn-back' %>
+                  <% else %>
+                    <%= link_to 'Return To Resource', "#{collection_collection_resource_details_url(@collection_resource.collection, @collection_resource, @resource_file)}/index?", class: 'btn-back' %>
+                  <% end %>
+                  <h1><%= @interview.present? ? @interview.title : @collection_resource.title %></h1>
+                </div>
+                <% if @interview.present? %>
+                  <%= link_to 'Preview', preview_interviews_manager_path(@interview.id), class: 'btn-interview-preview' %>
+
+                <% end %>
               </div>
             </div>
             <div class="col-md-6">
-              <div class="d-flex justify-content-between">
-                <div class="status d-flex align-items-center">
+              <div class="d-flex flex-column ml-auto right-toolbar">
+              <div class="status d-flex align-items-center m-1">
                   <% if @interview.present? %>
                     <span>Status</span>
                     <%= render 'interviews/interview_index/status' %>
                   <% end %>
                 </div>
-                <div class="button-holder">
-                  <% if @interview.present? %>
-                    <%= link_to 'Return To OHMS Studio', ohms_records_path, class: 'btn btn-outline-secondary' %>
+                <div class="button-holder right-button-holder">
                     <% if @interview.id.present? %>
                       <%= render partial: 'shared/ohms/buttons', locals: { interview: @interview } %>
                     <% end %>
-                  <% else %>
-                    <%= link_to 'Return To Resource', "#{collection_collection_resource_details_url(@collection_resource.collection, @collection_resource, @resource_file)}/index?", class: 'btn btn-outline-secondary mr-1' %>
-                  <% end %>
+
                 </div>
               </div>
             </div>

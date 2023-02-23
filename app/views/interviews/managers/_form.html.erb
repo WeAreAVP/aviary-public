@@ -11,7 +11,10 @@ thesaurus_settings = ::Thesaurus::ThesaurusSetting.where(organization_id: curren
         <div class="col-md-5">
           <div class="text-headline jumbotron mt-0 mb-4">
             <div class="heading-holder">
-              <h1>Metadata Editor </h1>
+              <div class="heading-box">
+                <%= link_to '', ohms_records_path, id: 'back-to-search-btn', class: 'btn-back' %>
+                <h1>Metadata Editor </h1>
+              </div>
             </div>
           </div>
           
@@ -25,9 +28,6 @@ thesaurus_settings = ::Thesaurus::ThesaurusSetting.where(organization_id: curren
               </div>
             </div>
             <div class="d-flex align-items-center">
-              <div class="btn-group">
-                <%= link_to 'Return To OHMS Studio', ohms_records_path, class: 'btn btn-outline-secondary' %>
-              </div>
               <%= f.submit 'Save', class: 'btn btn-success ml-3' %>
               <% if @interview.id.present? %>
               <%= render partial: 'shared/ohms/buttons', locals: { interview: @interview } %>

@@ -117,11 +117,11 @@
 }
 
 .container_gps > .container_gps_inner:first-child .remove_gps {
-  display: none
+  display: none;
 }
 
 .container_gps > .container_gps_inner + .container_gps_inner {
-  padding-top: 40px
+  padding-top: 40px;
 }
 
 .container_hyperlinks > .container_hyperlinks_inner:first-child .remove_hyperlinks {
@@ -428,6 +428,10 @@ div#noMediaConnection {
 }
 
 #interviews_data_table_wrapper {
+  .DTFC_ScrollWrapper {
+    opacity: 0;
+  }
+
   .DTFC_RightBodyLiner {
     tr {
       &:nth-of-type(odd) {
@@ -487,6 +491,7 @@ div#noMediaConnection {
     font-size: 14px;
     color: #6d757d;
     height: 34px !important;
+    margin: 0 !important;
   }
 
   .btn-group {
@@ -781,6 +786,7 @@ div#noMediaConnection {
     border-color: #7374FF;
   }
 }
+
 
 #interviews_data_table {
   td {
