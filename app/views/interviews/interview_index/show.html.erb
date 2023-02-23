@@ -11,11 +11,11 @@
               <div class="heading-holder table-head m-0">
                 <div class="heading-box">
                   <% if @interview.present? %>
-                    <%= link_to  ohms_records_path, id: 'back-to-search-btn' do  %>
+                    <%= link_to ohms_records_path, id: 'back-to-search-btn' do %>
                       <span class="fa fa-angle-left "></span> <small>Back to OHMS Studio</small>
                     <% end %>
                   <% else %>
-                    <%= link_to  "#{collection_collection_resource_details_url(@collection_resource.collection, @collection_resource, @resource_file)}/index?", id: 'back-to-search-btn' do %>
+                    <%= link_to "#{collection_collection_resource_details_url(@collection_resource.collection, @collection_resource, @resource_file)}/index?", id: 'back-to-search-btn' do %>
                       <span class="fa fa-angle-left "></span> <small>Back to My Resource</small>
                     <% end %>
                   <% end %>
@@ -29,16 +29,16 @@
             </div>
             <div class="col-md-6">
               <div class="d-flex flex-column ml-auto right-toolbar">
-              <div class="status d-flex align-items-center m-1">
+                <div class="status d-flex align-items-center m-1">
                   <% if @interview.present? %>
                     <span>Status</span>
                     <%= render 'interviews/interview_index/status' %>
                   <% end %>
                 </div>
                 <div class="button-holder right-button-holder">
-                    <% if @interview.present? && @interview.id.present? %>
-                      <%= render partial: 'shared/ohms/buttons', locals: { interview: @interview } %>
-                    <% end %>
+                  <% if @interview.present? && @interview.id.present? %>
+                    <%= render partial: 'shared/ohms/buttons', locals: { interview: @interview } %>
+                  <% end %>
 
                 </div>
               </div>
