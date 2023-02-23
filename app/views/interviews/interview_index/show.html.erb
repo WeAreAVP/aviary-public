@@ -11,9 +11,13 @@
               <div class="heading-holder table-head m-0">
                 <div class="heading-box">
                   <% if @interview.present? %>
-                    <%= link_to '', ohms_records_path, id: 'back-to-search-btn', class: 'btn-back' %>
+                    <%= link_to  ohms_records_path, id: 'back-to-search-btn' do  %>
+                      <span class="fa fa-angle-left "></span> <small>Back to OHMS Studio</small>
+                    <% end %>
                   <% else %>
-                    <%= link_to 'Return To Resource', "#{collection_collection_resource_details_url(@collection_resource.collection, @collection_resource, @resource_file)}/index?", class: 'btn-back' %>
+                    <%= link_to  "#{collection_collection_resource_details_url(@collection_resource.collection, @collection_resource, @resource_file)}/index?", id: 'back-to-search-btn' do %>
+                      <span class="fa fa-angle-left "></span> <small>Back to My Resource</small>
+                    <% end %>
                   <% end %>
                   <h1><%= @interview.present? ? @interview.title : @collection_resource.title %></h1>
                 </div>
@@ -32,7 +36,7 @@
                   <% end %>
                 </div>
                 <div class="button-holder right-button-holder">
-                    <% if @interview.id.present? %>
+                    <% if @interview.present? && @interview.id.present? %>
                       <%= render partial: 'shared/ohms/buttons', locals: { interview: @interview } %>
                     <% end %>
 
