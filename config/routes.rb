@@ -69,6 +69,10 @@ Rails.application.routes.draw do
   get 'ohms_records/ohms_index/:id/edit', to: 'interviews/interview_index#edit', as: :ohms_index_edit
   get 'ohms_records/ohms_index/new/:id', to: 'interviews/interview_index#new', as: :ohms_index_new
   get 'ohms_records/user_assignments/:interview_id/:user_id', to: 'interviews/managers#ohms_assignments', as: :ohms_records_user_assignments
+
+  get 'ohms_configuration', to: 'interviews/managers#ohms_configuration', as: :ohms_configuration
+  post 'ohms_configuration', to: 'interviews/managers#ohms_configuration_update', as: :ohms_configuration_update
+
   namespace :interviews do
     resources :managers do
       collection do

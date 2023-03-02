@@ -14,6 +14,23 @@ module Interviews
 
     before_action :set_interview, only: %i[show edit update destroy sync preview]
 
+    def ohms_configuration
+      authorize! :manage, Interviews::Interview
+      @ohms_configuration = OhmsConfiguration.where('organization_id', current_organization.id).try(:first)
+      @ohms_configuration = OhmsConfiguration.new if @ohms_configuration.nil?
+    end
+
+    def ohms_configuration_update
+      authorize! :manage, Interviews::Interview
+      @ohms_configuration = OhmsConfiguration.where('organization_id', current_organization.id).try(:first)
+      if @ohms_configuration.nil?
+        @ohms_configuration = OhmsConfiguration.new
+        @ohms_configuration.organization_id = current_organization.id
+      end
+      @ohms_configuration.update(ohms_configuration_params)
+      redirect_to ohms_configuration_url
+    end
+
     # GET /interviews
     # GET /interviews.json
     def index
@@ -393,6 +410,10 @@ module Interviews
                                                    :media_duration, :media_filename, :media_type, :right_statement, :usage_statement, :acknowledgment, :language_info, :include_language, :language_for_translation, :miscellaneous_cms_record_id,
                                                    :miscellaneous_ohms_xml_filename, :miscellaneous_use_restrictions, :miscellaneous_sync_url, :miscellaneous_user_notes, :interview_status, :status, :avalon_target_domain, :metadata_status,
                                                    :embed_code, :media_host_account_id, :media_host_player_id, :media_host_item_id, interviewee: [], interviewer: [], keywords: [], subjects: [], format_info: [])
+    end
+
+    def ohms_configuration_params
+      params.require(:ohms_configuration).permit(:configuration)
     end
 
     def get_thesaurus_terms_as_json(thesauru_terms)

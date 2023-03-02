@@ -63,6 +63,18 @@
   transform-origin: 0 0;
 }
 
+.ohms-configuration-btn {
+  position: absolute;
+
+  img {
+    width: 13px;
+    height: 13px;
+    object-fit: cover;
+    min-width: inherit;
+    min-height: inherit;
+  }
+}
+
 .search-detail-main .drop ul li {
   display: block;
   width: 100%;
