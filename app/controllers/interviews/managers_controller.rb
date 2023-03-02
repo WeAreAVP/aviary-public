@@ -31,7 +31,6 @@ module Interviews
       redirect_to ohms_configuration_url
     end
 
-
     # GET /interviews
     # GET /interviews.json
     def index
@@ -412,7 +411,7 @@ module Interviews
                                                    :miscellaneous_ohms_xml_filename, :miscellaneous_use_restrictions, :miscellaneous_sync_url, :miscellaneous_user_notes, :interview_status, :status, :avalon_target_domain, :metadata_status,
                                                    :embed_code, :media_host_account_id, :media_host_player_id, :media_host_item_id, interviewee: [], interviewer: [], keywords: [], subjects: [], format_info: [])
     end
-    
+
     def ohms_configuration_params
       params.require(:ohms_configuration).permit(:configuration)
     end

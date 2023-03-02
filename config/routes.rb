@@ -72,7 +72,7 @@ Rails.application.routes.draw do
 
   get 'ohms_configuration', to: 'interviews/managers#ohms_configuration', as: :ohms_configuration
   post 'ohms_configuration', to: 'interviews/managers#ohms_configuration_update', as: :ohms_configuration_update
-  
+
   namespace :interviews do
     resources :managers do
       collection do
