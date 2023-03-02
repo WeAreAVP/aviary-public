@@ -64,7 +64,7 @@ module Aviary
       interview.include_language = xml_data['translate'].present? ? xml_data['translate'] : 0
       interview.language_for_translation = xml_data['transcript_alt_lang'].present? ? xml_data['transcript_alt_lang'] : 'Undefined'
       interview.miscellaneous_cms_record_id = xml_data['cms_record_id'].present? ? xml_data['cms_record_id'] : ''
-      interview.miscellaneous_ohms_xml_filename = xml_data['xmllocation'].present? ? xml_data['xmllocation'] : ''
+      interview.miscellaneous_ohms_xml_filename = xml_data['xmlfilename'].present? ? xml_data['xmlfilename'] : ''
       interview.miscellaneous_use_restrictions = xml_data['userestrict'].present? ? xml_data['userestrict'] : 0
       interview.miscellaneous_user_notes = xml_data['user_notes'].present? ? xml_data['user_notes'] : ''
       interview.created_by_id = user.id
