@@ -186,7 +186,7 @@ module Interviews
             doc = Nokogiri::XML(export_text.to_xml)
             error_messages = xml_validation(doc)
             unless error_messages.any?
-              dos_xml << { xml: export_text.to_xml, title: interview.title, id: interview.id, ohms_xml_filename: interview.miscellaneous_ohms_xml_filename }
+              dos_xml << { xml: export_text.to_xml, title: interview.title, id: interview.id, ohms_xml_filename: interview.miscellaneous_ohms_xml_filename.gsub(/\s+/, '_') }
             end
           end
         end
@@ -280,7 +280,7 @@ module Interviews
           format.any { redirect_to ohms_records_path, notice: 'Something went wrong. Please try again later.' }
         end
       else
-        file_name = interview.miscellaneous_ohms_xml_filename.empty? ? interview.title : interview.miscellaneous_ohms_xml_filename
+        file_name = interview.miscellaneous_ohms_xml_filename.empty? ? interview.title : interview.miscellaneous_ohms_xml_filename.gsub(/\s+/, '_')
 
         respond_to do |format|
           format.xml { send_data(export_text.to_xml, filename: "#{file_name}.xml") }
