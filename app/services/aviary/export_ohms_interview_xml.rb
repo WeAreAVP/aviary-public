@@ -148,7 +148,8 @@ module Aviary
             xml.fmt interview.media_format
             xml.usage interview.usage_statement
             xml.userestrict interview.miscellaneous_use_restrictions? ? 1 : 0
-            xml.xmllocation interview.miscellaneous_ohms_xml_filename
+            ohms_configuration = OhmsConfiguration.where('organization_id', interview.organization.id).try(:first)
+            xml.xmllocation "#{ohms_configuration.configuration}/render.php?cachefile=#{interview.miscellaneous_ohms_xml_filename.gsub(/\s+/, '_')}" if ohms_configuration.present?
             xml.xmlfilename interview.miscellaneous_ohms_xml_filename
             xml.collection_link interview.collection_link
             xml.series_link interview.series_link
