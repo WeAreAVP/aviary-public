@@ -140,7 +140,7 @@ module Aviary
         gps_text = []
         gps_text_alt = []
         point['gpspoints'].each do |gpspoints|
-          if gpspoints.is_a?(Hash)
+          if gpspoints.is_a?(Hash) && gpspoints['gps'].present?
             temp = gpspoints['gps'].split(',')
             if temp.length > 1
               lat << temp[0].strip
@@ -158,7 +158,7 @@ module Aviary
         hyperlink_text = []
         hyperlink_text_alt = []
         point['hyperlinks'].each do |hyperlink|
-          if hyperlink.is_a?(Hash)
+          if hyperlink.is_a?(Hash) && hyperlink['hyperlink'].present?
             hyperlinks << hyperlink['hyperlink']
             hyperlink_text << hyperlink['hyperlink_text']
             hyperlink_text_alt << hyperlink['hyperlink_text_alt']

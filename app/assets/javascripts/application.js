@@ -518,8 +518,17 @@ function initToolTip(element){
 
 }
 
-$(function () {
+function skip_to_content(){
 
+    document_level_binding_element('.skiptocontent', 'keyup', function (event) {
+        if (event.keyCode === 13 || event.keyCode === 32) {
+            $('.vjs-big-play-button').focus();
+        }
+    });
+}
+
+$(function () {
+    skip_to_content();
     if ($('#sidebar-main').length == 0) {
         $(".main-content").removeClass('open');
     }
