@@ -13,7 +13,7 @@ if interview_transcript.present?
     text_color = 'color: #008b17;'
   end
 end
-html = '<div class="d-flex align-items-center"><div class="action-btn-holder btn-group">'
+html = '<div class="d-flex align-items-center"><div class="action-btn-holder">'
 html += '<button class="btn-interview btn btn-success" id="save_transcript_information">Save</button>' if defined?(sync_save)
 html += '<input type="submit" name="commit" value="Save" class="btn-interview btn-sm btn-success" data-disable-with="Save">' if defined?(show_save)
 html += link_to 'Edit Transcript', edit_interviews_transcript_path(@interview.file_transcripts.where(interview_transcript_type: 'main').try(:first)), class: 'btn-interview btn btn-primary' if defined?(edit_transcript)
