@@ -419,12 +419,14 @@ module Interviews
     def get_thesaurus_terms_as_json(thesauru_terms)
       keys = []
       i = 0
-      thesauru_terms.each do |thesaurus|
-        keys << {
-          id: thesaurus.id,
-          name: thesaurus.term
-        }
-        i += 1
+      if thesauru_terms.present?
+        thesauru_terms.each do |thesaurus|
+          keys << {
+            id: thesaurus.id,
+            name: thesaurus.term
+          }
+          i += 1
+        end
       end
       keys.to_json
     end
