@@ -19,18 +19,17 @@ thesaurus_settings = ::Thesaurus::ThesaurusSetting.where(organization_id: curren
           </div>
           
         </div>
-        <div class="col-md-7 text-right">
-          <div class="d-flex align-items-center justify-content-between">
-            <div class="status d-flex align-items-center">
-              <span>Status</span>
-              <div class="ml-1">
+        <div class="col-md-7">
+          <div class="d-flex flex-column ml-auto right-toolbar">
+            <div class="status d-flex align-items-center m-1">
+              <% if @interview.present? %>
+                <span>Status</span>
                 <%= f.select :metadata_status, options_for_select(@interview.listing_metadata_status.map { |key, index| [index, key] }, @interview.metadata_status), {},required: false, label: false, class: 'custom-placeholder dont-apply-selectize form-control p-2' %>
-              </div>
+              <% end %>
             </div>
-            <div class="d-flex align-items-center">
-              <%= f.submit 'Save', class: 'btn btn-success ml-3' %>
+            <div class="button-holder right-button-holder">
               <% if @interview.id.present? %>
-              <%= render partial: 'shared/ohms/buttons', locals: { interview: @interview } %>
+                <%= render partial: 'shared/ohms/buttons', locals: { interview: @interview, show_save: true } %>
               <% end %>
             </div>
           </div>
