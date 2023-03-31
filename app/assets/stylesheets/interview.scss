@@ -746,6 +746,17 @@ div#noMediaConnection {
     flex: 1;
     text-align: center;
 
+    &.btn-save {
+      border-color: #28a745;
+      color: #28a745;
+    }
+    
+    &.btn-transcript {
+      background-color: #fff;
+      border-color: #204f92;
+      color: #204f92 !important;
+    }
+
     &:hover {
       border: 1px solid;
       opacity: 0.6;
