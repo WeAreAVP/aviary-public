@@ -657,7 +657,8 @@ GEM
     rbtree (0.4.4)
     recaptcha (5.8.1)
       json
-    redis (4.8.1)
+    redis (5.0.6)
+      redis-client (>= 0.9.0)
     redis-client (0.14.1)
       connection_pool
     regexp_parser (2.2.0)
@@ -764,7 +765,7 @@ GEM
     set (1.0.2)
     shoulda-matchers (5.1.0)
       activesupport (>= 5.2.0)
-    sidekiq (7.0.7)
+    sidekiq (7.0.8)
       concurrent-ruby (< 2)
       connection_pool (>= 2.3.0)
       rack (>= 2.2.4)
