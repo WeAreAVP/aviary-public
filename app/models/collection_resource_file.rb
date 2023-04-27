@@ -31,6 +31,7 @@ class CollectionResourceFile < ApplicationRecord
     string :access, stored: true
     string :resource_file_content_type, stored: true
     string :resource_file_file_size, stored: true
+    long :resource_file_file_size, stored: true
     string :file_display_name, stored: true
     string :sort_order, stored: true
     integer :sort_order, stored: true
@@ -84,6 +85,7 @@ class CollectionResourceFile < ApplicationRecord
     end
     string :target_domain, stored: true
     string :duration, stored: true
+    long :duration, stored: true
     string :is_downloadable, stored: true
     text :embed_code, stored: true
   end
@@ -337,6 +339,10 @@ class CollectionResourceFile < ApplicationRecord
     end
     query_params[:sort] = if sort_column.to_s == 'collection_title_text'
                             CollectionResourceFile.collection_sorter(limit_condition, sort_direction, solr)
+                          elsif sort_column.to_s == 'resource_file_file_size_ss'
+                            "resource_file_file_size_ls #{sort_direction}"
+                          elsif sort_column.to_s == 'duration_ss'
+                            "duration_ls #{sort_direction}"
                           elsif sort_column.present? && sort_direction.present?
                             "#{sort_column} #{sort_direction}"
                           end
