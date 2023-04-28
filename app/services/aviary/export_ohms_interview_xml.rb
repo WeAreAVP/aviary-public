@@ -63,7 +63,38 @@ module Aviary
             end
 
             xml.file_name interview.media_filename
-            xml.sync interview.transcript_sync_data
+            file_transcript = FileTranscript.find_by(interview_id: interview.id)
+            formatted = ''
+            if interview.transcript_sync_data
+              xml.sync interview.transcript_sync_data
+            elsif file_transcript.present?
+              file_transcript_points = FileTranscriptPoint.where(file_transcript_id: file_transcript)
+              sync = "#{file_transcript.timecode_intervals.to_i}:"
+
+              file_transcript_points.each do |point|
+                info = point.text.split("\n")
+                info.each do |section|
+                  if section.present?
+                    breakup = section.split(' ')
+                    new_line = ''
+                    breakup.each_with_index do |word, k|
+                      if "#{new_line}#{word}".length > 80 || k == breakup.length - 1
+                        formatted = "#{formatted}#{new_line.strip}#{k == breakup.length - 1 ? " #{word}" : ''}\r\n"
+                        new_line = ''
+                      end
+                      new_line = "#{new_line}#{word} "
+                    end
+                    formatted = "#{formatted}\r\n"
+                  end
+                end
+                formatted_info = formatted.split("\r\n")
+                line = formatted_info.length
+                sync += "|#{line}(#{formatted_info.last.split(' ').length})"
+              end
+              xml.sync sync
+            else
+              xml.sync ''
+            end
             xml.sync_alt interview.transcript_sync_data_translation
             xml.transcript_alt_lang interview.language_for_translation
             xml.translate interview.include_language? ? 1 : 0
@@ -142,7 +173,11 @@ module Aviary
             file_transcript = FileTranscript.find_by(interview_id: interview.id)
             transcript_manager = Aviary::OhmsTranscriptManager.new
 
-            xml.transcript transcript_manager.read_notes_info(file_transcript)
+            if formatted.present?
+              xml.transcript formatted
+            else
+              xml.transcript transcript_manager.read_notes_info(file_transcript)
+            end
             xml.transcript_alt ''
             xml.rights interview.right_statement
             xml.fmt interview.media_format
