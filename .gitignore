@@ -46,7 +46,7 @@ capybara-*.html
 # Ignore File Visual Code
 .history/*
 .history
-
+/public/zips/*
 /public/assets/
 /public/system
 /coverage/
