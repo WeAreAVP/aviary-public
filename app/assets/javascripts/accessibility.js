@@ -36,10 +36,8 @@ function Accessibility() {
             var timerId = setInterval(adjustLocation, 10);
             setTimeout(function() {clearInterval(timerId)}, 500);
         });
-
         tabChanges();
     }
-
     const tabChanges = () => {
         document_level_binding_element('.vjs-big-play-button', 'focus', function () {
             $(".shareHolder").css({"visibility": "visible", "opacity": 1});

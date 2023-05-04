@@ -73,6 +73,12 @@ Rails.application.routes.draw do
 
   get 'ohms_configuration', to: 'interviews/managers#ohms_configuration', as: :ohms_configuration
   post 'ohms_configuration', to: 'interviews/managers#ohms_configuration_update', as: :ohms_configuration_update
+  get 'ohms_records/collections', to: 'interviews/collections#index', as: :list_collections
+  post 'ohms_records/collections/listing', to: 'interviews/collections#listing', as: :listing_collections
+
+  get 'ohms_records/collection/:collection_id', to: 'interviews/collections#interviews', as: :interview_list_of_collections
+  post 'ohms_records/collection/:collection_id', to: 'interviews/collections#interviews_list', as: :interview_lists_of_collections
+  get 'ohms_records/collection/export/:collection_id', to: 'interviews/collections#export', as: :interview_export
 
   namespace :interviews do
     resources :managers do

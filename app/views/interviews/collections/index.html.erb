@@ -4,13 +4,9 @@
       <div class="text-headline jumbotron">
         <div class="heading-holder table-head">
           <div class="row">
-            <div class="col-md-6">
-            
-            <h1> <%= @organization_user.role.system_name == "ohms_assigned_user" ? "#{current_user.full_name}'s OHMS Assignments" : 'OHMS Records' %></h1>
-            
-            </div>
-            <div class="col-md-6">
-              <% unless @organization_user.role.system_name == "ohms_assigned_user" %>
+            <div class="col-md-6"><h1>OHMS Collections</h1></div>
+            <div class="col-md-6 d-none">
+
               <div class="dropdown float-right  ml-2 ">
                 <button type="button" class="btn mr-2 btn-outline-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                   Add OHMS Record
@@ -22,7 +18,6 @@
               </div>
 
               <div class="dropdown float-right  ml-2 ">
-              
                 <button type="button" class="btn mr-2 btn-outline-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                   Table Options
                 </button>
@@ -33,36 +28,23 @@
                   <button class="dropdown-item bluk-edit-btn">Bulk Edit Options</button>
                 </div>
               </div>
-              <% end %>
             </div>
           </div>
         </div>
       </div>
       <div class="data-table collections-datatable">
-<<<<<<< HEAD
-        <%= content_tag :table, role: :datatable, class: ["table", "table-striped", 'table-bordered'], id: 'interviews_data_table', data: { url: (params[:collection_id].present? ? interview_lists_of_collections_path(params[:collection_id]) : ( @organization_user.role.system_name == "ohms_assigned_user" ? my_assignment_listing_path(format: :json) : listing_interviews_managers_path(format: :json))), rightrow: (@organization_user.role.system_name == "ohms_assigned_user" ? 1 : 2) } do %>
-=======
-        <%= content_tag :table, role: :datatable, class: ["table", "table-striped", 'table-bordered'], id: 'interviews_data_table', data: { url: (params[:collection_id].present? ? interview_lists_of_collections_path(params[:collection_id]) : listing_interviews_managers_path(format: :json) )} do %>
->>>>>>> cc28e628989265123d9d4512e4d8af900a99cedb
+        <%= content_tag :table, role: :datatable, class: ["table", "table-striped", 'table-bordered'], id: 'interviews_data_table', data: { url: listing_collections_path(format: :json) } do %>
           <thead>
           <tr>
-            <% unless @organization_user.role.system_name == "ohms_assigned_user" %>
             <th>
               <input type="checkbox" class="select_all_checkbox_interview" data-url="<%= bulk_resource_list_interviews_managers_path %>" data-bulk_delete="<%= fetch_bulk_edit_resource_list_collections_path %>"/>
             </th>
-            <% end %>
-            <% if @display_columns.present? %>
-              <% JSON.parse(@display_columns)['columns_status'].each_with_index do |(_field, status), _index| %>
-                <% field_status = status['status'] %>
-                <% field_key = status['value'] %>
-                <% if field_status.to_s.to_boolean? && field_key != 'ohms_assigned_user_id_is' %>
-                  <th><%= InterviewsHelper.display_field_title_interview(field_key) %></th>
-                <% end %>
-              <% end %>
-            <% end %>
-            <% unless @organization_user.role.system_name == "ohms_assigned_user" %>
-            <th>Assignments</th>
-            <% end %>
+            <th>Collection Name</th>
+            <th>Collection ID</th>
+            <th>Collection Link</th>
+            <th>Total Resources</th>
+            <th>Total Complete</th>
+            <th>Total Online</th>
             <th>Action</th>
           </tr>
           </thead>
@@ -215,9 +197,6 @@
                     <option value="bulk_delete">Bulk Delete</option>
                     <option value="mark_online">Mark records online</option>
                     <option value="mark_ofline">Mark records offline</option>
-                    <option value="mark_restricted">Mark restricted</option>
-                    <option value="mark_not_restricted">Mark not restricted</option>
-                    <option value="ohms_assigned_users">OHMS User Assignments</option>
                   </select>
                 </div>
               </div>
@@ -232,11 +211,6 @@
                 <h1 class="font-size-18px text-left"> Export selected interviews as XML.</h1>
               </div>
 
-              <div class="ohms_assign_users_content operation_content d-none">
-                <strong class="font-size-18px text-left">Select OHMS User *</strong>
-                <br />
-                <%= select_tag 'assigned_users', options_for_select(@users.collect { |u| [u.user.first_name + ' ' + u.user.last_name, u.user.id] }), prompt: 'Assign User' , class: 'bulk_assign_user', :required => true %>
-              </div>
             </div>
             <div class="col-12 mt-20px">
               <span id="number_of_bulk_selected_popup" class="float-right"></span>
@@ -268,7 +242,7 @@
             </li>
             <li class="text-muted mb-2 font-size-14px">Download a CSV import template <a href="/csvs/OHMS_Import_Template.csv" download>here</a></li>
           </ul>
-          
+
                 <div class="col-md-12 padding-left-30">
                   <label for="status_complete" class="">
                     <input type="checkbox" value="" id="status_complete" name="status_complete"> <strong class="text-sm-left">Automatically Mark Imported Records as “Completed”</strong>
@@ -283,7 +257,7 @@
             <p class="text-muted">Do you want to proceed?
             </p>
           </div>
-          
+
           <div class="import-xml-file-section">
               <span class="fileinput-button single-upload-file-cus text-center">
                   Browse and upload XML or CSV files
@@ -291,7 +265,7 @@
               </span>              
             <span id="import_file_name"></span>
           </div>
-          
+
         </div>
       </div>
       <div class="modal-footer">
@@ -360,8 +334,6 @@
     </div>
   </div>
 </div>
-<%= render 'interviews/managers/notes' %>
-<%= render 'interviews/managers/upload' %>
 <script type="text/javascript">
     let interviews_manager = new InterviewManager();
     <% if params[:e].present? %>

@@ -6,8 +6,10 @@ class InterviewsDatatable < ApplicationDatatable
   delegate :can?, :interviews_manager_path, :interviews_list_notes_path, :interviews_update_note_path, :interviews_transcript_path,
            :ohms_index_path, :ohms_records_edit_path, :preview_interviews_manager_path, :export_interviews_manager_path, :sync_interviews_manager_path, :check_valid_array, :bulk_resource_list_interviews_managers_path, to: :@view
 
-  def initialize(view, current_organization = nil, organization_user = '', use_organization = true)
+  def initialize(view, current_organization = nil, id = '', organization_user = '', use_organization = true)
+
     @view = view
+    @id = id
     @current_organization = current_organization
     @organization_user = organization_user
     @use_organization = use_organization
