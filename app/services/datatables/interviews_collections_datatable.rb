@@ -20,8 +20,8 @@ class InterviewsCollectionsDatatable < ApplicationDatatable
         column << "<input type='checkbox' class='interviews_selections interviews_selections-'
                     data-url='' data-id='' />"
         column << (resource['doclist'].present? && resource['doclist']['docs'].present? && resource['doclist']['docs'].try(:first).present? ? resource['doclist']['docs'].try(:first)['collection_name_ss'] : '')
-        column << resource['groupValue']
-        column << (resource['doclist'].present? && resource['doclist']['docs'].present? && resource['doclist']['docs'].try(:first).present? ? resource['doclist']['docs'].try(:first)['collection_link_ss'] : '')
+        column << (resource['doclist'].present? && resource['doclist']['docs'].present? && resource['doclist']['docs'].try(:first).present? ? resource['doclist']['docs'].try(:first)['collection_id_ss'] : '')
+        column << (resource['doclist'].present? && resource['doclist']['docs'].present? && resource['doclist']['docs'].try(:first).present? ? resource['doclist']['docs'].try(:first)['series_id_ss'] : '')
         column << (resource['doclist'].present? && resource['doclist']['numFound'].present? ? resource['doclist']['numFound'] : '')
         column << count[1]
         column << count[0]
@@ -50,9 +50,10 @@ class InterviewsCollectionsDatatable < ApplicationDatatable
   end
 
   def links(interview)
+    group_value = interview['groupValue'].gsub(' ', '_')
     html = '<div class="d-flex align-items-center"><div class="action-btn-holder btn-group">'
-    html += link_to 'Manage Interviews', interview_list_of_collections_path(interview['groupValue']), class: 'btn-interview btn-sm btn-link'
-    html += link_to 'Export Interviews', interview_export_path(interview['groupValue']), class: 'btn-interview btn-sm btn-link'
+    html += link_to 'Manage Interviews', interview_list_of_collections_path(group_value), class: 'btn-interview btn-sm btn-link'
+    html += link_to 'Export Interviews', interview_export_path(group_value), class: 'btn-interview btn-sm btn-link'
 
     html += '</div><div class="btn-interview-dropdown dropdown d-inline-block">'
 

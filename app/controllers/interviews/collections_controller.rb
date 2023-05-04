@@ -16,6 +16,7 @@ module Interviews
       @search_columns = current_organization.interview_search_column
       @display_columns = current_organization.interview_display_column
       @collections = Collection.where(organization_id: current_organization.id)
+      @users = current_organization.organization_ohms_assigned_users
     end
 
     def listing
@@ -33,14 +34,17 @@ module Interviews
       @search_columns = current_organization.interview_search_column
       @display_columns = current_organization.interview_display_column
       @collections = Collection.where(organization_id: current_organization.id)
+      @users = current_organization.organization_ohms_assigned_users
       render 'interviews/managers/index'
     end
 
     def interviews_list
       authorize! :manage, current_organization
+      organization_user = OrganizationUser.find_by_user_id(current_user.id)
+
       respond_to do |format|
         format.html
-        format.json { render json: InterviewsDatatable.new(view_context, current_organization) }
+        format.json { render json: InterviewsDatatable.new(view_context, current_organization, '', organization_user) }
       end
     end
 
