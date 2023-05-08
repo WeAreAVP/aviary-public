@@ -26,7 +26,7 @@ div.dataTables_wrapper div.dataTables_filter {
   vertical-align: inherit;
   margin: 15px 0;
   border: 1px solid #dfe4ea !important;
-  padding: 0 0 0 10px;
+  padding: 0;
   border-radius: 4px;
 }
 #billing_history_table_length select {
@@ -36,6 +36,9 @@ div.dataTables_wrapper div.dataTables_filter {
 
 div.dataTables_wrapper div.dataTables_length select {
   width: 60px;
+}
+div.dataTables_wrapper div.dataTables_length select:focus {
+  box-shadow: 0 2px 2px rgba(0,0,0,.075), 0 0 5px rgba(43, 73, 107, 0.5) !important;
 }
 
 .dataTables_length .selectize-input {
@@ -75,7 +78,7 @@ table.dataTable {
 
 .data-table .dataTables_length .form-control {
   margin: 0;
-  padding: 0;
+  padding: 0 0 0 10px;
   height: auto;
   border: none;
 }
