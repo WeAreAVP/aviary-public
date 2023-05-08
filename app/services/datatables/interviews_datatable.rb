@@ -7,7 +7,6 @@ class InterviewsDatatable < ApplicationDatatable
            :ohms_index_path, :ohms_records_edit_path, :preview_interviews_manager_path, :export_interviews_manager_path, :sync_interviews_manager_path, :check_valid_array, :bulk_resource_list_interviews_managers_path, to: :@view
 
   def initialize(view, current_organization = nil, id = '', organization_user = '', use_organization = true)
-
     @view = view
     @id = id
     @current_organization = current_organization

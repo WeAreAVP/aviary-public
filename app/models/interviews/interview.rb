@@ -15,7 +15,7 @@ module Interviews
     validates_presence_of :language_for_translation, if: :include_language?
 
     def update_thesaurus
-      thesaurus_settings = ::Thesaurus::ThesaurusSetting.where(organization_id: organization_id, is_global: true).try(:first)
+      thesaurus_settings = ::Thesaurus::ThesaurusSetting.where(organization_id: organization_id, is_global: true, thesaurus_type: 'index').try(:first)
       if thesaurus_settings.present?
         self.thesaurus_keywords = thesaurus_settings.thesaurus_keywords
         self.thesaurus_subjects = thesaurus_settings.thesaurus_subjects
@@ -126,6 +126,9 @@ module Interviews
       text :summary, stored: true
       string :keywords, multiple: true, stored: true
       string :subjects, multiple: true, stored: true
+      string :collection_id_series_id, stored: true do
+        collection_id.gsub(' ', '') + ' ' + series_id.gsub(' ', '')
+      end
       integer :notes_count, stored: true do
         interview_notes.count
       end
@@ -251,6 +254,9 @@ module Interviews
       text :keywords, stored: true
       text :subjects, stored: true
       text :media_host, stored: true
+      text :collection_id_series_id, stored: true do
+        collection_id.gsub(' ', '') + ' ' + series_id.gsub(' ', '')
+      end
       text :media_url, stored: true do
         media_url.present? ? media_url : 'None'
       end
@@ -339,8 +345,12 @@ module Interviews
       solr_q_condition = '*:*'
       complex_phrase_def_type = false
       fq_filters = ' document_type_ss:interview  '
+
       if params[:collection_id].present?
-        fq_filters += " AND collection_id_ss:#{params[:collection_id]} "
+        fq_filters += " AND collection_id_series_id_ss:\"#{params[:collection_id].gsub('_', ' ')}\" "
+      end
+      if export_and_current_organization[:organization_user].present? && export_and_current_organization[:organization_user].role.system_name == 'ohms_assigned_user'
+        fq_filters += " AND ohms_assigned_user_id_is:#{export_and_current_organization[:organization_user]['user_id']} "
       end
       if q.present?
         counter = 0
@@ -348,7 +358,6 @@ module Interviews
         JSON.parse(export_and_current_organization[:current_organization][:interview_search_column]).each do |_, value|
           if !value['value'].to_s.include?('_bs') && (value['status'] == 'true' || value['status'].to_s.to_boolean?)
             unless value['value'].to_s == 'id_is' && q.to_i <= 0
-
               alter_search_wildcard = value['value']
               alter_search_wildcard_string = alter_search_wildcard.clone
 
@@ -394,23 +403,21 @@ module Interviews
         end
         fq_filters += " AND (#{fq_filters_inner}) " unless fq_filters_inner.blank?
       end
-      if export_and_current_organization[:organization_user].present? && export_and_current_organization[:organization_user].role.system_name == 'ohms_assigned_user'
-        fq_filters += " AND ohms_assigned_user_id_is:#{export_and_current_organization[:organization_user]['user_id']} "
-      end
+
       filters = []
       filters << fq_filters
       filters << limit_condition if limit_condition.present?
       query_params = { q: solr_q_condition, fq: filters.flatten }
-
       query_params[:fq] << if export_and_current_organization[:current_organization].present?
                              (export_and_current_organization[:use_organization] ? "organization_id_is:#{export_and_current_organization[:current_organization].id}" : '')
                            else
                              'id_is:0'
                            end
+
       query_params[:defType] = 'complexphrase' if complex_phrase_def_type
       query_params[:wt] = 'json'
 
-      total_response = Curl.post(select_url, URI.encode_www_form(query_params))
+      total_response = Curl.post(select_url, query_params)
 
       begin
         total_response = JSON.parse(total_response.body_str)
@@ -426,7 +433,7 @@ module Interviews
         query_params[:start] = (page - 1) * per_page
         query_params[:rows] = per_page
       end
-      response = Curl.post(select_url, URI.encode_www_form(query_params))
+      response = Curl.post(select_url, query_params)
       begin
         response = JSON.parse(response.body_str)
       rescue StandardError
@@ -446,7 +453,7 @@ module Interviews
       select_url = "#{solr_url}/select"
       solr_q_condition = '*:*'
       complex_phrase_def_type = false
-      fq_filters = " document_type_ss:interview AND collection_id_ss:#{collection_id} "
+      fq_filters = " document_type_ss:interview AND collection_id_series_id_ss:#{collection_id} "
       filters = []
       filters << fq_filters
       query_params = { q: solr_q_condition, fq: filters.flatten, facet: true, 'facet.field' => %w[record_status_ss interview_status_ss] }
@@ -487,7 +494,7 @@ module Interviews
       select_url = "#{solr_url}/select"
       solr_q_condition = '*:*'
       complex_phrase_def_type = false
-      fq_filters = ' document_type_ss:interview AND collection_id_ss:["" TO *] '
+      fq_filters = ' document_type_ss:interview AND collection_id_series_id_ss:["" TO *] '
       if q.present?
         counter = 0
         fq_filters_inner = ''
@@ -543,7 +550,7 @@ module Interviews
       filters = []
       filters << fq_filters
       filters << limit_condition if limit_condition.present?
-      query_params = { q: solr_q_condition, fq: filters.flatten, group: true, 'group.field' => 'collection_id_ss' }
+      query_params = { q: solr_q_condition, fq: filters.flatten, group: true, 'group.field' => 'collection_id_series_id_ss' }
       query_params[:fq] << if export_and_current_organization[:current_organization].present?
                              "organization_id_is:#{export_and_current_organization[:current_organization].id}"
                            else
@@ -551,21 +558,23 @@ module Interviews
                            end
       query_params[:defType] = 'complexphrase' if complex_phrase_def_type
       query_params[:wt] = 'json'
-
+      query_params[:sort] = if sort_column.present? && sort_direction.present? && sort_column != 'id_is'
+                              "#{sort_column} #{sort_direction}"
+                            else
+                              'collection_id_series_id_ss asc'
+                            end
       total_response = Curl.post(select_url, query_params)
       begin
         total_response = JSON.parse(total_response.body_str)
       rescue StandardError
         total_response = { 'response' => { 'numFound' => 0 } }
       end
-      query_params[:sort] = "#{sort_column} #{sort_direction}" if sort_column.present? && sort_direction.present?
-
-      count = if total_response.present? && total_response['grouped'].present? && total_response['grouped']['collection_id_ss'].present? && total_response['grouped']['collection_id_ss']['groups'].present?
-                total_response['grouped']['collection_id_ss']['groups'].length
+      count = if total_response.present? && total_response['grouped'].present? && total_response['grouped']['collection_id_series_id_ss'].present? && total_response['grouped']['collection_id_series_id_ss']['groups'].present?
+                total_response['grouped']['collection_id_series_id_ss']['groups'].length
               else
                 0
               end
-      [total_response['grouped']['collection_id_ss']['groups'], count, {}, export_and_current_organization[:current_organization]]
+      [total_response['grouped']['collection_id_series_id_ss']['groups'], count, {}, export_and_current_organization[:current_organization]]
     end
 
     def self.column_configuration
