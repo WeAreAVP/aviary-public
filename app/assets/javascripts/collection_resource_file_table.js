@@ -146,6 +146,7 @@ function CollectionResourceFileTable() {
                         setTooltip(e.trigger, 'Copied!');
                         hideTooltip(e.trigger);
                     });
+                    fixTable();
                 }
             });
         }

@@ -405,6 +405,10 @@ li.admin .dropdown-submenu > a:focus + .dropdown-menu {
   background: #269af2 !important;
   border-color: #269af2 !important;
   color: #fff;
+  &.focus,
+  &:focus {
+    box-shadow: 0 0 0 0.2rem rgba(33, 150, 243, 0.5)
+  }
 }
 
 .btn-default:hover {

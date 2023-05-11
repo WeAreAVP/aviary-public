@@ -226,6 +226,18 @@ function scroll_to(target_element, time) {
     }
 }
 
+function fixTable() {
+    $('.hidden_focus_btn').focus(function(){
+        $('a[data-id="'+$(this).data('id')+'"]').last().addClass('focus');
+    });
+    $('.hidden_focus_btn').focusout(function(){
+        $('a[data-id="'+$(this).data('id')+'"]').last().removeClass('focus');
+    });
+    setTimeout(function () {
+        $(".DTFC_RightBodyLiner table a").each(function (i) { $(this).attr('tabindex', i + 1); });
+    }, 500);
+}
+
 /**
  *
  * @param type string danger/success

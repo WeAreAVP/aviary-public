@@ -99,9 +99,9 @@ height='400' width='1200' style='width: 100%;'></iframe>"
         links = ''
         begin
           links = '<a href="' + collection_collection_resource_details_path(collection_resource.collection.id, resource['collection_resource_id_ss'], resource['id_is']) +
-                  '"class="btn-sm btn-default">View</a>&nbsp;&nbsp;'
+                  '"class="btn-sm btn-default hidden_focus_btn" data-id="collection_resource_view_' + resource['id_is'].to_s + '">View</a>&nbsp;&nbsp;'
           links += '<a href="' + collection_collection_resource_add_resource_file_path(collection_resource.collection.id, resource['collection_resource_id_ss']) +
-                   '"class="btn-sm btn-success">Edit</a>&nbsp;&nbsp;'
+                   '"class="btn-sm btn-success hidden_focus_btn" data-id="collection_resource_edit_' + resource['id_is'].to_s + '">Edit</a>&nbsp;&nbsp;'
         rescue StandardError => e
           puts e.backtrace.join("\n")
         end
