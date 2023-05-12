@@ -138,7 +138,7 @@ class InterviewsDatatable < ApplicationDatatable
       toggle: 'tooltip', placement: 'top', title: (this_interview.present? ? this_interview.listing_metadata_index_status[this_interview.index_status.to_s] : '')
     }
 
-    html += link_to 'Notes', 'javascript://', class: 'btn-interview btn-sm btn-link interview_notes ' + notes_color(interview), id: 'interview_note_' + interview['id_is'].to_s, data: {
+    html += link_to 'Notes', 'javascript://', class: 'btn-interview btn-sm btn-link interview_note_' + interview['id_is'].to_s + ' interview_notes ' + notes_color(interview), id: 'interview_note_' + interview['id_is'].to_s, data: {
       id: interview['id_is'], url: interviews_list_notes_path(interview['id_is'], 'json'), updateurl: interviews_update_note_path(interview['id_is'], 'json')
     }
     unless @organization_user.role.system_name == 'ohms_assigned_user'

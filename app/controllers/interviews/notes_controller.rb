@@ -14,7 +14,7 @@ module Interviews
       interview = Interview.find(params[:id])
       respond_to do |format|
         format.html
-        format.json { render json: { data: interview.interview_notes.reverse_order, color: color(interview) } }
+        format.json { render json: { data: interview.interview_notes, color: color(interview) } }
       end
     end
 
@@ -38,7 +38,7 @@ module Interviews
         interview.reindex
         respond_to do |format|
           format.html
-          format.json { render json: { data: interview.interview_notes.reverse_order, color: color(interview) } }
+          format.json { render json: { data: interview.interview_notes, color: color(interview) } }
         end
       end
     end
