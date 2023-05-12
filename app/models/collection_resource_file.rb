@@ -291,6 +291,7 @@ class CollectionResourceFile < ApplicationRecord
     solr_q_condition = '*:*'
     complex_phrase_def_type = false
     fq_filters = ' document_type_ss:collection_resource_file  '
+    sort_column = sort_column.sub(/_(ss|sms)$/, '_scis')
     if q.present?
       counter = 0
       fq_filters_inner = ''

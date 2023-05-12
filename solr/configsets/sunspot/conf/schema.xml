@@ -54,6 +54,19 @@
     -->
     <!-- *** This fieldType is used by Sunspot! *** -->
     <fieldType name="string" class="solr.StrField" omitNorms="true"/>
+
+    <!-- *** Case insensitive string field used for sorting *** -->
+    <fieldType name="string_ci" class="solr.TextField" sortMissingLast="true" omitNorms="true">
+      <analyzer type="index">
+        <tokenizer class="solr.KeywordTokenizerFactory"/>
+        <filter class="solr.LowerCaseFilterFactory"/>
+      </analyzer>
+      <analyzer type="query">
+        <tokenizer class="solr.KeywordTokenizerFactory"/>
+        <filter class="solr.LowerCaseFilterFactory"/>
+      </analyzer>
+    </fieldType>
+
     <!-- *** This fieldType is used by Sunspot! *** -->
     <fieldType name="tdouble" class="solr.TrieDoubleField" omitNorms="true"/>
     <!-- *** This fieldType is used by Sunspot! *** -->
@@ -300,6 +313,7 @@
     <dynamicField name="*_llm" stored="false" type="location" multiValued="true" indexed="true"/>
     <dynamicField name="*_lls" stored="true" type="location" multiValued="false" indexed="true"/>
     <dynamicField name="*_llms" stored="true" type="location" multiValued="true" indexed="true"/>
+    <dynamicField name="*_scis" stored="false" type="string_ci" multiValued="false" indexed="true" />
     <field name="textSpell" stored="false" type="textSpell" multiValued="true" indexed="true"/>
     <field name="keywords" type="text_general" indexed="true" stored="false" multiValued="true"/>
     <field name="suggest" type="text_general" indexed="true" stored="false" multiValued="true"/>
@@ -322,7 +336,8 @@
         searching.  -->
   <!-- Use copyField to copy the fields you want to run spell checking
        on into one field. For example: -->
-  <copyField source="*_text"  dest="textSpell" />
+  <copyField source="*_text" dest="textSpell" />
+  <copyField source="*_ss" dest="*_scis" />
   <copyField source="*" dest="keywords"/>
   <copyField source="title_text" dest="suggest"/>
 </schema>
