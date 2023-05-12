@@ -64,7 +64,7 @@ module Aviary
       interview.include_language = xml_data['translate'].present? ? xml_data['translate'] : 0
       interview.language_for_translation = xml_data['transcript_alt_lang'].present? ? xml_data['transcript_alt_lang'] : 'Undefined'
       interview.miscellaneous_cms_record_id = xml_data['cms_record_id'].present? ? xml_data['cms_record_id'] : ''
-      interview.miscellaneous_ohms_xml_filename = xml_data['xmllocation'].present? ? xml_data['xmllocation'] : ''
+      interview.miscellaneous_ohms_xml_filename = xml_data['xmlfilename'].present? ? xml_data['xmlfilename'] : ''
       interview.miscellaneous_use_restrictions = xml_data['userestrict'].present? ? xml_data['userestrict'] : 0
       interview.miscellaneous_user_notes = xml_data['user_notes'].present? ? xml_data['user_notes'] : ''
       interview.created_by_id = user.id
@@ -106,7 +106,7 @@ module Aviary
       ohms_transcript_manager = Aviary::OhmsTranscriptManager.new
       ohms_transcript_manager.from_resource_file = false
       result = ohms_transcript_manager.process(transcript, '', true)
-      transcript.destroy if result.failure?
+      transcript.destroy if result.present? && result.failure?
     end
 
     def set_points(xml_data, interview, user)
@@ -140,7 +140,7 @@ module Aviary
         gps_text = []
         gps_text_alt = []
         point['gpspoints'].each do |gpspoints|
-          if gpspoints.is_a?(Hash)
+          if gpspoints.is_a?(Hash) && gpspoints['gps'].present?
             temp = gpspoints['gps'].split(',')
             if temp.length > 1
               lat << temp[0].strip
@@ -158,7 +158,7 @@ module Aviary
         hyperlink_text = []
         hyperlink_text_alt = []
         point['hyperlinks'].each do |hyperlink|
-          if hyperlink.is_a?(Hash)
+          if hyperlink.is_a?(Hash) && hyperlink['hyperlink'].present?
             hyperlinks << hyperlink['hyperlink']
             hyperlink_text << hyperlink['hyperlink_text']
             hyperlink_text_alt << hyperlink['hyperlink_text_alt']

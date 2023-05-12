@@ -19,13 +19,11 @@ class CollectionResourceFile < ApplicationRecord
   validate :generate_thumbnail
   scope :order_file, -> { order('sort_order ASC') }
   after_create :update_storage
-  after_save :update_duration, :update_object_permissions, :reindex_collection_resource, if: :partial_change?
+  after_save :update_duration, :update_object_permissions, :reindex_collection_resource
   after_destroy :update_duration, :reindex_collection_resource
   before_save :default_values
   before_update :set_total_time_enabled
   after_find :check_downloadable
-
-  def partial_change?; end
 
   searchable do
     integer :id, stored: true
@@ -33,8 +31,11 @@ class CollectionResourceFile < ApplicationRecord
     string :access, stored: true
     string :resource_file_content_type, stored: true
     string :resource_file_file_size, stored: true
+    long :resource_file_file_size, stored: true
     string :file_display_name, stored: true
-
+    string :sort_order, stored: true
+    integer :sort_order, stored: true
+    string :is_cc_on, stored: true
     begin
       time :resource_file_updated_at, stored: true
       time :created_at, stored: true
@@ -84,6 +85,9 @@ class CollectionResourceFile < ApplicationRecord
     end
     string :target_domain, stored: true
     string :duration, stored: true
+    long :duration, stored: true
+    string :is_downloadable, stored: true
+    text :embed_code, stored: true
   end
 
   def self.fields_values
@@ -107,7 +111,12 @@ class CollectionResourceFile < ApplicationRecord
       'resource_detail_embed_html_ss' => 'Resource Detail Embed HTML',
       'target_domain_ss' => 'Target Domain',
       'duration_ss' => 'Duration',
-      'collection_title_text' => 'Collection Title' }
+      'collection_title_text' => 'Collection Title',
+      'sort_order_ss' => 'Sequence #',
+      'sort_order_is' => 'Sequence #',
+      'is_downloadable_ss' => 'Downloadable?',
+      'is_cc_on_ss' => 'Turn on CC?',
+      'embed_code_texts' => 'Media Embed Code' }
   end
 
   def self.date_time_format(date_time)
@@ -300,6 +309,9 @@ class CollectionResourceFile < ApplicationRecord
           unless value['value'].to_s == 'id_is' && q.to_i <= 0
             fq_filters_inner = fq_filters_inner + (counter != 0 ? ' OR ' : ' ') + " #{CollectionResource.search_perp(q, value['value'].to_s)} "
             counter += 1
+            if value['value'].to_s == 'id_is'
+              fq_filters_inner = fq_filters_inner + (counter != 0 ? ' OR ' : ' ') + " #{CollectionResource.search_perp(q, 'id')} "
+            end
             if value['value'].to_s == 'collection_title_text'
               fq_filters_inner, counter = CollectionResource.search_collection_column(limit_condition, solr, q, counter, fq_filters_inner)
             end
@@ -320,36 +332,21 @@ class CollectionResourceFile < ApplicationRecord
                          end
     query_params[:defType] = 'complexphrase' if complex_phrase_def_type
     query_params[:wt] = 'json'
-    total_response = Curl.post(select_url, query_params)
+    total_response = Curl.post(select_url, URI.encode_www_form(query_params))
     begin
       total_response = JSON.parse(total_response.body_str)
     rescue StandardError
       total_response = { 'response' => { 'numFound' => 0 } }
     end
-    if sort_column.to_s == 'collection_title_text'
-
-      collections_raw = solr.get 'select', params: { q: '*:*', fq: ['document_type_ss:collection', 'status_ss:active', limit_condition], fl: %w[id_is], sort: 'title_ss desc' }
-      response = collections_raw['response'].present? && collections_raw['response']['docs'].present? ? collections_raw['response']['docs'] : nil
-      query_params[:sort] = if response.present? && !response.size.zero?
-                              sort = ''
-                              total = response.size
-                              response.each do |testing|
-                                sort += "if(eq(collection_id_is,#{testing['id_is']}), #{total} ,"
-                                total -= 1
-                              end
-                              sort += '0'
-                              (1..response.size).each do |_i|
-                                sort += ')'
-                              end
-                              sort.present? ? "#{sort} #{sort_direction}" : "collection_id_is #{sort_direction}"
-                            else
-                              query_params[:sort] = "collection_id_is #{sort_direction}"
-                            end
-    elsif sort_column.present? && sort_direction.present?
-      query_params[:sort] = "#{sort_column} #{sort_direction}"
-    end
-
-    query_params[:sort] = "#{sort_column} #{sort_direction}" if sort_column.present? && sort_direction.present?
+    query_params[:sort] = if sort_column.to_s == 'collection_title_text'
+                            CollectionResourceFile.collection_sorter(limit_condition, sort_direction, solr)
+                          elsif sort_column.to_s == 'resource_file_file_size_ss'
+                            "resource_file_file_size_ls #{sort_direction}"
+                          elsif sort_column.to_s == 'duration_ss'
+                            "duration_ls #{sort_direction}"
+                          elsif sort_column.present? && sort_direction.present?
+                            "#{sort_column} #{sort_direction}"
+                          end
     if export_and_current_organization[:export]
       query_params[:start] = 0
       query_params[:rows] = 100_000_000
@@ -357,7 +354,7 @@ class CollectionResourceFile < ApplicationRecord
       query_params[:start] = (page - 1) * per_page
       query_params[:rows] = per_page
     end
-    response = Curl.post(select_url, query_params)
+    response = Curl.post(select_url, URI.encode_www_form(query_params))
     begin
       response = JSON.parse(response.body_str)
     rescue StandardError
@@ -413,7 +410,7 @@ class CollectionResourceFile < ApplicationRecord
   end
 
   def self.collection_sorter(limit_condition, sort_direction, solr)
-    collections_raw = solr.get 'select', params: { q: '*:*', fq: ['document_type_ss:collection', 'status_ss:active', limit_condition], fl: %w[id_is], sort: 'title_ss desc' }
+    collections_raw = solr.post "select?#{URI.encode_www_form({ q: '*:*', fq: ['document_type_ss:collection', 'status_ss:active', limit_condition], fl: %w[id_is], sort: 'title_ss desc' })}"
     response = collections_raw['response'].present? && collections_raw['response']['docs'].present? ? collections_raw['response']['docs'] : nil
     if response.present? && !response.size.zero?
       sort = ''

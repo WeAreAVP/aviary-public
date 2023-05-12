@@ -23,6 +23,20 @@ SimpleCov.start 'rails' do
   add_filter 'app/helpers/contents_helper.rb'
   add_filter 'app/channels/application_cable/channel.rb'
   add_filter 'app/channels/application_cable/connection.rb'
+  add_filter 'app/controllers/subscriptions_controller.rb'
+  add_filter 'app/services/aviary/subscription_service.rb'
+  add_filter 'app/services/blacklight'
+  add_filter 'app/jobs'
+  add_filter 'app/channels'
+  add_filter 'lib'
+  add_filter 'app/mailers'
+  add_filter 'app/mailers'
+  add_filter 'config'
+  add_filter 'app/services/aviary/alberta.rb'
+  add_filter 'app/services/aviary/charge_service.rb'
+  add_filter 'app/services/aviary/houstonlibrary.rb'
+  add_filter 'app/services/aviary/ushmm.rb'
+  add_filter 'app/workers'
 end
 
 RSpec.configure do |config|
@@ -98,9 +112,7 @@ RSpec.configure do |config|
   # the seed, which is printed after each run.
   #     --seed 1234
   config.order = :random
-
   config.include Devise::Test::ControllerHelpers, type: :controller
-  # config.include ActionView::Helpers
   config.include Rails.application.routes.url_helpers
 
   # config.assets.debug = true

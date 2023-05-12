@@ -18,7 +18,7 @@ class SearchPresenter < BasePresenter
         current_params[:f].each do |index, single_fq|
           next if check_array.include?(index)
           single_fq.each do |single_fq_value|
-            solr_parameters[:fq] << (single_fq_value.scan(/['"']/).present? ? "{!term f=#{index}}#{single_fq_value}" : "#{index}:\"#{single_fq_value}\"")
+            solr_parameters[:fq] << (single_fq_value.scan(/['"]/).present? ? "{!term f=#{index}}#{single_fq_value}" : "#{index}:\"#{single_fq_value}\"")
           end
         end
       end

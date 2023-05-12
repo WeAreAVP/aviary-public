@@ -44,11 +44,11 @@ RSpec.describe PreviewScript, type: :service do
   end
 
   describe '#update_data_hash' do
-    subject { PreviewScript.new(collection, params).update_data_hash(PreviewScript.new(collection).data_hash(collection_resource, nil)) }
     context 'when resource is present' do
 
       it 'it return resource name in hash' do
-        expect(subject['fields']["resource_title"]).to eq(collection_resource.title)
+        test = PreviewScript.new(collection, params).update_data_hash(PreviewScript.new(collection).data_hash(collection_resource, nil))
+        expect(test["resource_title"]).to eq(collection_resource.title)
       end
 
       # it 'it update tombstone value' do

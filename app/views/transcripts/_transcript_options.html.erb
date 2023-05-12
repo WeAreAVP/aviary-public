@@ -2,7 +2,7 @@
   <div class="custom-checkbox custom-checkbox d-inline-block mr-3">
     <% checked = @collection_resource.collection.enable_itc_autoscroll ? 'checked="checked"' : '' %>
     <input type="checkbox" class="checkbox index-trance-checkbox" id="transcript-auto-scroll" <%= checked %>/>
-    <label for="transcript-auto-scroll">Auto Scroll with Media</label>
+    <label tabindex="0" for="transcript-auto-scroll">Auto Scroll with Media</label>
   </div>
   <div class="custom-checkbox custom-checkbox mr-3 transcript_enable_annotation_section d-none">
 
@@ -78,8 +78,8 @@
             <% end %>
           <% end %>
           <% if @resource_file.present? && @resource_file.file_transcripts.present? && !from_playlist.to_s.to_boolean? %>
-            <div class="dropdown-divider"></div>
-            <li class="dropdown-submenu">
+            <div class="dropdown-divider download_transcript_menu"></div>
+            <li class="dropdown-submenu download_transcript_menu">
               <a class="dropdown-item dropdown-toggle"><i class="fa fa-download" aria-hidden="true"></i>
                 Download
                 this

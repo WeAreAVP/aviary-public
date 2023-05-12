@@ -4,13 +4,13 @@ FactoryBot.define do
     sequence(:first_name) {|n| "first#{n}"}
     sequence(:last_name) {|n| "last#{n}"}
     sequence(:username) {|n| "username#{n}"}
-    password '1Password@23'
-    password_confirmation '1Password@23'
-    agreement '1'
-    confirmed_at Time.now
-    preferred_language 'en'
-    created_by_id 1
-    updated_by_id 1
+    password { '1Password@23' }
+    password_confirmation { '1Password@23' }
+    agreement { '1' }
+    confirmed_at { Time.now }
+    preferred_language { 'en' }
+    created_by_id { 1 }
+    updated_by_id { 1 }
 
     factory :user_as_organization_admin do
       after(:create) do |organization_admin_single|

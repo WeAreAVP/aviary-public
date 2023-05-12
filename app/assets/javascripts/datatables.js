@@ -26,6 +26,8 @@
 
 //Global setting and initializer
 
+// Do not show alert popup in any case. Always throw an error to the console
+$.fn.dataTable.ext.errMode = 'throw';
 $.extend( $.fn.dataTable.defaults, {
   responsive: true,
   pagingType: 'full',

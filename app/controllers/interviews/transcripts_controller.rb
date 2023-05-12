@@ -10,16 +10,22 @@ module Interviews
 
     def edit
       @file_transcript = FileTranscript.find(params[:id])
+      @interview = Interview.where(id: @file_transcript.interview_id).try(:first)
       if request.patch? && params['file_transcript'].present? && params['file_transcript']['text'].present?
         time = 0.0
         time_different = @file_transcript.timecode_intervals.to_f * 60
+
+        params['file_transcript']['text'] = params['file_transcript']['text'].gsub("\r", '')
+        transcript_manager = Aviary::OhmsTranscriptManager.new
+        params['file_transcript']['text'] = transcript_manager.parse_notes_info(params['file_transcript']['text'], @file_transcript)
+
         @text = params['file_transcript']['text']
         raw_point = @text.split("\n")
         @file_transcript.file_transcript_points.each do |single_transcript_point|
           single = single_transcript_point.point_info.split('(')
           row = single[0].to_i
           column = single[1].to_i
-          if row > 0 && column > 0
+          if row > 0 && column > 0 && row <= raw_point.length && raw_point[row].present?
             time += time_different
             if raw_point[row][column] != ' '
               start = 1
@@ -36,7 +42,11 @@ module Interviews
                 end
               end
             end
-            raw_point[row].insert(column, " [#{Time.at(time).utc.strftime('%H:%M:%S')}] ")
+            if raw_point[row].length.zero? || raw_point[row][column].nil?
+              raw_point[row] = "[#{Time.at(time).utc.strftime('%H:%M:%S')}] "
+            else
+              raw_point[row].insert(column, " [#{Time.at(time).utc.strftime('%H:%M:%S')}] ")
+            end
           end
         end
         @text = raw_point.join("\n")
@@ -53,11 +63,13 @@ module Interviews
         file.unlink
       end
       @text = @file_transcript.file_transcript_points.pluck(:text).join(' ')
+      transcript_manager = Aviary::OhmsTranscriptManager.new
+      @text =  transcript_manager.read_notes_info(@file_transcript, @text)
       OhmsBreadcrumbPresenter.new(@file_transcript, view_context).breadcrumb_manager('edit', @file_transcript, 'sync')
     end
 
     def create
-      authorize! :manage, current_organization
+      authorize! :manage, Interviews::Interview
       interview = Interviews::Interview.find(params[:id])
       message = ''
       response = if params['interview_transcript'].present?
@@ -119,7 +131,7 @@ module Interviews
                  end
       respond_to do |format|
         format.json { render json: { response: response } }
-        format.html { redirect_to interviews_managers_path(param) }
+        format.html { redirect_to ohms_records_path(param) }
       end
     end
 
@@ -172,7 +184,7 @@ module Interviews
 
     def find_forward(found, start, raw_point, row, column)
       while found == false
-        found = true if raw_point[row][column + start].nil?
+        break if raw_point[row].length.zero? || raw_point[row][column + start].nil?
         if raw_point[row][column + start] == ' '
           found = true
           column += start
@@ -184,6 +196,7 @@ module Interviews
 
     def find_backward(found, start, raw_point, row, column)
       while found == false
+        break if raw_point[row].length.zero? || raw_point[row][column + start].nil?
         if raw_point[row][column - start] == ' '
           found = true
           column += start
@@ -205,7 +218,6 @@ module Interviews
       file.close
       file.unlink
     end
-
 
     def upload_transcript(type, file, interview)
       interview.file_transcripts.where(interview_transcript_type: type).destroy_all if interview.file_transcripts.where(interview_transcript_type: type).present?

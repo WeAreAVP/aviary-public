@@ -6,6 +6,7 @@ class IiifController < ApplicationController
   # after_action :set_content_type
 
   def manifest
+    headers['Access-Control-Allow-Origin'] = '*'
     organization = current_organization
 
     @collection_resource = CollectionResource.includes(:collection).joins(:collection).where(noid: params[:noid]).where(collections: { organization_id: organization.id }).first
@@ -98,28 +99,31 @@ class IiifController < ApplicationController
         media_type = media_file.media_content_type.include?('video') ? 'Video' : 'Audio'
         width = 640
         height = @collection_resource.collection.is_audio_only && media_type == 'Audio' ? 40 : 360
+        metadata = media_file.is_3d? ? [{ label: { en: ['360 Video'] }, value: { en: ['TRUE'] } }] : []
         iiif_hash['items'] << {
           id: media_url,
           type: 'Canvas',
-          label: { en: ["Media File #{count} of #{media_files.count}"] },
+          label: { en: ["Media File #{count} of #{media_files.count} - #{media_file.resource_file_file_name}"] },
           duration: media_file.duration.to_f,
           width: width,
           height: height,
           thumbnail: [{ id: media_file.thumbnail_image, type: 'Image', format: content_type }],
-          items: [{ id: media_url + '/content/1', type: 'AnnotationPage', items: [{
-            id: media_url + "/content/#{count}/annotation/1",
-            type: 'Annotation',
-            motivation: 'painting',
-            body: {
-              id: media_file.media_direct_url,
-              type: media_type,
-              format: media_file.media_content_type,
-              duration: media_file.duration.to_f,
-              width: width,
-              height: height
-            },
-            target: media_url
-          }] }],
+          items: [{ id: media_url + '/content/1', type: 'AnnotationPage',
+                    items: [{
+                      id: media_url + "/content/#{count}/annotation/1",
+                      type: 'Annotation',
+                      motivation: 'painting',
+                      body: {
+                        id: media_file.media_direct_url,
+                        type: media_type,
+                        format: media_file.media_content_type,
+                        duration: media_file.duration.to_f,
+                        width: width,
+                        height: height
+                      },
+                      target: media_url,
+                      metadata: metadata
+                    }] }],
           annotations: annotations(media_file, media_url)
         }
       end
@@ -141,11 +145,11 @@ class IiifController < ApplicationController
       points = []
       transcript_points = transcript.file_transcript_points
       transcript_points.each do |point|
-        text = point.speaker.present? ? "#{point.speaker}: #{point.text}" : point.text
+        text = point.speaker.present? ? "<strong>#{point.speaker}:</strong> #{point.text}" : point.text
         points << {
           id: "#{media_url}/transcript/#{transcript.id}/annotation/#{annotation_counter}",
           type: 'Annotation',
-          motivation: 'supplementing',
+          motivation: 'transcribing',
           body: {
             type: 'TextualBody',
             value: text,
@@ -157,8 +161,26 @@ class IiifController < ApplicationController
       end
       annotations << { id: media_url + "/transcript/#{transcript.id}", type: 'AnnotationPage', label: { en: [transcript.title] }, items: points }
       counter += 1
+
+      if transcript.is_caption?
+        points = [{
+          id: "#{media_url}/transcript/#{transcript.id}/annotation/#{annotation_counter}",
+          type: 'Annotation',
+          motivation: 'subtitling',
+          body: {
+            type: 'TextualBody',
+            value: transcript.associated_file.url,
+            format: 'text/vtt',
+            language: transcript.language
+          },
+          target: transcript.associated_file.url
+        }]
+        annotation_counter += 1
+        annotations << { id: media_url + "/transcript/#{transcript.id}", type: 'AnnotationPage', label: { en: [languages_array_simple[0][transcript.language]] }, items: points }
+        counter += 1
+      end
     end
-    media_file.file_transcripts.each do |transcript|
+    media_file.file_transcripts.public_transcript.each do |transcript|
       next unless transcript.annotation_set.present?
       annotation_set = transcript.annotation_set
       next unless annotation_set.is_public
@@ -192,35 +214,38 @@ class IiifController < ApplicationController
     media_file.file_indexes.public_index.each do |single_index|
       points = []
       index_points = single_index.file_index_points
-      index_fields = { title: 'Title', synopsis: 'Synopsis', partial_script: 'Partial transcript', subjects: 'Subject', keywords: 'Keyword' }
+      index_fields = { title: 'Title', synopsis: 'Synopsis', partial_script: 'Partial Transcript', subjects: 'Subjects', keywords: 'Keywords' }
 
       index_points.each do |point|
         index_fields.each do |field|
           field_name, display_name = field
           next unless point.try(field_name).present?
           body = []
-          if %w[Subject Keyword].include?(display_name)
+          if %w[Subjects Keywords].include?(display_name)
             split_field_content = point.try(field_name).split(';')
             split_field_content.each do |field_content|
               body << {
                 type: 'TextualBody',
                 value: field_content.strip,
-                format: 'text/plain'
+                format: 'text/plain',
+                label: { en: [display_name] }
               }
             end
           else
             body << {
               type: 'TextualBody',
               value: point.try(field_name),
-              format: 'text/plain'
+              format: 'text/plain',
+              label: { en: [display_name] }
             }
           end
+          time = point.start_time == point.end_time ? point.start_time.to_f.to_s : "#{point.start_time.to_f},#{point.end_time.to_f}"
           points << {
             id: "#{media_url}/index/#{single_index.id}/annotation/#{annotation_counter}",
             type: 'Annotation',
             motivation: 'supplementing',
             body: body,
-            target: "#{media_url}#t=#{point.start_time.to_f},#{point.end_time.to_f}"
+            target: "#{media_url}#t=#{time}"
           }
           annotation_counter += 1
         end

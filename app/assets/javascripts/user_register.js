@@ -33,9 +33,11 @@ function UserRegister() {
         let flag = true;
         if (pswd == $(parent_container + ' #user_password').val() && pswd != '') {
             $(parent_container + ' .validation_password_match').removeClass('invalid-signup').addClass('valid-signup');
+            $(parent_container + ' .validation_password_match i').removeClass('fa-times').addClass('fa-check');
         } else {
             flag = false;
             $(parent_container + ' .validation_password_match').removeClass('valid-signup').addClass('invalid-signup');
+            $(parent_container + ' .validation_password_match i').removeClass('fa-check').addClass('fa-times');
         }
         return flag;
     };
@@ -46,53 +48,67 @@ function UserRegister() {
         //validate the length
         if (pswd.length < 8) {
             $(parent_container + ' .validation_length').removeClass('valid-signup').addClass('invalid-signup');
+            $(parent_container + ' .validation_length i').removeClass('fa-check').addClass('fa-times');
             flag = false;
         } else {
             $(parent_container + ' .validation_length').removeClass('invalid-signup').addClass('valid-signup');
+            $(parent_container + ' .validation_length i').removeClass('fa-times').addClass('fa-check');
         }
 
         //validate letter
         if (pswd.match(/[A-z]/)) {
             $(parent_container + ' .validation_letter').removeClass('invalid-signup').addClass('valid-signup');
+            $(parent_container + ' .validation_letter i').removeClass('fa-check').addClass('fa-times');
         } else {
             flag = false;
             $(parent_container + ' .validation_letter').removeClass('valid-signup').addClass('invalid-signup');
+            $(parent_container + ' .validation_letter i').removeClass('fa-times').addClass('fa-check');
         }
 
         //validate uppercase letter
         if (pswd.match(/[A-Z]/)) {
             $(parent_container + ' .validation_capital').removeClass('invalid-signup').addClass('valid-signup');
+            $(parent_container + ' .validation_capital i').removeClass('fa-times').addClass('fa-check');
         } else {
             flag = false;
             $(parent_container + ' .validation_capital').removeClass('valid-signup').addClass('invalid-signup');
+            $(parent_container + ' .validation_capital i').removeClass('fa-check').addClass('fa-times');
         }
         //validate uppercase letter
         if (pswd.match(/[a-z]/)) {
             $(parent_container + ' .validation_lower').removeClass('invalid-signup').addClass('valid-signup');
+            $(parent_container + ' .validation_lower i').removeClass('fa-times').addClass('fa-check');
         } else {
             flag = false;
             $(parent_container + ' .validation_lower').removeClass('valid-signup').addClass('invalid-signup');
+            $(parent_container + ' .validation_lower i').removeClass('fa-check').addClass('fa-times');
         }
         //special characters
         if (pswd.match(/[.@$!%*?&]/)) {
             $(parent_container + ' .validation_special_character').removeClass('invalid-signup').addClass('valid-signup');
+            $(parent_container + ' .validation_special_character i').removeClass('fa-times').addClass('fa-check');
         } else {
             flag = false;
             $(parent_container + ' .validation_special_character').removeClass('valid-signup').addClass('invalid-signup');
+            $(parent_container + ' .validation_special_character i').removeClass('fa-check').addClass('fa-times');
         }
         if (pswd.match(/[#()_+=<>/"'{}\[\]\\|`~;:\^\-]/)) {
             flag = false;
             $(parent_container + ' .validation_can_only_have_special_character').removeClass('valid-signup').addClass('invalid-signup');
+            $(parent_container + ' .validation_can_only_have_special_character i').removeClass('fa-check').addClass('fa-times');
         } else {
             $(parent_container + ' .validation_can_only_have_special_character').removeClass('invalid-signup').addClass('valid-signup');
+            $(parent_container + ' .validation_can_only_have_special_character i').removeClass('fa-times').addClass('fa-check');
         }
 
         //validate number
         if (pswd.match(/\d/)) {
             $(parent_container + ' .validation_number').removeClass('invalid-signup').addClass('valid-signup');
+            $(parent_container + ' .validation_number i').removeClass('fa-times').addClass('fa-check');
         } else {
             flag = false;
             $(parent_container + ' .validation_number').removeClass('valid-signup').addClass('invalid-signup');
+            $(parent_container + ' .validation_number i').removeClass('fa-check').addClass('fa-times');
         }
         return flag;
     };

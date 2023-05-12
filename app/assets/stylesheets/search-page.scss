@@ -350,6 +350,7 @@ form.range_limit .hold {
 
 .search_tombstone_cust_parent {
     position: relative;
+    margin-top: 5px;
 }
 
 .search_tombstone_cust_parent .moreclick {
@@ -1356,7 +1357,6 @@ form.range_limit .hold input:nth-child(2) {
     top: 10px;
     left: 20px;
     opacity: 0;
-    visibility: hidden;
 }
 
 .search-details .details li:hover .add_to_playlist_search_page {
@@ -1374,7 +1374,7 @@ form.range_limit .hold input:nth-child(2) {
     vertical-align: middle;
 }
 
-.bulk_add_to_playlist {
+.bulk_add_to_playlist-holder {
     position: absolute;
     top: 3px;
     right: 10px;
@@ -2872,7 +2872,6 @@ form.range_limit .hold input:nth-child(2) {
   left: 20px;
   opacity: 0;
   font-size: 12px;
-  visibility: hidden;
   font-family: var(--aviary-font-family);
 }
 
@@ -2891,7 +2890,7 @@ form.range_limit .hold input:nth-child(2) {
   vertical-align: middle;
 }
 
-.bulk_add_to_playlist {
+.bulk_add_to_playlist-holder {
   position: absolute;
   top: 3px;
   right: 10px;

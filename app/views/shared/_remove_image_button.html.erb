@@ -1,4 +1,4 @@
 <% if !model_obj.new_record? && model_obj.send(target_type).present? && !(model_obj.send(target_type).url.include?('aviary_default_collection')|| model_obj.send(target_type).url.include?('aviary_default_banner')) %>
-  <a class="remove_image_custom cursor-pointer" data-url="<%= remove_image_target_wise_url(model_obj.class.name, model_obj.id, target_type) %> ">
+  <a class="remove_image_custom cursor-pointer" tabindex="1" data-url="<%= remove_image_target_wise_url(model_obj.class.name, model_obj.id, target_type) %> ">
   </a>
 <% end %>

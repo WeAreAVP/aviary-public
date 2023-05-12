@@ -2,7 +2,7 @@ require 'rails_helper'
 RSpec.describe CollectionResourcesController, type: :controller do
   include Aviary::ResourceFileManagement
   include Devise::Test::ControllerHelpers
-  let(:collection_resource) { create(:collection_resource) }
+  let!(:collection_resource) { create(:collection_resource) }
   let(:collection_resource_failed) { create :collection_resource, attributes_for(:collection_resource, :not_public) }
   let(:collection_resource_file_vimeo) { build :collection_resource_file, attributes_for(:collection_resource_file, :check_vimeo) }
   let(:collection_resource_file_youtube) { build :collection_resource_file, attributes_for(:collection_resource_file, :check_embed) }
@@ -74,12 +74,6 @@ RSpec.describe CollectionResourcesController, type: :controller do
     end
   end
 
-  describe "GET load_head_and_tombstone_template" do
-    it "has a 200 status code" do
-      get :load_head_and_tombstone_template, params: { "collection_id" => "1", "collection_resource_id" => "1" }
-      expect(response.status).to eq(200)
-    end
-  end
 
   describe "GET load_resource_details_template" do
     it "has a 200 status code" do

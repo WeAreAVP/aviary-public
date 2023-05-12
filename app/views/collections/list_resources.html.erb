@@ -5,9 +5,11 @@
         <div class="row">
           <div class="col-md-7"><h1> <%= @collection.title %> </h1></div>
           <div class="col-md-5">
-            <a class="btn btn-primary float-right" href="<%= new_collection_collection_resource_path(@collection) %>">Add
-              Resource</a>
-            <%= render partial: 'collection_resources/show/collection_resource_buttons', locals: {from: 'list_resources'} %>
+            <div class="pull-right">
+              <a class="btn btn-primary float-right" href="<%= new_collection_collection_resource_path(@collection) %>">Add
+                Resource</a>
+              <%= render partial: 'collection_resources/show/collection_resource_buttons', locals: {from: 'list_resources'} %>
+            </div>
           </div>
         </div>
       </div>

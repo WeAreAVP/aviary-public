@@ -28,48 +28,50 @@
   <% end %>
   <% unless selected_missing_for_range_limit?(solr_field) %>
     <%= form_tag add_facet_params_to_url(search_catalog_path, session[:search_facets]), :method => :get, class: [BlacklightRangeLimit.classes[:form] + (is_date_field ? ' mr-4 ' : ''), "range_#{solr_field}"].join(' ') do %>
-      <input type='hidden' name='search_type' value='<%= params[:search_type] %>'/>
-      <input type='hidden' name='search_field' value='advanced'/>
-      <%== add_facet_params_to_form(session[:search_facets]) %>
-      <!-- we need to include a dummy search_field parameter if none exists,
-           to trick blacklight into displaying actual search results instead
-           of home page. Not a great solution, but easiest for now. -->
-      <% unless params.has_key?(:search_field) %>
-        <%= hidden_field_tag("search_field", "dummy_range") %>
-      <% end %>
+      <div class="d-flex">
 
-
-      <span style="<%= solr_field == 'description_duration_ls' ? 'display: none;':'width:70% !important; margin-right: 10px ' %> ">
-        <%= render_range_input(solr_field, :begin, input_label_range_begin, maxlength) %>
-
-        <% unless is_date_field %>
-          <span class="between">To</span>
-          <%= render_range_input(solr_field, :end, input_label_range_end, maxlength) %>
+        <input type='hidden' name='search_type' value='<%= params[:search_type] %>'/>
+        <input type='hidden' name='search_field' value='advanced'/>
+        <%== add_facet_params_to_form(session[:search_facets]) %>
+        <!-- we need to include a dummy search_field parameter if none exists,
+            to trick blacklight into displaying actual search results instead
+            of home page. Not a great solution, but easiest for now. -->
+        <% unless params.has_key?(:search_field) %>
+          <%= hidden_field_tag("search_field", "dummy_range") %>
         <% end %>
-      </span>
-      <% unless is_date_field %>
-        <div class="hold date-duration">
-          <div class="form-group">
-            <label>H</label>
-            <input type="text" pattern="[0-9]+" id="hrs_start" class="form-control range_end range_duration text-center"/>
-          </div>
-          <div class="form-group">
-            <label>M</label>
-            <input type="text" id="minutes_start" pattern="[0-9]+" class="form-control range_end range_duration text-center"/>
-          </div>
-          <div class="between">to</div>
-          <div class="form-group">
-            <label>H</label>
-            <input type="text" id="hrs_end" class="form-control range_begin range_duration text-center" pattern="[0-9]+"/>
-          </div>
-          <div class="form-group">
-            <label>M</label>
-            <input type="text" id="minutes_end" class="form-control range_begin range_duration text-center" pattern="[0-9]+"/>
-          </div>
-        </div>
-      <% end %>
-      <%= submit_tag t('blacklight.range_limit.submit_limit'), class: 'btn btn-primary range_button ' + (is_date_field ? ' w-25 mb-1' : '') + (solr_field == 'description_duration_ls' ? 'w-100p mt-2 description_duration_ls_validator' : '') %>
 
+
+        <span style="<%= solr_field == 'description_duration_ls' ? 'display: none;':'width:70% !important; margin-right: 10px ' %> ">
+          <%= render_range_input(solr_field, :begin, input_label_range_begin, maxlength) %>
+
+          <% unless is_date_field %>
+            <span class="between">To</span>
+            <%= render_range_input(solr_field, :end, input_label_range_end, maxlength) %>
+          <% end %>
+        </span>
+        <% unless is_date_field %>
+          <div class="hold date-duration">
+            <div class="form-group">
+              <label>H</label>
+              <input type="text" pattern="[0-9]+" id="hrs_start" class="form-control range_end range_duration text-center"/>
+            </div>
+            <div class="form-group">
+              <label>M</label>
+              <input type="text" id="minutes_start" pattern="[0-9]+" class="form-control range_end range_duration text-center"/>
+            </div>
+            <div class="between">to</div>
+            <div class="form-group">
+              <label>H</label>
+              <input type="text" id="hrs_end" class="form-control range_begin range_duration text-center" pattern="[0-9]+"/>
+            </div>
+            <div class="form-group">
+              <label>M</label>
+              <input type="text" id="minutes_end" class="form-control range_begin range_duration text-center" pattern="[0-9]+"/>
+            </div>
+          </div>
+        <% end %>
+        <%= submit_tag t('blacklight.range_limit.submit_limit'), class: 'btn btn-primary range_button ' + (is_date_field ? ' ' : '') + (solr_field == 'description_duration_ls' ? 'w-100p mt-2 description_duration_ls_validator' : '') %>
+      </div>
     <% end %>
   <% end %>
 

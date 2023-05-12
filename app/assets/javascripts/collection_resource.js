@@ -9,7 +9,7 @@
  */
 function CollectionResource() {
 
-
+    var last_current_time = 0;
     var file_access = true;
     var selfCR = this;
     selfCR.markerHandlerArrayDescription = {};
@@ -293,7 +293,7 @@ function CollectionResource() {
         $('.mCustomScrollbar_description').mCustomScrollbar();
         $('#view_edit_media_metadata_custom').mCustomScrollbar();
 
-
+        removeScrollMobile();
         initEvents();
         initCreateTranscription();
         selfCR.manageTabs(selfCR.edit_description);
@@ -377,6 +377,9 @@ function CollectionResource() {
                 responsive: true,
                 techOrder: ['chromecast', 'html5', 'youtube', 'vimeo'],
                 youtube: {autohide: 1},
+                html5: {
+                    nativeTextTracks: false
+                },
                 plugins: {
                     airplayButton: {},
                     constantTimeupdate: {
@@ -710,6 +713,20 @@ function CollectionResource() {
             }
         });
 
+        document_level_binding_element('#index-tab', 'click', function () {
+            let type = 'index';
+            setTimeout(function () {
+                selfCR.indexes.scroll_to_point(type, '.' + type + '_time_start_' + parseInt(currentTime, 10));
+            }, 50);
+        });
+
+        document_level_binding_element('#transcript-tab', 'click', function () {
+            let type = 'transcript';
+            setTimeout(function () {
+                selfCR.indexes.scroll_to_point(type, '.' + type + '_time_start_' + parseInt(currentTime, 10));
+            }, 50);
+        });
+
         document_level_binding_element('#auto_play_video', 'click', function () {
             checkAndCreateUrl();
         });
@@ -881,6 +898,7 @@ function CollectionResource() {
         }
         if ($("#" + type + "-auto-scroll").prop("checked") && parseInt(currentTime, 10) > 0) {
             if ($('.' + type + '_time_start_' + parseInt(currentTime, 10)).length > 0 && trigger_refresh == false) {
+                last_current_time = currentTime;
                 do_scroll(type, currentTime);
             } else if (parseFloat(currentTime) - parseFloat(previousTime) > 0.75 || parseFloat(currentTime) - parseFloat(previousTime) < -0.75 || trigger_refresh == true) {
                 setTimeout(function () {
@@ -1271,6 +1289,30 @@ function CollectionResource() {
                     clearInterval(loading_resources);
             }
         }, 500);
+    }
+
+    this.add_my_resource = function(id, note, url){
+        $('.loader').show();
+        let payload = [
+            {
+                resource_id: id,
+                note: $("#"+ note).val()
+            }
+        ];
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: {payload: JSON.stringify(payload)},
+            success: function (response) {
+                $('.loader').hide();
+                jsMessages('success', 'Resource added to list successfully.');
+
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                $('.loader').hide();
+                jsMessages('dangers', "We're sorry, the update failed.");
+            }
+        });
     }
 
 }

@@ -7,10 +7,14 @@
 </script>
 <%
   flash.each do |name, msg| %>
-  <% if msg.is_a?(String) %>
+  <% if msg.is_a?(String) && flash[name].present? %>
     <div id="alert_message" class="alert animated fadeInDown alert-<%= name.to_s == 'notice' ? "success" : "danger" %>">
-      <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-      <%== flash[name] %>
+      <div id="alert">
+        <span role="alert" aria-live="polite" aria-atomic="true">
+          <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+          <%== flash[name] %>
+        </span>
+      </div>
     </div>
   <% end %>
 <% end %>

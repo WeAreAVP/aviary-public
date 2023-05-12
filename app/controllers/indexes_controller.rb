@@ -14,7 +14,7 @@ class IndexesController < ApplicationController
   before_action :authenticate_user!
   def index
     authorize! :manage, current_organization
-    session[:file_index_bulk_edit] = []
+    session[:file_index_bulk_edit] = [] unless request.xhr?
     respond_to do |format|
       format.html
       format.json { render json: IndexesDatatable.new(view_context, current_organization, params['called_from'], params[:additionalData]) }
@@ -31,10 +31,7 @@ class IndexesController < ApplicationController
           index.update(is_public: params['access_type'] == 'yes')
         end
       end
-      render json: { message: t('updated_successfully'),
-                     errors: false,
-                     status: 'success',
-                     action: 'bulk_file_index_edit' }
+      format.json { render json: { message: t('updated_successfully'), errors: false, status: 'success', action: 'bulk_file_index_edit' } }
     end
   end
 
@@ -119,10 +116,11 @@ class IndexesController < ApplicationController
     @file_index_point = FileIndexPoint.new(file_index_point_params)
     @file_index_point.file_index_id = @file_index.id
     @file_index_point.start_time = human_to_seconds(params[:file_index_point][:start_time]).to_f
+    start_time = @file_index_point.start_time
     @file_index_point = set_custom_values(@file_index_point, '', params)
     respond_to do |format|
       if @file_index_point.save
-        format.html { redirect_to show_index_file_path(@resource_file.id, @file_index.id), notice: 'Resource Index was successfully created.' }
+        format.html { redirect_to "#{show_index_file_path(@resource_file.id, @file_index.id)}?time=#{start_time}", notice: 'Resource Index was successfully created.' }
         format.json { render :show_index, status: :created, location: @file_index_point }
       else
         format.html { render template: 'interviews/interview_index/new' }
@@ -139,10 +137,11 @@ class IndexesController < ApplicationController
     @file_index_point = FileIndexPoint.find(params[:file_index_point_id])
     @file_index_point.update(file_index_point_params)
     @file_index_point.start_time = human_to_seconds(params[:file_index_point][:start_time]).to_f
+    start_time = @file_index_point.start_time
     @file_index_point = set_custom_values(@file_index_point, '', params)
     respond_to do |format|
       if @file_index_point.save
-        format.html { redirect_to show_index_file_path(@resource_file.id, @file_index.id), notice: 'Resource Index was successfully created.' }
+        format.html { redirect_to "#{show_index_file_path(@resource_file.id, @file_index.id)}?time=#{start_time}", notice: 'Resource Index was successfully created.' }
         format.json { render :show_index, status: :created, location: @file_index_point }
       else
         format.html { render template: 'interviews/interview_index/edit' }
@@ -167,7 +166,14 @@ class IndexesController < ApplicationController
     @collection_resource = CollectionResource.find(@resource_file.collection_resource_id)
     @file_index = FileIndex.find(params[:file_index_id])
     @file_index_point = FileIndexPoint.find(params[:file_index_point_id])
+    set_thesaurus
     render template: 'interviews/interview_index/edit'
+  end
+
+  def set_thesaurus
+    thesaurus_settings = ::Thesaurus::ThesaurusSetting.where(organization_id: current_organization.id, is_global: true, thesaurus_type: 'resource').try(:first)
+    @thesaurus_keywords = thesaurus_settings.thesaurus_keywords if thesaurus_settings.present?
+    @thesaurus_subjects = thesaurus_settings.thesaurus_subjects if thesaurus_settings.present?
   end
 
   # Never trust parameters from the scary internet, only allow the white list through.
