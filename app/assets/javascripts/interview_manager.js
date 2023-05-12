@@ -462,10 +462,12 @@ function InterviewManager() {
     };
     const setNotesResponse = function (response) {
         let html = ""
+        let index = 1;
         response.data.forEach(element => {
-            html = html + '<div>' + element.note + '</div>';
-            html = html + '<div class="d-flex mb-3"><div class="custom-checkbox mr-3"><input type="radio" class="unresolve notes_status" name="status_' + element.id + '" id="unresolve_' + element.id + '" value="0" ' + (element.status ? "" : 'checked="checked"') + ' data-id="' + element.id + '" data-status="0" data-url="' + notesEvent.target.getAttribute("data-updateurl") + '" ></input><label for="unresolve_' + element.id + '">Unresolved</label></div>';
-            html = html + '<div class="custom-checkbox mr-3"><input type="radio" class="resolve notes_status" name="status_' + element.id + '" id="resolve_' + element.id + '" value="1" ' + (element.status ? 'checked="checked"' : "") + ' data-id="' + element.id + '" data-status="1" data-url="' + notesEvent.target.getAttribute("data-updateurl") + '" ></input><label for="resolve_' + element.id + '">Resolved</label></div></div>';
+            html = html + '<div>Note '+index+': ' + element.note + '</div>';
+            html = html + '<div class="d-flex mb-3"><div class="custom-checkbox mr-3"><input type="radio" class="unresolve notes_status" name="status_' + element.id + '" id="unresolve_' + element.id + '" value="0" ' + (element.status ? "" : 'checked="checked"') + ' data-id="' + element.id + '" data-interview_id="' + element.interview_id + '" data-status="0" data-url="' + notesEvent.target.getAttribute("data-updateurl") + '" ></input><label for="unresolve_' + element.id + '">Unresolved</label></div>';
+            html = html + '<div class="custom-checkbox mr-3"><input type="radio" class="resolve notes_status" name="status_' + element.id + '" id="resolve_' + element.id + '" value="1" ' + (element.status ? 'checked="checked"' : "") + ' data-id="' + element.id + '" data-interview_id="' + element.interview_id + '" data-status="1" data-url="' + notesEvent.target.getAttribute("data-updateurl") + '" ></input><label for="resolve_' + element.id + '">Resolved</label></div></div>';
+            index = index + 1;
         });
         html = (response.length == 0 ? "There are currently no notes associated with this interview." : html);
         $('#listNotes').html(html);
@@ -632,13 +634,13 @@ function InterviewManager() {
         document_level_binding_element(".interview_notes", 'click', function (e) {
             notesEvent = e;
             $("#notesForm").attr("action", $(this).data().url);
+            $("#notesForm").attr("data-id", $(this).data().id);
             $.ajax({
                 url: $(this).data().url,
                 type: 'GET',
                 dataType: 'json',
                 success: function (response) {
                     setNotesResponse(response);
-                    if (response.color) notesEventColor = response.color;
                     $('#note').val("");
                     $('#modalPopupNotes').modal('show');
                 },
@@ -655,7 +657,9 @@ function InterviewManager() {
                 type: 'POST',
                 dataType: 'json',
                 success: function (response) {
-                    if (response.color) notesEventColor = response.color;
+                    if (response.color){
+                        changeColor(e.target.getAttribute("data-interview_id"),response.color)
+                    }
                 },
             });
             jsMessages('success', 'Note updated successfully.');
@@ -685,7 +689,9 @@ function InterviewManager() {
                         $('.errors').html("");
                         setNotesResponse(response);
                         jsMessages('success', 'Note added successfully.');
-                        if (response.color) notesEventColor = response.color;
+                        if (response.color){
+                            changeColor(e.target.getAttribute("data-id"),response.color)
+                        }
                     },
                     error: function (response, status, error) {
                         let info = jQuery.parseJSON(response.responseText);
@@ -761,5 +767,11 @@ function InterviewManager() {
                 $('.bulk-edit-submit').prop('disabled', true)
             }
         });
+    }
+    const changeColor = (id, color) => {
+        $('.interview_note_'+id).removeClass('text-secondary');
+        $('.interview_note_'+id).removeClass('text-danger');
+        $('.interview_note_'+id).removeClass('text-success');
+        $('.interview_note_'+id).addClass(color);
     }
 }
