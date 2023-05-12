@@ -11,11 +11,12 @@
 module Aviary
   # ResourceManager Class for managing and mapping the resource information
   class ResourceManager
+    include ApplicationHelper
     PREVIEW_ONLY = 1
     INSERT_ONLY = 2
-    include ApplicationHelper
     require 'zip'
     attr_accessor :sync_problem
+
     # Method to create a new resource and its description fields with values
     def create_resource_and_description(resource, import)
       return if resource[:resource_file].present? && import.import_type == Import::ImportType::OHMS_XML && resource[:resource_file][:host][:value].casecmp('aviary').zero? && resource[:resource_file][:link][:value].include?('<code>')
@@ -23,11 +24,11 @@ module Aviary
       is_featured = resource[:is_featured]
 
       value_custom_unique_identifier = begin
-                                         resource[:custom_unique_identifier] = clean_uri(resource[:custom_unique_identifier])
-                                       rescue StandardError => e
-                                         as_config.logger.fatal "failing setting up custom_unique_identifier #{e}"
-                                         ''
-                                       end
+        resource[:custom_unique_identifier] = clean_uri(resource[:custom_unique_identifier])
+      rescue StandardError => e
+        as_config.logger.fatal "failing setting up custom_unique_identifier #{e}"
+        ''
+      end
 
       custom_unique_identifier = value_custom_unique_identifier.present? ? value_custom_unique_identifier : ''
 

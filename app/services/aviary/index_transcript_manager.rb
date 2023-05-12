@@ -214,6 +214,7 @@ module Aviary::IndexTranscriptManager
   # TranscriptManager Class for managing the index import of OHMS, WebVTT and Simple text files
   class TranscriptManager
     attr_accessor :annotations
+
     include Dry::Transaction
     include ApplicationHelper
     step :process
@@ -514,7 +515,7 @@ module Aviary::IndexTranscriptManager
             single_hash['end_time'] = single_hash['end_time'] - reset_timecode
           end
           single_hash['duration'] = single_hash['end_time'] - single_hash['start_time']
-          single_hash['text'] = text.lstrip.gsub(/:[\n]+/, ': ').gsub(/\n{3,5}/, "\n\n").strip
+          single_hash['text'] = text.lstrip.gsub(/:\n+/, ': ').gsub(/\n{3,5}/, "\n\n").strip
           point_hash << single_hash
         end
       elsif output.size <= 1 # There is no timestamp in the text file
@@ -522,7 +523,7 @@ module Aviary::IndexTranscriptManager
         single_hash['start_time'] = 0
         single_hash['end_time'] = file_transcript.collection_resource_file.duration
         single_hash['duration'] = single_hash['end_time'].to_f - single_hash['start_time'].to_f
-        single_hash['text'] = output[0].gsub(/:[\n]+/, ': ').gsub(/\n{3,5}/, "\n\n").strip
+        single_hash['text'] = output[0].gsub(/:\n+/, ': ').gsub(/\n{3,5}/, "\n\n").strip
         point_hash << single_hash
       else
         counter = -1
@@ -567,7 +568,7 @@ module Aviary::IndexTranscriptManager
                 counter += 1
               end
               unless point_hash[counter].nil? # keep adding the Text to the same point until gets a new timestamp
-                point_hash[counter]['text'] = point_hash[counter]['text'].gsub(/\n{3,10}/, "\n\n").strip + point.gsub(/:[\n]+/, ': ').gsub(/\n{3,5}/, "\n\n").strip
+                point_hash[counter]['text'] = point_hash[counter]['text'].gsub(/\n{3,10}/, "\n\n").strip + point.gsub(/:\n+/, ': ').gsub(/\n{3,5}/, "\n\n").strip
               end
             end
           end
@@ -595,12 +596,12 @@ module Aviary::IndexTranscriptManager
         single_hash['text'] = cue.text.gsub(%r{<\/?[^>]*>}, '')
         single_hash['speaker'] = speaker
         single_hash['writing_direction'] = cue.style.present? ? cue.style : ''
-        if points_hash.last.present? && single_hash["text"].include?(points_hash.last["text"])
-          single_hash["text"] = single_hash["text"].gsub(points_hash.last["text"],"").strip
+        if points_hash.last.present? && single_hash['text'].include?(points_hash.last['text'])
+          single_hash['text'] = single_hash['text'].gsub(points_hash.last['text'], '').strip
         end
-        unless single_hash["text"].blank?
+        unless single_hash['text'].blank?
           points_hash << single_hash
-        end 
+        end
       end
       Success(points_hash)
     end

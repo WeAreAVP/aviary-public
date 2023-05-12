@@ -103,7 +103,7 @@ class FileIndex < ApplicationRecord
                          end
     query_params[:defType] = 'complexphrase' if complex_phrase_def_type
     query_params[:wt] = 'json'
-    total_response = Curl.post(select_url, query_params)
+    total_response = Curl.post(select_url, URI.encode_www_form(query_params))
     begin
       total_response = JSON.parse(total_response.body_str)
     rescue StandardError
@@ -121,7 +121,7 @@ class FileIndex < ApplicationRecord
       query_params[:start] = (page - 1) * per_page
       query_params[:rows] = per_page
     end
-    response = Curl.post(select_url, query_params)
+    response = Curl.post(select_url, URI.encode_www_form(query_params))
     begin
       response = JSON.parse(response.body_str)
     rescue StandardError
@@ -136,7 +136,8 @@ class FileIndex < ApplicationRecord
                         '1' => { value: 'title_ss', status: 'true' },
                         '2' => { value: 'is_public_ss', status: 'true' },
                         '3' => { value: 'file_display_name_ss', status: 'true' },
-                        '4' => { value: 'collection_resource_title_ss', status: 'true' } } }
+                        '4' => { value: 'collection_resource_title_ss', status: 'true' },
+                        '5' => { value: 'associated_file_content_type_ss', status: 'true' } } }
   end
 
   def self.fields_values
@@ -148,6 +149,7 @@ class FileIndex < ApplicationRecord
       'description_ss' => 'Notes',
       'file_display_name_ss' => 'Media File',
       'collection_resource_title_ss' => 'Resource Title',
+      'associated_file_content_type_ss' => 'File Type',
       'updated_at_ds' => 'Date Updated',
       'created_at_ds' => 'Date Added'
     }
@@ -190,5 +192,6 @@ class FileIndex < ApplicationRecord
     string :document_type, stored: true do
       'file_index'
     end
+    string :associated_file_content_type, stored: true
   end
 end

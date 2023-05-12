@@ -16,4 +16,11 @@
     document.addEventListener("DOMContentLoaded", function (_event) {
         accessibility.initialize();
     });
+    document_level_binding_element('.search_field_selector_main', 'focus', function () {
+            $('.keyboard_virtual_custom').addClass('mt-30px');
+            $('.keyboard_virtual_custom').removeClass('mt-0');
+            $('.search_field_selector_main').addClass('advanced-search-on')
+            $('.buttons-search').show();
+
+        });
 </script>

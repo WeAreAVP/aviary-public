@@ -5,6 +5,7 @@
 class ApplicationController < ActionController::Base
   # Adds a few additional behaviors into the application controller
   include Blacklight::Controller
+  # layout :determine_layout if respond_to? :layout
   # Adds a few additional behaviors into the application controller
   include ApplicationHelper
   include Aviary::CheckOrganization
@@ -27,13 +28,13 @@ class ApplicationController < ActionController::Base
     session[:add_visitor] = {} unless params[:controller] == 'home' && %w[index featured_collections featured_resources record_tracking].include?(params[:action])
   end
 
-  def open(url, allow_redirections = "")
-    res = url =~ URI::regexp 
+  def open(url, _allow_redirections = '')
+    res = url =~ URI::DEFAULT_PARSER.make_regexp
     if res.nil?
-      return File.open(url, allow_redirections: :all, ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE)
+      File.open(url, allow_redirections: :all, ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE)
 
     else
-      return URI.open(url, allow_redirections: :all, ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE)
+      URI.open(url, allow_redirections: :all, ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE)
     end
   end
 
@@ -92,7 +93,7 @@ class ApplicationController < ActionController::Base
   end
 
   def search_param_handler
-    methods = %w[load_resource_details_template show load_head_and_tombstone_template search_text record_tracking list_playlist_items]
+    methods = %w[load_resource_details_template show search_text record_tracking list_playlist_items]
     controllers = %w[playlists transcripts indexes playlist_resources]
     session[:solr_params] = '' if params[:controller] != 'collection_resources' && !methods.include?(params[:action]) && params[:controller] != 'catalog'
     session[:search_text] = {} if !controllers.include?(params[:controller]) && !%w[upload].include?(params[:action]) && (params[:controller] != 'collection_resources' && !methods.include?(params[:action]))
@@ -168,7 +169,7 @@ class ApplicationController < ActionController::Base
           elsif Organization.first.class.name == 'Collection' && attribute == 'image'
             open("#{Rails.root}/public/aviary_default_collection.png")
           end
-    model_object.update_attributes(attribute.to_s => val)
+    model_object.update(attribute.to_s => val)
   end
 
   def store_user_location!

@@ -24,7 +24,7 @@ module AdvanceSearchHelper
             query_string = query_string.delete('"').strip
             # Adding all qouted phrase to keywords
             quotes_string.each do |single_quotes|
-              all_keywords[OpenSSL::Digest::SHA256.new.hexdigest(single_quotes)] = single_quotes.delete('"').delete("'")
+              all_keywords[OpenSSL::Digest.new('SHA256').hexdigest(single_quotes)] = single_quotes.delete('"').delete("'")
             end
             # If has multiple keywords/terms in searched split and treated each term separately
             if query_string.include? ' '
@@ -32,18 +32,18 @@ module AdvanceSearchHelper
                 # ignore stopwords
                 unless stopwords.include?(single_query.to_s.downcase)
                   # remove quotes and wild card search from terms
-                  all_keywords[OpenSSL::Digest::SHA256.new.hexdigest(single_query)] = single_query.delete('"').delete("'").delete('*')
+                  all_keywords[OpenSSL::Digest.new('SHA256').hexdigest(single_query)] = single_query.delete('"').delete("'").delete('*')
                 end
               end
             else
               unless stopwords.include?(query_string.to_s.downcase)
-                all_keywords[OpenSSL::Digest::SHA256.new.hexdigest(query_string)] = query_string.delete('"').delete("'")
+                all_keywords[OpenSSL::Digest.new('SHA256').hexdigest(query_string)] = query_string.delete('"').delete("'")
               end
             end
           else
             # If Search conducted is Advance hence expecting single search arguments
             unless stopwords.include?(single_search[single_facet.to_s].to_s.downcase)
-              all_keywords[OpenSSL::Digest::SHA256.new.hexdigest(single_search[single_facet.to_s])] = single_search[single_facet.to_s].delete('"').delete("'")
+              all_keywords[OpenSSL::Digest.new('SHA256').hexdigest(single_search[single_facet.to_s])] = single_search[single_facet.to_s].delete('"').delete("'")
             end
           end
         end
@@ -94,7 +94,7 @@ module AdvanceSearchHelper
                     'has'
                   end
         query_string += if query_params[single_facet.to_s].include?('*')
-                          " #{query_params['op'].present? ? '<i>' + query_params['op'].upcase + '</i>' : ''} <span style='color: #444;font-size:14px;'>wildcard search on</span>
+                          " #{query_params['op'].present? ? '<i>' + query_params['op'].upcase + '</i>' : ''} <span style='color: #fff;padding: 0 5px;font-size:14px;'>wildcard search on</span>
                              <strong>#{SearchBuilder.search_field_labels[single_facet.to_s].titleize}</strong> <i> USING </i> <strong class='title'>#{query_params['keyword_searched']}</strong>  "
                         else
                           " #{query_params['op'].present? ? '<i>' + query_params['op'].upcase + '</i>' : ''} <strong>#{SearchBuilder.search_field_labels[single_facet.to_s].titleize}</strong> <i>#{limiter}</i>

@@ -10,6 +10,7 @@
 // Read Sprockets README (https://github.com/rails/sprockets#sprockets-directives) for details
 // about supported directives.
 //
+//= require jquery3
 //= require rails-ujs
 //= require jquery
 
@@ -225,6 +226,18 @@ function scroll_to(target_element, time) {
     }
 }
 
+function fixTable() {
+    $('.hidden_focus_btn').focus(function(){
+        $('a[data-id="'+$(this).data('id')+'"]').last().addClass('focus');
+    });
+    $('.hidden_focus_btn').focusout(function(){
+        $('a[data-id="'+$(this).data('id')+'"]').last().removeClass('focus');
+    });
+    setTimeout(function () {
+        $(".DTFC_RightBodyLiner table a").each(function (i) { $(this).attr('tabindex', i + 1); });
+    }, 500);
+}
+
 /**
  *
  * @param type string danger/success
@@ -232,8 +245,10 @@ function scroll_to(target_element, time) {
  */
 function jsMessages(type, text) {
     html = '<div id="alert_message" class="alert animated fadeInDown alert-' + type + '">' +
+    '<div id="alert">' + 
+    '<span role="alert" aria-live="polite" aria-atomic="true">' + 
         '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' +
-        text + '</div>';
+        text + '</span></div></div>';
     $('body').append(html);
     window.setTimeout(function () {
         $("#alert_message").fadeIn(1500, function () {
@@ -515,8 +530,17 @@ function initToolTip(element){
 
 }
 
-$(function () {
+function skip_to_content(){
 
+    document_level_binding_element('.skiptocontent', 'keyup', function (event) {
+        if (event.keyCode === 13 || event.keyCode === 32) {
+            $('.vjs-big-play-button').focus();
+        }
+    });
+}
+
+$(function () {
+    skip_to_content();
     if ($('#sidebar-main').length == 0) {
         $(".main-content").removeClass('open');
     }
@@ -598,7 +622,19 @@ $(function () {
             }
         });
     }
+    function toggleMenu()
+    {
+        if($('#sidebar-main').hasClass("not-collapsed"))
+        {
+            $('#sub_nav').find('nav').attr("aria-expanded","true");
+        }
+        else
+        {
+            $('#sub_nav').find('nav').attr("aria-expanded","false");
+        }
+    }
     if ($('#menu-bar').length > 0) {
+        toggleMenu();
         $('#menu-bar').click(function () {
             let url = $(this).data('url');
             $('#sidebar-main').toggleClass('main_collapsed');
@@ -606,6 +642,7 @@ $(function () {
             $('.main-content').toggleClass('open');
             layout = $('#sidebar-main').hasClass('main_collapsed') ? 'main_collapsed' : 'not-collapsed';
             checkMenuType(layout);
+            toggleMenu();
             $.ajax({
                 url: url,
                 data: {layout: layout},
@@ -696,6 +733,14 @@ const getSearchKeywordsAsString = function () {
         });
     }
     return keywords;
+}
+
+function removeScrollMobile() {
+    if ($(window).width() < 767) {
+        $("*").mCustomScrollbar("destroy");
+        $('.mCustomScrollbar_description').attr('style', 'height:auto!important;max-height:inherit !important;');
+        $('#view_edit_media_metadata_custom').attr('style', 'height:auto!important;max-height:inherit !important;');
+    }
 }
 
 function removeImageCustom() {

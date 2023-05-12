@@ -1,0 +1,2 @@
+class OhmsConfiguration < ApplicationRecord
+end

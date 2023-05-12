@@ -75,8 +75,9 @@ class TranscriptsDatatable < ApplicationDatatable
                                                                                          data.collection_resource_file.collection_resource.id,
                                                                                          data.collection_resource_file.id, 'transcript',
                                                                                          selected_transcript: resource['id_is']) +
-                               '"class="btn-sm btn-default">View</a>&nbsp;&nbsp;'
-                    link_set += "<a href='javascript://' data-name='#{strip_tags(resource['title_ss'].to_s)}' data-url='#{transcript_delete_path(resource['id_is'])}' class='btn-sm btn-danger transcript_delete' >Delete</a>"
+                               '"class="btn-sm btn-default hidden_focus_btn" data-id="collection_resource_view_' + resource['id_is'].to_s + '">View</a>&nbsp;&nbsp;'
+                    link_set += "<a href='javascript://' data-name='#{strip_tags(resource['title_ss'].to_s)}' data-url='#{transcript_delete_path(resource['id_is'])}'
+                                class='btn-sm btn-danger transcript_delete hidden_focus_btn' data-id='collection_resource_delete_" + resource['id_is'].to_s + "' data-id='collection_resource_delete_" + resource['id_is'].to_s + "' >Delete</a>"
                     link_set
                   rescue StandardError => e
                     puts e.backtrace.join("\n")

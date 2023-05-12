@@ -3,7 +3,7 @@
   <div class="no-media">
     <% if params[:action] == "show" || params[:action] == "show_index" %>
     <div id="noAudio">
-      There is no online media associated with this item. Please update the media settings in the <a href="<%= edit_interviews_manager_path(@interview.id) %>">metadata editor</a> or proceed to index this item using offline media.
+      There is no online media associated with this item. Please update the media settings in the <a href="<%= ohms_records_edit_path(@interview.id) %>">metadata editor</a> or proceed to index this item using offline media.
     </div>
     <% else %>
     <div id="noMediaConnection">No Media Connection</div>
@@ -101,7 +101,7 @@
   </div>
   <% end %>
   <% if params[:action] == "show" || params[:action] == "show_index"  %>
-  <%= link_to 'Add Tag', 'javascript://', class: 'btn btn-outline-dark btn-block pull-left add_tag', data: { url: interviews_interview_index_new_path } %>
+  <%= link_to 'Add Tag', 'javascript://', class: 'btn btn-outline-dark btn-block pull-left add_tag', data: { url: ohms_index_new_path } %>
   <% end %>
 <% else %>
   <div id="media_host" data-host="" style="width: 75%;" >

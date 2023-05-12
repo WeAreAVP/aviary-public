@@ -114,25 +114,46 @@
     text-align: right;
 }
 
-.shareHolder.audioPlayer button {
+.shareHolder.audioPlayer button,
+.shareHolder.audioPlayer a {
     color: #000 !important;
     text-align: right;
 }
 
-.shareHolder.audioPlayer button:hover {
+.shareHolder.audioPlayer button:hover,
+.shareHolder.audioPlayer a:hover {
     color: #000 !important;
     opacity: 0.7;
 }
 
-.shareHolder.audioPlayer button:focus {
+.shareHolder.audioPlayer button:focus,
+.shareHolder.audioPlayer a:focus {
     outline-style: none;
     box-shadow: none;
     border-color: transparent;
 }
+.shareHolder.audioPlayer .btn {
+    margin-left: 40px !important;
+}
 
 .shareHolder.audioPlayer button i {
     margin-right: 0;
-    margin-left: 10px;
+    margin-left: 0;
+    line-height: 1;
+    font-size: 16px;
+    margin-top: 3px;
+    top: 0;
+}
+.shareHolder.audioPlayer .icon-manifest {
+    background: image-url(iiif-black) no-repeat;
+    background-size: 14px;
+    font-size: none;
+    display: inline-block;
+    vertical-align: middle;
+    width: 17px;
+    height: 14px;
+    top: 5px;
+    left: -21px;
 }
 
 .shareHolder .share-btn i {
@@ -267,7 +288,7 @@
         display: none;
         background-color: #fff !important;
         border: 1px solid rgba(0, 0, 0, 0.15) !important;
-        padding: 10px 0;
+        padding: 5px 0 15px;
         min-width: 7rem !important;
         margin: 3px;
         top: 50% !important;
@@ -283,6 +304,7 @@
 
     .shareHolder a,
     .shareHolder .dropdown-item button,
+    .shareHolder button,
     .shareHolder .dropdown-item {
         color: #222 !important;
         margin: 0;
@@ -309,9 +331,12 @@
 }
 
 @media screen and (max-width: 767px) {
-    #back-to-search-btn small {
-        display: none;
-    }
+  #back-to-search-btn small {
+    display: none;
+  }
+  .shareHolder.audioPlayer .btn {
+    padding: 0 !important;
+  }
 }
 
 .time-share {
@@ -397,9 +422,18 @@
 
 .embedLink textarea {
     resize: none;
-    height: 150px;
+    height: 150px;  
+    white-space: nowrap;
 }
-
+.embedLink .text-info,
+.shareModal .content .text-info {
+    font-size: 14px;
+    line-height: 18px !important;
+    margin-bottom: 20px;
+    display: inline-block;
+    background: #ecfcff;
+    padding: 10px 15px;
+}
 .replace_do {
     margin-top: 8px;
 }

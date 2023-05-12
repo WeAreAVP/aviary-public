@@ -43,9 +43,14 @@
         <a class="btn" href="<%= iiif_manifest_url(@collection_resource.noid) %>" target="_blank">
           <i class="icon-manifest"></i> Manifest
         </a>
-        </div>
-        </div>
       <% end %>
+      <% if current_user_is_current_org_user? %>
+        <button class="btn" title="My Resources" data-toggle="modal" data-target="#resourceListModel">
+          <i class="material-icons list_added">playlist_add_check</i> My Resources
+        </button>
+      <% end %>
+      </div>
+      </div>
     </div>
 
     <!-- Modal -->
@@ -77,7 +82,7 @@
               <% end %>
               <% if current_user_is_org_user?(current_organization) %>
                 <li class="nav-item">
-                  <a class="nav-link share_tabs" id="public_access_url-tab" data-toggle="tab" data-tabname="public_access_url_custom" href="#public_access" role="tab" aria-controls="public_access" aria-selected="false">Public
+                  <a class="nav-link share_tabs" id="public_access_url-tab" data-toggle="tab" data-tabname="public_access_url_custom" href="#public_access" role="tab" aria-controls="public_access" aria-selected="false">Resource Public
                     Access URL</a>
                 </li>
               <% end %>
@@ -98,7 +103,7 @@
                 <div class="content">
                   <div class="embedLink form-group">
                     <div class="field-title"><label>Embed Media File Link</label></div>
-                    <textarea readonly class="form-control mb-3 share_value" id="embed_file_url" placeholder="Embed Video"><iframe src="<%= embeded_url(embed_file_url(@collection_resource), 'embed', @resource_file.id) %>" allow="fullscreen" frameborder="0"></iframe></textarea>
+                    <textarea readonly class="form-control mb-3 share_value" id="embed_file_url" placeholder="Embed Video"><iframe title="<%=@collection_resource.title %>" src="<%= embeded_url(embed_file_url(@collection_resource), 'embed', @resource_file.id) %>" allow="fullscreen" frameborder="0"></iframe></textarea>
                     <% unless @resource_file.access == 'yes' %>
                       <span class="text-info">This media file is currently private. Accessibility via embed links will be limited to users signed into Aviary as registered users who also have been granted access to the resource.</span>
                     <% end %>
@@ -112,7 +117,7 @@
                 <div class="content">
                   <div class="embedLink form-group">
                     <div class="field-title"><label>Embed Resource URL Link</label></div>
-                    <textarea readonly class="form-control mb-3 share_value" id="embed_resource_url" placeholder="Embed Resource"><div <%= outer_div_style %> ><iframe  <%= common_style %> src="<%= embeded_url(collection_resource_url(@collection_resource), nil, @resource_file.id) %>" allow="fullscreen" frameborder="0"></iframe></div></textarea>
+                    <textarea readonly class="form-control mb-3 share_value" id="embed_resource_url" placeholder="Embed Resource"><div <%= outer_div_style %> ><iframe title="<%=@collection_resource.title %>"  <%= common_style %> src="<%= embeded_url(collection_resource_url(@collection_resource), nil, @resource_file.id) %>" allow="fullscreen" frameborder="0"></iframe></div></textarea>
                     <% unless @collection_resource.access == :access_public.to_s && @collection_resource.collection.is_public %>
                       <span class="text-info">This resource is currently private. Accessibility via embed links will be limited to users signed into Aviary as registered users who also have been granted access to the resource.</span>
                     <% end %>
@@ -125,7 +130,7 @@
                 <div class="content">
                   <div class="embedLink form-group">
                     <div class="field-title"><label>Embed Resource Media Player Link</label></div>
-                    <textarea readonly class="form-control mb-3 share_value" id="embed_resource_media_player" placeholder="Embed Resource Media Player"><iframe src="<%= embeded_url(collection_resource_url(@collection_resource), 'media_player', @resource_file.id) %>" allow="fullscreen" frameborder="0"></iframe></textarea>
+                    <textarea readonly class="form-control mb-3 share_value" id="embed_resource_media_player" placeholder="Embed Resource Media Player"><iframe title="<%=@collection_resource.title %>" src="<%= embeded_url(collection_resource_url(@collection_resource), 'media_player', @resource_file.id) %>" allow="fullscreen" frameborder="0"></iframe></textarea>
                     <% unless @collection_resource.access == :access_public.to_s && @collection_resource.collection.is_public %>
                       <span class="text-info">This resource is currently private. Accessibility via embed links will be limited to users signed into Aviary as registered users who also have been granted access to the resource.</span>
                     <% end %>
@@ -172,4 +177,49 @@
         });
     </script>
   <% end %>
+<% end %>
+
+<% if current_user.present?
+     resource_list = ResourceList.find_by(user_id: current_user.id, resource_id: @collection_resource.id)
+%>
+  <div class="resource_list_container" id="resource_list_container" data-listonly="true" data-organizationid="<%= @collection_resource.collection.organization.id %>" data-resourceid="<%= @collection_resource.id %>">
+    <div class="modal fade" id="resourceListModel" tabindex="-1" role="dialog" aria-labelledby="resourceListModelCenterTitle" aria-hidden="true">
+      <div class="modal-dialog modal-lg  modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title h3" id="exampleModalLabel">My Resources</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div id="" class="modal-body">
+            <table class="table table-hover table-striped table-bordered">
+              <thead>
+              <tr>
+                <th>ID</th>
+                <th>Resource title</th>
+                <th>Note</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr>
+                <td id="my_resource_id"><%= @collection_resource.id %></td>
+                <td id="my_resource_title"><%= @collection_resource.title %></td>
+                <td id="">
+                  <textarea class="form-controls" cols="36" id="my_resource_note"><%= resource_list.try(:note) %></textarea>
+                  <br/>
+                  <%= !resource_list.nil? ? "Previously updated: #{resource_list.try(:updated_at)}" : '' %>
+                </td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger" data-dismiss="modal">No</button>
+            <button onclick="collectionResource.add_my_resource('<%= @collection_resource.id %>', 'my_resource_note', '<%= assign_resources_to_list_catalog_path %>')" type="button" class="btn btn-primary"  data-dismiss="modal">Save</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 <% end %>

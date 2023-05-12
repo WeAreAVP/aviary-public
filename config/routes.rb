@@ -1,4 +1,9 @@
 Rails.application.routes.draw do
+  resources :saved_searches, except: [:index] do
+    collection do
+      match :datatable, to: 'saved_searches#index', via: %i[get post]
+    end
+  end
   concern :range_searchable, BlacklightRangeLimit::Routes::RangeSearchable.new
   mount Blacklight::Engine => '/'
   mount BlacklightAdvancedSearch::Engine => '/'
@@ -10,6 +15,7 @@ Rails.application.routes.draw do
     collection do
       post :update_selected_playlist
       post :assign_to_playlist
+      post :assign_resources_to_list
     end
   end
   devise_for :admins
@@ -53,6 +59,27 @@ Rails.application.routes.draw do
 
     get '/', to: 'users#index'
   end
+  get 'ohms_records', to: 'interviews/managers#index', as: :ohms_records
+  get 'ohms_records/collection/ohms_records/user_assignments/:interview_id/:user_id', to: 'interviews/managers#ohms_assignments', as: :ohms_collection_records_user_assignments
+  get 'my_ohms_assignment', to: 'interviews/managers#index', as: :my_ohms_assignment
+  post 'my_assignment_listing', to: 'interviews/managers#listing', as: :my_assignment_listing
+  post 'ohms_records', to: 'interviews/managers#create', as: :ohms_records_create
+  get 'ohms_records/:id/edit', to: 'interviews/managers#edit', as: :ohms_records_edit
+  get 'ohms_records/new', to: 'interviews/managers#new', as: :ohms_records_new
+  get 'ohms_records/ohms_index/:id', to: 'interviews/interview_index#show', as: :ohms_index
+  get 'ohms_records/ohms_index/:id/edit', to: 'interviews/interview_index#edit', as: :ohms_index_edit
+  get 'ohms_records/ohms_index/new/:id', to: 'interviews/interview_index#new', as: :ohms_index_new
+  get 'ohms_records/user_assignments/:interview_id/:user_id', to: 'interviews/managers#ohms_assignments', as: :ohms_records_user_assignments
+
+  get 'ohms_configuration', to: 'interviews/managers#ohms_configuration', as: :ohms_configuration
+  post 'ohms_configuration', to: 'interviews/managers#ohms_configuration_update', as: :ohms_configuration_update
+  get 'ohms_records/collections', to: 'interviews/collections#index', as: :list_collections
+  post 'ohms_records/collections/listing', to: 'interviews/collections#listing', as: :listing_collections
+
+  get 'ohms_records/collection/:collection_id', to: 'interviews/collections#interviews', as: :interview_list_of_collections
+  post 'ohms_records/collection/:collection_id', to: 'interviews/collections#interviews_list', as: :interview_lists_of_collections
+  get 'ohms_records/collection/export/:collection_id', to: 'interviews/collections#export', as: :interview_export
+
   namespace :interviews do
     resources :managers do
       collection do
@@ -107,8 +134,8 @@ Rails.application.routes.draw do
   get 'pricing', to: 'home#pricing', as: :pricing
   get 'terms_of_service', to: 'home#terms_of_service', as: :terms_of_service
   get 'privacy_policy', to: 'home#privacy_policy', as: :privacy_policy
-  get 'contact_us', to: 'home#contact_us', as: :contact_us
-  get 'support', to: 'home#support', as: :support
+  # get 'contact_us', to: 'home#contact_us', as: :contact_us
+  # get 'support', to: 'home#support', as: :support
   get 'about', to: 'home#about', as: :about
   get 'features', to: 'home#features', as: :features
   post 'submit_request', to: 'home#submit_request', as: :submit_request
@@ -156,6 +183,7 @@ Rails.application.routes.draw do
       post :list_resources
       get 'collection_resources/new', to: 'collection_resources#new'
       post :import, to: 'collections#import'
+      get :reset_default_tombstone_fields
     end
     collection do
       get '(/:collection_id)/export', to: 'collections#export', as: :export
@@ -230,6 +258,11 @@ Rails.application.routes.draw do
       post :data_table, to: 'collection_resources#index'
     end
   end
+  get 'myresources/listing', to: 'catalog#index', as: :listing_for_my_resources
+  post 'myresources/list/update_note/:id', to: 'myresources#update_note', as: :my_resources_list_update_note
+  delete 'myresources/list/delete_note/:id', to: 'myresources#delete_note', as: :my_resources_list_delete_note
+  get 'myresources/download', to: 'myresources#download_myresources', as: :download_myresources
+
   resources :indexes, only: %i[index] do
     collection do
       post :data_table, to: 'indexes#index'

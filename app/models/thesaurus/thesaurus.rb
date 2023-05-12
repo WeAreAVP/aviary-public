@@ -5,7 +5,6 @@ module Thesaurus
   # Thesaurus
   class Thesaurus < ApplicationRecord
     include UserTrackable
-    enum status: %w[is_active inactive]
     default_scope { where('thesaurus.status' => Thesaurus.statuses[:active]) }
     belongs_to :organization
     has_many :thesaurus_thesaurus_terms, class_name: 'Thesaurus::ThesaurusTerms'
@@ -22,9 +21,14 @@ module Thesaurus
       where(status: statuses[:active]).where(organization: organization)
     end
 
-    def self.fetch_list(page, per_page, query, organization_id, export = false)
+    def self.fetch_list(page, per_page, query, organization_id, export = false, ohms = false)
       thesaurus = Thesaurus.joins(%i[organization updated_by]) if organization_id.present?
       thesaurus = thesaurus.where('thesaurus.organization_id = ? ', organization_id)
+      thesaurus = if ohms
+                    thesaurus.where('thesaurus.thesaurus_type = ? ', 'ohms')
+                  else
+                    thesaurus.where('thesaurus.thesaurus_type = ? ', 'aviary')
+                  end
       if query.present?
         query = query.downcase.strip
         query_string_name = 'thesaurus.title LIKE (?)'
@@ -40,8 +44,8 @@ module Thesaurus
       [thesaurus, count]
     end
 
-    def self.list_thesaurus(org)
-      [['Not Assigned', '0']] + Thesaurus.all_active(org).map { |key, _| [key.title, key.id] }
+    def self.list_thesaurus(org, type = 'aviary')
+      [['Not Assigned', '0']] + Thesaurus.where(thesaurus_type: type).all_active(org).map { |key, _| [key.title, key.id] }
     end
   end
 end

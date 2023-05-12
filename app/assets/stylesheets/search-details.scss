@@ -63,6 +63,18 @@
   transform-origin: 0 0;
 }
 
+.ohms-configuration-btn {
+  position: absolute;
+
+  img {
+    width: 13px;
+    height: 13px;
+    object-fit: cover;
+    min-width: inherit;
+    min-height: inherit;
+  }
+}
+
 .search-detail-main .drop ul li {
   display: block;
   width: 100%;
@@ -1475,9 +1487,12 @@ dl.form textarea.text {
 }
 
 .edit_form form {
-  height: calc(100vh - 370px);
+  height: calc(100vh - 330px);
   overflow: hidden;
   overflow-y: auto;
+}
+.form_edit_custom_media_file form {
+  height: calc(100vh - 270px);
 }
 
 .edit_form .nested-fields {
@@ -2709,6 +2724,10 @@ dl.form textarea.text {
   transform: translateY(-50%);
   color: #fff;
   transition: 0.3s all ease;
+}
+
+.mediacarousel ul {
+  display: flex;
 }
 
 .mediacarousel-next {

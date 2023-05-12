@@ -13,7 +13,7 @@ class OrganizationField < ApplicationRecord
     TOKEN = 'tokens'.freeze
     TEXTAREA = 'editor'.freeze
 
-    NAMES = { DROPDOWN => 'dropdown', DATE => 'date', TEXT => 'text', TOKEN => 'tokens', TEXTAREA => 'editor' }.freeze
+    NAMES = { DROPDOWN => 'dropdown', DATE => 'date', TEXT => 'text', TEXTAREA => 'editor' }.freeze
 
     def self.for_select
       NAMES.invert.to_a

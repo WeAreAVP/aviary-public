@@ -28,6 +28,22 @@ function ThesaurusManager() {
             if ($(this).data('listOfFields').replaceAll(',', '<br/>'))
                 $('.field_listing_theasurus_info').html($(this).data('listOfFields').replaceAll(',', '<br/>'));
         });
+        
+        document_level_binding_element('#assignment_option_custom_thesaurus_record', 'change', function () {
+            if ($(this).val() == 0) {
+                $('assign_thesaurus_to_vocab_dropdown').fadeIn('10');
+            } else {
+                $('assign_thesaurus_to_vocab_dropdown').fadeOut('10');
+            }
+            $('.assign_thesaurus_to_vocab_dropdown').fadeOut('10');
+            let data = {
+                js_action: 'field_list',
+                action: 'fieldList',
+                thesaurus_id: $('#selected_file_t').val(),
+                interview_id: $(this).val()
+            };
+            appHelper.classAction($(this).data('url'), data, 'HTML', 'GET', '', that, true);
+        });
 
         document_level_binding_element('#assignment_option_custom_thesaurus', 'change', function () {
             if ($(this).val() == 0) {
@@ -44,7 +60,21 @@ function ThesaurusManager() {
             };
             appHelper.classAction($(this).data('url'), data, 'HTML', 'GET', '', that, true);
         });
-
+        document_level_binding_element('#assignment_option_custom_thesaurus_index', 'change', function () {
+            if ($(this).val() == 0) {
+                $('assign_thesaurus_to_vocab_dropdown').fadeIn('10');
+            } else {
+                $('assign_thesaurus_to_vocab_dropdown').fadeOut('10');
+            }
+            $('.assign_thesaurus_to_vocab_dropdown').fadeOut('10');
+            let data = {
+                js_action: 'field_list',
+                action: 'fieldList',
+                thesaurus_id: $('#selected_file_t').val(),
+                interview_id: $(this).val()
+            };
+            appHelper.classAction($(this).data('url'), data, 'HTML', 'GET', '', that, true);
+        });
 
         document_level_binding_element('#list_of_fields_dropdown', 'change', function () {
             $('.assign_thesaurus_to_vocab_dropdown').fadeIn('600');

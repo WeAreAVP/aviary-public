@@ -14,21 +14,63 @@ module Interviews
 
     before_action :set_interview, only: %i[show edit update destroy sync preview]
 
+    def ohms_configuration
+      authorize! :manage, Interviews::Interview
+      @ohms_configuration = OhmsConfiguration.where('organization_id', current_organization.id).try(:first)
+      @ohms_configuration = OhmsConfiguration.new if @ohms_configuration.nil?
+    end
+
+    def ohms_configuration_update
+      authorize! :manage, Interviews::Interview
+      @ohms_configuration = OhmsConfiguration.where('organization_id', current_organization.id).try(:first)
+      if @ohms_configuration.nil?
+        @ohms_configuration = OhmsConfiguration.new
+        @ohms_configuration.organization_id = current_organization.id
+      end
+      @ohms_configuration.update(ohms_configuration_params)
+      redirect_to ohms_configuration_url
+    end
+
     # GET /interviews
     # GET /interviews.json
     def index
-      authorize! :manage, current_organization
-      session[:interview_bulk] = [] unless request.xhr?
-      @interviews = Interviews::Interview.all
-      @search_columns = current_organization.interview_search_column
-      @display_columns = current_organization.interview_display_column
+      if request.path.include?('my_ohms_assignment')
+        @organization_user = OrganizationUser.find_by_user_id(current_user.id)
+        user_current_organization = @organization_user.organization
+        @search_columns = user_current_organization.interview_search_column
+        @display_columns = user_current_organization.interview_display_column
+        @collections = Collection.where(organization_id: user_current_organization.id)
+        @users = user_current_organization.organization_ohms_assigned_users
+      else
+        authorize! :manage, Interviews::Interview
+        session[:interview_bulk] = [] unless request.xhr?
+        @search_columns = current_organization.interview_search_column
+        @display_columns = current_organization.interview_display_column
+        @collections = Collection.where(organization_id: current_organization.id)
+        @organization_user = OrganizationUser.find_by user_id: current_user.id, organization_id: current_organization.id
+        @users = current_organization.organization_ohms_assigned_users
+      end
     end
 
     def listing
-      authorize! :manage, current_organization
-      respond_to do |format|
-        format.html
-        format.json { render json: InterviewsDatatable.new(view_context, current_organization) }
+      authorize! :manage, Interviews::Interview unless request.path.include?('my_assignment_listing')
+      if request.path.include?('my_assignment_listing')
+        organization_user = if current_organization.nil?
+                              OrganizationUser.find_by user_id: current_user.id
+                            else
+                              OrganizationUser.find_by user_id: current_user.id, organization_id: current_organization.id
+                            end
+        user_current_organization = organization_user.organization
+        respond_to do |format|
+          format.html
+          format.json { render json: InterviewsDatatable.new(view_context, user_current_organization, '', organization_user, (current_organization.nil? ? false : true)) }
+        end
+      else
+        organization_user = OrganizationUser.find_by user_id: current_user.id, organization_id: current_organization.id
+        respond_to do |format|
+          format.html
+          format.json { render json: InterviewsDatatable.new(view_context, current_organization, '', organization_user, true) }
+        end
       end
     end
 
@@ -38,19 +80,41 @@ module Interviews
 
     # GET /interviews/new
     def new
-      authorize! :manage, current_organization
+      authorize! :manage, Interviews::Interview
       @interview = Interviews::Interview.new
-      OhmsBreadcrumbPresenter.new(@interview, view_context).breadcrumb_manager("edit",@interview)
+      OhmsBreadcrumbPresenter.new(@interview, view_context).breadcrumb_manager('edit', @interview)
+      thesaurus_settings = ::Thesaurus::ThesaurusSetting.where(organization_id: current_organization.id, is_global: true, thesaurus_type: 'record').try(:first)
+      thesaurus_keys = thesaurus_settings.present? ? Thesaurus::ThesaurusTerms.where(thesaurus_information_id: thesaurus_settings.thesaurus_keywords).sort_by(&:term) : []
+      @keys = get_thesaurus_terms_as_json(thesaurus_keys)
+
+      thesaurus_subs = thesaurus_settings.present? ? Thesaurus::ThesaurusTerms.where(thesaurus_information_id: thesaurus_settings.thesaurus_subjects).sort_by(&:term) : []
+      @subjects = get_thesaurus_terms_as_json(thesaurus_subs)
+      @selected_keyword_ids = []
+      @selected_subjects_ids = []
     end
 
     # GET /interviews/1/edit
     def edit
       authorize! :manage, current_organization
-      OhmsBreadcrumbPresenter.new(@interview, view_context).breadcrumb_manager("edit",@interview)
+      OhmsBreadcrumbPresenter.new(@interview, view_context).breadcrumb_manager('edit', @interview)
+      thesaurus_settings = ::Thesaurus::ThesaurusSetting.where(organization_id: current_organization.id, is_global: true, thesaurus_type: 'record').try(:first)
+      thesaurus_keys = thesaurus_settings.present? ? Thesaurus::ThesaurusTerms.where(thesaurus_information_id: thesaurus_settings.thesaurus_keywords).sort_by(&:term) : []
+      @keys = get_thesaurus_terms_as_json(thesaurus_keys)
+
+      thesaurus_subs = thesaurus_settings.present? ? Thesaurus::ThesaurusTerms.where(thesaurus_information_id: thesaurus_settings.thesaurus_subjects).sort_by(&:term) : []
+      @subjects = get_thesaurus_terms_as_json(thesaurus_subs)
+
+      selected_keyword_ids = @interview[:keywords].present? ? @interview[:keywords] : []
+      selected_keyword_ids = Thesaurus::ThesaurusTerms.where(id: selected_keyword_ids)
+      @selected_keyword_ids = selected_keyword_ids.present? ? get_thesaurus_terms_as_json(selected_keyword_ids) : []
+
+      selected_subjects_ids = @interview[:keywords].present? ? @interview[:subjects] : []
+      selected_subjects_ids = Thesaurus::ThesaurusTerms.where(id: selected_subjects_ids)
+      @selected_subjects_ids = selected_subjects_ids.present? ? get_thesaurus_terms_as_json(selected_subjects_ids) : []
     end
 
     def preview
-      authorize! :manage, current_organization
+      authorize! :manage, Interviews::Interview
     end
 
     # GET /interviews/bulk_edit
@@ -60,7 +124,55 @@ module Interviews
       if params['check_type'] == 'bulk_delete'
         Interviews::Interview.where(id: session[:interview_bulk]).each(&:destroy) if session[:interview_bulk].present?
         respond_to do |format|
-          format.html { redirect_to interviews_managers_path, notice: t('updated_successfully') }
+          format.html { redirect_to ohms_records_path, notice: t('updated_successfully') }
+        end
+      elsif params['check_type'] == 'mark_online'
+        Interviews::Interview.where(id: session[:interview_bulk]).each do |interview|
+          interview.update(record_status: 'Online')
+          interview.reindex
+        end
+        respond_to do |format|
+          format.html { redirect_to ohms_records_path, notice: t('updated_successfully') }
+        end
+      elsif params['check_type'] == 'mark_not_restricted'
+        Interviews::Interview.where(id: session[:interview_bulk]).each do |interview|
+          interview.update(miscellaneous_use_restrictions: false)
+          interview.reindex
+        end
+        respond_to do |format|
+          format.html { redirect_to ohms_records_path, notice: t('updated_successfully') }
+        end
+      elsif params['check_type'] == 'mark_restricted'
+        Interviews::Interview.where(id: session[:interview_bulk]).each do |interview|
+          interview.update(miscellaneous_use_restrictions: true)
+          interview.reindex
+        end
+        respond_to do |format|
+          format.html { redirect_to ohms_records_path, notice: t('updated_successfully') }
+        end
+      elsif params['check_type'] == 'mark_ofline'
+        Interviews::Interview.where(id: session[:interview_bulk]).each do |interview|
+          interview.update(record_status: 'Offline')
+          interview.reindex
+        end
+        respond_to do |format|
+          format.html { redirect_to ohms_records_path, notice: t('updated_successfully') }
+        end
+      elsif params['check_type'] == 'ohms_assigned_users'
+        if params[:assigned_users].present?
+          user_id = params[:assigned_users]
+
+          Interviews::Interview.where(id: session[:interview_bulk]).each do |interview|
+            interview.update(ohms_assigned_user_id: user_id)
+            interview.reindex
+          end
+          respond_to do |format|
+            format.html { redirect_to ohms_records_path, notice: t('updated_successfully') }
+          end
+        else
+          respond_to do |format|
+            format.html { redirect_to ohms_records_path, notice: t('error_update_again') }
+          end
         end
       elsif params['check_type'] == 'download_xml'
         self.tmp_user_folder = "tmp/archive_#{current_user.id}_#{Time.now.to_i}"
@@ -74,7 +186,7 @@ module Interviews
             doc = Nokogiri::XML(export_text.to_xml)
             error_messages = xml_validation(doc)
             unless error_messages.any?
-              dos_xml << { xml: export_text.to_xml, title: interview.title, id: interview.id, ohms_xml_filename: interview.miscellaneous_ohms_xml_filename }
+              dos_xml << { xml: export_text.to_xml, title: interview.title, id: interview.id, ohms_xml_filename: interview.miscellaneous_ohms_xml_filename.gsub(/\s+/, '_') }
             end
           end
         end
@@ -82,9 +194,7 @@ module Interviews
         if dos_xml.present?
           dos_xml.each do |single_dos_xml|
             file_name = single_dos_xml[:ohms_xml_filename].present? ? single_dos_xml[:ohms_xml_filename] : 'interview' + single_dos_xml[:id].to_s + '.xml'
-            File.open(File.join(tmp_user_folder, file_name), 'wb') do |file|
-              file.write(single_dos_xml[:xml])
-            end
+            File.binwrite(File.join(tmp_user_folder, file_name), single_dos_xml[:xml])
             dos_xml_files << file_name
           end
         end
@@ -149,7 +259,7 @@ module Interviews
                                  end_time: single_info.end_time.present? ? time_to_duration(single_info.end_time) : '00:00:00' }
         end
       end
-      OhmsBreadcrumbPresenter.new(@interview, view_context).breadcrumb_manager("show",@interview,'sync')
+      OhmsBreadcrumbPresenter.new(@interview, view_context).breadcrumb_manager('show', @interview, 'sync')
       respond_to do |format|
         format.html
         format.json { render json: { response: { data_main: data_main, data_translation: data_translation } } }
@@ -159,7 +269,7 @@ module Interviews
     # GET /interviews/1/export.format
     def export
       authenticate_user! unless params[:viewer] == ENV['PREVIEW_KEY']
-      authorize! :manage, current_organization unless params[:viewer] == ENV['PREVIEW_KEY']
+      authorize! :manage, Interviews::Interview unless params[:viewer] == ENV['PREVIEW_KEY']
       interview = Interviews::Interview.find(params[:id])
       export_text = Aviary::ExportOhmsInterviewXml.new.export(interview)
       doc = Nokogiri::XML(export_text.to_xml)
@@ -167,14 +277,14 @@ module Interviews
 
       if error_messages.any?
         respond_to do |format|
-          format.any { redirect_to interviews_managers_path, notice: 'Something went wrong. Please try again later.' }
+          format.any { redirect_to ohms_records_path, notice: 'Something went wrong. Please try again later.' }
         end
       else
-        file_name = interview.miscellaneous_ohms_xml_filename.empty? ? interview.title : interview.miscellaneous_ohms_xml_filename
+        file_name = interview.miscellaneous_ohms_xml_filename.empty? ? interview.title : interview.miscellaneous_ohms_xml_filename.gsub(/\s+/, '_')
 
         respond_to do |format|
           format.xml { send_data(export_text.to_xml, filename: "#{file_name}.xml") }
-          format.any { redirect_to interviews_managers_path, notice: 'Not a valid URL.' }
+          format.any { redirect_to ohms_records_path, notice: 'Not a valid URL.' }
         end
       end
     end
@@ -182,12 +292,12 @@ module Interviews
     # POST /interviews
     # POST /interviews.json
     def create
-      authorize! :manage, current_organization
+      authorize! :manage, Interviews::Interview
       @interview = Interviews::Interview.new(interview_params)
       @interview.organization = current_organization
       respond_to do |format|
         if @interview.save
-          format.html { redirect_to interviews_managers_path, notice: 'Interview was successfully created.' }
+          format.html { redirect_to ohms_records_path, notice: 'Interview was successfully created.' }
           format.json { render :show, status: :created, location: @interview }
         else
           format.html { render :new }
@@ -199,10 +309,10 @@ module Interviews
     # PATCH/PUT /interviews/1
     # PATCH/PUT /interviews/1.json
     def update
-      authorize! :manage, current_organization
+      authorize! :manage, Interviews::Interview
       respond_to do |format|
         if @interview.update(interview_params)
-          format.html { redirect_to interviews_managers_path, notice: 'Interview was successfully updated.' }
+          format.html { redirect_to ohms_records_path, notice: 'Interview was successfully updated.' }
           format.json { render :show, status: :ok, location: @interview }
         else
           format.html { render :edit }
@@ -214,16 +324,16 @@ module Interviews
     # DELETE /interviews/1
     # DELETE /interviews/1.json
     def destroy
-      authorize! :manage, current_organization
+      authorize! :manage, Interviews::Interview
       @interview.destroy
       respond_to do |format|
-        format.html { redirect_to interviews_managers_path, notice: 'Interview was successfully destroyed.' }
+        format.html { redirect_to ohms_records_path, notice: 'Interview was successfully destroyed.' }
         format.json { head :no_content }
       end
     end
 
     def update_column_info
-      authorize! :manage, current_organization
+      authorize! :manage, Interviews::Interview
       search_columns = {}
       display_columns = { 'number_of_column_fixed' => 0, 'columns_status' => {} }
       respond_to do |format|
@@ -246,7 +356,7 @@ module Interviews
     end
 
     def import_metadata_xml
-      authorize! :manage, current_organization
+      authorize! :manage, Interviews::Interview
       file_data = params[:importXML]
       response_body = {}
       file_data.each do |data|
@@ -269,6 +379,21 @@ module Interviews
       render json: response_body
     end
 
+    def ohms_assignments
+      authorize! :manage, current_organization
+      user_id = params[:user_id]
+      interview_id = params[:interview_id]
+      interview = Interview.find(interview_id)
+      msg = if interview.update(ohms_assigned_user_id: user_id)
+              { success: true, message: t('updated_successfully') }
+            else
+              { success: false, message: t('error_update') }
+            end
+      respond_to do |format|
+        format.json { render json: msg, status: :accepted }
+      end
+    end
+
     private
 
     # Use callbacks to share common setup or constraints between actions.
@@ -278,11 +403,32 @@ module Interviews
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def interview_params
+      params[:interviews_interview][:keywords] = params[:keywords] if params[:keywords].present?
+      params[:interviews_interview][:subjects] = params[:subjects] if params[:subjects].present?
       params.require(:interviews_interview).permit(:title, :accession_number, :interview_date, :date_non_preferred_format, :collection_id, :collection_name, :collection_link, :series_id, :series, :series_link,
                                                    :summary, :thesaurus_keywords, :thesaurus_subjects, :thesaurus_titles, :transcript_sync_data, :transcript_sync_data_translation, :media_format, :media_host, :media_url,
                                                    :media_duration, :media_filename, :media_type, :right_statement, :usage_statement, :acknowledgment, :language_info, :include_language, :language_for_translation, :miscellaneous_cms_record_id,
                                                    :miscellaneous_ohms_xml_filename, :miscellaneous_use_restrictions, :miscellaneous_sync_url, :miscellaneous_user_notes, :interview_status, :status, :avalon_target_domain, :metadata_status,
                                                    :embed_code, :media_host_account_id, :media_host_player_id, :media_host_item_id, interviewee: [], interviewer: [], keywords: [], subjects: [], format_info: [])
+    end
+
+    def ohms_configuration_params
+      params.require(:ohms_configuration).permit(:configuration)
+    end
+
+    def get_thesaurus_terms_as_json(thesauru_terms)
+      keys = []
+      i = 0
+      if thesauru_terms.present?
+        thesauru_terms.each do |thesaurus|
+          keys << {
+            id: thesaurus.id,
+            name: thesaurus.term
+          }
+          i += 1
+        end
+      end
+      keys.to_json
     end
   end
 end
