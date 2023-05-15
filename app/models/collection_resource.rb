@@ -390,6 +390,7 @@ class CollectionResource < ApplicationRecord
     solr_q_condition = '*:*'
     complex_phrase_def_type = false
     fq_filters = ' document_type_ss:collection_resource  '
+    sort_column = sort_column.sub(/_(ss|sms)$/, '_scis')
     if q.present? && q.match(/(\w+\.)+\w+(?=\s|$)/).present?
       # for this kind of pattern (hvt.1021.232)
       solr_q_condition = "keywords:\"#{q}\""
