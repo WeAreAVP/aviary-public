@@ -67,7 +67,7 @@ module ApplicationHelper
   end
 
   def clean_uri(query)
-    query.to_s.gsub(%r{[/?!*'();:@&=+\]\[$,/?%# ]}, '')
+    query.to_s.gsub(%r{[/?!*'();:@&=+\]\[$,%# ]}, '')
   rescue StandardError
     ''
   end
@@ -227,7 +227,7 @@ module ApplicationHelper
   end
 
   def generate_random_password
-    OpenSSL::Digest::SHA256.new.hexdigest(SecureRandom.hex(8)) + '@AvIry'
+    OpenSSL::Digest.new('SHA256').hexdigest(SecureRandom.hex(8)) + '@AvIry'
   end
 
   def nunncenter_ohms_xsd
@@ -248,7 +248,7 @@ module ApplicationHelper
     raw_params.to_json
   end
 
-  def check_valid_array(value, attribute)
+  def check_valid_array(value, attribute, length = 50)
     value_current = 'none'
     return value_current unless value.present?
     value_current = if value.class == Array
@@ -267,7 +267,13 @@ module ApplicationHelper
                     else
                       value
                     end
-    %w(title_ss collection_title).include?(attribute) ? strip_tags(value_current.to_s.strip).gsub('::', ' ') : truncate(strip_tags(value_current.to_s.strip).gsub('::', ' '), length: 50)
+    if %w(title_ss collection_title).include?(attribute)
+      strip_tags(value_current.to_s.strip).gsub('::', ' ')
+    elsif length > 50
+      "<div class='interview_td #{attribute}'>#{truncate(strip_tags(value_current.to_s.strip).gsub('::', ' '), length: length)}</div>"
+    else
+      truncate(strip_tags(value_current.to_s.strip).gsub('::', ' '), length: length)
+    end
   end
 
   def lock_image(classes = '')
@@ -275,7 +281,7 @@ module ApplicationHelper
   end
 
   def key_hash_manager(string)
-    key = OpenSSL::Digest::SHA256.new.hexdigest(string)
+    key = OpenSSL::Digest.new('SHA256').hexdigest(string)
     %w[ɷ ʇ ʊ ʚ ʎ ʚ ʛ ɸ ʝ ʇ].each_with_index { |index, single_character| key = key.gsub(single_character.to_s, index) }
     key
   end

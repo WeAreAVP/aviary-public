@@ -8,13 +8,18 @@
     <main>
     <div class="heading-holder table-head mt-2">
         <div class="row">
-          <div class="col-md-12">
+          <div class="col-md-6">
             <div class="d-flex align-items-center">
               <a id="back-to-search-btn" class="collection_resource_edit_title" >
                 <span class="fa fa-angle-left "></span> <small class="mx-3">Back to <%= @file_transcript.interview.title %> </small>
               </a>
               <h1 class="h3 text-left m-0"> <%= @file_transcript.interview.title %> - Edit Transcript </h1>
             </div>          
+          </div>
+          <div class="col-md-6">
+            <% if @interview.id.present? %>
+            <%= render partial: 'shared/ohms/buttons', locals: { interview: @interview } %>
+            <% end %>
           </div>
         </div>
       </div>

@@ -83,12 +83,12 @@ class ResourcesListingDatatable < ApplicationDatatable
                           data-access='#{access_ss}' data-id='#{resource['id_is']}' class='btn-sm btn-success add_to_resource_group'>Add</a>"
                 else
                   links_set = '<a href="' + collection_collection_resource_path(resource['collection_id_is'], resource['id_is']) +
-                              '"class="btn-sm btn-default">View</a>&nbsp;&nbsp;'
+                              '"class="btn-sm btn-default hidden_focus_btn" data-id="collection_resource_view_' + resource['id_is'].to_s + '">View</a>&nbsp;&nbsp;'
                   links_set += '<a href="' + edit_collection_collection_resource_path(collection_id: resource['collection_id_is'], id: resource['id_is']) +
-                               '"class="btn-sm btn-success">Edit</a>&nbsp;&nbsp;'
+                               '"class="btn-sm btn-success hidden_focus_btn" data-id="collection_resource_edit_' + resource['id_is'].to_s + '">Edit</a>&nbsp;&nbsp;'
                   if CollectionResource.where(id: resource['id_is']).present?
                     if can? :destroy, CollectionResource.find(resource['id_is'])
-                      links_set += "<a href='javascript://' data-name='#{strip_tags(resource['title_ss'].to_s)}' data-url='#{collection_resource_path(resource['id_is'])}' class='btn-sm btn-danger resource_delete' >Delete</a>"
+                      links_set += "<a href='javascript://' data-name='#{strip_tags(resource['title_ss'].to_s)}' data-url='#{collection_resource_path(resource['id_is'])}' class='btn-sm btn-danger resource_delete hidden_focus_btn' data-id='collection_resource_delete_" + resource['id_is'].to_s + "' >Delete</a>"
                     end
                   end
                   links_set

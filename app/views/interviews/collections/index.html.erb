@@ -1,0 +1,346 @@
+<div id="main_container" class="container-fluid">
+  <div class="main_contain">
+    <main>
+      <div class="text-headline jumbotron">
+        <div class="heading-holder table-head">
+          <div class="row">
+            <div class="col-md-6"><h1>OHMS Collections</h1></div>
+            <div class="col-md-6 d-none">
+
+              <div class="dropdown float-right  ml-2 ">
+                <button type="button" class="btn mr-2 btn-outline-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Add OHMS Record
+                </button>
+                <div class="dropdown-menu dropdown-menu-right">
+                  <%= link_to 'Add Manually', ohms_records_new_path, class: 'dropdown-item' %>
+                  <button class="dropdown-item import-xml-resource-columns-btn" data-target=".manage-interview-import-xml-modal" data-toggle="modal">Import XML or CSV</button>
+                </div>
+              </div>
+
+              <div class="dropdown float-right  ml-2 ">
+                <button type="button" class="btn mr-2 btn-outline-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Table Options
+                </button>
+                <div class="dropdown-menu dropdown-menu-right">
+                  <button class="dropdown-item manage-resource-columns-btn" data-target=".manage-interview-column-modal" data-toggle="modal">
+                    Manage Table
+                  </button>
+                  <button class="dropdown-item bluk-edit-btn">Bulk Edit Options</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="data-table collections-datatable">
+        <%= content_tag :table, role: :datatable, class: ["table", "table-striped", 'table-bordered'], id: 'interviews_data_table', data: { url: listing_collections_path(format: :json) } do %>
+          <thead>
+          <tr>
+            <th>
+              <input type="checkbox" class="select_all_checkbox_interview" data-url="<%= bulk_resource_list_interviews_managers_path %>" data-bulk_delete="<%= fetch_bulk_edit_resource_list_collections_path %>"/>
+            </th>
+            <th>Collection Name</th>
+            <th>Collection ID</th>
+            <th>Series ID</th>
+            <th>Total Resources</th>
+            <th>Total Complete</th>
+            <th>Total Online</th>
+            <th>Action</th>
+          </tr>
+          </thead>
+          <tbody></tbody>
+        <% end %>
+      </div>
+    </main>
+  </div>
+</div>
+<div class="modal fade manage-interview-column-modal" data-url="<%= update_column_info_interviews_managers_path %>" id="manage_resource_columns_modal" tabindex="-1" role="dialog" aria-labelledby="ipPopupLabel" aria-hidden="true">
+  <div class="modal-lg modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title h5">Manage Table </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="upload-main" id='update_sort_information' data-url="<%= update_column_info_interviews_managers_path %>">
+
+          <ul class="nav nav-tabs " id="myTab" role="tablist">
+            <li class="nav-item">
+              <a class="nav-link active show" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Manage
+                Table Display Columns</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link " id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">
+                Manage Table Search Columns</a>
+            </li>
+          </ul>
+          <div class="tab-content" id="myTabContent">
+            <div class="tab-pane fade active show" id="home" role="tabpanel" aria-labelledby="home-tab">
+              <div class="row">
+                <div class="col-12">
+                  <h2 class="mt-2 font-weight-bold font-size-16px"> Search Fields Status:
+                    <span class="btn btn-light font-size-13px mb-5px float-right font-weight-bold uncheck_all_fields " data-search-status="false" data-search-field="all_fields_identifier" id="uncheck_all_fields"> Disable all</span>
+                    <span class="btn btn-light mb-5px float-right mr-5px font-size-13px font-weight-bold check_all_fields" data-search-status="true" data-search-field="all_fields_identifier" id="check_all_fields">Enable all</span>
+                  </h2>
+                  <ul id="sortable_resource_columns" class="list-group w-100" style="max-height: 400px;overflow-y: scroll;">
+                    <% if @display_columns.present? %>
+                      <% JSON.parse(@display_columns)['columns_status'].each_with_index do |(_field, status), _index| %>
+                        <% field_status = status['status'] %>
+                        <% field_key = status['value'] %>
+                        <li id="<%= field_key %>" class="sortable-li">
+                          <i class="fa fa-ellipsis-v text-muted handle pr-10px pl-10px"></i>
+                          <div class="form-check m-0 d-inline-block">
+                            <label for="<%= field_key %>_status">
+                              <input id="<%= field_key %>_status" class=" all_fields_identifier ml-5px" type="checkbox" <%= field_status.to_s.to_boolean? ? 'checked' : '' %>/>
+                              <%= InterviewsHelper.display_field_title_interview(field_key) %>
+                              <span class="icon-check"></span></label>
+                          </div>
+                          <th></th>
+                        </li>
+                      <% end %>
+                    <% end %>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+              <div class="row">
+                <div class="col-12">
+                  <h1 class="mt-4 font-weight-bold font-size-16px"> Search Fields Status:
+                    <span class="btn btn-light font-size-13px mb-5px float-right font-weight-bold uncheck_all_fields" data-search-status="false" data-search-field="all_fields_search_identifier" id="uncheck_all_fields"> Disable all</span>
+                    <span class="btn btn-light mb-5px float-right mr-5px font-size-13px font-weight-bold check_all_fields" data-search-status="true" data-search-field="all_fields_search_identifier" id="check_all_fields">Enable all</span>
+                  </h1>
+                  <% if @search_columns.present? %>
+                    <ul id="resource_search_columns" class="list-group w-100" style="max-height: 400px;overflow-y: scroll;">
+                      <% JSON.parse(@search_columns).each_with_index do |(_field, status), _index| %>
+                        <% field_status = status['status'] %>
+                        <% field_key = status['value'] %>
+                        <li id="<%= field_key %>" class="sortable-li">
+                          <div class="form-check m-0 d-inline-block">
+                            <label>
+                              <input id="<%= field_key %>" data-value='<%= field_key %>' class=" all_fields_search_identifier ml-5px" type="checkbox" <%= field_status.to_s.to_boolean? ? 'checked' : '' %>/>
+                              <%= InterviewsHelper.display_field_title_interview(field_key) %>
+                              <span class="icon-check"></span>
+                            </label>
+                          </div>
+                        </li>
+                      <% end %>
+                    </ul>
+                  <% end %>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="modal-footer" id="modalPopupFooter">
+        <a href="javascript://" class="btn btn-primary" id="update_column_status">Update</a>
+        <button type="button" class="btn btn-light" data-dismiss="modal">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade bd-example-modal-lg bulk-edit-review-modal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
+  <div class="modal-dialog modal-xl" role="document">
+
+    <div class="modal-content ">
+
+      <div class="modal-header">
+        <h1 class="font-weight-bold modal-title" style="font-size: 21px;">Bulk Edit Review</h1>
+      </div>
+      <div class="modal-body">
+        <h1 class="alert-danger font-size-21px text-center mb-20px p-2 "> Are you sure you want to
+          <span id="confirm_msg_pop_bulk"> export the interviews listed below as XML.</span>? </h1>
+        <table class="table table-hover review_resources_file_bulk table-sm " style="width: 100%;">
+          <thead>
+          <tr>
+            <td class="font-weight-bold"> ID</td>
+            <td class="font-weight-bold"> Title </td>
+          </tr>
+          </thead>
+          <tbody class="bulk-edit-review-content-resource-file">
+
+          </tbody>
+        </table>
+        <input id="token" name="token" type="hidden" value="" />
+        <%= hidden_field_tag "check_type", '', class: 'resource-file-check-type' %>
+        <%= hidden_field_tag "access_type", '', class: 'resource-file-access-type' %>
+        <%= hidden_field_tag "ids", '', class: 'resource-file-ids' %>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button class="btn btn-primary bulk-edit-do-it" onclick="$('#bulk_edit_form').submit();" data-url="<%= bulk_interview_edit_interviews_managers_path %>">Apply</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade bulk-edit-resource-file-modal bulk-edit-modal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <%= form_tag bulk_interview_edit_interviews_managers_path, {id: 'bulk_edit_form'} do %>
+        <div class="modal-header">
+          <h1 class="font-weight-bold modal-title" style="font-size: 21px;">Bulk Edit</h1>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <input value="assign_to_collection" type="hidden" name="bulk_edit[type_of_bulk_operation]" id="bulk_edit_type_of_bulk_operation">
+            <div class="col-md-12">
+              <div class="row">
+                <div class="col-12 float-left">
+                  <select class="bulk_operation_interviews" name="check_type">
+                    <option value="download_xml">Export as XML</option>
+                    <option value="bulk_delete">Bulk Delete</option>
+                    <option value="mark_online">Mark records online</option>
+                    <option value="mark_ofline">Mark records offline</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <input type="hidden" name='action' value="bulk_edit_operation"/>
+            <div class="col-md-12 mt-20px">
+              <div class="bulk_delete_content operation_content d-none">
+                <h1 class="font-size-18px text-left"> Delete selected interviews.</h1>
+              </div>
+
+              <div class="export_xml_content operation_content ">
+                <h1 class="font-size-18px text-left"> Export selected interviews as XML.</h1>
+              </div>
+
+            </div>
+            <div class="col-12 mt-20px">
+              <span id="number_of_bulk_selected_popup" class="float-right"></span>
+            </div>
+          </div>
+        </div>
+      <% end %>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button class="btn btn-primary bulk-edit-submit" data-url="<%= fetch_bulk_edit_resource_list_collections_path %>" onclick="$('.bulk-edit-review-modal').modal()" data-dismiss="modal">Apply</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade manage-interview-import-xml-modal" id="import_xml_modal" tabindex="-1" role="dialog" aria-labelledby="ipPopupLabel" aria-hidden="true">
+  <div class="modal-lg modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title h5">Import OHMS Interview XML or CSV</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="single-upload">
+          <ul class="import_csv_note">
+            <li class="text-muted mb-2 font-size-14px">Select one or more valid OHMS XML or CSV files using the box below to upload.</li>
+            </li>
+            <li class="text-muted mb-2 font-size-14px">Download a CSV import template <a href="/csvs/OHMS_Import_Template.csv" download>here</a></li>
+          </ul>
+
+                <div class="col-md-12 padding-left-30">
+                  <label for="status_complete" class="">
+                    <input type="checkbox" value="" id="status_complete" name="status_complete"> <strong class="text-sm-left">Automatically Mark Imported Records as “Completed”</strong>
+                  </label>
+                  <small class="form-text text-muted mb-3"><br/>Metadata, Index, and Transcript will be marked as completed.<br/>If no transcript is present, the "No Transcript" checkbox will be checked.</small>
+                </div>
+           <div id="progress_import" class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="background-color: #ffffff;">
+            <div class="progress-bar progress-bar-success" style="width:0%;"></div>
+          </div>   
+          <div class="import-file-confirmation" style="display: none;">
+            <p class="text-muted mb-4">This process will create a new interview record for each valid OHMS XML or CSV file you uploaded.</p>
+            <p class="text-muted">Do you want to proceed?
+            </p>
+          </div>
+
+          <div class="import-xml-file-section">
+              <span class="fileinput-button single-upload-file-cus text-center">
+                  Browse and upload XML or CSV files
+                  <input type="file" name="importXML[]" id="import_xml_file" accept=".csv, text/xml" data-url="<%= import_metadata_xml_interviews_managers_path %>" multiple/>
+              </span>              
+            <span id="import_file_name"></span>
+          </div>
+
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" id="import_xml_btn">Import</button>
+        <button type="button" class="btn btn-light close-import-popup" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade manage-interview-export-sync-modal" id="export_sync_modal" tabindex="-1" role="dialog" aria-labelledby="ipPopupLabel" aria-hidden="true">
+  <div class="modal-lg modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title h5">Sync with Aviary Resource</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form method="post" class="export_sync_form" id="export_sync_form" action="">
+        <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <div class="field-title">
+                  <label for="collection_id">Collection</label>
+                </div>
+                <%= select_tag 'collection_id', options_from_collection_for_select(@collections,'id','title',@collections&.first&.id), required: true %>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <div class="field-title">
+                  <label for="title">Display Title</label>
+                </div>
+                <%= text_field_tag "title", "", class: 'form-control', required: true %>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <div class="field-title">
+                  <label for="is_featured">Featured</label>
+                </div>
+                <%= select_tag 'is_featured', options_for_select([['Yes', true], ['No', false]], false), required: true %>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <div class="field-title">
+                  <label for="access">Access</label>
+                </div>
+                <%= select_tag 'access', options_for_select(CollectionResource.accesses.map { |key, value| [key.split('_').second.humanize, value] }) %>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <%= submit_tag 'Sync', class: 'btn btn-primary ' %>
+          <button type="button" class="btn btn-light close-export-popup" data-dismiss="modal">Close</button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+    let interviews_manager = new InterviewManager();
+    <% if params[:e].present? %>
+      interviews_manager.interview_transcript_id = '<%= params[:interview_transcript_id].present? ? params[:interview_transcript_id] : 0 %>'
+    <% end %>
+    $(function () {
+        interviews_manager.initializeTable();
+
+    });
+</script>

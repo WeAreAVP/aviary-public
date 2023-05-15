@@ -10,7 +10,7 @@
           <% end %>
         </strong>
         <% if current_user_is_org_user?(organization) && from_action == 'listing_for_add_to_playlist' %>
-            <a href="javascript:void(0);" class="add_resource_to_playlist d-flex btn btn-outline-light text-dark ml-auto align-items-center" data-url="<%= playlist_add_to_resource_url(playlist_id: playlist.id, collection_resource_id: collection_resource.id) %>"
+            <a href="javascript:void(0);" class="add_resource_to_playlist d-flex btn btn-light text-dark ml-auto align-items-center" data-url="<%= playlist_add_to_resource_url(playlist_id: playlist.id, collection_resource_id: collection_resource.id) %>"
                data-playlistid="<%= playlist.id %>" data-resourceid="<%= collection_resource.id %>">
               Add
               <div id="playlist_loader_<%= playlist.id %>" class="ml-1 playlist_loader d-none float-left">
@@ -23,7 +23,7 @@
             </a>
 
           <% if playlist.try(:playlist_resources).present? && !playlist.playlist_resources.size.zero? %>
-            <a href="<%= playlist_edit_path(playlist.id) %>" class="add_resource_to_playlist_specific btn btn-outline-light text-dark ml-2 align-items-center">
+            <a href="<%= playlist_edit_path(playlist.id) %>" class="add_resource_to_playlist_specific btn btn-light text-dark ml-2 align-items-center">
               Select specific media files
             </a>
           <% else %>

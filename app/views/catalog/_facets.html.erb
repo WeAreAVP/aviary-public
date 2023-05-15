@@ -31,9 +31,20 @@
             <%== add_facet_params_to_form(session[:search_facets]) %>
 
             <% if search_fields.length > 1 %>
+            <% 
+            selected = (params[:type_of_field_selector_single].present? ? params[:type_of_field_selector_single] : "")
+            %>
               <label for="search_field" class="sr-only"><%= t('blacklight.search.form.search_field.label') %></label>
-
-              <%= select_tag(:type_of_field_selector_single, options_for_select(search_fields, h(params[:search_field])), title: t('blacklight.search.form.search_field.title'), id: "type_of_field_selector_single", class: "type_of_field_selector_single mt-2") %>
+<div id="custom-select-search-dropdown" class="dropdown custom-select-search mt-2">
+                <button class="btn dropdown-toggle custom-select-search-dropdown-btn" type="button" data-toggle="dropdown" aria-expanded="true" aria-controls="id_academics_menu"><span class="type_of_field_selector_single_dropdown_label"><%= selected.blank? ? search_fields.try(:first).try(:first) : search_fields.select {|e| e[1] == selected}.try(:first).try(:first) %></span>
+                <span class="caret"></span></button>
+                <div id="id_academics_menu" class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                  <% search_fields.each_with_index do |search_field, search_index|%>
+                    <a class="type_of_field_selector_single_dropdown dropdown-item" href="#" data-value="<%=search_field[1]%>"  data-name="<%=search_field[0]%>" data-select="<%=(search_index.zero? && selected.blank? ? true : selected == search_field[1] ? true : false )%>" ><%=search_field[0]%></a>
+                  <% end %>
+                </div>
+              </div>
+              <%= select_tag(:type_of_field_selector_single, options_for_select(search_fields, h(params[:search_field])), title: t('blacklight.search.form.search_field.title'), id: "type_of_field_selector_single", class: "type_of_field_selector_single mt-2 d-none") %>
             <% elsif search_fields.length == 1 %>
             <% end %>
             <input type="text" class="form-control search_field_selector_single form-control w-100 mt-2" data_identifier="" placeholder="Search Aviary" value="<%= AdvanceSearchHelper::advance_search_query_only(session[:searched_keywords], false, session['solr_params'], stopwords) %>">
@@ -67,17 +78,21 @@
   </div>
 
 </div>
-<%= render partial: 'shared/search_info', locals: {from: 'search_page', classes: 'float-right ml-2 '} %>
-<a class="btn-adv simple_option_search float-right text-white font-size-13px ml-2 <%= params[:search_type] == 'advance' ? '' : 'd-none' %>" data-type="simple" href="javascript:void(0)">
-  Simple Search </a>
-<a class="btn-adv advance_option_search <%= params[:search_type] == 'advance' ? 'd-none' : '' %> float-right text-white font-size-13px" data-type="advance" href="javascript:void(0)">Advanced
-  Search </a>
-<span class="simple_start_over  <%= params[:search_type] == 'advance' ? 'd-none' : '' %> float-right" style="margin-top: -4px;"></span>
-<a class="btn-adv bold font-weight-bold simple_start_over <%= params[:search_type] == 'advance' ? 'd-none' : '' %> float-right text-white font-size-13px mx-2" href="<%= add_facet_params_to_url(search_catalog_url(q: '', search_field: 'all_fields', utf8: '✓'), session[:search_facets]) %>">Clear
-  Search Terms </a>
-<span class="simple_start_over  <%= params[:search_type] == 'advance' ? 'd-none' : '' %> float-right" style="margin-top: -4px;"> </span>
-<a class='btn-adv theme_font_color float-right text-white font-size-13px font-weight-bold' href="<%= search_catalog_url(q: '', search_field: 'all_fields', utf8: '✓', start_over_search: true) %>">
-  Start Over </a>
+<div class="pull-right">
+  <% if user_signed_in? %>
+    <%= link_to 'Save Search', new_saved_search_path, class: 'btn-adv theme_font_color float-left text-white font-size-13px font-weight-bold mr-md-2 mr-sm-1', id: 'saved_search', remote: true %>
+  <% end %>
+  <span class="simple_start_over  <%= params[:search_type] == 'advance' ? 'd-none' : '' %> float-left" style="margin-top: -4px;"> </span>
+  <a class='btn-adv theme_font_color float-left text-white font-size-13px font-weight-bold' href="<%= search_catalog_url(q: '', search_field: 'all_fields', utf8: '✓', start_over_search: true) %>">
+    Start Over </a>
 
-
+  <span class="simple_start_over  <%= params[:search_type] == 'advance' ? 'd-none' : '' %> float-left" style="margin-top: -4px;"></span>
+  <a class="btn-adv bold font-weight-bold simple_start_over <%= params[:search_type] == 'advance' ? 'd-none' : '' %> float-left text-white font-size-13px mx-md-2 mx-xs-0" href="<%= add_facet_params_to_url(search_catalog_url(q: '', search_field: 'all_fields', utf8: '✓'), session[:search_facets]) %>">Clear
+    Search Terms </a>
+  <a class="btn-adv advance_option_search <%= params[:search_type] == 'advance' ? 'd-none' : '' %> float-left text-white font-size-13px" data-type="advance" href="javascript:void(0)">Advanced
+    Search </a>
+  <a class="btn-adv simple_option_search float-left text-white font-size-13px ml-2 <%= params[:search_type] == 'advance' ? '' : 'd-none' %>" data-type="simple" href="javascript:void(0)">
+    Simple Search </a>
+  <%= render partial: 'shared/search_info', locals: {from: 'search_page', classes: ' ml-md-2 ml-lg-2 '} %>
+</div>
 <div class="clearfix"></div>

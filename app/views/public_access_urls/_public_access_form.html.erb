@@ -1,5 +1,11 @@
 <div class="public_access custom_form">
-
+  <div class='shareModal'>
+    <div class="content p-0">
+      <span class="public-access-url text-info w-100">
+      <b>Warning:</b> Anyone on the Internet with a Resource Public Access link will be able to view this resource, its media files, indexes, transcripts, and supplemental files.
+      </span>
+    </div>
+  </div>
   <input type='hidden' data-resoruceid=<%= collection_resource.id %> data-url='<%= encrypted_info_url %>' id='url_encryption' class='form-control'/>
 
   <% if @public_access_url.present? %>
@@ -11,7 +17,7 @@
       <div class="form-group">
         <% url_present = collection_resource.public_access_urls.present? && collection_resource.public_access_urls.ever_green_url.present? %>
         <div class="field-title"><label>Evergreen URL</label></div>
-        <textarea readonly class="form-control share_value float-left " id="ever_green_url" rows="2" placeholder="Evergreen Access URL"><%= url_present ? URI.unescape(collection_resource.public_access_urls.ever_green_url.first.url) : '' %></textarea>
+        <textarea readonly class="form-control share_value float-left " id="ever_green_url" rows="2" placeholder="Evergreen Access URL"><%= url_present ? CGI.unescape(collection_resource.public_access_urls.ever_green_url.first.url) : '' %></textarea>
       </div>
       <div class="w-100">
         <a class="btn btn-outline-primary generate-link-green-url mt-3" data-type="ever_green_url">
@@ -29,7 +35,7 @@
     <div class="limited_access_url public_access_tab mb-3">
       <div class="form-group">
         <div class="field-title">Limited Access URL</div>
-        <textarea readonly class="form-control share_value float-left " id="public_access_url" rows="2" placeholder="Public Limited Access URL"><%== @public_access_url.present? && @public_access_url.url.present? ? URI.unescape(@public_access_url.url) : '' %></textarea>
+        <textarea readonly class="form-control share_value float-left " id="public_access_url" rows="2" placeholder="Public Limited Access URL"><%== @public_access_url.present? && @public_access_url.url.present? ? CGI.unescape(@public_access_url.url) : '' %></textarea>
       </div>
       <div class="w-100">
         <a class="btn btn-outline-primary generate-link mt-3" data-type="limited_access_url">

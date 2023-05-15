@@ -102,6 +102,63 @@ module Aviary
         fields[fields_type.to_sym].delete(field_system_name)
         fields.save
       end
+
+      # This method allow you to query resource fields like an SQL
+      # Currently it only supports '=', '!=' and 'LIKE'
+      # In case of 'LIKE', the match is case insensitive
+      # It supports AND, OR and NOT logical operators
+      # Example:
+      #   org_field_manager = OrganizationFieldManager.new
+      #   org_field_manager.where(organization, "label = Worm Factor 2 OR system_name = publisher AND is_default = false", 'resource_fields')
+      # OR
+      #   org_field_manager.where(organization, "label = Worm Factor 2 OR system_name = publisher AND is_default LIKE %als%", 'resource_fields')
+      def where(organization, filter_statement, fields_type = 'collection_fields')
+        return {} if filter_statement.empty?
+
+        filter_statement = filter_statement.split(/(?<= AND)|(?<= OR)|(?<= NOT)/)
+        matchers = %w[LIKE = !=]
+
+        fields = organization.organization_field.send(fields_type)
+        fields.select do |_name, value|
+          result = true
+          logic = 'AND'
+
+          filter_statement.each do |condition|
+            condition = condition.split(/(?<= = )|(?<= != )|(?<= LIKE )/)
+            condition[1] = condition[1].split(/ (?=AND)| (?=OR)| (?=NOT)/)
+            condition[0] = condition[0].split(' ')
+
+            unless matchers.include?(condition[0][1])
+              raise "Incompatible matcher detected. Only '=', '!=' and 'LIKE' are allowed"
+            end
+
+            current_result = case condition[0][1]
+                             when '='
+                               value[condition[0][0]].to_s == condition[1][0]
+                             when '!='
+                               value[condition[0][0]].to_s != condition[1][0]
+                             when 'LIKE'
+                               value[condition[0][0]].to_s =~ /^#{condition[1][0].gsub('%', '.*')}$/i
+                             end
+
+            result = case logic
+                     when 'AND'
+                       result && current_result
+                     when 'OR'
+                       result || current_result
+                     when 'NOT'
+                       result && !current_result
+                     end
+
+            logic = condition[1][1].present? ? condition[1][1] : 'OR'
+            unless %w[AND OR NOT].include?(logic)
+              raise "Invalid logical operator detected, Only 'AND', 'OR' and 'NOT' are allowed"
+            end
+          end
+
+          result
+        end
+      end
     end
 
     # CollectionFieldManager

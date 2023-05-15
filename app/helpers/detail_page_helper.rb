@@ -96,10 +96,10 @@ module DetailPageHelper
       transcript_count[:total_transcript_wise][transcript_point.file_transcript_id][hash_keyword] += transcript_point_sum
       all_marker_occurrences_point = transcript_point.text.match_all(single_keyword, "transcript_timecode_#{transcript_point.id}")
       all_hits = begin
-                   all_marker_occurrences_annotation.merge(all_marker_occurrences_point) { |_key, a_val, b_val| a_val.merge b_val }.sort.to_h
-                 rescue StandardError
-                   all_marker_occurrences_point
-                 end
+        all_marker_occurrences_annotation.merge(all_marker_occurrences_point) { |_key, a_val, b_val| a_val.merge b_val }.sort.to_h
+      rescue StandardError
+        all_marker_occurrences_point
+      end
       x = 0
       all_hits.each do |_key, single_hit|
         if single_hit.class == Array
@@ -314,9 +314,12 @@ module DetailPageHelper
       counts[query_string] ||= {}
       counts[query_string]['Title'] ||= 0
       [description_search_fields, index_search_fields, transcript_search_fields].reduce([], :concat).each do |values|
-        title = values.to_s.titleize
-        %w[Description Texts Text Search Keywords Subjects Synopsis Subjects Speaker Script Partial Point Body Content].each do |single_word|
-          title = title.sub! single_word, '' if title.include?(single_word)
+        title = values.to_s.sub(/^description_/, '').sub(/_(texts|lms|is|ds|sms|ss)$/, '').sub(/_(search|text|search_|text_)/, '')
+        if current_organization.present?
+          resource_field_settings = current_organization.organization_field.resource_fields
+          title = resource_field_settings[title].present? ? resource_field_settings[title]['label'] : regular_title(title)
+        else
+          title = regular_title(title)
         end
         title = title.strip
         counts[query_string][title.to_s] ||= 0
@@ -341,6 +344,14 @@ module DetailPageHelper
     counts
   end
 
+  def regular_title(title)
+    title = title.titleize
+    %w[Keywords Subjects Synopsis Subjects Speaker Script Partial Point Body Content].each do |single_word|
+      title = title.sub! single_word, '' if title.include?(single_word)
+    end
+    title
+  end
+  
   def show_internal_field?(resource_fields_settings, system_name, current_user_is_org_user)
     current_user_is_org_user || (resource_fields_settings[system_name].present? &&
       !resource_fields_settings[system_name]['is_internal_only'].to_s.to_boolean?)

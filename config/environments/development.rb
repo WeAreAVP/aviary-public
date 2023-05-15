@@ -1,4 +1,4 @@
-require "active_support/core_ext/integer/time"
+require 'active_support/core_ext/integer/time'
 
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
@@ -29,7 +29,7 @@ Rails.application.configure do
 
     config.cache_store = :redis_cache_store, { url: 'redis://localhost:6379/1' }
   end
-  config.session_store :cache_store, key: ENV['SESSION_KEY']  || '_aviary_key' , domain: :all
+  config.session_store :cache_store, key: ENV['SESSION_KEY'] || '_aviary_key', domain: :all
   # Store uploaded files on the local file system (see config/storage.yml for options).
   config.active_storage.service = :local
 
@@ -79,7 +79,7 @@ Rails.application.configure do
 
   # Uncomment if you wish to allow Action Cable access from any origin.
   # config.action_cable.disable_request_forgery_protection = true
-  config.hosts << ".lvh.me"
+  config.hosts << '.lvh.me'
 
   # config.assets.check_precompiled_asset = false
 end

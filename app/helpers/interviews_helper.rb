@@ -27,10 +27,16 @@ module InterviewsHelper
       'OHMS XML Filename'
     when 'miscellaneous_use_restrictions'
       'Use Restrictions'
+    when 'miscellaneous_use_restrictions_bs'
+      'Use Restrictions'
     when 'miscellaneous_sync_url'
       'Alt Sync URL (Legacy Field)'
     when 'miscellaneous_user_notes'
       'User Notes'
+    when 'media_url_texts'
+      'Media URL'
+    when 'ohms_assigned_user_id_is'
+      'Assignments'
     else
       field.to_s.sub('_ss', '').sub('_sms', '').sub('_texts', '').sub('_text', '').sub('_is', '').sub('_bs', '').titleize
     end

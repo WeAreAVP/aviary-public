@@ -157,6 +157,8 @@ module Aviary::SolrIndexer
       type_field = '_lms'
     when 'editor'
       type_field = '_texts'
+    when 'string_ci'
+      type_field = '_scis'
     end
     type_field
   end
@@ -168,23 +170,6 @@ module Aviary::SolrIndexer
   end
 
   def self.date_handler(value)
-    begin
-      value = value.blank? ? '' : value.strip
-      case value.scan(/(?=-)/).count
-      when 0
-        value += '-01-01'
-      when 1
-        value += '-01'
-      end
-      begin
-        Date.parse(value)
-        value = value.to_time.utc.to_i
-      rescue ArgumentError
-        value = nil
-      end
-    rescue ArgumentError
-      value = nil
-    end
-    value
+    Aviary::General.new.date_handler_helper(value)
   end
 end

@@ -1,6 +1,6 @@
 <div id="sub_nav">
   <div class="container-fluid">
-    <nav class="navbar navbar-expand-sm">
+    <nav role="navigation" aria-label="Main menu" class="navbar navbar-expand-sm">
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         Menu
       </button>
@@ -10,9 +10,9 @@
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               <span class="icon-User"></span> Admin Options
             </a>
-            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-              <%= link_to('Manage Users', adminary_users_url(subdomain: false), class: 'dropdown-item') %>
-              <%= link_to('Manage Pending Users', pending_adminary_users_url(subdomain: false), class: 'dropdown-item') %>
+            <div class="dropdown-menu dropdown-left" aria-labelledby="navbarDropdown">
+              <%= link_to('Manage Users', admin_users_url(subdomain: false), class: 'dropdown-item') %>
+              <%= link_to('Manage Pending Users', pending_admin_users_url(subdomain: false), class: 'dropdown-item') %>
             </div>
           </li>
         </ul>

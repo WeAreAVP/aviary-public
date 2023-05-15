@@ -32,6 +32,7 @@
   <%#= javascript_pack_tag 'transcript-bundle' %>
 </head>
 <body class="<%= "#{params[:controller]} #{params[:action]} #{params[:controller]}-#{params[:action]}" %>">
+<div id="skiptocontent" class="skiptocontent" tabindex="1">Skip to main content</div>
 <span class='d-none' id="record_tracking_path" href="<%== record_tracking_path %>"> </span>
 
 <% if !modern_browser?(browser) && cookies[:alert_bypass].blank? %>
@@ -129,10 +130,6 @@
         <a href="<%= root_url + '?update_pop_bypass=true' %>">Go to Homepage</a></p>
     </div>
   </div>
-<% end %>
-
-<% unless params[:embed] == 'true' || params[:action] == 'embed_file' %>
-  <%= render partial: 'shared/accessibility_issue_button' %>
 <% end %>
 </body>
 </html>

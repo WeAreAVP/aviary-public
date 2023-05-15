@@ -1,7 +1,7 @@
-<%if @interview.present? %>
-  <select class="custom-placeholder dont-apply-selectize form-control ml-2 mr-3 index_status_select" name="index_status" data-url="<%= interviews_interview_index_status_update_path(@interview.id) %>" >
-    <% @interview.listing_metadata_index_status.each do | row | %>
-      <option value="<%= row[0] %>" <%= row[0] ==  @interview.index_status.to_s ? "selected" : ""%> ><%= row[1] %></option>
+<% if @interview.present? %>
+  <select class="custom-placeholder dont-apply-selectize form-control ml-2 mr-3 index_status_select" name="index_status" data-url="<%= interviews_interview_index_status_update_path(@interview.id) %>">
+    <% @interview.listing_metadata_index_status.each do |row| %>
+      <option value="<%= row[0] %>" <%= row[0] == @interview.index_status.to_s ? "selected" : "" %> ><%= row[1] %></option>
     <% end %>
   </select>
 <% end %>

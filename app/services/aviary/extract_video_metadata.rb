@@ -39,8 +39,12 @@ module Aviary::ExtractVideoMetadata
       metadata['url'] = video_embed
       metadata['title'] = params[:title].present? ? params[:title] : File.basename(uri.path)
       metadata['duration'] = params[:duration].to_d
-      metadata['thumbnail'] = params[:thumbnail].present? ? params[:thumbnail] : Rails.root.to_s + '/app/assets/images/video.png'
       metadata['content_type'] = Rack::Mime::MIME_TYPES[File.extname(uri.path)].present? ? Rack::Mime::MIME_TYPES[File.extname(uri.path)] : 'video/mp4'
+      metadata['thumbnail'] = if params[:thumbnail].present?
+                                params[:thumbnail]
+                              else
+                                metadata['content_type'].include?('audio') ? "https://#{ENV.fetch('S3_HOST_CDN')}/public/images/audio-default.png" : "https://#{ENV.fetch('S3_HOST_CDN')}/public/images/video-default.png"
+                              end
       metadata
     end
   end
@@ -89,7 +93,7 @@ module Aviary::ExtractVideoMetadata
     end
 
     def url_from_embed(video_embed)
-      regex = %r{https?:\/\/(?:[\w]+\.)*vimeo\.com(?:[\/\w]*\/?)?\/(?<id>[0-9]+)[^\s]*}
+      regex = %r{https?:\/\/(?:\w+\.)*vimeo\.com(?:[\/\w]*\/?)?\/(?<id>[0-9]+)[^\s]*}
       match = regex.match(video_embed)
       return if match.nil?
       return if match.size < 2
@@ -114,18 +118,10 @@ module Aviary::ExtractVideoMetadata
           doc = Nokogiri::HTML(open(video_url, read_timeout: 10))
           metadata['title'] = doc.search('//title')[0].children[0].text
           complex_text = doc.search('//script')[2].children
-          single_line_string = complex_text[0].text.split("\n")
-          valid_metadata = nil
-          single_line_string.each do |line|
-            next if line.blank?
-            begin
-              clean_line = line.split('var config =')[1].split(';')[0]
-              ruby_hash = JSON.parse(clean_line)
-              valid_metadata = ruby_hash
-              break
-            rescue JSON::ParserError
-              next
-            end
+          valid_metadata = parse_html(complex_text, 'var config =')
+          unless valid_metadata.present?
+            complex_text = doc.search('//script')[3].children
+            valid_metadata = parse_html(complex_text, 'window.playerConfig =')
           end
           if valid_metadata.present?
             metadata['title'] = valid_metadata['video']['title']
@@ -138,6 +134,25 @@ module Aviary::ExtractVideoMetadata
       end
       metadata['content_type'] = 'video/vimeo'
       metadata
+    end
+
+    def parse_html(html, splitter)
+      single_line_string = html[0].text.split("\n")
+      valid_metadata = nil
+      single_line_string.each do |line|
+        next if line.blank?
+        begin
+          clean_line = line.split(splitter)[1].split(';')[0]
+          ruby_hash = JSON.parse(clean_line)
+          valid_metadata = ruby_hash
+          break
+        rescue JSON::ParserError
+          next
+        rescue StandardError
+          next
+        end
+      end
+      valid_metadata
     end
   end
 

@@ -10,18 +10,18 @@ module Interviews
     # GET /interview/notes
     # GET /interview/notes.json
     def index
-      authorize! :manage, current_organization
+      authorize! :manage, Interviews::Interview
       interview = Interview.find(params[:id])
       respond_to do |format|
         format.html
-        format.json { render json: { data: interview.interview_notes.reverse_order, color: color(interview) } }
+        format.json { render json: { data: interview.interview_notes, color: color(interview) } }
       end
     end
 
     # POST /interview/notes
     # POST /interview/notes.json
     def create
-      authorize! :manage, current_organization
+      authorize! :manage, Interviews::Interview
       interview = Interview.find(params[:id])
       interview_notes = InterviewNote.new
       interview_notes.interview = interview
@@ -38,7 +38,7 @@ module Interviews
         interview.reindex
         respond_to do |format|
           format.html
-          format.json { render json: { data: interview.interview_notes.reverse_order, color: color(interview) } }
+          format.json { render json: { data: interview.interview_notes, color: color(interview) } }
         end
       end
     end
@@ -46,7 +46,7 @@ module Interviews
     # POST /interview/note/update
     # POST /interview/note/update.json
     def update
-      authorize! :manage, current_organization
+      authorize! :manage, Interviews::Interview
       interview_notes = InterviewNote.find(params[:note_id])
       interview_notes.status = (params[:status].to_i == 1)
       interview_notes.inject_updated_by(current_user)

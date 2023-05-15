@@ -1,0 +1,30 @@
+<div class="modal fade bd-example-modal-lg " id='save_search_form' tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content ">
+      <div class="modal-header">
+        <h2 class="font-weight-bold modal-title font-size-18px">Save Search</h2>
+      </div>
+      <div class="modal-body">
+        <%= form_for @saved_search, url: "#{update ? saved_search_path(@saved_search.id) : saved_searches_path}", remote: true do |form| %>
+          <div class="form-group">
+            <div class="field-title">
+              <%= form.label :title %>
+            </div>
+            <%= form.text_field :title, class: 'form-control' %>
+          </div>
+          <div class="form-group">
+            <div class="field-title">
+              <%= form.label :note %>
+            </div>
+            <%= form.text_area :note, placeholder: 'You can enter up to 500 characters', rows: '3', maxlength: '500', class: 'w-100 text optional request_access_template form-control' %>
+          </div>
+          <input type="hidden" name='saved_search[url]' id="saved_search_url" value="<%= url %>"/>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <%= form.submit "#{update ? 'Update' : 'Save'}", class: 'btn btn-primary' %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

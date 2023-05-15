@@ -26,7 +26,7 @@
           <div class="row">
             <div class="col-md-12">
               <div class="d-flex align-items-center">
-                <a id="back-to-search-btn" class="collection_edit_title" href="<%= (url_for(:back) == "javascript:history.back()" ? interviews_interview_index_path(params[:id]) : url_for(:back)) %>">
+                <a id="back-to-search-btn" class="collection_edit_title" href="<%= (url_for(:back) == "javascript:history.back()" ? ohms_index_path(params[:id]) : url_for(:back)) %>">
                   <span class="fa fa-angle-left "></span> <small class="mx-3">Back to 
                   <% if url_for(:back).include? "managers" %>
                     <strong>Interview Manager</strong>

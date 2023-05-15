@@ -45,7 +45,7 @@
                   <div class="field-title">
                     <%= f.label 'Access', for: 'collection_resource_public' %>
                   </div>
-                  <%= f.select :access, CollectionResource.accesses.map { |key, value| [key.split('_').second.humanize, key] }, {}, required: false, label: false, class: 'custom-placeholder' %>
+                  <%= f.select :access, CollectionResource.accesses.map { |key, _| [CollectionResource.readable_status(key), key] }, {}, required: false, label: false, class: 'custom-placeholder' %>
                 </div>
               </div>
             </div>

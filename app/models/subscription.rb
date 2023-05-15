@@ -7,6 +7,7 @@
 # Copyright (C) 2019 Audio Visual Preservation Solutions, Inc.
 class Subscription < ApplicationRecord
   attr_accessor :plan_type
+
   belongs_to :organization
   belongs_to :plan
   enum status: { inactive: 0, active: 1 }
