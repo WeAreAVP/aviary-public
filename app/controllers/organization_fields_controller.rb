@@ -42,6 +42,7 @@ class OrganizationFieldsController < ApplicationController
                      vocabulary: [],
                      help_text: '',
                      is_repeatable: false,
+                     is_internal_only: false,
                      field_configuration: {},
                      field_level: 'collection',
                      sort_order: 0,
@@ -166,6 +167,7 @@ class OrganizationFieldsController < ApplicationController
           'field_type' => params['custom_fields']['field_type'],
           'is_default' => false,
           'is_repeatable' => params['custom_fields']['is_repeatable'].to_boolean?,
+          'is_internal_only' => params['custom_fields']['is_internal_only'].to_boolean?,
           'field_level' => 'resource',
           'is_required' => params['custom_fields']['is_required'].to_boolean?,
           'system_name' => system_name,
@@ -203,6 +205,7 @@ class OrganizationFieldsController < ApplicationController
         update_information.delete('dropdown_options')
         update_information['is_public'] = update_information['is_public'].to_boolean?
         update_information['is_repeatable'] = update_information['is_repeatable'].to_boolean?
+        update_information['is_internal_only'] = field_values[update_information['system_name']]['is_default'].to_s.to_boolean? ? false : update_information['is_internal_only'].to_boolean?
         update_information['is_required'] = update_information['is_required'].to_boolean?
         update_information['is_vocabulary'] = is_vocabulary
         @org_field_manager.update_field_settings(field_values, { '0' => update_information }, current_organization, params['type'].present? ? params['type'] : 'resource_fields')
