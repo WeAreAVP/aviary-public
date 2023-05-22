@@ -26,6 +26,7 @@
           <%= hidden_field_tag "resource_file_id", @resource_file.try(&:id) %>
           <% @resource_columns_collection.each_with_index do |(system_name, single_collection_field), _index| %>
             <% next if @resource_fields_settings[system_name].blank? || system_name.blank? || !@resource_fields_settings[system_name]['description_display'].to_s.to_boolean? || !single_collection_field['status'].to_s.to_boolean?%>
+            <% next unless show_internal_field?(@resource_fields_settings, system_name, current_user_is_org_user?(current_organization)) %>
             <% field_settings = Aviary::FieldManagement::FieldManager.new(@resource_fields_settings[system_name], system_name)  %>
             <% label = field_settings.label %>
             <% if from == 'resource_metadata' %>

@@ -157,6 +157,8 @@ module Aviary::SolrIndexer
       type_field = '_lms'
     when 'editor'
       type_field = '_texts'
+    when 'string_ci'
+      type_field = '_scis'
     end
     type_field
   end

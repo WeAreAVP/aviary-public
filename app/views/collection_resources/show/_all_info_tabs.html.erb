@@ -184,8 +184,13 @@
     </div>
   </div>
   <% @description_count = {} %>
+  <% 
+    organization_field_manager = Aviary::FieldManagement::OrganizationFieldManager.new
+    resource_fields_settings = organization_field_manager.organization_field_settings(current_organization, nil, 'resource_fields')
+  %>
   <% @resource_columns_collection.each_with_index do |(system_name, single_collection_field), _index| %>
     <% field_settings = Aviary::FieldManagement::FieldManager.new(single_collection_field, system_name) %>
+    <% next unless show_internal_field?(resource_fields_settings, system_name, current_user_is_org_user?(current_organization)) %>
     <% if @resource_field_values.present? && boolean_value(field_settings.info_of_attribute('status')) && @resource_field_values[system_name].present? %>
       <% @resource_field_values[system_name]['values'].each do |single_value| %>
         <% @description_count = count_occurrence(single_value, @session_video_text_all, @description_count, 'description', false, nil, nil, nil, 'resource_metadata') %>

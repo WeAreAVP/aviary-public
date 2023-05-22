@@ -13,6 +13,7 @@
       <% @resource_columns_collection.each_with_index do |(system_name, single_collection_field), _index| %>
         <% next if single_collection_field['field_configuration'].present? && single_collection_field['field_configuration']['special_purpose'].present? && single_collection_field['field_configuration']['special_purpose'].to_s.to_boolean? %>
         <% next if @resource_fields_settings.blank? || @resource_fields_settings[system_name].blank? || system_name.blank? %>
+        <% next unless show_internal_field?(@resource_fields_settings, system_name, current_user_is_org_user?(current_organization)) %>
         <% field_settings = Aviary::FieldManagement::FieldManager.new(@resource_fields_settings[system_name], system_name)  %>
         <% label = field_settings.label  %>
         <% next if label == 'Title' %>
