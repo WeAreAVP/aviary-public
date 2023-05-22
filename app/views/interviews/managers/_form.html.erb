@@ -138,7 +138,7 @@ thesaurus_settings = ::Thesaurus::ThesaurusSetting.where(organization_id: curren
           </div>
           <div class="form-group">
             <div class="field-title"><%= f.label :summary %></div>
-            <%= f.input :summary, label: false, input_html: { class: 'form-control summary' } %>
+            <%= f.input :summary, label: false, input_html: { class: 'form-control summary ohm_summary' } %>
           </div>
           <div class="form-group">
             <div class="field-title"><%= f.label :keywords %>
@@ -339,7 +339,7 @@ thesaurus_settings = ::Thesaurus::ThesaurusSetting.where(organization_id: curren
   <br/>
 
 <% end %>
-
+<%= render 'interviews/managers/notes' %>
 <script type="application/javascript">
     let interviews_manager = new InterviewManager();
     $(function () {

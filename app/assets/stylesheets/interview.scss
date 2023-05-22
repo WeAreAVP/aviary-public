@@ -733,6 +733,20 @@ div#noMediaConnection {
   }
 }
 
+.ohms_buttons .action-btn-holder {
+  width: 240px;
+}
+
+.ohms_edit_transcript .action-btn-holder {
+  width: 227px;
+}
+
+#modalPopupNotesButton {
+  .modal-body {
+    overflow: hidden;
+  }
+}
+
 .action-btn-holder {
   margin-right: 0;
   display: inline-flex;

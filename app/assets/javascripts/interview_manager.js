@@ -21,6 +21,7 @@ function InterviewManager() {
     that.interview_transcript_id = 0;
     this.initialize = function () {
         bindEvents();
+        setIterviewNotes();
     };
 
     this.initializeSync = function () {
@@ -243,6 +244,29 @@ function InterviewManager() {
                     jsMessages('danger', 'Please select interviews before doing bulk operations.');
                 } else {
                     $('.bulk-edit-modal').modal();
+                }
+            });
+            $(".bluk-ohms-export-btn").unbind('click');
+            $('.bluk-ohms-export-btn').on('click', function () {
+                if (that.ids_session.length <= 0) {
+                    jsMessages('danger', 'Please select interviews before doing bulk operations.');
+                } else {
+                    $('#select_check_type').append($('<option>', {
+                        value: "download_xml",
+                        text: 'Bulk Export as OHMS XML'
+                    }));
+                    $('#select_check_type').val("download_xml");
+                    update_bulk_edit_view("download_xml")
+                    $('#bulk_edit_form').attr("target","_blank");
+                    $('.bulk-edit-submit').click();
+                    $('.bulk-edit-do-it').on('click', function () {
+                        setTimeout(() => {
+                            jsMessages('success', 'Download successfully!');
+                            location.reload();
+                        }, "1000");
+                    });
+
+
                 }
             });
             initUploadPopup();
@@ -690,7 +714,8 @@ function InterviewManager() {
                         setNotesResponse(response);
                         jsMessages('success', 'Note added successfully.');
                         if (response.color){
-                            changeColor(e.target.getAttribute("data-id"),response.color)
+                            changeColor(e.target.getAttribute("data-id"),response.color);
+                            $('#modalPopupNotes').modal('hide');
                         }
                     },
                     error: function (response, status, error) {
