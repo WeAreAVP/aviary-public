@@ -17,7 +17,9 @@
                   <%= link_to 'Return To OHMS Studio', ohms_records_path, class: 'btn btn-outline-secondary' %>
                   <%= link_to 'Return To Index', ohms_index_path(@interview.id), class: 'btn btn-outline-secondary' %>
                   <% if @interview.id.present? %>
+                    <div class="ohms_buttons">
                     <%= render partial: 'shared/ohms/buttons', locals: { interview: @interview } %>
+                    </div>
                   <% end %>
                 <% else %>
                   <%= link_to 'Return To Resource', "#{collection_collection_resource_details_url(@collection_resource.collection, @collection_resource, @resource_file)}/index?", class: 'btn btn-primary' %>

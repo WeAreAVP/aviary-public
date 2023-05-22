@@ -30,6 +30,14 @@ if this_interview.try(:file_transcripts).present?
     toggle: 'tooltip', placement: 'top', title: this_interview.interview_sync_status.second
   }
 end
+html += link_to 'Notes', "javascript://'", class: 'btn-interview btn-sm btn-link interview_note_'+ this_interview.id.to_s + ' notes_inner_button '+(this_interview.interview_notes.length.positive? ? interview.interview_notes.where(status: false).count.positive? ? 'text-danger' : 'text-success' : 'text-secondary' ), id: 'interview_note_' + this_interview.id.to_s, data: {
+  toggle: 'tooltip', placement: 'top', title: "Notes",
+  id: this_interview.id, url: (if @organization_user&.role&.system_name == 'ohms_assigned_user'
+                                      interviews_ohms_list_notes_path(this_interview.id, 'json')
+                                    else
+                                      interviews_list_notes_path(this_interview.id, 'json')
+                                    end), updateurl:  (@organization_user&.role&.system_name == 'ohms_assigned_user' ? interviews_ohms_update_note_path(this_interview.id, 'json') : interviews_update_note_path(this_interview.id, 'json'))
+}
 html += '</div><div class="btn-interview-dropdown dropdown d-inline-block">'
 
 
