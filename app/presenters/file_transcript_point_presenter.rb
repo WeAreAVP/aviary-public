@@ -70,7 +70,7 @@ class FileTranscriptPointPresenter < BaseIndexTranscriptPresenter
       length = target_info['endOffset'] - target_info['startOffset']
       replace = key.to_s * length
       element = '<div class="flag annotation_flag annotation_' + annotation.id.to_s + '" data-annotation="' + annotation.id.to_s + '"><div class="line"></div></div>' \
-                '<span data-annotation="' + annotation.id.to_s + '" ' + hit_by_search + '  class="annotation_marker annotation_' + annotation.id.to_s + '">' + text_to_replace[replace] + '</span>'
+                                                                                                                                   '<span data-annotation="' + annotation.id.to_s + '" ' + hit_by_search + '  class="annotation_marker annotation_' + annotation.id.to_s + '">' + text_to_replace[replace] + '</span>'
       text = text.gsub(replace, element)
     end
     text

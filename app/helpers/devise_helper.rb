@@ -15,8 +15,12 @@ module DeviseHelper
 
     html = <<-HTML
      <div id="alert_message" class="alert alert-danger">
+        <div id="alert">
+          <span role="alert" aria-live="polite" aria-atomic="true">
               <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
               #{messages}
+          </span>
+        </div>
      </div>
     HTML
 

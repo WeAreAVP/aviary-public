@@ -1,0 +1,91 @@
+---
+- - :permit
+  - MIT
+  - &1
+    :who:
+    :why:
+    :versions: []
+    :when: 2022-04-23 12:36:15.650568000 Z
+- - :permit
+  - BSD 2-Clause
+  - *1
+- - :permit
+  - BSD 3-clause
+  - *1
+- - :permit
+  - Apache 2.0
+  - *1
+- - :permit
+  - LGPLv3
+  - *1
+- - :permit
+  - ruby
+  - *1
+- - :permit
+  - ISC
+  - *1
+- - :permit
+  - Artistic-2.0
+  - *1
+- - :permit
+  - Mpl-2.0
+  - *1
+- - :permit
+  - GPL v2
+  - *1
+- - :permit
+  - GPL v3
+  - *1
+- - :permit
+  - BSD 3-Clause
+  - &2
+    :who:
+    :why:
+    :versions: []
+    :when: 2022-04-23 12:38:54.693565000 Z
+- - :permit
+  - Unlicense
+  - *2
+- - :permit
+  - New BSD
+  - *2
+- - :permit
+  - LGPL-2.1
+  - *2
+- - :permit
+  - zlib/libpng license
+  - *2
+- - :permit
+  - GPL-2.0
+  - *2
+- - :permit
+  - Apache
+  - *2
+- - :permit
+  - 2-clause BSDL
+  - *2
+- - :permit
+  - WTFPL
+  - :who:
+    :why:
+    :versions: []
+    :when: 2022-04-23 12:39:38.294518000 Z
+- - :ignore
+  - best_in_place
+  - :who:
+    :why:
+    :versions: []
+    :when: 2022-04-23 12:40:00.687789000 Z
+- - :license
+  - bootstrap-daterangepicker-rails
+  - Apache License v2.0
+  - :who:
+    :why:
+    :versions: []
+    :when: 2022-04-23 12:43:48.717353000 Z
+- - :permit
+  - Apache License v2.0
+  - :who:
+    :why:
+    :versions: []
+    :when: 2022-04-23 12:45:05.787082000 Z

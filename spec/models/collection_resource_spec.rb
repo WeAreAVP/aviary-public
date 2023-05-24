@@ -85,7 +85,7 @@ RSpec.describe CollectionResource, type: :model do
   describe '#collection resource' do
     context 'Connected to a correct collection resource' do
       it 'Fetch resource Listing' do
-        expect(CollectionResource.fetch_resources(1, 10, nil, nil, { search: { value: 'test' } }, 'document_type_ss:collection_resource', export: false, current_organization: organization).first.length).to be > 1
+        expect(CollectionResource.fetch_resources(1, 10, 'title_text', nil, { search: { value: 'test' } }, 'document_type_ss:collection_resource', export: false, current_organization: organization).first.length).to be > 1
       end
     end
   end
@@ -93,7 +93,7 @@ RSpec.describe CollectionResource, type: :model do
   describe '#collection resource' do
     context 'Connected to a correct collection resource' do
       it 'Fetch resource Listing' do
-        expect(CollectionResource.fetch_resources(1, 10, nil, nil, { search: { value: 'test test' } }, 'document_type_ss:collection_resource', export: false, current_organization: organization).first.length).to be > 1
+        expect(CollectionResource.fetch_resources(1, 10, 'title_text', nil, { search: { value: 'test test' } }, 'document_type_ss:collection_resource', export: false, current_organization: organization).first.length).to be > 1
       end
     end
   end
@@ -101,7 +101,7 @@ RSpec.describe CollectionResource, type: :model do
   describe '#collection resource' do
     context 'Connected to a correct collection resource' do
       it 'Fetch resource Listing' do
-        expect(CollectionResource.fetch_resources(1, 10, nil, nil, { search: { value: 'hvt.1021.232' } }, 'document_type_ss:collection_resource', export: false, current_organization: organization).first.length).to be >= 0
+        expect(CollectionResource.fetch_resources(1, 10, 'title_text', nil, { search: { value: 'hvt.1021.232' } }, 'document_type_ss:collection_resource', export: false, current_organization: organization).first.length).to be >= 0
       end
     end
   end

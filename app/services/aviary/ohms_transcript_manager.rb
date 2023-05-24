@@ -32,7 +32,7 @@ module Aviary
       self.sync_interval = 0.0
     end
 
-    def process(file_transcript, remove_title = nil, is_new = true, import = false)
+    def process(file_transcript, _remove_title = nil, is_new = true, import = false, ohms_data = {})
       file_path = ENV['RAILS_ENV'] == 'production' ? file_transcript.associated_file.expiring_url : file_transcript.associated_file.path
 
       if ['application/xml', 'text/xml'].include? file_transcript.associated_file_content_type
@@ -83,7 +83,11 @@ module Aviary
         end
       else
         file_content = Rails.env.production? ? URI.parse(file_path).read : File.read(open(file_path))
-        hash = parse_text(file_content, file_transcript)
+        hash = if ohms_data.length.positive?
+                 parse_ohms_text(file_content, file_transcript, ohms_data)
+               else
+                 parse_text(file_content, file_transcript)
+               end
         response = map_hash_to_db(file_transcript, hash, is_new)
         Success(response)
       end
@@ -135,13 +139,16 @@ module Aviary
     def parse_aviary_text(file, file_transcript)
       reg_ex = speaker_regex
       file = file.delete("\r") # replace \r because it will create problem in parsing logic
+      regex = /\[([0-9:.]+)\]/ ## This is used when only start time is given in transcript
+
+      file = parse_notes_info(file, file_transcript, regex)
+      file.squeeze("TRANSCRIPTION BEGIN\n\n")
       split_content = file.split("TRANSCRIPTION BEGIN\n\n")[1].split('TRANSCRIPTION END')[0] ## Get only transcript data from the file
       transcript_points_content = split_content.split("\n\n")
       point_hash = []
       counter = -1
       last_row = 0
       transcript_points_content.each do |transcript_point_content|
-        regex = /\[([0-9:.]+)\]/ ## This is used when only start time is given in transcript
         output = transcript_point_content.split(regex)
         mix_content = output[2].blank? ? [''] : output[2].lstrip.split("\n")
         single_hash = {}
@@ -196,6 +203,8 @@ module Aviary
       regex = /\[([0-9:.]+)\]/ ## This is used when only start time is given in transcript
       start_end_regex = /([0-9:.]+)\t([0-9:.]+)/ ## This is used when both start and end time is given in transcript
       time_regex = /(^[0-9:.]+)/
+      file = file.delete("\r") # replace \r because it will create problem in parsing logic
+      file = parse_notes_info(file, file_transcript, regex)
       output = file.split(regex)
       unless from_resource_file
         last_point = '00:00:00'
@@ -215,10 +224,93 @@ module Aviary
       Success(point_hash)
     end
 
+    def read_notes_info(file_transcript, text = '')
+      if text.blank? && file_transcript.present? && file_transcript.file_transcript_points.present?
+        text = file_transcript.file_transcript_points.pluck(:text).join(' ')
+      end
+      text_list = text.split("\n")
+      if file_transcript.present? && file_transcript.point_notes_info.present?
+        notes_info = file_transcript.point_notes_info
+        text_list.each_with_index do |_single_point, single_index|
+          if notes_info[single_index.to_s].present?
+            notes = notes_info[single_index.to_s].split('|')
+            prv_length = 0
+            notes.each do |note|
+              tag = note.split('-')
+              temp = "[[footnote]]#{tag[0]}[[/footnote]]"
+              text_list[single_index].insert((tag[1].to_i + prv_length), temp)
+              prv_length += temp.length
+            end
+          end
+        end
+        text = text_list.join("\n")
+        note_array = []
+        note_array = JSON.parse(file_transcript.notes_info) if file_transcript.notes_info.present?
+        if note_array.present?
+          last = note_array.map { |item| '[[note]]' + item + "[[/note]]\n" }.join
+          text += "\n[[footnotes]]\n#{last}[[/footnotes]]"
+        end
+      end
+
+      text
+    end
+
+    def parse_notes_info(file, file_transcript, regex = /\[([0-9]{2}:[0-9:.]+)\]|([0-9]{2}:[0-9:.]+)/)
+      new_file = file
+      new_file = new_file.gsub(regex, '')
+      new_file = new_file.split("\n")
+      info_notes = {}
+      new_file.each_with_index do |_line, line_index|
+        if new_file[line_index].include?('[[footnote]]')
+          foot_note_new = ''
+          foot_prv_location = 0
+          new_file[line_index].split('[[footnote]]').each_with_index do |foot, _foot_index|
+            if foot.include?('[[/footnote]]')
+              info_notes[line_index] = if info_notes[line_index].present?
+                                         "#{info_notes[line_index]}|#{foot.split('[[/footnote]]')[0]}-#{foot_prv_location}"
+                                       else
+                                         "#{foot.split('[[/footnote]]')[0]}-#{foot_prv_location}"
+                                       end
+              foot = foot.split('[[/footnote]]')[1]
+            end
+            foot_note_new = "#{foot_note_new}#{foot}"
+            foot_prv_location = foot_note_new.length
+          end
+          if foot_note_new.present?
+            new_file[line_index] = foot_note_new
+          end
+        end
+      end
+      new_file = new_file.join("\n")
+      if info_notes.present?
+        file_transcript.point_notes_info = info_notes
+        file_transcript.save
+      end
+      if new_file.include?('[[footnotes]]')
+        notes_links = []
+        item = new_file.split('[[footnotes]]')
+        item[1] = item[1].gsub("\n", '').strip
+        notes = item[1].split('[[note]]')
+        notes.each_with_index do |note, _index|
+          if note.include?('[[/note]]')
+            notes_links << note.split('[[/note]]')[0]
+          end
+        end
+        if notes_links.present?
+          file_transcript.notes_info = notes_links.to_json
+          file_transcript.save
+        end
+      end
+      file = file.gsub(%r{\[\[footnote\]\](\d+)\[\[/footnote\]\]}, '')
+      file = file.split('[[footnotes]]')[0]
+      file
+    end
+
     def parse_doc_text(file, file_transcript, regex = /\[([0-9]{2}:[0-9:.]+)\]|([0-9]{2}:[0-9:.]+)/)
       start_end_regex = /([0-9:.]+)\t([0-9:.]+)/ ## This is used when both start and end time is given in transcript
       time_regex = /(^[0-9:.]+)/
       file = file.force_encoding('UTF-8')
+      file = parse_notes_info(file, file_transcript, regex)
       output = file.split(regex)
       output = output.drop(1) if output.size > 1 && output[0].scan(regex).blank? && from_resource_file ## check if header exists then drop it
       # output = output.drop(output.size - 1) if output.size >= 1 && output[output.size - 1].scan(regex).blank? ## check if footer exists then drop it
@@ -266,7 +358,7 @@ module Aviary
           end
 
           single_hash['duration'] = single_hash['end_time'] - single_hash['start_time']
-          single_hash['text'] = text.lstrip.gsub(/:[\n]+/, ': ').gsub(/\n{3,5}/, "\n\n").strip
+          single_hash['text'] = text.lstrip.gsub(/:\n+/, ': ').gsub(/\n{3,5}/, "\n\n").strip
           unless single_hash.nil? # keep adding the Text to the same point until gets a new timestamp
             text_raw = single_hash['text']
             row = 0
@@ -290,7 +382,7 @@ module Aviary
         single_hash['start_time'] = 0
         single_hash['end_time'] = file_transcript.collection_resource_file.duration if from_resource_file
         single_hash['duration'] = single_hash['end_time'].to_f - single_hash['start_time'].to_f
-        single_hash['text'] = output[0].gsub(/:[\n]+/, ': ').gsub(/\n{3,5}/, "\n\n").strip if output.present?
+        single_hash['text'] = output[0].gsub(/:\n+/, ': ').gsub(/\n{3,5}/, "\n\n").strip if output.present?
         unless single_hash.nil? # keep adding the Text to the same point until gets a new timestamp
           text_raw = single_hash['text']
           row = 0
@@ -404,10 +496,27 @@ module Aviary
       end
     end
 
-    def parse_transcript(transcript, sync_points, file_transcript, interval)
+    def transcript_with_ohms_sync_point(transcript, sync_points)
+      transcript = transcript.split("\n")
+      begin
+        sync_points.each_with_index do |_sync, index|
+          transcript[index] = "#{transcript[index]}[smntb]"
+        end
+        Success(transcript.join("\n"))
+      rescue StandardError => ex
+        Failure(ex.message)
+      end
+    end
+
+    def parse_transcript(transcript, sync_points, file_transcript, interval, ohms = false)
       hash = []
+      last_row = 0
       if sync_points.present?
-        transcript = transcript_with_sync_point(transcript, sync_points)
+        transcript = if ohms
+                       transcript_with_ohms_sync_point(transcript, sync_points)
+                     else
+                       transcript_with_sync_point(transcript, sync_points)
+                     end
         return transcript if transcript.failure?
         transcript = transcript.value!.split('[smntb]')
         sync_points << 'last' # need to store last additional text as well.
@@ -417,6 +526,20 @@ module Aviary
           single_hash['end_time'] = single_hash['start_time'] + (interval * 60)
           single_hash['duration'] = single_hash['end_time'].to_f - single_hash['start_time'].to_f
           single_hash['text'] = transcript[index]
+          unless single_hash.nil? # keep adding the Text to the same point until gets a new timestamp
+            text_raw = single_hash['text']
+            row = 0
+            column = 0
+            if text_raw.present?
+              text = text_raw.split("\n")
+              unless text.empty?
+                row = text.length
+                column = text.last.length
+              end
+            end
+            last_row += row
+            single_hash['point_info'] = "#{last_row}(#{column})"
+          end
           hash << single_hash
         end
       else
@@ -430,8 +553,18 @@ module Aviary
       Success(hash)
     end
 
+    def parse_ohms_text(file_content, file_transcript, ohms_data)
+      transcript = parse_notes_info(file_content, file_transcript)
+      sync = ohms_data['Transcript Sync Data']
+      sync_info = sync.present? ? sync.split(':|') : nil
+      interval = sync_info.present? ? sync_info[0] : nil
+      sync_points = sync_info.present? ? sync_info[1].split('|') : nil
+      parse_transcript(transcript, sync_points, file_transcript, interval.to_f, true)
+    end
+
     def parse_ohms_xml(xml_hash, file_transcript)
       transcript = xml_hash['ROOT']['record']['transcript']
+      transcript = parse_notes_info(transcript, file_transcript)
       sync = xml_hash['ROOT']['record']['sync']
       sync_info = sync.present? ? sync.split(':|') : nil
       interval = sync_info.present? ? sync_info[0] : nil

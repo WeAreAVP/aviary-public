@@ -1,0 +1,27 @@
+<div class="modal fade bd-example-modal-lg bulk-edit-review-resource-list-modal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content ">
+      <div class="modal-header">
+        <h2 class="font-weight-bold modal-title font-size-18px">Resource List Review</h2>
+      </div>
+      <div class="modal-body">
+        <h1 class="font-size-16px text-left mb-2 p-2 mt-3 font-weight-bold"> Selected Resources </h1>
+        <table class="table table-hover review_resources-list table-sm " style="width: 100%;">
+          <thead>
+          <tr>
+            <td class="font-weight-bold"> ID</td>
+            <td class="font-weight-bold"> Resource Name</td>
+            <td class="font-weight-bold"> Notes</td>
+          </tr>
+          </thead>
+          <tbody class="bulk-edit-review-resource-list-content">
+          </tbody>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button class="btn btn-primary bulk-add-to-resource_list" data-url="<%= assign_resources_to_list_catalog_path %>">Apply</button>
+      </div>
+    </div>
+  </div>
+</div>

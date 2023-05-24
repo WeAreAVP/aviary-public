@@ -12,9 +12,8 @@ FactoryBot.define do
     banner_image { File.new("#{Rails.root}/spec/fixtures/abc.png") }
     bucket_name { |n| "custom-url-#{n}" }
     banner_slider_resources { |n| "{id:1}" }
-    storage_type 2
+    storage_type { 2 }
     association :user, factory: :user
-
 
     after(:create) do |organization|
       role = Role.where(:system_name => 'organization_owner').first || create(:role_organization_owner)

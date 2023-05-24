@@ -11,9 +11,9 @@ All code contributors must have an Individual Contributor License Agreement
 an institution, the institution must have a Corporate Contributor License
 Agreement (cCLA) on file.
 
-[Corporate Contributor License Agreement](https://confluence.weareavp.com/download/attachments/62457566/Corporate%20Contributor%20License%20Agreement.pdf?version=1&modificationDate=1571756472525&api=v2)
+[Corporate Contributor License Agreement](https://coda.aviaryplatform.com/intellectual-property-licensing-59#_luNNJ)
 
-[Individual Contributor License Agreement](https://confluence.weareavp.com/download/attachments/62457566/Individual%20Contributor%20License%20Agreement.pdf?version=1&modificationDate=1571756483523&api=v2)
+[Individual Contributor License Agreement](https://coda.aviaryplatform.com/intellectual-property-licensing-59#_luENY)
 
 ## Contribution Tasks
 

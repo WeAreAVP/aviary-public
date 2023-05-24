@@ -11,7 +11,17 @@ module Interviews
     has_many :file_transcripts, dependent: :destroy
     has_many :file_indexes, dependent: :destroy
     before_save :purify_value, :interview_status_info
+    before_create :update_thesaurus
     validates_presence_of :language_for_translation, if: :include_language?
+
+    def update_thesaurus
+      thesaurus_settings = ::Thesaurus::ThesaurusSetting.where(organization_id: organization_id, is_global: true, thesaurus_type: 'index').try(:first)
+      if thesaurus_settings.present?
+        self.thesaurus_keywords = thesaurus_settings.thesaurus_keywords
+        self.thesaurus_subjects = thesaurus_settings.thesaurus_subjects
+      end
+      thesaurus_settings
+    end
 
     def purify_value
       self.metadata_status = metadata_status.to_i
@@ -24,7 +34,7 @@ module Interviews
       transcript_available = true
 
       color = color_grading['0']
-      process_status = 'In Progress'
+      process_status = 'In Process'
 
       case metadata_status.to_s
       when '4'
@@ -35,7 +45,7 @@ module Interviews
           color = color_grading['3']
           process_status = 'Completed'
         else
-          process_status = 'In Progress'
+          process_status = 'In Process'
           color = color_grading['0']
         end
       when '-1', ''
@@ -102,6 +112,7 @@ module Interviews
         'interview'
       end
       string :status, stored: true
+      string :record_status, multiple: false, stored: true
       string :interviewee, multiple: true, stored: true
       string :interviewer, multiple: true, stored: true
       string :interview_date, stored: true
@@ -115,6 +126,9 @@ module Interviews
       text :summary, stored: true
       string :keywords, multiple: true, stored: true
       string :subjects, multiple: true, stored: true
+      string :collection_id_series_id, stored: true do
+        collection_id.gsub(' ', '') + ' ' + series_id.gsub(' ', '')
+      end
       integer :notes_count, stored: true do
         interview_notes.count
       end
@@ -176,7 +190,7 @@ module Interviews
         miscellaneous_ohms_xml_filename.present? ? miscellaneous_ohms_xml_filename : 'None'
       end
       boolean :miscellaneous_use_restrictions, stored: true do
-        miscellaneous_use_restrictions.present? ? miscellaneous_use_restrictions : 'None'
+        miscellaneous_use_restrictions.nil? ? false : miscellaneous_use_restrictions
       end
       text :miscellaneous_sync_url, stored: true do
         miscellaneous_sync_url.present? ? miscellaneous_sync_url : 'None'
@@ -240,6 +254,9 @@ module Interviews
       text :keywords, stored: true
       text :subjects, stored: true
       text :media_host, stored: true
+      text :collection_id_series_id, stored: true do
+        collection_id.gsub(' ', '') + ' ' + series_id.gsub(' ', '')
+      end
       text :media_url, stored: true do
         media_url.present? ? media_url : 'None'
       end
@@ -263,6 +280,9 @@ module Interviews
       end
       text :miscellaneous_ohms_xml_filename, stored: true do
         miscellaneous_ohms_xml_filename.present? ? miscellaneous_ohms_xml_filename : 'None'
+      end
+      integer :ohms_assigned_user_id, stored: true do
+        ohms_assigned_user_id.present? ? ohms_assigned_user_id : 'None'
       end
     end
 
@@ -318,13 +338,163 @@ module Interviews
       limiter
     end
 
-    def self.fetch_interview_list(page, per_page, sort_column, sort_direction, params, limit_condition, export_and_current_organization = { export: false, current_organization: false })
+    def self.fetch_interview_list(page, per_page, sort_column, sort_direction, params, limit_condition, export_and_current_organization = { export: false, current_organization: false, organization_user: false, use_organization: true })
       q = params[:search][:value] if params.present? && params.key?(:search) && params[:search].key?(:value)
       solr_url = Interviews::Interview.solr_path
       select_url = "#{solr_url}/select"
       solr_q_condition = '*:*'
       complex_phrase_def_type = false
       fq_filters = ' document_type_ss:interview  '
+
+      if params[:collection_id].present?
+        fq_filters += " AND collection_id_series_id_ss:\"#{params[:collection_id].gsub('_', ' ')}\" "
+      end
+      if export_and_current_organization[:organization_user].present? && export_and_current_organization[:organization_user].role.system_name == 'ohms_assigned_user'
+        fq_filters += " AND ohms_assigned_user_id_is:#{export_and_current_organization[:organization_user]['user_id']} "
+      end
+      if q.present?
+        counter = 0
+        fq_filters_inner = ''
+        JSON.parse(export_and_current_organization[:current_organization][:interview_search_column]).each do |_, value|
+          if !value['value'].to_s.include?('_bs') && (value['status'] == 'true' || value['status'].to_s.to_boolean?)
+            unless value['value'].to_s == 'id_is' && q.to_i <= 0
+              alter_search_wildcard = value['value']
+              alter_search_wildcard_string = alter_search_wildcard.clone
+
+              if alter_search_wildcard == 'created_at_is'
+                alter_search_wildcard = 'created_at_ss'
+                alter_search_wildcard_string = 'created_at_ss'
+              end
+
+              if alter_search_wildcard == 'updated_at_is'
+                alter_search_wildcard = 'updated_at_ss'
+                alter_search_wildcard_string = 'updated_at_ss'
+              end
+
+              if alter_search_wildcard == 'updated_by_id_is'
+                alter_search_wildcard = 'updated_by_ss'
+                alter_search_wildcard_string = 'updated_by_ss'
+              end
+
+              if alter_search_wildcard == 'created_by_id_is'
+                alter_search_wildcard = 'created_by_id_ss'
+                alter_search_wildcard_string = 'created_by_id_ss'
+              end
+
+              alter_search_wildcard.sub! '_ss', '_texts'
+              alter_search_wildcard.sub! '_sms', '_texts'
+              fq_filters_inner += if counter > 0
+                                    " OR  #{search_perp(q, alter_search_wildcard)} "
+                                  else
+                                    " #{search_perp(q, alter_search_wildcard)} "
+                                  end
+              counter += 1
+              fq_filters_inner += if counter > 0
+                                    " OR  #{search_perp(q, alter_search_wildcard_string)} "
+                                  else
+                                    " #{search_perp(q, alter_search_wildcard_string)} "
+                                  end
+
+              fq_filters_inner += " OR  #{straight_search_perp(q, alter_search_wildcard)} "
+              fq_filters_inner += " OR  #{straight_search_perp(q, alter_search_wildcard_string)} "
+              counter += 1
+            end
+          end
+        end
+        fq_filters += " AND (#{fq_filters_inner}) " unless fq_filters_inner.blank?
+      end
+
+      filters = []
+      filters << fq_filters
+      filters << limit_condition if limit_condition.present?
+      query_params = { q: solr_q_condition, fq: filters.flatten }
+      query_params[:fq] << if export_and_current_organization[:current_organization].present?
+                             (export_and_current_organization[:use_organization] ? "organization_id_is:#{export_and_current_organization[:current_organization].id}" : '')
+                           else
+                             'id_is:0'
+                           end
+
+      query_params[:defType] = 'complexphrase' if complex_phrase_def_type
+      query_params[:wt] = 'json'
+
+      total_response = Curl.post(select_url, query_params)
+
+      begin
+        total_response = JSON.parse(total_response.body_str)
+      rescue StandardError
+        total_response = { 'response' => { 'numFound' => 0 } }
+      end
+      query_params[:sort] = "#{sort_column} #{sort_direction}" if sort_column.present? && sort_direction.present?
+
+      if export_and_current_organization[:export]
+        query_params[:start] = 0
+        query_params[:rows] = 100_000_000
+      else
+        query_params[:start] = (page - 1) * per_page
+        query_params[:rows] = per_page
+      end
+      response = Curl.post(select_url, query_params)
+      begin
+        response = JSON.parse(response.body_str)
+      rescue StandardError
+        response = { 'response' => { 'docs' => {} } }
+      end
+      count = if total_response.present? && total_response['response'].present? && total_response['response']['numFound'].present?
+                total_response['response']['numFound'].to_i
+              else
+                0
+              end
+
+      [response['response']['docs'], count, {}, export_and_current_organization[:current_organization]]
+    end
+
+    def self.fetch_interview_collection_id(collection_id, _params, _limit_condition, export_and_current_organization = { export: true, current_organization: false })
+      solr_url = Interviews::Interview.solr_path
+      select_url = "#{solr_url}/select"
+      solr_q_condition = '*:*'
+      complex_phrase_def_type = false
+      fq_filters = " document_type_ss:interview AND collection_id_series_id_ss:#{collection_id} "
+      filters = []
+      filters << fq_filters
+      query_params = { q: solr_q_condition, fq: filters.flatten, facet: true, 'facet.field' => %w[record_status_ss interview_status_ss] }
+
+      query_params[:fq] << if export_and_current_organization[:current_organization].present?
+                             "organization_id_is:#{export_and_current_organization[:current_organization].id}"
+                           else
+                             'id_is:0'
+                           end
+      query_params[:defType] = 'complexphrase' if complex_phrase_def_type
+      query_params[:wt] = 'json'
+
+      total_response = Curl.post(select_url, query_params)
+
+      begin
+        total_response = JSON.parse(total_response.body_str)
+      rescue StandardError
+        total_response = { 'response' => { 'numFound' => 0 } }
+      end
+
+      online_count = if total_response.present? && total_response['facet_counts'].present? && total_response['facet_counts']['facet_fields'].present? && total_response['facet_counts']['facet_fields']['record_status_ss'].present? && total_response['facet_counts']['facet_fields']['record_status_ss'].find_index('Online').present?
+                       total_response['facet_counts']['facet_fields']['record_status_ss'][total_response['facet_counts']['facet_fields']['record_status_ss'].find_index('Online') + 1]
+                     else
+                       0
+                     end
+      complete_count = if total_response.present? && total_response['facet_counts'].present? && total_response['facet_counts']['facet_fields'].present? && total_response['facet_counts']['facet_fields']['interview_status_ss'].present? && total_response['facet_counts']['facet_fields']['interview_status_ss'].find_index('Completed').present?
+                         total_response['facet_counts']['facet_fields']['interview_status_ss'][total_response['facet_counts']['facet_fields']['interview_status_ss'].find_index('Completed') + 1]
+                       else
+                         0
+                       end
+
+      [online_count, complete_count]
+    end
+
+    def self.fetch_interview_collections_list(_page, _per_page, sort_column, sort_direction, params, limit_condition, export_and_current_organization = { export: false, current_organization: false })
+      q = params[:search][:value] if params.present? && params.key?(:search) && params[:search].key?(:value)
+      solr_url = Interviews::Interview.solr_path
+      select_url = "#{solr_url}/select"
+      solr_q_condition = '*:*'
+      complex_phrase_def_type = false
+      fq_filters = ' document_type_ss:interview AND collection_id_series_id_ss:["" TO *] '
       if q.present?
         counter = 0
         fq_filters_inner = ''
@@ -380,7 +550,7 @@ module Interviews
       filters = []
       filters << fq_filters
       filters << limit_condition if limit_condition.present?
-      query_params = { q: solr_q_condition, fq: filters.flatten }
+      query_params = { q: solr_q_condition, fq: filters.flatten, group: true, 'group.field' => 'collection_id_series_id_ss' }
       query_params[:fq] << if export_and_current_organization[:current_organization].present?
                              "organization_id_is:#{export_and_current_organization[:current_organization].id}"
                            else
@@ -388,36 +558,23 @@ module Interviews
                            end
       query_params[:defType] = 'complexphrase' if complex_phrase_def_type
       query_params[:wt] = 'json'
-
+      query_params[:sort] = if sort_column.present? && sort_direction.present? && sort_column != 'id_is'
+                              "#{sort_column} #{sort_direction}"
+                            else
+                              'collection_id_series_id_ss asc'
+                            end
       total_response = Curl.post(select_url, query_params)
-
       begin
         total_response = JSON.parse(total_response.body_str)
       rescue StandardError
         total_response = { 'response' => { 'numFound' => 0 } }
       end
-      query_params[:sort] = "#{sort_column} #{sort_direction}" if sort_column.present? && sort_direction.present?
-
-      if export_and_current_organization[:export]
-        query_params[:start] = 0
-        query_params[:rows] = 100_000_000
-      else
-        query_params[:start] = (page - 1) * per_page
-        query_params[:rows] = per_page
-      end
-      response = Curl.post(select_url, query_params)
-      begin
-        response = JSON.parse(response.body_str)
-      rescue StandardError
-        response = { 'response' => { 'docs' => {} } }
-      end
-      count = if total_response.present? && total_response['response'].present? && total_response['response']['numFound'].present?
-                total_response['response']['numFound'].to_i
+      count = if total_response.present? && total_response['grouped'].present? && total_response['grouped']['collection_id_series_id_ss'].present? && total_response['grouped']['collection_id_series_id_ss']['groups'].present?
+                total_response['grouped']['collection_id_series_id_ss']['groups'].length
               else
                 0
               end
-
-      [response['response']['docs'], count, {}, export_and_current_organization[:current_organization]]
+      [total_response['grouped']['collection_id_series_id_ss']['groups'], count, {}, export_and_current_organization[:current_organization]]
     end
 
     def self.column_configuration

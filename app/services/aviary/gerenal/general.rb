@@ -18,5 +18,26 @@ module Aviary
     def encoded_random_string
       Digest::SHA1.hexdigest random_string
     end
+
+    def date_handler_helper(value)
+      begin
+        value = value.blank? ? '' : value.strip
+        case value.scan(/(?=-)/).count
+        when 0
+          value += '-01-01'
+        when 1
+          value += '-01'
+        end
+        begin
+          Date.parse(value)
+          value = value.to_time.utc.to_i
+        rescue ArgumentError
+          value = ''
+        end
+      rescue ArgumentError
+        value = ''
+      end
+      value.to_s
+    end
   end
 end

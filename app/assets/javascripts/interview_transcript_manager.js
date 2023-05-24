@@ -25,6 +25,7 @@
      this.initialize = function () {
          timeDiffInSec = parseFloat($('#interviews_interview_timecode_intervals').val()) * 60;
          bindEvents();
+         setIterviewNotes();
          let searchParams = new URLSearchParams(window.location.search);
          host = $('#media_host').data('host');
          if ($('.tokenfield').length > 0) {

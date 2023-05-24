@@ -53,12 +53,15 @@ class PreviewScript
   def update_data_hash(data_hash)
     total = data_hash.count
     data_hash_fields = {}
-    data_hash_fields['fields'] = data_hash
+    data_hash_fields['fields'] = data_hash['fields']
     if @params['new_custom_value']['new_custom_field'].present?
+      data_hash_fields['fields'] ||= {}
       data_hash_fields['fields'][total + 1] = { @params['new_custom_value']['new_custom_field'] => [{ 'is_tombstone' => false, 'is_visible' => true },
                                                                                                     [{ 'value' => preview_hash_switch(@params['new_custom_value']['new_custom_field']).first }]] }
     end
     data_hash_fields['collection_title'] = @params['collection_title']
+    data_hash_fields['resource_title'] = data_hash['resource_title']
+    data_hash_fields['organization_title'] = data_hash['organization_title']
     data_hash_fields['fields']['resource'] ||= {}
     unless data_hash_fields['fields']['resource'].count.zero?
       data_hash_fields['fields'].each do |_k, v|

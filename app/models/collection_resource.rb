@@ -3,6 +3,7 @@
 # Copyright (C) 2019 Audio Visual Preservation Solutions, Inc.
 class CollectionResource < ApplicationRecord
   attr_accessor :can_edit, :can_view
+
   include Aviary::SolrIndexer
 
   belongs_to :collection, counter_cache: ENV['RAILS_ENV'] != 'test'
@@ -16,6 +17,7 @@ class CollectionResource < ApplicationRecord
   validate :unique_custom_unique_identifier
   accepts_nested_attributes_for :collection_resource_files, reject_if: :all_blank, allow_destroy: true
   attr_accessor :tab_resource_file, :sort_order, :file_url, :embed_code, :embed_type, :target_domain, :trans_points_solr, :index_points_solr, :description_values_solr, :collection_values_solr, :resource_file_id, :custom_description_solr
+
   scope :featured, -> { where(access: accesses[:access_public], is_featured: true) }
   scope :public_visible, -> { where(access: accesses[:access_public]) }
   enum access: %i[access_restricted access_public access_private]
@@ -28,6 +30,16 @@ class CollectionResource < ApplicationRecord
   attr_accessor :meta_date_updated, :collection_resource_files_list, :file_indexes_list, :file_transcripts_list
   # custom_fields?
   attr_accessor :dynamic_initializer
+
+  def self.readable_status(status)
+    readable_status = status.split('_').second.humanize
+    readable_statuses = {
+      access_restricted: readable_status + ' - Public and logged-in users will see “Request Access” button',
+      access_public: readable_status + ' - Visible to all',
+      access_private: readable_status + ' - Only organization users and those granted direct access will see these resources'
+    }
+    readable_statuses[status.to_sym]
+  end
 
   def update_attributes_solr
     self.collection_resource_files_list = collection_resource_files
@@ -167,11 +179,16 @@ class CollectionResource < ApplicationRecord
     end
     # resource_file_file_name
     string :thumbnail_link, multiple: false, stored: true do
-      if CollectionResourceFile.where(collection_resource_id: id).present?
-        url = CollectionResourceFile.where(collection_resource_id: id).order('sort_order ASC').first.thumbnail.url
-        url.present? ? url.gsub("'", "\\\\'") : "https://#{ENV['S3_HOST_CDN']}/public/images/video-default.png"
+      file = CollectionResourceFile.where(collection_resource_id: id)
+      if file.present?
+        url = file.order('sort_order ASC').first.thumbnail.url
+        if url.present?
+          url.gsub("'", "\\\\'")
+        else
+          (file.order('sort_order ASC').first.resource_file_content_type.present? && file.order('sort_order ASC').first.resource_file_content_type.include?('audio') ? "https://#{ENV.fetch('S3_HOST_CDN')}/public/images/audio-default.png" : "https://#{ENV.fetch('S3_HOST_CDN')}/public/images/video-default.png")
+        end
       else
-        "https://#{ENV['S3_HOST_CDN']}/public/images/video-default.png"
+        "https://#{ENV.fetch('S3_HOST_CDN')}/public/images/video-default.png"
       end
     end
 
@@ -293,7 +310,7 @@ class CollectionResource < ApplicationRecord
     resource_columns_collection.each_with_index do |(system_name, single_collection_field), _index|
       fields << system_name if single_collection_field['tombstone'].to_s.to_boolean?
     end
-    fields = %w[agent date duration] if fields.length.zero?
+    fields = %w[agent date description] if fields.length.zero?
     fields
   end
 
@@ -346,7 +363,7 @@ class CollectionResource < ApplicationRecord
   end
 
   def self.fetch_collections(export_and_current_organization, solr)
-    collections_raw = solr.get 'select', params: { q: '*:*',  start: 0, rows: 1000, fq: ['document_type_ss:collection', 'status_ss:active', "organization_id_is:#{export_and_current_organization[:current_organization].id}"], fl: %w[id_is title_ss] }
+    collections_raw = solr.post "select?#{URI.encode_www_form({ q: '*:*', start: 0, rows: 1000, fq: ['document_type_ss:collection', 'status_ss:active', "organization_id_is:#{export_and_current_organization[:current_organization].id}"], fl: %w[id_is title_ss] })}"
     collections = {}
     collections_raw['response']['docs'].each do |single_collection|
       collections[single_collection['id_is'].to_s] = single_collection['title_ss']
@@ -373,7 +390,8 @@ class CollectionResource < ApplicationRecord
     solr_q_condition = '*:*'
     complex_phrase_def_type = false
     fq_filters = ' document_type_ss:collection_resource  '
-    if q.present? && q.match(/([\w]+\.)+[\w]+(?=[\s]|$)/).present?
+    sort_column = sort_column.sub(/_(ss|sms)$/, '_scis')
+    if q.present? && q.match(/(\w+\.)+\w+(?=\s|$)/).present?
       # for this kind of pattern (hvt.1021.232)
       solr_q_condition = "keywords:\"#{q}\""
       complex_phrase_def_type = true
@@ -434,8 +452,8 @@ class CollectionResource < ApplicationRecord
               flag_added_filter = true
               processed = true
             when 'description_agent_search_texts', 'description_coverage_search_texts', 'description_description_search_texts', 'description_identifier_search_texts', 'description_keyword_search_texts',
-                'description_language_search_texts', 'description_preferred_citation_search_texts', 'description_publisher_search_texts', 'description_relation_search_texts', 'description_rights_statement_search_texts',
-                'description_source_metadata_uri_search_texts', 'description_source_search_texts', 'description_subject_search_texts', 'description_title_search_texts', 'description_type_search_texts', 'description_format_search_texts'
+              'description_language_search_texts', 'description_preferred_citation_search_texts', 'description_publisher_search_texts', 'description_relation_search_texts', 'description_rights_statement_search_texts',
+              'description_source_metadata_uri_search_texts', 'description_source_search_texts', 'description_subject_search_texts', 'description_title_search_texts', 'description_type_search_texts', 'description_format_search_texts'
 
               fq_filters_inner = fq_filters_inner + (counter != 0 ? ' OR ' : ' ') + " #{search_perp(q, field_name)} "
               alter_search = field_name.clone
@@ -493,7 +511,7 @@ class CollectionResource < ApplicationRecord
     query_params = { q: solr_q_condition, fq: filters.flatten }
     query_params[:defType] = 'complexphrase' if complex_phrase_def_type
     query_params[:wt] = 'json'
-    total_response = Curl.post(select_url, query_params)
+    total_response = Curl.post(select_url, URI.encode_www_form(query_params))
 
     begin
       total_response = JSON.parse(total_response.body_str)
@@ -518,7 +536,7 @@ class CollectionResource < ApplicationRecord
       query_params[:start] = (page - 1) * per_page
       query_params[:rows] = per_page
     end
-    response = Curl.post(select_url, query_params)
+    response = Curl.post(select_url, URI.encode_www_form(query_params))
     begin
       response = JSON.parse(response.body_str)
     rescue StandardError
@@ -603,7 +621,7 @@ class CollectionResource < ApplicationRecord
     collection_limiter = limit_condition.clone
     collection_limiter.sub! 'collection_id_is', 'id_is'
     collection_title_condition = CollectionResource.search_perp(query, 'collection_title_text')
-    collections_raw = solr.get 'select', params: { q: '*:*', fq: ['document_type_ss:collection', 'status_ss:active', collection_limiter, collection_title_condition], fl: %w[id_is title_ss] }
+    collections_raw = solr.post "select?#{URI.encode_www_form({ q: '*:*', fq: ['document_type_ss:collection', 'status_ss:active', collection_limiter, collection_title_condition], fl: %w[id_is title_ss] })}"
     collections_raw['response']['docs'].each do |single_collection|
       fq_filters_inner = fq_filters_inner + (counter != 0 ? ' OR ' : ' ') + "collection_id_is: #{single_collection['id_is']}"
       counter += 1

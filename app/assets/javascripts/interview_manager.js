@@ -21,6 +21,7 @@ function InterviewManager() {
     that.interview_transcript_id = 0;
     this.initialize = function () {
         bindEvents();
+        setIterviewNotes();
     };
 
     this.initializeSync = function () {
@@ -71,7 +72,7 @@ function InterviewManager() {
             scrollCollapse: false,
             fixedColumns:   {
                 leftColumns: 0,
-                rightColumns: 1
+                rightColumns: $('#interviews_data_table').data('rightrow')
             },
             pagingType: 'simple_numbers',
             'dom': "<'row'<'col-md-6 d-flex'f><'col-md-6'p>>" +
@@ -93,6 +94,7 @@ function InterviewManager() {
             drawCallback: function (settings) {
                 try {
                     that.datatableInitDraw(settings);
+                    that.datatableInitComplete(settings);
                    
                 } catch (e) {
 
@@ -140,8 +142,17 @@ function InterviewManager() {
         bulk_option_selection();
         initImportXmlFile();
         updateTranscriptInfo();
+        assignUser();
+        bulkAssignUser();
     };
 
+    this.datatableInitComplete = function (settings) {
+        setTimeout(function () {
+            window.dispatchEvent(new Event('resize'));
+            $('#interviews_data_table_wrapper .DTFC_ScrollWrapper').css('opacity', '1')
+        },100);
+    };
+    
     const updateTranscriptInfo = function() {
         let updateClass = '#update_transcript_inteviews';
         $("#interview_transcript_translation, #interview_transcript_associated_file").change(function(){
@@ -235,6 +246,29 @@ function InterviewManager() {
                     $('.bulk-edit-modal').modal();
                 }
             });
+            $(".bluk-ohms-export-btn").unbind('click');
+            $('.bluk-ohms-export-btn').on('click', function () {
+                if (that.ids_session.length <= 0) {
+                    jsMessages('danger', 'Please select interviews before doing bulk operations.');
+                } else {
+                    $('#select_check_type').append($('<option>', {
+                        value: "download_xml",
+                        text: 'Bulk Export as OHMS XML'
+                    }));
+                    $('#select_check_type').val("download_xml");
+                    update_bulk_edit_view("download_xml")
+                    $('#bulk_edit_form').attr("target","_blank");
+                    $('.bulk-edit-submit').click();
+                    $('.bulk-edit-do-it').on('click', function () {
+                        setTimeout(() => {
+                            jsMessages('success', 'Download successfully!');
+                            location.reload();
+                        }, "1000");
+                    });
+
+
+                }
+            });
             initUploadPopup();
         }, 500);
 
@@ -272,6 +306,7 @@ function InterviewManager() {
 
     const update_bulk_edit_view = function (selected_type) {
         $('.operation_content').addClass('d-none');
+        $('.bulk-edit-submit').prop('disabled', false)
         if (selected_type == 'download_xml') {
             $('.export_xml_content').removeClass('d-none');
             $('#bulk_edit_type_of_bulk_operation').val('download_xml');
@@ -280,7 +315,25 @@ function InterviewManager() {
             $('.bulk_delete_content').removeClass('d-none');
             $('#bulk_edit_type_of_bulk_operation').val('bulk_delete');
             $('#confirm_msg_pop_bulk').html(' delete the interviews listed below.');
-
+        }
+        else if (selected_type == 'mark_restricted' || selected_type == 'mark_not_restricted') {
+            $('.export_xml_content').addClass('d-none');
+            $('.bulk_delete_content').addClass('d-none');
+            $('#bulk_edit_type_of_bulk_operation').val(selected_type);
+            $('#confirm_msg_pop_bulk').html(' change the use restrictions for the interviews listed below');
+        }
+        else if (selected_type == 'mark_online' || selected_type == 'mark_ofline') {
+            $('.export_xml_content').addClass('d-none');
+            $('.bulk_delete_content').addClass('d-none');
+            $('#bulk_edit_type_of_bulk_operation').val(selected_type);
+            $('#confirm_msg_pop_bulk').html(' change the online status for the interviews listed below');
+        }
+        else if (selected_type == 'ohms_assigned_users') {
+            $('.bulk-edit-submit').prop('disabled', true)
+            $('.ohms_assign_users_content').removeClass('d-none');
+            $('.export_xml_content').addClass('d-none');
+            $('#bulk_edit_type_of_bulk_operation').val(selected_type);
+            $('#confirm_msg_pop_bulk').html(' assign OHMS user for the interviews listed below');
         }
     };
 
@@ -399,7 +452,8 @@ function InterviewManager() {
             manageFieldsMedia($(this).val());
         });
         manageFieldsMedia($('#interviews_interview_media_host').val());
-
+        assignUser();
+        bulkAssignUser();
     };
 
     const manageFieldsMedia = function (value) {
@@ -432,10 +486,12 @@ function InterviewManager() {
     };
     const setNotesResponse = function (response) {
         let html = ""
+        let index = 1;
         response.data.forEach(element => {
-            html = html + '<div>' + element.note + '</div>';
-            html = html + '<div class="d-flex mb-3"><div class="custom-checkbox mr-3"><input type="radio" class="unresolve notes_status" name="status_' + element.id + '" id="unresolve_' + element.id + '" value="0" ' + (element.status ? "" : 'checked="checked"') + ' data-id="' + element.id + '" data-status="0" data-url="' + notesEvent.target.getAttribute("data-updateurl") + '" ></input><label for="unresolve_' + element.id + '">Unresolved</label></div>';
-            html = html + '<div class="custom-checkbox mr-3"><input type="radio" class="resolve notes_status" name="status_' + element.id + '" id="resolve_' + element.id + '" value="1" ' + (element.status ? 'checked="checked"' : "") + ' data-id="' + element.id + '" data-status="1" data-url="' + notesEvent.target.getAttribute("data-updateurl") + '" ></input><label for="resolve_' + element.id + '">Resolved</label></div></div>';
+            html = html + '<div>Note '+index+': ' + element.note + '</div>';
+            html = html + '<div class="d-flex mb-3"><div class="custom-checkbox mr-3"><input type="radio" class="unresolve notes_status" name="status_' + element.id + '" id="unresolve_' + element.id + '" value="0" ' + (element.status ? "" : 'checked="checked"') + ' data-id="' + element.id + '" data-interview_id="' + element.interview_id + '" data-status="0" data-url="' + notesEvent.target.getAttribute("data-updateurl") + '" ></input><label for="unresolve_' + element.id + '">Unresolved</label></div>';
+            html = html + '<div class="custom-checkbox mr-3"><input type="radio" class="resolve notes_status" name="status_' + element.id + '" id="resolve_' + element.id + '" value="1" ' + (element.status ? 'checked="checked"' : "") + ' data-id="' + element.id + '" data-interview_id="' + element.interview_id + '" data-status="1" data-url="' + notesEvent.target.getAttribute("data-updateurl") + '" ></input><label for="resolve_' + element.id + '">Resolved</label></div></div>';
+            index = index + 1;
         });
         html = (response.length == 0 ? "There are currently no notes associated with this interview." : html);
         $('#listNotes').html(html);
@@ -602,13 +658,13 @@ function InterviewManager() {
         document_level_binding_element(".interview_notes", 'click', function (e) {
             notesEvent = e;
             $("#notesForm").attr("action", $(this).data().url);
+            $("#notesForm").attr("data-id", $(this).data().id);
             $.ajax({
                 url: $(this).data().url,
                 type: 'GET',
                 dataType: 'json',
                 success: function (response) {
                     setNotesResponse(response);
-                    if (response.color) notesEventColor = response.color;
                     $('#note').val("");
                     $('#modalPopupNotes').modal('show');
                 },
@@ -625,7 +681,9 @@ function InterviewManager() {
                 type: 'POST',
                 dataType: 'json',
                 success: function (response) {
-                    if (response.color) notesEventColor = response.color;
+                    if (response.color){
+                        changeColor(e.target.getAttribute("data-interview_id"),response.color)
+                    }
                 },
             });
             jsMessages('success', 'Note updated successfully.');
@@ -655,7 +713,10 @@ function InterviewManager() {
                         $('.errors').html("");
                         setNotesResponse(response);
                         jsMessages('success', 'Note added successfully.');
-                        if (response.color) notesEventColor = response.color;
+                        if (response.color){
+                            changeColor(e.target.getAttribute("data-id"),response.color);
+                            $('#modalPopupNotes').modal('hide');
+                        }
                     },
                     error: function (response, status, error) {
                         let info = jQuery.parseJSON(response.responseText);
@@ -676,4 +737,66 @@ function InterviewManager() {
             console.log(err);
         }
     };
+
+    const assignUser = () => {
+        document_level_binding_element(".assign_user", 'change', function (e) {
+            let userId = e.target.value
+            let callUrl = $(e.target).attr('data-call_url')
+            if(userId){
+                $.ajax({
+                    url: callUrl +'/' + e.target.value,
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function (response) {
+                        if (response.success) {
+                            jsMessages('success', response.message);
+                        } else {
+                            jsMessages('error', response.message);
+                        }
+                    },
+                });
+            }
+        });
+    }
+
+    this.keywordField = (keys, selectedKeys) => {
+        new Tokenfield({
+            el: document.querySelector('.tokenfield_keywords'), // Attach Tokenfield to the input element with class "text-input"
+            items: keys,
+            matchStart: true,
+            minChars: 1,
+            newItems: false,
+            itemName: 'keywords',
+            setItems: selectedKeys
+          });
+    }
+
+    this.searchField = (keys, selectedKeys) => {
+        new Tokenfield({
+            el: document.querySelector('.tokenfield_subjects'), // Attach Tokenfield to the input element with class "text-input"
+            items: keys,
+            matchStart: true,
+            minChars: 1,
+            newItems: false,
+            itemName: 'subjects',
+            setItems: selectedKeys
+        });
+    }
+
+    const bulkAssignUser = () => {
+        document_level_binding_element(".bulk_assign_user", 'change', function (e) {
+            let userId = e.target.value
+            if (userId) {
+                $('.bulk-edit-submit').prop('disabled', false)
+            } else {
+                $('.bulk-edit-submit').prop('disabled', true)
+            }
+        });
+    }
+    const changeColor = (id, color) => {
+        $('.interview_note_'+id).removeClass('text-secondary');
+        $('.interview_note_'+id).removeClass('text-danger');
+        $('.interview_note_'+id).removeClass('text-success');
+        $('.interview_note_'+id).addClass(color);
+    }
 }

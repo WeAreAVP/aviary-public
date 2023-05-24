@@ -102,6 +102,11 @@ function CollectionResourceFileTable() {
                     type: 'POST',
                     beforeSend(xhr) {
                         xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'))
+                    },
+                    dataSrc: function ( json ) {
+                        //Make your callback here.
+                        that.resource_bulk_edit.getTotalCount(json.recordsTotal)
+                        return json.data;
                     }
                 },
                 drawCallback: function (settings) {
@@ -141,6 +146,7 @@ function CollectionResourceFileTable() {
                         setTooltip(e.trigger, 'Copied!');
                         hideTooltip(e.trigger);
                     });
+                    fixTable();
                 }
             });
         }
@@ -175,7 +181,7 @@ function CollectionResourceFileTable() {
         });
 
         $.each($('.all_fields_search_identifier'), function (index) {
-            data['columns_search_status'][index] = {value: $(this).attr('id'), status: $(this).prop('checked')};
+            data['columns_search_status'][index] = {value: $(this).data('value'), status: $(this).prop('checked')};
         });
 
         that.app_helper.classAction($('#manage_resource_columns_modal').data('url'), data, 'JSON', 'POST', '', that);

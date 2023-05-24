@@ -16,6 +16,7 @@ class Organization < ApplicationRecord
   has_many :playlists, dependent: :destroy
   has_many :playlist_resources, dependent: :destroy
   has_many :annotation_sets, dependent: :destroy
+  has_many :thesaurus_settings, dependent: :destroy, class_name: 'Thesaurus::ThesaurusSetting'
   validates :name, :url, presence: true
   validates :url, uniqueness: { message: 'Already taken. Please choose another.' }
   validates :logo_image, attachment_presence: true
@@ -102,7 +103,9 @@ class Organization < ApplicationRecord
           '33' => { status: 'true', value: 'created_by_id_is', sort_name: true },
           '34' => { status: 'true', value: 'updated_by_id_is', sort_name: true },
           '35' => { status: 'true', value: 'created_at_is', sort_name: true },
-          '36' => { status: 'true', value: 'updated_at_is', sort_name: true }
+          '36' => { status: 'true', value: 'updated_at_is', sort_name: true },
+          '37' => { status: 'true', value: 'record_status_is', sort_name: true },
+          '38' => { status: 'true', value: 'ohms_assigned_user_id_is', sort_name: true }
         }
     }.to_json
 
@@ -201,18 +204,17 @@ class Organization < ApplicationRecord
     {
       organization_id_is: { key: 'organization_id_is', label: 'Organization Name', single: false, helper_method: :render_organization_facet_value, tag: 'organization_id_is-tag', ex: 'organization_id_is-tag', type: 'integer' },
       collection_id_is: { key: 'collection_id_is', label: 'Collection Title', single: false, helper_method: :render_collection_facet_value, tag: 'collection_id_is-tag', ex: 'collection_id_is-tag', type: 'integer' },
-      description_date_search_lms: { key: 'description_date_search_lms', label: 'Date', partial: 'blacklight_range_limit/range_limit_panel', range: { segments: false },
-                                     tag: 'description_date_search_lms-tag', ex: 'description_date_search_lms-tag', type: 'date' },
-      description_language_search_facet_sms: { key: 'description_language_search_facet_sms', label: 'Resource Language', single: false, type: 'text' },
-      description_coverage_search_facet_sms: { key: 'description_coverage_search_facet_sms', label: 'Location', single: false, type: 'text' },
+      date: { key: 'description_date_search_lms', label: 'Date', partial: 'blacklight_range_limit/range_limit_panel', range: { segments: false }, tag: 'description_date_search_lms-tag', ex: 'description_date_search_lms-tag', type: 'date' },
+      language: { key: 'description_language_search_facet_sms', label: 'Resource Language', single: false, type: 'text' },
+      coverage: { key: 'description_coverage_search_facet_sms', label: 'Location', single: false, type: 'text' },
       has_transcript_ss: { key: 'has_transcript_ss', label: 'Has Transcript', single: false, type: 'text' },
       has_index_ss: { key: 'has_index_ss', label: 'Has Index', single: false, type: 'text' },
-      description_format_search_facet_sms: { key: 'description_format_search_facet_sms', label: 'Format', single: false, type: 'text' },
-      description_publisher_search_facet_sms: { key: 'description_publisher_search_facet_sms', label: 'Publisher', single: false, type: 'text' },
-      description_agent_search_facet_sms: { key: 'description_agent_search_facet_sms', label: 'Agent', single: false, type: 'text' },
-      description_keyword_search_facet_sms: { key: 'description_keyword_search_facet_sms', label: 'Keyword', single: false, type: 'text' },
-      description_subject_search_facet_sms: { key: 'description_subject_search_facet_sms', label: 'Subject', single: false, type: 'text' },
-      description_type_search_facet_sms: { key: 'description_type_search_facet_sms', label: 'Type', single: false, type: 'text' },
+      format: { key: 'description_format_search_facet_sms', label: 'Format', single: false, type: 'text' },
+      publisher: { key: 'description_publisher_search_facet_sms', label: 'Publisher', single: false, type: 'text' },
+      agent: { key: 'description_agent_search_facet_sms', label: 'Agent', single: false, type: 'text' },
+      keyword: { key: 'description_keyword_search_facet_sms', label: 'Keyword', single: false, type: 'text' },
+      subject: { key: 'description_subject_search_facet_sms', label: 'Subject', single: false, type: 'text' },
+      type: { key: 'description_type_search_facet_sms', label: 'Type', single: false, type: 'text' },
       access_ss: { key: 'access_ss', label: 'Access', single: false, type: 'text' },
       description_duration_ls: { key: 'description_duration_ls', label: 'Duration', single: true, partial: 'blacklight_range_limit/range_limit_panel',
                                  range: { segments: false }, tag: 'description_duration_ls', ex: 'description_duration_ls-tag', type: 'date' }
@@ -325,7 +327,11 @@ class Organization < ApplicationRecord
               '17' => { status: 'true', value: 'file_display_name_ss', sort_name: true },
               '18' => { status: 'true', value: 'duration_ss', sort_name: true },
               '19' => { status: 'true', value: 'created_at_ds', sort_name: true },
-              '20' => { status: 'true', value: 'collection_title_text', sort_name: true }
+              '20' => { status: 'true', value: 'collection_title_text', sort_name: true },
+              '21' => { status: 'true', value: 'sort_order_is', sort_name: true },
+              '22' => { status: 'true', value: 'is_downloadable_ss', sort_name: true },
+              '23' => { status: 'true', value: 'is_cc_on_ss', sort_name: true },
+              '24' => { status: 'true', value: 'embed_code_texts', sort_name: false }
             }
     }.to_json
 
@@ -335,9 +341,12 @@ class Organization < ApplicationRecord
       '2' => { status: 'true', value: 'resource_file_content_type_ss' },
       '3' => { status: 'true', value: 'collection_resource_title_ss' },
       '4' => { status: 'true', value: 'target_domain_ss' },
-      '5' => { status: 'true', value: 'collection_title_text', sort_name: true }
+      '5' => { status: 'true', value: 'collection_title_text', sort_name: true },
+      '6' => { status: 'true', value: 'sort_order_ss', sort_name: true }
     }.to_json
     update(resource_file_display_column: display_columns_update, resource_file_search_column: search_columns_update) if resource_file_display_column.blank?
+    update_transcript_fields
+    update_file_index_fields
   end
 
   def update_search_configuration(force_update = false)
@@ -453,14 +462,14 @@ class Organization < ApplicationRecord
     bucket_exist = proc do |url|
       self.class.where(bucket_name: url).first
     end
-    bucket_name = ENV['WASABI_PREFIX'] + '_' + url
+    bucket_name = ENV.fetch('WASABI_PREFIX') + '_' + url
 
     1.step do |i|
       break unless bucket_exist.call(bucket_name).present?
       bucket_name = bucket_name + '_' + i.to_s
     end
 
-    if ENV['RAILS_ENV'] == 'production'
+    if ENV.fetch('RAILS_ENV') == 'production'
       s3 = s3_client
       s3.create_bucket(bucket: bucket_name)
       begin
@@ -476,10 +485,10 @@ class Organization < ApplicationRecord
 
   def s3_client
     Aws::S3::Client.new(
-      access_key_id: ENV['WASABI_KEY'],
-      secret_access_key: ENV['WASABI_SECRET'],
-      region: ENV['WASABI_REGION'],
-      endpoint: ENV['WASABI_ENDPOINT']
+      access_key_id: ENV.fetch('WASABI_KEY'),
+      secret_access_key: ENV.fetch('WASABI_SECRET'),
+      region: ENV.fetch('WASABI_REGION'),
+      endpoint: ENV.fetch('WASABI_ENDPOINT')
     )
   end
 
@@ -510,6 +519,10 @@ class Organization < ApplicationRecord
     organization_users.where(role_id: Role.org_owner_id, user_id: user.id)
   end
 
+  def organization_ohms_assigned_users
+    organization_users.where(role_id: Role.organization_ohms_assigned_user).where(status: true).includes(:user).where('users.status = ?', true).order('users.first_name')
+  end
+
   def resource_count
     count = CollectionResource.select('COUNT(collection_resources.id) total')
                               .joins('INNER JOIN collections ON collections.id = collection_resources.collection_id AND collections.status != 0')
@@ -538,7 +551,8 @@ class Organization < ApplicationRecord
           '5' => { status: 'true', value: 'updated_at_ds', sort_name: true },
           '6' => { status: 'true', value: 'created_at_ds', sort_name: true },
           '7' => { status: 'true', value: 'file_display_name_ss', sort_name: true },
-          '8' => { status: 'true', value: 'collection_resource_title_ss', sort_name: true }
+          '8' => { status: 'true', value: 'collection_resource_title_ss', sort_name: true },
+          '9' => { status: 'true', value: 'associated_file_content_type_ss', sort_name: true }
         }
     }.to_json
 
@@ -549,7 +563,8 @@ class Organization < ApplicationRecord
       '3' => { status: 'true', value: 'language_ss', sort_name: true },
       '4' => { status: 'true', value: 'description_ss', sort_name: true },
       '5' => { status: 'true', value: 'file_display_name_ss', sort_name: true },
-      '6' => { status: 'true', value: 'collection_resource_title_ss', sort_name: true }
+      '6' => { status: 'true', value: 'collection_resource_title_ss', sort_name: true },
+      '7' => { status: 'true', value: 'associated_file_content_type_ss', sort_name: true }
     }.to_json
     update(file_index_display_column: display_columns_update, file_index_search_column: search_columns_update) if file_index_display_column.blank?
   end
@@ -568,7 +583,10 @@ class Organization < ApplicationRecord
           '6' => { status: 'true', value: 'created_at_ds', sort_name: true },
           '7' => { status: 'true', value: 'file_display_name_ss', sort_name: true },
           '8' => { status: 'true', value: 'collection_resource_title_ss', sort_name: true },
-          '9' => { status: 'true', value: 'annotation_count_is', sort_name: true }
+          '9' => { status: 'true', value: 'annotation_count_is', sort_name: true },
+          '10' => { status: 'true', value: 'is_caption_ss', sort_name: true },
+          '11' => { status: 'true', value: 'is_downloadable_ss', sort_name: true },
+          '12' => { status: 'true', value: 'associated_file_content_type_ss', sort_name: true }
         }
     }.to_json
 
@@ -579,7 +597,9 @@ class Organization < ApplicationRecord
       '3' => { status: 'true', value: 'language_ss', sort_name: true },
       '4' => { status: 'true', value: 'description_ss', sort_name: true },
       '5' => { status: 'true', value: 'file_display_name_ss', sort_name: true },
-      '6' => { status: 'true', value: 'collection_resource_title_ss', sort_name: true }
+      '6' => { status: 'true', value: 'collection_resource_title_ss', sort_name: true },
+      '7' => { status: 'true', value: 'is_caption_ss', sort_name: true },
+      '8' => { status: 'true', value: 'associated_file_content_type_ss', sort_name: true }
     }.to_json
     update(transcript_display_column: display_columns_update, transcript_search_column: search_columns_update) if transcript_display_column.blank?
   end

@@ -19,7 +19,9 @@ function InterviewIndexManager() {
     let widget_soundcloud;
     let host = "";
     this.initialize = function () {
+        $('[data-toggle="tooltip"]').tooltip();
         bindEvents();
+        setIterviewNotes();
         let searchParams = new URLSearchParams(window.location.search)
         host = $('#media_host').data('host')
         if($('.tokenfield').length > 0){
@@ -309,7 +311,23 @@ function InterviewIndexManager() {
         document_level_binding_element('.btn-success', 'click', function () {
             formChange = 0;
         });
-        
+        document_level_binding_element('.play-timecode', 'click', function () {
+            let currentTime = $(this).data().timecode;
+            if ($('#avalon_widget').length > 0) {
+                player_widget('set_offset', {'offset': currentTime});
+                player_widget('play');
+            } else {
+                playerSpecificTimePlay = currentTime;
+                player_widget.currentTime(currentTime);
+                player_widget.play();
+            }
+            if ($(this).parent().hasClass('annotation_text')) {
+                $('.transcript_point_container').mCustomScrollbar("scrollTo", $('.annotation_marker.active'), {
+                    scrollInertia: 10,
+                    timeout: 1
+                });
+            }
+        }, true)
     };
     function unloadPage(){ 
         if(formChange == 1){

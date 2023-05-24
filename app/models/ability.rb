@@ -17,19 +17,21 @@ class Ability
     if user.organization_users.active.present? && organization.present?
       user_current_organization = user.organization_users.active.where(organization_id: organization.id)
       if user_current_organization.present?
-
-        can :manage, CollectionResource
-        can :manage, Playlist
-        can :manage, Organization
-        can :manage, Collection
-        can :manage, [FileIndex, FileIndexPoint]
-        can :manage, [FileTranscript, FileTranscriptPoint]
-        can :manage, [AnnotationSet, Annotation]
-        can :manage, CollectionResourceFile
-        roles = Role.org_owner_and_admin_id
-        unless roles.include? user_current_organization.first.role_id
-          cannot :destroy, Collection
-          cannot :destroy, CollectionResource
+        can :manage, Interviews::Interview
+        unless user_current_organization.first.role.system_name == 'ohms_assigned_user'
+          can :manage, CollectionResource
+          can :manage, Playlist
+          can :manage, Organization
+          can :manage, Collection
+          can :manage, [FileIndex, FileIndexPoint]
+          can :manage, [FileTranscript, FileTranscriptPoint]
+          can :manage, [AnnotationSet, Annotation]
+          can :manage, CollectionResourceFile
+          roles = Role.org_owner_and_admin_id
+          unless roles.include? user_current_organization.first.role_id
+            cannot :destroy, Collection
+            cannot :destroy, CollectionResource
+          end
         end
       end
     end
