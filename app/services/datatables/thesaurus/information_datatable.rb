@@ -44,6 +44,11 @@ module Thesaurus
                    else
                      labels.present? ? labels : []
                    end
+
+          thesaurus_settings = ::Thesaurus::ThesaurusSetting.find_or_create_by(organization_id: @current_organization.id, is_global: true, thesaurus_type: 'resource')
+          fields.push('Index: Keywords') if thesaurus_settings.thesaurus_keywords == thesauru.id
+          fields.push('Index: Subjects') if thesaurus_settings.thesaurus_subjects == thesauru.id
+
           html_link = if fields.present?
                         link_to 'Field Listing', 'javascript:void(0)', class: 'btn-sm btn-default field_listing_popup', data: { toggle: 'modal', list_of_fields: fields.join(','), target: '#field_listing_theasurus_popup',
                                                                                                                                 title: thesauru.title, id: thesauru.id }

@@ -94,7 +94,7 @@ function ThesaurusManager() {
 
     this.auto_complete = function () {
         document_level_binding_element('.thesaurus_term_autocomplete', 'focus', function () {
-            let min_length = 0;
+            let min_length = 2;
             if (!$(this).hasClass('ui-autocomplete-input')) {
                 $(this).autocomplete({
                     source: $(this).data('path') + '?tId=' + $(this).data('assigned-thesaurus') + '&typeOfList=' + $(this).data('typeOfList'),
