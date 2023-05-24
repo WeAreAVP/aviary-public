@@ -127,7 +127,7 @@ module Interviews
       string :keywords, multiple: true, stored: true
       string :subjects, multiple: true, stored: true
       string :collection_id_series_id, stored: true do
-        collection_id.gsub(' ', '') + ' ' + series_id.gsub(' ', '')
+        (collection_id.gsub(' ', '') + ' ' + series_id.gsub(' ', '')).strip
       end
       integer :notes_count, stored: true do
         interview_notes.count
