@@ -193,7 +193,7 @@ module Interviews
 
         if dos_xml.present?
           dos_xml.each do |single_dos_xml|
-            file_name = single_dos_xml[:ohms_xml_filename].present? ? single_dos_xml[:ohms_xml_filename] : 'interview' + single_dos_xml[:id].to_s + '.xml'
+            file_name = single_dos_xml[:ohms_xml_filename].present? && !single_dos_xml[:ohms_xml_filename].include?('http') ? single_dos_xml[:ohms_xml_filename] : 'interview' + single_dos_xml[:id].to_s + '.xml'
             File.binwrite(File.join(tmp_user_folder, file_name), single_dos_xml[:xml])
             dos_xml_files << file_name
           end
@@ -297,7 +297,7 @@ module Interviews
       @interview.organization = current_organization
       respond_to do |format|
         if @interview.save
-          format.html { redirect_to ohms_records_path, notice: 'Interview was successfully created.' }
+          format.html { redirect_to ohms_records_edit_path(@interview.id), notice: 'Interview was successfully created.' }
           format.json { render :show, status: :created, location: @interview }
         else
           format.html { render :new }
@@ -312,7 +312,7 @@ module Interviews
       authorize! :manage, Interviews::Interview
       respond_to do |format|
         if @interview.update(interview_params)
-          format.html { redirect_to ohms_records_path, notice: 'Interview was successfully updated.' }
+          format.html { redirect_to ohms_records_edit_path(@interview.id), notice: 'Interview was successfully updated.' }
           format.json { render :show, status: :ok, location: @interview }
         else
           format.html { render :edit }

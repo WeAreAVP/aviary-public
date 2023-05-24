@@ -21,6 +21,7 @@ function InterviewIndexManager() {
     this.initialize = function () {
         $('[data-toggle="tooltip"]').tooltip();
         bindEvents();
+        setIterviewNotes();
         let searchParams = new URLSearchParams(window.location.search)
         host = $('#media_host').data('host')
         if($('.tokenfield').length > 0){

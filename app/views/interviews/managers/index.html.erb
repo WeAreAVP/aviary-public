@@ -30,6 +30,7 @@
                   <button class="dropdown-item manage-resource-columns-btn" data-target=".manage-interview-column-modal" data-toggle="modal">
                     Manage Table
                   </button>
+                  <button class="dropdown-item bluk-ohms-export-btn">Bulk Export OHMS XML</button>
                   <button class="dropdown-item bluk-edit-btn">Bulk Edit Options</button>
                 </div>
               </div>
@@ -168,7 +169,7 @@
       </div>
       <div class="modal-body">
         <h1 class="alert-danger font-size-21px text-center mb-20px p-2 "> Are you sure you want to
-          <span id="confirm_msg_pop_bulk"> export the interviews listed below as XML.</span>? </h1>
+          <span id="confirm_msg_pop_bulk"> delete the interviews listed below.</span>? </h1>
         <table class="table table-hover review_resources_file_bulk table-sm " style="width: 100%;">
           <thead>
           <tr>
@@ -206,9 +207,8 @@
             <div class="col-md-12">
               <div class="row">
                 <div class="col-12 float-left">
-                  <select class="bulk_operation_interviews" name="check_type">
-                    <option value="download_xml">Export as XML</option>
-                    <option value="bulk_delete">Bulk Delete</option>
+                  <select class="bulk_operation_interviews" id="select_check_type" name="check_type">
+                    <option value="bulk_delete" selected>Bulk Delete</option>
                     <option value="mark_online">Mark records online</option>
                     <option value="mark_ofline">Mark records offline</option>
                     <option value="mark_restricted">Mark restricted</option>
@@ -220,12 +220,12 @@
             </div>
             <input type="hidden" name='action' value="bulk_edit_operation"/>
             <div class="col-md-12 mt-20px">
-              <div class="bulk_delete_content operation_content d-none">
+              <div class="bulk_delete_content operation_content">
                 <h1 class="font-size-18px text-left"> Delete selected interviews.</h1>
               </div>
 
-              <div class="export_xml_content operation_content ">
-                <h1 class="font-size-18px text-left"> Export selected interviews as XML.</h1>
+              <div class="export_xml_content operation_content d-none">
+                <h1 class="font-size-18px text-left"> Export selected interviews as OHMS XML.</h1>
               </div>
 
               <div class="ohms_assign_users_content operation_content d-none">

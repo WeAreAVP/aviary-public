@@ -40,7 +40,7 @@
           <button type="button" class="info-btn" data-content="WebVTT cue payload field in VTT export."></button>
         <% end %>
       </div>
-      <%= f.input :synopsis, required: false, label: false, input_html: { class: 'form-control title' } %>
+      <%= f.input :synopsis, required: false, label: false, input_html: { class: 'form-control title ohm_synopsis' } %>
     </div>
     <% if @interview.present? &&  @interview.include_language %>
     <div class="form-group">

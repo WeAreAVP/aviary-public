@@ -18,7 +18,9 @@
           </div>
           <div class="col-md-6">
             <% if @interview.id.present? %>
+            <div class="ohms_edit_transcript">
             <%= render partial: 'shared/ohms/buttons', locals: { interview: @interview } %>
+            </div>
             <% end %>
           </div>
         </div>
@@ -36,6 +38,10 @@
     </main>
   </div>
 </div>
+<%= render 'interviews/managers/notes' %>
 <script type="text/javascript">
     let interviews_index_manager = new InterviewIndexManager();
+    $(function () {
+      interviews_index_manager.initialize();
+    });
 </script>
