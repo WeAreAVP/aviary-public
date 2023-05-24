@@ -29,6 +29,7 @@ function UploadManager(app_helper) {
      * @returns {none}
      */
     this.initialize = function () {
+        setTabFocus();
         bindings();
         if ($('.info-btn').length > 0) {
             $('.info-btn').popover({
@@ -163,6 +164,7 @@ function UploadManager(app_helper) {
                 CheckEmbedType('.manage-media-modal ');
                 $('#other-info-holder').html($('#other-info').html());
                 binding_embed_local('.manage-media-modal ');
+                saveTabFocus(this);
             });
         });
 
@@ -301,6 +303,15 @@ function UploadManager(app_helper) {
             $('.field_embed_code').html($('.field_embed_code_parent_input').html());
         }
     };
+
+    const saveTabFocus = (el) => {
+      localStorage.setItem('saved_focus', `.${el.className.split(' ').join('.')}[data-file-id="${el.dataset.fileId}"]`);
+    }
+
+    const setTabFocus = () => {
+      $(localStorage.getItem('saved_focus')).focus();
+      localStorage.removeItem('saved_focus');
+    }
 
     this.handlecallback = function (response, container, requestData) {
         try {
