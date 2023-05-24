@@ -21,6 +21,8 @@ module Aviary
 
     # OrganizationFieldManager
     class OrganizationFieldManager < BasedFieldManager
+      include OrganizationHelper
+
       def organization_field_settings(organization, value_for = nil, fields_type = 'collection_fields', sort_by = 'sort_order', fetch_type = 'hash')
         return nil unless organization.present?
         organization.assign_fields_to_organization
@@ -56,6 +58,7 @@ module Aviary
           single_collection_field.each do |key, value|
             value = value.to_i if key.include? 'sort'
             fields[single_collection_field['system_name'].downcase][key] = value if fields[single_collection_field['system_name'].downcase].present?
+            fields[single_collection_field['system_name'].downcase]['is_internal_only'] = false if acts_as_default(fields[single_collection_field['system_name'].downcase])
           end
         end
         organization.organization_field[type] = fields
