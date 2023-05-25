@@ -71,6 +71,8 @@ module Interviews
       authorize! :manage, Interviews::Interview
       @file_index_point = FileIndexPoint.find(params[:id])
       @file_index_point.update(file_index_point_params)
+      @file_index_point.keywords = params[:keywords].join(';') if params[:keywords].present?
+      @file_index_point.subjects = params[:subjects].join(';') if params[:subjects].present?
       start_time = human_to_seconds(params[:file_index_point][:start_time])
       @file_index_point.start_time = start_time.to_f
       @file_index_point = set_custom_values(@file_index_point, '', params)
