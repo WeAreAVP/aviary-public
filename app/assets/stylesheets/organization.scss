@@ -193,11 +193,11 @@
 }
 
 .ohm_synopsis {
-  height: 137px !important;
+  min-height: 137px !important;
 }
 
 .ohm_summary {
-  height: 190px !important;
+  min-height: 190px !important;
 }
 .tokenfield.form-control {
   height: auto;
