@@ -72,7 +72,25 @@
   <div class="d-flex">
     <div class="form-group">
       <div class="field-title"><%= f.label :keywords, "Keywords" %></div>
-      <%= f.text_area :keywords, required: false, label: false, class: 'form-control keywords tokenfield tokenfield_keywords', data: { items: @interview.present? ? Thesaurus::ThesaurusTerms.where(thesaurus_information_id: @interview.thesaurus_keywords).sort_by(&:term).map(&:term) : @thesaurus_keywords.present? ? Thesaurus::ThesaurusTerms.where(thesaurus_information_id: @thesaurus_keywords).sort_by(&:term).map(&:term) : [] } %>
+      <% thesaurus = if @interview.present?
+                       Thesaurus::Thesaurus.where(id: @interview.thesaurus_keywords)
+                     elsif @thesaurus_keywords.present?
+                       Thesaurus::Thesaurus.where(id: @thesaurus_keywords)
+                     else
+                      nil
+                     end
+
+        keywords_data = {}
+        keywords_data[:selected_keys] = @file_index_point.keywords.split(';').map.with_index do |keyword, i|
+                                          thesaurus.length.positive? ? { id: i, label: keyword, value: keyword } : { id: keyword, name: keyword }
+                                        end
+        if thesaurus.length.positive?
+          keywords_data[:path] = autocomplete_thesaurus_manager_index_path
+          keywords_data[:t_id] = thesaurus.first.id
+          keywords_data[:type_of_list] = 'thesaurus'
+        end
+      %>
+      <%= f.text_area :keywords, required: false, label: false, class: 'form-control keywords tokenfield tokenfield_keywords', data: keywords_data %>
       <small class="form-text text-muted mt-1">Keywords should be separated by a semi-colon.</small>
       <% if @interview.present? %>
         <% thesaurus = Thesaurus::Thesaurus.where(id: @interview.thesaurus_keywords) %>
@@ -90,7 +108,7 @@
     <% if @interview.present? &&  @interview.include_language %>
       <div class="form-group">
         <div class="field-title"><%= f.label :keywords, "Keywords" %></div>
-        <%= f.text_area :keywords_alt, required: false, label: false, class: 'form-control keywords tokenfield tokenfield_keywords', data: { items: @interview.present? ? Thesaurus::ThesaurusTerms.where(thesaurus_information_id: @interview.thesaurus_keywords).sort_by(&:term).map(&:term) : @thesaurus_keywords.present? ? Thesaurus::ThesaurusTerms.where(thesaurus_information_id: @thesaurus_keywords).sort_by(&:term).map(&:term) : [] } %>
+        <%= f.text_area :keywords_alt, required: false, label: false, class: 'form-control keywords tokenfield tokenfield_keywords', data: keywords_data %>
         <small class="form-text text-muted mt-1">Keywords should be separated by a semi-colon.</small>
         <% if @interview.present? %>
           <% thesaurus = Thesaurus::Thesaurus.where(id: @interview.thesaurus_keywords) %>
@@ -110,7 +128,25 @@
   <div class="d-flex">
     <div class="form-group">
       <div class="field-title"><%= f.label :subjects, "Subjects" %></div>
-      <%= f.text_area :subjects, required: false, label: false, class: 'form-control subjects tokenfield tokenfield_subjects', data: { items: @interview.present? ? Thesaurus::ThesaurusTerms.where(thesaurus_information_id: @interview.thesaurus_subjects).sort_by(&:term).map(&:term) : @thesaurus_keywords.present? ? Thesaurus::ThesaurusTerms.where(thesaurus_information_id: @thesaurus_subjects).sort_by(&:term).map(&:term) : [] } %>
+      <% thesaurus = if @interview.present?
+                       Thesaurus::Thesaurus.where(id: @interview.thesaurus_subjects)
+                     elsif @thesaurus_keywords.present?
+                       Thesaurus::Thesaurus.where(id: @thesaurus_subjects)
+                     else
+                       nil
+                     end
+
+        subject_data = {}
+        subject_data[:selected_keys] = @file_index_point.subjects.split(';').map.with_index do |subject, i|
+                                          thesaurus.length.positive? ? { id: i, label: subject, value: subject } : { id: subject, name: subject }
+                                        end
+        if thesaurus.length.positive?
+          subject_data[:path] = autocomplete_thesaurus_manager_index_path
+          subject_data[:t_id] = thesaurus.first.id
+          subject_data[:type_of_list] = 'thesaurus'
+        end
+      %>
+      <%= f.text_area :subjects, required: false, label: false, class: 'form-control subjects tokenfield tokenfield_subjects', data: subject_data %>
       <small class="form-text text-muted mt-1">Subjects should be separated by a semi-colon.</small>
       <% if @interview.present? %>
         <% thesaurus = Thesaurus::Thesaurus.where(id: @interview.thesaurus_subjects) %>
@@ -128,7 +164,7 @@
     <% if @interview.present? &&  @interview.include_language %>
       <div class="form-group">
         <div class="field-title"><%= f.label :subjects, "Subjects" %></div>
-        <%= f.text_area :subjects_alt, required: false, label: false, class: 'form-control subjects tokenfield tokenfield_subjects', data: { items: @interview.present? ? Thesaurus::ThesaurusTerms.where(thesaurus_information_id: @interview.thesaurus_subjects).sort_by(&:term).map(&:term) : @thesaurus_keywords.present? ? Thesaurus::ThesaurusTerms.where(thesaurus_information_id: @thesaurus_subjects).sort_by(&:term).map(&:term) : [] } %>
+        <%= f.text_area :subjects_alt, required: false, label: false, class: 'form-control subjects tokenfield tokenfield_subjects', data: subject_data %>
         <small class="form-text text-muted mt-1">Subjects should be separated by a semi-colon.</small>
         <% if @interview.present? %>
           <% thesaurus = Thesaurus::Thesaurus.where(id: @interview.thesaurus_subjects) %>
