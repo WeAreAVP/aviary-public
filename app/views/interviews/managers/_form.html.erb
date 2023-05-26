@@ -145,13 +145,17 @@ thesaurus_settings = ::Thesaurus::ThesaurusSetting.where(organization_id: curren
             </div>
             <div class="container_keywords">
               <% @interview.keywords = @interview.keywords.join(';') if @interview.keywords.present? %>
-              <%= f.text_area :keywords, required: false, label: false, class: 'form-control keywords tokenfield tokenfield_keywords' %>
-              <small class="form-text text-muted mt-1">Keywords should be separated by a semi-colon.</small>
               <% if thesaurus_settings.present? && thesaurus_settings.thesaurus_keywords.positive? %>
                 <% thesaurus = Thesaurus::Thesaurus.where(id: thesaurus_settings.thesaurus_keywords) %>
                 <% if thesaurus.length.positive? %>
+                  <%= f.text_area :keywords, required: false, label: false, class: 'form-control keywords tokenfield tokenfield_keywords',
+                    data: { path: autocomplete_thesaurus_manager_index_path, t_id: thesaurus.first.id, type_of_list: 'thesaurus' } %>
+                  <small class="form-text text-muted mt-1">Keywords should be separated by a semi-colon.</small>
                   <small class="form-text text-muted mt-1">Current Thesaurus: <strong><%= thesaurus.first.title %></strong></small>
                 <% end %>
+              <% else %>
+                <%= f.text_area :keywords, required: false, label: false, class: 'form-control keywords tokenfield tokenfield_keywords' %>
+                <small class="form-text text-muted mt-1">Keywords should be separated by a semi-colon.</small>
               <% end %>
             </div>
           </div>
@@ -160,13 +164,17 @@ thesaurus_settings = ::Thesaurus::ThesaurusSetting.where(organization_id: curren
             </div>
             <div class="container_subjects">
               <% @interview.subjects = @interview.subjects.join(';') if @interview.subjects.present? %>
-              <%= f.text_area :subjects, required: false, label: false, class: 'form-control subjects tokenfield tokenfield_subjects' %>
-              <small class="form-text text-muted mt-1">Subjects should be separated by a semi-colon.</small>
               <% if thesaurus_settings.present? && thesaurus_settings.thesaurus_subjects.positive? %>
                 <% thesaurus = Thesaurus::Thesaurus.where(id: thesaurus_settings.thesaurus_subjects) %>
                 <% if thesaurus.length.positive? %>
+                  <%= f.text_area :subjects, required: false, label: false, class: 'form-control subjects tokenfield tokenfield_subjects',
+                    data: { path: autocomplete_thesaurus_manager_index_path, t_id: thesaurus.first.id, type_of_list: 'thesaurus' } %>
+                  <small class="form-text text-muted mt-1">Subjects should be separated by a semi-colon.</small>
                   <small class="form-text text-muted mt-1">Current Thesaurus: <strong><%= thesaurus.first.title %></strong></small>
                  <% end %>
+              <% else %>
+                <%= f.text_area :subjects, required: false, label: false, class: 'form-control subjects tokenfield tokenfield_subjects' %>
+                <small class="form-text text-muted mt-1">Subjects should be separated by a semi-colon.</small>
               <% end %>
             </div>
           </div>

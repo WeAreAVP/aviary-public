@@ -760,27 +760,73 @@ function InterviewManager() {
     }
 
     this.keywordField = (keys, selectedKeys) => {
-        new Tokenfield({
-            el: document.querySelector('.tokenfield_keywords'), // Attach Tokenfield to the input element with class "text-input"
-            items: keys,
-            matchStart: true,
+        const keywords_options = {
+            el: document.querySelector('.tokenfield_keywords'),
+            multiple: true,
             minChars: 1,
-            newItems: false,
             itemName: 'keywords',
             setItems: selectedKeys
-          });
+        }
+
+        if ($('.tokenfield_keywords').data('path') !== undefined) {
+            keywords_options.remote = {
+                url: $('.tokenfield_keywords').data('path'),
+                type: 'GET',
+                queryParam: 'term',
+                params: {
+                    tId: $('.tokenfield_keywords').data('tId'),
+                    typeOfList: $('.tokenfield_keywords').data('typeOfList')
+                }
+            };
+            keywords_options.newItems = false;
+            keywords_options.itemLabel = 'label';
+            keywords_options.itemValue = 'value';
+            keywords_options.itemData = 'label';
+            keywords_options.setItems = selectedKeys.map((item) => {
+              return { id: item.name, value: item.name, label: item.name }
+            });
+        } else {
+            keywords_options.newItems = true;
+            keywords_options.newItemName = 'keywords';
+            keywords_options.setItems = selectedKeys;
+        }
+
+        new Tokenfield(keywords_options);
     }
 
     this.searchField = (keys, selectedKeys) => {
-        new Tokenfield({
-            el: document.querySelector('.tokenfield_subjects'), // Attach Tokenfield to the input element with class "text-input"
-            items: keys,
-            matchStart: true,
-            minChars: 1,
-            newItems: false,
-            itemName: 'subjects',
-            setItems: selectedKeys
-        });
+        const subjects_options = {
+          el: document.querySelector('.tokenfield_subjects'),
+          multiple: true,
+          minChars: 1,
+          itemName: 'subjects',
+        };
+
+        if ($('.tokenfield_subjects').data('path') !== undefined) {
+          subjects_options.remote = {
+              url: $('.tokenfield_subjects').data('path'),
+              type: 'GET',
+              queryParam: 'term',
+              params: {
+                  tId: $('.tokenfield_subjects').data('tId'),
+                  typeOfList: $('.tokenfield_subjects').data('typeOfList')
+              }
+          };
+          subjects_options.newItems = false;
+          subjects_options.itemLabel = 'label';
+          subjects_options.itemValue = 'value';
+          subjects_options.itemData = 'label';
+          subjects_options.setItems = selectedKeys.map((item) => {
+              return { id: item.name, value: item.name, label: item.name }
+            });
+
+        } else {
+            subjects_options.newItems = true;
+            subjects_options.newItemName = 'subjects';
+            subjects_options.setItems = selectedKeys;
+        }
+
+        new Tokenfield(subjects_options);
     }
 
     const bulkAssignUser = () => {
