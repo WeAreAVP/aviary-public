@@ -136,8 +136,6 @@ class IndexesController < ApplicationController
     @file_index = FileIndex.find(params[:file_index_id])
     @file_index_point = FileIndexPoint.find(params[:file_index_point_id])
     @file_index_point.update(file_index_point_params)
-    @file_index_point.subjects = params[:subjects].join(';') if params[:subjects].present?
-    @file_index_point.keywords = params[:keywords].join(';') if params[:keywords].present?
     @file_index_point.start_time = human_to_seconds(params[:file_index_point][:start_time]).to_f
     start_time = @file_index_point.start_time
     @file_index_point = set_custom_values(@file_index_point, '', params)
