@@ -220,17 +220,17 @@ module Thesaurus
                                   if !Rails.env.test?
                                     ::Thesaurus::ThesaurusTerms.select('id, CONVERT(CONVERT(CONVERT(term USING latin1) USING binary) USING utf8) AS term_mod ')
                                                                .where('MATCH(term) AGAINST(? IN BOOLEAN MODE)', terms_all.join(' ').to_s)
-                                                               .where(thesaurus_information_id: thesaurus_id).order('term asc').limit(50)
+                                                               .where(thesaurus_information_id: thesaurus_id).limit(50)
                                   else
                                     ::Thesaurus::ThesaurusTerms.select('id, term AS term_mod ')
                                                                .where('term Like ?', terms_all.join(' ').to_s)
-                                                               .where(thesaurus_information_id: thesaurus_id).order('term asc').limit(50)
+                                                               .where(thesaurus_information_id: thesaurus_id).limit(50)
                                   end
 
                                 elsif !Rails.env.test?
-                                  ::Thesaurus::ThesaurusTerms.select('id, CONVERT(CONVERT(CONVERT(term USING latin1) USING binary) USING utf8) AS term_mod ').where(thesaurus_information_id: thesaurus_id).order('term asc').limit(10)
+                                  ::Thesaurus::ThesaurusTerms.select('id, CONVERT(CONVERT(CONVERT(term USING latin1) USING binary) USING utf8) AS term_mod ').where(thesaurus_information_id: thesaurus_id).limit(10)
                                 else
-                                  ::Thesaurus::ThesaurusTerms.select('id, term AS term_mod ').where(thesaurus_information_id: thesaurus_id).order('term asc').limit(10)
+                                  ::Thesaurus::ThesaurusTerms.select('id, term AS term_mod ').where(thesaurus_information_id: thesaurus_id).limit(10)
                                 end
                     thesaurus.map { |e| { id: e.id, label: e.term_mod, value: e.term_mod } } if thesaurus.present?
                   elsif %w[dropdown vocabulary].include? type_of_list
