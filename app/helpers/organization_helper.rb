@@ -10,4 +10,3 @@ module OrganizationHelper
     field['field_configuration'].present? && field['field_configuration']['act_as_default'].present? ? field['field_configuration']['act_as_default'].to_s.to_boolean? : false
   end
 end
-
