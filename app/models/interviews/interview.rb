@@ -404,6 +404,10 @@ module Interviews
         fq_filters += " AND (#{fq_filters_inner}) " unless fq_filters_inner.blank?
       end
 
+      if params.present? && params.key?(:notes_only)
+        fq_filters += ' AND notes_count_is:[1 TO *] '
+      end
+
       filters = []
       filters << fq_filters
       filters << limit_condition if limit_condition.present?
@@ -425,7 +429,9 @@ module Interviews
         total_response = { 'response' => { 'numFound' => 0 } }
       end
       query_params[:sort] = "#{sort_column} #{sort_direction}" if sort_column.present? && sort_direction.present?
-
+      if params.present? && params.key?(:notes_only)
+        query_params[:sort] = 'notes_unresolve_count_is desc'
+      end
       if export_and_current_organization[:export]
         query_params[:start] = 0
         query_params[:rows] = 100_000_000
