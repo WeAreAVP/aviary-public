@@ -127,6 +127,8 @@ module InterviewIndexHelper
     file_index_point.gps_longitude = long.to_json
     file_index_point.hyperlink = params[:file_index_point]['hyperlink'].to_json
     file_index_point.hyperlink_description = params[:file_index_point]["hyperlink_description#{alt}"].to_json
+    file_index_point.keywords = params[:keywords].join(';') if params[:keywords].present?
+    file_index_point.subjects = params[:subjects].join(';') if params[:subjects].present?
 
     set_end_time(file_index_point, params[:item_length].to_f)
   end
