@@ -88,7 +88,11 @@ class InterviewsDatatable < ApplicationDatatable
     elsif value['value'] == 'created_at_is'
       Time.at(resource[value['value']]).to_date
     elsif value['value'] == 'title_accession_number_ss'
-      "#{check_valid_array(resource[value['value']], value['value'])} #{link_to 'Preview', preview_interviews_manager_path(resource['id_is']), class: 'btn-interview-preview'}"
+      "<div class='title_accession_number'>#{resource[value['value']]}</div>
+      <div>
+        <span  style='margin-right: 0.5rem; color: #545454;'>#{resource['accession_number_ss']}</span>
+        #{link_to 'Preview', preview_interviews_manager_path(resource['id_is']), class: 'btn-interview-preview'}
+      </div>"
     elsif value['value'] == 'updated_at_is'
       Time.at(resource[value['value']]).to_date
     elsif value['value'] == 'keywords_sms'
@@ -135,7 +139,7 @@ class InterviewsDatatable < ApplicationDatatable
       }
     end
     html += link_to 'Index', ohms_index_path(interview['id_is']), class: 'btn-interview btn-sm btn-link', style: this_interview.color_grading_index[index_color_metadata.to_s], data: {
-      toggle: 'tooltip', placement: 'top', title: (this_interview.present? ? this_interview.listing_metadata_index_status[this_interview.index_status.to_s] : '')
+      toggle: 'tooltip', placement: 'top', title: (this_interview.present? ? this_interview.listing_metadata_index_status[this_interview.try(:index_status).to_s] : '')
     }
 
     html += link_to 'Notes', 'javascript://', class: 'btn-interview btn-sm btn-link interview_note_' + interview['id_is'].to_s + ' interview_notes ' + notes_color(interview), id: 'interview_note_' + interview['id_is'].to_s, data: {

@@ -49,25 +49,52 @@ module Aviary::IndexTranscriptManager
     def parse_webvtt(webvtt)
       index_hash = []
       webvtt.cues.each do |cue|
+        metadata = parse_metadata(cue)
         single_hash = {}
         json_array = [].to_json
-        single_hash['gps_latitude'] = json_array
-        single_hash['gps_longitude'] = json_array
-        single_hash['gps_zoom'] = json_array
-        single_hash['gps_description'] = json_array
-        single_hash['hyperlink'] = json_array
-        single_hash['hyperlink_description'] = json_array
-        single_hash['partial_script'] = ''
+        single_hash['gps_latitude'] = metadata['gps_lat'].present? ? [metadata['gps_lat']].to_json : json_array
+        single_hash['gps_longitude'] = metadata['gps_lng'].present? ? [metadata['gps_lng']].to_json : json_array
+        single_hash['gps_zoom'] = metadata['gps_zoom_level'].present? ? [metadata['gps_zoom_level']].to_json : json_array
+        single_hash['gps_description'] = metadata['gps_description'].present? ? [metadata['gps_description']].to_json : json_array
+        single_hash['hyperlink'] = metadata['hyperlink'].present? ? [metadata['hyperlink']].to_json : json_array
+        single_hash['hyperlink_description'] = metadata['hyperlink_description'].present? ? [metadata['hyperlink_description']].to_json : json_array
+        single_hash['partial_script'] = metadata['partial_transcript'].present? ? metadata['partial_transcript'] : ''
         single_hash['subjects'] = ''
         single_hash['keywords'] = ''
         single_hash['title'] = cue.identifier.present? ? cue.identifier : index_hash.size + 1
         single_hash['start_time'] = cue.start.to_f
         single_hash['end_time'] = cue.end.to_f
         single_hash['duration'] = single_hash['end_time'] - single_hash['start_time']
-        single_hash['synopsis'] = cue.text.present? ? cue.text.gsub(%r{/<\/?[^>]*>}, '') : ''
+        single_hash['synopsis'] = cue.text.present? ? cue.text.gsub(/\n*{.*}\n*/, '').gsub(%r{/<\/?[^>]*>}, '') : ''
         index_hash << single_hash
       end
       index_hash
+    end
+
+    def parse_metadata(cue)
+      string_metadata = cue.text.scan(/{.*}\n*/)
+      metadata = {}
+
+      return metadata unless string_metadata.present?
+
+      string_metadata.each do |data|
+        data = JSON.parse(data)
+        next unless data['value'].present?
+
+        key = data['label']['en'][0].downcase.parameterize(separator: '_')
+
+        if key == 'gps_coordinates'
+          coordinates = data['value'].split(',')
+          next unless coordinates.length == 2
+
+          metadata['gps_lat'] = coordinates[0]
+          metadata['gps_lng'] = coordinates[1]
+        else
+          metadata[key] = data['value']
+        end
+      end
+
+      metadata
     end
 
     def parse_index(index_points, file_index, alt_tag = '')

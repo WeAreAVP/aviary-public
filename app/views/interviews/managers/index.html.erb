@@ -47,7 +47,7 @@
       <div class="data-table collections-datatable">
         <%= content_tag :table, role: :datatable, class: ["table", "table-striped", 'table-bordered'], id: 'interviews_data_table', data: { url: (params[:collection_id].present? ? interview_lists_of_collections_path(params[:collection_id]) : ( @organization_user&.role&.system_name == "ohms_assigned_user" ? my_assignment_listing_path(format: :json) : listing_interviews_managers_path(format: :json))), rightrow: (@organization_user&.role&.system_name == "ohms_assigned_user" ? 1 : 2) } do %>
           <thead>
-          <tr>
+          <tr class="interviews_data_table_head">
             <% unless @organization_user&.role&.system_name == "ohms_assigned_user" %>
             <th>
               <input type="checkbox" class="select_all_checkbox_interview" data-url="<%= bulk_resource_list_interviews_managers_path %>" data-bulk_delete="<%= fetch_bulk_edit_resource_list_collections_path %>"/>

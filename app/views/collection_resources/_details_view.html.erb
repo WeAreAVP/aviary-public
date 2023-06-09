@@ -21,10 +21,12 @@
         <% if field_settings.should_display_on_detail_page && single_collection_field['status'].to_s.to_boolean? && @resource_description_value.present? %>
           <% resource_field_values = @resource_description_value.resource_field_values %>
           <% if resource_field_values.present? && resource_field_values[system_name].present? && resource_field_values[system_name].length > 0 && resource_field_values[system_name]['values'].present? %>
-            <dt data-toggle="tooltip" data-placement="top" data-html="true" title="<%= field_settings.help_text %>"><%= label %>:</dt>
-            <dd class="with-select">
-              <%= render partial: 'collection_resources/fields_partail_view', locals: { field_settings: field_settings, system_name: system_name, field: single_collection_field, values:  resource_field_values[system_name]} %>
-            </dd>
+            <div class="<%= field_settings.field_settings['is_internal_only'].to_s.to_boolean? ? 'internal-field' : '' %>">
+              <dt data-toggle="tooltip" data-placement="top" data-html="true" title="<%= field_settings.help_text %>"><%= label %>:</dt>
+              <dd class="with-select">
+                <%= render partial: 'collection_resources/fields_partail_view', locals: { field_settings: field_settings, system_name: system_name, field: single_collection_field, values:  resource_field_values[system_name]} %>
+              </dd>
+            </div>
             <div class="clearfix"></div>
           <% end %>
         <% end %>

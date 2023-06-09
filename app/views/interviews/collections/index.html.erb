@@ -35,7 +35,7 @@
       <div class="data-table collections-datatable">
         <%= content_tag :table, role: :datatable, class: ["table", "table-striped", 'table-bordered'], id: 'interviews_data_table', data: { url: listing_collections_path(format: :json) } do %>
           <thead>
-          <tr>
+          <tr class="interviews_data_table_head">
             <th>
               <input type="checkbox" class="select_all_checkbox_interview" data-url="<%= bulk_resource_list_interviews_managers_path %>" data-bulk_delete="<%= fetch_bulk_edit_resource_list_collections_path %>"/>
             </th>
