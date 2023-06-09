@@ -106,11 +106,11 @@ module Interviews
 
       selected_keyword_ids = @interview[:keywords].present? ? @interview[:keywords] : []
       selected_keyword_ids = Thesaurus::ThesaurusTerms.where(id: selected_keyword_ids)
-      @selected_keyword_ids = selected_keyword_ids.present? ? get_thesaurus_terms_as_json(selected_keyword_ids) : []
+      @selected_keyword_ids = selected_keyword_ids.present? ? get_thesaurus_terms_as_json(selected_keyword_ids) : get_thesaurus_terms_as_json(@interview[:keywords])
 
       selected_subjects_ids = @interview[:keywords].present? ? @interview[:subjects] : []
       selected_subjects_ids = Thesaurus::ThesaurusTerms.where(id: selected_subjects_ids)
-      @selected_subjects_ids = selected_subjects_ids.present? ? get_thesaurus_terms_as_json(selected_subjects_ids) : []
+      @selected_subjects_ids = selected_subjects_ids.present? ? get_thesaurus_terms_as_json(selected_subjects_ids) : get_thesaurus_terms_as_json(@interview[:subjects])
     end
 
     def preview
@@ -422,8 +422,8 @@ module Interviews
       if thesauru_terms.present?
         thesauru_terms.each do |thesaurus|
           keys << {
-            id: thesaurus.id,
-            name: thesaurus.term
+            id: (thesaurus.try(:id).present? ? thesaurus.id : thesaurus),
+            name: (thesaurus.try(:term).present? ? thesaurus.term : thesaurus)
           }
           i += 1
         end
