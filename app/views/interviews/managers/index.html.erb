@@ -22,7 +22,11 @@
               </div>
 
               <div class="dropdown float-right  ml-2 ">
-              
+                <% if request.url.include?('notes_only=1') %>
+                <a type="button" href="<%= ohms_records_path()%>" class="btn mr-2 btn-outline-primary">
+                  Undo Notes Filter
+                </a>
+                <% end %>
                 <button type="button" class="btn mr-2 btn-outline-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                   Table Options
                 </button>
@@ -32,6 +36,7 @@
                   </button>
                   <button class="dropdown-item bluk-ohms-export-btn">Bulk Export OHMS XML</button>
                   <button class="dropdown-item bluk-edit-btn">Bulk Edit Options</button>
+                  <button class="dropdown-item bluk-ohms-notes-filter-btn">Filter OHMS Notes</button>
                 </div>
               </div>
               <% end %>

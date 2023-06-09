@@ -58,7 +58,11 @@ function InterviewManager() {
     };
 
     this.initializeTable = function () {
-        
+        let data_url = $('#interviews_data_table').data('url');
+        if(window.location.href.includes('notes_only=1'))
+        {
+            data_url = $('#interviews_data_table').data('url')+'?notes_only=1'
+        }
         let config = {
             responsive: true,
             processing: true,
@@ -85,7 +89,7 @@ function InterviewManager() {
                 lengthMenu: " _MENU_ "
             },
             ajax: {
-                url: $('#interviews_data_table').data('url'),
+                url: data_url,
                 type: 'POST'
             },
             columnDefs: [
@@ -268,6 +272,11 @@ function InterviewManager() {
 
 
                 }
+            });
+            $(".bluk-ohms-notes-filter-btn").unbind('click');
+            $('.bluk-ohms-notes-filter-btn').on('click', function () {
+                let url_notes = window.location.href.split('?');
+                window.location.href = url_notes[0]+'?notes_only=1';
             });
             initUploadPopup();
         }, 500);
