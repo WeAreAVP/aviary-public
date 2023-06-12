@@ -50,7 +50,6 @@ module Thesaurus
       query_params[:sort] = " #{sort_column} #{sort_direction} "
 
       response = Curl.post(select_url, URI.encode_www_form(query_params))
-      debugger
       begin
         response = JSON.parse(response.body_str)
       rescue StandardError

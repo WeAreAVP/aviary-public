@@ -81,16 +81,26 @@ module Aviary::IndexTranscriptManager
         data = JSON.parse(data)
         next unless data['value'].present?
 
-        key = data['label']['en'][0].downcase.parameterize(separator: '_')
+        key = data['label']['en'][0].strip.downcase.parameterize(separator: '_')
 
-        if key == 'gps_coordinates'
-          coordinates = data['value'].split(',')
-          next unless coordinates.length == 2
+        if %w[gps_description gps_zoom_level gps_coordinates hyperlink hyperlink_description].include?(key)
+          if key == 'gps_coordinates'
+            coordinates = data['value'].split(';')
+            metadata['gps_lat'] = []
+            metadata['gps_lng'] = []
 
-          metadata['gps_lat'] = coordinates[0]
-          metadata['gps_lng'] = coordinates[1]
+            coordinates.each do |coordinate|
+              coordinate = coordinate.split(',')
+              next unless coordinate.length == 2
+
+              metadata['gps_lat'].push(coordinate[0].strip)
+              metadata['gps_lng'].push(coordinate[1].strip)
+            end
+          else
+            metadata[key] = data['value'].split(',').map(&:strip)
+          end
         else
-          metadata[key] = data['value']
+          metadata[key] = data['value'].strip
         end
       end
 
