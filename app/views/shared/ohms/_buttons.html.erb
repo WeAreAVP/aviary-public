@@ -21,7 +21,7 @@ html += link_to 'Metadata', "#{request.path.include?('ohms_records') && !request
   toggle: 'tooltip', placement: 'top', title: (this_interview.present? ? this_interview.listing_metadata_status[this_interview.metadata_status.to_s] : '')
 }
 html += link_to 'Index', "#{request.path.include?('ohms_index') ? 'javascript:void(0)' : ohms_index_path(interview.id)}", class: 'btn-interview btn-sm btn-link', style: this_interview.color_grading_index[index_color_metadata.to_s], data: {
-  toggle: 'tooltip', placement: 'top', title: (this_interview.present? ? this_interview.listing_metadata_index_status[this_interview.index_status.to_s] : '')
+  toggle: 'tooltip', placement: 'top', title: (this_interview.present? ? this_interview.listing_metadata_index_status[index_color_metadata] : '')
 }
 
 if this_interview.try(:file_transcripts).present?
