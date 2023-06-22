@@ -883,7 +883,7 @@ form.range_limit .hold input:nth-child(2) {
     width: 100%;
     position: relative;
 }
-.search-query-form .toggle-virtual-keyboard {
+.search-query-form .toggle-virtual-keyboard, .trigger-search-button {
     position: absolute;
     right: 0;
     color: #222 !important;
@@ -1036,7 +1036,7 @@ form.range_limit .hold input:nth-child(2) {
     overflow: hidden;
     margin-bottom: 0;
 }
-#advanced_search .form-group .toggle-virtual-keyboard {
+#advanced_search .form-group .toggle-virtual-keyboard, .trigger-search-button {
     position: absolute;
     top: 10px;
     right: 20px;
@@ -1471,11 +1471,11 @@ form.range_limit .hold input:nth-child(2) {
     text-decoration: none;
 }
 
-.toggle-virtual-keyboard {
+.toggle-virtual-keyboard, .trigger-search-button {
     width: 20px;
 }
 
-.search_details_bar .toggle-virtual-keyboard {
+.search_details_bar .toggle-virtual-keyboard, .search_details_bar .trigger-search-button {
     color: #c3c3c3 !important;
 }
 
@@ -1483,7 +1483,7 @@ form.range_limit .hold input:nth-child(2) {
     right: 33px !important;
 }
 
-.aviary-header .toggle-virtual-keyboard {
+.aviary-header .toggle-virtual-keyboard, .aviary-header .trigger-search-button {
     color: #336175 !important
 }
 
@@ -1494,7 +1494,7 @@ form.range_limit .hold input:nth-child(2) {
     display: inline-block;
 }
 
-#lines_search_bar .toggle-virtual-keyboard {
+#lines_search_bar .toggle-virtual-keyboard, #lines_search_bar .trigger-search-button {
     font-size: 18px;
     margin-top: 4px;
     display: inline-block;
@@ -2390,7 +2390,7 @@ form.range_limit .hold input:nth-child(2) {
   width: 100%;
   position: relative;
 }
-.search-query-form .toggle-virtual-keyboard {
+.search-query-form .toggle-virtual-keyboard, .search-query-form .trigger-search-button {
   position: absolute;
   right: 0;
   color: #222 !important;
@@ -2550,7 +2550,7 @@ form.range_limit .hold input:nth-child(2) {
   overflow: hidden;
   margin-bottom: 0;
 }
-#advanced_search .form-group .toggle-virtual-keyboard {
+#advanced_search .form-group .toggle-virtual-keyboard, #advanced_search .form-group .trigger-search-button {
   position: absolute;
   top: 10px;
   right: 20px;
@@ -2987,11 +2987,11 @@ form.range_limit .hold input:nth-child(2) {
   text-decoration: none;
 }
 
-.toggle-virtual-keyboard {
+.toggle-virtual-keyboard, .trigger-search-button {
   width: 20px;
 }
 
-.search_details_bar .toggle-virtual-keyboard {
+.search_details_bar .toggle-virtual-keyboard, .search_details_bar .trigger-search-button {
   color: #808080 !important;
 }
 
@@ -2999,7 +2999,7 @@ form.range_limit .hold input:nth-child(2) {
   right: 33px !important;
 }
 
-.aviary-header .toggle-virtual-keyboard {
+.aviary-header .toggle-virtual-keyboard, .aviary-header .trigger-search-button {
   color: #336175 !important
 }
 
@@ -3010,7 +3010,7 @@ form.range_limit .hold input:nth-child(2) {
   display: inline-block;
 }
 
-#lines_search_bar .toggle-virtual-keyboard {
+#lines_search_bar .toggle-virtual-keyboard, #lines_search_bar .trigger-search-button {
   font-size: 18px;
   margin-top: 4px;
   display: inline-block;

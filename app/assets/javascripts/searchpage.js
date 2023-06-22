@@ -160,6 +160,14 @@ function SearchPage() {
             updateSelectedPlaylist('single', $(this).prop('checked'), $(this).data('id'));
         });
 
+        document_level_binding_element('.trigger-search-button', 'click', function () {
+            $('.search-query-form').submit();
+        });
+
+        document_level_binding_element('.trigger-search-button', 'keyup', function (e) {
+            if (e.keyCode === 13) { $('.search-query-form').submit(); }
+        });
+
         document_level_binding_element('#select_all, #deselect_all ', 'click', function () {
             if ($(this).data('type') === 'select') {
                 $('.bulk_add_to_playlist').prop('checked', true);

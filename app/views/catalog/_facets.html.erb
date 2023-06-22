@@ -48,7 +48,11 @@
             <% elsif search_fields.length == 1 %>
             <% end %>
             <input type="text" class="form-control search_field_selector_single form-control w-100 mt-2" data_identifier="" placeholder="Search Aviary" value="<%= AdvanceSearchHelper::advance_search_query_only(session[:searched_keywords], false, session['solr_params'], stopwords) %>">
-
+            <%= render partial: 'catalog/magnifier_glass', locals: {
+              enable_drop_down: false,
+              identifier: '.search_field_selector_main',
+              default_color: current_organization.present? && current_organization.search_panel_font_color.present? ? current_organization.search_panel_font_color : '#336175' 
+            } %>
 
 
             <%- search_fields_for_advanced_search.each do |key, _| -%>
