@@ -18,8 +18,10 @@
           </div>
           <div class="col-md-6">
             <% if @interview.id.present? %>
-            <div class="ohms_edit_transcript">
-            <%= render partial: 'shared/ohms/buttons', locals: { interview: @interview } %>
+            <div class="ohms_edit_transcript right-toolbar ml-auto">
+              <div class="button-holder right-button-holder">
+                <%= render partial: 'shared/ohms/buttons', locals: { interview: @interview } %>
+              </div>
             </div>
             <% end %>
           </div>
@@ -30,7 +32,7 @@
           <%= f.input :text, :as => :text, :input_html => { style: 'height: 300px;border-radius: 6px !important;padding: 20px;', value: @text, class: 'form-control' } %>
         </div>
         <div class="mt-4">
-          <button class="btn btn-outline-dark"> Cancel</button>
+          <a type="button" href="<%= sync_interviews_manager_path(@interview.id)%>" class="btn btn-outline-dark"> Cancel</a>
           <button class="btn btn-primary"> Save</button>
         </div>
       <% end %>

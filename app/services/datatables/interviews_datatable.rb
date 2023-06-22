@@ -88,7 +88,11 @@ class InterviewsDatatable < ApplicationDatatable
     elsif value['value'] == 'created_at_is'
       Time.at(resource[value['value']]).to_date
     elsif value['value'] == 'title_accession_number_ss'
-      "#{check_valid_array(resource[value['value']], value['value'])} #{link_to 'Preview', preview_interviews_manager_path(resource['id_is']), class: 'btn-interview-preview'}"
+      "<div class='title_accession_number'>#{resource['title_ss']}</div>
+      <div>
+        <span  style='margin-right: 0.5rem; color: #545454;'>#{resource['accession_number_ss']}</span>
+        #{link_to 'Preview', preview_interviews_manager_path(resource['id_is']), class: 'btn-interview-preview'}
+      </div>"
     elsif value['value'] == 'updated_at_is'
       Time.at(resource[value['value']]).to_date
     elsif value['value'] == 'keywords_sms'
