@@ -64,7 +64,7 @@
                                     </thead>
                                   </table>
                                   <table class="table border-0" id="sort_facet_fields_table">
-                                    <tbody id='collection_field_preview_org' data-type="collection_fields" data-order-custom="sort_order" data-status-columns="display">
+                                    <tbody id='collection_field_preview_org' data-type="collection_fields" data-order-custom="sort_order" data-status-columns="display" data-internal-only-columns="is_internal_only">
                                     <% if @collection_fields.present? %>
                                       <% @collection_fields.each_with_index do |(system_name, single_collection_field), _index| %>
                                         <% label = single_collection_field['label'] %>
@@ -74,9 +74,9 @@
                                           <td width="70%">
                                             <i class="fa fa-ellipsis-v handle mx-2" style="color: lightgrey;cursor: move;"></i>
                                             <span>
-                                          <%= label %>
+                                              <%= label %>
+                                            </span>
 
-                                        </span>
                                             <% if is_default_field %>
                                               <i class="fa fa-asterisk color-grey font-size-8px" data-toggle="tooltip" data-placement="top" title="" aria-hidden="true" data-original-title="This is a default field of collection."></i>
                                             <% end %>
@@ -85,7 +85,6 @@
                                                 <%= single_collection_field['default_name'] %>
                                               </small>
                                             <% end %>
-
                                           </td>
                                           <td width="10%">
                                             <label class="toggle-switch">
@@ -136,14 +135,15 @@
                                         <table class="table table-hover border-0">
                                           <thead class="border-top-0">
                                           <tr class="">
-                                            <th style="width: 50% !important;"><h2>Field Name</h2></th>
+                                            <th style="width: 40% !important;"><h2>Field Name</h2></th>
                                             <th style="width: 10% !important; "><h2>Status</h2></th>
+                                            <th style="width: 10% !important; "><h2>Internal</h2></th>
                                             <th style="width: 40% !important; "><h2>Action</h2></th>
                                           </tr>
                                           </thead>
                                         </table>
                                         <table class="table border-0" id="sort_facet_fields_table">
-                                          <tbody id='description_preview_org' data-type="resource_fields" data-option='description_preview_org' data-order-custom="sort_order" data-status-columns="description_display">
+                                          <tbody id='description_preview_org' data-type="resource_fields" data-option='description_preview_org' data-order-custom="sort_order" data-status-columns="description_display"  data-internal-only-columns="is_internal_only">
                                           <% if @resource_fields.present? %>
                                             <% @resource_fields.each_with_index do |(system_name, single_collection_field), _index| %>
                                               <% next if single_collection_field['field_configuration'].present? && single_collection_field['field_configuration']['special_purpose'].present? && single_collection_field['field_configuration']['special_purpose'].to_s.to_boolean? %>
@@ -152,10 +152,10 @@
                                               <% type = single_collection_field['field_type'] %>
                                               <% status = true %>
                                               <tr class="facet_field <%= single_collection_field['system_name'] %>" data-field="<%= system_name %>" data-field-type="<%= type %>" data-label="<%= label %>" data-collection="<%= '' %>" data-is-default-field="<%= is_default_field %>">
-                                                <td width="50%">
+                                                <td width="40%">
                                                   <i class="fa fa-ellipsis-v handle mx-2" style="color: lightgrey;cursor: move;"></i>
                                                   <span data-toggle="tooltip" data-placement="top" title="" aria-hidden="true" data-original-title="<%= single_collection_field['help_text'] %>">
-                                                <%= label %>
+                                                    <%= label %>
                                                   </span>
                                                   <% if is_default_field %>
                                                     <i class="fa fa-asterisk color-grey font-size-8px" data-toggle="tooltip" data-placement="top" title="" aria-hidden="true" data-original-title="This is a default field of collection."></i>
@@ -165,11 +165,16 @@
                                                       <%= single_collection_field['default_name'] %>
                                                     </small>
                                                   <% end %>
-
                                                 </td>
                                                 <td width="10%">
                                                   <label class="toggle-switch">
                                                     <%= check_box_tag 'description_display' + single_collection_field['system_name'], boolean_value(single_collection_field['description_display']), boolean_value(single_collection_field['description_display']), class: "description_display toggle-switch__input template-data-is-facetable template-data-field-is-facetable" %>
+                                                    <span class="toggle-switch__slider"></span>
+                                                  </label>
+                                                </td>
+                                                <td width="10%">
+                                                  <label class="toggle-switch">
+                                                    <%= check_box_tag 'is_internal_only' + single_collection_field['system_name'], single_collection_field['is_internal_only'], single_collection_field['is_internal_only'].to_s.to_boolean?, class: "is_internal_only toggle-switch__input template-data-is-facetable template-data-field-is-facetable", disabled: acts_as_default(single_collection_field) %>
                                                     <span class="toggle-switch__slider"></span>
                                                   </label>
                                                 </td>
