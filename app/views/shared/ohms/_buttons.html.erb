@@ -16,11 +16,16 @@ end
 html = '<div class="d-flex align-items-center justify-content-end"><div class="action-btn-holder">'
 html += '<button class="btn-interview btn btn-link btn-save" id="save_transcript_information">Save</button>' if defined?(sync_save)
 html += '<input type="submit" name="commit" value="Save" class="btn-interview btn-sm btn-link btn-save" data-disable-with="Save">' if defined?(show_save)
+collection = Interviews::Interview.collection_series(@interview).strip
+if collection.present?
+  collection = collection.gsub(' ', '_')
+  html += link_to 'Collection', interview_list_of_collections_path(collection), class: 'btn-interview btn btn-collection'
+end
 html += link_to 'Edit Transcript', edit_interviews_transcript_path(@interview.file_transcripts.where(interview_transcript_type: 'main').try(:first)), class: 'btn-interview btn btn-primary  btn-link btn-transcript' if defined?(edit_transcript)
 html += link_to 'Metadata', "#{request.path.include?('ohms_records') && !request.path.include?('ohms_index') ? 'javascript:void(0)' : ohms_records_edit_path(interview.id)}", class: "btn-interview btn-sm btn-link", style: color_metadata.to_s, data: {
   toggle: 'tooltip', placement: 'top', title: (this_interview.present? ? this_interview.listing_metadata_status[this_interview.metadata_status.to_s] : '')
 }
-html += link_to 'Index', "#{request.path.include?('ohms_index') ? 'javascript:void(0)' : ohms_index_path(interview.id)}", class: 'btn-interview btn-sm btn-link', style: this_interview.color_grading_index[index_color_metadata.to_s], data: {
+html += link_to 'Index', "#{ohms_index_path(interview.id)}", class: 'btn-interview btn-sm btn-link', style: this_interview.color_grading_index[index_color_metadata.to_s], data: {
   toggle: 'tooltip', placement: 'top', title: (this_interview.present? ? this_interview.listing_metadata_index_status[this_interview.index_status.to_s] : '')
 }
 
