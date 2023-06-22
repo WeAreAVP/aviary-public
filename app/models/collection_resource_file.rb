@@ -25,17 +25,17 @@ class CollectionResourceFile < ApplicationRecord
   before_update :set_total_time_enabled
   after_find :check_downloadable
 
-  def partial_change?; end
-
   searchable do
     integer :id, stored: true
     string :resource_file_file_name, stored: true
     string :access, stored: true
     string :resource_file_content_type, stored: true
     string :resource_file_file_size, stored: true
+    long :resource_file_file_size, stored: true
     string :file_display_name, stored: true
     string :sort_order, stored: true
     integer :sort_order, stored: true
+    string :is_cc_on, stored: true
     begin
       time :resource_file_updated_at, stored: true
       time :created_at, stored: true
@@ -85,7 +85,9 @@ class CollectionResourceFile < ApplicationRecord
     end
     string :target_domain, stored: true
     string :duration, stored: true
+    long :duration, stored: true
     string :is_downloadable, stored: true
+    text :embed_code, stored: true
   end
 
   def self.fields_values
@@ -112,7 +114,9 @@ class CollectionResourceFile < ApplicationRecord
       'collection_title_text' => 'Collection Title',
       'sort_order_ss' => 'Sequence #',
       'sort_order_is' => 'Sequence #',
-      'is_downloadable_ss' => 'Downloadable?' }
+      'is_downloadable_ss' => 'Downloadable?',
+      'is_cc_on_ss' => 'Turn on CC?',
+      'embed_code_texts' => 'Media Embed Code' }
   end
 
   def self.date_time_format(date_time)
@@ -310,6 +314,7 @@ class CollectionResourceFile < ApplicationRecord
     solr_q_condition = '*:*'
     complex_phrase_def_type = false
     fq_filters = ' document_type_ss:collection_resource_file  '
+    sort_column = sort_column.sub(/_(ss|sms)$/, '_scis')
     if q.present?
       counter = 0
       fq_filters_inner = ''
@@ -318,6 +323,9 @@ class CollectionResourceFile < ApplicationRecord
           unless value['value'].to_s == 'id_is' && q.to_i <= 0
             fq_filters_inner = fq_filters_inner + (counter != 0 ? ' OR ' : ' ') + " #{CollectionResource.search_perp(q, value['value'].to_s)} "
             counter += 1
+            if value['value'].to_s == 'id_is'
+              fq_filters_inner = fq_filters_inner + (counter != 0 ? ' OR ' : ' ') + " #{CollectionResource.search_perp(q, 'id')} "
+            end
             if value['value'].to_s == 'collection_title_text'
               fq_filters_inner, counter = CollectionResource.search_collection_column(limit_condition, solr, q, counter, fq_filters_inner)
             end
@@ -346,6 +354,10 @@ class CollectionResourceFile < ApplicationRecord
     end
     query_params[:sort] = if sort_column.to_s == 'collection_title_text'
                             CollectionResourceFile.collection_sorter(limit_condition, sort_direction, solr)
+                          elsif sort_column.to_s == 'resource_file_file_size_ss'
+                            "resource_file_file_size_ls #{sort_direction}"
+                          elsif sort_column.to_s == 'duration_ss'
+                            "duration_ls #{sort_direction}"
                           elsif sort_column.present? && sort_direction.present?
                             "#{sort_column} #{sort_direction}"
                           end

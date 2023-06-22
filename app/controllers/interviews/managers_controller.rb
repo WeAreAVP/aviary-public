@@ -14,6 +14,23 @@ module Interviews
 
     before_action :set_interview, only: %i[show edit update destroy sync preview]
 
+    def ohms_configuration
+      authorize! :manage, Interviews::Interview
+      @ohms_configuration = OhmsConfiguration.where('organization_id', current_organization.id).try(:first)
+      @ohms_configuration = OhmsConfiguration.new if @ohms_configuration.nil?
+    end
+
+    def ohms_configuration_update
+      authorize! :manage, Interviews::Interview
+      @ohms_configuration = OhmsConfiguration.where('organization_id', current_organization.id).try(:first)
+      if @ohms_configuration.nil?
+        @ohms_configuration = OhmsConfiguration.new
+        @ohms_configuration.organization_id = current_organization.id
+      end
+      @ohms_configuration.update(ohms_configuration_params)
+      redirect_to ohms_configuration_url
+    end
+
     # GET /interviews
     # GET /interviews.json
     def index
@@ -46,13 +63,13 @@ module Interviews
         user_current_organization = organization_user.organization
         respond_to do |format|
           format.html
-          format.json { render json: InterviewsDatatable.new(view_context, user_current_organization, organization_user, (current_organization.nil? ? false : true)) }
+          format.json { render json: InterviewsDatatable.new(view_context, user_current_organization, '', organization_user, (current_organization.nil? ? false : true)) }
         end
       else
         organization_user = OrganizationUser.find_by user_id: current_user.id, organization_id: current_organization.id
         respond_to do |format|
           format.html
-          format.json { render json: InterviewsDatatable.new(view_context, current_organization, organization_user, true) }
+          format.json { render json: InterviewsDatatable.new(view_context, current_organization, '', organization_user, true) }
         end
       end
     end
@@ -89,11 +106,11 @@ module Interviews
 
       selected_keyword_ids = @interview[:keywords].present? ? @interview[:keywords] : []
       selected_keyword_ids = Thesaurus::ThesaurusTerms.where(id: selected_keyword_ids)
-      @selected_keyword_ids = selected_keyword_ids.present? ? get_thesaurus_terms_as_json(selected_keyword_ids) : []
+      @selected_keyword_ids = selected_keyword_ids.present? ? get_thesaurus_terms_as_json(selected_keyword_ids) : get_thesaurus_terms_as_json(@interview[:keywords])
 
       selected_subjects_ids = @interview[:keywords].present? ? @interview[:subjects] : []
       selected_subjects_ids = Thesaurus::ThesaurusTerms.where(id: selected_subjects_ids)
-      @selected_subjects_ids = selected_subjects_ids.present? ? get_thesaurus_terms_as_json(selected_subjects_ids) : []
+      @selected_subjects_ids = selected_subjects_ids.present? ? get_thesaurus_terms_as_json(selected_subjects_ids) : get_thesaurus_terms_as_json(@interview[:subjects])
     end
 
     def preview
@@ -169,14 +186,14 @@ module Interviews
             doc = Nokogiri::XML(export_text.to_xml)
             error_messages = xml_validation(doc)
             unless error_messages.any?
-              dos_xml << { xml: export_text.to_xml, title: interview.title, id: interview.id, ohms_xml_filename: interview.miscellaneous_ohms_xml_filename }
+              dos_xml << { xml: export_text.to_xml, title: interview.title, id: interview.id, ohms_xml_filename: interview.miscellaneous_ohms_xml_filename.gsub(/\s+/, '_') }
             end
           end
         end
 
         if dos_xml.present?
           dos_xml.each do |single_dos_xml|
-            file_name = single_dos_xml[:ohms_xml_filename].present? ? single_dos_xml[:ohms_xml_filename] : 'interview' + single_dos_xml[:id].to_s + '.xml'
+            file_name = single_dos_xml[:ohms_xml_filename].present? && !single_dos_xml[:ohms_xml_filename].include?('http') ? single_dos_xml[:ohms_xml_filename] : 'interview' + single_dos_xml[:id].to_s + '.xml'
             File.binwrite(File.join(tmp_user_folder, file_name), single_dos_xml[:xml])
             dos_xml_files << file_name
           end
@@ -263,7 +280,7 @@ module Interviews
           format.any { redirect_to ohms_records_path, notice: 'Something went wrong. Please try again later.' }
         end
       else
-        file_name = interview.miscellaneous_ohms_xml_filename.empty? ? interview.title : interview.miscellaneous_ohms_xml_filename
+        file_name = interview.miscellaneous_ohms_xml_filename.empty? ? interview.title : interview.miscellaneous_ohms_xml_filename.gsub(/\s+/, '_')
 
         respond_to do |format|
           format.xml { send_data(export_text.to_xml, filename: "#{file_name}.xml") }
@@ -280,7 +297,7 @@ module Interviews
       @interview.organization = current_organization
       respond_to do |format|
         if @interview.save
-          format.html { redirect_to ohms_records_path, notice: 'Interview was successfully created.' }
+          format.html { redirect_to ohms_records_edit_path(@interview.id), notice: 'Interview was successfully created.' }
           format.json { render :show, status: :created, location: @interview }
         else
           format.html { render :new }
@@ -295,7 +312,7 @@ module Interviews
       authorize! :manage, Interviews::Interview
       respond_to do |format|
         if @interview.update(interview_params)
-          format.html { redirect_to ohms_records_path, notice: 'Interview was successfully updated.' }
+          format.html { redirect_to ohms_records_edit_path(@interview.id), notice: 'Interview was successfully updated.' }
           format.json { render :show, status: :ok, location: @interview }
         else
           format.html { render :edit }
@@ -395,15 +412,21 @@ module Interviews
                                                    :embed_code, :media_host_account_id, :media_host_player_id, :media_host_item_id, interviewee: [], interviewer: [], keywords: [], subjects: [], format_info: [])
     end
 
+    def ohms_configuration_params
+      params.require(:ohms_configuration).permit(:configuration)
+    end
+
     def get_thesaurus_terms_as_json(thesauru_terms)
       keys = []
       i = 0
-      thesauru_terms.each do |thesaurus|
-        keys << {
-          id: thesaurus.id,
-          name: thesaurus.term
-        }
-        i += 1
+      if thesauru_terms.present?
+        thesauru_terms.each do |thesaurus|
+          keys << {
+            id: (thesaurus.try(:id).present? ? thesaurus.id : thesaurus),
+            name: (thesaurus.try(:term).present? ? thesaurus.term : thesaurus)
+          }
+          i += 1
+        end
       end
       keys.to_json
     end

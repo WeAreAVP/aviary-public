@@ -21,19 +21,17 @@
                     </div>
                   </div>
                 </div>
-                <div class="col-xl-5 col-lg-6 text-right">
-                  <div class="d-flex align-items-center justify-content-between">
-                    <div class="status d-flex align-items-center">
-                      <span>Status</span>
-                      <div class="ml-1">
+                <div class="col-xl-5 col-lg-6">
+                  <div class="d-flex flex-column ml-auto right-toolbar">
+                    <div class="status d-flex align-items-center m-1">
+                      <% if @interview.present? && @interview.id.present? %>
+                        <span>Status</span>
                         <%= f.select :sync_status, options_for_select(@interview.listing_metadata_status.map { |key, index| [index, key] }, @interview.sync_status), {}, required: false, label: false, class: 'custom-placeholder dont-apply-selectize form-control' %>
-                      </div>
+                      <% end %>
                     </div>
-                    <div class="d-flex align-items-center">
-                      <%= link_to 'Edit Transcript', edit_interviews_transcript_path(@interview.file_transcripts.where(interview_transcript_type: 'main').try(:first)), class: 'btn btn-primary ml-3' %>
-                      <button class="btn btn-success ml-3" id='save_transcript_information'>Save</button>
-                      <% if @interview.id.present? %>
-                      <%= render partial: 'shared/ohms/buttons', locals: { interview: @interview } %>
+                    <div class="button-holder right-button-holder">
+                      <% if @interview.present? && @interview.id.present? %>
+                        <%= render partial: 'shared/ohms/buttons', locals: { interview: @interview, edit_transcript: true, sync_save: true } %>
                       <% end %>
                     </div>
                   </div>
@@ -71,7 +69,7 @@
                     <% @main_transcript.point_notes_info = "" if @main_transcript.point_notes_info.nil? %>
                     <% notes_info = @main_transcript.point_notes_info %>
                     <% @data_main.each do |single_point| %>
-                     
+                      <% if single_point[:text].present? %>
                       <% list_line = single_point[:text].split("\n") %>
                       <% list_line.each_with_index do |single_list_line, line_index| %>
                         <% 
@@ -105,6 +103,7 @@
                         <span class="transcript_point_code text-dark transcript_point_code_<%= hms_to_number(single_point[:end_time]) %>" data-timecode="<%= hms_to_number(single_point[:end_time]) %>">[<%= single_point[:end_time] %>]</span>
                       <% end %>
                       <% counter = counter + 1 %>
+                      <% end %>
                     <% end %>
                     <% if @main_transcript.notes_info.present? %>
                       <% JSON.parse(@main_transcript.notes_info).each_with_index do |note, note_index| %>
@@ -165,6 +164,7 @@
         </main>
   </div>
 </div>
+<%= render 'interviews/managers/notes' %>
 <script type="text/javascript">
     let interview_manager = new InterviewManager();
     let interviews_transcript_manager = new InterviewTranscriptManager();

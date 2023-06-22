@@ -329,7 +329,9 @@ class Organization < ApplicationRecord
               '19' => { status: 'true', value: 'created_at_ds', sort_name: true },
               '20' => { status: 'true', value: 'collection_title_text', sort_name: true },
               '21' => { status: 'true', value: 'sort_order_is', sort_name: true },
-              '22' => { status: 'true', value: 'is_downloadable_ss', sort_name: true }
+              '22' => { status: 'true', value: 'is_downloadable_ss', sort_name: true },
+              '23' => { status: 'true', value: 'is_cc_on_ss', sort_name: true },
+              '24' => { status: 'true', value: 'embed_code_texts', sort_name: false }
             }
     }.to_json
 
@@ -343,6 +345,8 @@ class Organization < ApplicationRecord
       '6' => { status: 'true', value: 'sort_order_ss', sort_name: true }
     }.to_json
     update(resource_file_display_column: display_columns_update, resource_file_search_column: search_columns_update) if resource_file_display_column.blank?
+    update_transcript_fields
+    update_file_index_fields
   end
 
   def update_search_configuration(force_update = false)
@@ -458,14 +462,14 @@ class Organization < ApplicationRecord
     bucket_exist = proc do |url|
       self.class.where(bucket_name: url).first
     end
-    bucket_name = ENV['WASABI_PREFIX'] + '_' + url
+    bucket_name = ENV.fetch('WASABI_PREFIX') + '_' + url
 
     1.step do |i|
       break unless bucket_exist.call(bucket_name).present?
       bucket_name = bucket_name + '_' + i.to_s
     end
 
-    if ENV['RAILS_ENV'] == 'production'
+    if ENV.fetch('RAILS_ENV') == 'production'
       s3 = s3_client
       s3.create_bucket(bucket: bucket_name)
       begin
@@ -481,10 +485,10 @@ class Organization < ApplicationRecord
 
   def s3_client
     Aws::S3::Client.new(
-      access_key_id: ENV['WASABI_KEY'],
-      secret_access_key: ENV['WASABI_SECRET'],
-      region: ENV['WASABI_REGION'],
-      endpoint: ENV['WASABI_ENDPOINT']
+      access_key_id: ENV.fetch('WASABI_KEY'),
+      secret_access_key: ENV.fetch('WASABI_SECRET'),
+      region: ENV.fetch('WASABI_REGION'),
+      endpoint: ENV.fetch('WASABI_ENDPOINT')
     )
   end
 
@@ -516,7 +520,7 @@ class Organization < ApplicationRecord
   end
 
   def organization_ohms_assigned_users
-    organization_users.where(role_id: Role.organization_ohms_assigned_user).where(status: true).includes(:user).order('users.first_name')
+    organization_users.where(role_id: Role.organization_ohms_assigned_user).where(status: true).includes(:user).where('users.status = ?', true).order('users.first_name')
   end
 
   def resource_count
@@ -547,7 +551,8 @@ class Organization < ApplicationRecord
           '5' => { status: 'true', value: 'updated_at_ds', sort_name: true },
           '6' => { status: 'true', value: 'created_at_ds', sort_name: true },
           '7' => { status: 'true', value: 'file_display_name_ss', sort_name: true },
-          '8' => { status: 'true', value: 'collection_resource_title_ss', sort_name: true }
+          '8' => { status: 'true', value: 'collection_resource_title_ss', sort_name: true },
+          '9' => { status: 'true', value: 'associated_file_content_type_ss', sort_name: true }
         }
     }.to_json
 
@@ -558,7 +563,8 @@ class Organization < ApplicationRecord
       '3' => { status: 'true', value: 'language_ss', sort_name: true },
       '4' => { status: 'true', value: 'description_ss', sort_name: true },
       '5' => { status: 'true', value: 'file_display_name_ss', sort_name: true },
-      '6' => { status: 'true', value: 'collection_resource_title_ss', sort_name: true }
+      '6' => { status: 'true', value: 'collection_resource_title_ss', sort_name: true },
+      '7' => { status: 'true', value: 'associated_file_content_type_ss', sort_name: true }
     }.to_json
     update(file_index_display_column: display_columns_update, file_index_search_column: search_columns_update) if file_index_display_column.blank?
   end
@@ -578,7 +584,9 @@ class Organization < ApplicationRecord
           '7' => { status: 'true', value: 'file_display_name_ss', sort_name: true },
           '8' => { status: 'true', value: 'collection_resource_title_ss', sort_name: true },
           '9' => { status: 'true', value: 'annotation_count_is', sort_name: true },
-          '10' => { status: 'true', value: 'is_caption_ss', sort_name: true }
+          '10' => { status: 'true', value: 'is_caption_ss', sort_name: true },
+          '11' => { status: 'true', value: 'is_downloadable_ss', sort_name: true },
+          '12' => { status: 'true', value: 'associated_file_content_type_ss', sort_name: true }
         }
     }.to_json
 
@@ -590,7 +598,8 @@ class Organization < ApplicationRecord
       '4' => { status: 'true', value: 'description_ss', sort_name: true },
       '5' => { status: 'true', value: 'file_display_name_ss', sort_name: true },
       '6' => { status: 'true', value: 'collection_resource_title_ss', sort_name: true },
-      '7' => { status: 'true', value: 'is_caption_ss', sort_name: true }
+      '7' => { status: 'true', value: 'is_caption_ss', sort_name: true },
+      '8' => { status: 'true', value: 'associated_file_content_type_ss', sort_name: true }
     }.to_json
     update(transcript_display_column: display_columns_update, transcript_search_column: search_columns_update) if transcript_display_column.blank?
   end

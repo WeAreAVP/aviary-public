@@ -6,8 +6,9 @@ class InterviewsDatatable < ApplicationDatatable
   delegate :can?, :interviews_manager_path, :interviews_list_notes_path, :interviews_update_note_path, :interviews_transcript_path,
            :ohms_index_path, :ohms_records_edit_path, :preview_interviews_manager_path, :export_interviews_manager_path, :sync_interviews_manager_path, :check_valid_array, :bulk_resource_list_interviews_managers_path, to: :@view
 
-  def initialize(view, current_organization = nil, organization_user = '', use_organization = true)
+  def initialize(view, current_organization = nil, id = '', organization_user = '', use_organization = true)
     @view = view
+    @id = id
     @current_organization = current_organization
     @organization_user = organization_user
     @use_organization = use_organization
@@ -42,7 +43,7 @@ class InterviewsDatatable < ApplicationDatatable
   def assignment(resource)
     ohms_assigned_user_id_val = resource['ohms_assigned_user_id_is']
     users = @current_organization.organization_ohms_assigned_users
-    select_html = '<select class="assign_user" data-call_url="ohms_records/user_assignments/' + resource['id_is'].to_s + '" name="ohms_assigned_user_id"><option value="">Assign User</option>'
+    select_html = '<select class="assign_user" data-call_url="ohms_records/user_assignments/' + resource['id_is'].to_s + '" name="ohms_assigned_user_id"><option value="">Assign User</option><option value="0">Remove Assignment</option>'
     users.each do |user|
       ohms_user = user.user
       is_selected = ' selected="selected"' if ohms_assigned_user_id_val.to_i == ohms_user.id
@@ -137,7 +138,7 @@ class InterviewsDatatable < ApplicationDatatable
       toggle: 'tooltip', placement: 'top', title: (this_interview.present? ? this_interview.listing_metadata_index_status[this_interview.index_status.to_s] : '')
     }
 
-    html += link_to 'Notes', 'javascript://', class: 'btn-interview btn-sm btn-link interview_notes ' + notes_color(interview), id: 'interview_note_' + interview['id_is'].to_s, data: {
+    html += link_to 'Notes', 'javascript://', class: 'btn-interview btn-sm btn-link interview_note_' + interview['id_is'].to_s + ' interview_notes ' + notes_color(interview), id: 'interview_note_' + interview['id_is'].to_s, data: {
       id: interview['id_is'], url: interviews_list_notes_path(interview['id_is'], 'json'), updateurl: interviews_update_note_path(interview['id_is'], 'json')
     }
     unless @organization_user.role.system_name == 'ohms_assigned_user'
@@ -167,10 +168,11 @@ class InterviewsDatatable < ApplicationDatatable
     html
   end
 
-  def columns(resource_search_column = false)
+  def columns(_resource_search_column = false)
     columns_allowed = ['id_is']
-    if resource_search_column&.present?
-      resource_search_column.each do |_, value|
+    if @current_organization&.interview_search_column&.present?
+      resource_search_column_list = JSON.parse(@current_organization.interview_search_column).collect { |_k, v| v }
+      resource_search_column_list.each do |value|
         if !value['status'].blank? && value['status'].to_s.to_boolean?
           columns_allowed << value['value']
         end

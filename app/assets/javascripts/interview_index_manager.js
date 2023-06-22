@@ -21,25 +21,67 @@ function InterviewIndexManager() {
     this.initialize = function () {
         $('[data-toggle="tooltip"]').tooltip();
         bindEvents();
+        setIterviewNotes();
         let searchParams = new URLSearchParams(window.location.search)
         host = $('#media_host').data('host')
         if($('.tokenfield').length > 0){
-            $('.tokenfield_keywords').tokenfield({
-                delimiter: ';',
-                autocomplete: {
-                source: $(".tokenfield_keywords").data().items,
-                delay: 100
-                },
-                showAutocompleteOnFocus: false
-            });
-            $('.tokenfield_subjects').tokenfield({
-                delimiter: ';',
-                autocomplete: {
-                source: $('.tokenfield_subjects').data().items,
-                delay: 100
-                },
-                showAutocompleteOnFocus: false
-            });
+            const keywords_options = {
+                el: document.querySelector('.tokenfield_keywords'),
+                multiple: true,
+                minChars: 1,
+                itemName: 'keywords',
+                setItems: $('.tokenfield_keywords').data('selectedKeys')
+            };
+
+            if ($('.tokenfield_keywords').data('path') !== undefined) {
+                keywords_options.remote = {
+                    url: $('.tokenfield_keywords').data('path'),
+                    type: 'GET',
+                    queryParam: 'term',
+                    params: {
+                        tId: $('.tokenfield_keywords').data('tId'),
+                        typeOfList: $('.tokenfield_keywords').data('typeOfList')
+                    }
+                };
+                keywords_options.newItems = false;
+                keywords_options.itemLabel = 'label';
+                keywords_options.itemValue = 'value';
+                keywords_options.itemData = 'label';
+            } else {
+                keywords_options.newItems = true;
+                keywords_options.newItemName = 'keywords';
+            }
+
+            new Tokenfield(keywords_options);
+
+            const subjects_options = {
+              el: document.querySelector('.tokenfield_subjects'),
+              multiple: true,
+              minChars: 1,
+              itemName: 'subjects',
+              setItems: $('.tokenfield_subjects').data('selectedKeys')
+            };
+
+            if ($('.tokenfield_subjects').data('path') !== undefined) {
+              subjects_options.remote = {
+                  url: $('.tokenfield_subjects').data('path'),
+                  type: 'GET',
+                  queryParam: 'term',
+                  params: {
+                      tId: $('.tokenfield_subjects').data('tId'),
+                      typeOfList: $('.tokenfield_subjects').data('typeOfList')
+                  }
+              };
+              subjects_options.newItems = false;
+              subjects_options.itemLabel = 'label';
+              subjects_options.itemValue = 'value';
+              subjects_options.itemData = 'label';
+            } else {
+                subjects_options.newItems = true;
+                subjects_options.newItemName = 'subjects';
+            }
+
+          new Tokenfield(subjects_options);
         }
         if($('.no-media').length > 0)
         {
@@ -310,7 +352,23 @@ function InterviewIndexManager() {
         document_level_binding_element('.btn-success', 'click', function () {
             formChange = 0;
         });
-        
+        document_level_binding_element('.play-timecode', 'click', function () {
+            let currentTime = $(this).data().timecode;
+            if ($('#avalon_widget').length > 0) {
+                player_widget('set_offset', {'offset': currentTime});
+                player_widget('play');
+            } else {
+                playerSpecificTimePlay = currentTime;
+                player_widget.currentTime(currentTime);
+                player_widget.play();
+            }
+            if ($(this).parent().hasClass('annotation_text')) {
+                $('.transcript_point_container').mCustomScrollbar("scrollTo", $('.annotation_marker.active'), {
+                    scrollInertia: 10,
+                    timeout: 1
+                });
+            }
+        }, true)
     };
     function unloadPage(){ 
         if(formChange == 1){

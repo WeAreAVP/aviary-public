@@ -34,6 +34,10 @@ class TranscriptsController < ApplicationController
         FileTranscript.where(id: session[:file_transcript_bulk_edit]).each do |transcript|
           transcript.update(is_caption: params['caption'].to_i)
         end
+      elsif params['check_type'] == 'transcript_download'
+        FileTranscript.where(id: session[:file_transcript_bulk_edit]).each do |transcript|
+          transcript.update(is_downloadable: params['is_download'].to_i)
+        end
       end
       format.json { render json: { message: t('updated_successfully'), errors: false, status: 'success', action: 'bulk_file_transcript_edit' } }
     end
@@ -96,7 +100,7 @@ class TranscriptsController < ApplicationController
     file_transcript = FileTranscript.find_by_id(params[:id])
     if file_transcript.present? && %w[webvtt txt json].include?(params[:type])
       collection_resource = file_transcript.collection_resource_file.collection_resource
-      if file_transcript.is_public || collection_resource.can_view || collection_resource.can_edit || (can? :edit, collection_resource.collection.organization)
+      if file_transcript.is_downloadable.positive? && (file_transcript.is_public || collection_resource.can_view || collection_resource.can_edit || (can? :edit, collection_resource.collection.organization))
         export_text = Aviary::ExportTranscript.new.export(file_transcript, params[:type])
         send_data(export_text, filename: "export_transcript_#{Time.now.to_i}.#{params[:type]}")
       else
@@ -120,6 +124,9 @@ class TranscriptsController < ApplicationController
 
   # Never trust parameters from the scary internet, only allow the white list through.
   def file_transcript_params
-    params.require(:file_transcript).permit(:title, :is_caption, :associated_file, :is_public, :language, :is_edit, :draftjs, :description)
+    if params[:is_downloadable].present? && params[:is_downloadable].is_a?(String)
+      params[:is_downloadable] = (params[:is_downloadable].downcase == 'yes' ? 1 : 0)
+    end
+    params.require(:file_transcript).permit(:title, :is_caption, :associated_file, :is_public, :language, :is_edit, :draftjs, :description, :is_downloadable)
   end
 end

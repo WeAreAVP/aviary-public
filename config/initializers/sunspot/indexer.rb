@@ -30,6 +30,24 @@ module Sunspot
       documents
     end
 
+    def add_sort_fields(model, documents)
+      if %w[CollectionResource CollectionResourceFile SupplementalFile FileIndex FileTranscript RequestAccess SupplementalFile].include?(model.first.class.name)
+        fields = documents.first.fields.clone
+        sort_fields = {}
+        fields.each do |field|
+          if field.name.to_s.match(/_sms$/)
+            sort_fields[field.name] ||= []
+            sort_fields[field.name] << field.value
+          end
+        end
+
+        sort_fields.each do |key, value|
+          documents.first.fields << RSolr::Field.new({ name: key.to_s.sub(/_sms$/, Aviary::SolrIndexer.field_type_finder('string_ci')) }, value.slice(0, 2).join(' '))
+        end
+      end
+      documents
+    end
+
     #
     # Construct a representation of the model for indexing and send it to the
     # connection for indexing
@@ -41,6 +59,7 @@ module Sunspot
     def add(model)
       documents = Util.Array(model).map { |m| prepare_full_update(m) }
       documents = custom_field_handler(model, documents)
+      documents = add_sort_fields(model, documents)
       add_batch_documents(documents)
     end
   end

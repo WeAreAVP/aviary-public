@@ -226,6 +226,18 @@ function scroll_to(target_element, time) {
     }
 }
 
+function fixTable() {
+    $('.hidden_focus_btn').focus(function(){
+        $('a[data-id="'+$(this).data('id')+'"]').last().addClass('focus');
+    });
+    $('.hidden_focus_btn').focusout(function(){
+        $('a[data-id="'+$(this).data('id')+'"]').last().removeClass('focus');
+    });
+    setTimeout(function () {
+        $(".DTFC_RightBodyLiner table a").each(function (i) { $(this).attr('tabindex', i + 1); });
+    }, 500);
+}
+
 /**
  *
  * @param type string danger/success
@@ -233,8 +245,10 @@ function scroll_to(target_element, time) {
  */
 function jsMessages(type, text) {
     html = '<div id="alert_message" class="alert animated fadeInDown alert-' + type + '">' +
+    '<div id="alert">' + 
+    '<span role="alert" aria-live="polite" aria-atomic="true">' + 
         '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' +
-        text + '</div>';
+        text + '</span></div></div>';
     $('body').append(html);
     window.setTimeout(function () {
         $("#alert_message").fadeIn(1500, function () {
@@ -516,8 +530,17 @@ function initToolTip(element){
 
 }
 
-$(function () {
+function skip_to_content(){
 
+    document_level_binding_element('.skiptocontent', 'keyup', function (event) {
+        if (event.keyCode === 13 || event.keyCode === 32) {
+            $('.vjs-big-play-button').focus();
+        }
+    });
+}
+
+$(function () {
+    skip_to_content();
     if ($('#sidebar-main').length == 0) {
         $(".main-content").removeClass('open');
     }
@@ -767,5 +790,113 @@ const linkToExternalTab = function () {
         if (!a.test(this.href) && isUrlValid(this.href) && !this.href.includes('aviaryplatform.com')) {
             $(this).attr('target', '_blank');
         }
+    });
+}
+function setIterviewNotes(){
+    if($('.notes_inner_button').length > 0)
+    {
+        getResponse(0);
+        document_level_binding_element(".notes_inner_button", 'click', function (e) {
+            getResponse(1);
+        });
+        $('#notesForm').attr("id","notesFormButton");
+        $('#modalPopupNotes').attr("id","modalPopupNotesButton");
+        document_level_binding_element("#notesFormButton", 'submit', function (e) {
+            e.preventDefault();
+            let form = $(this);
+            let url = form.attr("action");
+            let serializedData = form.serialize();
+            if ($('#note').val() === "") {
+                $('.error_note').html("Please type a note before clicking the Add Note button.");
+            } else {
+                $.ajax({
+                    type: "POST",
+                    url: url,
+                    data: serializedData,
+                    success: function (response) {
+                        $('#note').val("");
+                        $('.errors').html("");
+                        setNoteResponse(response);
+                        jsMessages('success', 'Note added successfully.');
+                        if (response.color){
+                            setNoteColor(response.color)
+                        }
+                        $('#modalPopupNotesButton').modal('hide');
+                    },
+                    error: function (response, status, error) {
+                        let info = jQuery.parseJSON(response.responseText);
+                        for (const property in info.errors) {
+                            $('.error_' + property).html(property.toUpperCase() + ' ' + info.errors[property]);
+                        }
+                    }
+                });
+            }
+        })
+
+        document_level_binding_element(".notes_status_btn", 'click', function (e) {
+            let formData = {
+                'note_id': e.target.getAttribute("data-id"),
+                'status': e.target.getAttribute("data-status")
+            };
+            $.ajax({
+                url: e.target.getAttribute("data-url"),
+                data: formData,
+                type: 'POST',
+                dataType: 'json',
+                success: function (response) {
+                    if (response.color){
+                        setNoteColor(response.color)
+                    }
+                },
+            });
+            jsMessages('success', 'Note updated successfully.');
+        });
+    }
+}
+
+function setNoteResponse(response){
+    let html = ""
+    let index = 1;
+    response.data.forEach(element => {
+        html = html + '<div>Note '+index+': ' + element.note + '</div>';
+        html = html + '<div class="d-flex mb-3"><div class="custom-checkbox mr-3"><input type="radio" class="unresolve notes_status_btn" name="status_' + element.id + '" id="unresolve_' + element.id + '" value="0" ' + (element.status ? "" : 'checked="checked"') + ' data-id="' + element.id + '" data-interview_id="' + element.interview_id + '" data-status="0" data-url="' + $('.notes_inner_button').attr("data-updateurl") + '" ></input><label for="unresolve_' + element.id + '">Unresolved</label></div>';
+        html = html + '<div class="custom-checkbox mr-3"><input type="radio" class="resolve notes_status_btn" name="status_' + element.id + '" id="resolve_' + element.id + '" value="1" ' + (element.status ? 'checked="checked"' : "") + ' data-id="' + element.id + '" data-interview_id="' + element.interview_id + '" data-status="1" data-url="' + $('.notes_inner_button').attr("data-updateurl") + '" ></input><label for="resolve_' + element.id + '">Resolved</label></div></div>';
+        index = index + 1;
+    });
+    html = (response.length === 0 ? "There are currently no notes associated with this interview." : html);
+    $('#listNotes').html(html);
+
+}
+
+function setNoteColor(color){
+    $('.notes_inner_button').removeClass('text-secondary');
+    $('.notes_inner_button').removeClass('text-danger');
+    $('.notes_inner_button').removeClass('text-success');
+    $('.notes_inner_button').addClass(color);
+}
+
+function getResponse(opt)
+{
+    if(opt === 1)
+    {
+        $("#notesFormButton").attr("action", $('.notes_inner_button').attr("data-url"));
+        $("#notesFormButton").attr("data-id", $('.notes_inner_button').attr("data-id"));
+    }
+    $.ajax({
+        url: $('.notes_inner_button').attr("data-url"),
+        type: 'GET',
+        dataType: 'json',
+        success: function (response) {
+            if(response.color)
+            {
+                setNoteColor(response.color)
+            }
+            setNoteResponse(response);
+            if(opt === 1)
+            {
+                $('#note').val("");
+                $('#modalPopupNotesButton').modal('show');
+            }
+        },
     });
 }

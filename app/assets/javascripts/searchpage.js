@@ -184,6 +184,19 @@ function SearchPage() {
                 callSelectedPlaylist([], 'bulk', 'all');
             }
         });
+        $('.type_of_field_selector_single_dropdown').on('click', function () {
+            setTimeout(function(){
+                $('.custom-select-search-dropdown-btn')[0].focus();
+            }, 1000);
+            $('.type_of_field_selector_single_dropdown[data-select="true"]').attr("data-select","false")
+            $(this).attr("data-select","true")
+            var selectElement = $('#type_of_field_selector_single').eq(0);
+            var selectize = selectElement.data('selectize');
+            if (!!selectize) selectize.setValue($(this).data("value"));
+            $('.type_of_field_selector_single_dropdown_label').html($(this).data("name"))
+            $('.hidden_advance_search_single').val('');
+            $('.search-query-form').find('.' + $(this).data("value") + '_single').val($('.search_field_selector_single').val());
+        });
 
         $('.type_of_field_selector_single').on('change', function () {
             $('.hidden_advance_search_single').val('');

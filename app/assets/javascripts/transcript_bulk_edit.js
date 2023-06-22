@@ -318,5 +318,11 @@ function TranscriptBulkEdit(ids_session_raw) {
             $('#confirm_msg_pop_bulk').html(' change the caption status of the transcripts listed below');
 
         }
+        else if (selected_type == 'transcript_download') {
+            $('.transcript_download_content').removeClass('d-none');
+            $('#bulk_edit_type_of_bulk_operation').val('transcript_download');
+            $('#confirm_msg_pop_bulk').html(' change the download status of the transcripts listed below');
+
+        }
     };
 }

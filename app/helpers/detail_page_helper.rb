@@ -355,4 +355,9 @@ module DetailPageHelper
     end
     title
   end
+
+  def show_internal_field?(resource_fields_settings, system_name, current_user_is_org_user)
+    current_user_is_org_user || (resource_fields_settings[system_name].present? &&
+      !resource_fields_settings[system_name]['is_internal_only'].to_s.to_boolean?)
+  end
 end

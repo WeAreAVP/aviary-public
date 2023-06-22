@@ -293,6 +293,7 @@ function IndexTranscript() {
             $('#view_edit_media_metadata_custom').attr('style', 'height:' + (max_height) + 'px!important;max-height:650px !important;');
             $('.mCustomScrollbar_description').mCustomScrollbar();
             $('#view_edit_media_metadata_custom').mCustomScrollbar();
+            $('.index_point_container').mCustomScrollbar();
         }
         if ($(window).width() < 767) {
             $("*").mCustomScrollbar("destroy");
@@ -554,6 +555,9 @@ function IndexTranscript() {
     this.load_resource_transcript = function (response_raw, container, request) {
         let response = response_raw.body_response;
         let listing_transcripts = response_raw.listing_transcripts;
+        let is_downloadable = response_raw.is_downloadable;
+        if(is_downloadable === 1) $('.download_transcript_menu').show();
+        else $('.download_transcript_menu').hide();
 
         if (response && (response.includes('index_html_information') || response.includes('file_transcript'))) {
             response_handler(request, 'transcript', container, response, listing_transcripts);
@@ -819,6 +823,16 @@ function IndexTranscript() {
             $('#file_' + that.cuePointType + '_is_public')[0].selectize.setValue($('.file_' + that.cuePointType + '_' + current.val()).data().public.toString());
             $('#file_' + that.cuePointType + '_description').val($('.file_' + that.cuePointType + '_' + current.val()).data().description.toString());
             if (that.cuePointType == 'transcript') {
+                $('.is_downloadable_section').removeClass('d-none');
+                let download = $('.file_' + that.cuePointType + '_' + current.val()).data().downloadable;
+                if(download == 1)
+                {
+                    $('#file_' + that.cuePointType + '_is_downloadable').prop('checked', true)
+                }
+                else
+                {
+                    $('#file_' + that.cuePointType + '_is_downloadable').prop('checked', false)
+                }
                 let current_transcript = $('.file_' + that.cuePointType + '_' + current.val());
                 if (current_transcript.data('webvtt')) {
                     $('.is_caption_section').removeClass('d-none');
@@ -1045,6 +1059,8 @@ function IndexTranscript() {
                 });
                 var fileExtension = ['text/vtt', 'text/webvtt', 'vtt', 'webvtt'];
                 if (that.cuePointType == 'transcript') {
+                    $('.is_downloadable_section').removeClass('d-none');
+                    $('#file_' + that.cuePointType + '_is_downloadable').prop('checked', false)
                     if ($.inArray($('#file_name_transcript').text().split('.').pop().toLowerCase(), fileExtension) == -1) {
                         $('.is_caption_section').addClass('d-none');
                         $('.remove_title_section').addClass('d-none');

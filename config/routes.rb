@@ -60,6 +60,7 @@ Rails.application.routes.draw do
     get '/', to: 'users#index'
   end
   get 'ohms_records', to: 'interviews/managers#index', as: :ohms_records
+  get 'ohms_records/collection/ohms_records/user_assignments/:interview_id/:user_id', to: 'interviews/managers#ohms_assignments', as: :ohms_collection_records_user_assignments
   get 'my_ohms_assignment', to: 'interviews/managers#index', as: :my_ohms_assignment
   post 'my_assignment_listing', to: 'interviews/managers#listing', as: :my_assignment_listing
   post 'ohms_records', to: 'interviews/managers#create', as: :ohms_records_create
@@ -69,6 +70,16 @@ Rails.application.routes.draw do
   get 'ohms_records/ohms_index/:id/edit', to: 'interviews/interview_index#edit', as: :ohms_index_edit
   get 'ohms_records/ohms_index/new/:id', to: 'interviews/interview_index#new', as: :ohms_index_new
   get 'ohms_records/user_assignments/:interview_id/:user_id', to: 'interviews/managers#ohms_assignments', as: :ohms_records_user_assignments
+
+  get 'ohms_configuration', to: 'interviews/managers#ohms_configuration', as: :ohms_configuration
+  post 'ohms_configuration', to: 'interviews/managers#ohms_configuration_update', as: :ohms_configuration_update
+  get 'ohms_records/collections', to: 'interviews/collections#index', as: :list_collections
+  post 'ohms_records/collections/listing', to: 'interviews/collections#listing', as: :listing_collections
+
+  get 'ohms_records/collection/:collection_id', to: 'interviews/collections#interviews', as: :interview_list_of_collections
+  post 'ohms_records/collection/:collection_id', to: 'interviews/collections#interviews_list', as: :interview_lists_of_collections
+  get 'ohms_records/collection/export/:collection_id', to: 'interviews/collections#export', as: :interview_export
+
   namespace :interviews do
     resources :managers do
       collection do
@@ -123,8 +134,8 @@ Rails.application.routes.draw do
   get 'pricing', to: 'home#pricing', as: :pricing
   get 'terms_of_service', to: 'home#terms_of_service', as: :terms_of_service
   get 'privacy_policy', to: 'home#privacy_policy', as: :privacy_policy
-  get 'contact_us', to: 'home#contact_us', as: :contact_us
-  get 'support', to: 'home#support', as: :support
+  # get 'contact_us', to: 'home#contact_us', as: :contact_us
+  # get 'support', to: 'home#support', as: :support
   get 'about', to: 'home#about', as: :about
   get 'features', to: 'home#features', as: :features
   post 'submit_request', to: 'home#submit_request', as: :submit_request

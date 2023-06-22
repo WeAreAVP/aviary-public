@@ -220,6 +220,7 @@ function CollectionResourceTable() {
                     if (settings.aoData.length > 0) {
                         $('.export_btn').toggleClass('d-none');
                     }
+                    fixTable();
                     initBulkEdit();
                 }
             });

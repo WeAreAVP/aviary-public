@@ -57,6 +57,7 @@ class FileTranscript < ApplicationRecord
     elsif file_content_type == 'text/vtt' || ['.vtt', '.webvtt'].include?(File.extname(associated_file.queued_for_write[:original].original_filename).downcase)
       require 'webvtt'
       begin
+        associated_file.instance_write(:content_type, 'text/vtt') unless file_content_type == 'text/vtt'
         WebVTT.read(associated_file.queued_for_write[:original].path)
       rescue StandardError => ex
         errors.add(:associated_file, ex.message)
@@ -72,6 +73,7 @@ class FileTranscript < ApplicationRecord
     solr_q_condition = '*:*'
     complex_phrase_def_type = false
     fq_filters = ' document_type_ss:file_transcript  '
+    sort_column = sort_column.sub(/_(ss|sms)$/, '_scis')
     if q.present?
       counter = 0
       fq_filters_inner = ''
@@ -129,7 +131,8 @@ class FileTranscript < ApplicationRecord
                         '1' => { value: 'title_ss', status: 'true' },
                         '2' => { value: 'is_public_ss', status: 'true' },
                         '3' => { value: 'file_display_name_ss', status: 'true' },
-                        '4' => { value: 'collection_resource_title_ss', status: 'true' } } }
+                        '4' => { value: 'collection_resource_title_ss', status: 'true' },
+                        '5' => { value: 'associated_file_content_type_ss', status: 'true' } } }
   end
 
   def self.fields_values
@@ -140,9 +143,11 @@ class FileTranscript < ApplicationRecord
       'language_ss' => 'Language',
       'description_ss' => 'Notes',
       'file_display_name_ss' => 'Media File',
+      'associated_file_content_type_ss' => 'File Type',
       'collection_resource_title_ss' => 'Resource Title',
       'annotation_count_is' => 'Annotation Set Count',
       'is_caption_ss' => 'Caption',
+      'is_downloadable_ss' => 'Is Downloadable',
       'updated_at_ds' => 'Date Updated',
       'created_at_ds' => 'Date Added'
     }
@@ -187,8 +192,12 @@ class FileTranscript < ApplicationRecord
     string :is_caption, stored: true do
       is_caption == true ? 'Yes' : 'No'
     end
+    string :is_downloadable, stored: true do
+      is_downloadable.positive? ? 'Yes' : 'No'
+    end
     string :document_type, stored: true do
       'file_transcript'
     end
+    string :associated_file_content_type, stored: true
   end
 end

@@ -184,8 +184,11 @@
     font-size: 15px;
     line-height: 1.4;
     margin: 0 0 3px;
-    padding-left: 20px;
     position: relative;
+}
+
+#pswd_info li i {
+    padding-right: 10px;
 }
 
 .invalid-signup {
@@ -193,23 +196,7 @@
     color: #dc3545;
 }
 
-.invalid-signup:before {
-    content: '\f00d';
-    position: absolute;
-    font-family: "fontawesome";
-    top: 0;
-    left: 0;
-}
-
 .valid-signup {
     line-height: 24px;
     color: #388e3c;
-}
-
-.valid-signup:before {
-    content: '\f00c';
-    position: absolute;
-    font-family: "fontawesome";
-    top: 0;
-    left: 0;
 }

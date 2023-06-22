@@ -155,6 +155,7 @@ function TranscriptTable() {
                     if (called_from != 'permission_group') {
                         initBulkEdit();
                     }
+                    fixTable();
                 }
             });
         }

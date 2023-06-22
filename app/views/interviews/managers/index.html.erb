@@ -6,11 +6,11 @@
           <div class="row">
             <div class="col-md-6">
             
-            <h1> <%= @organization_user.role.system_name == "ohms_assigned_user" ? "#{current_user.full_name}'s OHMS Assignments" : 'OHMS Records' %></h1>
+            <h1> <%= @organization_user&.role&.system_name == "ohms_assigned_user" ? "#{current_user.full_name}'s OHMS Assignments" : 'OHMS Records' %></h1>
             
             </div>
             <div class="col-md-6">
-              <% unless @organization_user.role.system_name == "ohms_assigned_user" %>
+              <% unless @organization_user&.role&.system_name == "ohms_assigned_user" %>
               <div class="dropdown float-right  ml-2 ">
                 <button type="button" class="btn mr-2 btn-outline-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                   Add OHMS Record
@@ -22,7 +22,11 @@
               </div>
 
               <div class="dropdown float-right  ml-2 ">
-              
+                <% if request.url.include?('notes_only=1') %>
+                <a type="button" href="<%= ohms_records_path()%>" class="btn mr-2 btn-outline-primary">
+                  Undo Notes Filter
+                </a>
+                <% end %>
                 <button type="button" class="btn mr-2 btn-outline-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                   Table Options
                 </button>
@@ -30,7 +34,9 @@
                   <button class="dropdown-item manage-resource-columns-btn" data-target=".manage-interview-column-modal" data-toggle="modal">
                     Manage Table
                   </button>
+                  <button class="dropdown-item bluk-ohms-export-btn">Bulk Export OHMS XML</button>
                   <button class="dropdown-item bluk-edit-btn">Bulk Edit Options</button>
+                  <button class="dropdown-item bluk-ohms-notes-filter-btn">Filter OHMS Notes</button>
                 </div>
               </div>
               <% end %>
@@ -39,10 +45,10 @@
         </div>
       </div>
       <div class="data-table collections-datatable">
-        <%= content_tag :table, role: :datatable, class: ["table", "table-striped", 'table-bordered'], id: 'interviews_data_table', data: { url: (params[:collection_id].present? ? interview_lists_of_collections_path(params[:collection_id]) : ( @organization_user.role.system_name == "ohms_assigned_user" ? my_assignment_listing_path(format: :json) : listing_interviews_managers_path(format: :json))), rightrow: (@organization_user.role.system_name == "ohms_assigned_user" ? 1 : 2) } do %>
+        <%= content_tag :table, role: :datatable, class: ["table", "table-striped", 'table-bordered'], id: 'interviews_data_table', data: { url: (params[:collection_id].present? ? interview_lists_of_collections_path(params[:collection_id]) : ( @organization_user&.role&.system_name == "ohms_assigned_user" ? my_assignment_listing_path(format: :json) : listing_interviews_managers_path(format: :json))), rightrow: (@organization_user&.role&.system_name == "ohms_assigned_user" ? 1 : 2) } do %>
           <thead>
           <tr>
-            <% unless @organization_user.role.system_name == "ohms_assigned_user" %>
+            <% unless @organization_user&.role&.system_name == "ohms_assigned_user" %>
             <th>
               <input type="checkbox" class="select_all_checkbox_interview" data-url="<%= bulk_resource_list_interviews_managers_path %>" data-bulk_delete="<%= fetch_bulk_edit_resource_list_collections_path %>"/>
             </th>
@@ -56,7 +62,7 @@
                 <% end %>
               <% end %>
             <% end %>
-            <% unless @organization_user.role.system_name == "ohms_assigned_user" %>
+            <% unless @organization_user&.role&.system_name == "ohms_assigned_user" %>
             <th>Assignments</th>
             <% end %>
             <th>Action</th>
@@ -168,7 +174,7 @@
       </div>
       <div class="modal-body">
         <h1 class="alert-danger font-size-21px text-center mb-20px p-2 "> Are you sure you want to
-          <span id="confirm_msg_pop_bulk"> export the interviews listed below as XML.</span>? </h1>
+          <span id="confirm_msg_pop_bulk"> delete the interviews listed below.</span>? </h1>
         <table class="table table-hover review_resources_file_bulk table-sm " style="width: 100%;">
           <thead>
           <tr>
@@ -206,9 +212,8 @@
             <div class="col-md-12">
               <div class="row">
                 <div class="col-12 float-left">
-                  <select class="bulk_operation_interviews" name="check_type">
-                    <option value="download_xml">Export as XML</option>
-                    <option value="bulk_delete">Bulk Delete</option>
+                  <select class="bulk_operation_interviews" id="select_check_type" name="check_type">
+                    <option value="bulk_delete" selected>Bulk Delete</option>
                     <option value="mark_online">Mark records online</option>
                     <option value="mark_ofline">Mark records offline</option>
                     <option value="mark_restricted">Mark restricted</option>
@@ -220,12 +225,12 @@
             </div>
             <input type="hidden" name='action' value="bulk_edit_operation"/>
             <div class="col-md-12 mt-20px">
-              <div class="bulk_delete_content operation_content d-none">
+              <div class="bulk_delete_content operation_content">
                 <h1 class="font-size-18px text-left"> Delete selected interviews.</h1>
               </div>
 
-              <div class="export_xml_content operation_content ">
-                <h1 class="font-size-18px text-left"> Export selected interviews as XML.</h1>
+              <div class="export_xml_content operation_content d-none">
+                <h1 class="font-size-18px text-left"> Export selected interviews as OHMS XML.</h1>
               </div>
 
               <div class="ohms_assign_users_content operation_content d-none">

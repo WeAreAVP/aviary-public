@@ -136,6 +136,13 @@
                   Repeatable
                 </label>
               </div>
+              <div class="col-md-3  <%= meta_field_info['is_default'].present? && meta_field_info['is_default'].to_s.to_boolean? ? 'd-none' : '' %>">
+                <label>
+                  <%= ff.check_box :is_internal_only, checked: meta_field_info.present? && meta_field_info['is_internal_only'].present? &&
+                    meta_field_info['is_internal_only'].to_s.to_boolean? %>
+                  Internal Only?
+                </label>
+              </div>
             </div>
 
           </div>

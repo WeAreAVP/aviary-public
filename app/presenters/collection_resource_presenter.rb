@@ -143,6 +143,7 @@ class CollectionResourcePresenter < BasePresenter
 
   def file_wise_count(collection_resource, count_file_wise, session_video_text_all)
     counts_media_metadata = {}
+
     collection_resource.collection_resource_files.includes(%i[file_indexes file_transcripts]).each do |single_file|
       count_file_wise[single_file.id] ||= {}
       single_file.file_indexes.includes([:file_index_points]).each do |single_index|

@@ -354,6 +354,11 @@ function OrganizationFieldsManagement() {
                     info[index][value] = $(objectTr).find('.' + value).prop('checked');
                 });
             }
+            if (typeof $(obj).data('internalOnlyColumns') != 'undefined' && $(obj).data('internalOnlyColumns').length > 0) {
+                $.each($(obj).data('internalOnlyColumns').split(','), function (_index, value) {
+                    info[index][value] = $(objectTr).find('.' + value).prop('checked');
+                });
+            }
         });
         console.log(obj);
         let data = {

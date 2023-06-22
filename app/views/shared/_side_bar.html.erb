@@ -109,20 +109,34 @@
               <div class="card <%= disabled_organization_cls %>">
                 <div class="card-header" id="headingOne">
                   <h5 class="mb-0">
-                    <button class="btn btn-link <%= (["ohms_integrations"].include?(params[:controller])) ? '' : 'collapsed' %>" data-toggle="collapse" data-target="#ohms_nav" aria-expanded="<%= '' %>" aria-controls="permission">
+                    <button class="btn btn-link <%= (["ohms_integrations","interviews/collections"].include?(params[:controller])) ? '' : 'collapsed' %>" data-toggle="collapse" data-target="#ohms_nav" aria-expanded="<%= '' %>" aria-controls="permission">
                       <div class="nav-box">
                         <span class="ico" data-toggle="tooltip" data-placement="right" title="OHMS"><%= image_tag 'icons/integration.png' %></span>
-                        <span class="title">OHMS</span>
+                        <span class="title">OHMS<a href="https://coda.aviaryplatform.com/ohms-in-aviary-beta-testing-10" target="_blank" data-toggle="tooltip" data-placement="top" title="OHMS in Aviary Beta">Beta</a></span>
                       </div>
                     </button>
                   </h5>
 
                 </div>
 
-                <div id="ohms_nav" class="collapse <%= '' %>" aria-labelledby="headingOne"
+                <div id="ohms_nav" class="collapse <%= (["ohms_integrations","interviews/collections"].include?(params[:controller])) ? 'show' : '' %>" aria-labelledby="headingOne"
                      data-parent="#accordion" style="">
                   <div class="card-body">
                     <div id="accordion">
+                    <% if current_user.current_org_owner_admin(current_organization).present?  %>
+                        <div class="card <%= disabled_organization_cls %>">
+                          <div class="card-header headingOne">
+                            <h5 class="mb-0">
+                              <button onclick="document.location.href='<%= list_collections_path %>'" class="btn btn-link  no_sub_colaps" data-toggle="collapse" aria-expanded="<%= (params[:controller] == 'ohms_integrations' || params[:controller] == "interviews/collections" ? 'active' : '') != '' ? 'true' : '' %>" aria-controls="collapse">
+                                <div class="nav-box">
+                                  <span class="ico" data-toggle="tooltip" data-placement="right" title="Authentication Configuration"><%= image_tag 'icons/integration.png' %></span>
+                                  <span class="title">OHMS Collections</span>
+                                </div>
+                              </button>
+                            </h5>
+                          </div>
+                        </div>
+                      <% end %>
                       <% if current_user.current_org_owner_admin(current_organization).present?  %>
                         <div class="card <%= disabled_organization_cls %>">
                           <div class="card-header headingOne">
@@ -145,6 +159,21 @@
                                 <div class="nav-box">
                                   <span class="ico" data-toggle="tooltip" data-placement="right" title="" data-original-title="Trint"><i class="fa fa-file font-size-16px" style="color: dimgray;"></i></span>
                                   <span class="title">OHMS Thesaurus Manager</span>
+                                </div>
+                              </button>
+                            </h5>
+                          </div>
+                        </div>
+                      <% end %>
+
+                      <% if current_user.current_org_owner_admin(current_organization).present? %>
+                        <div class="card <%= disabled_organization_cls %>">
+                          <div class="card-header headingOne">
+                            <h5 class="mb-0">
+                              <button onclick="document.location.href='<%= "#{ohms_configuration_path}" %>'" class="btn btn-link  no_sub_colaps" data-toggle="collapse" aria-expanded="<%= params[:type] == "ohms" ? 'true' : '' %>" aria-controls="collapse">
+                                <div class="nav-box">
+                                  <span class="ico" data-toggle="tooltip" data-placement="right" title="" data-original-title="Trint"><i class="fa fa-file font-size-16px" style="color: dimgray;"></i></span>
+                                  <span class="title">OHMS Configuration</span>
                                 </div>
                               </button>
                             </h5>

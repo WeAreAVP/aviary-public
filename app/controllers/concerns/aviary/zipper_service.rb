@@ -16,15 +16,20 @@ module Aviary::ZipperService
 
   private
 
-  def process_and_create_zip_file(files, _file_path)
+  def process_and_create_zip_file(files, _file_path, return_path = false)
     begin
       FileUtils.mkdir_p(tmp_user_folder) unless Dir.exist?(tmp_user_folder)
       files.each do |filename|
         create_zip_from_tmp_folder(tmp_user_folder, filename)
       end
+      if return_path
+        return "#{tmp_user_folder}.zip"
+      end
       zip_data = File.read("#{tmp_user_folder}.zip")
     ensure
-      FileUtils.rm_rf([tmp_user_folder, "#{tmp_user_folder}.zip"])
+      unless return_path
+        FileUtils.rm_rf([tmp_user_folder, "#{tmp_user_folder}.zip"])
+      end
     end
     zip_data
   end
