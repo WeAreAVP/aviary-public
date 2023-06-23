@@ -31,7 +31,7 @@ module Sunspot
     end
 
     def add_sort_fields(model, documents)
-      if %w[CollectionResource CollectionResourceFile SupplementalFile FileIndex FileTranscript RequestAccess SupplementalFile].include?(model.first.class.name)
+      if %w[CollectionResource CollectionResourceFile SupplementalFile FileIndex FileTranscript RequestAccess SupplementalFile Thesaurus::ThesaurusTerms].include?(model.first.class.name)
         fields = documents.first.fields.clone
         sort_fields = {}
         fields.each do |field|
