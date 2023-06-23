@@ -133,7 +133,6 @@ function AdvanceSearchHandler() {
 
         });
 
-        console.log($('.advanced-search-submit'));
         $('.advanced-search-submit').on('click', function () {
             let empty_value_found = false;
             $('.search_field_selector').each(function () {
