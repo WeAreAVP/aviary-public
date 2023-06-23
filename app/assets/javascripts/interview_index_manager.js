@@ -351,7 +351,7 @@ function InterviewIndexManager() {
         document_level_binding_element('.simple_form', 'change', function () {
             formChange = 1;
         });
-        document_level_binding_element('.btn-success', 'click', function () {
+        document_level_binding_element('.btn-primary', 'click', function () {
             formChange = 0;
         });
         document_level_binding_element('.play-timecode', 'click', function () {
