@@ -2,6 +2,14 @@ require 'rails_helper'
 
 RSpec.describe CollectionsController, type: :controller do
   let(:collection) { create(:collection) }
+  let(:collection_resource_1) { create(:collection_resource, collection: collection) }
+  let(:collection_resource_2) { create(:collection_resource, collection: collection) }
+  let(:collection_resource_file_1) { create(collection_resource_file, collection_resource: collection_resource_1) }
+  let(:collection_resource_file_2) { create(collection_resource_file, collection_resource: collection_resource_1) }
+  let(:collection_resource_file_3) { create(collection_resource_file, collection_resource: collection_resource_2) }
+  let(:collection_resource_file_4) { create(collection_resource_file, collection_resource: collection_resource_2) }
+  let(:collection_resource_file_5) { create(collection_resource_file, collection_resource: collection_resource_2) }
+
   before do
     request[:subdomain] = collection.organization.url
     allow(controller).to receive(:current_organization).and_return(collection.organization)
@@ -203,6 +211,68 @@ RSpec.describe CollectionsController, type: :controller do
     it "should return resource csv" do
       get :export, params: { export_type: 'resources' }
       response.header['Content-Disposition'].include?("collection_resources")
+    end
+
+    it "should have all the metadata fields with proper syntax" do
+      collection_resource_1.create_resource_description_value.resource_field_values = {
+        "date"=>{"values"=>[{"value"=>"2013-07-10", "vocab_value"=>"issued"}], "system_name"=>"date"},
+        "type"=>{"values"=>[{"value"=>"Science", "vocab_value"=>""}], "system_name"=>"type"},
+        "agent"=>{"values"=>[{"value"=>"Derek Muller", "vocab_value"=>""}], "system_name"=>"agent"},
+        "format"=>{"values"=>[{"value"=>"video", "vocab_value"=>""}], "system_name"=>"format"},
+        "source"=>{"values"=>[{"value"=>"Youtube", "vocab_value"=>""}], "system_name"=>"source"},
+        "creator"=>{"values"=>[{"value"=>"Derek Muller", "vocab_value"=>""}], "system_name"=>"creator"},
+        "keyword"=>{"values"=>[{"value"=>"Transistor", "vocab_value"=>""}, {"value"=>"Computer", "vocab_value"=>""}, {"value"=>"Quantum", "vocab_value"=>""}], "system_name"=>"keyword"},
+        "subject"=>{"values"=>[{"value"=>"Computer Science", "vocab_value"=>"other"}], "system_name"=>"subject"},
+        "coverage"=>{"values"=>[{"value"=>"Global", "vocab_value"=>"spatial"}], "system_name"=>"coverage"},
+        "language"=>{"values"=>[{"value"=>"English", "vocab_value"=>"primary"}], "system_name"=>"language"},
+        "relation"=>{"values"=>[{"value"=>"From Transistors to Quantum Computers", "vocab_value"=>"is part of"}], "system_name"=>"relation"},
+        "publisher"=>{"values"=>[{"value"=>"Veritasium", "vocab_value"=>""}], "system_name"=>"publisher"},
+        "identifier"=>{"values"=>[{"value"=>"IcrBqCFLHIY", "vocab_value"=>"other"}], "system_name"=>"identifier"},
+        "description"=>
+          {"values"=>
+            [{"value"=>
+              "<p><span style=\"color: #030303; font-family: Roboto, Arial, sans-serif; font-size: 14px; white-space: pre-wrap; background-color: #f9f9f9;\">When I mentioned to people that I was doing a video on transistors, they would say \"as in a transistor radio?\" Yes! That's exactly what I mean, but it goes so much deeper than that. After the transistor was invented in 1947 one of the first available consumer technologies it was applied to was radios, so they could be made portable and higher quality. Hence the line in 'Brown-eyed Girl' - \"going down to the old mine with a transistor radio.\" But more important to our lives today, the transistor made possible the microcomputer revolution, and hence the Internet, and also TVs, mobile phones, fancy washing machines, dishwashers, calculators, satellites, projectors etc. etc. A transistor is based on semiconductor material, usually silicon, which is 'doped' with impurities to carefully change its electrical properties. These n and p-type semiconductors are then put together in different configurations to achieve a desire
+      d electrical result. And in the case of the transistor, this is to make a tiny electrical switch. These switches are then connected together to perform computations, store information, and basically make everything el
+      ectrical work intelligently.</span></p>",
+              "vocab_value"=>"general"}],
+          "system_name"=>"description"},
+        "rights_statement"=>
+          {"values"=>
+            [{"value"=>
+              "<p style=\"margin: 0.25rem 0px 0.75rem; color: #1f1f1f; font-family: 'Google Sans Text', Roboto, 'Helvetica Neue', Helvetica, sans-serif; font-size: 14px; background-color: #ffffff;\">The ability to mark upl
+      oaded videos with a Creative Commons license is available to all creators.</p>\r\n<p style=\"margin: 0.25rem 0px 0.75rem; color: #1f1f1f; font-family: 'Google Sans Text', Roboto, 'Helvetica Neue', Helvetica, sans-seri
+      f; font-size: 14px; background-color: #ffffff;\">The standard YouTube license remains the default setting for all uploads. To review the terms of the standard YouTube license,&nbsp;refer to our&nbsp;<a style=\"color: 
+      #0b57d0; text-decoration-line: none;\" href=\"https://www.youtube.com/static?template=terms\" target=\"_blank\" rel=\"noopener\">Terms of Service</a>.</p>\r\n<p style=\"margin: 0.25rem 0px 0.75rem; color: #1f1f1f; fon
+      t-family: 'Google Sans Text', Roboto, 'Helvetica Neue', Helvetica, sans-serif; font-size: 14px; background-color: #ffffff;\">Creative Commons licenses can only be used on 100%&nbsp;original content. If there's a&nbsp;
+      <a style=\"color: #0b57d0; text-decoration-line: none;\" href=\"https://support.google.com/youtube/answer/6013276\" rel=\"noopener\">Content ID</a>&nbsp;claim on your video,&nbsp;you cannot mark your video with the Cr
+      eative Commons license.</p>\r\n<p style=\"margin: 0.25rem 0px 0.75rem; color: #1f1f1f; font-family: 'Google Sans Text', Roboto, 'Helvetica Neue', Helvetica, sans-serif; font-size: 14px; background-color: #ffffff;\">By
+      marking your original video with a Creative Commons license, you're granting the entire YouTube community the right to reuse and edit that video.</p>",
+              "vocab_value"=>""}],
+          "system_name"=>"rights_statement"},
+        "source_metadata_uri"=>{"values"=>[{"value"=>"https://www.youtube.com/watch?v=IcrBqCFLHIY", "vocab_value"=>""}], "system_name"=>"source_metadata_uri"}
+      }
+      collection_resource_2.create_resource_description_value.resource_field_values = {
+        "date"=>{"values"=>[{"value"=>"2021-12-23", "vocab_value"=>""}], "system_name"=>"date"},
+        "agent"=>{"values"=>[{"value"=>"Usman Javaid", "vocab_value"=>""}], "system_name"=>"agent"},
+        "coverage"=>{"values"=>[{"value"=>"Testing", "vocab_value"=>"spatial"}], "system_name"=>"coverage"},
+        "description"=>{"values"=>[{"value"=>"<p>Test Testing</p>", "vocab_value"=>""}], "system_name"=>"description"}
+      }
+      collection_resource_1.reindex_collection_resource
+      collection_resource_2.reindex_collection_resource
+      get :export, params: { export_type: 'resources' }
+      csv_array = response.body.split("\n").map { |line| line.split(',') }
+
+      expect(csv_array[0]).to eq(["aviary ID", "Resource User Key", "Title", "Source Metadata URI", "Duration", "Publisher", "Rights Statement", "Source", "Agent", "Date",
+                                  "Coverage", "Language", "Description", "Format", "Identifier", "Relation", "Subject", "Keyword", "Type", "Access", "Preferred Citation",
+                                  "Collection Title", "PURL", "URL", "Embed"])
+
+      data = csv_array.filter { |line| line[0] == collection_resource_1.id.to_s }.first
+      expect(data).to eq([collection_resource_1.id.to_s, "\"\"", collection_resource_1.title, "\"\"", "00:00:00", "\"\"", "", "\"\"", "\"\"", "\"\"", "\"\"", "\"\"", "", "\"\"",
+                          "\"\"", "\"\"", "\"\"", "\"\"", "\"\"", "access_public", "", "title_1", "http://localhost/r/#{collection_resource_1.noid}",
+                          "http://localhost/collections/#{collection_resource_1.collection.id}/collection_resources/#{collection_resource_1.id}",
+                          "<iframe src='http://localhost/collections/#{collection_resource_1.collection.id}/collection_resources/#{collection_resource_1.id}?embed=true' height='400' width='1200' style='width: 100%'></iframe>"])
+
+      data = csv_array.filter { |line| line[0] == collection_resource_2.id.to_s }.first
     end
   end
 end
