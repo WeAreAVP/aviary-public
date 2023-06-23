@@ -23,13 +23,13 @@
     <div class="col-md-6">
       <div class="form-group">
         <div class="field-title"><%= f.label :password %></div>
-        <%= f.password_field :password, autocomplete: 'off', required: true, class: 'form-control', placeholder: 'Password' %>
+        <%= f.password_field :password, autocomplete: 'off', required: true, class: 'form-control', placeholder: 'Password', 'aria-describedby' => 'validations-description' %>
       </div>
     </div>
     <div class="col-md-6">
       <div class="form-group">
         <div class="field-title"><%= f.label :password_confirmation %></div>
-        <%= f.password_field :password_confirmation, autocomplete: 'off', required: true, class: 'form-control', placeholder: 'Password Confirmation' %>
+        <%= f.password_field :password_confirmation, autocomplete: 'off', required: true, class: 'form-control', placeholder: 'Password Confirmation', 'aria-describedby' => 'confirm-validations-description' %>
       </div>
     </div>
     <div class="col-md-12">

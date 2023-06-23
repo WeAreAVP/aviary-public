@@ -22,30 +22,32 @@ module Interviews
         @text = params['file_transcript']['text']
         raw_point = @text.split("\n")
         @file_transcript.file_transcript_points.each do |single_transcript_point|
-          single = single_transcript_point.point_info.split('(')
-          row = single[0].to_i
-          column = single[1].to_i
-          if row > 0 && column > 0 && row <= raw_point.length && raw_point[row].present?
-            time += time_different
-            if raw_point[row][column] != ' '
-              start = 1
-              found = false
-              if raw_point[row].length > column
-                found, column, start = find_forward(found, start, raw_point, row, column)
-                if raw_point[row][column] != ' '
-                  _found, column, _start = find_backward(found, start, raw_point, row, column)
-                end
-              else
-                found, column, start = find_backward(found, start, raw_point, row, column)
-                if raw_point[row][column] != ' '
-                  _found, column, _start = find_forward(found, start, raw_point, row, column)
+          if single_transcript_point.point_info.present?
+            single = single_transcript_point.point_info.split('(')
+            row = single[0].to_i
+            column = single[1].to_i
+            if row > 0 && column > 0 && row <= raw_point.length && raw_point[row].present?
+              time += time_different
+              if raw_point[row][column] != ' '
+                start = 1
+                found = false
+                if raw_point[row].length > column
+                  found, column, start = find_forward(found, start, raw_point, row, column)
+                  if raw_point[row][column] != ' '
+                    _found, column, _start = find_backward(found, start, raw_point, row, column)
+                  end
+                else
+                  found, column, start = find_backward(found, start, raw_point, row, column)
+                  if raw_point[row][column] != ' '
+                    _found, column, _start = find_forward(found, start, raw_point, row, column)
+                  end
                 end
               end
-            end
-            if raw_point[row].length.zero? || raw_point[row][column].nil?
-              raw_point[row] = "[#{Time.at(time).utc.strftime('%H:%M:%S')}] "
-            else
-              raw_point[row].insert(column, " [#{Time.at(time).utc.strftime('%H:%M:%S')}] ")
+              if raw_point[row].length.zero? || raw_point[row][column].nil?
+                raw_point[row] = "[#{Time.at(time).utc.strftime('%H:%M:%S')}] "
+              else
+                raw_point[row].insert(column, " [#{Time.at(time).utc.strftime('%H:%M:%S')}] ")
+              end
             end
           end
         end

@@ -88,7 +88,7 @@ class InterviewsDatatable < ApplicationDatatable
     elsif value['value'] == 'created_at_is'
       Time.at(resource[value['value']]).to_date
     elsif value['value'] == 'title_accession_number_ss'
-      "<div class='title_accession_number'>#{resource[value['value']]}</div>
+      "<div class='title_accession_number'>#{resource['title_ss']}</div>
       <div>
         <span  style='margin-right: 0.5rem; color: #545454;'>#{resource['accession_number_ss']}</span>
         #{link_to 'Preview', preview_interviews_manager_path(resource['id_is']), class: 'btn-interview-preview'}
