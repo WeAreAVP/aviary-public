@@ -319,6 +319,10 @@ module Interviews
       limiter
     end
 
+    def self.collection_series(interview)
+      interview.collection_id.gsub(' ', '') + ' ' + interview.series_id.gsub(' ', '')
+    end
+
     def self.straight_search_perp(query, field)
       limiter = ''
       if query.present?
