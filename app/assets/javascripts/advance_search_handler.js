@@ -133,6 +133,7 @@ function AdvanceSearchHandler() {
 
         });
 
+        console.log($('.advanced-search-submit'));
         $('.advanced-search-submit').on('click', function () {
             let empty_value_found = false;
             $('.search_field_selector').each(function () {
@@ -216,6 +217,7 @@ function AdvanceSearchHandler() {
                 $('.' + parent_class + '  .remove_div_term').remove();
             }
             if (allow_operator == false) {
+                $('.' + parent_class + '  .adjustable_area_advance_search input.form-control.search_field_selector').css('padding-right', '60px');
                 $('.' + parent_class + '  .operator_term').remove();
             }
             if( allow_remove == false && allow_operator == false ){

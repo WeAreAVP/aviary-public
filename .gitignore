@@ -112,3 +112,4 @@ public/query_string
 /yarn-error.log
 yarn-debug.log*
 .yarn-integrity
+dump.rdb
