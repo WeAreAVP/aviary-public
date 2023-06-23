@@ -1,7 +1,7 @@
 <div class="">
   <%= f.hidden_field :id %>
   <% if @interview.present? %>
-    <input type='hidden' value="<%= interview_lang_info(@interview.language_info.gsub(/(\w+)/) {|s| s.capitalize}) %>" name='<%= "file_index_point[language][]"%>' id="file_index_point_language"/>
+    <input type='hidden' value="<%= interview_lang_info(@interview.language_info.gsub(/(\w+)/) {|s| s.capitalize}) %>" name="file_index_point[language][]" id="file_index_point_language"/>
     <% if @interview.include_language %>
       <input type='hidden' value="<%= interview_lang_info(@interview.language_for_translation.gsub(/(\w+)/) {|s| s.capitalize}) %>" name='<%= "file_index_point[language][]"%>' id="file_index_point_language"/>
       <%= f.hidden_field :id_alt %>
@@ -81,10 +81,15 @@
                      end
 
         keywords_data = {}
-        keywords_data[:selected_keys] = @file_index_point.keywords.split(';').map.with_index do |keyword, i|
-                                          thesaurus.length.positive? ? { id: i, label: keyword, value: keyword } : { id: keyword, name: keyword }
+        keywords_data[:selected_keys] = if thesaurus.present? && @file_index_point.keywords.present?
+                                          @file_index_point.keywords.split(';').map.with_index do |keyword, i|
+                                            thesaurus.length.positive? ? { id: i, label: keyword, value: keyword } : { id: keyword, name: keyword }
+                                          end
+                                        else
+                                          ''
                                         end
-        if thesaurus.length.positive?
+
+        if thesaurus.present? && thesaurus.length.positive?
           keywords_data[:path] = autocomplete_thesaurus_manager_index_path
           keywords_data[:t_id] = thesaurus.first.id
           keywords_data[:type_of_list] = 'thesaurus'
@@ -137,10 +142,15 @@
                      end
 
         subject_data = {}
-        subject_data[:selected_keys] = @file_index_point.subjects.split(';').map.with_index do |subject, i|
-                                          thesaurus.length.positive? ? { id: i, label: subject, value: subject } : { id: subject, name: subject }
-                                        end
-        if thesaurus.length.positive?
+        subject_data[:selected_keys] = if thesaurus.present? && @file_index_point.subjects.present?
+                                         @file_index_point.subjects.split(';').map.with_index do |subject, i|
+                                           thesaurus.length.positive? ? { id: i, label: subject, value: subject } : { id: subject, name: subject }
+                                         end
+                                       else
+                                         ''
+                                       end
+
+        if thesaurus.present? && thesaurus.length.positive?
           subject_data[:path] = autocomplete_thesaurus_manager_index_path
           subject_data[:t_id] = thesaurus.first.id
           subject_data[:type_of_list] = 'thesaurus'
