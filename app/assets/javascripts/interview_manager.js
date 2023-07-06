@@ -791,6 +791,7 @@ function InterviewManager() {
             keywords_options.itemLabel = 'label';
             keywords_options.itemValue = 'value';
             keywords_options.itemData = 'label';
+            keywords_options.maxSuggest = parseInt($('.tokenfield_keywords').data('maxSuggest'), 10);
             keywords_options.setItems = selectedKeys.map((item) => {
               return { id: item.name, value: item.name, label: item.name }
             });
@@ -825,6 +826,7 @@ function InterviewManager() {
           subjects_options.itemLabel = 'label';
           subjects_options.itemValue = 'value';
           subjects_options.itemData = 'label';
+          subjects_options.maxSuggest = parseInt($('.tokenfield_keywords').data('maxSuggest'), 10);
           subjects_options.setItems = selectedKeys.map((item) => {
               return { id: item.name, value: item.name, label: item.name }
             });
