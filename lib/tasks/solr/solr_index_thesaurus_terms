@@ -1,0 +1,23 @@
+#
+# Aviary is an audiovisual content publishing platform with sophisticated features for search and permissions controls.
+# Copyright (C) 2019 Audio Visual Preservation Solutions, Inc.
+namespace :aviary do
+  namespace :solr_index do
+    desc 'Index all objects of Collection for Solr; in descending order'
+    task thesaurus_terms: :environment do
+      failed = []
+      puts "IDs of Thesaurus::ThesaurusTerms which are successfully indexed"
+      Thesaurus::ThesaurusTerms.select('id, thesaurus_information_id, CONVERT(CONVERT(CONVERT(term USING latin1) USING binary) USING utf8) AS term').find_in_batches do |group|
+        group.each do |t|
+          next unless t.term.present?
+          Sunspot.index t
+          Sunspot.commit
+          puts t.id
+        rescue StandardError
+          failed.push(t.id)
+        end
+      end
+      puts "IDs of Thesaurus::ThesaurusTerms which couldn't be indexed: #{failed}" unless failed.empty?
+    end
+  end
+end

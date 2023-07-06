@@ -18,7 +18,7 @@
         <div class="col-md-6">
           <div class="form--group">
             <%= select_tag "collection_resource[collection_resource_field_values][][vocabularies_id]",
-                           options_for_select(field_settings.vocabulary? ? field_settings.vocabulary_list : [], selected: single_value.present? && single_value['vocab_value'].present? ? single_value['vocab_value'] : ''),
+                           options_for_select(field_settings.vocabulary? ? field_settings.vocabulary_list.map { |option| option.to_s.gsub(/(\n|\r)/, '').strip } : [], selected: single_value.present? && single_value['vocab_value'].present? ? single_value['vocab_value'].to_s.gsub(/(\n|\r)/, '').strip : ''),
                            {:class => "select_option #{type_for_view} selectized", :include_blank => true} %>
           </div>
         </div>

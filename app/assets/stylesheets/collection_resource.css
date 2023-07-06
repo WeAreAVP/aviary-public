@@ -314,3 +314,10 @@ h5.MsoNormal span {
     left: 0;
     right: 0;
 }
+
+.internal-field {
+  color: #545454;
+  background-color: #f7f7f7;
+  border: 1px solid #e1e1e1;
+  margin-right: 15px;
+}
