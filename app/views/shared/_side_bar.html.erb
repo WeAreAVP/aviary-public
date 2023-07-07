@@ -13,7 +13,7 @@
             </div>
             <div class="side-nav-logo">
               <div class="img-holder">
-                <%= image_tag organization_logo %>
+                <%= image_tag(organization_logo, alt: current_organization.name) %>
               </div>
               <div class="title"><%= current_organization.name %></div>
             </div>
