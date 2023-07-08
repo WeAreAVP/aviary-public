@@ -13,7 +13,7 @@ class CollectionResourcePresenter < BasePresenter
   end
 
   def breadcrumb_manager(type, collection_resource, collection)
-    active_link = 'class="active" href="javascript:void(0);"'
+    active_link = 'class="active" href="javascript:void(0);" aria-current="page"'
     collection_link = "<a href='#{list_resources_collection_path(collection)}'>Collection</a>".html_safe
     resource_link = "<a href='#{collection_collection_resource_path(collection, collection_resource)}'>Resource Detail</a>".html_safe
     manage_file_link = "<a href='#{collection_collection_resource_add_resource_file_path(collection, collection_resource)}'>Manage Media Files</a>".html_safe
