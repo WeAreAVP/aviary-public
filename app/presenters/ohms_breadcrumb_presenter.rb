@@ -14,7 +14,7 @@ class OhmsBreadcrumbPresenter < BasePresenter
 
   def breadcrumb_manager(type, interview, option = '')
     ohms_link = "<a href='javascript:;'>OHMS</a>".html_safe
-    active_link = 'class="active" href="javascript:void(0);"'
+    active_link = 'class="active" href="javascript:void(0);" aria-current="page"'
     interview_link = "<a href='#{ohms_records_path}'>OHMS Studio</a>".html_safe
     case type
     when 'edit'

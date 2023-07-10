@@ -1,7 +1,7 @@
 <header id="header" class="aviary-header">
   <div class="container-fluid">
     <nav role="navigation" aria-label="Main menu" class="navbar navbar-expand-sm navbar-light">
-      <%= link_to image_tag("homepage/main-logo.png"), root_path, class: 'navbar-brand' %>
+      <%= link_to image_tag("homepage/main-logo.png", alt: "Aviary"), root_path, class: 'navbar-brand' %>
 
       <div class="search-nav search1cus">
         <% unless current_page?('/catalog') %>
