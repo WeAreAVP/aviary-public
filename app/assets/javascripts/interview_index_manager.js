@@ -47,6 +47,7 @@ function InterviewIndexManager() {
                 keywords_options.itemLabel = 'label';
                 keywords_options.itemValue = 'value';
                 keywords_options.itemData = 'label';
+                keywords_options.maxSuggest = parseInt($('.tokenfield_keywords').data('maxSuggest'), 10);
             } else {
                 keywords_options.newItems = true;
                 keywords_options.newItemName = 'keywords';
@@ -76,6 +77,7 @@ function InterviewIndexManager() {
               subjects_options.itemLabel = 'label';
               subjects_options.itemValue = 'value';
               subjects_options.itemData = 'label';
+              subjects_options.maxSuggest = parseInt($('.tokenfield_keywords').data('maxSuggest'), 10);
             } else {
                 subjects_options.newItems = true;
                 subjects_options.newItemName = 'subjects';

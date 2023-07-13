@@ -95,7 +95,7 @@
           keywords_data[:type_of_list] = 'thesaurus'
         end
       %>
-      <%= f.text_area :keywords, required: false, label: false, class: 'form-control keywords tokenfield tokenfield_keywords', data: keywords_data %>
+      <%= f.text_area :keywords, required: false, label: false, class: 'form-control keywords tokenfield tokenfield_keywords', data: keywords_data.merge(max_suggest: ENV.fetch('MAX_SUGGEST', 100)) %>
       <small class="form-text text-muted mt-1">Keywords should be separated by a semi-colon.</small>
       <% if @interview.present? %>
         <% thesaurus = Thesaurus::Thesaurus.where(id: @interview.thesaurus_keywords) %>
@@ -113,7 +113,7 @@
     <% if @interview.present? &&  @interview.include_language %>
       <div class="form-group">
         <div class="field-title"><%= f.label :keywords, "Keywords" %></div>
-        <%= f.text_area :keywords_alt, required: false, label: false, class: 'form-control keywords tokenfield tokenfield_keywords', data: keywords_data %>
+        <%= f.text_area :keywords_alt, required: false, label: false, class: 'form-control keywords tokenfield tokenfield_keywords', data: keywords_data.merge(max_suggest: ENV.fetch('MAX_SUGGEST', 100)) %>
         <small class="form-text text-muted mt-1">Keywords should be separated by a semi-colon.</small>
         <% if @interview.present? %>
           <% thesaurus = Thesaurus::Thesaurus.where(id: @interview.thesaurus_keywords) %>
@@ -156,7 +156,7 @@
           subject_data[:type_of_list] = 'thesaurus'
         end
       %>
-      <%= f.text_area :subjects, required: false, label: false, class: 'form-control subjects tokenfield tokenfield_subjects', data: subject_data %>
+      <%= f.text_area :subjects, required: false, label: false, class: 'form-control subjects tokenfield tokenfield_subjects', data: subject_data.merge(max_suggest: ENV.fetch('MAX_SUGGEST', 100)) %>
       <small class="form-text text-muted mt-1">Subjects should be separated by a semi-colon.</small>
       <% if @interview.present? %>
         <% thesaurus = Thesaurus::Thesaurus.where(id: @interview.thesaurus_subjects) %>
@@ -174,7 +174,7 @@
     <% if @interview.present? &&  @interview.include_language %>
       <div class="form-group">
         <div class="field-title"><%= f.label :subjects, "Subjects" %></div>
-        <%= f.text_area :subjects_alt, required: false, label: false, class: 'form-control subjects tokenfield tokenfield_subjects', data: subject_data %>
+        <%= f.text_area :subjects_alt, required: false, label: false, class: 'form-control subjects tokenfield tokenfield_subjects', data: subject_data.merge(max_suggest: ENV.fetch('MAX_SUGGEST', 100)) %>
         <small class="form-text text-muted mt-1">Subjects should be separated by a semi-colon.</small>
         <% if @interview.present? %>
           <% thesaurus = Thesaurus::Thesaurus.where(id: @interview.thesaurus_subjects) %>

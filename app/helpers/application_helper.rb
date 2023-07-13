@@ -105,9 +105,18 @@ module ApplicationHelper
   end
 
   def time_to_duration(seconds, mili_seconds = false)
-    format = '%H:%M:%S'
-    format = '%H:%M:%S.%L' if mili_seconds
-    Time.at(seconds.to_f).utc.strftime(format)
+    hours = seconds / 3600
+    minutes = (seconds % 3600) / 60
+    remaining_seconds = seconds % 60
+
+    time_string = "#{format('%02d', hours)}:#{format('%02d', minutes)}:#{format('%02d', remaining_seconds)}"
+
+    if mili_seconds
+      milliseconds = (seconds % 1) * 1000
+      time_string += ".#{format('%03d', milliseconds)}"
+    end
+
+    time_string
   rescue StandardError
     '00:00:00'
   end

@@ -220,7 +220,10 @@ module Thesaurus
                       terms_all = terms_all.map { |item| "*#{item.gsub(/[^0-9a-zA-Z ]/i, '')}*" }
                     end
 
-                    thesaurus = ::Thesaurus::ThesaurusTerms.fetch_resources(1, 50, 'term_ss', 'asc', terms_all, thesaurus_id)
+                    thesaurus = ::Thesaurus::ThesaurusTerms.fetch_resources(
+                      1, ENV.fetch('MAX_SUGGEST', 100).to_i, 'term_ss', 'asc',
+                      terms_all, thesaurus_id
+                    )
                     thesaurus unless thesaurus.present?
 
                     thesaurus.map do |e|
