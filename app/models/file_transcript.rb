@@ -30,7 +30,7 @@ class FileTranscript < ApplicationRecord
   after_destroy :update_solr
 
   def update_solr
-    collection_resource_file.collection_resource.reindex_collection_resource if should_index?
+    collection_resource_file.reindex_collection_resource_file if should_index?
   end
 
   def should_index?

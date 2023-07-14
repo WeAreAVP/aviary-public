@@ -13,6 +13,7 @@ function DisplaySettings() {
     this.Filters = new Array();
     this.load_resource_again = true;
     this.page_number = 1;
+    let contrastRequest = null;
 
     this.handlecallback = function (response, container, requestData) {
         try {
@@ -101,7 +102,8 @@ function DisplaySettings() {
             defaultValue: "#000000",
             letterCase: "lowercase",
             animationSpeed: 50,
-            animationEasing: "swing"
+            animationEasing: "swing",
+            change: fetchContrastInfo
         });
         manage_form_banner_visibility(banner_type);
         manage_form_banner_title_visibility(banner_title_type);
@@ -131,6 +133,7 @@ function DisplaySettings() {
         AddExistingData(triggered_from);
         $('#' + triggered_from + '_banner_slider_resources_table').DataTable();
 
+        fetchContrastInfo();
     };
 
     const AddExistingData = function (triggered_from) {
@@ -240,5 +243,43 @@ function DisplaySettings() {
             $('.banner-title-text').removeClass('d-none');
             $('.banner-title-image').addClass('d-none');
         }
+    };
+
+    // Fetch color contrast information and show warnings if needed
+    const fetchContrastInfo = function () {
+        // Cancel the previous request, if any
+        if (contrastRequest) {
+            contrastRequest.abort();
+        }
+
+        contrastRequest = $.ajax({
+            url: $('#organization_search_panel_bg_color').data('url'),
+            data: {
+                search_background_color: $('#organization_search_panel_bg_color').val().replace('#', ''),
+                banner_title_color: $('#organization_title_font_color').val().replace('#', ''),
+                saarch_font_color: $('#organization_search_panel_font_color').val().replace('#', '')
+            },
+            success: function (response) {
+                if (response.banner_contrast === 'fail') {
+                    $('#organization_title_font_color').addClass('border-danger');
+                    if ($('#organization_title_font_color_warning').length === 0) {
+                        $('#organization_title_font_color').parent().append('<small id="organization_title_font_color_warning" class="text-danger contrast-warning">This Banner Title Text Color does not provide sufficient color contrast with the Search Panel Background Color you have chosen to meet the WCAG Level AAA accessibility standard. Please see <a href="https://webaim.org/resources/contrastchecker/" target="_blank">WebAIM: Contrast Checker</a> for more information.</small>');
+                    }
+                } else {
+                    $('#organization_title_font_color').removeClass('border-danger');
+                    $('#organization_title_font_color_warning').remove();
+                }
+
+                if (response.search_contrast === 'fail') {
+                    $('#organization_search_panel_font_color').addClass('border-danger');
+                    if ($('#organization_search_panel_font_color_warning').length === 0) {
+                        $('#organization_search_panel_font_color').parent().append('<small id="organization_search_panel_font_color_warning" class="text-danger contrast-warning">This Search Panel Font Color does not provide sufficient color contrast with the Search Panel Background Color you have chosen to meet the WCAG Level AAA accessibility standard. Please see <a href="https://webaim.org/resources/contrastchecker/" target="_blank">WebAIM: Contrast Checker</a> for more information.</small>');
+                    }
+                } else {
+                    $('#organization_search_panel_font_color').removeClass('border-danger');
+                    $('#organization_search_panel_font_color_warning').remove();
+                }
+            }
+        });
     };
 }

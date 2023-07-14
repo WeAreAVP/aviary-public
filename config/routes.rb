@@ -142,6 +142,7 @@ Rails.application.routes.draw do
   resources :organizations, only: %i[index show update]
   get '/organization_profile', to: 'organizations#edit', as: :edit_organization
   get '/display_settings', to: 'organizations#display_settings', as: :display_settings_organization
+  get :color_contrast, to: 'organizations#color_contrast', as: :color_contrast_organization
   match '/search_configuration', to: 'organizations#search_configuration', as: :search_configuration_organization, via: %i[get post]
   post '/set_layout', to: 'home#set_layout'
   scope :public_access_urls do

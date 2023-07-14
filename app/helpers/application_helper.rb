@@ -105,6 +105,7 @@ module ApplicationHelper
   end
 
   def time_to_duration(seconds, mili_seconds = false)
+    seconds = seconds.to_f
     hours = seconds / 3600
     minutes = (seconds % 3600) / 60
     remaining_seconds = seconds % 60
