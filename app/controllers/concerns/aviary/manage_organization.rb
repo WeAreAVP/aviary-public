@@ -21,6 +21,15 @@ module Aviary::ManageOrganization
     authorize! :manage, current_organization
   end
 
+  def color_contrast
+    authorize! :manage, current_organization
+
+    banner_contrast = fetch_contrast(params[:banner_title_color], params[:search_background_color])
+    search_contrast = fetch_contrast(params[:saarch_font_color], params[:search_background_color])
+
+    render json: { banner_contrast: banner_contrast['AAALarge'], search_contrast: search_contrast['AAA'] }
+  end
+
   def update
     authorize! :manage, current_organization unless admin_signed_in?
     if @organization.update(org_params)
@@ -69,5 +78,18 @@ module Aviary::ManageOrganization
                                          :banner_title_text, :banner_type, :banner_slider_resources, :default_tab_selection,
                                          :title_font_color, :title_font_family, :title_font_size, :favicon, :hide_on_home,
                                          :custom_domain, :custom_url_for_resource, :search_panel_bg_color, :search_panel_font_color)
+  end
+
+  def fetch_contrast(fcolor, bcolor)
+    params = { fcolor: fcolor, bcolor: bcolor, api: '' }
+    uri = 'https://webaim.org/resources/contrastchecker/'
+
+    response = Curl.get(uri, params)
+
+    begin
+      JSON.parse(response.body)
+    rescue JSON::ParserError
+      nil
+    end
   end
 end

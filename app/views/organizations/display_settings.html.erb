@@ -119,7 +119,7 @@
             <div class="col-md-6">
               <div class="form-group">
                 <div class="field-title"><label for="">Search Panel Background Color <button type="button" class="info-btn" data-content="This color will be used as the background color behind the search bar on the search resources page. It will also be used as the background color behind the search bar on your organization landing page and your collection landing page if you do not display a banner on those pages."></button></label></div>
-                <%= f.input :search_panel_bg_color, label: false, input_html: { class: 'form-control color_picker', placeholder: 'Font Color' }, :required => true %>
+                <%= f.input :search_panel_bg_color, label: false, input_html: { class: 'form-control color_picker', placeholder: 'Font Color', data: { url: color_contrast_organization_url } }, :required => true %>
               </div>
             </div>
             <div class="col-md-6">
