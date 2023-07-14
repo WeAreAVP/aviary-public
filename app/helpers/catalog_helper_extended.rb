@@ -9,6 +9,9 @@ module CatalogHelperExtended
     if current_organization.display_banner
       "background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
                          url(#{current_organization.banner_image.url}) !important;
+      background-size: cover !important;
+      background-repeat: no-repeat !important;
+      background-position: center center !important;
       min-height: 300px !important;"
     else
       "background-color: #{current_organization.search_panel_bg_color.present? ? current_organization.search_panel_bg_color : '#f05d1f'}"
