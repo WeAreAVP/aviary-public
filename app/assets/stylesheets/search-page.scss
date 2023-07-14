@@ -737,7 +737,7 @@ form.range_limit .hold input:nth-child(2) {
 }
 
 .search-result-visual {
-    background: #26ff00 !important;
+    background: #336175;
     padding: 55px 20px 40px;
     color: #f3f3f3;
     z-index: 3;
@@ -746,8 +746,7 @@ form.range_limit .hold input:nth-child(2) {
     position: relative;
     font-weight: 100;
     text-align: center;
-    background-repeat: no-repeat !important;
-    background-size: cover !important;
+    background-repeat: no-repeat;
     margin-bottom: 20px;
     min-height: 135px;
 }

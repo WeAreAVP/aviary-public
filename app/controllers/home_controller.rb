@@ -20,9 +20,9 @@ class HomeController < ApplicationController
     HomePresenter.manage_home_tracking(cookies, organization, session, ahoy)
     cookies[:update_pop_bypass] = true if params[:update_pop_bypass]
 
-    if organization.present? && organization.default_tab_selection == 'collections' && request.fullpath == '/'
-      redirect_to org_collection_url
-    end
+    return unless organization.present? && organization.default_tab_selection == 'collections' && request.fullpath == '/'
+
+    redirect_to org_collection_url
   end
 
   def featured_collections
