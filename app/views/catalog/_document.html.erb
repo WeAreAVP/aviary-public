@@ -8,16 +8,6 @@
      collection = document_collection.present? ? document_collection.second : nil
   %>
   <li class="<%= can_access ? '' : 'locked' %>">
-    <% if current_user_is_org_user?(document_organization) || request.path.include?("myresources/listing") %>
-      <div class="bulk_add_to_playlist-holder">
-        <input type="checkbox" class="bulk_add_to_playlist" data-id="<%= collection_resource.id %>" <%= session['search_playlist_id'].present? && session['search_playlist_id'].include?(collection_resource.id.to_s) ? 'checked="true"' : '' %>/>
-        <% if request.path.include?("myresources/listing") %>
-          <a class="ico ml-1 myresources_edit" data-id="<%=document['id_is']%>" data-url="<%= my_resources_list_update_note_path(document['id_is']) %>" data-title="<%=document['title_ss']%>" data-id="<%=document['id_is']%>"><span data-toggle="tooltip" data-placement="top" title="Edit My Resource" aria-hidden="true"><i class="fa fa-edit"></i></span></a>
-          <a class="ico ml-1 myresources_delete" data-id="<%=document['id_is']%>" data-url="<%= my_resources_list_delete_note_path(document['id_is']) %>"><span data-toggle="tooltip" data-placement="top" title="Delete My Resource" aria-hidden="true"><i class="fa fa-remove"></i></span></a>
-        <% end %>
-      </div>
-    <% end %>
-
     <div class="hold">
 
       <% resource_url = can_access ? document_detail_url(document, document_organization) : 'javascript://' %>
@@ -32,6 +22,17 @@
       </div>
       <div class="text-holder pt-5px mt-5px">
         <a href="<%= resource_url %>" class="mb-0px"> <%= document['title_ss'] %>  </a>
+
+        <!-- This checkbox is placed here to make it accessible right after the resource title -->
+        <% if current_user_is_org_user?(document_organization) || request.path.include?("myresources/listing") %>
+          <div class="bulk_add_to_playlist-holder">
+            <input type="checkbox" class="bulk_add_to_playlist" data-id="<%= collection_resource.id %>" <%= session['search_playlist_id'].present? && session['search_playlist_id'].include?(collection_resource.id.to_s) ? 'checked="true"' : '' %>/>
+            <% if request.path.include?("myresources/listing") %>
+              <a class="ico ml-1 myresources_edit" data-id="<%=document['id_is']%>" data-url="<%= my_resources_list_update_note_path(document['id_is']) %>" data-title="<%=document['title_ss']%>" data-id="<%=document['id_is']%>"><span data-toggle="tooltip" data-placement="top" title="Edit My Resource" aria-hidden="true"><i class="fa fa-edit"></i></span></a>
+              <a class="ico ml-1 myresources_delete" data-id="<%=document['id_is']%>" data-url="<%= my_resources_list_delete_note_path(document['id_is']) %>"><span data-toggle="tooltip" data-placement="top" title="Delete My Resource" aria-hidden="true"><i class="fa fa-remove"></i></span></a>
+            <% end %>
+          </div>
+        <% end %>
 
         <div style="display: block;vertical-align: middle;height: 30px;" class="main-hold">
           <% if document_organization.present? %>
