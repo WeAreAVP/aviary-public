@@ -316,8 +316,18 @@ h5.MsoNormal span {
 }
 
 .internal-field {
-  color: #545454;
-  background-color: #f7f7f7;
-  border: 1px solid #e1e1e1;
-  margin-right: 15px;
+    color: #545454;
+    background-color: #f7f7f7;
+    border: 1px solid #ecf0f4;
+    margin: 10px 10px 10px 0;
+    border-radius: 6px;
+    display: flex;
+}
+
+.internal-field dt {
+    width: 21%;
+}
+
+.internal-field dd {
+    width: 79%;
 }
