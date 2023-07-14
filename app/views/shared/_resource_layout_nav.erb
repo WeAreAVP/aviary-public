@@ -1,13 +1,16 @@
 <% if @detail_page %>
   <div class="filter-holder">
+    <span class="sr-only">Change search results display options</span>
     <ul>
       <li class="new_default_rs_view_cust ">
         <%= link_to collection_collection_resource_details_path(@collection_resource.collection, @collection_resource, @resource_file, 'detail', 'description', params[:accessed_from]), class: "#{'active' if session[:view_type] == 'detail'}" do %>
+          <span class="sr-only">View results as list</span>
           <span class="icon-Layout-Grid-A"></span>
         <% end %>
       </li>
       <li>
         <%= link_to collection_collection_resource_details_path(@collection_resource.collection, @collection_resource, @resource_file, 'annotation', 'description', params[:accessed_from]), class: "#{'active' if session[:view_type] != 'detail'}" do %>
+          <span class="sr-only">View results as grid</span>
           <span class="icon-Layout-Grid-B"></span>
         <% end %>
       </li>
