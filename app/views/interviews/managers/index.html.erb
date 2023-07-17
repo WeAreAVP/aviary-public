@@ -1,39 +1,39 @@
 <div id="main_container" class="container-fluid">
   <div class="main_contain">
     <main>
-      <div class="text-headline jumbotron">
+      <div class="text-headline jumbotron mb-3">
         <div class="heading-holder table-head">
           <div class="row">
             <div class="col-md-8">
             
             <h1> <%= @organization_user&.role&.system_name == "ohms_assigned_user" ? "#{current_user.full_name}'s OHMS Assignments" : 'OHMS Records' %></h1>
             <% if request.path.include?("/ohms_records/collection/")%>
-              <div class="row m-0">
+              <div class="row m-0 text-dark ml-4">
                 <div class="col-md-5">
                   <div class="form-group row my-0 text-left">
-                    <label for="collection_id" class="col-sm-4 col-form-label my-0 px-0 font-weight-bold">Collection ID:</label>
-                    <div class="col-sm-8 px-0 py-2">
+                    <label for="collection_id" class="col-auto col-form-label collection-info-label my-0 px-0 py-1 font-weight-bold">Collection ID:</label>
+                    <div class="col-auto pl-1 py-1 collection-info-value">
                       <%=@collection_id%>
                     </div>
                   </div>
                   <div class="form-group row my-0 text-left">
-                    <label for="series_id" class="col-sm-4 col-form-label my-0 px-0 font-weight-bold">Series ID:</label>
-                    <div class="col-sm-8 px-0 py-2">
-                    <%=@series_id%>
+                    <label for="series_id" class="col-auto col-form-label collection-info-label my-0 px-0 py-1 font-weight-bold">Series ID:</label>
+                    <div class="col-auto pl-1 py-1 collection-info-value">
+                      <%=@series_id%>
                     </div>
                   </div>
                 </div>
                 <div class="col-md-7">
                   <div class="form-group row my-0 text-left">
-                    <label for="collection_title" class="col-sm-4 col-form-label my-0 px-0 font-weight-bold">Collection Title:</label>
-                    <div class="col-sm-8 px-0 py-2">
+                    <label for="collection_title" class="col-auto col-form-label collection-info-label my-0 px-0 py-1 font-weight-bold">Collection Title:</label>
+                    <div class="col-auto pl-1 py-1 collection-info-value">
                       <%=@collection_title%>
                     </div>
                   </div>
                   <div class="form-group row my-0 text-left">
-                    <label for="series_title" class="col-sm-4 col-form-label my-0 px-0 font-weight-bold">Series Title:</label>
-                    <div class="col-sm-8 px-0 py-2">
-                    <%=@series_title%>
+                    <label for="series_title" class="col-auto col-form-label collection-info-label my-0 px-0 py-1 font-weight-bold">Series Title:</label>
+                    <div class="col-auto pl-1 py-1 collection-info-value">
+                      <%=@series_title%>
                     </div>
                   </div>
                 </div>
