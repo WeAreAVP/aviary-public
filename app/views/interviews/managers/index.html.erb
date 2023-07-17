@@ -12,14 +12,8 @@
                 <div class="col-md-5">
                   <div class="form-group row my-0 text-left">
                     <label for="collection_id" class="col-auto col-form-label collection-info-label my-0 px-0 py-1 font-weight-bold">Collection ID:</label>
-                    <div class="col-auto pl-1 py-1 collection-info-value">
+                    <div class="col-auto pl-1 py-1 collection-info-value overflow-x-hidden">
                       <%=@collection_id%>
-                    </div>
-                  </div>
-                  <div class="form-group row my-0 text-left">
-                    <label for="series_id" class="col-auto col-form-label collection-info-label my-0 px-0 py-1 font-weight-bold">Series ID:</label>
-                    <div class="col-auto pl-1 py-1 collection-info-value">
-                      <%=@series_id%>
                     </div>
                   </div>
                 </div>
@@ -30,6 +24,16 @@
                       <%=@collection_title%>
                     </div>
                   </div>
+                </div>
+                <div class="col-md-5">
+                  <div class="form-group row my-0 text-left">
+                    <label for="series_id" class="col-auto col-form-label collection-info-label my-0 px-0 py-1 font-weight-bold">Series ID:</label>
+                    <div class="col-sm-8 pl-1 py-1 collection-info-value">
+                      <%=@series_id%>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-7">
                   <div class="form-group row my-0 text-left">
                     <label for="series_title" class="col-auto col-form-label collection-info-label my-0 px-0 py-1 font-weight-bold">Series Title:</label>
                     <div class="col-auto pl-1 py-1 collection-info-value">
