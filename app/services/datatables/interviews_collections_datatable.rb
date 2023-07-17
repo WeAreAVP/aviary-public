@@ -19,7 +19,7 @@ class InterviewsCollectionsDatatable < ApplicationDatatable
       [].tap do |column|
         column << "<input type='checkbox' class='interviews_selections interviews_selections-'
                     data-url='' data-id='' />"
-        column << (resource['doclist'].present? && resource['doclist']['docs'].present? && resource['doclist']['docs'].try(:first).present? ? resource['doclist']['docs'].try(:first)['collection_name_ss'] : '')
+        column << "<div class='collection_name' style='max-width: 10rem;'>#{resource['doclist'].present? && resource['doclist']['docs'].present? && resource['doclist']['docs'].try(:first).present? ? resource['doclist']['docs'].try(:first)['collection_name_ss'] : ''}</div>"
         column << (resource['doclist'].present? && resource['doclist']['docs'].present? && resource['doclist']['docs'].try(:first).present? ? resource['doclist']['docs'].try(:first)['collection_id_ss'] : '')
         column << (resource['doclist'].present? && resource['doclist']['docs'].present? && resource['doclist']['docs'].try(:first).present? ? resource['doclist']['docs'].try(:first)['series_id_ss'] : '')
         column << (resource['doclist'].present? && resource['doclist']['numFound'].present? ? resource['doclist']['numFound'] : '')

@@ -93,8 +93,9 @@ function InterviewManager() {
                 type: 'POST'
             },
             columnDefs: [
-                {orderable: false, targets: -1}, {orderable: false, targets: 0}
+                {orderable: false, targets: [0, -1, -2] }
             ],
+            order: [[1, 'asc']],
             drawCallback: function (settings) {
                 try {
                     that.datatableInitDraw(settings);
