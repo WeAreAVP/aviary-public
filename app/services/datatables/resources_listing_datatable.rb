@@ -58,8 +58,12 @@ class ResourcesListingDatatable < ApplicationDatatable
             end
           end
         else
-          column << "<input type='checkbox' class='resources_selections resources_selections-#{resource['id_is']}'
-                  data-url='#{bulk_resource_list_collections_path(collection_id: resource['collection_id_is'], collection_resource_id: resource['id_is'])}' data-id='#{resource['id_is']}' />"
+          column << %(
+            <label><span class="sr-only">Aviary resource with ID #{resource['id_is']} titled #{resource['title_ss']}</span>
+              <input type='checkbox' class='resources_selections resources_selections-#{resource['id_is']}'
+                  data-url='#{bulk_resource_list_collections_path(collection_id: resource['collection_id_is'], collection_resource_id: resource['id_is'])}' data-id='#{resource['id_is']}' />
+            </label>
+          )
           if @resource_fields.present?
             @resource_fields.each_with_index do |(system_name, single_collection_field), _index|
               field_settings = Aviary::FieldManagement::FieldManager.new(single_collection_field, system_name)
