@@ -33,7 +33,7 @@
         </div>
       </div>
       <div class="data-table collections-datatable">
-        <%= content_tag :table, role: :datatable, class: ["table", "table-striped", 'table-bordered'], id: 'interviews_data_table', data: { url: listing_collections_path(format: :json) } do %>
+        <%= content_tag :table, role: :datatable, class: ["table", "table-striped", 'table-bordered'], id: 'interviews_data_table', data: { url: listing_collections_path(format: :json), rightrow: 1 } do %>
           <thead>
           <tr class="interviews_data_table_head">
             <th>

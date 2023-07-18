@@ -428,4 +428,13 @@ class CollectionResourceFile < ApplicationRecord
       "collection_id_is #{sort_direction}"
     end
   end
+
+  def reindex_collection_resource_file
+    reload
+
+    Sunspot.index self
+    Sunspot.commit
+
+    collection_resource.reindex_collection_resource
+  end
 end

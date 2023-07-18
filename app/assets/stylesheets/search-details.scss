@@ -337,7 +337,7 @@
 }
 
 .search-detail-main .nav-tabs#resourceTab {
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid #5a5a5a;
   margin-left: 15px;
   margin-top: 10px;
 }
@@ -359,7 +359,7 @@
   line-height: 1.3;
   padding: 7px;
   position: relative;
-  color: #8da1ad;
+  color: #5a5a5a;
   font-family: var(--aviary-font-family);
 }
 
@@ -400,6 +400,12 @@
   @include activeTab;
 }
 
+.search-detail-main .nav-item a:hover,
+.search-detail-main .nav-item:hover {
+  border-bottom: none;
+  opacity: 1;
+}
+
 .search-detail-main .sub-descriptions .nav-item a {
   padding: 10px !important;
 }
@@ -429,7 +435,7 @@
   font-size: 14px;
   line-height: 19px;
   font-weight: bold;
-  padding: 15px 10px 0 7px;
+  padding: 15px 10px 15px 7px;
   width: 21%;
   float: left;
   word-break: break-word;

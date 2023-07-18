@@ -38,8 +38,12 @@ class IndexesDatatable < ApplicationDatatable
             column << manage(value, resource) if !value['status'].blank? && value['status'] == 'true'
           end
         else
-          column << "<input type='checkbox' class='resources_selections resources_selections-#{resource['id_is']}'
-                  data-url='#{bulk_resource_list_collections_path}' data-id='#{resource['id_is']}' />"
+          column << %(
+            <label><span class="sr-only">File index with ID #{resource['id_is']} titled #{resource['title_ss']}</span>
+              <input type='checkbox' class='resources_selections resources_selections-#{resource['id_is']}'
+                data-url='#{bulk_resource_list_collections_path}' data-id='#{resource['id_is']}' />
+            </label>
+          )
 
           if resources.fourth.present? && !resources.fourth.resource_file_display_column.blank? && !JSON.parse(resources.fourth.resource_file_display_column)['columns_status'].blank?
             JSON.parse(resources.fourth.file_index_display_column)['columns_status'].each do |_, value|

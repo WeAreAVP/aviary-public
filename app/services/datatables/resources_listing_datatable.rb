@@ -58,8 +58,12 @@ class ResourcesListingDatatable < ApplicationDatatable
             end
           end
         else
-          column << "<input type='checkbox' class='resources_selections resources_selections-#{resource['id_is']}'
-                  data-url='#{bulk_resource_list_collections_path(collection_id: resource['collection_id_is'], collection_resource_id: resource['id_is'])}' data-id='#{resource['id_is']}' />"
+          column << %(
+            <label><span class="sr-only">Aviary resource with ID #{resource['id_is']} titled #{resource['title_ss']}</span>
+              <input type='checkbox' class='resources_selections resources_selections-#{resource['id_is']}'
+                  data-url='#{bulk_resource_list_collections_path(collection_id: resource['collection_id_is'], collection_resource_id: resource['id_is'])}' data-id='#{resource['id_is']}' />
+            </label>
+          )
           if @resource_fields.present?
             @resource_fields.each_with_index do |(system_name, single_collection_field), _index|
               field_settings = Aviary::FieldManagement::FieldManager.new(single_collection_field, system_name)
@@ -74,23 +78,26 @@ class ResourcesListingDatatable < ApplicationDatatable
           end
         end
         links = if %w[permission_group playlist_add_resource].include?(@called_from)
-                  resource['description_identifier_sms'] = resource['description_identifier_sms'].collect { |e| e ? e.to_s.strip : e }
-                  description_identifier_sms = resource['description_identifier_sms'].present? ? truncate(strip_tags(resource['description_identifier_sms'].join(',')).gsub('::', '')) : 'none'
-                  description_date_sms = resource['description_date_sms'].present? ? truncate(strip_tags(resource['description_date_sms'].join(',')).gsub('::', '')) : 'none'
-                  access_ss = resource['access_ss'].present? ? resource['access_ss'].titleize : 'none'
-                  "<a href='javascript:void(0)' data-label='#{strip_tags(resource['title_ss'].to_s.delete('"'))} (#{resource['id_is']})'
-                          data-value='#{strip_tags(resource['title_ss'].to_s.delete('"'))}' data-description_identifier='#{description_identifier_sms}' data-description_date='#{description_date_sms}'
-                          data-access='#{access_ss}' data-id='#{resource['id_is']}' class='btn-sm btn-success add_to_resource_group'>Add</a>"
+                  description_identifier_sms = resource['description_identifier_sms'].to_s.strip.presence || 'none'
+                  description_date_sms = resource['description_date_sms'].to_s.strip.presence || 'none'
+                  access_ss = resource['access_ss'].to_s.titleize.presence || 'none'
+
+                  "<a href='javascript:void(0)' data-label='#{strip_tags(resource['title_ss'].to_s.delete('"'))} (#{resource['id_is']})' \
+                    data-value='#{strip_tags(resource['title_ss'].to_s.delete('"'))}' \
+                    data-description_identifier='#{description_identifier_sms}' data-description_date='#{description_date_sms}' \
+                    data-access='#{access_ss}' data-id='#{resource['id_is']}' class='btn-sm btn-success add_to_resource_group'>Add</a>"
                 else
-                  links_set = '<a href="' + collection_collection_resource_path(resource['collection_id_is'], resource['id_is']) +
-                              '"class="btn-sm btn-default hidden_focus_btn" data-id="collection_resource_view_' + resource['id_is'].to_s + '">View</a>&nbsp;&nbsp;'
-                  links_set += '<a href="' + edit_collection_collection_resource_path(collection_id: resource['collection_id_is'], id: resource['id_is']) +
-                               '"class="btn-sm btn-success hidden_focus_btn" data-id="collection_resource_edit_' + resource['id_is'].to_s + '">Edit</a>&nbsp;&nbsp;'
-                  if CollectionResource.where(id: resource['id_is']).present?
-                    if can? :destroy, CollectionResource.find(resource['id_is'])
-                      links_set += "<a href='javascript://' data-name='#{strip_tags(resource['title_ss'].to_s)}' data-url='#{collection_resource_path(resource['id_is'])}' class='btn-sm btn-danger resource_delete hidden_focus_btn' data-id='collection_resource_delete_" + resource['id_is'].to_s + "' >Delete</a>"
-                    end
+                  links_set = "<a href='#{collection_collection_resource_path(resource['collection_id_is'], resource['id_is'])}' class='btn-sm btn-default hidden_focus_btn' \
+                    data-id='collection_resource_view_#{resource['id_is']}'>View</a>&nbsp;&nbsp;"
+                  links_set += "<a href='#{edit_collection_collection_resource_path(collection_id: resource['collection_id_is'], id: resource['id_is'])}' \
+                    class='btn-sm btn-success hidden_focus_btn' data-id='collection_resource_edit_#{resource['id_is']}'>Edit</a>&nbsp;&nbsp;"
+
+                  if CollectionResource.exists?(resource['id_is']) && can?(:destroy, CollectionResource.find(resource['id_is']))
+                    links_set += "<a href='javascript://' data-name='#{strip_tags(resource['title_ss'].to_s)}' \
+                      data-url='#{collection_resource_path(resource['id_is'])}' \
+                      class='btn-sm btn-danger resource_delete hidden_focus_btn' data-id='collection_resource_delete_#{resource['id_is']}'>Delete</a>"
                   end
+
                   links_set
                 end
         column << links
