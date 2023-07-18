@@ -12,11 +12,17 @@ class HomeController < ApplicationController
                                      indexes: [], keywords: [], op: [], resource_description: [],
                                      search_field: 'advanced', search_type: 'simple', title_text: '',
                                      transcript: [], type_of_search: ['simple'])
+      return
     end
+
     title_bread_crumb = organization.present? ? "Back to <strong>#{organization.name.truncate(25, omission: '...')}</strong>" : 'Back to Aviary Home'
     record_last_bread_crumb(request.fullpath, title_bread_crumb)
     HomePresenter.manage_home_tracking(cookies, organization, session, ahoy)
     cookies[:update_pop_bypass] = true if params[:update_pop_bypass]
+
+    return unless organization.present? && organization.default_tab_selection == 'collections' && request.fullpath == '/'
+
+    redirect_to org_collection_url
   end
 
   def featured_collections

@@ -149,7 +149,7 @@ thesaurus_settings = ::Thesaurus::ThesaurusSetting.where(organization_id: curren
                 <% thesaurus = Thesaurus::Thesaurus.where(id: thesaurus_settings.thesaurus_keywords) %>
                 <% if thesaurus.length.positive? %>
                   <%= f.text_area :keywords, required: false, label: false, class: 'form-control keywords tokenfield tokenfield_keywords',
-                    data: { path: autocomplete_thesaurus_manager_index_path, t_id: thesaurus.first.id, type_of_list: 'thesaurus' } %>
+                    data: { path: autocomplete_thesaurus_manager_index_path, t_id: thesaurus.first.id, type_of_list: 'thesaurus', max_suggest: ENV.fetch('MAX_SUGGEST', 100) } %>
                   <small class="form-text text-muted mt-1">Keywords should be separated by a semi-colon.</small>
                   <small class="form-text text-muted mt-1">Current Thesaurus: <strong><%= thesaurus.first.title %></strong></small>
                 <% end %>
@@ -168,7 +168,7 @@ thesaurus_settings = ::Thesaurus::ThesaurusSetting.where(organization_id: curren
                 <% thesaurus = Thesaurus::Thesaurus.where(id: thesaurus_settings.thesaurus_subjects) %>
                 <% if thesaurus.length.positive? %>
                   <%= f.text_area :subjects, required: false, label: false, class: 'form-control subjects tokenfield tokenfield_subjects',
-                    data: { path: autocomplete_thesaurus_manager_index_path, t_id: thesaurus.first.id, type_of_list: 'thesaurus' } %>
+                    data: { path: autocomplete_thesaurus_manager_index_path, t_id: thesaurus.first.id, type_of_list: 'thesaurus', max_suggest: ENV.fetch('MAX_SUGGEST', 100) } %>
                   <small class="form-text text-muted mt-1">Subjects should be separated by a semi-colon.</small>
                   <small class="form-text text-muted mt-1">Current Thesaurus: <strong><%= thesaurus.first.title %></strong></small>
                  <% end %>

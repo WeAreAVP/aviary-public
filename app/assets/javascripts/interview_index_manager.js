@@ -47,6 +47,7 @@ function InterviewIndexManager() {
                 keywords_options.itemLabel = 'label';
                 keywords_options.itemValue = 'value';
                 keywords_options.itemData = 'label';
+                keywords_options.maxSuggest = parseInt($('.tokenfield_keywords').data('maxSuggest'), 10);
             } else {
                 keywords_options.newItems = true;
                 keywords_options.newItemName = 'keywords';
@@ -76,6 +77,7 @@ function InterviewIndexManager() {
               subjects_options.itemLabel = 'label';
               subjects_options.itemValue = 'value';
               subjects_options.itemData = 'label';
+              subjects_options.maxSuggest = parseInt($('.tokenfield_keywords').data('maxSuggest'), 10);
             } else {
                 subjects_options.newItems = true;
                 subjects_options.newItemName = 'subjects';
@@ -338,20 +340,26 @@ function InterviewIndexManager() {
             
 
         });
-        document_level_binding_element('.delete_index', 'click', function () {
 
+        document_level_binding_element('.delete_index', 'click', function () {
             $('#modalPopupFooterYes').attr('href', $(this).data().url);
             let message = 'Are you sure you want to remove this index point?';
             $('#modalPopupBody').html(message);
             $('#modalPopupTitle').html('Delete "' + $(this).data().name + '"');
             $('#modalPopup').modal('show');
         });
-        document_level_binding_element('.simple_form', 'change', function () {
+
+        document_level_binding_element('.simple_form', 'change, keyup', function () {
             formChange = 1;
         });
-        document_level_binding_element('.btn-primary', 'click', function () {
-            formChange = 0;
+
+        document_level_binding_element('.simple_form', 'submit', function (e) {
+          e.preventDefault();
+
+          formChange = 0;
+          this.submit();
         });
+
         document_level_binding_element('.play-timecode', 'click', function () {
             let currentTime = $(this).data().timecode;
             if ($('#avalon_widget').length > 0) {
