@@ -177,6 +177,7 @@ function InterviewIndexManager() {
             else
             {
                 let videoJsOptions = {
+                    autoplay: true,
                     fluid: true,
                     aspectRatio: '16:9',
                     responsive: true,
