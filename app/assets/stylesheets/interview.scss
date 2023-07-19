@@ -831,6 +831,15 @@ div#noMediaConnection {
       white-space: normal !important;
     }
 
+    .collection_name {
+      display: -webkit-box;
+      -webkit-line-clamp: 3 ;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: normal !important;
+    }
+
     .btn-interview-preview {
       border: 1px solid #1a1aff;
       color: #1a1aff;

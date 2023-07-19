@@ -30,8 +30,12 @@ class ResourceFilesDatatable < ApplicationDatatable
   def data
     resources.first.map do |resource|
       [].tap do |column|
-        column << "<input type='checkbox' class='resources_selections resources_selections-#{resource['id_is']}'
-                  data-url='#{bulk_resource_list_collections_path}' data-id='#{resource['id_is']}' />"
+        column << %(
+          <label><span class="sr-only">Resource media file with ID #{resource['id_is']} titled #{resource['file_display_name_ss']}</span>
+            <input type='checkbox' class='resources_selections resources_selections-#{resource['id_is']}'
+              data-url='#{bulk_resource_list_collections_path}' data-id='#{resource['id_is']}' />
+          </label>
+        )
         common_classes = "class='btn btn-sm btn-default copy-link' data-clipboard-action='copy' data-original-title='' title='' "
         collection_resource = CollectionResource.find(resource['collection_resource_id_ss'])
         if resources.fourth.present? && !resources.fourth.resource_file_display_column.blank? && !JSON.parse(resources.fourth.resource_file_display_column)['columns_status'].blank?
