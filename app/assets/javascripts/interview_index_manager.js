@@ -177,7 +177,6 @@ function InterviewIndexManager() {
             else
             {
                 let videoJsOptions = {
-                    autoplay: true,
                     fluid: true,
                     aspectRatio: '16:9',
                     responsive: true,
@@ -229,8 +228,8 @@ function InterviewIndexManager() {
                                         
                                     });
                                 }
-                            }, 2000);
-                        }, 4000);
+                            }, 1000);
+                        }, 1000);
                     }
                     else
                     {
@@ -261,8 +260,8 @@ function InterviewIndexManager() {
                                             
                                         });
                                     }
-                                }, 2000);
-                            }, 4000);
+                                }, 1000);
+                            }, 1000);
                         }
                         else
                         {
@@ -284,7 +283,7 @@ function InterviewIndexManager() {
                                         
                                     });
                                 }
-                            }, 2000);
+                            }, 1000);
                         }
                         
                     }
