@@ -504,57 +504,17 @@ module Interviews
       select_url = "#{solr_url}/select"
       solr_q_condition = '*:*'
       complex_phrase_def_type = false
-      fq_filters = ' document_type_ss:interview AND collection_id_series_id_ss:["" TO *] '
+      fq_filters = ' document_type_ss:interview '
       if q.present?
         counter = 0
         fq_filters_inner = ''
-        JSON.parse(export_and_current_organization[:current_organization][:interview_search_column]).each do |_, value|
-          if value['status'] == 'true' || value['status'].to_s.to_boolean?
-            unless value['value'].to_s == 'id_is' && q.to_i <= 0
+        %w[collection_id_texts collection_name_texts series_id_texts].each do |name|
+          fq_filters_inner += counter > 0 ? "  OR  #{search_perp(q, name)}  " : "  #{search_perp(q, name)}  "
+          fq_filters_inner += " OR  #{straight_search_perp(q, name)} "
 
-              alter_search_wildcard = value['value']
-              alter_search_wildcard_string = alter_search_wildcard.clone
-
-              if alter_search_wildcard == 'created_at_is'
-                alter_search_wildcard = 'created_at_ss'
-                alter_search_wildcard_string = 'created_at_ss'
-              end
-
-              if alter_search_wildcard == 'updated_at_is'
-                alter_search_wildcard = 'updated_at_ss'
-                alter_search_wildcard_string = 'updated_at_ss'
-              end
-
-              if alter_search_wildcard == 'updated_by_id_is'
-                alter_search_wildcard = 'updated_by_ss'
-                alter_search_wildcard_string = 'updated_by_ss'
-              end
-
-              if alter_search_wildcard == 'created_by_id_is'
-                alter_search_wildcard = 'created_by_id_ss'
-                alter_search_wildcard_string = 'created_by_id_ss'
-              end
-
-              alter_search_wildcard.sub! '_ss', '_texts'
-              alter_search_wildcard.sub! '_sms', '_texts'
-              fq_filters_inner += if counter > 0
-                                    " OR  #{search_perp(q, alter_search_wildcard)} "
-                                  else
-                                    " #{search_perp(q, alter_search_wildcard)} "
-                                  end
-              counter += 1
-              fq_filters_inner += if counter > 0
-                                    " OR  #{search_perp(q, alter_search_wildcard_string)} "
-                                  else
-                                    " #{search_perp(q, alter_search_wildcard_string)} "
-                                  end
-
-              fq_filters_inner += " OR  #{straight_search_perp(q, alter_search_wildcard)} "
-              fq_filters_inner += " OR  #{straight_search_perp(q, alter_search_wildcard_string)} "
-              counter += 1
-            end
-          end
+          counter += 1
         end
+
         fq_filters += " AND (#{fq_filters_inner}) " unless fq_filters_inner.blank?
       end
       filters = []
