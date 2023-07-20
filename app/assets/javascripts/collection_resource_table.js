@@ -183,6 +183,10 @@ function CollectionResourceTable() {
                     data: function (d) {
                         d.called_from = called_from;
                         d.additionalData = additionalData;
+                    },
+                    dataSrc: function ( json ) {
+                        that.resource_bulk_edit.setTotalRecords(json.recordsTotal)
+                        return json.data;
                     }
                 },
                 drawCallback: function (settings) {
