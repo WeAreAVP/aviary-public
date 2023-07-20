@@ -30,7 +30,8 @@ function InterviewIndexManager() {
                 multiple: true,
                 minChars: 1,
                 itemName: 'keywords',
-                setItems: $('.tokenfield_keywords').data('selectedKeys')
+                setItems: $('.tokenfield_keywords').data('selectedKeys'),
+                delimiters: [';', 'Tab', 'Enter', 'Numpad Enter']
             };
 
             if ($('.tokenfield_keywords').data('path') !== undefined) {
@@ -60,7 +61,8 @@ function InterviewIndexManager() {
               multiple: true,
               minChars: 1,
               itemName: 'subjects',
-              setItems: $('.tokenfield_subjects').data('selectedKeys')
+              setItems: $('.tokenfield_subjects').data('selectedKeys'),
+              delimiters: [';', 'Tab', 'Enter', 'Numpad Enter']
             };
 
             if ($('.tokenfield_subjects').data('path') !== undefined) {
