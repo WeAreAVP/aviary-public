@@ -7,123 +7,108 @@
   <% end %>
 </style>
 <% if request.path.include?("myresources/listing") %>
-<div class="heading-holder table-head">
-          <div class="row">
-          <div class="col-md-12 ml-5 mt-3 mb-3">
-<h1><%="#{current_user.full_name}'s"%> Saved Resources</h1>
-</div>
-</div>
+  <div class="heading-holder table-head">
+    <div class="row">
+      <div class="col-md-12 ml-5 mt-3 mb-3">
+        <h1><%="#{current_user.full_name.strip}'s"%> Saved Resources</h1>
+      </div>
+    </div>
+  </div>
 </div>
 <% end %>
-<div class="<%= request.path.include?("myresources/listing") ? 'd-none' : 'search-result-visual' %>">
+
+<%= render 'search_bar' %>
+
+<% if current_organization && request.fullpath == '/collection' %>
+  <%= render 'home/organization_home' %>
+<% else %>
   <div class="container">
     <div class="row">
-      <div class="col-md-12">
-        <div class="form-group">
-          <%= render 'search_sidebar' %>
-          <div class="filter-holder">
-            <%= render :partial => 'catalog/view_type_group' %>
+      <div class="<%= request.path.include?("myresources/listing") ? 'd-none' : 'col-md-3' %>">
+
+        <div id="facets" class="facets sidenav">
+          <div class="reset">
+            <span>Filter</span>
+            <%= link_to search_catalog_url(q: '', search_field: 'advanced', search_type: params[:search_type], utf8: '✓', reset_facets: 'true'), :class => "btn-reset-filters btn-outline-dark btn", :id => "startOverLink" do %>
+              <%= t('blacklight.search.start_over') %>
+            <% end %>
           </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-<div class="container">
-  <div class="row">
-    <div class="<%= request.path.include?("myresources/listing") ? 'd-none' : 'col-md-3' %>">
-
-      <div id="facets" class="facets sidenav">
-        <div class="reset">
-          <span>Filter</span>
-          <%= link_to search_catalog_url(q: '', search_field: 'advanced', search_type: params[:search_type], utf8: '✓', reset_facets: 'true'), :class => "btn-reset-filters btn-outline-dark btn", :id => "startOverLink" do %>
-            <%= t('blacklight.search.start_over') %>
-          <% end %>
-        </div>
-        <div id="facet-panel-collapse" class="collapse panel-group show">
-          <% if has_facet_values? %>
-            <%= render_facet_partials.html_safe %>
-          <% end %>
-        </div>
-      </div>
-
-    </div>
-    <div id="sidebar" class="<%= request.path.include?("myresources/listing") ? 'col-md-12' : 'col-md-9' %>">
-
-      <div id="content">
-        <div class="row">
-          <div class="col-md-8">
-            <%= render :partial => 'sort_widget' %>
-          </div>
-
-          <div class="col-md-4 text-right filters mb-0">
-            <div class=""><%= render 'results_pagination' %></div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-md-12 text-right add_bulk_playlist_actions">
-            <% if (current_organization.present? && current_user_is_org_user?(current_organization)) || request.path.include?("myresources/listing") %>
-              <span id="select_all" class="playlist_actions" data-type="select"> Select All</span>
-              <span id="deselect_all" class="playlist_actions" data-type="deselect"> Deselect All</span>
-              <% if request.path.include?("myresources/listing") %>
-                <a href="javascript:void(0)" id="export_to_resource_list" class="btn btn-light playlist_actions ml-2" data-url="<%= download_myresources_path %>">
-                    <span class="fa fa-download"></span> Export Citations
-                    (<span id="number_of_selected_resources" class="grey"><%= session['search_playlist_id'].present? ? session['search_playlist_id'].size : 0 %></span>)</a>
-              <% end %>
-              <% if current_organization.present? && current_user_is_org_user?(current_organization) && !request.path.include?("myresources/listing") %>
-                <a href="javascript:void(0)" id="add_to_playlist" class="btn btn-light playlist_actions ml-2" data-url="<%= fetch_bulk_edit_resource_list_collections_path %>">
-                  Add Selected Resource to Playlist
-                  (<span id="number_of_selected_resources" class="grey"><%= session['search_playlist_id'].present? ? session['search_playlist_id'].size : 0 %></span>)</a>
-                <a href="javascript:void(0)" id="add_to_resource_list" class="btn btn-light playlist_actions ml-2" data-url="<%= fetch_bulk_edit_resource_list_collections_path %>">
-                  <span class="fa fa-save"></span> Save Resources
-                  (<span id="number_of_selected_resource_list" class="grey"><%= session['search_playlist_id'].present? ? session['search_playlist_id'].size : 0 %></span>)</a>
-              <% end %>
+          <div id="facet-panel-collapse" class="collapse panel-group show">
+            <% if has_facet_values? %>
+              <%= render_facet_partials.html_safe %>
             <% end %>
           </div>
         </div>
-        <% unless has_search_parameters? %>
-          <%# if there are no input/search related params, display the "home" partial -%>
-          <%= render 'home' %>
-          <%= render 'shared/sitelinks_search_box' %>
-        <% else %>
-          <%= render 'search_results' %>
-        <% end %>
       </div>
+      <div id="sidebar" class="<%= request.path.include?("myresources/listing") ? 'col-md-12' : 'col-md-9' %>">
+
+        <div id="content">
+          <div class="row">
+            <div class="col-md-8">
+              <%= render :partial => 'sort_widget' %>
+            </div>
+
+            <div class="col-md-4 text-right filters mb-0">
+              <div class=""><%= render 'results_pagination' %></div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12 text-right add_bulk_playlist_actions">
+              <% if current_user.present? %>
+                <span id="select_all" class="playlist_actions" data-type="select"> Select All</span>
+                <span id="deselect_all" class="playlist_actions" data-type="deselect"> Deselect All</span>
+              <% end %>
+            <% end %>
+            <% if current_user.present? && current_user_is_org_user?(current_organization) && !request.path.include?("myresources/listing") %>
+              <a href="javascript:void(0)" id="add_to_resource_list" class="btn btn-light playlist_actions ml-2" data-url="<%= fetch_bulk_edit_resource_list_collections_path %>">
+                <span class="fa fa-save"></span> Save Resources
+                (<span id="number_of_selected_resource_list" class="grey"><%= session['search_playlist_id'].present? ? session['search_playlist_id'].size : 0 %></span>)</a>
+            <% end %>
+            </div>
+          </div>
+          <% unless has_search_parameters? %>
+            <%# if there are no input/search related params, display the "home" partial -%>
+            <%= render 'home' %>
+            <%= render 'shared/sitelinks_search_box' %>
+          <% else %>
+            <%= render 'search_results' %>
+          <% end %>
+        </div>
     </div>
   </div>
-</div>
-<span id='update_selected_playlist_catalog_url' data-url="<%= update_selected_playlist_catalog_path %>"></span>
-<div class="modal fade bd-example-modal-lg bulk-edit-review-playlist-modal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
-  <div class="modal-dialog modal-lg" role="document">
-    <div class="modal-content ">
-      <div class="modal-header">
-        <h2 class="font-weight-bold modal-title font-size-18px">Bulk Review</h2>
-      </div>
-      <div class="modal-body">
-        <h1 class="font-size-16px text-center mb-2 p-2 font-weight-bold"> Select Playlist </h1>
-        <select id="select_playlist">
-          <% if current_organization.present? %>
-            <% current_organization.playlists.each do |single_playlist| %>
-              <option value="<%= single_playlist.id %>"> <%= single_playlist.name %> </option>
+  <span id='update_selected_playlist_catalog_url' data-url="<%= update_selected_playlist_catalog_path %>"></span>
+  <div class="modal fade bd-example-modal-lg bulk-edit-review-playlist-modal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content ">
+        <div class="modal-header">
+          <h2 class="font-weight-bold modal-title font-size-18px">Bulk Review</h2>
+        </div>
+        <div class="modal-body">
+          <h1 class="font-size-16px text-center mb-2 p-2 font-weight-bold"> Select Playlist </h1>
+          <select id="select_playlist">
+            <% if current_organization.present? %>
+              <% current_organization.playlists.each do |single_playlist| %>
+                <option value="<%= single_playlist.id %>"> <%= single_playlist.name %> </option>
+              <% end %>
             <% end %>
-          <% end %>
-        </select>
+          </select>
 
-        <h1 class="font-size-16px text-center mb-2 p-2 mt-3 font-weight-bold"> Selected Resources </h1>
-        <table class="table table-hover review_resources table-sm " style="width: 100%;">
-          <thead>
-          <tr>
-            <td class="font-weight-bold"> ID</td>
-            <td class="font-weight-bold"> Resource Name</td>
-          </tr>
-          </thead>
-          <tbody class="bulk-edit-review-playlist-content">
-          </tbody>
-        </table>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button class="btn btn-primary bulk-add-to-playlist" data-url="<%= assign_to_playlist_catalog_path %>">Apply</button>
+          <h1 class="font-size-16px text-center mb-2 p-2 mt-3 font-weight-bold"> Selected Resources </h1>
+          <table class="table table-hover review_resources table-sm " style="width: 100%;">
+            <thead>
+            <tr>
+              <td class="font-weight-bold"> ID</td>
+              <td class="font-weight-bold"> Resource Name</td>
+            </tr>
+            </thead>
+            <tbody class="bulk-edit-review-playlist-content">
+            </tbody>
+          </table>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button class="btn btn-primary bulk-add-to-playlist" data-url="<%= assign_to_playlist_catalog_path %>">Apply</button>
+        </div>
       </div>
     </div>
   </div>
@@ -135,16 +120,18 @@
   </div>
 <% end %>
 <script type="text/javascript">
-    let search_obj = new SearchPage();
+    $(document).ready(function () {
+      let search_obj = new SearchPage();
 
-    $(function () {
-        search_obj.initialize();
-
-    });
-    <% if request.path.include?("myresources/listing") %>
-      let myresources = new MyResources();
       $(function () {
-        myresources.initialize();
+          search_obj.initialize();
+
       });
-    <% end %>
+      <% if request.path.include?("myresources/listing") %>
+        let myresources = new MyResources();
+        $(function () {
+          myresources.initialize();
+        });
+      <% end %>
+    });
 </script>
