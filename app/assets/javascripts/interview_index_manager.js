@@ -230,8 +230,8 @@ function InterviewIndexManager() {
                                         
                                     });
                                 }
-                            }, 2000);
-                        }, 4000);
+                            }, 1000);
+                        }, 1000);
                     }
                     else
                     {
@@ -262,8 +262,8 @@ function InterviewIndexManager() {
                                             
                                         });
                                     }
-                                }, 2000);
-                            }, 4000);
+                                }, 1000);
+                            }, 1000);
                         }
                         else
                         {
@@ -285,7 +285,7 @@ function InterviewIndexManager() {
                                         
                                     });
                                 }
-                            }, 2000);
+                            }, 1000);
                         }
                         
                     }
