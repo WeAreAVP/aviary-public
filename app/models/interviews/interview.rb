@@ -425,7 +425,7 @@ module Interviews
       query_params[:defType] = 'complexphrase' if complex_phrase_def_type
       query_params[:wt] = 'json'
 
-      total_response = Curl.post(select_url, query_params)
+      total_response = Curl.post(select_url, URI.encode_www_form(query_params))
 
       begin
         total_response = JSON.parse(total_response.body_str)
@@ -443,7 +443,7 @@ module Interviews
         query_params[:start] = (page - 1) * per_page
         query_params[:rows] = per_page
       end
-      response = Curl.post(select_url, query_params)
+      response = Curl.post(select_url, URI.encode_www_form(query_params))
       begin
         response = JSON.parse(response.body_str)
       rescue StandardError
@@ -476,7 +476,7 @@ module Interviews
       query_params[:defType] = 'complexphrase' if complex_phrase_def_type
       query_params[:wt] = 'json'
 
-      total_response = Curl.post(select_url, query_params)
+      total_response = Curl.post(select_url, URI.encode_www_form(query_params))
 
       begin
         total_response = JSON.parse(total_response.body_str)
@@ -504,7 +504,7 @@ module Interviews
       select_url = "#{solr_url}/select"
       solr_q_condition = '*:*'
       complex_phrase_def_type = false
-      fq_filters = ' document_type_ss:interview '
+      fq_filters = ' document_type_ss:interview AND collection_id_series_id_ss:["" TO *] '
       if q.present?
         counter = 0
         fq_filters_inner = ''
@@ -533,7 +533,7 @@ module Interviews
                             else
                               'collection_id_series_id_ss asc'
                             end
-      total_response = Curl.post(select_url, query_params)
+      total_response = Curl.post(select_url, URI.encode_www_form(query_params))
       begin
         total_response = JSON.parse(total_response.body_str)
       rescue StandardError

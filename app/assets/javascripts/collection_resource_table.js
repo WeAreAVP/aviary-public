@@ -185,7 +185,9 @@ function CollectionResourceTable() {
                         d.additionalData = additionalData;
                     },
                     dataSrc: function ( json ) {
-                        that.resource_bulk_edit.setTotalRecords(json.recordsTotal)
+                        if (typeof that.resource_bulk_edit != "undefined") {
+                            that.resource_bulk_edit.setTotalRecords(json.recordsTotal)
+                        }
                         return json.data;
                     }
                 },
