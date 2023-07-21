@@ -21,12 +21,15 @@
 
       <%= text_field_tag 'keywords[]', params[:q], placeholder: placeholder, class: "form-control search-field-blacklight search_field_selector_main", id: "q_single", autocomplete: "off" %>
       <div class="buttons-search">
-        <a class='advanced-search-btn' href="<%= search_action_url %>?utf8=✓&search_field=advanced&update_advance_search=update_advance_search&search_type=advance">Advanced
-          Search</a> <%= render partial: 'shared/search_info', locals: { from: 'landing_pages', classes: 'float-right ml-3 mt-3px ' } %>
+        <a class='advanced-search-btn' href="<%= search_action_url %>?utf8=✓&search_field=advanced&update_advance_search=update_advance_search&search_type=advance">
+          Advanced Search
+        </a>
+        <%= render partial: 'shared/search_info', locals: { from: 'landing_pages', classes: 'float-right ml-3 mt-3px ' } %>
       </div>
     <% end %>
   </div>
 <% end %>
+
 <script type="text/javascript">
   $(document).ready(function(){
     // Following code is commented to give user sort choice preference. 'title_ss asc' is now the default choice
