@@ -199,12 +199,11 @@
 .ohm_summary {
   min-height: 190px !important;
 }
+
 .tokenfield.form-control {
   height: auto;
 }
-.organization-section textarea.form-control {
-  word-break: break-all;
-}
+
 .custom_form .form-control:disabled, 
 .custom_form .form-control[readonly] {
     background-color: #ffffff;
