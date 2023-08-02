@@ -37,7 +37,13 @@ class SearchPresenter < BasePresenter
   end
 
   def self.collection_facet_manager(current_organization, current_user, user_ip, current_params, has_values, last_fq)
-    fq = "organization_id_is:(#{current_params[:f][:organization_id_is].join(' OR ')})" if current_params[:f].present? && current_params[:f][:organization_id_is].present?
+    if current_params[:f].present? && current_params[:f][:organization_id_is].present?
+      fq = if current_params[:f][:organization_id_is].is_a?(Array)
+             "organization_id_is:(#{current_params[:f][:organization_id_is].join(' OR ')})"
+           else
+             "organization_id_is:(#{current_params[:f][:organization_id_is].values.join(' OR ')})"
+           end
+    end
     facet_collection = '{!ex=collection_id_is-tag}collection_id_is'
     default_params = { facet: facet_collection, fq: fq }
     default_params[:last_fq] = last_fq.present? ? last_fq : false

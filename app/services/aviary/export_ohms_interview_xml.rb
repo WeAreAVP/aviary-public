@@ -65,7 +65,7 @@ module Aviary
             xml.file_name interview.media_filename
             file_transcript = FileTranscript.find_by(interview_id: interview.id)
             formatted = ''
-            if interview.transcript_sync_data
+            if interview.transcript_sync_data.present?
               xml.sync interview.transcript_sync_data
             elsif file_transcript.present?
               file_transcript_points = FileTranscriptPoint.where(file_transcript_id: file_transcript)

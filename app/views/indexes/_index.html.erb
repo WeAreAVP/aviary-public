@@ -16,7 +16,7 @@
             <% parent_in = 0 %>
             <% @file_index_points.sort_by {|t| t.start_time.to_f }.each_with_index do |index_point, counter| %>
               <% present(index_point) do |presenter| %>
-                <% if presenter.parent_id != 0 %>
+                <% if presenter.parent_id.present? && presenter.parent_id != 0 %>
                   <% parent = index_point.parent_id.positive? %>
                   <% if parent && parent_in == 0%>
                     <% parent_in = 1 %>

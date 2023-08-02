@@ -46,7 +46,7 @@ module InterviewIndexHelper
 
     elsif interview.media_host == 'Aviary'
       source_tags = ''
-      doc = Nokogiri::HTML(open(interview.media_url, read_timeout: 10))
+      doc = Nokogiri::HTML(open(interview.media_url.strip, read_timeout: 10))
       video_src_nodes = doc.search('//source')
       video_src_nodes.each do |node|
         source_tags = format('<source src="%s" type="%s"/>', node.attributes['src'].value, video_src_nodes.first.attributes['type'].value)
