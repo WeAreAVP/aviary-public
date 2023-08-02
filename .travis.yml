@@ -18,7 +18,7 @@ before_install:
 - gem update bundler
 - gem install bundler
 before_script:
-- curl -sSL https://raw.githubusercontent.com/moliware/travis-solr/master/travis-solr.sh | SOLR_VERSION=7.5.0 SOLR_COLLECTION=test SOLR_COLLECTION_CONF=solr/configsets/sunspot/conf bash
+- curl -sSL https://raw.githubusercontent.com/UsmanLhrPk/travis-solr/master/travis-solr.sh | SOLR_VERSION=9.3.0 SOLR_COLLECTION=test SOLR_COLLECTION_CONF=solr/configsets/sunspot/conf bash
 - RAILS_ENV=test bundle exec rake db:create
 - RAILS_ENV=test bundle exec rake db:migrate
 script:
