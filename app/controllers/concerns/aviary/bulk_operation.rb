@@ -26,7 +26,14 @@ module Aviary::BulkOperation
           search_info = { search: { value: params[:searchValue].present? ? params[:searchValue] : '' } }
           table_of_caller = 'organization_id_is'
           limit_resource = "#{table_of_caller}:#{current_organization.id}"
-          data = CollectionResourceFile.fetch_file_list(0, 0, 'id_is', 'desc', search_info, limit_resource, { export: true, current_organization: current_organization })
+          data = if params['type'] == 'collection_resource_files'
+                   CollectionResourceFile.fetch_file_list(0, 0, 'id_is', 'desc', search_info, limit_resource, { export: true, current_organization: current_organization })
+                 else
+                   organization_field_manager = Aviary::FieldManagement::OrganizationFieldManager.new
+                   resource_fields = organization_field_manager.organization_field_settings(current_organization, nil, 'resource_fields', 'resource_table_sort_order')
+                   CollectionResource.fetch_resources(1, 100_000_000, 'id_is', 'desc', search_info.merge(fl: 'id_is'), limit_resource,
+                                                      resource_fields: resource_fields, export: false, current_organization: current_organization)
+                 end
           records_ids = data.first.present? ? data.first.pluck('id_is') : []
           records_ids.each do |single_id|
             session[current_key] << single_id.to_s unless session[current_key].include? single_id.to_s

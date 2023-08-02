@@ -1,0 +1,87 @@
+<div class="<%= request.path.include?("myresources/listing") ? 'd-none' : 'search-result-visual' %>" 
+style="<%= CatalogHelperExtended.organization_home_search_container_styles(request, current_organization) %>">
+
+  <% if request.fullpath == '/collection' %>
+    <% if current_organization.display_banner %>
+      <% if current_organization.banner_type == 'featured_resources_slider' && current_organization.banner_slider_resources.present? %>
+        <div class="org-banner-slider owl-carousel owl-theme">
+          <% banner_files = CollectionResourceFile.where(collection_resource_id: JSON.parse(banner_slider_resources).pluck('id')).where.not(thumbnail_file_name: nil).sample(10) %>
+          <% banner_files.each do |single_banner| %>
+            <% thumb_url = single_banner.thumbnail.url(:medium) %>
+            <% unless thumb_url.present? %>
+              <% present(single_banner) do |presenter| %>
+                <% thumb_url = presenter.media_type.include?('avalon') || presenter.media_type.include?('video') ? "https://#{ENV['S3_HOST_CDN']}/public/images/video-default.png" : "https://#{ENV['S3_HOST_CDN']}/public/images/audio-default.png" %>
+              <% end %>
+            <% end %>
+            <% if single_banner.collection_resource.present? %>
+              <a href="<%= collection_collection_resource_path(single_banner.collection_resource.collection_id, single_banner.collection_resource.id) %>">
+                <span><%= image_tag(thumb_url) %></span>
+                <div class="text-detail">
+                  <strong><%= single_banner.collection_resource.title if single_banner.collection_resource.present? %></strong>
+                  <span class="collection"><%= single_banner.collection_resource.collection.title if single_banner.collection_resource.collection.present? %></span>
+                </div>
+              </a>
+            <% end %>
+          <% end %>
+        </div>
+        <div class="container">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="text mb-4" style="<%= banner_style %>"><%= current_organization.banner_title_text %></div>
+            </div>
+            <div class="col-md-12">
+              <div class="form-group">
+                <div class="<%= container_classes %>">
+                  <%= render 'search_sidebar' %>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% else %>
+        <div class="container">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="text mb-4" style="<%= banner_style %>"><%= current_organization.banner_title_text %></div>
+            </div>
+            <div class="col-md-12">
+              <div class="form-group">
+                <div class="<%= container_classes %>">
+                  <%= render 'search_sidebar' %>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    <% else %>
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="text mb-4" style="<%= banner_style %>"><%= current_organization.banner_title_text %></div>
+          </div>
+          <div class="col-md-12">
+            <div class="form-group">
+              <div class="<%= container_classes %>">
+                <%= render_search_bar %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  <% else %>
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="form-group">
+            <%= render 'search_sidebar' %>
+            <div class="filter-holder">
+              <%= render :partial => 'catalog/view_type_group' %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>

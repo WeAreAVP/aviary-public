@@ -511,6 +511,7 @@ class CollectionResource < ApplicationRecord
     query_params = { q: solr_q_condition, fq: filters.flatten }
     query_params[:defType] = 'complexphrase' if complex_phrase_def_type
     query_params[:wt] = 'json'
+    query_params[:fl] = params[:fl] if params.present? && params[:fl].present?
     total_response = Curl.post(select_url, URI.encode_www_form(query_params))
 
     begin

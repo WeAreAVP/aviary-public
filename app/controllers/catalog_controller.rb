@@ -35,6 +35,13 @@ class CatalogController < ApplicationController
       end
       search_state.params['resource_list'] = resource_list.collect(&:resource_id)
       search_state.params['myresources'] = 1
+    elsif request.path.include?('collection')
+      organization = current_organization
+      title_bread_crumb = organization.present? ? "Back to <strong>#{organization.name.truncate(25, omission: '...')}</strong>" : 'Back to Aviary Home'
+      record_last_bread_crumb(request.fullpath, title_bread_crumb)
+      HomePresenter.manage_home_tracking(cookies, organization, session, ahoy)
+
+      cookies[:update_pop_bypass] = true if params[:update_pop_bypass]
     end
     super
   end

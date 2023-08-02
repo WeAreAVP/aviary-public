@@ -425,7 +425,7 @@ module Interviews
       query_params[:defType] = 'complexphrase' if complex_phrase_def_type
       query_params[:wt] = 'json'
 
-      total_response = Curl.post(select_url, query_params)
+      total_response = Curl.post(select_url, URI.encode_www_form(query_params))
 
       begin
         total_response = JSON.parse(total_response.body_str)
@@ -443,7 +443,7 @@ module Interviews
         query_params[:start] = (page - 1) * per_page
         query_params[:rows] = per_page
       end
-      response = Curl.post(select_url, query_params)
+      response = Curl.post(select_url, URI.encode_www_form(query_params))
       begin
         response = JSON.parse(response.body_str)
       rescue StandardError
@@ -476,7 +476,7 @@ module Interviews
       query_params[:defType] = 'complexphrase' if complex_phrase_def_type
       query_params[:wt] = 'json'
 
-      total_response = Curl.post(select_url, query_params)
+      total_response = Curl.post(select_url, URI.encode_www_form(query_params))
 
       begin
         total_response = JSON.parse(total_response.body_str)
@@ -508,53 +508,13 @@ module Interviews
       if q.present?
         counter = 0
         fq_filters_inner = ''
-        JSON.parse(export_and_current_organization[:current_organization][:interview_search_column]).each do |_, value|
-          if value['status'] == 'true' || value['status'].to_s.to_boolean?
-            unless value['value'].to_s == 'id_is' && q.to_i <= 0
+        %w[collection_id_texts collection_name_texts series_id_texts].each do |name|
+          fq_filters_inner += counter > 0 ? "  OR  #{search_perp(q, name)}  " : "  #{search_perp(q, name)}  "
+          fq_filters_inner += " OR  #{straight_search_perp(q, name)} "
 
-              alter_search_wildcard = value['value']
-              alter_search_wildcard_string = alter_search_wildcard.clone
-
-              if alter_search_wildcard == 'created_at_is'
-                alter_search_wildcard = 'created_at_ss'
-                alter_search_wildcard_string = 'created_at_ss'
-              end
-
-              if alter_search_wildcard == 'updated_at_is'
-                alter_search_wildcard = 'updated_at_ss'
-                alter_search_wildcard_string = 'updated_at_ss'
-              end
-
-              if alter_search_wildcard == 'updated_by_id_is'
-                alter_search_wildcard = 'updated_by_ss'
-                alter_search_wildcard_string = 'updated_by_ss'
-              end
-
-              if alter_search_wildcard == 'created_by_id_is'
-                alter_search_wildcard = 'created_by_id_ss'
-                alter_search_wildcard_string = 'created_by_id_ss'
-              end
-
-              alter_search_wildcard.sub! '_ss', '_texts'
-              alter_search_wildcard.sub! '_sms', '_texts'
-              fq_filters_inner += if counter > 0
-                                    " OR  #{search_perp(q, alter_search_wildcard)} "
-                                  else
-                                    " #{search_perp(q, alter_search_wildcard)} "
-                                  end
-              counter += 1
-              fq_filters_inner += if counter > 0
-                                    " OR  #{search_perp(q, alter_search_wildcard_string)} "
-                                  else
-                                    " #{search_perp(q, alter_search_wildcard_string)} "
-                                  end
-
-              fq_filters_inner += " OR  #{straight_search_perp(q, alter_search_wildcard)} "
-              fq_filters_inner += " OR  #{straight_search_perp(q, alter_search_wildcard_string)} "
-              counter += 1
-            end
-          end
+          counter += 1
         end
+
         fq_filters += " AND (#{fq_filters_inner}) " unless fq_filters_inner.blank?
       end
       filters = []
@@ -573,7 +533,7 @@ module Interviews
                             else
                               'collection_id_series_id_ss asc'
                             end
-      total_response = Curl.post(select_url, query_params)
+      total_response = Curl.post(select_url, URI.encode_www_form(query_params))
       begin
         total_response = JSON.parse(total_response.body_str)
       rescue StandardError
