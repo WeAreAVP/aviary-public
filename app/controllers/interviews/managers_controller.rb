@@ -403,12 +403,22 @@ module Interviews
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def interview_params
-      params[:interviews_interview][:keywords] = params[:interviews_interview][:keywords].split('; ') if params[:interviews_interview][:keywords].present?
-      params[:interviews_interview][:subjects] = params[:interviews_interview][:subjects].split('; ') if params[:interviews_interview][:subjects].present?      params.require(:interviews_interview).permit(:title, :accession_number, :interview_date, :date_non_preferred_format, :collection_id, :collection_name, :collection_link, :series_id, :series, :series_link,
-                                                   :summary, :thesaurus_keywords, :thesaurus_subjects, :thesaurus_titles, :transcript_sync_data, :transcript_sync_data_translation, :media_format, :media_host, :media_url,
-                                                   :media_duration, :media_filename, :media_type, :right_statement, :usage_statement, :acknowledgment, :language_info, :include_language, :language_for_translation, :miscellaneous_cms_record_id,
-                                                   :miscellaneous_ohms_xml_filename, :miscellaneous_use_restrictions, :miscellaneous_sync_url, :miscellaneous_user_notes, :interview_status, :status, :avalon_target_domain, :metadata_status,
-                                                   :embed_code, :media_host_account_id, :media_host_player_id, :media_host_item_id, interviewee: [], interviewer: [], keywords: [], subjects: [], format_info: [])
+      if params[:interviews_interview][:keywords].present?
+        params[:interviews_interview][:keywords] = params[:interviews_interview][:keywords].split('; ')
+      end
+
+      if params[:interviews_interview][:subjects].present?
+        params[:interviews_interview][:subjects] = params[:interviews_interview][:subjects].split('; ')
+      end
+
+      params.require(:interviews_interview)
+            .permit(:title, :accession_number, :interview_date, :date_non_preferred_format, :collection_id, :collection_name, :collection_link, :series_id, :series,
+                    :series_link, :summary, :thesaurus_keywords, :thesaurus_subjects, :thesaurus_titles, :transcript_sync_data, :transcript_sync_data_translation,
+                    :media_format, :media_host, :media_url, :media_duration, :media_filename, :media_type, :right_statement, :usage_statement, :acknowledgment,
+                    :language_info, :include_language, :language_for_translation, :miscellaneous_cms_record_id, :miscellaneous_ohms_xml_filename,
+                    :miscellaneous_use_restrictions, :miscellaneous_sync_url, :miscellaneous_user_notes, :interview_status, :status, :avalon_target_domain,
+                    :metadata_status, :embed_code, :media_host_account_id, :media_host_player_id, :media_host_item_id,
+                    interviewee: [], interviewer: [], keywords: [], subjects: [], format_info: [])
     end
 
     def ohms_configuration_params
