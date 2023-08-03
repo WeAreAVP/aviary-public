@@ -35,7 +35,7 @@ module Thesaurus
         fq += ' AND ( '
         query.each_with_index do |term, i|
           fq += ' OR ' if i != 0
-          fq += " term_texts:#{term} " if term.present?
+          fq += " term_scis:#{term} " if term.present?
         end
         fq += ' ) '
       end

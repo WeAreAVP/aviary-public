@@ -26,66 +26,58 @@ function InterviewIndexManager() {
         host = $('#media_host').data('host')
         if($('.tokenfield').length > 0){
             const keywords_options = {
-                el: document.querySelector('.tokenfield_keywords'),
-                multiple: true,
-                minChars: 1,
-                itemName: 'keywords',
-                setItems: $('.tokenfield_keywords').data('selectedKeys'),
-                delimiters: [';', 'Tab', 'Enter', 'Numpad Enter']
-            };
+                minLength: 1,
+                delimiter: [';', 'Tab', 'Enter', 'Numpad Enter'],
+                beautify: true,
+            }
 
             if ($('.tokenfield_keywords').data('path') !== undefined) {
-                keywords_options.remote = {
-                    url: $('.tokenfield_keywords').data('path'),
-                    type: 'GET',
-                    queryParam: 'term',
-                    params: {
-                        tId: $('.tokenfield_keywords').data('tId'),
-                        typeOfList: $('.tokenfield_keywords').data('typeOfList')
-                    }
-                };
-                keywords_options.newItems = false;
-                keywords_options.itemLabel = 'label';
-                keywords_options.itemValue = 'value';
-                keywords_options.itemData = 'label';
-                keywords_options.maxSuggest = parseInt($('.tokenfield_keywords').data('maxSuggest'), 10);
-            } else {
-                keywords_options.newItems = true;
-                keywords_options.newItemName = 'keywords';
+                keywords_options.autocomplete = {
+                    source: function( request, response ) {
+                        $.ajax({
+                            url: $('.tokenfield_keywords').data('path'),
+                            dataType: "json",
+                            data: {
+                                term: request.term,
+                                tId: $('.tokenfield_keywords').data('tId'),
+                                typeOfList: $('.tokenfield_keywords').data('typeOfList')
+                            },
+                            success: function( data ) {
+                              response( data );
+                            }
+                        });
+                    },
+                }
             }
 
-            new Tokenfield(keywords_options);
+            $('.tokenfield_keywords').tokenfield(keywords_options);
 
             const subjects_options = {
-              el: document.querySelector('.tokenfield_subjects'),
-              multiple: true,
-              minChars: 1,
-              itemName: 'subjects',
-              setItems: $('.tokenfield_subjects').data('selectedKeys'),
-              delimiters: [';', 'Tab', 'Enter', 'Numpad Enter']
-            };
-
-            if ($('.tokenfield_subjects').data('path') !== undefined) {
-              subjects_options.remote = {
-                  url: $('.tokenfield_subjects').data('path'),
-                  type: 'GET',
-                  queryParam: 'term',
-                  params: {
-                      tId: $('.tokenfield_subjects').data('tId'),
-                      typeOfList: $('.tokenfield_subjects').data('typeOfList')
-                  }
-              };
-              subjects_options.newItems = false;
-              subjects_options.itemLabel = 'label';
-              subjects_options.itemValue = 'value';
-              subjects_options.itemData = 'label';
-              subjects_options.maxSuggest = parseInt($('.tokenfield_keywords').data('maxSuggest'), 10);
-            } else {
-                subjects_options.newItems = true;
-                subjects_options.newItemName = 'subjects';
+                minLength: 1,
+                delimiter: [';', 'Tab', 'Enter', 'Numpad Enter'],
+                beautify: true,
             }
 
-          new Tokenfield(subjects_options);
+            if ($('.tokenfield_subjects').data('path') !== undefined) {
+            subjects_options.autocomplete = {
+                source: function( request, response ) {
+                    $.ajax({
+                        url: $('.tokenfield_subjects').data('path'),
+                        dataType: "json",
+                        data: {
+                            term: request.term,
+                            tId: $('.tokenfield_subjects').data('tId'),
+                            typeOfList: $('.tokenfield_subjects').data('typeOfList')
+                        },
+                        success: function( data ) {
+                          response( data );
+                        }
+                    });
+                },
+            }
+            }
+
+            $('.tokenfield_subjects').tokenfield(subjects_options);
         }
         if($('.no-media').length > 0)
         {
