@@ -9,7 +9,7 @@ Rails.application.routes.draw do
   mount BlacklightAdvancedSearch::Engine => '/'
 
   concern :searchable, Blacklight::Routes::Searchable.new
-  resource :catalog, only: [:index], as: 'catalog', path: '/catalog', controller: 'catalog' do
+  resource :catalog, only: [:index], as: 'catalog', path: '/catalog', controller: 'catalog', constraints: { format: 'html' } do
     concerns :searchable
     concerns :range_searchable
     collection do

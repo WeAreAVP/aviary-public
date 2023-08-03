@@ -480,6 +480,11 @@ module Interviews
 
       begin
         total_response = JSON.parse(total_response.body_str)
+
+        if total_response['error'].present?
+          Rails.logger.error total_response['error']['msg']
+          raise 'There is an error in the query'
+        end
       rescue StandardError
         total_response = { 'response' => { 'numFound' => 0 } }
       end
