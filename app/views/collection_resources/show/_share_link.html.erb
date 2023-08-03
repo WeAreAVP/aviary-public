@@ -1,7 +1,7 @@
 <% unless @resource_file.nil? %>
   <% is_audio_only = false %>
   <% present(@resource_file) do |presenter| %>
-    <% is_audio_only = @collection_resource.collection.is_audio_only if @collection_resource.present? && presenter.media_type.include?('audio') %>
+    <% is_audio_only = @collection_resource.collection.is_audio_only if @collection_resource.present? && presenter.media_type.present? && presenter.media_type.include?('audio') %>
   <% end %>
 
   <% unless params[:embed] == 'true' %>

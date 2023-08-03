@@ -120,6 +120,10 @@ module Aviary::ExtractVideoMetadata
           complex_text = doc.search('//script')[2].children
           valid_metadata = parse_html(complex_text, 'var config =')
           unless valid_metadata.present?
+            complex_text = doc.search('//script')[2].children
+            valid_metadata = parse_html(complex_text, 'window.playerConfig =')
+          end
+          unless valid_metadata.present?
             complex_text = doc.search('//script')[3].children
             valid_metadata = parse_html(complex_text, 'window.playerConfig =')
           end
