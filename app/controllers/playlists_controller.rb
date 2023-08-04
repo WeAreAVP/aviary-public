@@ -185,7 +185,7 @@ class PlaylistsController < ApplicationController
     render partial: 'add_to_playlist', locals: { playlists: playlists, organization: organization, collection_resource: collection_resource, from_action: from_action, collection_resource_playlist_ids: collection_resource_playlist_ids }
   rescue StandardError => e
     puts e
-    format.json { render json: t('error_update'), status: :unprocessable_entity }
+    render json: t('error_update'), status: :unprocessable_entity
   end
 
   def load_chapters
