@@ -48,9 +48,9 @@ module Thesaurus
       query_params[:start] = (page - 1) * per_page
       query_params[:rows] = per_page
       query_params[:sort] = " #{sort_column} #{sort_direction} "
-
-      response = Curl.post(select_url, URI.encode_www_form(query_params))
+      
       begin
+        response = Curl.post(select_url, URI.encode_www_form(query_params))
         response = JSON.parse(response.body_str)
       rescue StandardError
         response = { 'response' => { 'docs' => {} } }
