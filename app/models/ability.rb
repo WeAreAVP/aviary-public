@@ -17,8 +17,12 @@ class Ability
     if user.organization_users.active.present? && organization.present?
       user_current_organization = user.organization_users.active.where(organization_id: organization.id)
       if user_current_organization.present?
-        can :manage, Interviews::Interview
-        unless user_current_organization.first.role.system_name == 'ohms_assigned_user'
+        if user_current_organization.first.role.system_name == 'ohms_assigned_user'
+          can :manage, Interviews::Interview do |interview|
+            interview.ohms_assigned_user_id == user.id
+          end
+        else
+          can :manage, Interviews::Interview
           can :manage, CollectionResource
           can :manage, Playlist
           can :manage, Organization

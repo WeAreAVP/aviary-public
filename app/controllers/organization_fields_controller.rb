@@ -7,6 +7,7 @@
 class OrganizationFieldsController < ApplicationController
   before_action :field_manager
   before_action :authenticate_user!
+  include ApplicationHelper
 
   def index
     authorize! :manage, current_organization
@@ -121,15 +122,16 @@ class OrganizationFieldsController < ApplicationController
       collection.solr_index
     when 'editVocabulary'
       list_type = params['list_type']
+      params['vocabulary'] = str_to_array(params['vocabulary'])
       field_values = @org_field_manager.organization_field_settings(current_organization, nil, params['type'])
       if list_type == 'dropdown_options'
         exiting_vocab = case params['update_type']
                         when 'reset_to_default'
                           Rails.configuration.default_fields['fields']['resource'][params['field']]['vocabulary']
                         when '1'
-                          field_values[params['field']]['field_configuration']['dropdown_options'].append(params['vocabulary'].split(',')).flatten
+                          field_values[params['field']]['field_configuration']['dropdown_options'].append(params['vocabulary']).flatten
                         else
-                          params['vocabulary'].split(',')
+                          params['vocabulary']
                         end
         exiting_vocab = exiting_vocab.uniq if exiting_vocab.present?
         update_information = { '0' => { 'system_name' => params['field'], 'field_configuration' => { 'dropdown_options' => exiting_vocab.uniq } } }
@@ -139,9 +141,9 @@ class OrganizationFieldsController < ApplicationController
                         when 'reset_to_default'
                           Rails.configuration.default_fields['fields']['resource'][params['field']]['vocabulary']
                         when '1'
-                          field_values[params['field']]['vocabulary'].append(params['vocabulary'].split(',')).flatten
+                          field_values[params['field']]['vocabulary'].append(params['vocabulary']).flatten
                         else
-                          params['vocabulary'].split(',')
+                          params['vocabulary']
                         end
 
         exiting_vocab = exiting_vocab.uniq if exiting_vocab.present?
@@ -155,7 +157,8 @@ class OrganizationFieldsController < ApplicationController
       collection = Collection.find_by_id(params['collection_id'])
       @collection_field_manager.update_field_settings_collection(update_information, collection, 'resource_fields')
     when 'updateInformation'
-
+      params['custom_fields']['vocabulary'] = str_to_array(params['custom_fields']['vocabulary']) if params['custom_fields']['vocabulary'].present?
+      params['custom_fields']['dropdown_options'] = str_to_array(params['custom_fields']['dropdown_options']) if params['custom_fields']['dropdown_options'].present?
       type = :notice
       if params['meta_field_id'].blank?
         all_fields = current_organization.organization_field.resource_fields
@@ -172,8 +175,8 @@ class OrganizationFieldsController < ApplicationController
           'is_required' => params['custom_fields']['is_required'].to_boolean?,
           'system_name' => system_name,
           'is_vocabulary' => params['custom_fields']['vocabulary'].present?,
-          'vocabulary' => params['custom_fields']['vocabulary'].present? ? params['custom_fields']['vocabulary'].split(',') : [],
-          'field_configuration' => { 'dropdown_options' => params['custom_fields']['dropdown_options'].present? ? params['custom_fields']['dropdown_options'].split(',') : [] },
+          'vocabulary' => params['custom_fields']['vocabulary'].present? ? params['custom_fields']['vocabulary'] : [],
+          'field_configuration' => { 'dropdown_options' => params['custom_fields']['dropdown_options'].present? ? params['custom_fields']['dropdown_options'] : [] },
           'sort_order' => current_organization.organization_field.resource_fields.keys.count.to_i + 1,
           'description_display' => true,
           'resource_table_display' => false,
@@ -196,7 +199,6 @@ class OrganizationFieldsController < ApplicationController
       else
         field_values = @org_field_manager.organization_field_settings(current_organization, nil, params['type'].present? ? params['type'] : 'resource_fields')
         update_information = params['custom_fields']
-        is_vocabulary = update_information['vocabulary'].present? && update_information['vocabulary'].strip.present?
         update_information['field_type'] = update_information['column_type'] if update_information['column_type'].present?
         update_information.delete('is_custom')
         update_information.delete('vocabulary')
@@ -207,7 +209,6 @@ class OrganizationFieldsController < ApplicationController
         update_information['is_repeatable'] = update_information['is_repeatable'].to_boolean?
         update_information['is_internal_only'] = field_values[update_information['system_name']]['is_default'].to_s.to_boolean? ? false : update_information['is_internal_only'].to_boolean?
         update_information['is_required'] = update_information['is_required'].to_boolean?
-        update_information['is_vocabulary'] = is_vocabulary
         @org_field_manager.update_field_settings(field_values, { '0' => update_information }, current_organization, params['type'].present? ? params['type'] : 'resource_fields')
       end
     end
