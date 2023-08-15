@@ -147,15 +147,16 @@ GEM
     bindex (0.8.1)
     binding_of_caller (1.0.0)
       debug_inspector (>= 0.0.1)
-    blacklight (7.22.2)
+    blacklight (7.33.1)
       deprecation
       globalid
+      hashdiff
       i18n (>= 1.7.0)
       jbuilder (~> 2.7)
       kaminari (>= 0.15)
       ostruct (>= 0.3.2)
-      rails (>= 5.1, < 7)
-      view_component (~> 2.42)
+      rails (>= 5.1, < 7.1)
+      view_component (~> 2.66)
     blacklight_advanced_search (7.0.0)
       blacklight (~> 7.0)
       parslet
@@ -368,6 +369,7 @@ GEM
     globalid (1.1.0)
       activesupport (>= 5.0)
     hana (1.3.7)
+    hashdiff (1.0.1)
     hashie (5.0.0)
     hiredis (0.6.3)
     htmlentities (4.3.4)
@@ -502,7 +504,7 @@ GEM
       rake
     mini_magick (4.11.0)
     mini_mime (1.1.2)
-    minitest (5.18.1)
+    minitest (5.19.0)
     model_attribute (3.2.0)
     momentjs-rails (2.29.1.1)
       railties (>= 3.1)
@@ -511,7 +513,7 @@ GEM
     multi_xml (0.6.0)
     multipart-post (2.1.1)
     mysql2 (0.5.3)
-    net-imap (0.3.6)
+    net-imap (0.3.7)
       date
       net-protocol
     net-pop (0.1.2)
@@ -535,11 +537,11 @@ GEM
     noid-rails (3.0.3)
       actionpack (>= 5.0.0, < 7)
       noid (~> 0.9)
-    nokogiri (1.15.2-arm64-darwin)
+    nokogiri (1.15.3-arm64-darwin)
       racc (~> 1.4)
-    nokogiri (1.15.2-x86_64-darwin)
+    nokogiri (1.15.3-x86_64-darwin)
       racc (~> 1.4)
-    nokogiri (1.15.2-x86_64-linux)
+    nokogiri (1.15.3-x86_64-linux)
       racc (~> 1.4)
     oga (3.3)
       ast
@@ -560,7 +562,7 @@ GEM
     open_uri_redirections (0.2.1)
     orm_adapter (0.5.0)
     os (1.0.1)
-    ostruct (0.5.2)
+    ostruct (0.5.5)
     parallel (1.21.0)
     paranoia (2.5.0)
       activerecord (>= 5.1, < 7.1)
@@ -583,7 +585,7 @@ GEM
     puma (5.6.5)
       nio4r (~> 2.0)
     racc (1.7.1)
-    rack (2.2.7)
+    rack (2.2.8)
     rack-accept (0.4.5)
       rack (>= 0.4)
     rack-attack (6.6.0)
@@ -875,7 +877,7 @@ GEM
       nokogiri (~> 1.6)
       rubyzip (>= 1.3.0)
       selenium-webdriver (~> 4.0)
-    websocket-driver (0.7.5)
+    websocket-driver (0.7.6)
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.5)
     wicked_pdf (2.1.0)
@@ -889,7 +891,7 @@ GEM
     xpath (3.2.0)
       nokogiri (~> 1.8)
     yomu (0.1.5)
-    zeitwerk (2.6.8)
+    zeitwerk (2.6.10)
 
 PLATFORMS
   arm64-darwin-21

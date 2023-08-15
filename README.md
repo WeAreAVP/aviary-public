@@ -15,13 +15,13 @@ Collaboration between AVP and the Fortunoff Video Archive for Holocaust Testimon
 
 Setup and Configuration
 ===
-*  Copy .env.example to .env
+* Copy .env.example to .env
     
         cp .env.example .env
     
     put correct configuration variables in the .env
 
-*  Run Solr instance or use sunspot solr
+* Run Solr instance or use sunspot solr
    
         bundle exec rake sunspot:solr:start
     
@@ -39,20 +39,21 @@ Setup and Configuration
         rake aviary:solr_index:collection_resources
         rake aviary:solr_index:collection_resource_files
         rake aviary:solr_index:given_class[ClassName] e.g. CollectionResource
+        rake aviary:solr_index:thesaurus_terms
 
-*  Create Database
+* Create Database
      
         bundle exec rake db:create 
     
-*  Run DB Migrations
+* Run DB Migrations
     
         bundle exec rake db:migrate
     
-*  Run DB Seed
+* Run DB Seed
     
         bundle exec rake db:seed
         
-*  Run rails server
+* Run rails server
     
         rails s
 
@@ -72,9 +73,9 @@ Sample Login
 Requirements
 ===
 
-*  **OS**: Ubuntu 20.04
+*  **OS**: >= Ubuntu 20.04
 *  **Ruby**: 3.1.0
-*  **Rails**: 6.1.4.4
+*  **Rails**: 6.1.7.4
 *  **Nginx**
 *  **Puma**
 *  **MySQL**: >=5.7.x
@@ -117,10 +118,12 @@ See the [LICENSE](LICENSE.md) and [THIRD-PARTY-LICENSE](THIRD-PARTY-LICENSE.md) 
 Contributors
 === 
 
- *  Nouman Tayyab nouman@weareavp.com
- *  Furqan Wasi furqan@weareavp.com
- *  Zaheer Abdul Wajid zaheer@weareavp.com
- *  Raza Saleem raza@weareavp.com
+ * Nouman Tayyab nouman@weareavp.com
+ * Furqan Wasi furqan@weareavp.com
+ * Rimsha Khalid rimsha@weareavp.com
+ * Zaheer Abdul Wajid zaheer@weareavp.com
+ * Raza Saleem raza@weareavp.com
+ * Usman Javaid usman@weareavp.com
 
   
 

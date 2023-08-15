@@ -516,6 +516,11 @@ class CollectionResource < ApplicationRecord
 
     begin
       total_response = JSON.parse(total_response.body_str)
+
+      if total_response['error'].present?
+        Rails.logger.error total_response['error']['msg']
+        raise 'There is an error in the query'
+      end
     rescue StandardError
       total_response = { 'response' => { 'numFound' => 0 } }
     end
@@ -540,6 +545,11 @@ class CollectionResource < ApplicationRecord
     response = Curl.post(select_url, URI.encode_www_form(query_params))
     begin
       response = JSON.parse(response.body_str)
+
+      if response['error'].present?
+        Rails.logger.error response['error']['msg']
+        raise 'There is an error in the query'
+      end
     rescue StandardError
       response = { 'response' => { 'docs' => {} } }
     end

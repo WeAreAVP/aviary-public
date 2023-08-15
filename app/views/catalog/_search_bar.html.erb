@@ -5,7 +5,7 @@ style="<%= CatalogHelperExtended.organization_home_search_container_styles(reque
     <% if current_organization.display_banner %>
       <% if current_organization.banner_type == 'featured_resources_slider' && current_organization.banner_slider_resources.present? %>
         <div class="org-banner-slider owl-carousel owl-theme">
-          <% banner_files = CollectionResourceFile.where(collection_resource_id: JSON.parse(banner_slider_resources).pluck('id')).where.not(thumbnail_file_name: nil).sample(10) %>
+          <% banner_files = CollectionResourceFile.where(collection_resource_id: JSON.parse(current_organization.banner_slider_resources).pluck('id')).where.not(thumbnail_file_name: nil).sample(10) %>
           <% banner_files.each do |single_banner| %>
             <% thumb_url = single_banner.thumbnail.url(:medium) %>
             <% unless thumb_url.present? %>

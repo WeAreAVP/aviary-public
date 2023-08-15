@@ -217,7 +217,7 @@ module Thesaurus
 
                     if term.present?
                       terms_all = term.split(' ')
-                      terms_all = terms_all.map { |item| "*#{item.gsub(/[^0-9a-zA-Z ]/i, '')}*" }
+                      terms_all = terms_all.map { |item| "#{item.gsub(/[^0-9a-zA-Z ]/i, '')}*" }
                     end
 
                     thesaurus = ::Thesaurus::ThesaurusTerms.fetch_resources(
