@@ -3,7 +3,7 @@
 # Aviary is an audiovisual content publishing platform with sophisticated features for search and permissions controls.
 # Copyright (C) 2019 Audio Visual Preservation Solutions, Inc.
 class InterviewsDatatable < ApplicationDatatable
-  delegate :can?, :interviews_manager_path, :interviews_list_notes_path, :interviews_update_note_path, :interviews_transcript_path,
+  delegate :can?, :interviews_manager_path, :interviews_list_notes_path, :interviews_update_note_path, :interviews_transcript_path, :ohms_records_user_assignments_path,
            :ohms_index_path, :ohms_records_edit_path, :preview_interviews_manager_path, :export_interviews_manager_path, :sync_interviews_manager_path, :check_valid_array, :bulk_resource_list_interviews_managers_path, to: :@view
 
   def initialize(view, current_organization = nil, id = '', organization_user = '', use_organization = true)
@@ -145,6 +145,9 @@ class InterviewsDatatable < ApplicationDatatable
     html += link_to 'Notes', 'javascript://', class: 'btn-interview btn-sm btn-link interview_note_' + interview['id_is'].to_s + ' interview_notes ' + notes_color(interview), id: 'interview_note_' + interview['id_is'].to_s, data: {
       id: interview['id_is'], url: interviews_list_notes_path(interview['id_is'], 'json'), updateurl: interviews_update_note_path(interview['id_is'], 'json')
     }
+    if @organization_user&.role&.system_name == 'ohms_assigned_user'
+      html += link_to 'Remove Assignment', 'javascript://', class: 'btn-interview btn-sm btn-link interview_remove_assignmant', data: { url: ohms_records_user_assignments_path(interview['id_is'], 0), name: interview['title_ss'] }
+    end
     unless @organization_user.role.system_name == 'ohms_assigned_user'
       html += link_to (this_interview.try(:file_transcripts).present? && this_interview.file_transcripts.first.associated_file_updated_at.present? ? 'Re-Upload Transcript' : 'Upload Transcript'), 'javascript:void(0);',
                       class: 'btn-interview btn-sm btn-link interview_transcript_upload ',

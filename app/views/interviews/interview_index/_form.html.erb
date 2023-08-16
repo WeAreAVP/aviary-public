@@ -43,6 +43,7 @@
             <div class="left-section">
               <div class="form-group">
                 <div class="field-title"><%= f.label :start_time, "Timestamp*" %></div>
+                <input type="hidden" name="current_time" id="current_time"/>
                 <% if @interview.present? %>
                   <%= f.hidden_field :interview_id, value: @interview.id %>
                 <% else %>
