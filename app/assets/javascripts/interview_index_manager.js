@@ -166,9 +166,6 @@ function InterviewIndexManager() {
                         }
                     }
                     $('.player-section').css('visibility','unset');
-                    setInterval(function () {
-                        $("#current_time").val(player_widget.currentTime());
-                    }, 1000);
                 });
             }
             else
@@ -288,6 +285,9 @@ function InterviewIndexManager() {
                 });
             
             }
+            setInterval(function () {
+                $("#current_time").val(player_widget.currentTime());
+            }, 1000);
         }
         
         
