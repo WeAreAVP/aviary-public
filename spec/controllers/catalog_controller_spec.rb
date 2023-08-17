@@ -12,6 +12,7 @@ RSpec.describe CatalogController, type: :controller do
 
   describe "Get Search" do
     before (:each) do
+      collection_resource.reindex_collection_resource
       collection_resource_2.reindex_collection_resource
       collection_resource_3.reindex_collection_resource
       collection_resource_4.reindex_collection_resource
