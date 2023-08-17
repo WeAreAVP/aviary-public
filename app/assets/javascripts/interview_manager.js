@@ -779,7 +779,7 @@ function InterviewManager() {
     this.keywordField = (keys, selectedKeys) => {
         const keywords_options = {
             minLength: 1,
-            delimiter: [';', 'Tab', 'Enter', 'Numpad Enter'],
+            delimiter: [';'],
             beautify: true,
         }
 
@@ -808,7 +808,7 @@ function InterviewManager() {
     this.searchField = (keys, selectedKeys) => {
         const subjects_options = {
             minLength: 1,
-            delimiter: [';', 'Tab', 'Enter', 'Numpad Enter'],
+            delimiter: [';'],
             beautify: true,
         }
 
