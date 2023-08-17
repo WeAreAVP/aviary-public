@@ -12,6 +12,31 @@ module ApplicationHelper
     nil
   end
 
+  def str_to_array(str)
+    res = []
+    begin
+      qoute = 0
+      temp = ''
+      str.split(',').each do |item|
+        if item.include?('"') || qoute == 1
+          temp += item + ','
+          if qoute == 1 && item.include?('"')
+            res << temp.chomp(',').strip
+            temp = ''
+            qoute = 0
+          else
+            qoute = 1
+          end
+        else
+          res << item.strip
+        end
+      end
+    rescue StandardError
+      res = []
+    end
+    res
+  end
+
   def collection_feed(_collection_id)
     nil
   end

@@ -11,7 +11,12 @@ RSpec.describe CatalogController, type: :controller do
   let!(:collection_resource_file) { build :collection_resource_file, collection_resource: collection_resource }
 
   describe "Get Search" do
-
+    before (:each) do
+      collection_resource.reindex_collection_resource
+      collection_resource_2.reindex_collection_resource
+      collection_resource_3.reindex_collection_resource
+      collection_resource_4.reindex_collection_resource
+    end
     it "no keyword search" do
       get :index, params: { utf8: '✓', update_advance_search: 'update_advance_search', search_type: 'simple', search_field: 'advanced', commit: 'Search', type_of_field_selector_single: 'keywords',
                             keywords: [''], title_text: [''], resource_description: [''], indexes: [''], transcript: [''], op: [''], type_of_search: ['simple'] }, format: :json

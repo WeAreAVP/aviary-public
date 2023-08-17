@@ -12,7 +12,7 @@
     <% type = 'thesaurus' %>
     <input name="collection_resource[collection_resource_field_values][][value]" type="text" id="thesaurus_term_autocomplete_<%= field_settings.system_name %>" value="<%= single_value_raw.present? ? single_value_raw : '' %>" class="form-control thesaurus_term_autocomplete" autocomplete="nope" placeholder="Enter a term" data-type-of-list="<%= type %>" data-assigned-thesaurus="<%= assigned_thesaurus %>" data-path="<%= autocomplete_thesaurus_manager_index_path %>"/>
   <% else %>
-    <%= select_tag "collection_resource[collection_resource_field_values][][value]", options_for_select(field_settings.dropdown_options.map { |option| option.to_s.gsub(/(\n|\r)/, '').strip }, selected: single_value_raw.present? ? single_value_raw.to_s.gsub(/(\n|\r)/, '').strip : ''), { :class => "select_option #{type_for_view}", :include_blank => true } %>
+    <%= select_tag "collection_resource[collection_resource_field_values][][value]", options_for_select(field_settings.dropdown_options.map { |option| option.to_s.gsub("\"","").gsub(/(\n|\r)/, '').strip }, selected: single_value_raw.present? ? single_value_raw.to_s.gsub("\"","").gsub(/(\n|\r)/, '').strip : ''), { :class => "select_option #{type_for_view}", :include_blank => true } %>
   <% end %>
 
 <% when OrganizationField::TypeInformation::TEXTAREA.to_s %>

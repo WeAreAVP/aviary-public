@@ -767,6 +767,13 @@ function InterviewManager() {
                 });
             }
         });
+        document_level_binding_element('.interview_remove_assignmant', 'click', function () {
+            $('#modalPopupBody').html('Are you sure you want to remove assignmant for this Interview? There is no undoing this action.');
+            $('#modalPopupTitle').html('Remove Assignmant "' + $(this).data().name + '" Interview');
+            $('#modalPopupFooterYes').attr('href', $(this).data().url);
+            $('#modalPopupFooterYes').attr('data-method', 'get');
+            $('#modalPopup').modal('show');
+        });
     }
 
     this.keywordField = (keys, selectedKeys) => {
