@@ -11,6 +11,11 @@ RSpec.describe CatalogController, type: :controller do
   let!(:collection_resource_file) { build :collection_resource_file, collection_resource: collection_resource }
 
   describe "Get Search" do
+    before (:each) do
+      collection_resource_2.reindex_collection_resource
+      collection_resource_3.reindex_collection_resource
+      collection_resource_4.reindex_collection_resource
+    end
 
     it "no keyword search" do
       get :index, params: { utf8: '✓', update_advance_search: 'update_advance_search', search_type: 'simple', search_field: 'advanced', commit: 'Search', type_of_field_selector_single: 'keywords',
@@ -84,7 +89,6 @@ RSpec.describe CatalogController, type: :controller do
     end
 
     it 'keyword search hvt.1021.232 AND "dfgh ghjk" AND dfgh AND "ghjk"' do
-      collection_resource.reindex_collection_resource
       get :index, params: { utf8: '✓', update_advance_search: 'update_advance_search', search_type: 'simple', search_field: 'advanced', commit: 'Search', type_of_field_selector_single: 'keywords',
                             keywords: ['hvt.1021.232 AND dfgh ghjk AND dfgh AND ghjk AND *ing'], title_text: [''], resource_description: [''], indexes: [''], transcript: [''], op: [''], type_of_search: ['simple'] }, format: :json
       expect(response.status).to eq(200)
@@ -97,7 +101,6 @@ RSpec.describe CatalogController, type: :controller do
     end
 
     it 'Advance Search' do
-      collection_resource.reindex_collection_resource
       get :index, params: { utf8: '✓', update_advance_search: 'update_advance_search', search_type: 'advance', keywords: ['dora', 'salo', 'testimony'], title_text: ['', '', ''], resource_description: ['', '', ''],
                             indexes: ['', '', ''], transcript: ['', '', ''], op: ['', 'AND', 'AND'], type_of_search: ['simple', 'simple', 'simple'], sort: 'score asc', search_field: 'advanced', commit: 'Search' }, format: :json
       expect(response.status).to eq(200)
@@ -111,7 +114,6 @@ RSpec.describe CatalogController, type: :controller do
       expect(assigns(:document_list).size).to eq(1)
     end
     it "resource Description search dora AND salo" do
-      collection_resource.reindex_collection_resource
       get :index, params: { utf8: '✓', update_advance_search: 'update_advance_search', search_type: 'simple', search_field: 'advanced', commit: 'Search', type_of_field_selector_single: 'resource_description',
                             keywords: [''], title_text: [''], resource_description: ['hvt.1021.232'], indexes: [''], transcript: [''], op: [''], type_of_search: ['simple'] }, format: :json
       expect(response.status).to eq(200)
@@ -119,7 +121,6 @@ RSpec.describe CatalogController, type: :controller do
     end
 
     it "collection title testing" do
-      collection_resource.reindex_collection_resource
       get :index, params: { utf8: '✓', update_advance_search: 'update_advance_search', search_type: 'simple', search_field: 'advanced', commit: 'Search', type_of_field_selector_single: 'resource_description',
                             keywords: [''], title_text: [''], collection_title: ['testing'], resource_description: [''], indexes: [''], transcript: [''], op: [''], type_of_search: ['simple'] }, format: :json
       expect(response.status).to eq(200)
@@ -127,7 +128,6 @@ RSpec.describe CatalogController, type: :controller do
     end
 
     it "indexes testing" do
-      collection_resource.reindex_collection_resource
       get :index, params: { utf8: '✓', update_advance_search: 'update_advance_search', search_type: 'simple', search_field: 'advanced', commit: 'Search', type_of_field_selector_single: 'resource_description',
                             keywords: [''], title_text: [''], collection_title: [''], resource_description: [''], indexes: ['testing'], transcript: [''], op: [''], type_of_search: ['simple'] }, format: :json
       expect(response.status).to eq(200)
@@ -136,7 +136,6 @@ RSpec.describe CatalogController, type: :controller do
 
     it "resource Description search dora AND salo" do
       SearchBuilder::search_field_labels
-      collection_resource.reindex_collection_resource
       get :index, params: { utf8: '✓', update_advance_search: 'update_advance_search', search_type: 'simple', search_field: 'advanced', commit: 'Search', type_of_field_selector_single: 'resource_description',
                             keywords: [''], title_text: [''], collection_title: [''], resource_description: [''], indexes: [''], transcript: ['testing'], op: [''], type_of_search: ['simple'] }, format: :json
       expect(response.status).to eq(200)
