@@ -210,6 +210,8 @@ class PlaylistsController < ApplicationController
       param[:pst] = @playlist_resource.playlist_items.order(:sort_order).first.start_time if @playlist_resource.playlist_items.order(:sort_order).first.start_time.present?
       param[:pet] = @playlist_resource.playlist_items.order(:sort_order).first.end_time if @playlist_resource.playlist_items.order(:sort_order).first.end_time.present?
       param[:collection_resource_file_id] = @playlist_resource.playlist_items.order(:sort_order).first.collection_resource_file.id
+    elsif @playlist_resource.present? && @playlist_resource.playlist_items.empty?
+      param[:collection_resource_file_id] = 0
     end
     param[:share] = params[:share] if params[:share].present?
     param = embed_params(param)
