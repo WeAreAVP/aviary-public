@@ -27,7 +27,7 @@ function InterviewIndexManager() {
         if($('.tokenfield').length > 0){
             const keywords_options = {
                 minLength: 1,
-                delimiter: [';', 'Tab', 'Enter', 'Numpad Enter'],
+                delimiter: [';'],
                 beautify: true,
             }
 
@@ -54,7 +54,7 @@ function InterviewIndexManager() {
 
             const subjects_options = {
                 minLength: 1,
-                delimiter: [';', 'Tab', 'Enter', 'Numpad Enter'],
+                delimiter: [';'],
                 beautify: true,
             }
 

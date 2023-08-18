@@ -19,7 +19,7 @@
             </div>
             <div class="sidebar-logo">
               <%= link_to root_url(host: ENV['APP_HOST']) do %>
-                <%= image_tag 'homepage/main-logo.png' %>
+                <%= image_tag 'homepage/main-logo.png', alt: 'Aviary menu'  %>
               <% end %>
             </div>
             <div class="card <%= disabled_organization_cls %>">

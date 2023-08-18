@@ -32,12 +32,27 @@ $.extend( $.fn.dataTable.defaults, {
   keys: true,
   responsive: true,
   pagingType: 'full',
-  //dom:
-  //  "<'row'<'col-sm-4 text-left'f><'right-action col-sm-8 text-right'<'buttons'B> <'select-info'> >>" +
-  //  "<'row'<'dttb col-12 px-0'tr>>" +
-  //  "<'row'<'col-sm-12 table-footer'lip>>"
+  language: {
+    aria: {
+      paginate: {
+        first: 'First Page',
+        previous: 'Go to previous page',
+        next: 'Go to next page',
+        last: 'Last'
+      }
+    }
+  }
 });
 
+$(document).on('init.dt', function () {
+  $('table.dataTable:not(.DTFC_Cloned) th:nth-child(2)').first().addClass('focusable');
+});
+
+$(document).on('draw.dt', function () {
+  $('.page-item:not(.previous, .next) a').each(function () {
+    $(this).attr('aria-label', `Go to page ${$(this).text()}`);
+  })
+});
 
 $(document).on('preInit.dt', function(e, settings) {
   var api, table_id, url;

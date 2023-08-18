@@ -6,7 +6,10 @@
           <% if current_organization.present? %>
             <% if (can? :manage, current_organization) %>
               <li>
-                <a href="javascript://" class="menu" id="menu-bar" data-url="<%= set_layout_path %>" data-layout="<%= session[:layout] %>"><i class="fa fa-bars"><%= image_tag 'https://img.icons8.com/android/344/menu.png' %></i></a>
+                <a href="javascript://" class="menu" id="menu-bar" data-url="<%= set_layout_path %>" data-layout="<%= session[:layout] %>" alt="Expand/Contract staff menu bar">
+                  <span class="sr-only">Expand/Contract staff menu bar button.</span>
+                  <i class="fa fa-bars"><%= image_tag 'https://img.icons8.com/android/344/menu.png' %></i>
+                </a>
               </li>
             <% end %>
           <% end %>
