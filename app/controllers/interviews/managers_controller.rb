@@ -404,13 +404,17 @@ module Interviews
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def interview_params
-      if params[:interviews_interview][:keywords].present?
-        params[:interviews_interview][:keywords] = params[:interviews_interview][:keywords].split('; ')
-      end
+      params[:interviews_interview][:keywords] = if params[:interviews_interview][:keywords].present?
+                                                   params[:interviews_interview][:keywords].split('; ')
+                                                 else
+                                                   []
+                                                 end
 
-      if params[:interviews_interview][:subjects].present?
-        params[:interviews_interview][:subjects] = params[:interviews_interview][:subjects].split('; ')
-      end
+      params[:interviews_interview][:subjects] = if params[:interviews_interview][:subjects].present?
+                                                   params[:interviews_interview][:subjects].split('; ')
+                                                 else
+                                                   []
+                                                 end
 
       params.require(:interviews_interview)
             .permit(:title, :accession_number, :interview_date, :date_non_preferred_format, :collection_id, :collection_name, :collection_link, :series_id, :series,

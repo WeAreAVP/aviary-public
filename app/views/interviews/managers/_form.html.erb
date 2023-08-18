@@ -144,7 +144,7 @@ thesaurus_settings = ::Thesaurus::ThesaurusSetting.where(organization_id: curren
             <div class="field-title"><%= f.label :keywords %>
             </div>
             <div class="container_keywords">
-              <% @interview.keywords = @interview.keywords.join(';') if @interview.keywords.present? %>
+              <% @interview.keywords = @interview.keywords.present? ? @interview.keywords.join(';') : '' %>
               <% if thesaurus_settings.present? && thesaurus_settings.thesaurus_keywords.positive? %>
                 <% thesaurus = Thesaurus::Thesaurus.where(id: thesaurus_settings.thesaurus_keywords) %>
                 <% if thesaurus.length.positive? %>
@@ -163,7 +163,7 @@ thesaurus_settings = ::Thesaurus::ThesaurusSetting.where(organization_id: curren
             <div class="field-title"><%= f.label :subjects %>
             </div>
             <div class="container_subjects">
-              <% @interview.subjects = @interview.subjects.join(';') if @interview.subjects.present? %>
+              <% @interview.subjects = @interview.subjects.present? ? @interview.subjects.join(';') : '' %>
               <% if thesaurus_settings.present? && thesaurus_settings.thesaurus_subjects.positive? %>
                 <% thesaurus = Thesaurus::Thesaurus.where(id: thesaurus_settings.thesaurus_subjects) %>
                 <% if thesaurus.length.positive? %>
