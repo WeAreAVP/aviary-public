@@ -157,7 +157,7 @@ module Interviews
             @file_index_point_alt = set_custom_values(@file_index_point_alt, '_alt', params)
             if @file_index_point_alt.save
               start_time = params[:current_time].to_f if params[:current_time].present?
-              format.html { redirect_to "#{ohms_records_path(@file_index.interview_id)}?time=#{start_time}", notice: 'Interview Index was successfully created.' }
+              format.html { redirect_to "#{ohms_index_path(@file_index.interview_id)}?time=#{start_time}", notice: 'Interview Index was successfully created.' }
               format.json { render :show, status: :created, location: @file_index_point }
             else
               format.html { render :new }
