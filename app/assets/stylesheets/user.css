@@ -92,7 +92,6 @@
     border: 0;
     height: 18px;
     margin: 0;
-
     overflow: hidden;
     padding: 0;
     position: absolute;
@@ -104,7 +103,7 @@
 }
 
 .toggle-switch__input:checked + .toggle-switch__slider {
-    background-color: #00acff;
+    background-color: #00127c;
 }
 
 .toggle-switch__input:checked + .toggle-switch__slider::before {
