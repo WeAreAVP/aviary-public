@@ -106,6 +106,8 @@ Rails.application.routes.draw do
     get 'interview/notes/:id.:format', to: 'notes#index', as: :list_notes
     post 'interview/notes/:id.:format', to: 'notes#create', as: :create_note
     post 'interview/note/update/:id.:format', to: 'notes#update', as: :update_note
+    post 'interview/note/delete', to: 'notes#delete', as: :delete_note
+    get 'ohms_interview/notes/export/:id.:format', to: 'notes#export', as: :ohms_export_note
 
     resources :interview_index
     get 'interview/index/new/:id', to: 'interview_index#new', as: :interview_index_new

@@ -143,6 +143,7 @@ function InterviewManager() {
             $('.' + $(this).data('search-field')).prop('checked', $(this).data('search-status'));
         });
         initDeletePopup();
+        initDeleteInterviewPopup();
         initNotesPopup();
         bulk_option_selection();
         initImportXmlFile();
@@ -274,6 +275,29 @@ function InterviewManager() {
 
                 }
             });
+            $(".bluk-ohms-export-notes-btn").unbind('click');
+            $('.bluk-ohms-export-notes-btn').on('click', function () {
+                if (that.ids_session.length <= 0) {
+                    jsMessages('danger', 'Please select interviews before doing bulk operations.');
+                } else {
+                    $('#select_check_type').append($('<option>', {
+                        value: "download_notes",
+                        text: 'Bulk Export as OHMS XML'
+                    }));
+                    $('#select_check_type').val("download_notes");
+                    update_bulk_edit_view("download_notes")
+                    $('#bulk_edit_form').attr("target","_blank");
+                    $('.bulk-edit-submit').click();
+                    $('.bulk-edit-do-it').on('click', function () {
+                        setTimeout(() => {
+                            jsMessages('success', 'Download successfully!');
+                            location.reload();
+                        }, "1000");
+                    });
+
+
+                }
+            });
             $(".bluk-ohms-notes-filter-btn").unbind('click');
             $('.bluk-ohms-notes-filter-btn').on('click', function () {
                 let url_notes = window.location.href.split('?');
@@ -317,7 +341,12 @@ function InterviewManager() {
     const update_bulk_edit_view = function (selected_type) {
         $('.operation_content').addClass('d-none');
         $('.bulk-edit-submit').prop('disabled', false)
-        if (selected_type == 'download_xml') {
+        if (selected_type == 'download_notes') {
+            $('.export_xml_content').removeClass('d-none');
+            $('#bulk_edit_type_of_bulk_operation').val('download_notes');
+            $('#confirm_msg_pop_bulk').html(' export the interviews notes listed below as CSV.');
+        }
+        else if (selected_type == 'download_xml') {
             $('.export_xml_content').removeClass('d-none');
             $('#bulk_edit_type_of_bulk_operation').val('download_xml');
             $('#confirm_msg_pop_bulk').html(' export the interviews listed below as XML.');
@@ -456,6 +485,7 @@ function InterviewManager() {
         containerRepeatManager.makeContainerRepeatable(".add_interviewer", ".remove_interviewer", '.container_interviewer_inner', '.container_interviewer', '.interviewer');
         containerRepeatManager.makeContainerRepeatable(".add_format", ".remove_format", '.container_format_inner', '.container_format', '.format');
         initDeletePopup();
+        initDeleteInterviewPopup();
         initNotesPopup();
         initImportXmlFile();
         document_level_binding_element('#interviews_interview_media_host', 'change', function () {
@@ -494,17 +524,56 @@ function InterviewManager() {
             $('#modalPopup').modal('show');
         });
     };
+    const initDeleteInterviewPopup = function () {
+        document_level_binding_element('.delete_notes', 'click', function (e) {
+            var data = $(this).data();
+            var msg = 'Are you sure you wish to delete this note? This action cannot be undone';
+            if (data.option == 'delete_all')
+            {
+                msg = 'Are you sure you wish to delete all notes for this OHMS Studio record? This action cannot be undone'
+            }
+            if(confirm(msg))
+            {
+                let formData = {
+                    'id': data.id,
+                    'option': data.option,
+                    'interview_id': data.interview_id
+                };
+                $.ajax({
+                    url: data.url,
+                    data: formData,
+                    type: 'POST',
+                    dataType: 'json',
+                    success: function (response) {
+                        setNotesResponse(response,data.interview_id);
+                        jsMessages('success', 'Note deleted successfully.');
+                    },
+                });
+            }
+        });
+
+
+    };
     const setNotesResponse = function (response) {
         let html = ""
         let index = 1;
         response.data.forEach(element => {
+            let delete_note = ''
+            if(notesEvent.target.getAttribute("data-deleteurl"))
+            {
+                delete_note = '<div class="pull-right ml-auto"><button class="btn btn-danger p-1 delete_notes" data-id="' + element.id + '" data-interview_id="' + element.interview_id + '" data-option="delete_single" data-url="' + notesEvent.target.getAttribute("data-deleteurl") + '" >Delete Note</button></div>';
+            }
             html = html + '<div>Note '+index+': ' + element.note + '</div>';
             html = html + '<div class="d-flex mb-3"><div class="custom-checkbox mr-3"><input type="radio" class="unresolve notes_status" name="status_' + element.id + '" id="unresolve_' + element.id + '" value="0" ' + (element.status ? "" : 'checked="checked"') + ' data-id="' + element.id + '" data-interview_id="' + element.interview_id + '" data-status="0" data-url="' + notesEvent.target.getAttribute("data-updateurl") + '" ></input><label for="unresolve_' + element.id + '">Unresolved</label></div>';
-            html = html + '<div class="custom-checkbox mr-3"><input type="radio" class="resolve notes_status" name="status_' + element.id + '" id="resolve_' + element.id + '" value="1" ' + (element.status ? 'checked="checked"' : "") + ' data-id="' + element.id + '" data-interview_id="' + element.interview_id + '" data-status="1" data-url="' + notesEvent.target.getAttribute("data-updateurl") + '" ></input><label for="resolve_' + element.id + '">Resolved</label></div></div>';
+            html = html + '<div class="custom-checkbox mr-3"><input type="radio" class="resolve notes_status" name="status_' + element.id + '" id="resolve_' + element.id + '" value="1" ' + (element.status ? 'checked="checked"' : "") + ' data-id="' + element.id + '" data-interview_id="' + element.interview_id + '" data-status="1" data-url="' + notesEvent.target.getAttribute("data-updateurl") + '" ></input><label for="resolve_' + element.id + '">Resolved</label></div>'+delete_note+'</div>';
             index = index + 1;
         });
         html = (response.length == 0 ? "There are currently no notes associated with this interview." : html);
         $('#listNotes').html(html);
+        if(response && response.color)
+        {
+            $('.interview_note_'+interview_id).addClass(response.color)
+        }
     }
     const clearImportXmlFile = function () {
         $("#import_xml_file").val(null).trigger("change");
@@ -669,6 +738,7 @@ function InterviewManager() {
             notesEvent = e;
             $("#notesForm").attr("action", $(this).data().url);
             $("#notesForm").attr("data-id", $(this).data().id);
+            $(".exportNotes").attr("href", $(this).data().exporturl);
             $.ajax({
                 url: $(this).data().url,
                 type: 'GET',
