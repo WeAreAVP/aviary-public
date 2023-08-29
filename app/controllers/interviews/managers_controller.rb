@@ -7,7 +7,7 @@ module Interviews
   # ManagerController
   class ManagersController < ApplicationController
     include XMLFileHandler
-
+    include InterviewsHelper
     include Aviary::BulkOperation
     include Aviary::ZipperService
     before_action :authenticate_user!, except: :export
@@ -121,7 +121,15 @@ module Interviews
     def bulk_edit; end
 
     def bulk_interview_edit
-      if params['check_type'] == 'bulk_delete'
+      if params['check_type'] == 'download_notes'
+        csv_rows = export_csv(session[:interview_bulk])
+        filename = "bulkexport_archivednote_#{DateTime.now.strftime('%Y%m%d')}"
+        notes_csv = CSV.generate(headers: true) do |csv|
+          csv_rows.map { |row| csv << row }
+        end
+        send_data notes_csv, filename: "#{filename}.csv", type: 'csv'
+
+      elsif params['check_type'] == 'bulk_delete'
         Interviews::Interview.where(id: session[:interview_bulk]).each(&:destroy) if session[:interview_bulk].present?
         respond_to do |format|
           format.html { redirect_to ohms_records_path, notice: t('updated_successfully') }

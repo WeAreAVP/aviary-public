@@ -55,4 +55,29 @@ module InterviewsHelper
     Rails.logger.error ex.message
     0
   end
+
+  def export_csv(interview_id)
+    interviews = Interviews::Interview.where(id: interview_id)
+    csv_rows = []
+    key = 0
+    csv_rows << ['Sn#', 'OHMS Record Title', 'Interviewee', 'Accession Number', 'Interview Date', 'Collection ID', 'Collection Name', 'Note Content', 'Note Status', 'Export Date']
+    interviews.each do |interview|
+      interview.interview_notes.each do |note|
+        key += 1
+        row = []
+        row << key
+        row << interview.title
+        row << interview.interviewee.join(';;')
+        row << interview.accession_number
+        row << interview.interview_date
+        row << interview.collection_id
+        row << interview.collection_name
+        row << note['note']
+        row << (note['status'] ? 'resolved' : 'unresolved')
+        row << DateTime.now.strftime('%Y-%m-%d').to_s
+        csv_rows << row
+      end
+    end
+    csv_rows
+  end
 end
