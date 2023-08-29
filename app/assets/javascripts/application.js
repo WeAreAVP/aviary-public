@@ -527,14 +527,25 @@ function initToolTip(element){
         $(element).tooltip();
     else
         $('[data-toggle="tooltip"]').tooltip();
+}
 
+function initTooltipAccessibility() {
+    $('button.info-btn').each(function () {
+        if ($(this).data('content') !== '') {
+            $(this).tooltip();
+            $(this).attr('aria-label', $(this).data('content'));
+        }
+    });
 }
 
 function skip_to_content(){
 
     document_level_binding_element('.skiptocontent', 'keyup', function (event) {
         if (event.keyCode === 13 || event.keyCode === 32) {
-            $('.vjs-big-play-button').focus();
+            if ($('.vjs-big-play-button').length)
+                $('.vjs-big-play-button').focus();
+            else
+                $('.focusable:first').focus();
         }
     });
 }
@@ -662,6 +673,7 @@ $(function () {
     }
     resourceSearchBar();
     linkToExternalTab();
+    initTooltipAccessibility();
 });
 
 function dateTimePicker(objectCaller, element, drops) {

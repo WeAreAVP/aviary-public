@@ -161,6 +161,7 @@ button:hover, input[type=submit]:hover {
 .form_in_place input {
   width: 412px !important;
 }
+
 .form-group {
   margin-bottom: 0.5rem;
 }
@@ -217,8 +218,8 @@ a:hover,
 }
 
 .btn-primary {
-  background-color: #204f92;
-  border-color: #204f92;
+  background-color: #000e53;
+  border-color: #000e53;
   color: #fff !important;
 
   &:hover, &:focus, &:active {
@@ -270,7 +271,7 @@ li.admin .dropdown-submenu > a:focus + .dropdown-menu {
 }
 
 .ui-menu {
-  max-height: 100px;
+  max-height: 200px;
   overflow: auto;
 }
 
@@ -343,8 +344,8 @@ li.admin .dropdown-submenu > a:focus + .dropdown-menu {
 
   &:hover {
     opacity: 0.8;
-    background: #28a745;
-    border-color: #28a745;
+    background: #0b2f0f;
+    border-color: #0b2f0f;
   }
 }
 
@@ -400,14 +401,15 @@ li.admin .dropdown-submenu > a:focus + .dropdown-menu {
 }
 
 .btn-danger {
-  background-color: #e12c10 !important;
-  border-color: #e12c10 !important;
+  background-color: #810404 !important;
+  border-color: #810404 !important;
 }
 
 .btn-default {
-  background: #269af2 !important;
-  border-color: #269af2 !important;
+  background: #00127c !important;
+  border-color: #00127c !important;
   color: #fff;
+
   &.focus,
   &:focus {
     box-shadow: 0 0 0 0.2rem rgba(33, 150, 243, 0.5)
@@ -1072,6 +1074,7 @@ li.admin .dropdown-submenu > a:focus + .dropdown-menu {
     color: #000;
     min-width: 230px;
     text-align: left;
+
     &:after {
       position: absolute;
       top: 22px;
@@ -1079,21 +1082,25 @@ li.admin .dropdown-submenu > a:focus + .dropdown-menu {
       border-width: 0.4em;
     }
   }
+
   .dropdown-menu {
     width: 100%;
     min-width: 200px;
-      a {
-        display: block;
-        color: #000;
-        text-decoration: none;
-        padding: 6px 10px;
-        &:hover {
-          background: #f3f3f3;
-        }
-        &[data-select="true"]{
-          background: #f5f5f5;
-        }
+
+    a {
+      display: block;
+      color: #000;
+      text-decoration: none;
+      padding: 6px 10px;
+
+      &:hover {
+        background: #f3f3f3;
       }
+
+      &[data-select="true"] {
+        background: #f5f5f5;
+      }
+    }
   }
 }
 
@@ -2357,7 +2364,7 @@ ul {
 }
 
 .toggle-switch__input:checked + .toggle-switch__slider {
-  background-color: #0a8dc3;
+  background-color: #00127c;
 }
 
 .toggle-switch__input:checked + .toggle-switch__slider::before {

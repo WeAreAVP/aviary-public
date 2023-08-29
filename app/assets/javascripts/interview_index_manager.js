@@ -27,7 +27,7 @@ function InterviewIndexManager() {
         if($('.tokenfield').length > 0){
             const keywords_options = {
                 minLength: 1,
-                delimiter: [';', 'Tab', 'Enter', 'Numpad Enter'],
+                delimiter: [';'],
                 beautify: true,
             }
 
@@ -54,7 +54,7 @@ function InterviewIndexManager() {
 
             const subjects_options = {
                 minLength: 1,
-                delimiter: [';', 'Tab', 'Enter', 'Numpad Enter'],
+                delimiter: [';'],
                 beautify: true,
             }
 
@@ -166,9 +166,6 @@ function InterviewIndexManager() {
                         }
                     }
                     $('.player-section').css('visibility','unset');
-                    setInterval(function () {
-                        $("#current_time").val(player_widget.currentTime());
-                    }, 1000);
                 });
             }
             else
@@ -288,6 +285,9 @@ function InterviewIndexManager() {
                 });
             
             }
+            setInterval(function () {
+                $("#current_time").val(player_widget.currentTime());
+            }, 1000);
         }
         
         

@@ -1,7 +1,7 @@
 <div class="video-detail-holder">
   <div class="video-main carousel slide" data-ride="carousel">
     <div class="carousel-inner">
-      <% if @collection_resource.present? %>
+      <% if @collection_resource.present? && @resource_file.present? %>
         <% if @playlist_show.present? && @playlist_show %>
           <%= render partial: 'playlists/edit/share_playlist' %>
         <% end %>

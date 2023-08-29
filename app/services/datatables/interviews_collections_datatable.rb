@@ -52,8 +52,8 @@ class InterviewsCollectionsDatatable < ApplicationDatatable
   def links(interview)
     group_value = interview['groupValue'].gsub(' ', '_')
     html = '<div class="d-flex align-items-center"><div class="action-btn-holder btn-group">'
-    html += link_to 'Manage Interviews', interview_list_of_collections_path(group_value), class: 'btn-interview btn-sm btn-link'
-    html += link_to 'Export Interviews', interview_export_path(group_value), class: 'btn-interview btn-sm btn-link'
+    html += link_to 'Manage Interviews', interview_list_of_collections_path(group_value), class: 'btn-interview btn-sm btn-default btn-link'
+    html += link_to 'Export Interviews', interview_export_path(group_value), class: 'btn-interview btn-sm btn-default btn-link'
 
     html += '</div><div class="btn-interview-dropdown dropdown d-inline-block">'
 
