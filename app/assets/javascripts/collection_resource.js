@@ -51,7 +51,13 @@ function CollectionResource() {
     selfCR.index_file_count = 0;
     selfCR.transcript_file_count = 0;
     selfCR.auto_loading_inprogress = false;
-    let publicAccessUrl = {};
+  let publicAccessUrl = {};
+    const transcriptTabSelected = new CustomEvent('tabchanged', {
+      detail: { tab: 'transcript' }
+    });
+    const indexTabSelected = new CustomEvent('tabchanged', {
+      detail: { tab: 'index' }
+    });
 
     var annotation = new Annotations();
     var resizeAllowed = true;
@@ -713,17 +719,9 @@ function CollectionResource() {
             }
         });
 
-        document_level_binding_element('#index-tab', 'click', function () {
-            let type = 'index';
+        document.addEventListener('tabchanged', (e) => {
             setTimeout(function () {
-                selfCR.indexes.scroll_to_point(type, '.' + type + '_time_start_' + parseInt(currentTime, 10));
-            }, 50);
-        });
-
-        document_level_binding_element('#transcript-tab', 'click', function () {
-            let type = 'transcript';
-            setTimeout(function () {
-                selfCR.indexes.scroll_to_point(type, '.' + type + '_time_start_' + parseInt(currentTime, 10));
+                selfCR.indexes.scroll_to_point(e.detail.tab, '.' + e.detail.tab + '_time_start_' + parseInt(currentTime, 10));
             }, 50);
         });
 
@@ -1127,6 +1125,12 @@ function CollectionResource() {
                 });
             }
             show_marker_hanlders(currentTab);
+
+            if (currentTab === 'transcript') {
+              document.dispatchEvent(transcriptTabSelected);
+            } else if (currentTab === 'index') {
+              document.dispatchEvent(indexTabSelected);
+            }
         });
         $('.btn-search-result-nav').on('click', function () {
             let tabType = window.location.pathname.substr(window.location.pathname.lastIndexOf('/') + 1);
