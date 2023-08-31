@@ -51,7 +51,7 @@ function CollectionResource() {
     selfCR.index_file_count = 0;
     selfCR.transcript_file_count = 0;
     selfCR.auto_loading_inprogress = false;
-  let publicAccessUrl = {};
+    let publicAccessUrl = {};
     const transcriptTabSelected = new CustomEvent('tabchanged', {
       detail: { tab: 'transcript' }
     });
