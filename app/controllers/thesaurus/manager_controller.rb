@@ -165,7 +165,7 @@ module Thesaurus
       @thesaurus.organization_id = current_organization.id
       @thesaurus.inject_updated_by(current_user)
       if thesaurus_params['ohms_integrations_vocabulary'].present? && thesaurus_params['ohms_integrations_vocabulary'].respond_to?(:read)
-        @thesaurus = write_terms(thesaurus_params['ohms_integrations_vocabulary'], @thesaurus, thesaurus_params[:operation_type].to_s.to_boolean?)
+        write_terms(thesaurus_params['ohms_integrations_vocabulary'], @thesaurus, thesaurus_params[:operation_type].to_s.to_boolean?)
       end
 
       respond_to do |format|
@@ -268,18 +268,8 @@ module Thesaurus
     def write_terms(file, thesaurus, append)
       file_path = "#{Rails.root.join('public', 'reports')}/#{Time.now.to_i}_#{thesaurus.id}_tt.csv"
       File.write(file_path, file.read)
-      ThesaurusTermsWriterWorker.perform_in(1.second, file_path, thesaurus.id, append, current_user.id, params[:action])
-    end
 
-    def manage_terms(thesaurus_terms, thesaurus)
-      if thesaurus_terms.present?
-        ::Thesaurus::ThesaurusTerms.transaction do
-          thesaurus_terms.each do |single_term|
-            ::Thesaurus::ThesaurusTerms.create(thesaurus_information_id: thesaurus.id, term: single_term) unless ::Thesaurus::ThesaurusTerms.where(thesaurus_information_id: thesaurus.id, term: single_term).present?
-          end
-        end
-      end
-      thesaurus
+      ThesaurusTermsWriterWorker.perform_in(1.second, file_path, thesaurus.id, append, current_user.id, params[:action])
     end
   end
 end
