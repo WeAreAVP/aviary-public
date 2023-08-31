@@ -554,7 +554,7 @@ function InterviewManager() {
 
 
     };
-    const setNotesResponse = function (response) {
+    const setNotesResponse = function (response, interview_id = 0) {
         let html = ""
         let index = 1;
         response.data.forEach(element => {
@@ -570,7 +570,7 @@ function InterviewManager() {
         });
         html = (response.length == 0 ? "There are currently no notes associated with this interview." : html);
         $('#listNotes').html(html);
-        if(response && response.color)
+        if(response && response.color && interview_id)
         {
             $('.interview_note_'+interview_id).addClass(response.color)
         }
