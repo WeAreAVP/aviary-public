@@ -7,6 +7,7 @@ module Interviews
   # NoteController
   class NotesController < ApplicationController
     before_action :authenticate_user!
+    include InterviewsHelper
     # GET /interview/notes
     # GET /interview/notes.json
     def index
@@ -56,6 +57,39 @@ module Interviews
       respond_to do |format|
         format.html
         format.json { render json: { data: interview_notes, color: color(interview) } }
+      end
+    end
+
+    # GET /interview/note/export
+    # GET /interview/note/export.json
+    def export
+      authorize! :manage, Interviews::Interview
+      interview = Interview.find(params[:id])
+      csv_rows = export_csv(params[:id])
+      filename = 'OHMSRecordTitle_archivednote'
+      filename = interview.miscellaneous_ohms_xml_filename.split('.').try(:first) if interview.miscellaneous_ohms_xml_filename.present?
+      notes_csv = CSV.generate(headers: true) do |csv|
+        csv_rows.map { |row| csv << row }
+      end
+      send_data notes_csv, filename: "#{filename}.csv", type: 'csv'
+    end
+
+    def delete
+      authorize! :manage, Interviews::Interview
+      case params[:option]
+      when 'delete_single'
+        interview_notes = InterviewNote.find(params[:id])
+        interview_notes.destroy
+        interview = Interview.find(interview_notes.interview_id)
+        interview.reindex
+      when 'delete_all'
+        interview = Interview.find(params[:id])
+        interview.interview_notes.destroy_all
+        interview.reindex
+      end
+      respond_to do |format|
+        format.html
+        format.json { render json: { data: interview.interview_notes, color: color(interview) } }
       end
     end
 

@@ -75,7 +75,7 @@ Requirements
 
 *  **OS**: >= Ubuntu 20.04
 *  **Ruby**: 3.1.0
-*  **Rails**: 6.1.7.4
+*  **Rails**: 6.1.7.6
 *  **Nginx**
 *  **Puma**
 *  **MySQL**: >=5.7.x
