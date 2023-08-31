@@ -39,6 +39,7 @@ class FileIndex < ApplicationRecord
     return if associated_file.present? && associated_file.queued_for_write[:original].nil?
     file_content_type = associated_file.queued_for_write[:original].content_type
     if ['application/xml', 'text/xml'].include? file_content_type
+      associated_file.instance_write(:content_type, file_content_type.gsub('application', 'text')) if file_content_type.include?('application')
       doc = Nokogiri::XML(File.read(associated_file.queued_for_write[:original].path))
       error_messages = xml_validation(doc, 'index')
       error_messages.each do |error|
