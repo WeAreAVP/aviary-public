@@ -150,9 +150,7 @@ module Thesaurus
       @thesaurus.inject_updated_by(current_user)
       respond_to do |format|
         if @thesaurus.save
-          @thesaurus = over_write_terms(thesaurus_params['ohms_integrations_vocabulary'], @thesaurus)
-          @thesaurus.number_of_terms = ::Thesaurus::ThesaurusTerms.where(thesaurus_information_id: @thesaurus.id).count
-          @thesaurus.save
+          write_terms(thesaurus_params['ohms_integrations_vocabulary'], @thesaurus, false) if thesaurus_params['ohms_integrations_vocabulary'].present?
           format.html { redirect_to edit_thesaurus_manager_path(@thesaurus.id), notice: 'Ohms Thesaurus  created successfully.' }
           format.json { render json: { msg: 'Thesaurus  created successfully.', id: @thesaurus.id } }
         else
@@ -165,15 +163,11 @@ module Thesaurus
     def update
       authorize! :manage, current_organization
       @thesaurus.organization_id = current_organization.id
-      if thesaurus_params['ohms_integrations_vocabulary'].present? && thesaurus_params['ohms_integrations_vocabulary'].respond_to?(:read)
-        @thesaurus = if thesaurus_params[:operation_type] == '0'
-                       over_write_terms(thesaurus_params['ohms_integrations_vocabulary'], @thesaurus)
-                     elsif thesaurus_params[:operation_type] == '1'
-                       append_terms(thesaurus_params['ohms_integrations_vocabulary'], @thesaurus)
-                     end
-      end
-      @thesaurus.number_of_terms = ::Thesaurus::ThesaurusTerms.where(thesaurus_information_id: @thesaurus.id).count
       @thesaurus.inject_updated_by(current_user)
+      if thesaurus_params['ohms_integrations_vocabulary'].present? && thesaurus_params['ohms_integrations_vocabulary'].respond_to?(:read)
+        write_terms(thesaurus_params['ohms_integrations_vocabulary'], @thesaurus, thesaurus_params[:operation_type].to_s.to_boolean?)
+      end
+
       respond_to do |format|
         if @thesaurus.update(thesaurus_params)
           format.html { redirect_to edit_thesaurus_manager_path(@thesaurus.id), notice: 'Thesaurus  created successfully.' }
@@ -271,35 +265,11 @@ module Thesaurus
       @thesaurus = id.present? ? ::Thesaurus::Thesaurus.find_by_id(id) : nil
     end
 
-    def over_write_terms(file, thesaurus)
-      thesaurus_terms = if file.present?
-                          file.respond_to?(:read) ? CSV.foreach(file.path, encoding: 'iso-8859-1:utf-8').map { |row| row[0] } : []
-                        else
-                          []
-                        end
-      all_terms = ::Thesaurus::ThesaurusTerms.where(thesaurus_information_id: thesaurus.id)
-      all_terms.destroy_all if all_terms.present?
-      manage_terms(thesaurus_terms.compact, thesaurus)
-    end
+    def write_terms(file, thesaurus, append)
+      file_path = "#{Rails.root.join('public', 'reports')}/#{Time.now.to_i}_#{thesaurus.id}_tt.csv"
+      File.write(file_path, file.read)
 
-    def append_terms(file, thesaurus)
-      thesaurus_terms = if file.present?
-                          file.respond_to?(:read) ? CSV.foreach(file.path, encoding: 'iso-8859-1:utf-8').map { |row| row[0] } : []
-                        else
-                          []
-                        end
-      manage_terms(thesaurus_terms.compact, thesaurus)
-    end
-
-    def manage_terms(thesaurus_terms, thesaurus)
-      if thesaurus_terms.present?
-        ::Thesaurus::ThesaurusTerms.transaction do
-          thesaurus_terms.each do |single_term|
-            ::Thesaurus::ThesaurusTerms.create(thesaurus_information_id: thesaurus.id, term: single_term) unless ::Thesaurus::ThesaurusTerms.where(thesaurus_information_id: thesaurus.id, term: single_term).present?
-          end
-        end
-      end
-      thesaurus
+      ThesaurusTermsWriterWorker.perform_in(1.second, file_path, thesaurus.id, append, current_user.id, params[:action])
     end
   end
 end
