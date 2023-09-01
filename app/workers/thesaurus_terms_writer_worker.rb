@@ -67,4 +67,3 @@ class ThesaurusTermsWriterWorker
     UserMailer.notification_alert(User.find(user_id), notification).deliver_now
   end
 end
-
