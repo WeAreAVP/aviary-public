@@ -1,0 +1,12 @@
+<div class="breadcrumb">
+  <%if request.url.include?("ohms") %>
+  <a href="/organization_fields?activetab=organization_thesaurus_content&type=ohms">OHMS Thesaurus Manager</a> » 
+  <%else%>
+  <a href="/organization_fields">Fields Configuration</a> » <a href="/organization_fields#organization_thesaurus_content">Thesaurus</a> » 
+  <%end%>
+  <%if request.url.include?("edit") %>
+  <a class="active" href="javascript:void(0);" aria-current="page" '="">Edit Thesaurus</a>
+  <%else%>
+  <a class="active" href="javascript:void(0);" aria-current="page" '="">Create Thesaurus</a>
+  <%end%>
+</div>  
