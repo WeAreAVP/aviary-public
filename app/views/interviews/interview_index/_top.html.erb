@@ -101,7 +101,7 @@
   </div>
   <% end %>
   <% if params[:action] == "show" || params[:action] == "show_index"  %>
-  <%= link_to 'Add Tag', 'javascript://', class: 'btn btn-outline-dark btn-block pull-left add_tag', data: { url: ohms_index_new_path } %>
+  <%= link_to 'Add Index Segment', 'javascript://', class: 'btn btn-outline-dark btn-block pull-left add_tag', data: { url: ohms_index_new_path } %>
   <% end %>
 <% else %>
   <div id="media_host" data-host="" style="width: 75%;" >
@@ -109,9 +109,9 @@
     <%= render partial: 'collection_resources/show/mediaplayer', locals: { single_file: @resource_file, is_audio_only: is_audio_only } %>
     <% if params[:action] == "show" || params[:action] == "show_index"  %>
       <% if @file_index.present? %>
-        <%= link_to 'Add Tag', 'javascript://', class: 'btn btn-primary btn-xs pull-left mt-2 add_tag', data: { url: add_index_file_path(@resource_file.id, @file_index.id) } %>
+        <%= link_to 'Add Index Segment', 'javascript://', class: 'btn btn-primary btn-xs pull-left mt-2 add_tag', data: { url: add_index_file_path(@resource_file.id, @file_index.id) } %>
       <% else %>
-        <%= link_to 'Add Tag', 'javascript://', class: 'btn btn-primary btn-xs pull-left mt-2 add_tag', data: { url: add_index_path(@resource_file.id) } %>
+        <%= link_to 'Add Index Segment', 'javascript://', class: 'btn btn-primary btn-xs pull-left mt-2 add_tag', data: { url: add_index_path(@resource_file.id) } %>
       <% end %>
     <% end %>
   </div>
