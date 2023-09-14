@@ -33,7 +33,7 @@
           <% end %>
         <% end %>
         <% if @can_access_transcript %>
-          <div class="transcript_html_information">
+          <div class="transcript_html_information" dir="<%=check_rtl_language(@file_transcript.language)%>">
           </div>
           <textarea class="transcript_time_wise d-none"><%== @transcript_time_wise.present? ? @transcript_time_wise.to_h.to_json : '{}' %></textarea>
           <textarea class="transcript_count d-none"><%== @transcript_count.present? ? @transcript_count.to_h.to_json : '{}' %></textarea>
