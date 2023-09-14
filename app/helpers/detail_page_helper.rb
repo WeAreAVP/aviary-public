@@ -30,6 +30,11 @@ module DetailPageHelper
     </div>".html_safe
   end
 
+  def check_rtl_language(language_code)
+    rtl = %w[ar arc dv fa ha he khw ks ku ps ur yi]
+    (rtl.include?(language_code) ? 'rtl' : '')
+  end
+
   def count_transcript_occurrence(transcript_point, single_keyword, transcript_count, is_file_wise, counter, annotation_search_count, all_annotations)
     transcript_point_sum = count_em(transcript_point.text, single_keyword) + count_em(transcript_point.speaker, single_keyword)
 
