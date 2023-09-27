@@ -5,7 +5,7 @@
         <%= render_breadcrumbs %>
       </div>
       <div class="text-headline jumbotron m-0">
-        <div class="mb-4 border-bottom pb-4 top-index-interview">
+        <div class="mb-2 border-bottom pb-4 top-index-interview">
           <div class="row">
             <div class="col-md-6">
               <div class="heading-holder table-head m-0">
@@ -48,6 +48,12 @@
         <div class="row">
           <div class="col-md-6">
             <div class="accordion interview-accordion" id="accordionIndex">
+              <div class="mb-2">
+                <button class="btn btn-outline-primary btn-down" type="button" id="toggle_all">
+                  Expand All
+                </button>
+              </div>
+
               <% @file_index_point.sort_by { |t| t.start_time.to_f }.each_with_index do |data, index| %>
                 <% if @interview.present? %>
                   <%
@@ -64,7 +70,26 @@
                         <i class="fa fa-angle-down"></i>
                       </button>
                       <div>
-                        <div class="segment-title"><%= data.title %> <%= @file_index_point_alt.present? && !@file_index_point_alt.first.title.blank? ? " | #{@file_index_point_alt.first.title}" : "" %></div>
+                        <div class="segment-title">
+                          <div class="title">
+                            <span id="file_index_point_title_<%= data.id %>"><%= data.title %></span>
+                            <%= @file_index_point_alt.present? && !@file_index_point_alt.first.title.blank? ? " | #{@file_index_point_alt.first.title}" : "" %>
+                          </div>
+
+                          <div class="edit_title d-none" style="position: relative;">
+                            <%= simple_form_for data, html: { id: "save_file_index_point_title_form_#{data.id}" }, url: update_index_point_title_path(data.id) do |f| %>
+                              <%= f.input :title, required: true, label: false, input_html: { class: 'form-control', id: "edit_file_index_point_title_#{data.id}" }, value: data.title  %>
+                              <input class="save_index_title btn btn-outline-primary" type="submit" value="Save" data-file-index-point-id="<%= data.id %>"
+                                 style="
+                                  position: absolute;
+                                  top: 0;
+                                  right: 0;
+                                  height: 100%;
+                                  border-color: #204f92;"
+                              >
+                            <% end %>
+                          </div>
+                        </div>
                         <div class="segment-duration play-timecode" data-timecode="<%= data.start_time %>"><%= time_to_duration(data.start_time) %></div>
                       </div>
                       <div class="d-flex">

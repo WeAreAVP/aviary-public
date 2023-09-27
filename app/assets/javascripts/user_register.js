@@ -92,7 +92,7 @@ function UserRegister() {
             $(parent_container + ' .validation_special_character').removeClass('valid-signup').addClass('invalid-signup');
             $(parent_container + ' .validation_special_character i').removeClass('fa-check').addClass('fa-times').attr("aria-label","invalid");
         }
-        if (pswd.match(/[#()_+=<>/"'{}\[\]\\|`~;:\^\-]/)) {
+        if (pswd === '' || pswd.match(/[#()_+=<>/"'{}\[\]\\|`~;:\^\-]/)) {
             flag = false;
             $(parent_container + ' .validation_can_only_have_special_character').removeClass('valid-signup').addClass('invalid-signup');
             $(parent_container + ' .validation_can_only_have_special_character i').removeClass('fa-check').addClass('fa-times').attr("aria-label","invalid");
