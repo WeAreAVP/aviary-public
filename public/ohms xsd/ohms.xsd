@@ -57,7 +57,7 @@
                                                     <xs:enumeration value="SoundCloud" />
                                                     <xs:enumeration value="Vimeo" />
                                                     <xs:enumeration value="YouTube" />
-
+                                                    <xs:enumeration value="" />
                                                     <xs:enumeration value="Other" />
                                                 </xs:restriction>
                                             </xs:simpleType>
@@ -71,6 +71,7 @@
                                                 <xs:restriction base="xs:string">
                                                     <xs:enumeration value="audio" />
                                                     <xs:enumeration value="video" />
+                                                    <xs:enumeration value="" />
                                                 </xs:restriction>
                                             </xs:simpleType>
                                         </xs:element>
