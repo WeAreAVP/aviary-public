@@ -142,23 +142,25 @@ module Blacklight::FacetsHelperBehavior
   def render_facet_value(facet_field, item, _options = {})
     path = path_for_facet(facet_field, item)
 
-    "<input type='checkbox' class='checked-facets m-r ' data-linkremove='#{path}&update_facets=true'/>".html_safe + content_tag(:span, class: 'facet-label facet_value_custom') do
-      if %w[access_restricted access_public access_private public_resource_restricted_content].include?(facet_display_value(facet_field, item))
-        case facet_display_value(facet_field, item).to_s
-        when 'access_restricted'
-          'Restricted Resource'
-        when 'access_public'
-          'Public Resource'
-        when 'access_private'
-          'Private Resource'
-        when 'public_resource_restricted_content'
-          'Public Resource w/ restricted content'
-        else
-          facet_display_value(facet_field, item).to_s.titleize
-        end
-      else
-        facet_display_value(facet_field, item).to_s
-      end
+    name = if %w[access_restricted access_public access_private public_resource_restricted_content].include?(facet_display_value(facet_field, item))
+             case facet_display_value(facet_field, item).to_s
+             when 'access_restricted'
+               'Restricted Resource'
+             when 'access_public'
+               'Public Resource'
+             when 'access_private'
+               'Private Resource'
+             when 'public_resource_restricted_content'
+               'Public Resource w/ restricted content'
+             else
+               facet_display_value(facet_field, item).to_s.html_safe
+             end
+           else
+             facet_display_value(facet_field, item).to_s.html_safe
+           end
+
+    "<input type='checkbox' class='checked-facets m-r ' data-linkremove='#{path}&update_facets=true' aria-label='#{name},' />".html_safe + content_tag(:span, class: 'facet-label facet_value_custom') do
+      name
     end + render_facet_count(item.hits)
   end
 
@@ -183,7 +185,7 @@ module Blacklight::FacetsHelperBehavior
   # @param [String] item
   def render_selected_facet_value(facet_field, item)
     remove_href = search_action_path(search_state.remove_facet_params(facet_field, item))
-    "<input type='checkbox' checked='checked' class='checked-facets mr-3 ' data-linkremove='#{remove_href}'/>".html_safe + content_tag(:span, class: 'facet-label 2') do
+    "<input type='checkbox' checked='checked' class='checked-facets mr-3 ' data-linkremove='#{remove_href}' aria-label='#{facet_display_value(facet_field, item)},' />".html_safe + content_tag(:span, class: 'facet-label 2') do
       content_tag(:span, facet_display_value(facet_field, item).to_s, class: 'selected facet_value_custom') +
         # remove link
         # link_to(remove_href, class: "remove") do

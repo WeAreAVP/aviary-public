@@ -58,6 +58,7 @@
                                                     <xs:enumeration value="Vimeo" />
                                                     <xs:enumeration value="YouTube" />
                                                     <xs:enumeration value="Other" />
+                                                    <xs:enumeration value="" />
                                                 </xs:restriction>
                                             </xs:simpleType>
                                         </xs:element>
@@ -70,6 +71,7 @@
                                                 <xs:restriction base="xs:string">
                                                     <xs:enumeration value="audio" />
                                                     <xs:enumeration value="video" />
+                                                    <xs:enumeration value="" />
                                                 </xs:restriction>
                                             </xs:simpleType>
                                         </xs:element>
@@ -159,5 +161,3 @@
         </xs:complexType>
     </xs:element>
 </xs:schema>
-
-
