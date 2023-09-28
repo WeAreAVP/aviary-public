@@ -176,6 +176,18 @@ class IndexesController < ApplicationController
     @thesaurus_subjects = thesaurus_settings.thesaurus_subjects if thesaurus_settings.present?
   end
 
+  def update_index_point_title
+    authorize! :manage, current_organization
+    @file_index_point = FileIndexPoint.find(params[:file_index_point_id])
+    @file_index_point.title = params[:file_index_point][:title]
+
+    if @file_index_point.save
+      render json: { message: 'File Index Poinst title updated successfully.', status: 'success' }
+    else
+      render json: { message: 'Unable to update File Index Point title.', status: 'danger' }
+    end
+  end
+
   # Never trust parameters from the scary internet, only allow the white list through.
   def file_index_params
     params.require(:file_index).permit(:title, :associated_file, :is_public, :language, :description)
