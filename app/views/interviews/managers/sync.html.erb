@@ -79,7 +79,11 @@
                             notes.each do | note |
                               tag = note.split('-')
                               temp = "<sup&nbsp;id=\"sup#{tag[0]}\"><a&nbsp;href=\"#footnote#{tag[0]}\"&nbsp;class=\"note_sup\">#{tag[0]}</a></sup>".html_safe
-                              list_line[line_index+ (counter-1)].insert((tag[1].to_i+prv_length),temp)
+                              begin
+                                list_line[line_index+ (counter-1)].insert((tag[1].to_i+prv_length),temp)
+                              rescue => exception
+
+                              end
                               prv_length = prv_length + (temp.length)
                             end
                           end
@@ -125,8 +129,7 @@
                         <% end %>
                       </div>
                       <% if @data_translation.length > counter_translation %>
-                        <span class="transcript_point_code text-dark transcript_point_code_<%= hms_to_number(single_point[:end_time]) %>" data-timecode="<%= hms_to_number(single_point[:end_time]) %>">[<%= single_point[:end_time] %>
-                          ]</span>
+                        <span class="transcript_point_code text-dark transcript_point_code_<%= hms_to_number(single_point[:end_time]) %>" data-timecode="<%= hms_to_number(single_point[:end_time]) %>">[<%= single_point[:end_time] %>]</span>
                       <% end %>
                       <% counter_translation = counter_translation + 1 %>
 
