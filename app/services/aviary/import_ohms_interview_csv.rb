@@ -75,7 +75,7 @@ module Aviary
       interview.usage_statement = csv_raw['Usage'].present? ? csv_raw['Usage'] : ''
       interview.acknowledgment = csv_raw['Acknowledgement'].present? ? csv_raw['Acknowledgement'] : ''
       interview.language_info = csv_raw['Language'].present? ? csv_raw['Language'] : ''
-      interview.include_language = (csv_raw['Include Translation'].present? && csv_raw['Include Translation'] == 'yes')
+      interview.include_language = ((csv_raw['Include Translation'].present? && csv_raw['Include Translation'] == 'yes') || csv_raw['Include Translation'].present?)
 
       interview.language_for_translation = csv_raw['Language for Translation'].present? ? csv_raw['Language for Translation'] : 'Undefined'
       interview.miscellaneous_cms_record_id = csv_raw['CMS Record ID'].present? ? csv_raw['CMS Record ID'] : ''

@@ -42,7 +42,7 @@
       </div>
       <%= f.input :synopsis, required: false, label: false, input_html: { class: 'form-control title ohm_synopsis' } %>
     </div>
-    <% if @interview.present? &&  @interview.include_language %>
+    <% if @interview.present? &&  @interview.include_language && @file_index_point.gps_description_alt.present? && JSON.parse(@file_index_point.gps_description_alt).present?  %>
     <div class="form-group">
       <div class="field-title">
         <%= f.label :title do %>

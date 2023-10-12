@@ -125,8 +125,7 @@
                         <% end %>
                       </div>
                       <% if @data_translation.length > counter_translation %>
-                        <span class="transcript_point_code text-dark transcript_point_code_<%= hms_to_number(single_point[:end_time]) %>" data-timecode="<%= hms_to_number(single_point[:end_time]) %>">[<%= single_point[:end_time] %>
-                          ]</span>
+                        <span class="transcript_point_code text-dark transcript_point_code_<%= hms_to_number(single_point[:end_time]) %>" data-timecode="<%= hms_to_number(single_point[:end_time]) %>">[<%= single_point[:end_time] %>]</span>
                       <% end %>
                       <% counter_translation = counter_translation + 1 %>
 
