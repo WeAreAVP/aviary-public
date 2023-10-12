@@ -79,7 +79,11 @@
                             notes.each do | note |
                               tag = note.split('-')
                               temp = "<sup&nbsp;id=\"sup#{tag[0]}\"><a&nbsp;href=\"#footnote#{tag[0]}\"&nbsp;class=\"note_sup\">#{tag[0]}</a></sup>".html_safe
-                              list_line[line_index+ (counter-1)].insert((tag[1].to_i+prv_length),temp)
+                              begin
+                                list_line[line_index+ (counter-1)].insert((tag[1].to_i+prv_length),temp)
+                              rescue => exception
+
+                              end
                               prv_length = prv_length + (temp.length)
                             end
                           end
