@@ -79,8 +79,26 @@
                 <% end %>
               </div>
               <div class="save_btn">
-                <%= f.submit 'Save & Close', class: 'btn btn-success' %>
-                <%= f.submit 'Save & Create New', class: 'btn btn-success save_and_new' %>
+                <div class="d-flex">
+                  <% if params[:action] == 'edit' %>
+                    <a class="h-30px d-inline-block mr-2 <%= @previous_index_point.nil? ? 'disable_btn' : '' %>"
+                      href="<%= @previous_index_point.nil? ? 'javascript:void(0)' : edit_interviews_interview_index_path(@previous_index_point.id) %>"
+                      aria-label="Go to previous index segment <%= @previous_index_point.nil? ? '; disabled' : '' %>">
+                      <img class="h-30px" src="<%= image_url('arrow-previous-icon.png') %>" alt="Go to previous index segment">
+                    </a>
+                  <% end %>
+
+                  <%= f.submit 'Save & Close', class: 'btn btn-success mr-2' %>
+                  <%= f.submit 'Save & Create New', class: 'btn btn-success save_and_new' %>
+
+                  <% if params[:action] == 'edit' %>
+                    <a class="h-30px d-inline-block ml-2 <%= @next_index_point.nil? ? 'disable_btn': ''  %>"
+                      href="<%= @next_index_point.nil? ? 'javascript:void(0)': edit_interviews_interview_index_path(@next_index_point.id)  %>"
+                      aria-label="Go to next index segment <%= @next_index_point.nil? ? '; disabled' : '' %>">
+                      <img class="h-30px" src="<%= image_url('arrow-next-icon.png') %>" alt="Go to next index segment">
+                    </a>
+                  <% end %>
+                </div>
               </div>
             </div>
           </div>
