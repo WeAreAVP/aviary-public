@@ -240,7 +240,8 @@ module Aviary
               temp = "[[footnote]]#{tag[0]}[[/footnote]]"
               begin
                 text_list[single_index].insert((tag[1].to_i + prv_length), temp)
-              rescue StandardError
+              rescue StandardError => ex
+                Failure(ex.message)
               end
               prv_length += temp.length
             end
