@@ -382,7 +382,68 @@ function InterviewIndexManager() {
                 $('.interview_index_manager').attr("action",url+"?new=1");
             }
         }, true);
+
+        document_level_binding_element('#toggle_all', 'click', function () {
+            if ($(this).text().trim() === 'Expand All') {
+                $('#accordionIndex div[id^="collapse_"]').addClass('show');
+                $('#accordionIndex div[id^="collapse_"]').removeClass('collapse');
+                $('.btn-collapse').removeClass('collapsed');
+                $('.btn-collapse').attr('aria-expanded', true);
+                $(this).removeClass('btn-down');
+                $(this).addClass('btn-up');
+                $(this).text('Collapse All');
+            } else {
+                $('#accordionIndex div[id^="collapse_"]').removeClass('show');
+                $('#accordionIndex div[id^="collapse_"]').addClass('collapse');
+                $('.btn-collapse').addClass('collapsed');
+                $('.btn-collapse').attr('aria-expanded', false);
+                $(this).removeClass('btn-up');
+                $(this).addClass('btn-down');
+                $(this).text('Expand All')
+            }
+        });
+
+        document_level_binding_element('.segment-title', 'click', function (event) {
+            event.stopPropagation();
+            hideAllSegmentTitleInputs();
+
+            $(this).find('.title').addClass('d-none');
+            $(this).find('.edit_title').removeClass('d-none');
+        });
+
+        $(window).click('click', hideAllSegmentTitleInputs);
+
+        document_level_binding_element('.save_index_title', 'click', function (event) {
+            event.preventDefault();
+
+            const fileIndexPointId = $(this).data('fileIndexPointId');
+            if ($(`#file_index_point_title_${fileIndexPointId}`).text() === $(`#edit_file_index_point_title_${fileIndexPointId}`).val())
+                return;
+
+            $.ajax({
+                url: $(`#save_file_index_point_title_form_${fileIndexPointId}`)[0].action,
+                data: $(`#save_file_index_point_title_form_${fileIndexPointId}`).serialize(),
+                type: 'POST',
+                success: function (response) {
+                    jsMessages(response.status, response.message);
+                    $(`#file_index_point_title_${fileIndexPointId}`).text(
+                        $(`#edit_file_index_point_title_${fileIndexPointId}`).val()
+                    );
+                    hideAllSegmentTitleInputs();
+                },
+                error: function (error) {
+                    jsMessages('danger', error);
+                }
+            });
+        });
     };
+
+    function hideAllSegmentTitleInputs() {
+        formChange = 0;
+        $('.segment-title .title').removeClass('d-none');
+        $('.segment-title .edit_title').addClass('d-none');
+    }  
+
     function unloadPage(){ 
         if(formChange == 1){
             return "Are you sure you want to leave with unsaved changes?";

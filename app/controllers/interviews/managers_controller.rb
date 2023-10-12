@@ -288,7 +288,11 @@ module Interviews
           format.any { redirect_to ohms_records_path, notice: 'Something went wrong. Please try again later.' }
         end
       else
-        file_name = interview.miscellaneous_ohms_xml_filename.empty? ? interview.title : interview.miscellaneous_ohms_xml_filename.gsub(/\s+/, '_')
+        file_name = if interview.miscellaneous_ohms_xml_filename.empty?
+                      interview.accession_number.empty? ? interview.title : interview.accession_number
+                    else
+                      interview.miscellaneous_ohms_xml_filename.gsub(/\s+/, '_').gsub(/.xml$/, '')
+                    end
 
         respond_to do |format|
           format.xml { send_data(export_text.to_xml, filename: "#{file_name}.xml") }

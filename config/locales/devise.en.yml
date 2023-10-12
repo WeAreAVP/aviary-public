@@ -39,7 +39,7 @@ en:
       send_paranoid_instructions: "If your email address exists in our database, you will receive a password recovery link at your email address in a few minutes."
       updated: "Your password has been changed successfully. You are now signed in."
       updated_not_active: "Your password has been changed successfully."
-      too_short: "Password must be at least 4 characters long"
+      too_short: "Password must have at least 8 characters long"
       confirmation: "Your passwords do not match"
     registrations:
       destroyed: "Bye! Your account has been successfully cancelled. We hope to see you again soon."
@@ -60,7 +60,7 @@ en:
   errors:
     messages:
       taken: "Email has already been taken"
-      too_short: "Password must be at least 4 characters long"
+      too_short: "Password must have at least 8 characters long"
       confirmation: "Your passwords do not match"
       already_confirmed: "was already confirmed, please try signing in"
       confirmation_period_expired: "needs to be confirmed within %{period}, please request a new one"
