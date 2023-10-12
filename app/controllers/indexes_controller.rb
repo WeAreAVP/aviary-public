@@ -182,7 +182,7 @@ class IndexesController < ApplicationController
     @file_index_point.title = params[:file_index_point][:title]
 
     if @file_index_point.save
-      render json: { message: 'File Index Poinst title updated successfully.', status: 'success' }
+      render json: { message: 'Index Segment Title updated successfully.', status: 'success' }
     else
       render json: { message: 'Unable to update File Index Point title.', status: 'danger' }
     end
