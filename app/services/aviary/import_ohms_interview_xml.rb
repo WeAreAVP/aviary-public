@@ -125,6 +125,9 @@ module Aviary
         file_index_alt.save(validate: false)
         FileIndexPoint.where(file_index_id: file_index_alt.id).destroy_all
       end
+      unless xml_data['index']['point'].is_a?(Array)
+        xml_data['index']['point'] = [xml_data['index']['point']]
+      end
       xml_data['index']['point'].each do |point|
         file_index_point = FileIndexPoint.new
         file_index_point.file_index_id = file_index.id

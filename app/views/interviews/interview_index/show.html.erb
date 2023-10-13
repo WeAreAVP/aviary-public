@@ -79,7 +79,7 @@
                           <div class="edit_title d-none" style="position: relative;">
                             <%= simple_form_for data, html: { id: "save_file_index_point_title_form_#{data.id}" }, url: update_index_point_title_path(data.id) do |f| %>
                               <%= f.input :title, required: true, label: false, input_html: { class: 'form-control', id: "edit_file_index_point_title_#{data.id}" }, value: data.title  %>
-                              <input class="save_index_title btn btn-outline-primary" type="submit" value="Save" data-file-index-point-id="<%= data.id %>"
+                              <input class="save_index_title btn btn-primary" type="submit" value="Save" data-file-index-point-id="<%= data.id %>"
                                  style="
                                   position: absolute;
                                   top: 0;

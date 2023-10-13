@@ -351,7 +351,7 @@ module Interviews
       fq_filters = ' document_type_ss:interview  '
 
       if params[:collection_id].present?
-        fq_filters += " AND collection_id_series_id_ss:\"#{params[:collection_id].gsub('_', ' ')}\" "
+        fq_filters += " AND collection_id_series_id_ss:\"#{params[:collection_id].gsub('+', ' ')}\" "
       end
       if export_and_current_organization[:organization_user].present? && export_and_current_organization[:organization_user].role.system_name == 'ohms_assigned_user'
         fq_filters += " AND ohms_assigned_user_id_is:#{export_and_current_organization[:organization_user]['user_id']} "
