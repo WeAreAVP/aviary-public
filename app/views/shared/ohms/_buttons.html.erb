@@ -19,7 +19,7 @@ html += '<input type="submit" name="commit" value="Save" class="btn-interview bt
 
 collection = Interviews::Interview.collection_series(@interview).strip
 if collection.present?
-  collection = collection.gsub(' ', '_')
+  collection = collection.gsub(' ', '+')
   html += link_to 'Collection', interview_list_of_collections_path(collection), class: 'btn-interview btn btn-collection'
 end
 
