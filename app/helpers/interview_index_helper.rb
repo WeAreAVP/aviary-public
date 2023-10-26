@@ -158,6 +158,59 @@ module InterviewIndexHelper
     file_index_point
   end
 
+  def select_file_index_points(file_index_points, file_index_point)
+    if file_index_points.present? && file_index_points.is_a?(Enumerable)
+      return file_index_points
+    end
+
+    file_index_point.present? && file_index_point.is_a?(Enumerable) ? file_index_point : []
+  end
+
+  def render_index_timeline(total_duration, index_points, active_point_id)
+    html = ''
+
+    index_points = index_points.sort_by { |t| t.start_time.to_f }
+    index_points.each_with_index do |point, index|
+      if index == 0 && point.start_time != 0
+        width = point.start_time / total_duration * 100
+        html += index_segment(index, width, point, true) if width > 0
+      end
+
+      index_duration = (point.end_time || index_points[index + 1]&.start_time ||
+        total_duration) - point.start_time
+
+      width = index_duration / total_duration * 100
+      html += index_segment(index, width, point, false, point.id == active_point_id.to_i)
+
+      next_starting_time = index_points[index + 1]&.start_time || total_duration
+      if point.end_time.present? && point.end_time != next_starting_time
+        index_duration = next_starting_time - point.end_time
+        width = index_duration / total_duration * 100
+
+        html += index_segment(index, width, point, true) if width > 0
+      end
+    end
+
+    html
+  end
+
+  def index_segment(index, width, point, disabled = false, active = false)
+    if disabled
+      <<-HTML
+        <div class="index-segment-disabled bg-secondary"
+          style="width: #{width.floor(2)}%;">
+        </div>
+      HTML
+    else
+      <<-HTML
+        <div class="index-segment #{'active' if active}" data-title="#{time_to_duration(point.start_time)} #{point.title}"
+          style="width: #{width.round(2) < 1 ? 1 : width.ceil(2)}%;"
+          data-target="collapse_#{index}">
+        </div>
+      HTML
+    end
+  end
+
   def adjacent_index_points
     next_index_point = previous_index_point = nil
 

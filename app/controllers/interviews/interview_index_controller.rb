@@ -21,6 +21,7 @@ module Interviews
     def new
       authorize! :manage, Interviews::Interview
       @interview = Interview.find(params[:id])
+      @file_index_points = FileIndexPoint.where(file_index_id: @interview.file_indexes&.first&.id)
       @file_index_point = FileIndexPoint.new
       set_thesaurus
       OhmsBreadcrumbPresenter.new(@interview, view_context).breadcrumb_manager('edit', @interview, 'index')
@@ -44,6 +45,7 @@ module Interviews
       @file_index_point = FileIndexPoint.find(params[:id])
       @file_index = FileIndex.find(@file_index_point.file_index_id)
       @interview = Interview.find(@file_index.interview_id)
+      @file_index_points = FileIndexPoint.where(file_index_id: @interview.file_indexes&.first&.id)
       set_thesaurus
       OhmsBreadcrumbPresenter.new(@interview, view_context).breadcrumb_manager('edit', @interview, 'index')
 

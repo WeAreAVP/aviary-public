@@ -937,3 +937,67 @@ td:has(> select.assign_user) {
   text-align: center;
   width: -webkit-fill-available;
 }
+
+@keyframes pulse {
+  0% { opacity: 0; }
+  50% { opacity: 0.5; }
+  100% { opacity: 0; }
+}
+
+.highlight {
+  background-color: #ece4bc;
+  animation-name: pulse;
+  animation-duration: 1s;
+  animation-iteration-count: 4;
+}
+
+.frontdrop.highlight {
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  z-index: 1;
+}
+
+.index-segment, .index-segment-disabled {
+  opacity: 0.5;
+  transition: all 250ms;
+}
+
+
+.index-segment {
+  background-color: #003853;
+  cursor: pointer;
+}
+
+.index-segment.active {
+  opacity: 1;
+  transition: all 250ms;
+}
+
+.index-segment:hover {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+.save_index_title {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100%;
+  border-color: #204f92;
+}
+
+.index-segment:hover::before {
+  content: attr(data-title);
+  position: relative;
+  font-size: x-small;
+  color: black;
+  top: -30px;
+  background: #dbdbdb;
+  opacity: 1;
+  border: 1px solid black;
+  width: max-content;
+  display: inline-block;
+  padding: 0 2px;
+  z-index: 20;
+}

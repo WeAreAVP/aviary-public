@@ -96,6 +96,10 @@
             <% end %>
           </audio>
         </div>
+
+        <%= render partial: 'interviews/interview_index/media_timeline',
+          locals: { total_duration: hms_to_number(@interview.media_duration), index_points: select_file_index_points(@file_index_points, @file_index_point) , active_point_id: params[:action] == 'edit' ? params[:id] : nil } %>
+        
       </div>
     <% end %>
   </div>
@@ -104,6 +108,10 @@
   <%= link_to 'Add Index Segment', 'javascript://', class: 'btn btn-outline-dark btn-block pull-left add_tag', data: { url: ohms_index_new_path } %>
   <% end %>
 <% else %>
+
+  <%= render partial: 'interviews/interview_index/media_timeline',
+    locals: { total_duration: @resource_file.duration, index_points: select_file_index_points(@file_index_points, @file_index_point) , active_point_id: params[:file_index_point_id]  } %>
+
   <div id="media_host" data-host="" style="width: 75%;" >
     <% is_audio_only = @collection_resource.present? ? @collection_resource.collection.is_audio_only : false %>
     <%= render partial: 'collection_resources/show/mediaplayer', locals: { single_file: @resource_file, is_audio_only: is_audio_only } %>

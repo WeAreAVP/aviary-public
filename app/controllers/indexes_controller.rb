@@ -94,6 +94,7 @@ class IndexesController < ApplicationController
     @file_index_point = FileIndexPoint.new
     if params[:file_index_id].present? && !params[:file_index_id].empty?
       @file_index = FileIndex.find(params[:file_index_id])
+      @file_index_points = @file_index.file_index_points
     end
     render template: 'interviews/interview_index/new'
   end
@@ -165,6 +166,7 @@ class IndexesController < ApplicationController
     @resource_file = CollectionResourceFile.find(params[:resource_file_id])
     @collection_resource = CollectionResource.find(@resource_file.collection_resource_id)
     @file_index = FileIndex.find(params[:file_index_id])
+    @file_index_points = @file_index.file_index_points
     @file_index_point = FileIndexPoint.find(params[:file_index_point_id])
     @previous_index_point, @next_index_point = adjacent_index_points
 
