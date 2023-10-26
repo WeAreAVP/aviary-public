@@ -36,12 +36,15 @@ module InterviewIndexHelper
       data['source_tags'] = source_tags
 
     elsif interview.media_host == 'Other'
-      ext = File.extname(URI.parse(interview.media_url).path)
+      ext = File.extname(URI.parse(URI::Parser.new.escape(interview.media_url)).to_s)
       data['type'] = if interview.media_format == 'audio'
                        "audio/#{ext.sub('.', '')}"
                      else
                        "video/#{ext.sub('.', '')}"
                      end
+      if data['type'].include?('audio/m4a')
+        data['type'] = data['type'].gsub('m4a', 'mp4')
+      end
       data['src'] = interview.media_url
 
     elsif interview.media_host == 'Aviary'

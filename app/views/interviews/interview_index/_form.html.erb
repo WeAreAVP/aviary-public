@@ -53,7 +53,8 @@
                 <% end %>
                 <input type="hidden" name="item_length" id="item_length"/>
                 <%= f.hidden_field :start_time, value: time_to_duration(@file_index_point.start_time.to_f), class: 'video_time', id: "hidden_video_time" %>
-                <%= f.text_field :start_time, value: time_to_duration(@file_index_point.start_time.to_f), class: 'video_time video_input form-control', disabled: true %>
+                <%= f.text_field :start_time, value: time_to_duration(@file_index_point.start_time.to_f), class: 'video_time video_input form-control', 
+                  placeholder: "HH:MM:SS" %>
                 <% if @file_index_point.errors && @file_index_point.errors.messages && @file_index_point.errors.messages.length.positive? && @file_index_point.errors.messages[:start_time] && @file_index_point.errors.messages[:start_time].first %>
                   <span class="form_error"><%= @file_index_point.errors.messages[:start_time].first %></span>
                 <% end %>
@@ -78,8 +79,26 @@
                 <% end %>
               </div>
               <div class="save_btn">
-                <%= f.submit 'Save & Close', class: 'btn btn-success' %>
-                <%= f.submit 'Save & Create New', class: 'btn btn-success save_and_new' %>
+                <div class="d-flex">
+                  <% if params[:action] == 'edit' %>
+                    <a class="h-30px d-inline-block mr-2 <%= @previous_index_point.nil? ? 'disable_btn' : '' %>"
+                      href="<%= @previous_index_point.nil? ? 'javascript:void(0)' : edit_interviews_interview_index_path(@previous_index_point.id) %>"
+                      aria-label="Go to previous index segment <%= @previous_index_point.nil? ? '; disabled' : '' %>">
+                      <img class="h-30px" src="<%= image_url('arrow-previous-icon.png') %>" alt="Go to previous index segment">
+                    </a>
+                  <% end %>
+
+                  <%= f.submit 'Save & Close', class: 'btn btn-success mr-2' %>
+                  <%= f.submit 'Save & Create New', class: 'btn btn-success save_and_new' %>
+
+                  <% if params[:action] == 'edit' %>
+                    <a class="h-30px d-inline-block ml-2 <%= @next_index_point.nil? ? 'disable_btn': ''  %>"
+                      href="<%= @next_index_point.nil? ? 'javascript:void(0)': edit_interviews_interview_index_path(@next_index_point.id)  %>"
+                      aria-label="Go to next index segment <%= @next_index_point.nil? ? '; disabled' : '' %>">
+                      <img class="h-30px" src="<%= image_url('arrow-next-icon.png') %>" alt="Go to next index segment">
+                    </a>
+                  <% end %>
+                </div>
               </div>
             </div>
           </div>
@@ -134,6 +153,13 @@
 
   </div>
 </div>
+<style>
+  .vjs-has-started .vjs-control-bar {
+      display: flex !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+  }
+</style>
 <script type="text/javascript">
     $(document).ready(function () {
         $(".top-section-test-interview").sticky({topSpacing: 50});
