@@ -1164,6 +1164,30 @@ fields:
       resource_table_sort_order: 28
       search_display: true
       search_sort_order: 28
+      
+    created_at:
+      label: 'Created At'
+      system_name: created_at
+      field_type: text
+      is_required: false
+      is_public: false
+      is_default: true
+      is_vocabulary: false
+      vocabulary: []
+      help_text: null
+      is_repeatable: true
+      field_configuration: { special_purpose: true, visible_at: 'resource_listing' }
+      field_level: resource
+      sort_order: 32
+      description_display: false
+      resource_table_display: true
+      resource_table_search: false
+      solr_display_column: 'created_at_ss'
+      solr_search_column: ''
+      resource_table_sort_order: 32
+      search_display: false
+      search_sort_order: 32
+      ris_label: ''
   collection:
     identifier:
       label: 'Identifier'
