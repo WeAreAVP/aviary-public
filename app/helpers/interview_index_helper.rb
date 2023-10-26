@@ -157,4 +157,21 @@ module InterviewIndexHelper
 
     file_index_point
   end
+
+  def adjacent_index_points
+    next_index_point = previous_index_point = nil
+
+    @file_index_points ||= FileIndexPoint.where(file_index_id: @interview.file_indexes&.first&.id)
+    @file_index_points = @file_index_points.sort_by { |t| t.start_time.to_f }
+    @file_index_points.each_with_index do |index_point, index|
+      if @file_index_point.id == index_point.id
+        next_index_point = index < (@file_index_points.length - 1) ? @file_index_points[index + 1] : nil
+        previous_index_point = index > 0 ? @file_index_points[index - 1] : nil
+
+        break
+      end
+    end
+
+    [previous_index_point, next_index_point]
+  end
 end

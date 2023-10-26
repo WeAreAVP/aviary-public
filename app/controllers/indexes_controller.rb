@@ -166,6 +166,8 @@ class IndexesController < ApplicationController
     @collection_resource = CollectionResource.find(@resource_file.collection_resource_id)
     @file_index = FileIndex.find(params[:file_index_id])
     @file_index_point = FileIndexPoint.find(params[:file_index_point_id])
+    @previous_index_point, @next_index_point = adjacent_index_points
+
     set_thesaurus
     render template: 'interviews/interview_index/edit'
   end
