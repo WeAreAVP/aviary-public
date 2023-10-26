@@ -927,3 +927,13 @@ td:has(> select.assign_user) {
 .tokenfield .tokenfield-input {
   margin-top: 7px;
 }
+
+.index-segment.active::before {
+  content: "▴";
+  position: relative;
+  display: inline-block;
+  color: black;
+  top: 12px;
+  text-align: center;
+  width: -webkit-fill-available;
+}
