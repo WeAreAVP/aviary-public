@@ -634,6 +634,7 @@ module Aviary::IndexTranscriptManager
         single_hash['speaker'] = speaker
         single_hash['writing_direction'] = cue.style.present? ? cue.style : ''
         if points_hash.last.present? && single_hash['text'].include?(points_hash.last['text'])
+          points_hash.last['end_time'] = single_hash['end_time'] if single_hash['text'] == points_hash.last['text']
           single_hash['text'] = single_hash['text'].gsub(points_hash.last['text'], '').strip
         end
         unless single_hash['text'].blank?
