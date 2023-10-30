@@ -110,7 +110,7 @@ class ResourcesListingDatatable < ApplicationDatatable
       resource[system_name].present? ? time_to_duration(resource[system_name]) : '00:00:00'
     elsif system_name == 'collection_title'
       resources.third[resource['collection_id_is'].to_s]
-    elsif system_name == 'updated_at_ss'
+    elsif %w[updated_at_ss created_at_ss].include?(system_name)
       resource[system_name].to_date
     elsif system_name == 'access_ss'
       resource[system_name].present? ? resource[system_name].titleize : resource[system_name]
