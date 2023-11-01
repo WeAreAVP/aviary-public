@@ -38,6 +38,11 @@
     border-radius: 3px;
     transition: .2s all ease-in-out;
 }
+
+.list-group .form-check .icon-check {
+    left: 5px !important;
+}
+
 .form-check .icon-check:before{
     width: 10px;
     height: 6px;

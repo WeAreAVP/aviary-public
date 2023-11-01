@@ -132,7 +132,7 @@ gem 'kaminari'
 #
 #
 # # Rails JQuery
-gem 'jquery-ui-rails'
+gem 'jquery-ui-rails', git: "https://github.com/jquery-ui-rails/jquery-ui-rails"
 gem 'rails-autocomplete'
 gem 'cocoon'
 gem 'jquery-fileupload-rails'
