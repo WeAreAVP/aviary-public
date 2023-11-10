@@ -279,9 +279,17 @@ function InterviewIndexManager() {
                                 }
                             }, 1000);
                         }
-                        
                     }
                     $('.player-section').css('visibility','unset');
+
+                    if ($('#media-index-timeline-pointer')[0]) {
+                        player_widget.on('constant-timeupdate', updateIndexPointer);
+
+                        function updateIndexPointer() {
+                            let progressPercent = player_widget.cache_.currentTime / player_widget.cache_.duration;
+                            $('#media-index-timeline-pointer').css('left', `${progressPercent * 100}%`);
+                        }
+                    }
                 });
             
             }

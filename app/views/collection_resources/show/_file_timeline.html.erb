@@ -12,6 +12,7 @@
   if file_indexes.present? %>
     <div>
       <div class="flex media-timeline my-2">
+        <div id="media-index-timeline-pointer" class="media-index-timeline"></div>
         <div class="d-flex" style="gap: 1px; height: 20px;">
           <% file_indexes.includes([:file_index_points]).each do |index| %>
               <% index_points = index.file_index_points.sort_by { |t| t.start_time.to_f } %>

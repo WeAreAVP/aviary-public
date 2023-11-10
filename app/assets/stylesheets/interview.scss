@@ -974,7 +974,7 @@ td:has(> select.assign_user) {
   transition: all 250ms;
 }
 
-.index-segment:hover {
+.index-segment:hover:not(.active) {
   opacity: 1;
   transform: scale(1.1);
 }
@@ -987,17 +987,31 @@ td:has(> select.assign_user) {
   border-color: #204f92;
 }
 
-.index-segment:hover::before {
-  content: attr(data-title);
+.media-timeline {
   position: relative;
+}
+
+.index-segment:hover::after {
+  content: attr(data-title);
+  position: absolute;
   font-size: x-small;
   color: black;
   top: -30px;
   background: #dbdbdb;
   opacity: 1;
   border: 1px solid black;
-  width: max-content;
+  width: inherit;
   display: inline-block;
   padding: 0 2px;
   z-index: 20;
+}
+
+.media-index-timeline {
+  background-color: gray;
+  z-index: 10;
+  width: 7px;
+  height: 30px;
+  position: absolute;
+  top: -5px;
+  left: 0px;
 }
