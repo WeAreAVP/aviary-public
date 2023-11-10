@@ -7,17 +7,66 @@
      end
    end
 %>
-<% if file_indexes.present? %>
-  <div class="bottom_layer timeline-player-bar">
-    <% file_indexes.includes([:file_index_points]).each do |index| %>
-      <% index.file_index_points.each_with_index do |point, index_number| %>
-        <% color = 'blue' %>
-        <% color = 'light-orange' if !session[:index_count].blank? and session[:index_count]['individual']['index'].key? "id-#{point.id}" and session[:index_count]['individual']['index']["id-#{point.id}"] > 0 %>
-        <% left = (100 * (point.start_time.to_f / (@resource_file.duration.to_f.nonzero? || 1))).floor %>
-        <% current_page = (index_number / Aviary::IndexTranscriptManager::POINTS_PER_PAGE).floor %>
-        <% current_page = (current_page <= 0 ? 0 : current_page) %>
-        <span class="play-timecode timeline-point index_timeline index_<%= index.id %> <%= color %> d-none point_index_<%= point.id %>" data-type="index" data-page-number="<%= current_page %>" data-point="<%= point.id %>" data-timecode="<%= point.start_time %>" data-toggle="tooltip" data-placement="bottom" title="<%= Time.at(point.start_time.to_f).utc.strftime('%H:%M:%S') + ' ' + point.title %>" style="left:<%= left %>%;"></span>
-      <% end %>
-    <% end %>
-  </div>
+<%
+  total_duration = @resource_file.duration
+  if file_indexes.present? %>
+    <div>
+      <div class="flex media-timeline my-2">
+        <div class="d-flex" style="gap: 1px; height: 20px;">
+          <% file_indexes.includes([:file_index_points]).each do |index| %>
+              <% index_points = index.file_index_points.sort_by { |t| t.start_time.to_f } %>
+              <% index_points.each_with_index do |point, index_number| %>
+                <% color = 'blue' %>
+                <% color = 'light-orange' if !session[:index_count].blank? and session[:index_count]['individual']['index'].key? "id-#{point.id}" and session[:index_count]['individual']['index']["id-#{point.id}"] > 0 %>
+                <% current_page = (index_number / Aviary::IndexTranscriptManager::POINTS_PER_PAGE).floor %>
+                <% current_page = (current_page <= 0 ? 0 : current_page) %>
+                <%
+                  html = ''
+                  if index_number == 0 && point.start_time != 0
+                    width = point.start_time / total_duration * 100
+                    if width > 0
+                      html += <<-HTML
+                        <div class="index-segment-disabled bg-secondary index_timeline index_#{index.id} #{color} d-none point_index_#{point.id}"
+                          style="width: #{width.floor(2)}%;">
+                        </div>
+                      HTML
+                    end
+                  end
+
+                  index_duration = (point.end_time || index_points[index_number + 1]&.start_time ||
+                    total_duration) - point.start_time
+
+                  width = index_duration / total_duration * 100
+                  html += <<-HTML
+                    <div class="index-segment play-timecode timeline-point index_timeline index_#{index.id} #{color} d-none point_index_#{point.id}"
+                      data-type="index" data-page-number="#{current_page}"
+                      data-point="#{point.id}" data-timecode="#{point.start_time}"
+                      data-toggle="tooltip" data-placement="bottom"
+                      title="#{Time.at(point.start_time.to_f).utc.strftime('%H:%M:%S') + ' ' + point.title}"
+                      style="width: #{width.round(2) < 1 ? 1 : width.ceil(2)}%;"
+                      data-target="collapse_#{index_number}">
+                    </div>
+                  HTML
+
+                  next_starting_time = index_points[index_number + 1]&.start_time || total_duration
+                  if point.end_time.present? && point.end_time != next_starting_time
+                    index_duration = next_starting_time - point.end_time
+                    width = index_duration / total_duration * 100
+
+                    if width > 0
+                      html += <<-HTML
+                        <div class="index-segment-disabled bg-secondary index_timeline index_#{index.id} #{color} d-none point_index_#{point.id}"
+                          style="width: #{width.floor(2)}%;">
+                        </div>
+                      HTML
+                    end
+                  end
+                %>
+
+                <%== html %>
+              <% end %>
+            <% end %>
+          </div>
+      </div>
+    </div>
 <% end %>

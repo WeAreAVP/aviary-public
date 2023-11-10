@@ -11,9 +11,10 @@ class ThesaurusTermsWriterWorker
   include Sidekiq::Worker
 
   def perform(*args)
-    file_path, thesaurus_id, append_mode, user_id, action = args
+    file_name, thesaurus_id, append_mode, user_id, action = args
 
     thesaurus = ::Thesaurus::Thesaurus.find(thesaurus_id)
+    file_path = Rails.root.join('public', 'reports', file_name)
     file = File.open(file_path, 'r')
 
     thesaurus_terms = if file.present?
