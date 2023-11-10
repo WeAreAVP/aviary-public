@@ -22,7 +22,9 @@ module Aviary
       xml_hash = Hash.from_xml(doc.to_s)
       xml_data = xml_hash['ROOT']['record']
 
-      interview = Interviews::Interview.new
+      interview = Interviews::Interview.find_by(ohms_row_id: xml_data['id'].to_i)
+      interview = Interviews::Interview.new if interview.nil?
+      interview.ohms_row_id = xml_data['id'].to_i
       interview.organization_id = organization.id
       interview.title = xml_data['title'].present? ? xml_data['title'] : ''
       interview.accession_number = xml_data['accession'].present? ? xml_data['accession'] : ''
@@ -30,11 +32,7 @@ module Aviary
       interview.interviewee = [interview.interviewee] if interview.interviewee.is_a?(String)
       interview.interviewer = xml_data['interviewer'].present? ? xml_data['interviewer'] : []
       interview.interviewer = [interview.interviewer] if interview.interviewer.is_a?(String)
-      interview.interview_date = if xml_data['date']['value'].present? && !xml_data['date']['value'].empty?
-                                   Date.strptime(xml_data['date']['value']).strftime('%m/%d/%Y')
-                                 else
-                                   ''
-                                 end
+      interview.interview_date =  xml_data['date']['value']
       interview.date_non_preferred_format = xml_data['date_nonpreferred_format'].present? ? xml_data['date_nonpreferred_format'] : ''
       interview.collection_id = xml_data['collection_id'].present? ? xml_data['collection_id'] : ''
       interview.collection_name = xml_data['collection_name'].present? ? xml_data['collection_name'] : ''
