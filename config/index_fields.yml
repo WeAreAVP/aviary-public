@@ -1,0 +1,182 @@
+#
+# Aviary is an audiovisual content publishing platform with sophisticated features for search and permissions controls.
+# Copyright (C) 2019 Audio Visual Preservation Solutions, Inc.
+index_template_items:
+  - name: 'Aviary'
+    parent_child: true
+    fields:
+        title:
+            name: 'Segment Title'
+            system_name: 'title'
+            status: true
+        start_time:    
+            name: 'Segment Start Time'
+            system_name: 'start_time'
+            status: true
+        end_time:
+            name: 'Segment End Time'
+            system_name: 'end_time'
+            status: true
+        synopsis:
+            name: 'Segment Synopsis'
+            system_name: 'synopsis'
+            status: true
+        partial_script:
+            name: 'Partial Transcript'
+            system_name: 'partial_script'
+            status: true
+        gps:
+            name: 'GPS'
+            system_name: 'gps'
+            status: true
+        subjects:
+            name: 'Segment Subject'
+            system_name: 'subjects'
+            status: true
+        keywords:
+            name: 'Segment Keyword'
+            system_name: 'keywords'
+            status: true
+        hyperlink:
+            name: 'Hyperlink'
+            system_name: 'hyperlink'
+            status: true
+        publisher:
+            name: 'Segment Publisher'
+            system_name: 'publisher'
+            status: false
+        contributor:
+            name: 'Segment Contributor'
+            system_name: 'contributor'
+            status: false
+        segment_date:
+            name: 'Segment Date'
+            system_name: 'segment_date'
+            status: false
+        identifier:
+            name: 'Segment Identifier'
+            system_name: 'identifier'
+            status: false
+        rights:
+            name: 'Segment Rights'
+            system_name: 'rights'
+            status: false
+  - name: 'OHMS'
+    parent_child: true
+    fields:
+        title:
+            name: 'Segment Title'
+            system_name: 'title'
+            status: true
+        start_time:    
+            name: 'Segment Start Time'
+            system_name: 'start_time'
+            status: true
+        end_time:
+            name: 'Segment End Time'
+            system_name: 'end_time'
+            status: false
+        synopsis:
+            name: 'Segment Synopsis'
+            system_name: 'synopsis'
+            status: true
+        partial_script:
+            name: 'Partial Transcript'
+            system_name: 'partial_script'
+            status: true
+        gps:
+            name: 'GPS'
+            system_name: 'gps'
+            status: true
+        subjects:
+            name: 'Segment Subject'
+            system_name: 'subjects'
+            status: true
+        keywords:
+            name: 'Segment Keyword'
+            system_name: 'keywords'
+            status: true
+        hyperlink:
+            name: 'Hyperlink'
+            system_name: 'hyperlink'
+            status: true
+        publisher:
+            name: 'Segment Publisher'
+            system_name: 'publisher'
+            status: false
+        contributor:
+            name: 'Segment Contributor'
+            system_name: 'contributor'
+            status: false
+        segment_date:
+            name: 'Segment Date'
+            system_name: 'segment_date'
+            status: false
+        identifier:
+            name: 'Segment Identifier'
+            system_name: 'identifier'
+            status: false
+        rights:
+            name: 'Segment Rights'
+            system_name: 'rights'
+            status: false
+  - name: 'AES60-2011'
+    parent_child: true
+    fields:
+        title:
+            name: 'Segment Title'
+            system_name: 'title'
+            status: true
+        start_time:    
+            name: 'Segment Start Time'
+            system_name: 'start_time'
+            status: true
+        end_time:
+            name: 'Segment End Time'
+            system_name: 'end_time'
+            status: true
+        synopsis:
+            name: 'Segment Synopsis'
+            system_name: 'synopsis'
+            status: true
+        partial_script:
+            name: 'Partial Transcript'
+            system_name: 'partial_script'
+            status: false
+        gps:
+            name: 'GPS'
+            system_name: 'gps'
+            status: false
+        subjects:
+            name: 'Segment Subject'
+            system_name: 'subjects'
+            status: true
+        keywords:
+            name: 'Segment Keyword'
+            system_name: 'keywords'
+            status: false
+            status: false
+        hyperlink:
+            name: 'Hyperlink'
+            system_name: 'hyperlink'
+            status: false
+        publisher:
+            name: 'Segment Publisher'
+            system_name: 'publisher'
+            status: true
+        contributor:
+            name: 'Segment Contributor'
+            system_name: 'contributor'
+            status: true
+        segment_date:
+            name: 'Segment Date'
+            system_name: 'segment_date'
+            status: true
+        identifier:
+            name: 'Segment Identifier'
+            system_name: 'identifier'
+            status: true
+        rights:
+            name: 'Segment Rights'
+            system_name: 'rights'
+            status: true

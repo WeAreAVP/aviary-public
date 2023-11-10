@@ -227,7 +227,7 @@ div#noMediaConnection {
       border-color: #e5ebed;
       background: #e5ebed;
       color: #222;
-      padding: 10px;
+      padding: 4px;
       margin: 5px 5px 10px;
       flex: 1;
 
@@ -243,13 +243,13 @@ div#noMediaConnection {
 
   .left-section {
     height: 100%;
-    padding: 30px 30px 0;
+    padding: 0 30px;
     position: relative;
 
     .update_time {
       position: absolute;
-      top: 52px;
-      right: 30px;
+      top: 22px;
+      right: 15px;
       border: 1px solid #ced4da;
       font-size: 14px;
       height: 55px;

@@ -84,7 +84,7 @@ class IndexesController < ApplicationController
       @file_index = FileIndex.find(params[:file_index_id])
       @file_index_point = @file_index.file_index_points
     end
-    render template: 'interviews/interview_index/show'
+    render template: 'indexes/form/show'
   end
 
   def add_index
@@ -96,7 +96,7 @@ class IndexesController < ApplicationController
       @file_index = FileIndex.find(params[:file_index_id])
       @file_index_points = @file_index.file_index_points
     end
-    render template: 'interviews/interview_index/new'
+    render template: 'indexes/form/new'
   end
 
   def create_index
@@ -127,7 +127,7 @@ class IndexesController < ApplicationController
         format.html { redirect_to url, notice: 'Resource Index was successfully created.' }
         format.json { render :show_index, status: :created, location: @file_index_point }
       else
-        format.html { render template: 'interviews/interview_index/new' }
+        format.html { render template: 'indexes/form/new' }
         format.json { render json: @file_index_point.errors, status: :unprocessable_entity }
       end
     end
@@ -151,9 +151,21 @@ class IndexesController < ApplicationController
         format.html { redirect_to url, notice: 'Resource Index was successfully updated.' }
         format.json { render :show_index, status: :created, location: @file_index_point }
       else
-        format.html { render template: 'interviews/interview_index/edit' }
+        format.html { render template: 'indexes/form/edit' }
         format.json { render json: @file_index_point.errors, status: :unprocessable_entity }
       end
+    end
+  end
+
+  def update_index_title
+    authorize! :manage, current_organization
+    @file_index = FileIndex.find(params[:file_index_id])
+    @file_index.title = params[:file_index][:title]
+
+    if @file_index.save
+      render json: { message: 'Index Title updated successfully.', status: 'success' }
+    else
+      render json: { message: 'Unable to update File Index Point title.', status: 'danger' }
     end
   end
 
@@ -177,7 +189,7 @@ class IndexesController < ApplicationController
     @previous_index_point, @next_index_point = adjacent_index_points
 
     set_thesaurus
-    render template: 'interviews/interview_index/edit'
+    render template: 'indexes/form/edit'
   end
 
   def set_thesaurus

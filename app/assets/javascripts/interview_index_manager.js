@@ -305,7 +305,7 @@ function InterviewIndexManager() {
         containerRepeatManager.makeContainerRepeatable(".add_gps", ".remove_gps", '.container_gps_inner', '.container_gps', '.gps');
         containerRepeatManager.makeContainerRepeatable(".add_hyperlinks", ".remove_hyperlinks", '.container_hyperlinks_inner', '.container_hyperlinks', '.hyperlinks');
         document_level_binding_element('.update_time', 'click', function () {
-            updateTime();
+            updateTime(this);
         });
         document_level_binding_element('.update_backward', 'click', function () {
             updateBackward();
@@ -477,12 +477,53 @@ function InterviewIndexManager() {
                 }
             });
         });
+
+        document_level_binding_element('#index_title_heading', 'click', function (event) {
+            event.stopPropagation();
+
+            $(this).addClass('d-none');
+            $('#save_file_index_title_form').removeClass('d-none');
+            $('#save_file_index_title_form').addClass('d-flex');
+        });
+
+        document_level_binding_element('.cancel_file_index_title', 'click', hideAllSegmentTitleInputs);
+
+        document_level_binding_element('.save_file_index_title', 'click', function (event) {
+            event.preventDefault();
+
+            if ($('#index_title_heading').text().trim() === $('#edit_file_index_title').val())
+                return;
+
+            $.ajax({
+                url: $('#save_file_index_title_form')[0].action,
+                data: $('#save_file_index_title_form').serialize(),
+                type: 'POST',
+                success: function (response) {
+                    jsMessages(response.status, response.message);
+                    $('#index_title_heading').text(
+                        $('#edit_file_index_title').val()
+                    );
+                    hideAllSegmentTitleInputs();
+                },
+                error: function (error) {
+                    jsMessages('danger', error);
+                }
+            });
+        });
     };
 
     function hideAllSegmentTitleInputs() {
         formChange = 0;
-        $('.segment-title .title').removeClass('d-none');
-        $('.segment-title .edit_title').addClass('d-none');
+        if ($('.segment-title .title')[0]) {
+            $('.segment-title .title').removeClass('d-none');
+            $('.segment-title .edit_title').addClass('d-none');
+        }
+
+        if ($('#index_title_heading')[0]) {
+            $('#index_title_heading').removeClass('d-none');
+            $('#save_file_index_title_form').addClass('d-none');
+            $('#save_file_index_title_form').removeClass('d-flex');
+        }
     }  
 
     function unloadPage(){ 
@@ -582,7 +623,7 @@ function InterviewIndexManager() {
             return player_widget.currentTime();  
         }
     }
-    const updateTime = function () {
+    const updateTime = function (button) {
         if(host == "SoundCloud")
         {
             widget_soundcloud.getPosition(function (pos) {
@@ -592,10 +633,11 @@ function InterviewIndexManager() {
         }
         else
         {
-            if($('.no-media').length > 0)
-                $('.video_time').val($('.video_input').val());
+            let selector = $(button).data('time-target') || '.video_time';
+            if ($('.no-media').length > 0)
+                $(selector).val($('.video_input').val());
             else
-                $('.video_time').val(secondsToHuman(getTime()));
+                $(selector).val(secondsToHuman(getTime()));
         }
     };
 

@@ -132,6 +132,11 @@ module InterviewIndexHelper
     file_index_point.hyperlink_description = params[:file_index_point]["hyperlink_description#{alt}"].to_json
     file_index_point.subjects = params[:subjects].join(';') if params[:subjects].present?
     file_index_point.keywords = params[:keywords].join(';') if params[:keywords].present?
+    file_index_point.parent_id = params[:file_index_point][:parent_id] if params[:file_index_point][:parent_id].present?
+    if params[:file_index_point][:end_time].present? && human_to_seconds(params[:file_index_point][:end_time]).to_f > file_index_point.start_time
+      file_index_point.end_time = human_to_seconds(params[:file_index_point][:end_time]).to_f
+      return file_index_point
+    end
 
     set_end_time(file_index_point, params[:item_length].to_f)
   end
@@ -226,5 +231,17 @@ module InterviewIndexHelper
     end
 
     [previous_index_point, next_index_point]
+  end
+
+  def generate_segments_dropdown(file_index, file_index_point)
+    options = file_index.file_index_points.where(parent_id: 0)
+                        .where.not(id: file_index_point.id)
+                        &.sort_by { |t| t.start_time.to_f }&.map do |point|
+      <<-HTML
+        <option value="#{point.id}" #{point.id == file_index_point.parent_id ? 'selected' : ''}>#{point.title}</option>
+      HTML
+    end
+
+    options.join("\n")
   end
 end
