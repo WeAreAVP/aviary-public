@@ -1,0 +1,7 @@
+<% if index_points.present? && index_points.length > 0 %>
+  <div class="flex media-timeline my-2">
+    <div class="d-flex" style="gap: 1px; height: 20px;">
+      <%== render_index_timeline(total_duration, index_points, active_point_id) %>
+    </div>
+  </div>
+<% end %>

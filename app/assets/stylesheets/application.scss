@@ -535,3 +535,27 @@ $size: 24px;
     width: $size;
   }
 }
+
+.overflow-y-auto {
+  overflow-y: auto;
+}
+
+/* width */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 5px;
+}
+
+/* Track */
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+/* Handle */
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #000e53;
+}
+
+/* Handle on hover */
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  opacity: 0.8;
+}

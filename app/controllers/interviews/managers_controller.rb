@@ -194,14 +194,18 @@ module Interviews
             doc = Nokogiri::XML(export_text.to_xml)
             error_messages = xml_validation(doc)
             unless error_messages.any?
-              dos_xml << { xml: export_text.to_xml, title: interview.title, id: interview.id, ohms_xml_filename: interview.miscellaneous_ohms_xml_filename.gsub(/\s+/, '_') }
+              dos_xml << { xml: export_text.to_xml, accession_number: interview.accession_number, title: interview.title, id: interview.id, ohms_xml_filename: interview.miscellaneous_ohms_xml_filename.gsub(/\s+/, '_') }
             end
           end
         end
 
         if dos_xml.present?
           dos_xml.each do |single_dos_xml|
-            file_name = single_dos_xml[:ohms_xml_filename].present? && !single_dos_xml[:ohms_xml_filename].include?('http') ? single_dos_xml[:ohms_xml_filename] : 'interview' + single_dos_xml[:id].to_s + '.xml'
+            file_name = if single_dos_xml[:ohms_xml_filename].present?
+                          single_dos_xml[:ohms_xml_filename].gsub(/\s+/, '_').gsub(/.xml$/, '')
+                        else
+                          single_dos_xml[:accession_number].empty? ? single_dos_xml[:title] : single_dos_xml[:accession_number]
+                        end + '.xml'
             File.binwrite(File.join(tmp_user_folder, file_name), single_dos_xml[:xml])
             dos_xml_files << file_name
           end

@@ -904,11 +904,21 @@ function IndexTranscript() {
                 player_widget.currentTime(currentTime);
                 player_widget.play();
             }
+
+            $('.index-segment').removeClass('active');
+            $(`.index-segment[data-timecode="${currentTime}"]`).addClass('active');
+
+            $(`.index_time.index_custom_identifier`).removeClass('highlight');
+            $(`.index_time.index_custom_identifier.index_time_start_${parseInt(currentTime, 10)}`).addClass('highlight');
+            
             if ($(this).parent().hasClass('annotation_text')) {
                 $('.transcript_point_container').mCustomScrollbar("scrollTo", $('.annotation_marker.active'), {
                     scrollInertia: 10,
                     timeout: 1
                 });
+            } else {
+                $(`.index_time.index_custom_identifier.index_time_start_${parseInt(currentTime, 10)}`)[0]
+                    .scrollIntoView({ behavior: "smooth", block: "nearest", inline: "nearest" });
             }
         }, true)
     };

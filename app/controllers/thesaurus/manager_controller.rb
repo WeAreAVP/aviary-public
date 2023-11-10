@@ -266,10 +266,11 @@ module Thesaurus
     end
 
     def write_terms(file, thesaurus, append)
-      file_path = "#{Rails.root.join('public', 'reports')}/#{Time.now.to_i}_#{thesaurus.id}_tt.csv"
-      File.write(file_path, file.read)
+      file_name = "#{Time.now.to_i}_#{thesaurus.id}_tt.csv"
+      file_path = Rails.root.join('public', 'reports', file_name)
+      File.write(file_path, file.read, mode: 'wb+')
 
-      ThesaurusTermsWriterWorker.perform_in(1.second, file_path, thesaurus.id, append, current_user.id, params[:action])
+      ThesaurusTermsWriterWorker.perform_in(1.second, file_name, thesaurus.id, append, current_user.id, params[:action])
     end
   end
 end

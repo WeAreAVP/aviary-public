@@ -403,6 +403,40 @@ function InterviewIndexManager() {
             }
         });
 
+        document_level_binding_element('.index-segment', 'click', function () {
+            let segmentId = $(this).data('target');
+
+            let segmentButton = $(`.btn-collapse[data-target='#${segmentId}']`);
+            if (segmentButton.attr('aria-expanded') === 'false') {
+                segmentButton.click();
+                $(`.segment-duration.play-timecode.${segmentId}`).click();
+            } else {
+                $('.frontdrop').removeClass('highlight');
+            }
+
+            // Highlight the active index segment on timeline
+            $('.index-segment').removeClass('active');
+            $(this).addClass('active');
+
+            // Highlight the corresponding index segment
+            $(`.frontdrop.${segmentId}`).addClass('highlight');
+            setTimeout(() => {
+                $(`.frontdrop.${segmentId}`).removeClass('highlight');
+            }, 3000);
+
+            // Scroll the corresponding index segment into view
+            $(`.card.${segmentId}`)[0].scrollIntoView({ behavior: "smooth", block: "nearest", inline: "nearest" });
+        });
+
+        document_level_binding_element('.btn-collapse', 'click', function () {
+            // Highlight the active index segment on timeline
+            $('.index-segment').removeClass('active');
+            if ($(this).attr('aria-expanded') === 'true') {
+                $(`.index-segment[data-target="${$(this).attr('aria-controls')}"]`).addClass('active');
+                $(`.segment-duration.play-timecode.${$(this).attr('aria-controls')}`).click();
+            }
+        });
+
         document_level_binding_element('.segment-title', 'click', function (event) {
             event.stopPropagation();
             hideAllSegmentTitleInputs();
