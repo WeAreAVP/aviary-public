@@ -13,19 +13,7 @@ module Aviary
     include XMLFileHandler
     include ApplicationHelper
     def export(interview)
-      date = if interview.interview_date.empty?
-               ''
-             else
-               begin
-                 Date.parse(interview.interview_date).strftime('%Y-%m-%d')
-               rescue StandardError
-                 begin
-                   Date.strptime(interview.interview_date, '%m/%d/%Y').strftime('%Y-%m-%d')
-                 rescue StandardError
-                   ''
-                 end
-               end
-             end
+      date = interview.interview_date
       builder = Nokogiri::XML::Builder.new(encoding: 'UTF-8') do |xml|
         xml.ROOT('xmlns' => 'https://www.weareavp.com/nunncenter/ohms', 'xmlns:xsi' => 'http://www.w3.org/2001/XMLSchema-instance', 'xsi:schemaLocation' => 'https://www.weareavp.com/nunncenter/ohms/ohms.xsd') {
           xml.record('id' => interview.id, 'dt' => DateTime.now.strftime('%Y-%m-%d')) {
