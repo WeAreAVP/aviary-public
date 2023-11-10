@@ -292,6 +292,18 @@
               </div>
             <% end %>
 
+            <div class="card">
+              <div class="card-header" id="headingTwo">
+                <h5 class="mb-0">
+                  <a href="https://coda.aviaryplatform.com/" target="_blank" class="btn btn-link text-dark no_sub_colaps text-decoration-none">
+                    <div class="nav-box">
+                      <span class="ico" data-toggle="tooltip" data-placement="right" title="Account"><%= image_tag 'icons/question.png' %></span>
+                      <span class="title">Documentation</span>
+                    </div>
+                  </a>
+                </h5>
+              </div>
+            </div>
           </div>
           <% unless ['', Plan.pay_a_y_go].include? current_organization.subscription.plan.stripe_id %>
             <div class="storage resources">

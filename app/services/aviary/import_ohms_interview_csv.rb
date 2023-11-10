@@ -95,7 +95,7 @@ module Aviary
 
       if interview.valid?
         interview.save
-        process_transcript(csv_raw, user, interview)
+        process_transcript(csv_raw, user, interview) if csv_raw['Transcript_0'].present?
         set_points(csv_raw, interview, user)
         true
       else
@@ -104,11 +104,15 @@ module Aviary
     end
 
     def process_transcript(csv_raw, user, interview)
-      transcripts = []
-      csv_raw.each do |item|
-        transcripts << item[1] if item[0].include?('Transcript_')
+      i = 0
+
+      main_transcript = ''
+      while csv_raw["Transcript_#{i}"].present?
+        main_transcript += csv_raw["Transcript_#{i}"].gsub(' --- ', "\n") + "\n"
+
+        i += 1
       end
-      main_transcript = Sanitize.fragment(transcripts.join("\n"))
+
       file = Tempfile.new('content')
       file.path
       file.write(main_transcript)
