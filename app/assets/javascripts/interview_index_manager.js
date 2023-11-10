@@ -387,7 +387,7 @@ function InterviewIndexManager() {
             var url = $('.interview_index_manager').attr("action")
             if(!url.includes("new=1"))
             {
-                $('.interview_index_manager').attr("action",url+"?new=1");
+                $('.interview_index_manager').attr("action", url+"?new=1");
             }
         }, true);
 
@@ -407,7 +407,7 @@ function InterviewIndexManager() {
                 $('.btn-collapse').attr('aria-expanded', false);
                 $(this).removeClass('btn-up');
                 $(this).addClass('btn-down');
-                $(this).text('Expand All')
+                $(this).text('Expand All');
             }
         });
 

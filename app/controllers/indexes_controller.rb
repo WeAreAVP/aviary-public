@@ -121,7 +121,10 @@ class IndexesController < ApplicationController
     @file_index_point = set_custom_values(@file_index_point, '', params)
     respond_to do |format|
       if @file_index_point.save
-        format.html { redirect_to "#{show_index_file_path(@resource_file.id, @file_index.id)}?time=#{start_time}", notice: 'Resource Index was successfully created.' }
+        url = "#{show_index_file_path(@resource_file.id, @file_index.id)}?time=#{start_time}"
+        url = "#{add_index_file_path(@resource_file.id, @file_index.id)}?time=#{start_time}" if params['new'].present?
+
+        format.html { redirect_to url, notice: 'Resource Index was successfully created.' }
         format.json { render :show_index, status: :created, location: @file_index_point }
       else
         format.html { render template: 'interviews/interview_index/new' }
@@ -142,7 +145,10 @@ class IndexesController < ApplicationController
     @file_index_point = set_custom_values(@file_index_point, '', params)
     respond_to do |format|
       if @file_index_point.save
-        format.html { redirect_to "#{show_index_file_path(@resource_file.id, @file_index.id)}?time=#{start_time}", notice: 'Resource Index was successfully created.' }
+        url = "#{show_index_file_path(@resource_file.id, @file_index.id)}?time=#{start_time}"
+        url = "#{add_index_file_path(@resource_file.id, @file_index.id)}?time=#{start_time}" if params['new'].present?
+
+        format.html { redirect_to url, notice: 'Resource Index was successfully updated.' }
         format.json { render :show_index, status: :created, location: @file_index_point }
       else
         format.html { render template: 'interviews/interview_index/edit' }
