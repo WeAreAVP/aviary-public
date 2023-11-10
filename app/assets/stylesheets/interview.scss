@@ -938,31 +938,14 @@ td:has(> select.assign_user) {
   width: -webkit-fill-available;
 }
 
-@keyframes pulse {
-  0% { opacity: 0; }
-  50% { opacity: 0.5; }
-  100% { opacity: 0; }
-}
-
 .highlight {
   background-color: #ece4bc;
-  animation-name: pulse;
-  animation-duration: 1s;
-  animation-iteration-count: 4;
-}
-
-.frontdrop.highlight {
-  height: 100%;
-  width: 100%;
-  position: absolute;
-  z-index: 1;
 }
 
 .index-segment, .index-segment-disabled {
   opacity: 0.5;
   transition: all 250ms;
 }
-
 
 .index-segment {
   background-color: #003853;
