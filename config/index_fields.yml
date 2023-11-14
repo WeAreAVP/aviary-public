@@ -62,7 +62,7 @@ index_template_items:
             system_name: 'rights'
             status: false
   - name: 'OHMS'
-    parent_child: true
+    parent_child: false
     fields:
         title:
             name: 'Segment Title'

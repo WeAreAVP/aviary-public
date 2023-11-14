@@ -1,7 +1,3 @@
-<%
-  index_fields_conf = YAML.load_file(Rails.root.join('config','index_fields.yml'))
-  @index_template = index_fields_conf['index_template_items'][@resource_file.collection_resource.collection.index_template]
-%>
 <div class="interview-index">
   <div class="breadcrumb resources-details">
     <%= render_breadcrumbs %>
@@ -78,48 +74,44 @@
                     <input type="hidden" name="item_length" id="item_length"/>
 
                     <!-- Start Time -->
-                    <% if @index_template['fields']['start_time']['status'] %>
-                      <div class="col">
-                        <div class="field-title"><%= f.label :start_time, "Start Time*" %></div>
-                        <input type="hidden" name="current_time" id="current_time"/>
+                    <div class="col">
+                      <div class="field-title"><%= f.label :start_time, "Start Time*" %></div>
+                      <input type="hidden" name="current_time" id="current_time"/>
 
-                        <%= f.hidden_field :start_time, value: time_to_duration(@file_index_point.start_time.to_f), class: 'video_start_time', id: "hidden_video_start_time" %>
-                        <%= f.text_field :start_time, value: time_to_duration(@file_index_point.start_time.to_f),
-                          class: 'video_start_time video_input form-control', placeholder: "HH:MM:SS"
-                        %>
+                      <%= f.hidden_field :start_time, value: time_to_duration(@file_index_point.start_time.to_f), class: 'video_start_time', id: "hidden_video_start_time" %>
+                      <%= f.text_field :start_time, value: time_to_duration(@file_index_point.start_time.to_f),
+                        class: 'video_start_time video_input form-control', placeholder: "HH:MM:SS"
+                      %>
 
-                        <% if @file_index_point.errors && @file_index_point.errors.messages && @file_index_point.errors.messages.length.positive? &&
-                          @file_index_point.errors.messages[:start_time] && @file_index_point.errors.messages[:start_time].first
-                        %>
-                          <span class="form_error"><%= @file_index_point.errors.messages[:start_time].first %></span>
-                        <% end %>
+                      <% if @file_index_point.errors && @file_index_point.errors.messages && @file_index_point.errors.messages.length.positive? &&
+                        @file_index_point.errors.messages[:start_time] && @file_index_point.errors.messages[:start_time].first
+                      %>
+                        <span class="form_error"><%= @file_index_point.errors.messages[:start_time].first %></span>
+                      <% end %>
 
-                        <a href="javascript:void(0);" data-time-target=".video_start_time" class="btn btn-outline-dark update_time float-right">Update Time</a>
-                      </div>
-                    <% end %>
+                      <a href="javascript:void(0);" data-time-target=".video_start_time" class="btn btn-outline-dark update_time float-right">Update Time</a>
+                    </div>
                     <!-- Start Time End -->
 
                     <!-- End Time -->
-                    <% if @index_template['fields']['end_time']['status'] %>
-                      <div class="col">
-                        <div class="field-title"><%= f.label :end_time, "End Time" %></div>
-                        <input type="hidden" name="current_time" id="current_time"/>
+                    <div class="col">
+                      <div class="field-title"><%= f.label :end_time, "End Time" %></div>
+                      <input type="hidden" name="current_time" id="current_time"/>
 
-                        <input type="hidden" name="item_length" id="item_length"/>
-                        <%= f.hidden_field :end_time, value: time_to_duration(@file_index_point.end_time.to_f), class: 'video_end_time', id: "hidden_video_end_time" %>
-                        <%= f.text_field :end_time, value: time_to_duration(@file_index_point.end_time.to_f),
-                          class: 'video_end_time video_input form-control', placeholder: "HH:MM:SS"
-                        %>
+                      <input type="hidden" name="item_length" id="item_length"/>
+                      <%= f.hidden_field :end_time, value: time_to_duration(@file_index_point.end_time.to_f), class: 'video_end_time', id: "hidden_video_end_time" %>
+                      <%= f.text_field :end_time, value: time_to_duration(@file_index_point.end_time.to_f),
+                        class: 'video_end_time video_input form-control', placeholder: "HH:MM:SS"
+                      %>
 
-                        <% if @file_index_point.errors && @file_index_point.errors.messages && @file_index_point.errors.messages.length.positive? &&
-                          @file_index_point.errors.messages[:end_time] && @file_index_point.errors.messages[:end_time].first
-                        %>
-                          <span class="form_error"><%= @file_index_point.errors.messages[:end_time].first %></span>
-                        <% end %>
+                      <% if @file_index_point.errors && @file_index_point.errors.messages && @file_index_point.errors.messages.length.positive? &&
+                        @file_index_point.errors.messages[:end_time] && @file_index_point.errors.messages[:end_time].first
+                      %>
+                        <span class="form_error"><%= @file_index_point.errors.messages[:end_time].first %></span>
+                      <% end %>
 
-                        <a href="javascript:void(0);" data-time-target=".video_end_time" class="btn btn-outline-dark update_time float-right">Update Time</a>
-                      </div>
-                    <% end %>
+                      <a href="javascript:void(0);" data-time-target=".video_end_time" class="btn btn-outline-dark update_time float-right">Update Time</a>
+                    </div>
                     <!-- End Time End -->
                   </div>
 

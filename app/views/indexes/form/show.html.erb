@@ -31,16 +31,6 @@
                 </div>
               </div>
             </div>
-            <div class="col-md-6">
-              <div class="d-flex flex-column ml-auto <%= 'index-template-interview pull-right' %>">
-                <div class="status d-flex align-items-center m-1">
-                  <%if ENV.fetch('OHMS_DEVELOPMENT_ONLY', 0).to_s == '1' %>
-                    <span>Index Template</span>
-                    <%= render 'interviews/interview_index/index_template' %>
-                  <%end%>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
         <div class="row">
