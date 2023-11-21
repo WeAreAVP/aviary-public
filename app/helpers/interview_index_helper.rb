@@ -222,10 +222,10 @@ module InterviewIndexHelper
       HTML
     else
       <<-HTML
-        <div class="index-segment #{'active' if active}" data-title="#{time_to_duration(point.start_time)} #{point.title}"
+        <button class="index-segment #{'active' if active}" data-title="#{time_to_duration(point.start_time)} #{point.title}"
           style="width: #{width.round(2) < 1 ? 1 : width.ceil(2)}%;"
           data-target="collapse_#{index}">
-        </div>
+        </button>
       HTML
     end
   end
