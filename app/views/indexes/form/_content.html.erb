@@ -5,9 +5,9 @@
     locals: { total_duration: @resource_file.duration, index_points: select_file_index_points(@file_index_points, @file_index_point) , active_point_id: params[:file_index_point_id]  } %>
   <% if params[:action] == "show" || params[:action] == "show_index"  %>
     <% if @file_index.present? %>
-      <%= link_to 'Add Index Segment', 'javascript://', class: 'btn btn-primary btn-xs pull-left mt-2 add_tag', data: { url: add_index_file_path(@resource_file.id, @file_index.id) } %>
+      <%= link_to 'Add Index Segment', 'javascript://', class: 'btn btn-outline-dark btn-block pull-left mt-2 add_tag', data: { url: add_index_file_path(@resource_file.id, @file_index.id) } %>
     <% else %>
-      <%= link_to 'Add Index Segment', 'javascript://', class: 'btn btn-primary btn-xs pull-left mt-2 add_tag', data: { url: add_index_path(@resource_file.id) } %>
+      <%= link_to 'Add Index Segment', 'javascript://', class: 'btn btn-outline-dark btn-block pull-left mt-2 add_tag', data: { url: add_index_path(@resource_file.id) } %>
     <% end %>
   <% end %>
 </div>

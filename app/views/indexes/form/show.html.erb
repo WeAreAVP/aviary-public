@@ -15,18 +15,20 @@
                   <% end %>
 
                   <!-- Title -->
-                  <div class="d-flex" style="align-items: center;">
+                  <% if @file_index.present? %>
+                    <div class="d-flex" style="align-items: center;">
                       <div class="mr-2">Editing Index</div>
                       <h1 id="index_title_heading" class="cursor-pointer"><%= @file_index.title %></h1>
 
-                    <%= simple_form_for @file_index, html: { class: 'd-none', id: "save_file_index_title_form" }, url: update_index_title_path(@file_index.id) do |f| %>
-                      <input class="string required form-control" id="edit_file_index_title" required="required" aria-required="true" type="text"
-                        value="<%= @file_index.title %>" name="file_index[title]" />
+                      <%= simple_form_for @file_index, html: { class: 'd-none', id: "save_file_index_title_form" }, url: update_index_title_path(@file_index.id) do |f| %>
+                        <input class="string required form-control" id="edit_file_index_title" required="required" aria-required="true" type="text"
+                          value="<%= @file_index.title %>" name="file_index[title]" />
 
-                      <input class="cancel_file_index_title btn btn-secondary" type="button" value="Cancel" />
-                      <input class="save_file_index_title btn btn-primary" type="submit" value="Save" />
-                    <% end %>
-                  </div>
+                        <input class="cancel_file_index_title btn btn-secondary" type="button" value="Cancel" />
+                        <input class="save_file_index_title btn btn-primary" type="submit" value="Save" />
+                      <% end %>
+                    </div>
+                  <% end %>
 
                 </div>
               </div>
@@ -126,6 +128,7 @@
                               </div>
                             </li>
                           <% end %>
+
                           <% unless data.keywords.blank? %>
                             <li class="list-group-item d-flex justify-content-between">
                               <div class="w-50"><strong>Keywords:</strong></div>
@@ -226,7 +229,7 @@
             </div>
           </div>
           <div class="col-md-6 video-box-section">
-            <%= render 'interviews/interview_index/top' %>
+            <%= render 'indexes/form/content' %>
           </div>
         </div>
 

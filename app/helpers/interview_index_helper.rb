@@ -114,25 +114,33 @@ module InterviewIndexHelper
   def set_custom_values(file_index_point, alt, params)
     lat = []
     long = []
-    unless params[:file_index_point]['zoom'].first.empty? && params[:file_index_point]['gps_latitude'].first.empty? && params[:file_index_point]['gps_description'].first.empty?
-      params[:file_index_point]['gps_latitude'].each_with_index do |gps, _index|
-        temp = gps.split(',')
-        if temp.length > 1
-          lat << temp[0].strip
-          long << temp[1].strip
+
+    if params[:file_index_point]['zoom'].present? && params[:file_index_point]['gps_latitude'].present? && params[:file_index_point]['gps_description'].present?
+      unless params[:file_index_point]['zoom'].first.empty? && params[:file_index_point]['gps_latitude'].first.empty? && params[:file_index_point]['gps_description'].first.empty?
+        params[:file_index_point]['gps_latitude'].each_with_index do |gps, _index|
+          temp = gps.split(',')
+          if temp.length > 1
+            lat << temp[0].strip
+            long << temp[1].strip
+          end
         end
       end
     end
 
-    file_index_point.gps_zoom = params[:file_index_point]['zoom'].to_json
-    file_index_point.gps_description = params[:file_index_point]["gps_description#{alt}"].to_json
-    file_index_point.gps_latitude = lat.to_json
-    file_index_point.gps_longitude = long.to_json
-    file_index_point.hyperlink = params[:file_index_point]['hyperlink'].to_json
-    file_index_point.hyperlink_description = params[:file_index_point]["hyperlink_description#{alt}"].to_json
-    file_index_point.subjects = params[:subjects].join(';') if params[:subjects].present?
+    file_index_point.gps_zoom = params[:file_index_point]['zoom'].to_json if params[:file_index_point]['zoom'].present?
+    file_index_point.gps_description = params[:file_index_point]["gps_description#{alt}"].to_json if params[:file_index_point]["gps_description#{alt}"].present?
+    file_index_point.gps_latitude = lat.to_json if lat.present?
+    file_index_point.gps_longitude = long.to_json if long.present?
+    file_index_point.hyperlink = params[:file_index_point]['hyperlink'].to_json if params[:file_index_point]['hyperlink'].present?
+    file_index_point.hyperlink_description = params[:file_index_point]["hyperlink_description#{alt}"].to_json if params[:file_index_point]["hyperlink_description#{alt}"].present?
     file_index_point.keywords = params[:keywords].join(';') if params[:keywords].present?
+    file_index_point.subjects = params[:subjects].join(';') if params[:subjects].present?
     file_index_point.parent_id = params[:file_index_point][:parent_id] if params[:file_index_point][:parent_id].present?
+    file_index_point.publisher = params[:file_index_point][:publisher] if params[:file_index_point][:publisher].present?
+    file_index_point.contributor = params[:file_index_point][:contributor] if params[:file_index_point][:contributor].present?
+    file_index_point.identifier = params[:file_index_point][:identifier] if params[:file_index_point][:identifier].present?
+    file_index_point.rights = params[:file_index_point][:rights] if params[:file_index_point][:rights].present?
+    file_index_point.segment_date = params[:file_index_point][:segment_date] if params[:file_index_point][:segment_date].present?
     if params[:file_index_point][:end_time].present? && human_to_seconds(params[:file_index_point][:end_time]).to_f > file_index_point.start_time
       file_index_point.end_time = human_to_seconds(params[:file_index_point][:end_time]).to_f
       return file_index_point

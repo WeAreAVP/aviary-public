@@ -172,6 +172,7 @@ function InterviewIndexManager() {
             {
                 let videoJsOptions = {
                     fluid: true,
+                    playbackRates: [0.5, 1, 1.5, 2],
                     aspectRatio: '16:9',
                     responsive: true,
                     preload: true,
@@ -348,7 +349,7 @@ function InterviewIndexManager() {
 
         document_level_binding_element('.delete_index', 'click', function () {
             $('#modalPopupFooterYes').attr('href', $(this).data().url);
-            let message = 'Are you sure you want to remove this index point?';
+            let message = 'Are you sure you want to delete this index segment?';
             $('#modalPopupBody').html(message);
             $('#modalPopupTitle').html('Delete "' + $(this).data().name + '"');
             $('#modalPopup').modal('show');

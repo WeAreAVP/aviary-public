@@ -7,21 +7,29 @@
       <div class="row">
 
       <!-- Title -->
-      <div class="d-flex col-md-8" style="align-items: center;">
+      <% if @file_index.present? %>
+        <div class="d-flex col-md-8" style="align-items: center;">
+            <div class="mr-2">
+              <%= params['action'] == 'edit_index' ? 'Editing' : 'Creating' %>
+              Segment of Index
+            </div>
+            <h1 id="index_title_heading" class="cursor-pointer"><%= @file_index.title %></h1>
+
+          <%= simple_form_for @file_index, html: { class: 'd-none', id: "save_file_index_title_form" }, url: update_index_title_path(@file_index.id) do |f| %>
+            <input class="string required form-control" id="edit_file_index_title" required="required" aria-required="true" type="text"
+              value="<%= @file_index.title %>" name="file_index[title]" />
+
+            <input class="cancel_file_index_title btn btn-secondary" type="button" value="Cancel" />
+            <input class="save_file_index_title btn btn-primary" type="submit" value="Save" />
+          <% end %>
+        </div>
+      <% else %>
+        <div class="d-flex col-md-8" style="align-items: center;">
           <div class="mr-2">
-            <%= params['action'] == 'edit_index' ? 'Editing' : 'Creating' %>
-            Segment of Index
+            Segment of New Index
           </div>
-          <h1 id="index_title_heading" class="cursor-pointer"><%= @file_index.title %></h1>
-
-        <%= simple_form_for @file_index, html: { class: 'd-none', id: "save_file_index_title_form" }, url: update_index_title_path(@file_index.id) do |f| %>
-          <input class="string required form-control" id="edit_file_index_title" required="required" aria-required="true" type="text"
-            value="<%= @file_index.title %>" name="file_index[title]" />
-
-          <input class="cancel_file_index_title btn btn-secondary" type="button" value="Cancel" />
-          <input class="save_file_index_title btn btn-primary" type="submit" value="Save" />
-        <% end %>
-      </div>
+        </div>
+      <% end %>
 
         <!-- Return Button -->
         <div class="col-md-4">

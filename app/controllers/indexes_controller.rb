@@ -124,7 +124,7 @@ class IndexesController < ApplicationController
         url = "#{show_index_file_path(@resource_file.id, @file_index.id)}?time=#{start_time}"
         url = "#{add_index_file_path(@resource_file.id, @file_index.id)}?time=#{start_time}" if params['new'].present?
 
-        format.html { redirect_to url, notice: 'Resource Index was successfully created.' }
+        format.html { redirect_to url, notice: 'Index segment was successfully Saved.' }
         format.json { render :show_index, status: :created, location: @file_index_point }
       else
         format.html { render template: 'indexes/form/new' }
@@ -148,7 +148,7 @@ class IndexesController < ApplicationController
         url = "#{show_index_file_path(@resource_file.id, @file_index.id)}?time=#{start_time}"
         url = "#{add_index_file_path(@resource_file.id, @file_index.id)}?time=#{start_time}" if params['new'].present?
 
-        format.html { redirect_to url, notice: 'Resource Index was successfully updated.' }
+        format.html { redirect_to url, notice: 'Index segment was successfully Saved.' }
         format.json { render :show_index, status: :created, location: @file_index_point }
       else
         format.html { render template: 'indexes/form/edit' }
@@ -163,9 +163,9 @@ class IndexesController < ApplicationController
     @file_index.title = params[:file_index][:title]
 
     if @file_index.save
-      render json: { message: 'Index Title updated successfully.', status: 'success' }
+      render json: { message: 'Index title updated successfully.', status: 'success' }
     else
-      render json: { message: 'Unable to update File Index Point title.', status: 'danger' }
+      render json: { message: 'Unable to update Index title.', status: 'danger' }
     end
   end
 
@@ -175,7 +175,7 @@ class IndexesController < ApplicationController
     file_index = FileIndex.find(file_index_point.file_index_id)
     update_end_time(file_index_point)
     respond_to do |format|
-      format.html { redirect_to show_index_file_path(file_index.collection_resource_file_id, file_index.id), notice: 'The Resource index you selected has been deleted successfully.' }
+      format.html { redirect_to show_index_file_path(file_index.collection_resource_file_id, file_index.id), notice: 'Index segment was successfully deleted.' }
     end
   end
 
