@@ -87,8 +87,11 @@
                       <input type="hidden" name="current_time" id="current_time"/>
 
                       <%= f.hidden_field :start_time, value: time_to_duration(@file_index_point.start_time.to_f), class: 'video_start_time', id: "hidden_video_start_time" %>
+                      <button class="edit-time" type="button" alt="Edit End Time" data-time-target=".video_start_time">
+                        <i class="fa fa-pencil"></i>
+                      </button>
                       <%= f.text_field :start_time, value: time_to_duration(@file_index_point.start_time.to_f),
-                        class: 'video_start_time video_input form-control', placeholder: "HH:MM:SS"
+                        class: 'video_start_time video_input form-control', disabled: true
                       %>
 
                       <% if @file_index_point.errors && @file_index_point.errors.messages && @file_index_point.errors.messages.length.positive? &&
@@ -108,8 +111,11 @@
 
                       <input type="hidden" name="item_length" id="item_length"/>
                       <%= f.hidden_field :end_time, value: time_to_duration(@file_index_point.end_time.to_f), class: 'video_end_time', id: "hidden_video_end_time" %>
+                      <button class="edit-time" type="button" alt="Edit End Time" data-time-target=".video_end_time">
+                        <i class="fa fa-pencil"></i>
+                      </button>
                       <%= f.text_field :end_time, value: time_to_duration(@file_index_point.end_time.to_f),
-                        class: 'video_end_time video_input form-control', placeholder: "HH:MM:SS"
+                        class: 'video_end_time video_input form-control', disabled: true
                       %>
 
                       <% if @file_index_point.errors && @file_index_point.errors.messages && @file_index_point.errors.messages.length.positive? &&

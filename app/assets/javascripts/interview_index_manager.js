@@ -343,8 +343,6 @@ function InterviewIndexManager() {
                     jsMessages('success', 'Index point status updated successfully.');
                 },
             });
-            
-
         });
 
         document_level_binding_element('.delete_index', 'click', function () {
@@ -511,6 +509,13 @@ function InterviewIndexManager() {
                 }
             });
         });
+
+        document_level_binding_element('.edit-time', 'click', function (e) {
+            let timecode = prompt('Change timecode (HH:MM:SS)', $($(this).data('timeTarget')).val());
+
+            if (timecode.match(/^\d{2}:[0-5]\d:[0-5]\d$/))
+                $($(this).data('timeTarget')).val(timecode);
+        })
     };
 
     function hideAllSegmentTitleInputs() {

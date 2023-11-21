@@ -246,6 +246,10 @@ div#noMediaConnection {
     padding: 0 30px;
     position: relative;
 
+    .video_start_time, .video_end_time, .video_time {
+      padding-left: 45px;
+    }
+
     .update_time {
       position: absolute;
       top: 22px;
@@ -256,6 +260,15 @@ div#noMediaConnection {
       display: flex;
       align-items: center;
       border-radius: 0 4px 4px 0;
+    }
+
+    .edit-time {
+      background-color: none;
+      left: 15px;
+      cursor: pointer;
+      width: 30px;
+      padding: 0 17px;
+      border-radius: 4px 0 0 4px;
     }
 
     .field-title {
