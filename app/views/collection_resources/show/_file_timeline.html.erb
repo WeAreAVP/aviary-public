@@ -39,7 +39,7 @@
 
                   width = index_duration / total_duration * 100
                   html += <<-HTML
-                    <button class="index-segment play-timecode timeline-point index_timeline index_#{index.id} #{color} d-none point_index_#{point.id}"
+                    <button class="index-segment border-0 play-timecode timeline-point index_timeline index_#{index.id} #{color} d-none point_index_#{point.id}"
                       data-type="index" data-page-number="#{current_page}" tabindex="0"
                       data-point="#{point.id}" data-timecode="#{point.start_time}"
                       data-toggle="tooltip" data-placement="bottom"
