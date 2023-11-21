@@ -176,16 +176,18 @@
                   </div>
                   <!-- Save & Navigation Buttons End -->
 
-                  <div class="d-flex w-100">
-                    <div class="form-group w-100 h-4">
-                      <div class="field-title"><%= f.label :parent_id, "Part of" %></div>
-                      <select name='<%= "file_index_point[parent_id]"%>' style="height: 53px"
-                        id="file_index_point_parent_id" class="optional form-control parent_id dont-apply-selectize">
-                        <option value="0"></option>
-                        <%== generate_segments_dropdown(@file_index, @file_index_point) %>
-                      </select>
+                  <% if @file_index.present? && @index_template['parent_child'] %>
+                    <div class="d-flex w-100">
+                      <div class="form-group w-100 h-4">
+                        <div class="field-title"><%= f.label :parent_id, "Part of" %></div>
+                        <select name='<%= "file_index_point[parent_id]"%>' style="height: 53px"
+                          id="file_index_point_parent_id" class="optional form-control parent_id dont-apply-selectize">
+                          <option value="0"></option>
+                          <%== generate_segments_dropdown(@file_index, @file_index_point) %>
+                        </select>
+                      </div>
                     </div>
-                  </div>
+                  <% end %>
                 </div>
               </div>
             </div>

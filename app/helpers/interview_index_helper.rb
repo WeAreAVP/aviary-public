@@ -49,12 +49,18 @@ module InterviewIndexHelper
 
     elsif interview.media_host == 'Aviary'
       source_tags = ''
-      doc = Nokogiri::HTML(open(interview.media_url.strip, read_timeout: 10))
-      video_src_nodes = doc.search('//source')
-      video_src_nodes.each do |node|
-        source_tags = format('<source src="%s" type="%s"/>', node.attributes['src'].value, video_src_nodes.first.attributes['type'].value)
+      begin
+        doc = Nokogiri::HTML(open(interview.media_url.strip, read_timeout: 10))
+        video_src_nodes = doc.search('//source')
+        video_src_nodes.each do |node|
+          source_tags = format('<source src="%s" type="%s"/>', node.attributes['src'].value, video_src_nodes.first.attributes['type'].value)
+        end
+        data['source_tags'] = source_tags
+      rescue StandardError => ex
+        Rails.logger.error(ex)
+        error = 'Error accessing resource. Please ensure that the resource is public.'
+        data['error'] = error
       end
-      data['source_tags'] = source_tags
 
     elsif interview.media_host == 'SoundCloud'
       data['iframe'] = interview.embed_code.sub('<iframe ', '<iframe id="soundcloud_widget" ')
