@@ -133,7 +133,7 @@
                   <div class="buttons-box music_btn">
                     <a href="javascript:void(0);" class="btn btn-outline-dark update_step_backward"><i class="fa fa-step-backward"></i></a>
                     <a href="javascript:void(0);" class="btn btn-outline-dark update_backward"><%= image_tag("rewind.png", :alt => "Rewind 10 sec") %></a>
-                    <a href="javascript:void(0);" class="btn btn-outline-dark update_play"><i class="fa fa-play"></i></a>
+                    <a href="javascript:void(0);" class="btn btn-outline-dark upedate_play"><i class="fa fa-play"></i></a>
                     <a href="javascript:void(0);" class="btn btn-outline-dark update_pause"><i class="fa fa-stop"></i></a>
                     <a href="javascript:void(0);" class="btn btn-outline-dark update_forward"><%= image_tag("fast-forward.png", :alt => "Forward 10 sec") %></a>
                   </div>
@@ -200,7 +200,7 @@
 </div>
 <script type="text/javascript">
     $(document).ready(function () {
-        $(".top-section-test-interview").sticky({topSpacing: 50});
+        $(".top-section-test-interview").sticky({topSpacing: 50, bottomSpacing: 395});
         if ($('.left_space').text().length == 0) {
             $('.left_space').remove();
         }
