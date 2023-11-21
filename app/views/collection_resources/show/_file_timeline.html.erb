@@ -40,10 +40,11 @@
                   width = index_duration / total_duration * 100
                   html += <<-HTML
                     <button class="index-segment play-timecode timeline-point index_timeline index_#{index.id} #{color} d-none point_index_#{point.id}"
-                      data-type="index" data-page-number="#{current_page}"
+                      data-type="index" data-page-number="#{current_page}" tabindex="0"
                       data-point="#{point.id}" data-timecode="#{point.start_time}"
                       data-toggle="tooltip" data-placement="bottom"
                       title="#{Time.at(point.start_time.to_f).utc.strftime('%H:%M:%S') + ' ' + point.title}"
+                      aria-label="Index segment at #{Time.at(point.start_time.to_f).utc.strftime('%H:%M:%S') + ' titled: ' + point.title}"
                       style="width: #{width.round(2) < 1 ? 1 : width.ceil(2)}%;"
                       data-target="collapse_#{index_number}">
                     </button>

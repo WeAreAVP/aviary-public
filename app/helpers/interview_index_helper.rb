@@ -223,7 +223,8 @@ module InterviewIndexHelper
     else
       <<-HTML
         <button class="index-segment #{'active' if active}" data-title="#{time_to_duration(point.start_time)} #{point.title}"
-          style="width: #{width.round(2) < 1 ? 1 : width.ceil(2)}%;"
+          aria-label="Index segment at #{time_to_duration(point.start_time)} titled: #{point.title}"
+          style="width: #{width.round(2) < 1 ? 1 : width.ceil(2)}%;" tabindex="0"
           data-target="collapse_#{index}">
         </button>
       HTML
