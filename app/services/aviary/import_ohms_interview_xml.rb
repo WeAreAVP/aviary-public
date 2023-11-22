@@ -32,7 +32,7 @@ module Aviary
       interview.interviewee = [interview.interviewee] if interview.interviewee.is_a?(String)
       interview.interviewer = xml_data['interviewer'].present? ? xml_data['interviewer'] : []
       interview.interviewer = [interview.interviewer] if interview.interviewer.is_a?(String)
-      interview.interview_date =  xml_data['date']['value']
+      interview.interview_date = xml_data['date']['value']
       interview.date_non_preferred_format = xml_data['date_nonpreferred_format'].present? ? xml_data['date_nonpreferred_format'] : ''
       interview.collection_id = xml_data['collection_id'].present? ? xml_data['collection_id'] : ''
       interview.collection_name = xml_data['collection_name'].present? ? xml_data['collection_name'] : ''
