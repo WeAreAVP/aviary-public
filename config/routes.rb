@@ -113,6 +113,7 @@ Rails.application.routes.draw do
     get 'interview/index/new/:id', to: 'interview_index#new', as: :interview_index_new
     post 'interview/index/create/:id', to: 'interview_index#create', as: :interview_index_create
     post 'interview/index/status/:id', to: 'interview_index#status_update', as: :interview_index_status_update
+    get 'interview/index/index_segment_timeline/:id', to: 'interview_index#index_segment_timeline', as: :index_segment_timeline
   end
 
   namespace :thesaurus do

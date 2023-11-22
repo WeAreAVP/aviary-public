@@ -125,6 +125,13 @@ function InterviewIndexManager() {
                         }, 4000);
                     }
                 }
+
+                setTimeout(function () {
+                    kdp.kBind('mediaLoaded', function () {
+                        getIndexSegmentsTimeline(kdp.evaluate('{duration}'), host);
+                    });
+                }, 1000);
+
                 $('.player-section').css('visibility','unset');
             }
             else if(host == "SoundCloud")
@@ -165,6 +172,13 @@ function InterviewIndexManager() {
                             }, 2000);
                         }
                     }
+
+                    $('.player-section').css('visibility', 'unset');
+
+                    widget_soundcloud.getDuration(function (pos) {
+                        getIndexSegmentsTimeline(pos * 0.001, host);
+                    });
+
                     $('.player-section').css('visibility','unset');
                 });
             }
@@ -281,26 +295,54 @@ function InterviewIndexManager() {
                             }, 1000);
                         }
                     }
+
+                    player_widget.on("loadedmetadata", function () {
+                        getIndexSegmentsTimeline(player_widget.duration(), host);
+                    });
+                    
                     $('.player-section').css('visibility','unset');
-
-                    if ($('#media-index-timeline-pointer')[0]) {
-                        player_widget.on('constant-timeupdate', updateIndexPointer);
-
-                        function updateIndexPointer() {
-                            let progressPercent = player_widget.cache_.currentTime / player_widget.cache_.duration;
-                            $('#media-index-timeline-pointer').css('left', `${progressPercent * 100}%`);
-                        }
-                    }
                 });
-            
             }
             setInterval(function () {
                 $("#current_time").val(player_widget.currentTime());
             }, 1000);
         }
-        
-        
     };
+
+    const getIndexSegmentsTimeline = function (total_duration, host) {
+        $.ajax({
+            url: $('#index-segments-timeline').data('url'),
+            data: {
+                total_duration: total_duration,
+                active_point_id: $('#index-segments-timeline').data('activePointId'),
+            },
+            success: function( response ) {
+                $('#index-segments-timeline').append(response);
+
+                if ($('#media-index-timeline-pointer')[0]) {
+                    if (host === 'Kaltura') {
+                        kdp.kBind('playerUpdatePlayhead', function (currentTime) {
+                                let progressPercent = currentTime / total_duration;
+                                $('#media-index-timeline-pointer').css('left', `${progressPercent * 100}%`);
+                        });
+                    }  else if (host === 'SoundCloud') {
+                        widget_soundcloud.bind(SC.Widget.Events.PLAY_PROGRESS, function () {
+                            widget_soundcloud.getPosition(function (pos) {
+                                let progressPercent = pos * 0.001 / total_duration;
+                                $('#media-index-timeline-pointer').css('left', `${progressPercent * 100}%`);
+                            })
+                        });
+                    } else {
+                        player_widget.on('constant-timeupdate', updateIndexPointer);
+
+                        let progressPercent = player_widget.cache_.currentTime / total_duration;
+                        $('#media-index-timeline-pointer').css('left', `${progressPercent * 100}%`);
+                    }
+                }
+            }
+        });
+    }
+
     const bindEvents = function () {
         let containerRepeatManager = new ContainerRepeatManager();
         containerRepeatManager.makeContainerRepeatable(".add_gps", ".remove_gps", '.container_gps_inner', '.container_gps', '.gps');
@@ -358,10 +400,18 @@ function InterviewIndexManager() {
         });
 
         document_level_binding_element('.simple_form', 'submit', function (e) {
-          e.preventDefault();
+            e.preventDefault();
 
-          formChange = 0;
-          this.submit();
+            if (!$('.timestamp-errors').length) {
+                formChange = 0;
+
+                this.submit();
+            } else {
+                setTimeout(() => {
+                    $('input[type="submit"]').prop('disabled', false)
+                }, 100);
+                jsMessages('danger', 'Please ensure the timestamps are not out of bound');
+            }
         });
 
         document_level_binding_element('.play-timecode', 'click', function () {
@@ -382,13 +432,16 @@ function InterviewIndexManager() {
             }
         }, true)
         
+
         document_level_binding_element('.save_and_new', 'click', function () {
-            var url = $('.interview_index_manager').attr("action")
-            if(!url.includes("new=1"))
-            {
-                $('.interview_index_manager').attr("action", url+"?new=1");
+            if ($('timestamp-errors').length) {
+                var url = $('.interview_index_manager').attr("action")
+                if(!url.includes("new=1"))
+                {
+                    $('.interview_index_manager').attr("action", url+"?new=1");
+                }
             }
-        }, true);
+        });
 
         document_level_binding_element('#toggle_all', 'click', function () {
             if ($(this).text().trim() === 'Expand All') {
@@ -510,12 +563,38 @@ function InterviewIndexManager() {
             });
         });
 
-        document_level_binding_element('.edit-time', 'click', function (e) {
-            let timecode = prompt('Change timecode (HH:MM:SS)', $($(this).data('timeTarget')).val());
+        setTimeout(() => {
+            document_level_binding_element('.edit-time', 'click', function (e) {
+                let timecode = prompt('Change timecode (HH:MM:SS)', $($(this).data('timeTarget')).val());
 
-            if (timecode.match(/^\d{2}:[0-5]\d:[0-5]\d$/))
-                $($(this).data('timeTarget')).val(timecode);
-        })
+                if (timecode.match(/^\d{2}:[0-5]\d:[0-5]\d$/)) {
+                    timeArray = timecode.split(':');
+                    switch (host) {
+                        case 'Kaltura':
+                            videoDuration = kdp.evaluate('{duration}');
+                            break;
+
+                        case 'SoundCloud':
+                            videoDuration = widget_soundcloud.getDuration();
+                            break;
+
+                        default:
+                            videoDuration = player_widget.duration();
+                            break;
+                    }
+
+                    $(`span#${$(this).data('timeTarget').replace('.', '')}-error`).remove();
+                    const timeInSeconds = (parseInt(timeArray[0]) * 3600) + (parseInt(timeArray[1]) * 60) + parseInt(timeArray[2]);
+                    if (timeInSeconds > videoDuration) {
+                        $(`<span id="${$(this).data('timeTarget').replace('.', '')}-error" class="timestamp-errors form_error">Can't be out of bound</span>`).insertAfter(
+                            $(`input${$(this).data('timeTarget')}.form-control`)
+                        );
+                    }
+
+                    $($(this).data('timeTarget')).val(timecode);
+                }
+            });
+        }, 1500);
     };
 
     function hideAllSegmentTitleInputs() {
