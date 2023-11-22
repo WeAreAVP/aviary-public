@@ -272,7 +272,10 @@ Rails.application.routes.draw do
       post :bulk_file_index_edit
     end
   end
-  resources :transcripts, only: %i[index] do
+  resources :transcripts, only: %i[index edit] do
+    member do
+      post 'edit', to: 'transcripts#update', format: :json
+    end
     collection do
       post :data_table, to: 'transcripts#index'
       post :bulk_file_transcript_edit

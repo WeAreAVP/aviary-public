@@ -15,16 +15,13 @@
                 </div>
               <% end %>
               <hr/>
-              <% if !@file_transcript.is_edit && @file_transcript.timestamps.present? %>
-                <% json_timestamp = valid_json?(@file_transcript.timestamps.gsub('=>', ':')) %>
-                <% unless json_timestamp['title'].present? %>
+              <% if allow_editor?(@file_transcript) %>
                   <a class="edit_fields edit_transcript" href="javascript://"
                      data-url="<%= edit_transcript_url(@file_transcript, host: Utilities::AviaryDomainHandler.subdomain_handler(current_organization)) %>">
                      <span class="icon-Edit">
                       <img src="<%= image_path 'icons/edit-icon.png' %>">
                     </span>
                   </a>
-                <% end %>
               <% elsif @file_transcript.is_edit && (@file_transcript.locked_by == current_user.id) %>
                 <a href="javascript://" class="btn-sm btn-success finish_editing" data-url="<%= edit_transcript_url(@file_transcript, host: Utilities::AviaryDomainHandler.subdomain_handler(current_organization)) %>">Finish
                   Editing</a>

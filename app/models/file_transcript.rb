@@ -21,6 +21,7 @@ class FileTranscript < ApplicationRecord
                                                                      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
                                                                      'application/msword', 'application/zip'],
                                                       message: 'Only XML, WebVTT, TXT, Doc and Docx formats allowed.'
+  has_attached_file :saved_slate_js, validate_media_type: false, default_url: ''
   attr_accessor :remove_title
 
   scope :order_transcript, -> { order('sort_order ASC') }
@@ -35,6 +36,10 @@ class FileTranscript < ApplicationRecord
 
   def should_index?
     interview_id.blank?
+  end
+
+  def slate_js
+    File.read(saved_slate_js.path)
   end
 
   def validate_file
