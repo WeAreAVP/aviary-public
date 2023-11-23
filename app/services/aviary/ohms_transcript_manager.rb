@@ -210,7 +210,7 @@ module Aviary
         last_point = '00:00:00'
         time_different = sync_interval.to_f * 60
         output.each_with_index do |points, point_key|
-          if points.match(/(^[0-9:.]+)/).present?
+          if points.match(regex).present?
             time = last_point.split(':').map(&:to_f).inject(0) { |a, b| a * 60 + b } # convert time to seconds
             time += time_different
             time = Time.at(time).utc.strftime('%H:%M:%S')
