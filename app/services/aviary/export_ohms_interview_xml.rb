@@ -206,6 +206,7 @@ module Aviary
               xml.transcript transcript_manager.read_notes_info(file_transcript)
             end
             transcript_alt = ''
+            file_transcript_alt = FileTranscript.where(interview_id: interview.id)
             if file_transcript_alt.length == 2
               transcript_alt_file = file_transcript_alt.last
               transcript_alt = transcript_manager.read_notes_info(transcript_alt_file)
