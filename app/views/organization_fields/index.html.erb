@@ -323,24 +323,31 @@
                                       </thead>
                                     </table>
                                     <table class="table border-0" id="sort_facet_fields_table">
-                                      <tbody id='resource_table_org' data-type="resource_fields" data-option='resource_table_org' data-order-custom="resource_table_sort_order" data-status-columns="resource_table_display,resource_table_search">
+                                      <tbody id='index_fields' data-type="index_fields" data-option='index_fields' data-order-custom="sort_order" data-status-columns="display">
                                       <% if @indexes_columns_fields.present? %>
-                                        <% @indexes_columns_fields.sort { |a, b| a[0].to_i <=> b[0].to_i }.each_with_index do |value, _index| %>
-                                          <% slug = value[1]['value'] %>
-                                          <% label = FileIndex.fields_values[slug] %>
-                                          <tr class="facet_field <%= slug %>" data-field="<%= slug %>" data-label="<%= label %>">
-                                            <td width="90%">
-                                                <% if slug.present? && slug != slug %>
-                                                  <small class="mt-2 form-text font-size-12px text-muted d-inline">
-                                                    <%= slug %>
-                                                  </small>
-                                                <% end %>
-                                              <%= label %>
-                                            </td>
+                                      <% @indexes_columns_fields.each_with_index do |(name, props), _index| %>
+                                        <% label = props['display_name'] %>
 
+                                        <tr class="<%= name %>" data-field="<%= name %>" data-label="<%= label %>"
+                                          data-is-required-field="<%= props['required'] %>">
+                                          <td width="80%">
+                                            <i class="fa fa-ellipsis-v handle mx-2" style="color: lightgrey;cursor: move;"></i>
+                                            <span data-toggle="tooltip" data-placement="top" title="" aria-hidden="true" data-original-title="<%= name %>">
+                                              <%= label %>
+                                            </span>
+                                            <% if props['required'].to_s.to_boolean? %>
+                                              <i class="fa fa-asterisk color-grey font-size-8px" data-toggle="tooltip" data-placement="top" title="" aria-hidden="true" data-original-title="This is a required field and cannot be reordered or disabled."></i>
+                                            <% end %>
+                                            <small class="mt-2 form-text font-size-12px text-muted d-inline">
+                                              <%= name %>
+                                            </small>
+
+                                          </td>
                                             <td width="10%">
-                                              <label class="toggle-switch">
-                                                <%= check_box_tag 'display' + slug, class: "display toggle-switch__input template-data-is-facetable template-data-field-is-facetable" %>
+                                              <label class="toggle-switch ml-3">
+                                                <%= check_box_tag 'display' + name, props['display'], props['display'].to_s.to_boolean?,
+                                                  disabled: props['required'], class: "display toggle-switch__input template-data-is-facetable template-data-field-is-facetable" %>
+
                                                 <span class="toggle-switch__slider"></span>
                                               </label>
                                             </td>

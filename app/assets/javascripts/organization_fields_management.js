@@ -184,7 +184,7 @@ function OrganizationFieldsManagement() {
             axis: "y",
             containment: "parent",
             cursor: "move",
-            items: "tr",
+            items: "tr:not([data-is-required-field='true'])",
             tolerance: "pointer",
             update: function () {
                 updateSortInfo(this)

@@ -15,7 +15,7 @@ class OrganizationFieldsController < ApplicationController
     @resource_fields = @org_field_manager.organization_field_settings(current_organization, nil, 'resource_fields')
     @resource_columns_search = @org_field_manager.organization_field_settings(current_organization, nil, 'resource_fields', 'search_sort_order')
     @resource_columns_table = @org_field_manager.organization_field_settings(current_organization, nil, 'resource_fields', 'resource_table_sort_order')
-    @indexes_columns_fields = JSON.parse(current_organization.file_index_display_column)['columns_status']
+    @indexes_columns_fields = @org_field_manager.organization_field_settings(current_organization, nil, 'index_fields', 'sort_order')
     @part_of_collections = {}
     return unless current_organization.collections.present?
     current_organization.collections.each do |single_collection|
