@@ -65,6 +65,7 @@ module Aviary
             xml.file_name interview.media_filename
             file_transcript = FileTranscript.find_by(interview_id: interview.id)
             formatted = ''
+            alt_formatted = ''
             if interview.transcript_sync_data.present?
               xml.sync interview.transcript_sync_data
             elsif file_transcript.present?
@@ -109,17 +110,17 @@ module Aviary
                     new_line = ''
                     breakup.each_with_index do |word, k|
                       if "#{new_line}#{word}".length > 80 || k == breakup.length - 1
-                        formatted = "#{formatted}#{new_line.strip}#{k == breakup.length - 1 ? " #{word}" : ''}\r\n"
+                        alt_formatted = "#{alt_formatted}#{new_line.strip}#{k == breakup.length - 1 ? " #{word}" : ''}\r\n"
                         new_line = ''
                       end
                       new_line = "#{new_line}#{word} "
                     end
-                    formatted = "#{formatted}\r\n"
+                    alt_formatted = "#{alt_formatted}\r\n"
                   end
                 end
-                formatted_info = formatted.split("\r\n")
-                line = formatted_info.length
-                sync_alt += "|#{line}(#{formatted_info.last.split(' ').length})"
+                alt_formatted_info = alt_formatted.split("\r\n")
+                line = alt_formatted_info.length
+                sync_alt += "|#{line}(#{alt_formatted_info.last.split(' ').length})"
               end
             end
             xml.sync_alt sync_alt
@@ -199,13 +200,13 @@ module Aviary
             xml.rel interview.try('rel').present? ? interview.rel : ''
             file_transcript = FileTranscript.find_by(interview_id: interview.id)
             transcript_manager = Aviary::OhmsTranscriptManager.new
-
             if formatted.present?
               xml.transcript formatted
             else
               xml.transcript transcript_manager.read_notes_info(file_transcript)
             end
             transcript_alt = ''
+            file_transcript_alt = FileTranscript.where(interview_id: interview.id)
             if file_transcript_alt.length == 2
               transcript_alt_file = file_transcript_alt.last
               transcript_alt = transcript_manager.read_notes_info(transcript_alt_file)
