@@ -53,12 +53,15 @@
                 <% end %>
                 <input type="hidden" name="item_length" id="item_length"/>
                 <%= f.hidden_field :start_time, value: time_to_duration(@file_index_point.start_time.to_f), class: 'video_time', id: "hidden_video_time" %>
+                <button class="edit-time" type="button" alt="Edit End Time" data-time-target=".video_time" style="left: 30px;">
+                  <i class="fa fa-pencil"></i>
+                </button>
                 <%= f.text_field :start_time, value: time_to_duration(@file_index_point.start_time.to_f), class: 'video_time video_input form-control', 
-                  placeholder: "HH:MM:SS" %>
+                  disabled: true %>
                 <% if @file_index_point.errors && @file_index_point.errors.messages && @file_index_point.errors.messages.length.positive? && @file_index_point.errors.messages[:start_time] && @file_index_point.errors.messages[:start_time].first %>
                   <span class="form_error"><%= @file_index_point.errors.messages[:start_time].first %></span>
                 <% end %>
-                <a href="javascript:void(0);" class="btn btn-outline-dark update_time">Update Time</a>
+                <a href="javascript:void(0);" class="btn btn-outline-dark update_time" style="right: 30px;">Update Time</a>
               </div>
               <div class="buttons-box music_btn">
                 <a href="javascript:void(0);" class="btn btn-outline-dark update_step_backward"><i class="fa fa-step-backward"></i></a>

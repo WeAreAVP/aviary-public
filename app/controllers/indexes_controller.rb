@@ -84,7 +84,7 @@ class IndexesController < ApplicationController
       @file_index = FileIndex.find(params[:file_index_id])
       @file_index_point = @file_index.file_index_points
     end
-    render template: 'interviews/interview_index/show'
+    render template: 'indexes/form/show'
   end
 
   def add_index
@@ -96,7 +96,7 @@ class IndexesController < ApplicationController
       @file_index = FileIndex.find(params[:file_index_id])
       @file_index_points = @file_index.file_index_points
     end
-    render template: 'interviews/interview_index/new'
+    render template: 'indexes/form/new'
   end
 
   def create_index
@@ -121,10 +121,13 @@ class IndexesController < ApplicationController
     @file_index_point = set_custom_values(@file_index_point, '', params)
     respond_to do |format|
       if @file_index_point.save
-        format.html { redirect_to "#{show_index_file_path(@resource_file.id, @file_index.id)}?time=#{start_time}", notice: 'Resource Index was successfully created.' }
+        url = "#{show_index_file_path(@resource_file.id, @file_index.id)}?time=#{start_time}"
+        url = "#{add_index_file_path(@resource_file.id, @file_index.id)}?time=#{start_time}" if params['new'].present?
+
+        format.html { redirect_to url, notice: 'Index segment was successfully Saved.' }
         format.json { render :show_index, status: :created, location: @file_index_point }
       else
-        format.html { render template: 'interviews/interview_index/new' }
+        format.html { render template: 'indexes/form/new' }
         format.json { render json: @file_index_point.errors, status: :unprocessable_entity }
       end
     end
@@ -142,12 +145,27 @@ class IndexesController < ApplicationController
     @file_index_point = set_custom_values(@file_index_point, '', params)
     respond_to do |format|
       if @file_index_point.save
-        format.html { redirect_to "#{show_index_file_path(@resource_file.id, @file_index.id)}?time=#{start_time}", notice: 'Resource Index was successfully created.' }
+        url = "#{show_index_file_path(@resource_file.id, @file_index.id)}?time=#{start_time}"
+        url = "#{add_index_file_path(@resource_file.id, @file_index.id)}?time=#{start_time}" if params['new'].present?
+
+        format.html { redirect_to url, notice: 'Index segment was successfully Saved.' }
         format.json { render :show_index, status: :created, location: @file_index_point }
       else
-        format.html { render template: 'interviews/interview_index/edit' }
+        format.html { render template: 'indexes/form/edit' }
         format.json { render json: @file_index_point.errors, status: :unprocessable_entity }
       end
+    end
+  end
+
+  def update_index_title
+    authorize! :manage, current_organization
+    @file_index = FileIndex.find(params[:file_index_id])
+    @file_index.title = params[:file_index][:title]
+
+    if @file_index.save
+      render json: { message: 'Index title updated successfully.', status: 'success' }
+    else
+      render json: { message: 'Unable to update Index title.', status: 'danger' }
     end
   end
 
@@ -157,7 +175,7 @@ class IndexesController < ApplicationController
     file_index = FileIndex.find(file_index_point.file_index_id)
     update_end_time(file_index_point)
     respond_to do |format|
-      format.html { redirect_to show_index_file_path(file_index.collection_resource_file_id, file_index.id), notice: 'The Resource index you selected has been deleted successfully.' }
+      format.html { redirect_to show_index_file_path(file_index.collection_resource_file_id, file_index.id), notice: 'Index segment was successfully deleted.' }
     end
   end
 
@@ -171,7 +189,7 @@ class IndexesController < ApplicationController
     @previous_index_point, @next_index_point = adjacent_index_points
 
     set_thesaurus
-    render template: 'interviews/interview_index/edit'
+    render template: 'indexes/form/edit'
   end
 
   def set_thesaurus

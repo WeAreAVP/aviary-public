@@ -48,7 +48,7 @@ module Aviary
       interview.interview_date = if csv_raw['Day'].present? && !csv_raw['Day'].empty? &&
                                     Date.valid_date?(csv_raw['Year'].to_i, csv_raw['Month'].to_i, csv_raw['Day'].to_i)
 
-                                   DateTime.new(csv_raw['Year'].to_i, csv_raw['Month'].to_i, csv_raw['Day'].to_i).strftime('%m/%d/%Y')
+                                   DateTime.new(csv_raw['Year'].to_i, csv_raw['Month'].to_i, csv_raw['Day'].to_i).strftime('%Y-%m-%d')
                                  else
                                    ''
                                  end
@@ -107,16 +107,16 @@ module Aviary
       i = 0
 
       main_transcript = ''
-      while csv_raw["Transcript_#{i}"].present?
-        main_transcript += csv_raw["Transcript_#{i}"].gsub(' --- ', "\n") + "\n"
+      until csv_raw["Transcript_#{i}"].nil?
+        main_transcript += "#{csv_raw["Transcript_#{i}"]}\n"
 
         i += 1
       end
 
       file = Tempfile.new('content')
       file.path
-      file.write(main_transcript)
-      return unless transcripts.length.positive?
+      File.write(file.path, main_transcript)
+      return unless main_transcript.present?
       file_transcript = { title: csv_raw['Title'],
                           is_public: true,
                           associated_file: file,

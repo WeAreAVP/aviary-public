@@ -41,7 +41,7 @@ class FileIndexPointPresenter < BasePresenter
                  else
                    ''
                  end
-    text = "<div class='row pt-20px pl-20px index_time index_custom_identifier #{index_time_start} #{item_class}' id='index_timecode_#{id}' data-id='#{id}' data-index_timecode='#{start_time.to_i} '>
+    text = "<div class='row pt-20px pb-20px pl-20px index_time index_custom_identifier #{index_time_start} #{item_class}' id='index_timecode_#{id}' data-id='#{id}' data-index_timecode='#{start_time.to_i} '>
     <div class='col-md-2 text-center timecode_section'>
     <a class='play-timecode' href='javascript://' data-timecode='#{start_time}'>#{display_time}</a>
     </div>

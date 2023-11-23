@@ -125,6 +125,13 @@ function InterviewIndexManager() {
                         }, 4000);
                     }
                 }
+
+                setTimeout(function () {
+                    kdp.kBind('mediaLoaded', function () {
+                        getIndexSegmentsTimeline(kdp.evaluate('{duration}'), host);
+                    });
+                }, 1000);
+
                 $('.player-section').css('visibility','unset');
             }
             else if(host == "SoundCloud")
@@ -165,6 +172,13 @@ function InterviewIndexManager() {
                             }, 2000);
                         }
                     }
+
+                    $('.player-section').css('visibility', 'unset');
+
+                    widget_soundcloud.getDuration(function (pos) {
+                        getIndexSegmentsTimeline(pos * 0.001, host);
+                    });
+
                     $('.player-section').css('visibility','unset');
                 });
             }
@@ -172,6 +186,7 @@ function InterviewIndexManager() {
             {
                 let videoJsOptions = {
                     fluid: true,
+                    playbackRates: [0.5, 1, 1.5, 2],
                     aspectRatio: '16:9',
                     responsive: true,
                     preload: true,
@@ -279,25 +294,61 @@ function InterviewIndexManager() {
                                 }
                             }, 1000);
                         }
-                        
                     }
+
+                    player_widget.on("loadedmetadata", function () {
+                        getIndexSegmentsTimeline(player_widget.duration(), host);
+                    });
+                    
                     $('.player-section').css('visibility','unset');
                 });
-            
             }
             setInterval(function () {
                 $("#current_time").val(player_widget.currentTime());
             }, 1000);
         }
-        
-        
     };
+
+    const getIndexSegmentsTimeline = function (total_duration, host) {
+        $.ajax({
+            url: $('#index-segments-timeline').data('url'),
+            data: {
+                total_duration: total_duration,
+                active_point_id: $('#index-segments-timeline').data('activePointId'),
+            },
+            success: function( response ) {
+                $('#index-segments-timeline').append(response);
+
+                if ($('#media-index-timeline-pointer')[0]) {
+                    if (host === 'Kaltura') {
+                        kdp.kBind('playerUpdatePlayhead', function (currentTime) {
+                                let progressPercent = currentTime / total_duration;
+                                $('#media-index-timeline-pointer').css('left', `${progressPercent * 100}%`);
+                        });
+                    }  else if (host === 'SoundCloud') {
+                        widget_soundcloud.bind(SC.Widget.Events.PLAY_PROGRESS, function () {
+                            widget_soundcloud.getPosition(function (pos) {
+                                let progressPercent = pos * 0.001 / total_duration;
+                                $('#media-index-timeline-pointer').css('left', `${progressPercent * 100}%`);
+                            })
+                        });
+                    } else {
+                        player_widget.on('constant-timeupdate', updateIndexPointer);
+
+                        let progressPercent = player_widget.cache_.currentTime / total_duration;
+                        $('#media-index-timeline-pointer').css('left', `${progressPercent * 100}%`);
+                    }
+                }
+            }
+        });
+    }
+
     const bindEvents = function () {
         let containerRepeatManager = new ContainerRepeatManager();
         containerRepeatManager.makeContainerRepeatable(".add_gps", ".remove_gps", '.container_gps_inner', '.container_gps', '.gps');
         containerRepeatManager.makeContainerRepeatable(".add_hyperlinks", ".remove_hyperlinks", '.container_hyperlinks_inner', '.container_hyperlinks', '.hyperlinks');
         document_level_binding_element('.update_time', 'click', function () {
-            updateTime();
+            updateTime(this);
         });
         document_level_binding_element('.update_backward', 'click', function () {
             updateBackward();
@@ -334,13 +385,11 @@ function InterviewIndexManager() {
                     jsMessages('success', 'Index point status updated successfully.');
                 },
             });
-            
-
         });
 
         document_level_binding_element('.delete_index', 'click', function () {
             $('#modalPopupFooterYes').attr('href', $(this).data().url);
-            let message = 'Are you sure you want to remove this index point?';
+            let message = 'Are you sure you want to delete this index segment?';
             $('#modalPopupBody').html(message);
             $('#modalPopupTitle').html('Delete "' + $(this).data().name + '"');
             $('#modalPopup').modal('show');
@@ -351,10 +400,18 @@ function InterviewIndexManager() {
         });
 
         document_level_binding_element('.simple_form', 'submit', function (e) {
-          e.preventDefault();
+            e.preventDefault();
 
-          formChange = 0;
-          this.submit();
+            if (!$('.timestamp-errors').length) {
+                formChange = 0;
+
+                this.submit();
+            } else {
+                setTimeout(() => {
+                    $('input[type="submit"]').prop('disabled', false)
+                }, 100);
+                jsMessages('danger', 'Please ensure the timestamps are not out of bound');
+            }
         });
 
         document_level_binding_element('.play-timecode', 'click', function () {
@@ -375,13 +432,16 @@ function InterviewIndexManager() {
             }
         }, true)
         
+
         document_level_binding_element('.save_and_new', 'click', function () {
-            var url = $('.interview_index_manager').attr("action")
-            if(!url.includes("new=1"))
-            {
-                $('.interview_index_manager').attr("action",url+"?new=1");
+            if ($('timestamp-errors').length) {
+                var url = $('.interview_index_manager').attr("action")
+                if(!url.includes("new=1"))
+                {
+                    $('.interview_index_manager').attr("action", url+"?new=1");
+                }
             }
-        }, true);
+        });
 
         document_level_binding_element('#toggle_all', 'click', function () {
             if ($(this).text().trim() === 'Expand All') {
@@ -399,7 +459,7 @@ function InterviewIndexManager() {
                 $('.btn-collapse').attr('aria-expanded', false);
                 $(this).removeClass('btn-up');
                 $(this).addClass('btn-down');
-                $(this).text('Expand All')
+                $(this).text('Expand All');
             }
         });
 
@@ -419,10 +479,8 @@ function InterviewIndexManager() {
             $(this).addClass('active');
 
             // Highlight the corresponding index segment
-            $(`.frontdrop.${segmentId}`).addClass('highlight');
-            setTimeout(() => {
-                $(`.frontdrop.${segmentId}`).removeClass('highlight');
-            }, 3000);
+            $('.card-header').removeClass('highlight');
+            $(`#heading_${segmentId.replace('collapse_', '')}`).addClass('highlight');
 
             // Scroll the corresponding index segment into view
             $(`.card.${segmentId}`)[0].scrollIntoView({ behavior: "smooth", block: "nearest", inline: "nearest" });
@@ -431,6 +489,7 @@ function InterviewIndexManager() {
         document_level_binding_element('.btn-collapse', 'click', function () {
             // Highlight the active index segment on timeline
             $('.index-segment').removeClass('active');
+            $('.card-header').removeClass('highlight');
             if ($(this).attr('aria-expanded') === 'true') {
                 $(`.index-segment[data-target="${$(this).attr('aria-controls')}"]`).addClass('active');
                 $(`.segment-duration.play-timecode.${$(this).attr('aria-controls')}`).click();
@@ -470,12 +529,86 @@ function InterviewIndexManager() {
                 }
             });
         });
+
+        document_level_binding_element('#index_title_heading', 'click', function (event) {
+            event.stopPropagation();
+
+            $(this).addClass('d-none');
+            $('#save_file_index_title_form').removeClass('d-none');
+            $('#save_file_index_title_form').addClass('d-flex');
+        });
+
+        document_level_binding_element('.cancel_file_index_title', 'click', hideAllSegmentTitleInputs);
+
+        document_level_binding_element('.save_file_index_title', 'click', function (event) {
+            event.preventDefault();
+
+            if ($('#index_title_heading').text().trim() === $('#edit_file_index_title').val())
+                return;
+
+            $.ajax({
+                url: $('#save_file_index_title_form')[0].action,
+                data: $('#save_file_index_title_form').serialize(),
+                type: 'POST',
+                success: function (response) {
+                    jsMessages(response.status, response.message);
+                    $('#index_title_heading').text(
+                        $('#edit_file_index_title').val()
+                    );
+                    hideAllSegmentTitleInputs();
+                },
+                error: function (error) {
+                    jsMessages('danger', error);
+                }
+            });
+        });
+
+        setTimeout(() => {
+            document_level_binding_element('.edit-time', 'click', function (e) {
+                let timecode = prompt('Change timecode (HH:MM:SS)', $($(this).data('timeTarget')).val());
+
+                if (timecode.match(/^\d{2}:[0-5]\d:[0-5]\d$/)) {
+                    timeArray = timecode.split(':');
+                    switch (host) {
+                        case 'Kaltura':
+                            videoDuration = kdp.evaluate('{duration}');
+                            break;
+
+                        case 'SoundCloud':
+                            videoDuration = widget_soundcloud.getDuration();
+                            break;
+
+                        default:
+                            videoDuration = player_widget.duration();
+                            break;
+                    }
+
+                    $(`span#${$(this).data('timeTarget').replace('.', '')}-error`).remove();
+                    const timeInSeconds = (parseInt(timeArray[0], 10) * 3600) + (parseInt(timeArray[1], 10) * 60) + parseInt(timeArray[2], 10);
+                    if (timeInSeconds > videoDuration) {
+                        $(`<span id="${$(this).data('timeTarget').replace('.', '')}-error" class="timestamp-errors form_error">Can't be out of bound</span>`).insertAfter(
+                            $(`input${$(this).data('timeTarget')}.form-control`)
+                        );
+                    }
+
+                    $($(this).data('timeTarget')).val(timecode);
+                }
+            });
+        }, 1500);
     };
 
     function hideAllSegmentTitleInputs() {
         formChange = 0;
-        $('.segment-title .title').removeClass('d-none');
-        $('.segment-title .edit_title').addClass('d-none');
+        if ($('.segment-title .title')[0]) {
+            $('.segment-title .title').removeClass('d-none');
+            $('.segment-title .edit_title').addClass('d-none');
+        }
+
+        if ($('#index_title_heading')[0]) {
+            $('#index_title_heading').removeClass('d-none');
+            $('#save_file_index_title_form').addClass('d-none');
+            $('#save_file_index_title_form').removeClass('d-flex');
+        }
     }  
 
     function unloadPage(){ 
@@ -575,7 +708,7 @@ function InterviewIndexManager() {
             return player_widget.currentTime();  
         }
     }
-    const updateTime = function () {
+    const updateTime = function (button) {
         if(host == "SoundCloud")
         {
             widget_soundcloud.getPosition(function (pos) {
@@ -585,10 +718,11 @@ function InterviewIndexManager() {
         }
         else
         {
-            if($('.no-media').length > 0)
-                $('.video_time').val($('.video_input').val());
+            let selector = $(button).data('time-target') || '.video_time';
+            if ($('.no-media').length > 0)
+                $(selector).val($('.video_input').val());
             else
-                $('.video_time').val(secondsToHuman(getTime()));
+                $(selector).val(secondsToHuman(getTime()));
         }
     };
 
