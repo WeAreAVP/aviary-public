@@ -595,6 +595,23 @@ function InterviewIndexManager() {
                 }
             });
         }, 1500);
+
+        document_level_binding_element('.index_template_btn', 'click', function () {
+            let formData = {
+                'index_default_template': $('#index_default_template').prop('checked'),
+                'index_template': $('#index_template').val()
+            }
+            $.ajax({
+                url: $(this).data().url,
+                data: formData,
+                type: 'POST',
+                dataType: 'json',
+                success: function (response) {
+                    $("#index_template").val(response.index_template).change();
+                    jsMessages('success', 'File index updated successfully.');
+                },
+            });
+        });
     };
 
     function hideAllSegmentTitleInputs() {

@@ -1,0 +1,26 @@
+<div class="tab">
+  <div class="tab-content">
+    <div class="row">
+      <div class="col-12 p-5">
+          <div class="row">
+            <div class="col-4">
+              <div class="field-title">
+                <label> Index Edit Template </label>
+              </div>
+              <div class="form-check">
+                <label class="form-check-label">
+                  <input type="checkbox" name="index_default_template" class="form-check-input" value="1" <%=(@collection.index_default_template.positive? ? 'checked': '') %> >Set as default index template settings
+                </label>
+              </div>
+              <select id='index_template' name='index_template'>
+                <option value="">Select option</option>
+                <%index_template_items().each_with_index do |index,key| %>
+                <option value="<%=key%>" <%=(@collection.index_template == key ? 'selected' : '')%>><%=index%></option>
+                <%end%>
+              </select>
+            </div>
+          </div>
+      </div>
+    </div>
+  </div>
+</div>

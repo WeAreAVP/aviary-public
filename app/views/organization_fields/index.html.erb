@@ -32,12 +32,16 @@
                         <ul class="nav nav-tabs" id="organization_field_settings" role="tablist">
                           <% if request.GET["type"].nil? %>
                             <li class="nav-item">
-                              <a class="nav-link parent_menu" id="collection_field_settings" data-tab="collection_field_settings_content" data-toggle="tab" href="#collection_field_settings_content" role="tab" aria-controls="collection_field_settings_content" aria-selected="false">Collection
-                                Fields Settings</a>
+                              <a class="nav-link parent_menu" id="collection_field_settings" data-tab="collection_field_settings_content" data-toggle="tab" href="#collection_field_settings_content" role="tab" aria-controls="collection_field_settings_content" aria-selected="false">
+                                Collection Fields Settings</a>
                             </li>
                             <li class="nav-item">
-                              <a class="nav-link parent_menu" id="resource_field_settings" data-tab="organization_field_settings_content" data-toggle="tab" href="#organization_field_settings_content" role="tab" aria-controls="organization_field_settings_content" aria-selected="false">Resource
-                                Fields Settings</a>
+                              <a class="nav-link parent_menu" id="resource_field_settings" data-tab="organization_field_settings_content" data-toggle="tab" href="#organization_field_settings_content" role="tab" aria-controls="organization_field_settings_content" aria-selected="false">
+                                Resource Fields Settings</a>
+                            </li>
+                            <li class="nav-item">
+                              <a class="nav-link parent_menu" id="indexes_field_settings" data-tab="indexes_field_settings_content" data-toggle="tab" href="#indexes_field_settings_content" role="tab" aria-controls="indexes_field_settings_content" aria-selected="false">
+                                Index Fields Settings</a>
                             </li>
                           <% end %>
                           <% if ENV['OHMS_DEVELOPMENT_ONLY'].to_s == '1' %>
@@ -281,6 +285,75 @@
                             </div>
                           </div>
                           <% if ENV['OHMS_DEVELOPMENT_ONLY'].to_s == '1' %>
+                            <div class="tab-pane fade active w-100" style="z-index: 999999" id="indexes_field_settings_content" role="tabpanel" aria-labelledby="indexes_field_settings_content">
+                              <div class="tab">
+                                <div class="tab-content">
+                                  <div class="row">
+                                    <div class="col-12 p-5">
+                                      <%= form_for :anything, url: update_index_template_organization_fields_path do |form| %>
+                                        <div class="row">
+                                          <div class="col-4">
+                                            <div class="field-title">
+                                              <label> Index Edit Template </label>
+                                            </div>
+                                            <select id='index_template' name='index_template'>
+                                              <option value="">Select option</option>
+                                              <%index_template_items().each_with_index do |index,key| %>
+                                              <option value="<%=key%>" <%=(current_organization.index_template == key ? 'selected' : '')%>><%=index%></option>
+                                              <%end%>
+                                            </select>
+                                            <button type="submit" class="btn btn-primary">Save</button>
+                                          </div>
+                                        </div>
+                                      <% end %>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div class="row">
+                                <div class="col-12 p-5">
+                                  <div class="holder custom_fields_container border">
+                                    <table class="table table-hover border-0">
+                                      <thead class="border-top-0">
+                                      <tr class="">
+                                        <th style="width: 80% !important;"><h2>Field Name</h2></th>
+                                        <th style="width: 10% !important;"><h2>Display Columns</h2></th>
+                                      </tr>
+                                      </thead>
+                                    </table>
+                                    <table class="table border-0" id="sort_facet_fields_table">
+                                      <tbody id='resource_table_org' data-type="resource_fields" data-option='resource_table_org' data-order-custom="resource_table_sort_order" data-status-columns="resource_table_display,resource_table_search">
+                                      <% if @indexes_columns_fields.present? %>
+                                        <% @indexes_columns_fields.sort { |a, b| a[0].to_i <=> b[0].to_i }.each_with_index do |value, _index| %>
+                                          <% slug = value[1]['value'] %>
+                                          <% label = FileIndex.fields_values[slug] %>
+                                          <tr class="facet_field <%= slug %>" data-field="<%= slug %>" data-label="<%= label %>">
+                                            <td width="90%">
+                                                <% if slug.present? && slug != slug %>
+                                                  <small class="mt-2 form-text font-size-12px text-muted d-inline">
+                                                    <%= slug %>
+                                                  </small>
+                                                <% end %>
+                                              <%= label %>
+                                            </td>
+
+                                            <td width="10%">
+                                              <label class="toggle-switch">
+                                                <%= check_box_tag 'display' + slug, class: "display toggle-switch__input template-data-is-facetable template-data-field-is-facetable" %>
+                                                <span class="toggle-switch__slider"></span>
+                                              </label>
+                                            </td>
+                                          </tr>
+                                        <% end %>
+                                      <% end %>
+                                      </tbody>
+                                    </table>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+
                             <div class="tab-pane fade active " id="organization_thesaurus_content" role="tabpanel" aria-labelledby="organization_thesaurus_content">
                               <div class="row">
 

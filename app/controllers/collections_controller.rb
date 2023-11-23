@@ -94,6 +94,17 @@ class CollectionsController < ApplicationController
   end
 
   def update
+    if params['index_default_template'].nil? && params['index_template'].present?
+      @collection.index_default_template = 0
+      @collection.index_template = params['index_template'].to_i
+      @collection.save
+    elsif params['index_default_template'].present?
+      @collection.index_default_template = 1
+      @collection.index_template = current_organization.index_template
+      @collection.save
+    end
+    UpdateDefaultIndexTemplateJob.perform_later(current_organization, 'collection', params['index_template'], params['index_default_template'], @collection.id)
+  
     if @collection.update(collection_params.except('request_access_template_collection_ids', 'access_request_approval_email', 'request_access_template', 'request_access_button_text', 'accept_request_notification_recipients'))
       updated_field_values = {}
       params['collection']['collection_field_values_attributes'].each do |value|

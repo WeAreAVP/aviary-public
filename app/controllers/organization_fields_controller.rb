@@ -15,6 +15,7 @@ class OrganizationFieldsController < ApplicationController
     @resource_fields = @org_field_manager.organization_field_settings(current_organization, nil, 'resource_fields')
     @resource_columns_search = @org_field_manager.organization_field_settings(current_organization, nil, 'resource_fields', 'search_sort_order')
     @resource_columns_table = @org_field_manager.organization_field_settings(current_organization, nil, 'resource_fields', 'resource_table_sort_order')
+    @indexes_columns_fields = JSON.parse(current_organization.file_index_display_column)['columns_status']
     @part_of_collections = {}
     return unless current_organization.collections.present?
     current_organization.collections.each do |single_collection|
@@ -105,6 +106,15 @@ class OrganizationFieldsController < ApplicationController
       format.html { render 'organization_fields/assignment_management', layout: false }
       format.json { render json: {} }
     end
+  end
+
+  def update_index_template
+    authorize! :manage, current_organization
+    current_organization.index_template = params['index_template'].to_i
+    current_organization.save
+    UpdateDefaultIndexTemplateJob.perform_later(current_organization, 'organization', params['index_template'])
+    flash[:notice] = 'Template updated successfully'
+    redirect_back(fallback_location: organization_fields_path)
   end
 
   def update_information

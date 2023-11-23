@@ -1,0 +1,14 @@
+<div class="form-check mr-2 ml-2">
+  <label class="form-check-label">
+    <input type="checkbox" id="index_default_template" name="index_default_template" class="form-check-input" value="1" <%=(@file_index.index_default_template.positive? ? 'checked': '') %> >Set as default
+  </label>
+</div>
+<select class="custom-placeholder dont-apply-selectize" id='index_template' name='index_template'>
+  <option value="">Select option</option>
+  <%index_template_items().each_with_index do |index,key| %>
+  <option value="<%=key%>" <%=(@file_index.index_template == key ? 'selected' : '')%>><%=index%></option>
+  <%end%>
+</select>
+<a class="btn btn-outline-secondary collection-custom-field-icon ml-2 index_template_btn" data-url="<%=interviews_interview_update_template_url(@file_index.id)%>" href="javascript:void(0);">
+  <i class="fa fa-save"></i>
+</a>

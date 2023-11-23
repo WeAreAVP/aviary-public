@@ -28,11 +28,14 @@
               </div>
             </div>
             <div class="col-md-6">
-              <div class="d-flex flex-column ml-auto right-toolbar">
+              <div class="d-flex flex-column ml-auto <%=(@interview.present? ? 'right-toolbar' : 'index-template-interview pull-right')%>">
                 <div class="status d-flex align-items-center m-1">
                   <% if @interview.present? %>
                     <span>Status</span>
                     <%= render 'interviews/interview_index/status' %>
+                  <% else %>
+                    <span>Index Template</span>
+                    <%= render 'interviews/interview_index/index_template' %>
                   <% end %>
                 </div>
                 <div class="button-holder right-button-holder">

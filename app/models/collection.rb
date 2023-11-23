@@ -26,6 +26,14 @@ class Collection < ApplicationRecord
   # custom_fields?
   attr_accessor :dynamic_initializer
 
+  after_create :update_default_index_template
+
+  def update_default_index_template
+    return unless organization.present?
+    self.index_template = organization.index_template
+    save
+  end
+
   def init_dynamic_initializer
     @dynamic_initializer = {
       field_types: %w[Collection CollectionResource],

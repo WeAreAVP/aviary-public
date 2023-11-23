@@ -32,7 +32,10 @@
                   <a class="nav-link" tabindex="0" id="resource_description_tab" data-tab="resource_description" data-toggle="tab" href="#custom_preview" role="tab" aria-controls="custom_preview" aria-selected="false" data-path="<%= edit_collection_path(@collection) %>">Resource
                     Description</a>
                 </li>
-
+                <li class="nav-item">
+                  <a class="nav-link" tabindex="0" id="index_description_tab" data-tab="index_description" data-toggle="tab" href="#index_preview" role="tab" aria-controls="index_preview" aria-selected="false" data-path="<%= edit_collection_path(@collection) %>">Index
+                    Description</a>
+                </li>
               </ul>
               <%= simple_form_for @collection, :url => @collection.new_record? ? collections_path : collection_path, html: { novalidate: true, class: "collection-edit-form display_settings_form" } do |c| %>
 
@@ -50,7 +53,9 @@
                   <div class="tab-pane fade" id="custom_preview" role="tabpanel" aria-labelledby="custom_preview_tab">
                     <%= render partial: 'collection_field_visibility' %>
                   </div>
-
+                  <div class="tab-pane fade" id="index_preview" role="tabpanel" aria-labelledby="index_preview">
+                    <%= render partial: 'index_collection_field_visibility', locals: { c: c, feedable: @collection } %>
+                  </div>
                 </div>
               <% end %>
 

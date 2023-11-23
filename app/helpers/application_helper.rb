@@ -104,6 +104,10 @@ module ApplicationHelper
     0
   end
 
+  def index_template_items
+    %w[Aviary OHMS AES60-2011]
+  end
+
   def interview_video_info(interview)
     interview_video_info_helper(interview)
   end
