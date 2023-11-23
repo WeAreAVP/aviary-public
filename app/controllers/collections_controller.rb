@@ -105,7 +105,7 @@ class CollectionsController < ApplicationController
       @collection.save
     end
     UpdateDefaultIndexTemplateJob.perform_later(current_organization, 'collection', params['index_template'], params['index_default_template'], @collection.id)
-  
+
     if @collection.update(collection_params.except('request_access_template_collection_ids', 'access_request_approval_email', 'request_access_template', 'request_access_button_text', 'accept_request_notification_recipients'))
       updated_field_values = {}
       params['collection']['collection_field_values_attributes'].each do |value|
