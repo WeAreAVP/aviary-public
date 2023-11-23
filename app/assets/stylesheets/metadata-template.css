@@ -441,9 +441,6 @@
     text-decoration: underline;
 }
 
-.file_index .pt-20px:first-child {
-    padding-top: 0 !important;
-}
 .file_index .row:hover {
     background: #faf9fb;
 }

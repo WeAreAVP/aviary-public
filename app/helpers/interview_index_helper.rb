@@ -49,12 +49,18 @@ module InterviewIndexHelper
 
     elsif interview.media_host == 'Aviary'
       source_tags = ''
-      doc = Nokogiri::HTML(open(interview.media_url.strip, read_timeout: 10))
-      video_src_nodes = doc.search('//source')
-      video_src_nodes.each do |node|
-        source_tags = format('<source src="%s" type="%s"/>', node.attributes['src'].value, video_src_nodes.first.attributes['type'].value)
+      begin
+        doc = Nokogiri::HTML(open(interview.media_url.strip, read_timeout: 10))
+        video_src_nodes = doc.search('//source')
+        video_src_nodes.each do |node|
+          source_tags = format('<source src="%s" type="%s"/>', node.attributes['src'].value, video_src_nodes.first.attributes['type'].value)
+        end
+        data['source_tags'] = source_tags
+      rescue StandardError => ex
+        Rails.logger.error(ex)
+        error = 'Error accessing resource. Please ensure that the resource is public.'
+        data['error'] = error
       end
-      data['source_tags'] = source_tags
 
     elsif interview.media_host == 'SoundCloud'
       data['iframe'] = interview.embed_code.sub('<iframe ', '<iframe id="soundcloud_widget" ')
@@ -114,24 +120,37 @@ module InterviewIndexHelper
   def set_custom_values(file_index_point, alt, params)
     lat = []
     long = []
-    unless params[:file_index_point]['zoom'].first.empty? && params[:file_index_point]['gps_latitude'].first.empty? && params[:file_index_point]['gps_description'].first.empty?
-      params[:file_index_point]['gps_latitude'].each_with_index do |gps, _index|
-        temp = gps.split(',')
-        if temp.length > 1
-          lat << temp[0].strip
-          long << temp[1].strip
+
+    if params[:file_index_point]['zoom'].present? && params[:file_index_point]['gps_latitude'].present? && params[:file_index_point]['gps_description'].present?
+      unless params[:file_index_point]['zoom'].first.empty? && params[:file_index_point]['gps_latitude'].first.empty? && params[:file_index_point]['gps_description'].first.empty?
+        params[:file_index_point]['gps_latitude'].each_with_index do |gps, _index|
+          temp = gps.split(',')
+          if temp.length > 1
+            lat << temp[0].strip
+            long << temp[1].strip
+          end
         end
       end
     end
 
-    file_index_point.gps_zoom = params[:file_index_point]['zoom'].to_json
-    file_index_point.gps_description = params[:file_index_point]["gps_description#{alt}"].to_json
-    file_index_point.gps_latitude = lat.to_json
-    file_index_point.gps_longitude = long.to_json
-    file_index_point.hyperlink = params[:file_index_point]['hyperlink'].to_json
-    file_index_point.hyperlink_description = params[:file_index_point]["hyperlink_description#{alt}"].to_json
-    file_index_point.subjects = params[:subjects].join(';') if params[:subjects].present?
+    file_index_point.gps_zoom = params[:file_index_point]['zoom'].to_json if params[:file_index_point]['zoom'].present?
+    file_index_point.gps_description = params[:file_index_point]["gps_description#{alt}"].to_json if params[:file_index_point]["gps_description#{alt}"].present?
+    file_index_point.gps_latitude = lat.to_json if lat.present?
+    file_index_point.gps_longitude = long.to_json if long.present?
+    file_index_point.hyperlink = params[:file_index_point]['hyperlink'].to_json if params[:file_index_point]['hyperlink'].present?
+    file_index_point.hyperlink_description = params[:file_index_point]["hyperlink_description#{alt}"].to_json if params[:file_index_point]["hyperlink_description#{alt}"].present?
     file_index_point.keywords = params[:keywords].join(';') if params[:keywords].present?
+    file_index_point.subjects = params[:subjects].join(';') if params[:subjects].present?
+    file_index_point.parent_id = params[:file_index_point][:parent_id] if params[:file_index_point][:parent_id].present?
+    file_index_point.publisher = params[:file_index_point][:publisher] if params[:file_index_point][:publisher].present?
+    file_index_point.contributor = params[:file_index_point][:contributor] if params[:file_index_point][:contributor].present?
+    file_index_point.identifier = params[:file_index_point][:identifier] if params[:file_index_point][:identifier].present?
+    file_index_point.rights = params[:file_index_point][:rights] if params[:file_index_point][:rights].present?
+    file_index_point.segment_date = params[:file_index_point][:segment_date] if params[:file_index_point][:segment_date].present?
+    if params[:file_index_point][:end_time].present? && human_to_seconds(params[:file_index_point][:end_time]).to_f > file_index_point.start_time
+      file_index_point.end_time = human_to_seconds(params[:file_index_point][:end_time]).to_f
+      return file_index_point
+    end
 
     set_end_time(file_index_point, params[:item_length].to_f)
   end
@@ -203,10 +222,15 @@ module InterviewIndexHelper
       HTML
     else
       <<-HTML
-        <div class="index-segment #{'active' if active}" data-title="#{time_to_duration(point.start_time)} #{point.title}"
+        <button class="index-segment border-0 #{'active' if active}"
+          data-type="index" tabindex="0"
+          data-point="#{point.id}" data-timecode="#{point.start_time}"
+          data-toggle="tooltip" data-placement="bottom"
+          title="#{Time.at(point.start_time.to_f).utc.strftime('%H:%M:%S') + ' ' + point.title}"
+          aria-label="Index segment at #{Time.at(point.start_time.to_f).utc.strftime('%H:%M:%S') + ' titled: ' + point.title}"
           style="width: #{width.round(2) < 1 ? 1 : width.ceil(2)}%;"
           data-target="collapse_#{index}">
-        </div>
+        </button>
       HTML
     end
   end
@@ -226,5 +250,17 @@ module InterviewIndexHelper
     end
 
     [previous_index_point, next_index_point]
+  end
+
+  def generate_segments_dropdown(file_index, file_index_point)
+    options = file_index.file_index_points.where(parent_id: 0)
+                        .where.not(id: file_index_point.id)
+                        &.sort_by { |t| t.start_time.to_f }&.map do |point|
+      <<-HTML
+        <option value="#{point.id}" #{point.id == file_index_point.parent_id ? 'selected' : ''}>#{point.title}</option>
+      HTML
+    end
+
+    options.join("\n")
   end
 end

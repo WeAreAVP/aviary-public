@@ -523,6 +523,15 @@ function CollectionResource() {
                     }
                 }
             });
+
+            if ($('#media-index-timeline-pointer')[0]) {
+                player_widget.on('constant-timeupdate', updateIndexPointer);
+
+                function updateIndexPointer() {
+                    let progressPercent = player_widget.cache_.currentTime / player_widget.cache_.duration;
+                    $('#media-index-timeline-pointer').css('left', `${progressPercent * 100}%`);
+                }
+            }
         }
         $('.carousel-wrap').removeClass('d-none');
         $(window).resize(function () {

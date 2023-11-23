@@ -3,7 +3,7 @@
 # Aviary is an audiovisual content publishing platform with sophisticated features for search and permissions controls.
 # Copyright (C) 2019 Audio Visual Preservation Solutions, Inc.
 class IndexesDatatable < ApplicationDatatable
-  delegate :strip_tags, :check_valid_array,
+  delegate :strip_tags, :check_valid_array, :show_index_file_path,
            :current_organization, :bulk_resource_list_collections_path,
            :collection_collection_resource_details_path, :delete_file_index_path, :can?, to: :@view
 
@@ -75,12 +75,25 @@ class IndexesDatatable < ApplicationDatatable
                 else
                   begin
                     data = FileIndex.find(resource['id_is'])
-                    link_set = '<a href="' + collection_collection_resource_details_path(data.collection_resource_file.collection_resource.collection.id,
-                                                                                         data.collection_resource_file.collection_resource.id,
-                                                                                         data.collection_resource_file.id, 'index',
-                                                                                         selected_index: resource['id_is']) +
-                               '"class="btn-sm btn-default hidden_focus_btn" data-id="collection_resource_view_' + resource['id_is'].to_s + '">View</a>&nbsp;&nbsp;'
-                    link_set += "<a href='javascript://' data-name='#{strip_tags(resource['title_ss'].to_s)}' data-url='#{delete_file_index_path(resource['id_is'])}' class='btn-sm btn-danger index_delete hidden_focus_btn' data-id='collection_resource_delete_" + resource['id_is'].to_s + "' >Delete</a>"
+                    link_set = <<-HTML
+                      <div class="d-flex">
+                        <a href="#{collection_collection_resource_details_path(data.collection_resource_file.collection_resource.collection.id,
+                                                                               data.collection_resource_file.collection_resource.id,
+                                                                               data.collection_resource_file.id, 'index',
+                                                                               selected_index: resource['id_is'])}"
+                          class="btn-sm btn-default hidden_focus_btn" data-id="collection_resource_view_#{resource['id_is']}">
+                          View
+                        </a>&nbsp;&nbsp;
+                        <a href="#{show_index_file_path(data.collection_resource_file.id, resource['id_is'])}"
+                          class="btn-sm btn-success hidden_focus_btn">
+                          Edit
+                        </a>&nbsp;&nbsp;
+                        <a href="javascript://" data-name="#{strip_tags(resource['title_ss'])}" data-url="#{delete_file_index_path(resource['id_is'])}"
+                          class="btn-sm btn-danger index_delete hidden_focus_btn" data-id="collection_resource_delete_#{resource['id_is']}">
+                          Delete
+                        </a>
+                      </div>
+                    HTML
                     link_set
                   rescue StandardError => e
                     puts e.backtrace.join("\n")
