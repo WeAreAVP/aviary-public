@@ -1,0 +1,52 @@
+<div class="add-field modal fade" id="index_fields_edit" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="h4 mb-0">
+          Add/Edit Custom Vocabulary for "<%= meta_field['system_name'] %>"
+        </h4>
+      </div>
+      <div class="modal-body">
+
+        <input id="custom_fields_label" type="hidden" name="system_name" value="<%= meta_field['system_name'] %>">
+
+        <div class="row">
+          <div class="col-md-12 meta-custom-vocabulary-div">
+            <div class="form-group">             
+              <div class="field-title">
+                <label for="" class="float-left">Custom Vocabulary</label>
+              </div>
+
+              <% if meta_field['system_name'].present? %>
+                <a id='edit_vocabulary' href="javascript:void(0);"
+                  class="btn-sm btn-success float-right mb-2 cursor-pointer edit_vocabulary text-decoration-none"
+                  data-toggle="modal" data-target="#update_vocabulary_popup" data-field-type="index_fields"
+                  data-field="<%= meta_field['system_name'] %>">
+
+                  Edit Vocabulary
+                </a>
+              <% end %>
+              <% vocab = meta_field.present? && meta_field['vocabulary'].present? ? meta_field['vocabulary'] : [] %>
+              <% vocab = vocab.class.name == 'String' ? JSON.parse(vocab) : vocab %>
+              <% vocab = vocab.class.name == 'Array' ? vocab.join(',') : vocab %>
+              <textarea disabled="disabled" class="form-control meta-custom-vocabulary" rows="5" name="index_field[vocabulary]"
+                id="custom_fields_vocabulary" disabled="<%= meta_field['system_name'].present? %>"><%= vocab.present? && !vocab.length.zero? ? vocab : '' %></textarea>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        if ($('#custom_fields_field_column_type').val() != 1) {
+            $('.meta-options-div').hide()
+            $('.meta-custom-options').prop('required', false)
+        }
+    });
+</script>

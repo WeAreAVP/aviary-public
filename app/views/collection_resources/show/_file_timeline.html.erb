@@ -12,6 +12,7 @@
   if file_indexes.present? %>
     <div>
       <div class="flex media-timeline my-2">
+        <div id="media-index-timeline-pointer" class="media-index-timeline"></div>
         <div class="d-flex" style="gap: 1px; height: 20px;">
           <% file_indexes.includes([:file_index_points]).each do |index| %>
               <% index_points = index.file_index_points.sort_by { |t| t.start_time.to_f } %>
@@ -38,14 +39,15 @@
 
                   width = index_duration / total_duration * 100
                   html += <<-HTML
-                    <div class="index-segment play-timecode timeline-point index_timeline index_#{index.id} #{color} d-none point_index_#{point.id}"
-                      data-type="index" data-page-number="#{current_page}"
+                    <button class="index-segment border-0 play-timecode timeline-point index_timeline index_#{index.id} #{color} d-none point_index_#{point.id}"
+                      data-type="index" data-page-number="#{current_page}" tabindex="0"
                       data-point="#{point.id}" data-timecode="#{point.start_time}"
                       data-toggle="tooltip" data-placement="bottom"
                       title="#{Time.at(point.start_time.to_f).utc.strftime('%H:%M:%S') + ' ' + point.title}"
+                      aria-label="Index segment at #{Time.at(point.start_time.to_f).utc.strftime('%H:%M:%S') + ' titled: ' + point.title}"
                       style="width: #{width.round(2) < 1 ? 1 : width.ceil(2)}%;"
                       data-target="collapse_#{index_number}">
-                    </div>
+                    </button>
                   HTML
 
                   next_starting_time = index_points[index_number + 1]&.start_time || total_duration

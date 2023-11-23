@@ -113,6 +113,7 @@ Rails.application.routes.draw do
     get 'interview/index/new/:id', to: 'interview_index#new', as: :interview_index_new
     post 'interview/index/create/:id', to: 'interview_index#create', as: :interview_index_create
     post 'interview/index/status/:id', to: 'interview_index#status_update', as: :interview_index_status_update
+    get 'interview/index/index_segment_timeline/:id', to: 'interview_index#index_segment_timeline', as: :index_segment_timeline
   end
 
   namespace :thesaurus do
@@ -294,6 +295,7 @@ Rails.application.routes.draw do
   get 'indexes/add/:resource_file_id/:file_index_id', to: 'indexes#add_index', as: 'add_index_file'
   get 'indexes/edit/:resource_file_id/:file_index_id/:file_index_point_id', to: 'indexes#edit_index', as: 'edit_index_file'
   patch 'indexes/update/:resource_file_id/:file_index_id/:file_index_point_id', to: 'indexes#update_index', as: 'update_index_file'
+  patch 'indexes/update_index_title/:file_index_id', to: 'indexes#update_index_title', as: 'update_index_title'
   patch 'indexes/update_index_point_title/:file_index_point_id', to: 'indexes#update_index_point_title', as: 'update_index_point_title'
   post 'indexes/create/:resource_file_id', to: 'indexes#create_index', as: 'create_index'
   delete 'indexes/destroy/:index_file_point_id', to: 'indexes#destroy_index', as: 'destroy_index'

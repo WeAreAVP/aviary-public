@@ -10,8 +10,22 @@ class FileIndexPoint < ApplicationRecord
   before_save :manage_gps_points, :manage_hyperlinks
   validate :validate_time_uniqueness
   validates_presence_of :title
+  validate :dates_not_out_of_bound
   attr_accessor :id_alt, :title_alt, :partial_script_alt, :keywords_alt, :subjects_alt, :synopsis_alt, :gps_latitude_alt,
                 :gps_description_alt, :zoom_alt, :hyperlink_alt, :hyperlink_description_alt, :gps_points_alt, :hyperlinks_alt
+
+  def dates_not_out_of_bound
+    duration = file_index.collection_resource_file&.duration || file_index.interview&.media_duration
+    return if !duration.present? || duration == 0
+
+    if start_time < 0 || start_time > duration
+      errors.add(:start_time, "can't be out of bound")
+    end
+
+    return if end_time.present? && (end_time > 0 && end_time <= duration && end_time >= start_time)
+
+    errors.add(:end_time, "can't be out of bound")
+  end
 
   def manage_gps_points
     points = []

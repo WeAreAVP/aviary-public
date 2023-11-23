@@ -201,6 +201,15 @@ module Interviews
       end
     end
 
+    def index_segment_timeline
+      authorize! :manage, Interviews::Interview
+      render partial: 'interviews/interview_index/media_timeline', locals: {
+        total_duration: params[:total_duration].to_f,
+        index_points: FileIndexPoint.where(file_index_id: params[:id]),
+        active_point_id: params[:active_point_id]
+      }
+    end
+
     private
 
     # Never trust parameters from the scary internet, only allow the white list through.
