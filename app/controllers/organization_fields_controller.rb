@@ -130,6 +130,10 @@ class OrganizationFieldsController < ApplicationController
       collection = Collection.find_by_id(params['collection_id'])
       @collection_field_manager.update_field_settings(JSON.parse(params['info'].to_json), collection, 'resource_fields')
       collection.solr_index
+    when 'updateSortCollectionIndexFields'
+      collection = Collection.find_by_id(params['collection_id'])
+      @collection_field_manager.update_field_settings(JSON.parse(params['info'].to_json), collection, 'index_fields')
+      collection.solr_index
     when 'editVocabulary'
       list_type = params['list_type']
       params['vocabulary'] = str_to_array(params['vocabulary'])

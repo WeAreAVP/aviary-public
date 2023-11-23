@@ -76,9 +76,11 @@
 <div id="custom_fields_popup"></div>
 
 <script type="application/javascript">
-    $(function () {
-        let organizationFieldsManagement = new OrganizationFieldsManagement();
-        organizationFieldsManagement.initializeCollection();
-        organizationFieldsManagement.toggleCollectionEditBinding();
+    $(document).ready(function () {
+        $(function () {
+            let organizationFieldsManagement = new OrganizationFieldsManagement();
+            organizationFieldsManagement.initializeCollection();
+            organizationFieldsManagement.toggleCollectionEditBinding();
+        });
     });
 </script>

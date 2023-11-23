@@ -20,6 +20,55 @@
               </select>
             </div>
           </div>
+
+          <div class="row">
+            <div class="col-12 p-5">
+              <div class="holder custom_fields_container border">
+                <table class="table table-hover border-0">
+                  <thead class="border-top-0">
+                  <tr class="">
+                    <th style="width: 80% !important;"><h2>Field Name</h2></th>
+                    <th style="width: 20% !important;"><h2>Display Columns</h2></th>
+                  </tr>
+                  </thead>
+                </table>
+
+                <table class="table table-hover" id="sort_custom_fields_table" data-url="<%= update_information_organization_fields_path(collection_id: @collection.id) %>" data-path="<%= update_sort_fields_collection_path %>">
+                  <tbody id='collection_index_field_preview_org' class="ui-sortable" data-type="index_fields" data-order-custom="sort_order" data-status-columns="display">
+                    <% if @index_columns_collection.present? %>
+                      <% @index_columns_collection.each_with_index do |(name, props), _index| %>
+                        <% label = props['display_name'] %>
+
+                        <tr class="<%= name %>" data-field="<%= name %>" data-label="<%= label %>" data-is-required-field="<%= props['required'] %>">
+                          <td width="80%">
+                            <i class="fa fa-ellipsis-v handle mx-2" style="color: lightgrey;cursor: move;"></i>
+                            <span data-toggle="tooltip" data-placement="top" title="" aria-hidden="true" data-original-title="<%= name %>">
+                              <%= label %>
+                            </span>
+                            <% if props['required'].to_s.to_boolean? %>
+                              <i class="fa fa-asterisk color-grey font-size-8px" data-toggle="tooltip" data-placement="top" title="" aria-hidden="true" data-original-title="This is a required field and cannot be reordered or disabled."></i>
+                            <% end %>
+                            <small class="mt-2 form-text font-size-12px text-muted d-inline">
+                              <%= name %>
+                            </small>
+
+                          </td>
+                          <td width="10%">
+                            <label class="toggle-switch ml-3">
+                              <%= check_box_tag 'display_' + name, props['display'], props['display'].to_s.to_boolean?,
+                                disabled: props['required'], class: "display toggle-switch__input template-data-is-facetable template-data-field-is-facetable" %>
+
+                                <span class="toggle-switch__slider"></span>
+                            </label>
+                          </td>
+                        </tr>
+                      <% end %>
+                    <% end %>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
       </div>
     </div>
   </div>

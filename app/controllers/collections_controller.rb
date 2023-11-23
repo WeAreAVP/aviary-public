@@ -79,6 +79,7 @@ class CollectionsController < ApplicationController
     @collection_field_manager = Aviary::FieldManagement::CollectionFieldManager.new
     @resource_fields = @organization_field_manager.organization_field_settings(current_organization, nil, 'resource_fields')
     @resource_columns_collection = @collection_field_manager.sort_fields(@collection_field_manager.collection_resource_field_settings(@collection, 'resource_fields').resource_fields, 'sort_order')
+    @index_columns_collection = @collection_field_manager.sort_fields(@collection_field_manager.collection_resource_field_settings(@collection, 'index_fields').index_fields, 'sort_order')
     @collection_fields = @organization_field_manager.organization_field_settings(current_organization, nil, 'collection_fields', 'sort_order')
     @collection_fields_and_value = @collection.collection_fields_and_value
     @collection_resource = @collection.collection_resources.first

@@ -36,7 +36,7 @@
                   <% end %>
                 <% end %>
                 <% index_time_start = !recorded.include?(index_point.start_time.to_i) ? "index_time_start_#{index_point.start_time.to_i}" : '' %>
-                <%== presenter.single_index_point_hanlder(index_time_start, @session_video_text_all, parent_id) %>
+                <%== presenter.single_index_point_hanlder(index_time_start, @session_video_text_all, @index_columns_collection, parent_id) %>
                 <% @index_time_wise = index_page_wise_time_range(@index_time_wise, index_point, counter) %>
                 <% @index_count = count_occurrence(index_point, @session_video_text_all, @index_count, 'index', false, counter) %>
               <% end %>

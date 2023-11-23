@@ -36,6 +36,8 @@ function OrganizationFieldsManagement() {
         editVocabulary();
         deleteField();
         activeMenuManage();
+        initIndexFieldsSortsCollection();
+        statusDisplayToggle();
         $("#organization_field_settings_content #manage_fields_options").unstick();
         if ($(window).width() >= 992) {
             $("#organization_field_settings_content #manage_fields_options").sticky({
@@ -281,10 +283,63 @@ function OrganizationFieldsManagement() {
                 $(this).prop('checked', false);
                 return alert('Cannot select more then 3 tombstone values');
             }
+
             // todo: woke on this to mage preview field work
             updateSortInfoCollection($('#collection_resource_field_preview_org'));
 
         });
+    };
+
+    const statusDisplayToggle = function () {
+        document_level_binding_element('.display.toggle-switch__input', 'click', function () {
+            updateIndexFieldInfoCollection($('#collection_index_field_preview_org'));
+        });
+    };
+
+    const initIndexFieldsSortsCollection = function () {
+        $('#collection_index_field_preview_org').sortable({
+            axis: "y",
+            containment: "parent",
+            cursor: "move",
+            items: "tr:not([data-is-required-field='true'])",
+            tolerance: "pointer",
+            update: function () {
+                updateIndexFieldInfoCollection(this)
+            }
+        });
+    };
+
+    /**
+     *
+     * @param obj
+     */
+    const updateIndexFieldInfoCollection = function (obj) {
+        let info = {};
+
+        $('#' + $(obj).attr('id') + ' tr').each(function (index, objectTr) {
+            info[index] = {system_name: $(this).data('field')};
+            info[index][$(obj).data('orderCustom')] = index;
+            if (typeof $(obj).data('statusColumns') != 'undefined' && $(obj).data('statusColumns').length > 0) {
+                $.each($(obj).data('statusColumns').split(','), function (_index, value) {
+                    info[index][value] = $(objectTr).find('.' + value).prop('checked');
+                });
+            }
+            if (typeof $(obj).data('internalOnlyColumns') != 'undefined' && $(obj).data('internalOnlyColumns').length > 0) {
+                $.each($(obj).data('internalOnlyColumns').split(','), function (_index, value) {
+                    info[index][value] = $(objectTr).find('.' + value).prop('checked');
+                });
+            }
+        });
+
+        let data = {
+            js_action: 'updateSortCollectionIndexFields',
+            action: 'updateSortCollectionIndexFields',
+            info: info,
+            options: $(obj).data('option'),
+            type: $(obj).data('type')
+        };
+        let appHelper = new App();
+        appHelper.classAction($('#sort_custom_fields_table').data('url'), data, 'JSON', 'POST', '', that, true);
     };
 
     const initFieldsSortsCollection = function () {
