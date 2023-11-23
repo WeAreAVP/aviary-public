@@ -10,30 +10,31 @@
     <div class="heading-holder table-head">
       <div class="row">
 
-        <!-- Title -->
-        <% if @file_index.present? %>
-          <div class="d-flex col-md-8" style="align-items: center;">
-              <div class="mr-2">
-                <%= params['action'] == 'edit_index' ? 'Editing' : 'Creating' %>
-                Segment of Index
-              </div>
-              <h1 id="index_title_heading" class="cursor-pointer"><%= @file_index.title %></h1>
-
-            <%= simple_form_for @file_index, html: { class: 'd-none', id: "save_file_index_title_form" }, url: update_index_title_path(@file_index.id) do |f| %>
-              <input class="string required form-control" id="edit_file_index_title" required="required" aria-required="true" type="text"
-                value="<%= @file_index.title %>" name="file_index[title]" />
-
-              <input class="cancel_file_index_title btn btn-secondary" type="button" value="Cancel" />
-              <input class="save_file_index_title btn btn-primary" type="submit" value="Save" />
-            <% end %>
+      <!-- Title -->
+      <% if @file_index.present? %>
+        <div class="d-flex col-md-8" style="align-items: center;">
+          <div class="mr-2">
+            <%= params['action'] == 'edit_index' ? 'Editing' : 'Creating' %>
+            Segment of Index
           </div>
-        <% else %>
-          <div class="d-flex col-md-8" style="align-items: center;">
-            <div class="mr-2">
-              Segment of New Index
-            </div>
+          <h1 id="index_title_heading" class="cursor-pointer"><%= @file_index.title %></h1>
+
+          <%= simple_form_for @file_index, html: { class: 'd-none', id: "save_file_index_title_form" },
+            url: update_index_title_path(@file_index.id) do |f| %>
+            <input class="string required form-control" id="edit_file_index_title" required="required" aria-required="true" type="text"
+            value="<%= @file_index.title %>" name="file_index[title]" />
+
+            <input class="cancel_file_index_title btn btn-secondary" type="button" value="Cancel" />
+            <input class="save_file_index_title btn btn-primary" type="submit" value="Save" />
+          <% end %>
+        </div>
+      <% else %>
+        <div class="d-flex col-md-8" style="align-items: center;">
+          <div class="mr-2">
+            Segment of New Index
           </div>
-        <% end %>
+        </div>
+      <% end %>
 
         <!-- Return Button -->
         <div class="col-md-4">
@@ -86,50 +87,54 @@
                     <input type="hidden" name="item_length" id="item_length"/>
 
                     <!-- Start Time -->
-                    <div class="col">
-                      <div class="field-title"><%= f.label :start_time, "Start Time*" %></div>
-                      <input type="hidden" name="current_time" id="current_time"/>
+                    <% if @index_template['fields']['start_time']['status'] %>
+                      <div class="col">
+                        <div class="field-title"><%= f.label :start_time, "Start Time*" %></div>
+                        <input type="hidden" name="current_time" id="current_time"/>
 
-                      <%= f.hidden_field :start_time, value: time_to_duration(@file_index_point.start_time.to_f), class: 'video_start_time', id: "hidden_video_start_time" %>
-                      <button class="edit-time" type="button" alt="Edit End Time" data-time-target=".video_start_time">
-                        <i class="fa fa-pencil"></i>
-                      </button>
-                      <%= f.text_field :start_time, value: time_to_duration(@file_index_point.start_time.to_f),
-                        class: 'video_start_time video_input form-control', disabled: true
-                      %>
+                        <%= f.hidden_field :start_time, value: time_to_duration(@file_index_point.start_time.to_f), class: 'video_start_time', id: "hidden_video_start_time" %>
+                        <button class="edit-time" type="button" alt="Edit End Time" data-time-target=".video_start_time">
+                          <i class="fa fa-pencil"></i>
+                        </button>
+                        <%= f.text_field :start_time, value: time_to_duration(@file_index_point.start_time.to_f),
+                          class: 'video_start_time video_input form-control', disabled: true
+                        %>
 
-                      <% if @file_index_point.errors && @file_index_point.errors.messages && @file_index_point.errors.messages.length.positive? &&
-                        @file_index_point.errors.messages[:start_time] && @file_index_point.errors.messages[:start_time].first
-                      %>
-                        <span class="form_error"><%= @file_index_point.errors.messages[:start_time].first %></span>
-                      <% end %>
+                        <% if @file_index_point.errors && @file_index_point.errors.messages && @file_index_point.errors.messages.length.positive? &&
+                          @file_index_point.errors.messages[:start_time] && @file_index_point.errors.messages[:start_time].first
+                        %>
+                          <span class="form_error"><%= @file_index_point.errors.messages[:start_time].first %></span>
+                        <% end %>
 
-                      <a href="javascript:void(0);" data-time-target=".video_start_time" class="btn btn-outline-dark update_time float-right">Update Time</a>
-                    </div>
+                        <a href="javascript:void(0);" data-time-target=".video_start_time" class="btn btn-outline-dark update_time float-right">Update Time</a>
+                      </div>
+                    <% end %>
                     <!-- Start Time End -->
 
                     <!-- End Time -->
-                    <div class="col">
-                      <div class="field-title"><%= f.label :end_time, "End Time" %></div>
-                      <input type="hidden" name="current_time" id="current_time"/>
+                    <% if @index_template['fields']['end_time']['status'] %>
+                      <div class="col">
+                        <div class="field-title"><%= f.label :end_time, "End Time" %></div>
+                        <input type="hidden" name="current_time" id="current_time"/>
 
-                      <input type="hidden" name="item_length" id="item_length"/>
-                      <%= f.hidden_field :end_time, value: time_to_duration(@file_index_point.end_time.to_f), class: 'video_end_time', id: "hidden_video_end_time" %>
-                      <button class="edit-time" type="button" alt="Edit End Time" data-time-target=".video_end_time">
-                        <i class="fa fa-pencil"></i>
-                      </button>
-                      <%= f.text_field :end_time, value: time_to_duration(@file_index_point.end_time.to_f),
-                        class: 'video_end_time video_input form-control', disabled: true
-                      %>
+                        <input type="hidden" name="item_length" id="item_length"/>
+                        <%= f.hidden_field :end_time, value: time_to_duration(@file_index_point.end_time.to_f), class: 'video_end_time', id: "hidden_video_end_time" %>
+                        <button class="edit-time" type="button" alt="Edit End Time" data-time-target=".video_end_time">
+                          <i class="fa fa-pencil"></i>
+                        </button>
+                        <%= f.text_field :end_time, value: time_to_duration(@file_index_point.end_time.to_f),
+                          class: 'video_end_time video_input form-control', disabled: true
+                        %>
 
-                      <% if @file_index_point.errors && @file_index_point.errors.messages && @file_index_point.errors.messages.length.positive? &&
-                        @file_index_point.errors.messages[:end_time] && @file_index_point.errors.messages[:end_time].first
-                      %>
-                        <span class="form_error"><%= @file_index_point.errors.messages[:end_time].first %></span>
-                      <% end %>
+                        <% if @file_index_point.errors && @file_index_point.errors.messages && @file_index_point.errors.messages.length.positive? &&
+                          @file_index_point.errors.messages[:end_time] && @file_index_point.errors.messages[:end_time].first
+                        %>
+                          <span class="form_error"><%= @file_index_point.errors.messages[:end_time].first %></span>
+                        <% end %>
 
-                      <a href="javascript:void(0);" data-time-target=".video_end_time" class="btn btn-outline-dark update_time float-right">Update Time</a>
-                    </div>
+                        <a href="javascript:void(0);" data-time-target=".video_end_time" class="btn btn-outline-dark update_time float-right">Update Time</a>
+                      </div>
+                    <% end %>
                     <!-- End Time End -->
                   </div>
 
@@ -137,7 +142,7 @@
                   <div class="buttons-box music_btn">
                     <a href="javascript:void(0);" class="btn btn-outline-dark update_step_backward"><i class="fa fa-step-backward"></i></a>
                     <a href="javascript:void(0);" class="btn btn-outline-dark update_backward"><%= image_tag("rewind.png", :alt => "Rewind 10 sec") %></a>
-                    <a href="javascript:void(0);" class="btn btn-outline-dark upedate_play"><i class="fa fa-play"></i></a>
+                    <a href="javascript:void(0);" class="btn btn-outline-dark update_play"><i class="fa fa-play"></i></a>
                     <a href="javascript:void(0);" class="btn btn-outline-dark update_pause"><i class="fa fa-stop"></i></a>
                     <a href="javascript:void(0);" class="btn btn-outline-dark update_forward"><%= image_tag("fast-forward.png", :alt => "Forward 10 sec") %></a>
                   </div>
@@ -180,13 +185,13 @@
                   </div>
                   <!-- Save & Navigation Buttons End -->
 
-                  <% if @file_index.present? %>
+                  <% if @file_index.present? && @index_template['parent_child'] %>
                     <div class="d-flex w-100">
                       <div class="form-group w-100 h-4">
                         <div class="field-title"><%= f.label :parent_id, "Part of" %></div>
                         <select name='<%= "file_index_point[parent_id]"%>' style="height: 53px"
                           id="file_index_point_parent_id" class="optional form-control parent_id dont-apply-selectize">
-                          <option value="0"></option>
+                          <option value="0">Select Parent Index Segment</option>
                           <%== generate_segments_dropdown(@file_index, @file_index_point) %>
                         </select>
                       </div>
