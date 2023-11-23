@@ -18,15 +18,15 @@ module Interviews
     def validate_date_format
       date_array = interview_date.split('-')
       if date_array.length == 3
-        unless (date_array[0].to_i >= 1970 && date_array[0].to_i <= Date.today.year) && (date_array[1].to_i >= 1 && date_array[1].to_i <= 12) && (date_array[2].to_i >= 1 && date_array[2].to_i <= 31)
+        unless (date_array[0].to_i >= 1900 && date_array[0].to_i <= Date.today.year) && (date_array[1].to_i >= 1 && date_array[1].to_i <= 12) && (date_array[2].to_i >= 1 && date_array[2].to_i <= 31)
           errors.add(:interview_date, 'Date must be in the following formats: yyyy-mm-dd or yyyy-mm or yyyy')
         end
       elsif date_array.length == 2
-        unless (date_array[0].to_i >= 1970 && date_array[0].to_i <= Date.today.year) && (date_array[1].to_i >= 1 && date_array[1].to_i <= 12)
+        unless (date_array[0].to_i >= 1900 && date_array[0].to_i <= Date.today.year) && (date_array[1].to_i >= 1 && date_array[1].to_i <= 12)
           errors.add(:interview_date, 'Date must be in the following formats: yyyy-mm-dd or yyyy-mm or yyyy')
         end
       elsif date_array.length == 1
-        unless date_array[0].to_i >= 1970 && date_array[0].to_i <= Date.today.year
+        unless date_array[0].to_i >= 1900 && date_array[0].to_i <= Date.today.year
           errors.add(:interview_date, 'Date must be in the following formats: yyyy-mm-dd or yyyy-mm or yyyy')
         end
       else

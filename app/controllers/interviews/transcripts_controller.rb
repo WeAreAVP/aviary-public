@@ -131,6 +131,9 @@ module Interviews
                  else
                    [interview.file_transcripts.where(interview_transcript_type: 'main').try(:first), interview.file_transcripts.where(interview_transcript_type: 'translation').try(:first)]
                  end
+      if params['interview_transcript'].present? && params['interview_transcript']['no_transcript'].present? && params['interview_transcript']['no_transcript'].to_i.positive?
+        interview.file_transcripts.destroy_all
+      end
       respond_to do |format|
         format.json { render json: { response: response } }
         format.html { redirect_to ohms_records_path(param) }
