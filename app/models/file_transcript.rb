@@ -39,6 +39,9 @@ class FileTranscript < ApplicationRecord
   end
 
   def slate_js
+    uri = URI(saved_slate_js.url)
+    Net::HTTP.get(uri)
+  rescue StandardError
     File.read(saved_slate_js.path)
   end
 

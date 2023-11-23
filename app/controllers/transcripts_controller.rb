@@ -198,6 +198,10 @@ class TranscriptsController < ApplicationController
   end
 
   def process_vtt_transcript
+    url = URI.parse(@transcript.associated_file.url)
+    response = Net::HTTP.get_response(url)
+    ['vtt', response.body]
+  rescue StandardError
     content = File.read(@transcript.associated_file.path)
     ['vtt', content]
   end
