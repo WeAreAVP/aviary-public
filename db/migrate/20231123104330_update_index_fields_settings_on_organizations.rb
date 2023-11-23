@@ -3,6 +3,9 @@ class UpdateIndexFieldsSettingsOnOrganizations < ActiveRecord::Migration[6.1]
     Organization.all.each do |org|
       if org.organization_field.present?
         index_fields_settings = org.organization_field.index_fields
+
+        next unless index_fields_settings.present?
+
         index_fields_settings.each do |key, _value|
           unless %w[title keywords subjects gps hyperlink].include?(index_fields_settings[key]['system_name'])
             index_fields_settings[key]['vocabulary'] = []
