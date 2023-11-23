@@ -37,8 +37,6 @@ function OrganizationFieldsManagement() {
         deleteField();
         activeMenuManage();
         editIndexField();
-        initIndexFieldsSortsCollection();
-        statusDisplayToggle();
         $("#organization_field_settings_content #manage_fields_options").unstick();
         if ($(window).width() >= 992) {
             $("#organization_field_settings_content #manage_fields_options").sticky({
@@ -251,6 +249,8 @@ function OrganizationFieldsManagement() {
         addFieldToSelectCollection();
         assignCollectionFields();
         statusTombToggle();
+        initIndexFieldsSortsCollection();
+        statusDisplayToggle();
     };
 
     const assignCollectionFields = function () {
@@ -426,7 +426,6 @@ function OrganizationFieldsManagement() {
         };
         appHelper.classAction($('.sort_update_fields').data('url'), data, 'JSON', 'POST', '', that, true);
     };
-
 
     const addFieldToSelectCollection = function () {
         document_level_binding_element('.add_field_to_select_collection', 'click', function () {
