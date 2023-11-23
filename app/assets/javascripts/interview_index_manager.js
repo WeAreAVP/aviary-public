@@ -584,7 +584,7 @@ function InterviewIndexManager() {
                     }
 
                     $(`span#${$(this).data('timeTarget').replace('.', '')}-error`).remove();
-                    const timeInSeconds = (parseInt(timeArray[0]) * 3600) + (parseInt(timeArray[1]) * 60) + parseInt(timeArray[2]);
+                    const timeInSeconds = (parseInt(timeArray[0], 10) * 3600) + (parseInt(timeArray[1], 10) * 60) + parseInt(timeArray[2], 10);
                     if (timeInSeconds > videoDuration) {
                         $(`<span id="${$(this).data('timeTarget').replace('.', '')}-error" class="timestamp-errors form_error">Can't be out of bound</span>`).insertAfter(
                             $(`input${$(this).data('timeTarget')}.form-control`)

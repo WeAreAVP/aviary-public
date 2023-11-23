@@ -10,6 +10,7 @@ class FileIndex < ApplicationRecord
   include ApplicationHelper
   belongs_to :user
   belongs_to :collection_resource_file
+  belongs_to :interview, class_name: 'Interviews::Interview', optional: true
   has_many :file_index_points, dependent: :destroy
   has_attached_file :associated_file, validate_media_type: false, default_url: ''
   validates_presence_of :title, :language, message: 'is required.'
