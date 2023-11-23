@@ -104,6 +104,10 @@ module ApplicationHelper
     0
   end
 
+  def index_template_items
+    YAML.load_file(Rails.root.join('config', 'index_fields.yml'))['index_template_items']
+  end
+
   def interview_video_info(interview)
     interview_video_info_helper(interview)
   end

@@ -26,11 +26,26 @@ class Collection < ApplicationRecord
   # custom_fields?
   attr_accessor :dynamic_initializer
 
+  after_create :update_default_index_template, :add_index_fields_to_collection_fields_and_value
+
+  def update_default_index_template
+    return unless organization.present?
+    self.index_template = organization.index_template
+    save
+  end
+
   def init_dynamic_initializer
     @dynamic_initializer = {
       field_types: %w[Collection CollectionResource],
       parent_entity: nil
     }
+  end
+
+  def add_index_fields_to_collection_fields_and_value
+    index_fields = organization.organization_field.index_fields
+    return unless index_fields.present?
+
+    collection_fields_and_value.update(index_fields: index_fields) if collection_fields_and_value.present?
   end
 
   def collection_card_image

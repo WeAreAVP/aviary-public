@@ -23,6 +23,14 @@ class FileIndex < ApplicationRecord
 
   after_save :update_solr
   after_destroy :update_solr
+  after_create :update_default_index_template
+
+  def update_default_index_template
+    collection = self&.collection_resource_file&.collection_resource&.collection
+    return unless collection.present?
+    self.index_template = collection.index_template
+    save
+  end
 
   def update_solr
     collection_resource_file.collection_resource.reindex_collection_resource if interview_id.nil?

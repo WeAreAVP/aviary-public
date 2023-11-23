@@ -114,6 +114,8 @@ class CollectionResourcesController < ApplicationController
     render plain: '' unless request.xhr?
     @resource_file = params[:resource_file_id] ? CollectionResourceFile.find_by(id: params[:resource_file_id]) : @collection_resource.collection_resource_files.order_file.first
     authorize! :read, @collection_resource
+    @collection_field_manager = Aviary::FieldManagement::CollectionFieldManager.new
+    @index_columns_collection = @collection_field_manager.sort_fields(@collection_field_manager.collection_resource_field_settings(@collection, 'index_fields').index_fields, 'sort_order')
     @file_index = params['selected_index'].to_i > 0 ? FileIndex.find(params['selected_index']) : @resource_file.file_indexes.order_index.first
     @file_index_points = @file_index.file_index_points
     @total_index_points = @file_index.file_index_points.count

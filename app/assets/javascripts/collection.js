@@ -125,7 +125,7 @@ function Collection() {
         $('#collectionTabs a').click(function () {
             let tabType = window.location.pathname.substr(window.location.pathname.lastIndexOf('/') + 1);
             let currentTab = $(this).data().tab;
-            if ($.inArray(tabType, ['general_settings', 'collection_description', 'resource_description']) >= 0)
+            if ($.inArray(tabType, ['general_settings', 'collection_description', 'resource_description', 'index_description']) >= 0)
                 window.history.replaceState({}, document.title, window.location.pathname.replace(/\/[^\/]*$/, '/' + currentTab));
             else
                 window.history.replaceState({}, document.title, window.location.pathname + '/' + currentTab);
