@@ -6,7 +6,7 @@
 <select class="custom-placeholder dont-apply-selectize" id='index_template' name='index_template'>
   <option value="">Select option</option>
   <%index_template_items().each_with_index do |index,key| %>
-  <option value="<%=key%>" <%=(@file_index.index_template == key ? 'selected' : '')%>><%=index%></option>
+    <option value="<%=key%>" <%=(@file_index.index_template == key ? 'selected' : '')%>><%=index['name']%></option>
   <%end%>
 </select>
 <a class="btn btn-outline-secondary collection-custom-field-icon ml-2 index_template_btn" data-url="<%=interviews_interview_update_template_url(@file_index.id)%>" href="javascript:void(0);">

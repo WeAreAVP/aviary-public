@@ -15,7 +15,7 @@
               <select id='index_template' name='index_template'>
                 <option value="">Select option</option>
                 <%index_template_items().each_with_index do |index,key| %>
-                <option value="<%=key%>" <%=(@collection.index_template == key ? 'selected' : '')%>><%=index%></option>
+                  <option value="<%=key%>" <%=(@collection.index_template == key ? 'selected' : '')%>><%=index['name']%></option>
                 <%end%>
               </select>
             </div>

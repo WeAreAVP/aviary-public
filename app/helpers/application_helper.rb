@@ -105,7 +105,7 @@ module ApplicationHelper
   end
 
   def index_template_items
-    %w[Aviary OHMS AES60-2011]
+    YAML.load_file(Rails.root.join('config', 'index_fields.yml'))['index_template_items']
   end
 
   def interview_video_info(interview)

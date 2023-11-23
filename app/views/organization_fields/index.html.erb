@@ -299,7 +299,7 @@
                                           <select id='index_template' name='index_template'>
                                             <option value="">Select option</option>
                                             <%index_template_items().each_with_index do |index,key| %>
-                                            <option value="<%=key%>" <%=(current_organization.index_template == key ? 'selected' : '')%>><%=index%></option>
+                                              <option value="<%=key%>" <%=(current_organization.index_template == key ? 'selected' : '')%>><%=index['name']%></option>
                                             <%end%>
                                           </select>
                                           <button type="submit" class="btn btn-primary">Save</button>
