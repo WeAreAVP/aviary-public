@@ -284,47 +284,47 @@
                               </div>
                             </div>
                           </div>
-                          <% if ENV['OHMS_DEVELOPMENT_ONLY'].to_s == '1' %>
-                            <div class="tab-pane fade active w-100" style="z-index: 999999" id="indexes_field_settings_content" role="tabpanel" aria-labelledby="indexes_field_settings_content">
-                              <div class="tab">
-                                <div class="tab-content">
-                                  <div class="row">
-                                    <div class="col-12 p-5">
-                                      <%= form_for :anything, url: update_index_template_organization_fields_path do |form| %>
-                                        <div class="row">
-                                          <div class="col-4">
-                                            <div class="field-title">
-                                              <label> Index Edit Template </label>
-                                            </div>
-                                            <select id='index_template' name='index_template'>
-                                              <option value="">Select option</option>
-                                              <%index_template_items().each_with_index do |index,key| %>
-                                              <option value="<%=key%>" <%=(current_organization.index_template == key ? 'selected' : '')%>><%=index%></option>
-                                              <%end%>
-                                            </select>
-                                            <button type="submit" class="btn btn-primary">Save</button>
+
+                          <div class="tab-pane fade active w-100" style="z-index: 999999" id="indexes_field_settings_content" role="tabpanel" aria-labelledby="indexes_field_settings_content">
+                            <div class="tab">
+                              <div class="tab-content">
+                                <div class="row">
+                                  <div class="col-12 p-5">
+                                    <%= form_for :anything, url: update_index_template_organization_fields_path do |form| %>
+                                      <div class="row">
+                                        <div class="col-4">
+                                          <div class="field-title">
+                                            <label> Index Edit Template </label>
                                           </div>
+                                          <select id='index_template' name='index_template'>
+                                            <option value="">Select option</option>
+                                            <%index_template_items().each_with_index do |index,key| %>
+                                            <option value="<%=key%>" <%=(current_organization.index_template == key ? 'selected' : '')%>><%=index%></option>
+                                            <%end%>
+                                          </select>
+                                          <button type="submit" class="btn btn-primary">Save</button>
                                         </div>
-                                      <% end %>
-                                    </div>
+                                      </div>
+                                    <% end %>
                                   </div>
                                 </div>
                               </div>
+                            </div>
 
-                              <div class="row">
-                                <div class="col-12 p-5">
-                                  <div class="holder custom_fields_container border">
-                                    <table class="table table-hover border-0">
-                                      <thead class="border-top-0">
-                                      <tr class="">
-                                        <th style="width: 80% !important;"><h2>Field Name</h2></th>
-                                        <th style="width: 10% !important;"><h2>Display Columns</h2></th>
-                                      </tr>
-                                      </thead>
-                                    </table>
-                                    <table class="table border-0" id="sort_facet_fields_table">
-                                      <tbody id='index_fields' data-type="index_fields" data-option='index_fields' data-order-custom="sort_order" data-status-columns="display">
-                                      <% if @indexes_columns_fields.present? %>
+                            <div class="row">
+                              <div class="col-12 p-5">
+                                <div class="holder custom_fields_container border">
+                                  <table class="table table-hover border-0">
+                                    <thead class="border-top-0">
+                                    <tr class="">
+                                      <th style="width: 80% !important;"><h2>Field Name</h2></th>
+                                      <th style="width: 10% !important;"><h2>Display Columns</h2></th>
+                                    </tr>
+                                    </thead>
+                                  </table>
+                                  <table class="table border-0" id="sort_facet_fields_table">
+                                    <tbody id='index_fields' data-type="index_fields" data-option='index_fields' data-order-custom="sort_order" data-status-columns="display">
+                                    <% if @indexes_columns_fields.present? %>
                                       <% @indexes_columns_fields.each_with_index do |(name, props), _index| %>
                                         <% label = props['display_name'] %>
 
@@ -343,17 +343,50 @@
                                             </small>
 
                                           </td>
-                                            <td width="10%">
-                                              <label class="toggle-switch ml-3">
-                                                <%= check_box_tag 'display' + name, props['display'], props['display'].to_s.to_boolean?,
-                                                  disabled: props['required'], class: "display toggle-switch__input template-data-is-facetable template-data-field-is-facetable" %>
+                                          <td width="10%">
+                                            <label class="toggle-switch ml-3">
+                                              <%= check_box_tag 'display' + name, props['display'], props['display'].to_s.to_boolean?,
+                                                disabled: props['required'], class: "display toggle-switch__input template-data-is-facetable template-data-field-is-facetable" %>
 
-                                                <span class="toggle-switch__slider"></span>
-                                              </label>
-                                            </td>
-                                          </tr>
-                                        <% end %>
+                                              <span class="toggle-switch__slider"></span>
+                                            </label>
+                                          </td>
+                                        </tr>
                                       <% end %>
+                                    <% end %>
+                                    </tbody>
+                                  </table>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div class="tab-pane fade active " id="organization_thesaurus_content" role="tabpanel" aria-labelledby="organization_thesaurus_content">
+                            <div class="row">
+
+                              <div class="col-md-6 "></div>
+                              <div class="col-md-6  pt-2 pr-5">
+                                <a class="btn btn-primary btn-xs pull-right float-right" href="<%= request.GET["type"].nil? ? new_thesaurus_manager_path : "#{new_thesaurus_manager_path}?type=ohms" %>">Add
+                                  New
+                                  Thesaurus</a>
+                              </div>
+                              <div class="col-12 p-5">
+                                <div class="data-table custom_fields_container border data-table  mb-4">
+                                  <div>
+                                    <table class="table table-striped table-bordered" id='thesaurus_list_table' data-url="<%= request.GET["type"].nil? ? datatable_thesaurus_manager_index_path : "#{datatable_thesaurus_manager_index_path}?type=ohms" %>">
+                                      <thead>
+                                      <tr>
+                                        <th style="width: 12% !important;">Title</th>
+                                        <th style="width: 16% !important;">Description</th>
+                                        <th style="width: 10% !important;"> # of Terms</th>
+                                        <th style="width: 16% !important;">Updated by</th>
+                                        <th style="width: 16% !important;">Date Updated</th>
+                                        <th style="width: 10% !important;"> Assigned Fields</th>
+                                        <th style="width: 16% !important;">Actions</th>
+                                      </tr>
+                                      </thead>
+                                      <tbody>
+
                                       </tbody>
                                     </table>
                                   </div>
@@ -361,41 +394,7 @@
                               </div>
                             </div>
 
-                            <div class="tab-pane fade active " id="organization_thesaurus_content" role="tabpanel" aria-labelledby="organization_thesaurus_content">
-                              <div class="row">
-
-                                <div class="col-md-6 "></div>
-                                <div class="col-md-6  pt-2 pr-5">
-                                  <a class="btn btn-primary btn-xs pull-right float-right" href="<%= request.GET["type"].nil? ? new_thesaurus_manager_path : "#{new_thesaurus_manager_path}?type=ohms" %>">Add
-                                    New
-                                    Thesaurus</a>
-                                </div>
-                                <div class="col-12 p-5">
-                                  <div class="data-table custom_fields_container border data-table  mb-4">
-                                    <div>
-                                      <table class="table table-striped table-bordered" id='thesaurus_list_table' data-url="<%= request.GET["type"].nil? ? datatable_thesaurus_manager_index_path : "#{datatable_thesaurus_manager_index_path}?type=ohms" %>">
-                                        <thead>
-                                        <tr>
-                                          <th style="width: 12% !important;">Title</th>
-                                          <th style="width: 16% !important;">Description</th>
-                                          <th style="width: 10% !important;"> # of Terms</th>
-                                          <th style="width: 16% !important;">Updated by</th>
-                                          <th style="width: 16% !important;">Date Updated</th>
-                                          <th style="width: 10% !important;"> Assigned Fields</th>
-                                          <th style="width: 16% !important;">Actions</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-
-                                        </tbody>
-                                      </table>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-
-                            </div>
-                          <% end %>
+                          </div>
                         </div>
                       </div>
                     </div>
