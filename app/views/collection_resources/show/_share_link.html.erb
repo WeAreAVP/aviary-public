@@ -103,7 +103,7 @@
                 <div class="content">
                   <div class="embedLink form-group">
                     <div class="field-title"><label>Embed Media File Link</label></div>
-                    <textarea readonly class="form-control mb-3 share_value" id="embed_file_url" placeholder="Embed Video"><iframe title="<%=@collection_resource.title %>" src="<%= embeded_url(embed_file_url(@collection_resource), 'embed', @resource_file.id) %>" allow="fullscreen" frameborder="0"></iframe></textarea>
+                    <textarea readonly class="form-control mb-3 share_value" id="embed_file_url" placeholder="Embed Video"><iframe title="<%=@collection_resource.title.strip%>" src="<%=embeded_url(embed_file_url(@collection_resource), 'embed', @resource_file.id)%>"></iframe></textarea>
                     <% unless @resource_file.access == 'yes' %>
                       <span class="text-info">This media file is currently private. Accessibility via embed links will be limited to users signed into Aviary as registered users who also have been granted access to the resource.</span>
                     <% end %>
@@ -117,7 +117,7 @@
                 <div class="content">
                   <div class="embedLink form-group">
                     <div class="field-title"><label>Embed Resource URL Link</label></div>
-                    <textarea readonly class="form-control mb-3 share_value" id="embed_resource_url" placeholder="Embed Resource"><div <%= outer_div_style %> ><iframe title="<%=@collection_resource.title %>"  <%= common_style %> src="<%= embeded_url(collection_resource_url(@collection_resource), nil, @resource_file.id) %>" allow="fullscreen" frameborder="0"></iframe></div></textarea>
+                    <textarea readonly class="form-control mb-3 share_value" id="embed_resource_url" placeholder="Embed Resource"><div <%= outer_div_style %> ><iframe title="<%=@collection_resource.title.strip%>"  <%= common_style %> src="<%=embeded_url(collection_resource_url(@collection_resource), nil, @resource_file.id)%>" allow="fullscreen" frameborder="0"></iframe></div></textarea>
                     <% unless @collection_resource.access == :access_public.to_s && @collection_resource.collection.is_public %>
                       <span class="text-info">This resource is currently private. Accessibility via embed links will be limited to users signed into Aviary as registered users who also have been granted access to the resource.</span>
                     <% end %>
@@ -130,7 +130,7 @@
                 <div class="content">
                   <div class="embedLink form-group">
                     <div class="field-title"><label>Embed Resource Media Player Link</label></div>
-                    <textarea readonly class="form-control mb-3 share_value" id="embed_resource_media_player" placeholder="Embed Resource Media Player"><iframe title="<%=@collection_resource.title %>" src="<%= embeded_url(collection_resource_url(@collection_resource), 'media_player', @resource_file.id) %>" allow="fullscreen" frameborder="0"></iframe></textarea>
+                    <textarea readonly class="form-control mb-3 share_value" id="embed_resource_media_player" placeholder="Embed Resource Media Player"><iframe title="<%=@collection_resource.title.strip%>" src="<%=embeded_url(collection_resource_url(@collection_resource), 'media_player', @resource_file.id)%>" allow="fullscreen" frameborder="0"></iframe></textarea>
                     <% unless @collection_resource.access == :access_public.to_s && @collection_resource.collection.is_public %>
                       <span class="text-info">This resource is currently private. Accessibility via embed links will be limited to users signed into Aviary as registered users who also have been granted access to the resource.</span>
                     <% end %>

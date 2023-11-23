@@ -102,7 +102,7 @@ thesaurus_settings = ::Thesaurus::ThesaurusSetting.where(organization_id: curren
           </div>
           <div class="form-group">
             <div class="field-title"><%= f.label :interview_date, 'Interview Date' %></div>
-            <%= f.input :interview_date, label: false, input_html: { class: 'form-control interview_date', type: 'text' } %>
+            <%= f.input :interview_date, label: false, input_html: { class: 'form-control', type: 'text', placeholder: 'yyyy-mm-dd or yyyy-mm or yyyy' } %>
           </div>
           <div class="form-group">
             <div class="field-title"><%= f.label :media_type, 'Type' %></div>

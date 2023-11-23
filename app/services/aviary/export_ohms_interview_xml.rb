@@ -13,19 +13,7 @@ module Aviary
     include XMLFileHandler
     include ApplicationHelper
     def export(interview)
-      date = if interview.interview_date.empty?
-               ''
-             else
-               begin
-                 Date.parse(interview.interview_date).strftime('%Y-%m-%d')
-               rescue StandardError
-                 begin
-                   Date.strptime(interview.interview_date, '%m/%d/%Y').strftime('%Y-%m-%d')
-                 rescue StandardError
-                   ''
-                 end
-               end
-             end
+      date = interview.interview_date
       builder = Nokogiri::XML::Builder.new(encoding: 'UTF-8') do |xml|
         xml.ROOT('xmlns' => 'https://www.weareavp.com/nunncenter/ohms', 'xmlns:xsi' => 'http://www.w3.org/2001/XMLSchema-instance', 'xsi:schemaLocation' => 'https://www.weareavp.com/nunncenter/ohms/ohms.xsd') {
           xml.record('id' => interview.id, 'dt' => DateTime.now.strftime('%Y-%m-%d')) {
@@ -107,7 +95,34 @@ module Aviary
             else
               xml.sync ''
             end
-            xml.sync_alt interview.transcript_sync_data_translation
+            sync_alt = interview.transcript_sync_data_translation
+            file_transcript_alt = FileTranscript.where(interview_id: interview.id)
+            if file_transcript_alt.length == 2
+              file_transcript_last = file_transcript_alt.last
+              file_transcript_points = FileTranscriptPoint.where(file_transcript_id: file_transcript_last)
+              sync_alt = "#{file_transcript_last.timecode_intervals.to_i}:"
+              file_transcript_points.each do |point|
+                info = point.text.split("\n")
+                info.each do |section|
+                  if section.present?
+                    breakup = section.split(' ')
+                    new_line = ''
+                    breakup.each_with_index do |word, k|
+                      if "#{new_line}#{word}".length > 80 || k == breakup.length - 1
+                        formatted = "#{formatted}#{new_line.strip}#{k == breakup.length - 1 ? " #{word}" : ''}\r\n"
+                        new_line = ''
+                      end
+                      new_line = "#{new_line}#{word} "
+                    end
+                    formatted = "#{formatted}\r\n"
+                  end
+                end
+                formatted_info = formatted.split("\r\n")
+                line = formatted_info.length
+                sync_alt += "|#{line}(#{formatted_info.last.split(' ').length})"
+              end
+            end
+            xml.sync_alt sync_alt
             xml.transcript_alt_lang interview.language_for_translation
             xml.translate interview.include_language? ? 1 : 0
             xml.media_id interview.try('media_id').present? ? interview.media_id : ''
@@ -190,7 +205,12 @@ module Aviary
             else
               xml.transcript transcript_manager.read_notes_info(file_transcript)
             end
-            xml.transcript_alt ''
+            transcript_alt = ''
+            if file_transcript_alt.length == 2
+              transcript_alt_file = file_transcript_alt.last
+              transcript_alt = transcript_manager.read_notes_info(transcript_alt_file)
+            end
+            xml.transcript_alt transcript_alt
             xml.rights interview.right_statement
             xml.fmt interview.media_format
             xml.usage interview.usage_statement
