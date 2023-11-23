@@ -173,6 +173,7 @@ Rails.application.routes.draw do
       get :assignment_management
       post :create_custom_fields
       get :new_edit_custom_field
+      get :index_fields_edit
     end
   end
 

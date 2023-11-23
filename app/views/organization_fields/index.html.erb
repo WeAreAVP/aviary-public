@@ -319,6 +319,7 @@
                                     <tr class="">
                                       <th style="width: 80% !important;"><h2>Field Name</h2></th>
                                       <th style="width: 10% !important;"><h2>Display Columns</h2></th>
+                                      <th style="width: 10% !important;"><h2>Actions</h2></th>
                                     </tr>
                                     </thead>
                                   </table>
@@ -344,12 +345,22 @@
 
                                           </td>
                                           <td width="10%">
-                                            <label class="toggle-switch ml-3">
+                                            <label class="toggle-switch">
                                               <%= check_box_tag 'display' + name, props['display'], props['display'].to_s.to_boolean?,
                                                 disabled: props['required'], class: "display toggle-switch__input template-data-is-facetable template-data-field-is-facetable" %>
 
                                               <span class="toggle-switch__slider"></span>
                                             </label>
+                                          </td>
+                                          <td width="10%">
+                                            <% if props['vocabulary'].class.name == 'Array' %>
+                                              <label class="toggle-switch">
+                                                <a href="javascript:void(0)" class="btn btn-sm btn-success text-white edit-index-field" 
+                                                  data-url="<%= index_fields_edit_organization_fields_path %>" data-name="<%= name %>">
+                                                  Edit
+                                                </a>
+                                              </label>
+                                          <% end %>
                                           </td>
                                         </tr>
                                       <% end %>

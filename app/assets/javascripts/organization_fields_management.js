@@ -36,6 +36,7 @@ function OrganizationFieldsManagement() {
         editVocabulary();
         deleteField();
         activeMenuManage();
+        editIndexField();
         initIndexFieldsSortsCollection();
         statusDisplayToggle();
         $("#organization_field_settings_content #manage_fields_options").unstick();
@@ -109,7 +110,7 @@ function OrganizationFieldsManagement() {
                 js_action: 'editVocabulary',
                 action: 'editVocabulary',
                 field: $('.edit_vocabulary').data('field'),
-                type: 'resource_fields',
+                type: $('.edit_vocabulary').data('fieldType') || 'resource_fields',
                 update_type: $('#update_vocabulary').val(),
                 vocabulary: $('#new_vocabulary').val(),
                 list_type: 'vocabulary'
@@ -437,6 +438,22 @@ function OrganizationFieldsManagement() {
             };
             appHelper.classAction($('.sort_update_fields').data('url'), data, 'JSON', 'POST', '', that, true);
         });
+    };
+
+    const editIndexField = function () {
+        document_level_binding_element('.edit-index-field', 'click', function () {
+            $('#index-field-edit-form').trigger("reset");
+            let data = {action: 'IndexFieldEdit', field_name: $(this).data('name')};
+            $('.edit_vocabulary').data('field', $(this).data('field'));
+            appHelper.classAction($(this).data('url'), data, 'JSON', 'GET', '', that, true);
+        });
+    };
+
+    this.IndexFieldEdit = function (response) {
+        if (typeof response != 'undefined' && response.responseText) {
+            $('#custom_fields_popup').html(response.responseText);
+            $('#index_fields_edit').modal('show');
+        }
     };
 
     this.addFieldToSelectCollection = function () {

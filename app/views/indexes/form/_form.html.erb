@@ -1,3 +1,7 @@
+<%
+  index_fields_conf = YAML.load_file(Rails.root.join('config','index_fields.yml'))
+  @index_template = index_fields_conf['index_template_items'][@resource_file.collection_resource.collection.index_template]
+%>
 <div class="interview-index">
   <div class="breadcrumb resources-details">
     <%= render_breadcrumbs %>
