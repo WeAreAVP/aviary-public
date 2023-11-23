@@ -120,7 +120,7 @@ class TranscriptsController < ApplicationController
       TranscriptEditJob.perform_later({
                                         transcript: transcript,
                                         params: decompressed_params,
-                                        current_user_id: current_user.id,
+                                        current_user_id: current_user.id
                                       })
       render json: { success: true }
     else
@@ -166,11 +166,10 @@ class TranscriptsController < ApplicationController
   end
 
   def decompress_request_body
-    if request.headers['Content-Encoding'] == 'gzip'
-      request.body.rewind
-      decompressed_body = Zlib::GzipReader.new(StringIO.new(request.body.read)).read
-      request.env['action_dispatch.request.request_parameters'] = JSON.parse(decompressed_body)
-    end
+    return unless request.headers['Content-Encoding'] == 'gzip'
+    request.body.rewind
+    decompressed_body = Zlib::GzipReader.new(StringIO.new(request.body.read)).read
+    request.env['action_dispatch.request.request_parameters'] = JSON.parse(decompressed_body)
   end
 
   def find_transcript

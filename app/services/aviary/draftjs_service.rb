@@ -8,25 +8,24 @@
 # Aviary is an audiovisual content publishing platform with sophisticated features for search and permissions controls.
 # Copyright (C) 2019 Audio Visual Preservation Solutions, Inc.
 module Aviary
+  # The class is written to convert the draftjs json to transcript points and webvvt file
   class DraftjsService
     include DeprecatedHelper
     def create_transcript_points(transcript)
       slate_js_blocks = JSON.parse(transcript.slate_js)
       transcript_point_hash = []
 
-      words_index = 0
       words = slate_js_blocks[0]['children'][0]['words']
-      slate_js_blocks.each_with_index do |point, _idx|
+      slate_js_blocks.each_with_index do |point, idx|
         data = point['children'][0]
         text = data['text']
         paragraph_words = text.split(' ')
         speaker = point['speaker'].present? && point['speaker'].downcase != 'add speaker' ? point['speaker'] : ''
-        paragraph_words_index = 0
         word_timestamp = []
 
-        paragraph_words.each_with_index do |word, index|
+        paragraph_words.each do |word|
           start_time = point['start']
-          end_time = slate_js_blocks.length >= _idx + 1 && slate_js_blocks[_idx + 1] ? slate_js_blocks[_idx + 1]['start'] : words.last['end']
+          end_time = slate_js_blocks.length >= idx + 1 && slate_js_blocks[idx + 1] ? slate_js_blocks[idx + 1]['start'] : words.last['end']
           word_timestamp << {
             start: start_time,
             end: end_time,
@@ -69,7 +68,7 @@ module Aviary
       words = []
       timestamp_words.each do |timestamp_word|
         webvtt_timestamp = timestamp_word['start'] if webvtt_timestamp.blank?
-        words << timestamp_word['text'] 
+        words << timestamp_word['text']
         if timestamp_word['end'] - webvtt_timestamp >= 4 || (webvtt_timestamp.present? && timestamp_word.equal?(timestamp_words.last))
           webvtt_text += "#{Time.at(webvtt_timestamp).utc.strftime('%H:%M:%S.%L')} --> #{Time.at(timestamp_word['end']).utc.strftime('%H:%M:%S.%L')}\n"
           webvtt_text += "#{words.join(' ')}\n\n"
