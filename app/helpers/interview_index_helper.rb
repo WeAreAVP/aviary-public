@@ -74,7 +74,7 @@ module InterviewIndexHelper
     elsif interview.media_host == 'Vimeo'
       regex = %r{https?:\/\/(?:\w+\.)*vimeo\.com(?:[\/\w]*\/?)?\/(?<id>[0-9]+)[^\s]*}
       match = regex.match(interview.embed_code)
-      data['src'] = "https://player.vimeo.com/video/#{match[1]}"
+      data['src'] = match[0]
     end
     data
   end
