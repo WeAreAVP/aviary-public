@@ -79,6 +79,7 @@ class CollectionsController < ApplicationController
     @collection_field_manager = Aviary::FieldManagement::CollectionFieldManager.new
     @resource_fields = @organization_field_manager.organization_field_settings(current_organization, nil, 'resource_fields')
     @resource_columns_collection = @collection_field_manager.sort_fields(@collection_field_manager.collection_resource_field_settings(@collection, 'resource_fields').resource_fields, 'sort_order')
+    @index_columns_collection = @collection_field_manager.sort_fields(@collection_field_manager.collection_resource_field_settings(@collection, 'index_fields').index_fields, 'sort_order')
     @collection_fields = @organization_field_manager.organization_field_settings(current_organization, nil, 'collection_fields', 'sort_order')
     @collection_fields_and_value = @collection.collection_fields_and_value
     @collection_resource = @collection.collection_resources.first
@@ -94,6 +95,17 @@ class CollectionsController < ApplicationController
   end
 
   def update
+    if params['index_default_template'].nil? && params['index_template'].present?
+      @collection.index_default_template = 0
+      @collection.index_template = params['index_template'].to_i
+      @collection.save
+    elsif params['index_default_template'].present?
+      @collection.index_default_template = 1
+      @collection.index_template = current_organization.index_template
+      @collection.save
+    end
+    UpdateDefaultIndexTemplateJob.perform_later(current_organization, 'collection', params['index_template'], params['index_default_template'], @collection.id)
+
     if @collection.update(collection_params.except('request_access_template_collection_ids', 'access_request_approval_email', 'request_access_template', 'request_access_button_text', 'accept_request_notification_recipients'))
       updated_field_values = {}
       params['collection']['collection_field_values_attributes'].each do |value|

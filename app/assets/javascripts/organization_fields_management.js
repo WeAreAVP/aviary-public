@@ -36,6 +36,7 @@ function OrganizationFieldsManagement() {
         editVocabulary();
         deleteField();
         activeMenuManage();
+        editIndexField();
         $("#organization_field_settings_content #manage_fields_options").unstick();
         if ($(window).width() >= 992) {
             $("#organization_field_settings_content #manage_fields_options").sticky({
@@ -107,7 +108,7 @@ function OrganizationFieldsManagement() {
                 js_action: 'editVocabulary',
                 action: 'editVocabulary',
                 field: $('.edit_vocabulary').data('field'),
-                type: 'resource_fields',
+                type: $('.edit_vocabulary').data('fieldType') || 'resource_fields',
                 update_type: $('#update_vocabulary').val(),
                 vocabulary: $('#new_vocabulary').val(),
                 list_type: 'vocabulary'
@@ -184,7 +185,7 @@ function OrganizationFieldsManagement() {
             axis: "y",
             containment: "parent",
             cursor: "move",
-            items: "tr",
+            items: "tr:not([data-is-required-field='true'])",
             tolerance: "pointer",
             update: function () {
                 updateSortInfo(this)
@@ -248,6 +249,8 @@ function OrganizationFieldsManagement() {
         addFieldToSelectCollection();
         assignCollectionFields();
         statusTombToggle();
+        initIndexFieldsSortsCollection();
+        statusDisplayToggle();
     };
 
     const assignCollectionFields = function () {
@@ -281,10 +284,63 @@ function OrganizationFieldsManagement() {
                 $(this).prop('checked', false);
                 return alert('Cannot select more then 3 tombstone values');
             }
+
             // todo: woke on this to mage preview field work
             updateSortInfoCollection($('#collection_resource_field_preview_org'));
 
         });
+    };
+
+    const statusDisplayToggle = function () {
+        document_level_binding_element('.display.toggle-switch__input', 'click', function () {
+            updateIndexFieldInfoCollection($('#collection_index_field_preview_org'));
+        });
+    };
+
+    const initIndexFieldsSortsCollection = function () {
+        $('#collection_index_field_preview_org').sortable({
+            axis: "y",
+            containment: "parent",
+            cursor: "move",
+            items: "tr:not([data-is-required-field='true'])",
+            tolerance: "pointer",
+            update: function () {
+                updateIndexFieldInfoCollection(this)
+            }
+        });
+    };
+
+    /**
+     *
+     * @param obj
+     */
+    const updateIndexFieldInfoCollection = function (obj) {
+        let info = {};
+
+        $('#' + $(obj).attr('id') + ' tr').each(function (index, objectTr) {
+            info[index] = {system_name: $(this).data('field')};
+            info[index][$(obj).data('orderCustom')] = index;
+            if (typeof $(obj).data('statusColumns') != 'undefined' && $(obj).data('statusColumns').length > 0) {
+                $.each($(obj).data('statusColumns').split(','), function (_index, value) {
+                    info[index][value] = $(objectTr).find('.' + value).prop('checked');
+                });
+            }
+            if (typeof $(obj).data('internalOnlyColumns') != 'undefined' && $(obj).data('internalOnlyColumns').length > 0) {
+                $.each($(obj).data('internalOnlyColumns').split(','), function (_index, value) {
+                    info[index][value] = $(objectTr).find('.' + value).prop('checked');
+                });
+            }
+        });
+
+        let data = {
+            js_action: 'updateSortCollectionIndexFields',
+            action: 'updateSortCollectionIndexFields',
+            info: info,
+            options: $(obj).data('option'),
+            type: $(obj).data('type')
+        };
+        let appHelper = new App();
+        appHelper.classAction($('#sort_custom_fields_table').data('url'), data, 'JSON', 'POST', '', that, true);
     };
 
     const initFieldsSortsCollection = function () {
@@ -371,7 +427,6 @@ function OrganizationFieldsManagement() {
         appHelper.classAction($('.sort_update_fields').data('url'), data, 'JSON', 'POST', '', that, true);
     };
 
-
     const addFieldToSelectCollection = function () {
         document_level_binding_element('.add_field_to_select_collection', 'click', function () {
             let data = {
@@ -382,6 +437,22 @@ function OrganizationFieldsManagement() {
             };
             appHelper.classAction($('.sort_update_fields').data('url'), data, 'JSON', 'POST', '', that, true);
         });
+    };
+
+    const editIndexField = function () {
+        document_level_binding_element('.edit-index-field', 'click', function () {
+            $('#index-field-edit-form').trigger("reset");
+            let data = {action: 'IndexFieldEdit', field_name: $(this).data('name')};
+            $('.edit_vocabulary').data('field', $(this).data('field'));
+            appHelper.classAction($(this).data('url'), data, 'JSON', 'GET', '', that, true);
+        });
+    };
+
+    this.IndexFieldEdit = function (response) {
+        if (typeof response != 'undefined' && response.responseText) {
+            $('#custom_fields_popup').html(response.responseText);
+            $('#index_fields_edit').modal('show');
+        }
     };
 
     this.addFieldToSelectCollection = function () {

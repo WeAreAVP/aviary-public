@@ -113,6 +113,7 @@ Rails.application.routes.draw do
     get 'interview/index/new/:id', to: 'interview_index#new', as: :interview_index_new
     post 'interview/index/create/:id', to: 'interview_index#create', as: :interview_index_create
     post 'interview/index/status/:id', to: 'interview_index#status_update', as: :interview_index_status_update
+    post 'interview/index/update_template/:id', to: 'interview_index#update_template', as: :interview_update_template
     get 'interview/index/index_segment_timeline/:id', to: 'interview_index#index_segment_timeline', as: :index_segment_timeline
   end
 
@@ -167,10 +168,12 @@ Rails.application.routes.draw do
   resources :organization_fields do
     collection do
       post :update_information
+      post :update_index_template
       get :delete_field
       get :assignment_management
       post :create_custom_fields
       get :new_edit_custom_field
+      get :index_fields_edit
     end
   end
 
