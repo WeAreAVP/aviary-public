@@ -104,11 +104,11 @@ class TranscriptsController < ApplicationController
   end
 
   def edit
+    resource = @transcript.collection_resource_file.collection_resource
+    return unless authorize_resource_access(resource)
     lock_transcript_for_editing
     stt_type, json = process_transcript_based_on_type
-    resource = @transcript.collection_resource_file.collection_resource
     metadata = load_transcript_metadata
-    authorize_resource_access(resource)
     render json: build_response(resource, json, stt_type, metadata)
   end
 
