@@ -79,7 +79,7 @@ class TranscriptsDatatable < ApplicationDatatable
                                                                                          data.collection_resource_file.id, 'transcript',
                                                                                          selected_transcript: resource['id_is']) +
                                '"class="btn-sm btn-default hidden_focus_btn" data-id="collection_resource_view_' + resource['id_is'].to_s + '">View</a>&nbsp;&nbsp;'
-                    link_set += "<a href='javascript://' class='btn-sm btn-default hidden_focus_btn edit_transcript' data-url='#{edit_transcript_url(resource['id_is'], host: Utilities::AviaryDomainHandler.subdomain_handler(@current_organization))}'> Edit </a>&nbsp;&nbsp;" if allow_editor?(data)
+                    link_set += "<a href='javascript://' class='btn-sm btn-default hidden_focus_btn edit_transcript' data-url='#{edit_transcript_url(resource['id_is'], host: Utilities::AviaryDomainHandler.subdomain_handler(@current_organization))}'> Edit </a>&nbsp;&nbsp;" if ApplicationHelper.allow_editor?(data)
                     link_set += "<a href='javascript://' data-name='#{strip_tags(resource['title_ss'].to_s)}' data-url='#{transcript_delete_path(resource['id_is'])}'
                                 class='btn-sm btn-danger transcript_delete hidden_focus_btn' data-id='collection_resource_delete_" + resource['id_is'].to_s + "' data-id='collection_resource_delete_" + resource['id_is'].to_s + "' >Delete</a>"
                     link_set
@@ -126,21 +126,5 @@ class TranscriptsDatatable < ApplicationDatatable
       end
     end
     columns_allowed
-  end
-
-  def allow_editor?(data)
-    !data.is_edit &&
-      (data.associated_file_content_type == 'text/vtt' ||
-       valid_json?(data&.timestamps&.gsub('=>', ':')))
-  end
-
-  def valid_json?(json)
-    return false if json.nil?
-    begin
-      ruby_hash = JSON.parse(json)
-      ruby_hash
-    rescue JSON::ParserError
-      false
-    end
   end
 end
