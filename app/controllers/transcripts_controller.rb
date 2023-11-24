@@ -10,8 +10,15 @@
 #
 # Aviary is an audiovisual content publishing platform with sophisticated features for search and permissions controls.
 # Copyright (C) 2019 Audio Visual Preservation Solutions, Inc.
+
+require 'zlib'
 class TranscriptsController < ApplicationController
   before_action :authenticate_user!, except: :export
+  before_action :decompress_request_body, only: [:update]
+  before_action :find_transcript, only: [:edit]
+
+  skip_before_action :verify_authenticity_token, only: :update
+
   def index
     authorize! :manage, current_organization
     session[:file_transcript_bulk_edit] = [] unless request.xhr?
@@ -96,6 +103,32 @@ class TranscriptsController < ApplicationController
     redirect_back(fallback_location: root_path)
   end
 
+  def edit
+    resource = @transcript.collection_resource_file.collection_resource
+    render json: { success: false } unless authorize_resource_access(resource)
+    lock_transcript_for_editing
+    stt_type, json = process_transcript_based_on_type
+    metadata = load_transcript_metadata
+    render json: build_response(resource, json, stt_type, metadata)
+  end
+
+  def update
+    transcript = FileTranscript.find(params[:id])
+    # TODO: Move this to use strong parameters
+    decompressed_params = request.env['action_dispatch.request.request_parameters']['file_transcript']
+    if decompressed_params['slatejs'].present?
+      TranscriptEditJob.perform_later({
+                                        transcript: transcript,
+                                        params: decompressed_params,
+                                        current_user_id: current_user.id
+                                      })
+      render json: { success: true }
+    else
+      transcript.update(file_transcript_params)
+      render json: { success: false }
+    end
+  end
+
   def export
     file_transcript = FileTranscript.find_by_id(params[:id])
     if file_transcript.present? && %w[webvtt txt json].include?(params[:type])
@@ -122,11 +155,84 @@ class TranscriptsController < ApplicationController
     end
   end
 
+  private
+
   # Never trust parameters from the scary internet, only allow the white list through.
   def file_transcript_params
     if params[:is_downloadable].present? && params[:is_downloadable].is_a?(String)
       params[:is_downloadable] = (params[:is_downloadable].downcase == 'yes' ? 1 : 0)
     end
     params.require(:file_transcript).permit(:title, :is_caption, :associated_file, :is_public, :language, :is_edit, :draftjs, :description, :is_downloadable)
+  end
+
+  def decompress_request_body
+    return unless request.headers['Content-Encoding'] == 'gzip'
+    request.body.rewind
+    decompressed_body = Zlib::GzipReader.new(StringIO.new(request.body.read)).read
+    request.env['action_dispatch.request.request_parameters'] = JSON.parse(decompressed_body)
+  end
+
+  def find_transcript
+    @transcript = FileTranscript.find(params[:id])
+  end
+
+  def lock_transcript_for_editing
+    @transcript.update(is_edit: true, locked_by: current_user.id)
+  end
+
+  def process_transcript_based_on_type
+    if @transcript.saved_slate_js.present?
+      ['slatejs', @transcript.slate_js]
+    elsif @transcript.timestamps.present?
+      process_ibm_transcript
+    else
+      process_vtt_transcript
+    end
+  end
+
+  def process_ibm_transcript
+    ibm_watson = JSON.parse(@transcript.timestamps.gsub('=>', ':'))
+    ibm_watson['results'].first['speaker_labels'] ||= []
+    ['ibm', ibm_watson.to_json]
+  end
+
+  def process_vtt_transcript
+    url = URI.parse(@transcript.associated_file.url)
+    response = Net::HTTP.get_response(url)
+    ['vtt', response.body]
+  rescue StandardError
+    content = File.read(@transcript.associated_file.path)
+    ['vtt', content]
+  end
+
+  def fetch_media_url
+    @transcript.collection_resource_file.embed_code
+  end
+
+  def authorize_resource_access(resource)
+    authorize! :read, resource
+  end
+
+  def load_transcript_metadata
+    {
+      is_caption: @transcript.is_caption,
+      is_downloadable: @transcript.is_downloadable,
+      description: @transcript.description,
+      is_public: @transcript.is_public,
+      language: @transcript.language
+    }
+  end
+
+  def build_response(resource, json, stt_type, metadata)
+    {
+      env: !Rails.env.test?,
+      host: root_url(host: Utilities::AviaryDomainHandler.subdomain_handler(current_organization)),
+      media_url: fetch_media_url,
+      title: @transcript.title,
+      resource_title: resource.title,
+      transcript: json,
+      sst_type: stt_type,
+      metadata: metadata
+    }
   end
 end
