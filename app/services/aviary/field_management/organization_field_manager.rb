@@ -179,7 +179,7 @@ module Aviary
           end
 
           if collection.collection_fields_and_value.present?
-            collection.collection_fields_and_value.update_attributes(type.to_s => collection_fields) if collection.collection_fields_and_value[type.to_sym].blank?
+            collection.collection_fields_and_value.update(type.to_s => collection_fields) if collection.collection_fields_and_value[type.to_sym].blank?
           else
             obj = CollectionFieldsAndValue.create(collection: collection, organization: collection.organization)
             obj[type.to_sym] = collection_fields
