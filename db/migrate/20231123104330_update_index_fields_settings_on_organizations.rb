@@ -15,7 +15,7 @@ class UpdateIndexFieldsSettingsOnOrganizations < ActiveRecord::Migration[6.1]
         %w[publisher contributor segment_date identifier rights].each_with_index do |system_name, index|
           index_fields_settings[system_name] = {
             system_name: system_name,
-            display_name: system_name.capitalize,
+            display_name: system_name.titleize,
             sort_order: 9 + index + 1,
             display: true,
             required: false,
