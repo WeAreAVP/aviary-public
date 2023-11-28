@@ -5,7 +5,7 @@
 class TranscriptsDatatable < ApplicationDatatable
   delegate :time_to_duration, :number_to_human_size, :strip_tags, :check_valid_array, :options_for_select, :select_tag, :content_tag, :noid_url, :embeded_url, :collection_resource_url, :embed_file_url,
            :current_organization, :bulk_resource_list_collections_path, :user_change_org_status_path, :collection_collection_resource_add_resource_file_path,
-           :user_remove_user_path, :collection_collection_resource_details_path, :collection_collection_resource_details_url, :transcript_delete_path, :edit_transcript_url, :can?, to: :@view
+           :user_remove_user_path, :collection_collection_resource_details_path, :collection_collection_resource_details_url, :transcript_delete_path, :edit_transcript_url, :allow_editor?, :can?, to: :@view
 
   def initialize(view, caller, called_from = '', additional_data = {})
     @view = view
@@ -79,7 +79,7 @@ class TranscriptsDatatable < ApplicationDatatable
                                                                                          data.collection_resource_file.id, 'transcript',
                                                                                          selected_transcript: resource['id_is']) +
                                '"class="btn-sm btn-default hidden_focus_btn" data-id="collection_resource_view_' + resource['id_is'].to_s + '">View</a>&nbsp;&nbsp;'
-                    link_set += "<a href='javascript://' class='btn-sm btn-default hidden_focus_btn edit_transcript' data-url='#{edit_transcript_url(resource['id_is'], host: Utilities::AviaryDomainHandler.subdomain_handler(@current_organization))}'> Edit </a>&nbsp;&nbsp;" if ApplicationHelper.allow_editor?(data)
+                    link_set += "<a href='javascript://' class='btn-sm btn-default hidden_focus_btn edit_transcript' data-url='#{edit_transcript_url(resource['id_is'], host: Utilities::AviaryDomainHandler.subdomain_handler(@current_organization))}'> Edit </a>&nbsp;&nbsp;" if allow_editor?(data)
                     link_set += "<a href='javascript://' data-name='#{strip_tags(resource['title_ss'].to_s)}' data-url='#{transcript_delete_path(resource['id_is'])}'
                                 class='btn-sm btn-danger transcript_delete hidden_focus_btn' data-id='collection_resource_delete_" + resource['id_is'].to_s + "' data-id='collection_resource_delete_" + resource['id_is'].to_s + "' >Delete</a>"
                     link_set
