@@ -215,7 +215,7 @@ module ApplicationHelper
     languages_array
   end
 
-  def self.allow_editor?(file_transcript)
+  def allow_editor?(file_transcript)
     !file_transcript.is_edit &&
       (file_transcript.associated_file_content_type == 'text/vtt' ||
       valid_json?(file_transcript&.timestamps&.gsub('=>', ':')))
