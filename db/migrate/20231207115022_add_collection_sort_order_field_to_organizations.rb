@@ -1,3 +1,4 @@
+require './app/services/aviary/field_management/organization_field_manager.rb'
 class AddCollectionSortOrderFieldToOrganizations < ActiveRecord::Migration[6.1]
   include Aviary::FieldManagement
 
