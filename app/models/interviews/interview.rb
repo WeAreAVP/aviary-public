@@ -33,7 +33,7 @@ module Interviews
         errors.add(:interview_date, 'Date must be in the following formats: yyyy-mm-dd or yyyy-mm or yyyy')
       end
     end
-    
+
     def update_thesaurus
       thesaurus_settings = ::Thesaurus::ThesaurusSetting.where(organization_id: organization_id, is_global: true, thesaurus_type: 'index').try(:first)
       if thesaurus_settings.present?
