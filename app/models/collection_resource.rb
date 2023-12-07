@@ -23,7 +23,7 @@ class CollectionResource < ApplicationRecord
   enum access: %i[access_restricted access_public access_private]
   before_save :index_points_fetch, :transcript_points_fetch, :description_values_fetch, :update_attributes_solr
   before_create :generate_noid
-  after_save :update_duration
+  after_save :update_duration, :update_collection_sort_order_in_resource_description
   after_destroy :remove_from_solr
   after_create :update_resource_count
   before_update :updated_collection_name
@@ -107,6 +107,19 @@ class CollectionResource < ApplicationRecord
     end
   end
 
+  def update_collection_sort_order_in_resource_description
+    resource_description_value = ResourceDescriptionValue.find_or_create_by(collection_resource_id: id)
+
+    description_values = resource_description_value.resource_field_values
+    description_values['collection_sort_order'] = { values: [{ value: collection_sort_order.to_s, vocabulary: '' }] }
+
+    resource_description_value.update_column(
+      :resource_field_values, description_values
+    )
+
+    reindex_collection_resource
+  end
+
   searchable do
     solr_mapper_transcript_point = [{ text: :transcript_point_text }, { speaker: :transcript_point_speaker }, { title: :index_point_title }, { annotation_body_content: :annotation_body_content }]
     solr_mapper_index_point = [{ title: :index_point_title }, { synopsis: :index_point_synopsis }, { subjects: :index_point_subjects },
@@ -118,12 +131,13 @@ class CollectionResource < ApplicationRecord
       { 'format_search' => :description_format_search }, { 'identifier_search' => :description_identifier_search }, { 'relation_search' => :description_relation_search },
       { 'subject_search' => :description_subject_search }, { 'keyword_search' => :description_keyword_search }, { 'type_search' => :description_type_search },
       { 'source_metadata_uri_search' => :description_source_metadata_uri_search }, { 'preferred_citation_search' => :description_preferred_citation_search },
+      { 'collection_sort_order_search' => :description_collection_sort_order_search },
       { 'custom_field_values_search' => :description_custom_field_values_search }, { 'duration_search' => :description_duration },
       { 'title' => :description_title }, { 'publisher' => :description_publisher }, { 'rights_statement' => :description_rights_statement }, { 'source' => :description_source },
       { 'date' => :description_date }, { 'coverage' => :description_coverage }, { 'language' => :description_language }, { 'description' => :description_description },
       { 'format' => :description_format }, { 'identifier' => :description_identifier }, { 'relation' => :description_relation }, { 'subject' => :description_subject },
       { 'keyword' => :description_keyword }, { 'agent' => :description_agent }, { 'preferred_citation' => :description_preferred_citation }, { 'duration' => :description_duration },
-      { 'source_metadata_uri' => :description_source_metadata_uri }, { 'all_vocabs' => :description_vocabulary }
+      { 'source_metadata_uri' => :description_source_metadata_uri }, { 'all_vocabs' => :description_vocabulary }, { 'collection_sort_order' => :description_collection_sort_order }
     ]
     integer :id, stored: true
     string :id, stored: true
@@ -151,18 +165,22 @@ class CollectionResource < ApplicationRecord
     boolean :status, stored: true
 
     string :external_resource_id, stored: true
+
     string :document_type, stored: true do
       'collection_resource'
     end
+
     string :created_at, stored: true
     string :updated_at, stored: true
     integer :collection_id, stored: true
     string :noid, multiple: false, stored: true
     text :custom_unique_identifier, stored: true
     string :custom_unique_identifier, stored: true
+
     integer :resource_collection_id, stored: false do
       collection_id
     end
+
     integer :resource_organization_id, stored: false do
       if collection.present?
         collection.organization_id
@@ -170,6 +188,7 @@ class CollectionResource < ApplicationRecord
         ''
       end
     end
+
     integer :organization_id, multiple: false, stored: true do
       if collection.present?
         collection.organization_id
@@ -177,6 +196,7 @@ class CollectionResource < ApplicationRecord
         ''
       end
     end
+
     # resource_file_file_name
     string :thumbnail_link, multiple: false, stored: true do
       file = CollectionResourceFile.where(collection_resource_id: id)
@@ -230,14 +250,16 @@ class CollectionResource < ApplicationRecord
         trans_points_solr[single_mapper_definition.keys.first] if !trans_points_solr.nil? && trans_points_solr.key?(single_mapper_definition.keys.first)
       end
     end
+
     solr_mapper_index_point.each do |single_mapper_definition|
       text single_mapper_definition[single_mapper_definition.keys.first], stored: true do
         index_points_solr[single_mapper_definition.keys.first] if !index_points_solr.nil? && index_points_solr.key?(single_mapper_definition.keys.first)
       end
     end
+
     solr_mapper_definition.each do |single_mapper_definition|
       multiple = true
-      multiple = false if %w[source_metadata_uri_search preferred_citation_search source_metadata_uri preferred_citation duration].include? single_mapper_definition.keys.first
+      multiple = false if %w[source_metadata_uri_search preferred_citation_search source_metadata_uri preferred_citation duration collection_sort_order].include? single_mapper_definition.keys.first
       if %i[description_rights_statement description_description].include?(single_mapper_definition[single_mapper_definition.keys.first])
         text single_mapper_definition[single_mapper_definition.keys.first], stored: true do
           description_values_solr[single_mapper_definition.keys.first] if !description_values_solr.nil? && description_values_solr.key?(single_mapper_definition.keys.first) && !single_mapper_definition.keys.first.include?('_search')
@@ -258,6 +280,12 @@ class CollectionResource < ApplicationRecord
       elsif single_mapper_definition.keys.first == 'duration_search'
         long single_mapper_definition[single_mapper_definition.keys.first], multiple: false, stored: true do
           description_values_solr[single_mapper_definition.keys.first].first if !description_values_solr.nil? && description_values_solr.key?(single_mapper_definition.keys.first) && single_mapper_definition.keys.first.include?('_search')
+        end
+      elsif single_mapper_definition.keys.first == 'collection_sort_order'
+        integer single_mapper_definition[single_mapper_definition.keys.first], multiple: false, stored: true do
+          if !description_values_solr.nil? && description_values_solr.key?(single_mapper_definition.keys.first) && !single_mapper_definition.keys.first.include?('_search')
+            description_values_solr[single_mapper_definition.keys.first]
+          end
         end
       else
         if %i[description_rights_statement description_description description_rights_statement_search description_description_search].include?(single_mapper_definition[single_mapper_definition.keys.first])

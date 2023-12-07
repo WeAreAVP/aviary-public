@@ -136,6 +136,7 @@ module Aviary::SolrIndexer
               description_values_solr[field_name] << unless system_name == 'duration'
                                                        value_with_vocab
                                                      end
+              description_values_solr[field_name] = value if system_name == 'collection_sort_order'
             rescue StandardError => e
               puts e
             end

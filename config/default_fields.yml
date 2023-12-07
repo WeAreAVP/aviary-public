@@ -1164,7 +1164,6 @@ fields:
       resource_table_sort_order: 28
       search_display: true
       search_sort_order: 28
-      
     created_at:
       label: 'Created At'
       system_name: created_at
@@ -1188,6 +1187,29 @@ fields:
       search_display: false
       search_sort_order: 32
       ris_label: ''
+    collection_sort_order:
+      label: 'Collection Sort Order'
+      help_text: 'Define sort order of resources within collection'
+      is_public: false
+      field_type: integer
+      is_default: true
+      is_repeatable: false
+      is_internal_only: true
+      field_level: resource
+      is_required: false
+      system_name: collection_sort_order
+      is_vocabulary: false
+      vocabulary: []
+      field_configuration: {}
+      sort_order: 33
+      description_display: true
+      resource_table_display: true
+      resource_table_search: true
+      search_display: true
+      solr_display_column: collection_sort_order_ss
+      solr_search_column: description_collection_sort_order_search_texts
+      resource_table_sort_order: 33
+      search_sort_order: 33
 
   collection:
     identifier:
