@@ -105,12 +105,12 @@ thesaurus_settings = ::Thesaurus::ThesaurusSetting.where(organization_id: curren
             <%= f.input :interview_date, label: false, input_html: { class: 'form-control', type: 'text', placeholder: 'yyyy-mm-dd or yyyy-mm or yyyy' } %>
           </div>
           <div class="form-group">
-            <div class="field-title"><%= f.label :media_type, 'Type' %></div>
-            <%= f.input :media_type, label: false, input_html: { class: 'form-control media_type' } %>
-          </div>
-          <div class="form-group">
             <div class="field-title"><%= f.label :date_non_preferred_format, 'Date (non-preferred format) ' %></div>
             <%= f.input :date_non_preferred_format, label: false, input_html: { class: 'form-control date_non_preferred_format' } %>
+          </div>
+          <div class="form-group">
+            <div class="field-title"><%= f.label :media_type, 'Type' %></div>
+            <%= f.input :media_type, label: false, input_html: { class: 'form-control media_type' } %>
           </div>
           <div class="form-group">
             <div class="field-title"><%= f.label :collection_id, 'Collection ID' %></div>
