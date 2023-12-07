@@ -104,6 +104,10 @@ module ApplicationHelper
     0
   end
 
+  def index_template_items
+    YAML.load_file(Rails.root.join('config', 'index_fields.yml'))['index_template_items']
+  end
+
   def interview_video_info(interview)
     interview_video_info_helper(interview)
   end
@@ -209,6 +213,12 @@ module ApplicationHelper
                        'tk' => 'Turkmen', 'tw' => 'Twi', 'ug' => 'Uighur, Uyghur', 'uk' => 'Ukrainian', 'ur' => 'Urdu', 'uz' => 'Uzbek', 've' => 'Venda', 'vi' => 'Vietnamese', 'vo' => 'Volap_k',
                        'wa' => 'Walloon', 'cy' => 'Welsh', 'fy' => 'Western Frisian', 'wo' => 'Wolof', 'xh' => 'Xhosa', 'yi' => 'Yiddish', 'yo' => 'Yoruba', 'za' => 'Zhuang, Chuang', 'zu' => 'Zulu']
     languages_array
+  end
+
+  def allow_editor?(file_transcript)
+    !file_transcript.is_edit &&
+      (file_transcript.associated_file_content_type == 'text/vtt' ||
+      valid_json?(file_transcript&.timestamps&.gsub('=>', ':')))
   end
 
   def valid_json?(json)

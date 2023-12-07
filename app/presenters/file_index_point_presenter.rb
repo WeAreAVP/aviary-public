@@ -33,47 +33,82 @@ class FileIndexPointPresenter < BasePresenter
     '<div><span class="point_title">Keywords: </span>' + concat_keywords + '</div>'
   end
 
-  def single_index_point_hanlder(index_time_start, session_video_text_all, parent = false)
-    item_class = if parent == 0
-                   'parent_index'
-                 elsif parent.positive?
-                   'child_index'
-                 else
-                   ''
-                 end
-    text = "<div class='row pt-20px pl-20px index_time index_custom_identifier #{index_time_start} #{item_class}' id='index_timecode_#{id}' data-id='#{id}' data-index_timecode='#{start_time.to_i} '>
-    <div class='col-md-2 text-center timecode_section'>
-    <a class='play-timecode' href='javascript://' data-timecode='#{start_time}'>#{display_time}</a>
-    </div>
-    <div class='col-md-10 content_section'>
-    <div class='file_index_mark_custom'>
-    <a class='play-timecode' href='javascript://' data-timecode='#{start_time}'>#{title}</a>
-    </div>"
-    unless synopsis.blank?
-      text += "<div class='pt-10px file_index_mark_custom'>#{synopsis}</div>"
-    end
-    unless partial_transcript.blank?
-      text += "<div class='pt-10px file_index_mark_custom'>#{partial_transcript}</div>"
-    end
-    unless display_subjects.blank?
-      text += "<span class='file_index_mark_custom'>#{display_subjects}</span>"
-    end
-    unless display_keywords.blank?
-      text += "<span class='file_index_mark_custom'>#{display_keywords}</span>"
-    end
-    unless gps.blank?
-      text += "<div class='pt-10px'> #{gps}</div>"
-    end
-    unless display_hyperlink.blank?
-      text += "<div class='pt-10px'>#{display_hyperlink}</div>"
-    end
-    text += '</div></div>'
+  def single_index_point_hanlder(index_time_start, session_video_text_all, index_fields_conf, parent = false)
+    item_class = get_item_class(parent)
+    index_field_html = generate_index_fields_html(index_fields_conf)
+
+    text = index_segment_html(index_time_start, item_class, index_field_html)
     if session_video_text_all.present?
       session_video_text_all.each do |key_keyword, single_keyword|
         text = text.gsub(/(#{single_keyword})/i, '<span data-markjs="true" class="highlight-marker mark ' + key_keyword + '">' + single_keyword + '</span>')
       end
     end
     text
+  end
+
+  def get_item_class(parent)
+    if parent == 0
+      'parent_index'
+    elsif parent.positive?
+      'child_index'
+    else
+      ''
+    end
+  end
+
+  def generate_index_fields_html(index_fields_conf)
+    index_field_html = ''
+
+    index_fields_conf.each do |field|
+      next unless field[1]['display'].to_s.to_boolean?
+
+      case field[0]
+      when 'synopsis'
+        unless synopsis.blank?
+          index_field_html += <<-HTML
+            <div class='pt-10px file_index_mark_custom'>
+              #{synopsis}
+            </div>
+          HTML
+        end
+      when 'partial_script'
+        unless partial_transcript.blank?
+          index_field_html += "<div class='pt-10px file_index_mark_custom'>#{partial_transcript}</div>"
+        end
+      when 'keywords', 'subjects'
+        f = send("display_#{field[0]}")
+        unless f.blank?
+          index_field_html += "<span class='file_index_mark_custom'>#{f}</span>"
+        end
+      when 'gps'
+        unless gps.blank?
+          index_field_html += "<div class='pt-10px'>#{gps}</div>"
+        end
+      when 'hyperlink'
+        unless display_hyperlink.blank?
+          index_field_html += "<div class='pt-10px'>#{display_hyperlink}</div>"
+        end
+      end
+    end
+
+    index_field_html
+  end
+
+  def index_segment_html(index_time_start, item_class, index_field_html)
+    <<-HTML
+      <div class='row pt-20px pl-20px index_time index_custom_identifier #{index_time_start} #{item_class}'
+        id='index_timecode_#{id}' data-id='#{id}' data-index_timecode='#{start_time.to_i} '>
+        <div class='col-md-2 text-center timecode_section'>
+          <a class='play-timecode' href='javascript://' data-timecode='#{start_time}'>#{display_time}</a>
+        </div>
+        <div class='col-md-10 content_section'>
+          <div class='file_index_mark_custom'>
+            <a class='play-timecode' href='javascript://' data-timecode='#{start_time}'>#{title}</a>
+          </div>
+          #{index_field_html}
+        </div>
+      </div>
+    HTML
   end
 
   def gps

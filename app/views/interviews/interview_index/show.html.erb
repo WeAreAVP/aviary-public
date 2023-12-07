@@ -28,11 +28,14 @@
               </div>
             </div>
             <div class="col-md-6">
-              <div class="d-flex flex-column ml-auto right-toolbar">
+              <div class="d-flex flex-column ml-auto <%=(@interview.present? ? 'right-toolbar' : 'index-template-interview pull-right')%>">
                 <div class="status d-flex align-items-center m-1">
                   <% if @interview.present? %>
                     <span>Status</span>
                     <%= render 'interviews/interview_index/status' %>
+                  <% else %>
+                    <span>Index Template</span>
+                    <%= render 'interviews/interview_index/index_template' %>
                   <% end %>
                 </div>
                 <div class="button-holder right-button-holder">
@@ -65,8 +68,6 @@
                     %>
                   <% end %>
                   <div class="card collapse_<%= index %>">
-                    <div class="frontdrop collapse_<%= index %>"  style="transition: background-color 0.25s ease-out;"></div>
-
                     <div class="card-header" id="heading_<%= index %>">
                       <h2 class="mb-0 d-flex align-items-start">
                         <button class="btn btn-link btn-collapse text-left" type="button" data-toggle="collapse" data-target="#collapse_<%= index %>" aria-expanded="false" aria-controls="collapse_<%= index %>">

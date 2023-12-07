@@ -154,6 +154,7 @@ function TranscriptTable() {
                 initComplete: function (settings) {
                     if (called_from != 'permission_group') {
                         initBulkEdit();
+                        editTranscript();
                     }
                     fixTable();
                 }
@@ -163,6 +164,19 @@ function TranscriptTable() {
 
     const initBulkEdit = function () {
         that._bulk_edit.initialize();
+    };
+
+    const editTranscript = function () {
+        if ($('.edit_transcript').length > 0) {
+            $('.edit_transcript').unbind('click').bind('click', function () {
+                let url = btoa($(this).data().url);
+                let width = $(window).width() - 150;
+                let height = $(window).height();
+                window.open('/transcript-editor/index.html?transcript=' + url, 'winname', 'directories=0,titlebar=0,toolbar=0,location=0,status=0,menubar=0,scrollbars=no,resizable=no,width=' + width + ',height=' + height);
+                setTimeout('window.location.reload();', 2000);
+            });
+        }
+
     };
 
     const initDeletePopup = function () {

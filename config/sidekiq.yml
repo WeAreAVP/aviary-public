@@ -1,6 +1,7 @@
 :verbose: true
 :concurrency: 8
 :queues:
+- transcript_editor
 - default
 - mailers
 - ffmpeg

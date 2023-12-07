@@ -27,6 +27,23 @@ module Interviews
       OhmsBreadcrumbPresenter.new(@interview, view_context).breadcrumb_manager('edit', @interview, 'index')
     end
 
+    def update_template
+      authorize! :manage, Interviews::Interview
+      file_index = FileIndex.find(params['id'])
+      if !params['index_default_template'].to_boolean? && params['index_template'].present?
+        file_index.index_default_template = 0
+        file_index.index_template = params['index_template'].to_i
+        file_index.save
+      elsif params['index_default_template'].to_boolean?
+        file_index.index_default_template = 1
+        file_index.index_template = current_organization.index_template
+        file_index.save
+      end
+      respond_to do |format|
+        format.json { render json: { index_template: file_index.index_template } }
+      end
+    end
+
     def set_thesaurus
       thesaurus_settings = ::Thesaurus::ThesaurusSetting.where(organization_id: current_organization.id, is_global: true, thesaurus_type: 'index').try(:first)
       if Thesaurus::Thesaurus.where(id: @interview.thesaurus_keywords).length.zero?
@@ -199,6 +216,15 @@ module Interviews
         format.html { render :show }
         format.json { render json: {} }
       end
+    end
+
+    def index_segment_timeline
+      authorize! :manage, Interviews::Interview
+      render partial: 'interviews/interview_index/media_timeline', locals: {
+        total_duration: params[:total_duration].to_f,
+        index_points: FileIndexPoint.where(file_index_id: params[:id]),
+        active_point_id: params[:active_point_id]
+      }
     end
 
     private
