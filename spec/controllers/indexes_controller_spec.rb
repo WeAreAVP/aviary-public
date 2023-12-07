@@ -42,9 +42,11 @@ RSpec.describe IndexesController, type: :controller do
       updated_title = 'This is a new Title'
       post :update_index, params: { resource_file_id: file_index.collection_resource_file.id, file_index_id: file_index.id, file_index_point_id: file_index_point.id,
                                     file_index_point: { start_time: file_index_point.start_time, id: file_index_point.id, title: updated_title,
-                                      synopsis: file_index_point.synopsis, partial_script: file_index_point.partial_script, keywords: file_index_point.keywords,
-                                      subjects: file_index_point.subjects, gps_latitude: JSON.parse(file_index_point.gps_latitude), gps_description: JSON.parse(file_index_point.gps_description),
-                                      zoom: JSON.parse(file_index_point.gps_zoom), hyperlink: JSON.parse(file_index_point.hyperlink), hyperlink_description: JSON.parse(file_index_point.hyperlink_description)
+                                      synopsis: file_index_point.synopsis&.split('|||')&.map { |term| {vocabulary: term&.split(':::')[1] , value: term&.split(':::')[0]} },
+                                      partial_script: file_index_point.synopsis&.split('|||')&.map { |term| {vocabulary: term&.split(':::')[1] , value: term&.split(':::')[0]} },
+                                      keywords: file_index_point.keywords, subjects: file_index_point.subjects, gps_latitude: JSON.parse(file_index_point.gps_latitude),
+                                      gps_description: JSON.parse(file_index_point.gps_description), zoom: JSON.parse(file_index_point.gps_zoom),
+                                      hyperlink: JSON.parse(file_index_point.hyperlink), hyperlink_description: JSON.parse(file_index_point.hyperlink_description)
                                     }
                                   },
             format: :html
@@ -57,9 +59,11 @@ RSpec.describe IndexesController, type: :controller do
       updated_title = 'This is a new Title'
       post :update_index, params: { resource_file_id: file_index.collection_resource_file.id, file_index_id: file_index.id, file_index_point_id: file_index_point.id,
                                     file_index_point: { start_time: file_index_point.start_time, id: file_index_point.id, title: nil,
-                                      synopsis: file_index_point.synopsis, partial_script: file_index_point.partial_script, keywords: file_index_point.keywords,
-                                      subjects: file_index_point.subjects, gps_latitude: JSON.parse(file_index_point.gps_latitude), gps_description: JSON.parse(file_index_point.gps_description),
-                                      zoom: JSON.parse(file_index_point.gps_zoom), hyperlink: JSON.parse(file_index_point.hyperlink), hyperlink_description: JSON.parse(file_index_point.hyperlink_description)
+                                      synopsis: file_index_point.synopsis&.split('|||')&.map { |term| {vocabulary: term&.split(':::')[1] , value: term&.split(':::')[0]} },
+                                      partial_script: file_index_point.synopsis&.split('|||')&.map { |term| {vocabulary: term&.split(':::')[1] , value: term&.split(':::')[0]} },
+                                      keywords: file_index_point.keywords, subjects: file_index_point.subjects, gps_latitude: JSON.parse(file_index_point.gps_latitude),
+                                      gps_description: JSON.parse(file_index_point.gps_description), zoom: JSON.parse(file_index_point.gps_zoom),
+                                      hyperlink: JSON.parse(file_index_point.hyperlink), hyperlink_description: JSON.parse(file_index_point.hyperlink_description)
                                     }
                                   },
             format: :json

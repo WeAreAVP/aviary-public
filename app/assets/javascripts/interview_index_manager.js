@@ -346,6 +346,17 @@ function InterviewIndexManager() {
         let containerRepeatManager = new ContainerRepeatManager();
         containerRepeatManager.makeContainerRepeatable(".add_gps", ".remove_gps", '.container_gps_inner', '.container_gps', '.gps');
         containerRepeatManager.makeContainerRepeatable(".add_hyperlinks", ".remove_hyperlinks", '.container_hyperlinks_inner', '.container_hyperlinks', '.hyperlinks');
+
+        const fields = ['synopsis', 'publisher', 'identifier', 'contributor', 'partial_script', 'segment_date', 'rights'];
+        for (const field of fields) {
+            containerRepeatManager.makeContainerRepeatable(
+                `.add_${field}`, `.remove_${field}_field`,
+                `.single-field-container[data-system-name="${field}"]`,
+                `.container_field[data-system-name="${field}"]`,
+                `.${field}`
+            );
+        }
+
         document_level_binding_element('.update_time', 'click', function () {
             updateTime(this);
         });

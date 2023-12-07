@@ -78,6 +78,11 @@ class IndexesController < ApplicationController
     authorize! :manage, current_organization
     @resource_file = CollectionResourceFile.find(params[:resource_file_id])
     @collection_resource = CollectionResource.find(@resource_file.collection_resource_id)
+    @collection_field_manager = Aviary::FieldManagement::CollectionFieldManager.new
+    @index_columns_collection = @collection_field_manager.sort_fields(
+      @collection_field_manager.collection_resource_field_settings(@collection_resource.collection, 'index_fields').index_fields, 'sort_order'
+    )
+
     if params[:file_index_id].nil?
       @file_index_point = []
     else
@@ -118,7 +123,7 @@ class IndexesController < ApplicationController
     @file_index_point.file_index_id = @file_index.id
     @file_index_point.start_time = human_to_seconds(params[:file_index_point][:start_time]).to_f
     start_time = @file_index_point.start_time
-    @file_index_point = set_custom_values(@file_index_point, '', params)
+    @file_index_point = set_aviary_index_point_values(@file_index_point, params)
     respond_to do |format|
       if @file_index_point.save
         url = "#{show_index_file_path(@resource_file.id, @file_index.id)}?time=#{start_time}"
@@ -142,7 +147,7 @@ class IndexesController < ApplicationController
     @file_index_point.update(file_index_point_params)
     @file_index_point.start_time = human_to_seconds(params[:file_index_point][:start_time]).to_f
     start_time = @file_index_point.start_time
-    @file_index_point = set_custom_values(@file_index_point, '', params)
+    @file_index_point = set_aviary_index_point_values(@file_index_point, params)
     respond_to do |format|
       if @file_index_point.save
         url = "#{show_index_file_path(@resource_file.id, @file_index.id)}?time=#{start_time}"
