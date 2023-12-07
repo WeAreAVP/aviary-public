@@ -40,7 +40,7 @@ module Aviary
       interview.series_id = xml_data['series_id'].present? ? xml_data['series_id'] : ''
       interview.series = xml_data['series_name'].present? ? xml_data['series_name'] : ''
       interview.series_link = xml_data['series_link'].present? ? xml_data['series_link'] : ''
-      interview.media_format = xml_data['fmt'].present? ? xml_data['fmt'] : ''
+      interview.media_format = xml_data['fmt'].present? ? xml_data['fmt'] : 'video'
       interview.summary = xml_data['description'].present? ? xml_data['description'] : ''
       interview.keywords = xml_data['keyword'].present? ? xml_data['keyword'] : []
       interview.keywords = [interview.keywords] if interview.keywords.is_a?(String)
