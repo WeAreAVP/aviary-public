@@ -1188,6 +1188,7 @@ fields:
       search_display: false
       search_sort_order: 32
       ris_label: ''
+
   collection:
     identifier:
       label: 'Identifier'
@@ -1308,3 +1309,85 @@ fields:
       field_level: collection
       sort_order: 7
       display: true
+
+  index:
+    title:
+      system_name: 'title'
+      display_name: 'Segment Title'
+      sort_order: 0
+      display: true
+      required: true
+    synopsis:
+      system_name: 'synopsis'
+      display_name: 'Segment Synopsis'
+      sort_order: 1
+      display: true
+      required: false
+      vocabulary: []
+    partial_script:
+      system_name: 'partial_script'
+      display_name: 'Partial Transcript'
+      sort_order: 2
+      display: true
+      required: false
+      vocabulary: []
+    keywords:
+      system_name: 'keywords'
+      display_name: 'Keywords'
+      sort_order: 3
+      display: true
+      required: false
+    subjects:
+      system_name: 'subjects'
+      display_name: 'Subjects'
+      sort_order: 4
+      display: true
+      required: false
+    gps:
+      system_name: 'gps'
+      display_name: 'GPS'
+      sort_order: 5
+      display: true
+      required: false
+    hyperlink:
+      system_name: 'hyperlink'
+      display_name: 'Hyperlink'
+      sort_order: 6
+      display: true
+      required: false
+    publisher:
+      system_name: 'publisher'
+      display_name: 'Publisher'
+      sort_order: 7
+      display: true
+      required: false
+      vocabulary: []
+    contributor:
+      system_name: 'contributor'
+      display_name: 'Contributor'
+      sort_order: 8
+      display: true
+      required: false
+      vocabulary: []
+    segment_date:
+      system_name: 'segment_date'
+      display_name: 'Segment Date'
+      sort_order: 9
+      display: true
+      required: false
+      vocabulary: []
+    identifier:
+      system_name: 'identifier'
+      display_name: 'Identifier'
+      sort_order: 10
+      display: true
+      required: false
+      vocabulary: []
+    rights:
+      system_name: 'rights'
+      display_name: 'rights'
+      sort_order: 10
+      display: true
+      required: false
+      vocabulary: []
+    
