@@ -74,7 +74,12 @@ module InterviewIndexHelper
     elsif interview.media_host == 'Vimeo'
       regex = %r{https?:\/\/(?:\w+\.)*vimeo\.com(?:[\/\w]*\/?)?\/(?<id>[0-9]+)[^\s]*}
       match = regex.match(interview.embed_code)
-      data['src'] = match[0]
+
+      if match.present?
+        data['src'] = match[0]
+      else
+        data['error'] = 'Error processing url. It can be because the provided url is not of vimeo.'
+      end
     end
     data
   end
