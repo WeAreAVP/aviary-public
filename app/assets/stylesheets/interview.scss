@@ -310,7 +310,7 @@ div#noMediaConnection {
     }
 
     .video-placeholder {
-      height: 244px;
+      max-height: 244px;
 
       .video-js {
         height: 244px;
