@@ -46,7 +46,16 @@ class InterviewsCollectionsDatatable < ApplicationDatatable
   end
 
   def sort_column
-    columns(JSON.parse(@current_organization.interview_display_column)['columns_status'])[params[:order]['0'][:column].to_i]
+    columns_allowed = ['id_is']
+    if @current_organization&.interview_display_column&.present?
+      resource_display_column_list = JSON.parse(@current_organization.interview_display_column)['columns_status'].collect { |_k, v| v }
+      resource_display_column_list.each do |value|
+        if !value['status'].blank? && value['status'].to_s.to_boolean?
+          columns_allowed << value['value']
+        end
+      end
+    end
+    columns_allowed&.[](params[:order]&.[]('0')&.[](:column)&.to_i).to_s
   end
 
   def links(interview)
