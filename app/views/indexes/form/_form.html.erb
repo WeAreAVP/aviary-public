@@ -60,7 +60,7 @@
     :url => @file_index_point.new_record? ? create_index_path(@resource_file.id) : update_index_file_path(@resource_file.id, @file_index.id, @file_index_point.id), html: { class: "interview_index_manager" } do |f|
   %>
     <div class="organization-section">
-      <div class="row">
+      <div class="flex-column-reverse flex-md-row row">
         <!-- Inner Form -->
         <div class="w-100 interview-index-form p-2 border rounded col-md-6">
           <div class="col-md-12">
@@ -69,7 +69,7 @@
         </div>
         <!-- Inner Form -->
 
-        <div class="col-md-6">
+        <div class="col-md-6 p-0 px-md-3">
           <div class="top-section-test-interview border rounded">
             <div class="row">
               <div class="col-md-12">
@@ -211,7 +211,12 @@
 </div>
 <script type="text/javascript">
     $(document).ready(function () {
-        $(".top-section-test-interview").sticky({topSpacing: 50, bottomSpacing: 395});
+        if ($(window).width() >= 992) {
+            $(".top-section-test-interview").sticky({topSpacing: 50, bottomSpacing: 113});
+        } else {
+            $(".top-section-test-interview").unstick();
+        }
+
         if ($('.left_space').text().length == 0) {
             $('.left_space').remove();
         }
