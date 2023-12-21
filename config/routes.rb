@@ -142,6 +142,7 @@ Rails.application.routes.draw do
   # get 'support', to: 'home#support', as: :support
   get 'about', to: 'home#about', as: :about
   get 'features', to: 'home#features', as: :features
+  get 'security', to: 'home#security', as: :security
   post 'submit_request', to: 'home#submit_request', as: :submit_request
   resources :organizations, only: %i[index show update]
   get '/organization_profile', to: 'organizations#edit', as: :edit_organization
