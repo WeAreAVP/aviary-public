@@ -218,7 +218,6 @@ class FileIndex < ApplicationRecord
     string :associated_file_file_name, stored: true
   end
 
-
   def rename_filename_on_s3
     return unless associated_file_file_name_changed? && associated_file_file_name_was.present?
 
