@@ -335,3 +335,13 @@ h5.MsoNormal span {
 .internal-field dd {
     width: 79%;
 }
+
+.edit-pencil {
+    position: absolute;
+    top: 23px;
+    right: 16px;
+    padding: 19px;
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
+    font-size: 15px;
+}

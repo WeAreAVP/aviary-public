@@ -11,8 +11,10 @@
           </div>
           <span class="form-control fileinput-button">Select File
             <%= form.file_field :associated_file, as: :file, error: false, label: false, class: 'form-control' %>
-              </span>
-          <small class="text-muted font-size-12px pt-2"> Allowed formats: OHMS XML, Trint doc(x) and WebVTT. </small>
+          </span>
+          <small class="text-muted font-size-12px pt-2">
+            Allowed formats: OHMS XML, Trint doc(x) and WebVTT.
+          </small>
           <small id="file_name_transcript" class="text-muted border d-block text-center p-2 mt-3">
             No file selected.
           </small>
@@ -27,6 +29,19 @@
           <%= form.text_field :title, label: false, class: 'form-control' %>
           <div class="title text-danger"></div>
           <small class="text-muted font-size-12px mt-3">Title will be used to differentiate multiple transcripts for a single file.</small>
+        </div>
+      </div>
+    </div>
+    <div class="row" id="transcript-associated-file-file-name">
+      <div class="col-md-12">
+        <div class="form-group relative">
+          <div class="field-title"><label for="title">Current Associated Transcript File Name</label></div>
+          <%= form.text_field :associated_file_file_name, disabled: true, label: false, class: 'form-control' %>
+          <a href="javascript:void(0)"><i class="fa fa-pencil bg-secondary text-white edit-pencil"></i></a>
+          <div class="title text-danger"></div>
+          <small class="text-muted font-size-12px mt-3">
+            This file name will be used as the file name for the exported transcript file. Please ensure to add the correct file extension and replace any spaces with '_' or '-'. Editing this file name will not replace the transcript. To replace the existing index, instead choose 'Select a Transcript to associate with this file."
+          </small>
         </div>
       </div>
     </div>
