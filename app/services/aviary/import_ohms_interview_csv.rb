@@ -37,7 +37,7 @@ module Aviary
     end
 
     def process(organization, user, status, csv_raw)
-      interview = Interviews::Interview.find_by(id: csv_raw['rowid'])
+      interview = Interviews::Interview.where(ohms_row_id: csv_raw['rowid'], organization_id: organization.id).try(:first) if csv_raw['rowid'].present?
       interview = Interviews::Interview.new if interview.nil?
 
       interview.organization_id = organization.id

@@ -45,7 +45,7 @@ module Interviews
 
     def purify_value
       self.metadata_status = metadata_status.to_i
-      self.media_host = Interviews::Interview.media_hosts[media_host] if media_host == 'Host'
+      self.media_host = listing_media_host[media_host] if media_host == 'Host'
     end
 
     def interview_status_info
