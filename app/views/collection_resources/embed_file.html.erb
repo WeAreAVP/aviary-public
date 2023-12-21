@@ -32,7 +32,7 @@
         </div>
       </div>
     </div>
-    <% if params["media_player"].present? && params["media_player"].to_s.to_boolean? %>
+    <% if params["media_player"].to_s.to_boolean? %>
       <% unless @resource_file.nil? %>
         <%= render layout: 'collection_resources/show/media_carousel' do %>
           <%= render partial: 'collection_resources/show/resource_listing' %>
