@@ -160,26 +160,14 @@
                   <div class="save_btn">
                     <div class="d-flex">
                       <!-- Navigate Previous Button -->
-                      <% if %w[edit edit_index].include?(params[:action]) %>
-                        <a class="d-inline-block mr-2 index-navigation-arrows btn btn-primary <%= @previous_index_point.nil? ? 'disable_btn' : '' %>"
-                          aria-label="Go to previous index segment <%= @previous_index_point.nil? ? '; disabled' : '' %>"
-                          href="<%= !@previous_index_point.nil? && params[:action] == 'edit_index' ? edit_index_file_path(params[:resource_file_id], params[:file_index_id], @previous_index_point&.id) : 'javascript:void(0)' %>">
-                          <i class="fa fa-angle-left" alt="Go to previous index segment"></i>
-                        </a>
-                      <% end %>
+                      <%== previous_navigation_button %>
                       <!-- Navigate Previous Button End -->
 
                       <%= f.submit 'Save & Close', class: 'btn btn-success mr-2' %>
                       <%= f.submit 'Save & Create New', class: 'btn btn-success save_and_new' %>
 
                       <!-- Navigate Next Button -->
-                      <% if %w[edit edit_index].include?(params[:action]) %>
-                        <a class="d-inline-block ml-2 index-navigation-arrows btn btn-primary <%= @next_index_point.nil? ? 'disable_btn' : ''  %>"
-                          aria-label="Go to next index segment <%= @next_index_point.nil? ? '; disabled' : '' %>"
-                          href="<%= !@next_index_point.nil? && params[:action] == 'edit_index' ? edit_index_file_path(params[:resource_file_id], params[:file_index_id], @next_index_point&.id) : 'javascript:void(0)' %>">
-                          <i class="fa fa-angle-right" alt="Go to next index segment"></i>
-                        </a>
-                      <% end %>
+                      <%== next_navigation_button %>
                       <!-- Navigate Next Button End -->
                     </div>
                   </div>

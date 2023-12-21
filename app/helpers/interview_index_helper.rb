@@ -263,4 +263,46 @@ module InterviewIndexHelper
 
     options.join("\n")
   end
+
+  def next_navigation_button
+    return unless %w[edit edit_index].include?(params[:action])
+
+    <<-HTML
+      <a class="d-inline-block ml-2 index-navigation-arrows btn btn-primary #{@next_index_point.nil? ? 'disable_btn' : ''} "
+        aria-label="Go to next index segment #{@next_index_point.nil? ? '; disabled' : ''}"
+        href="#{href(@next_index_point) || 'javascript:void(0)'}">
+        <i class="fa fa-angle-right" alt="Go to next index segment"></i>
+      </a>
+    HTML
+  end
+
+  def previous_navigation_button
+    return unless %w[edit edit_index].include?(params[:action])
+
+    <<-HTML
+      <a class="d-inline-block mr-2 index-navigation-arrows btn btn-primary #{@previous_index_point.nil? ? 'disable_btn' : ''} "
+        aria-label="Go to next index segment #{@previous_index_point.nil? ? '; disabled' : ''}"
+        href="#{href(@previous_index_point) || 'javascript:void(0)'}">
+        <i class="fa fa-angle-left" alt="Go to next index segment"></i>
+      </a>
+    HTML
+  end
+
+  def href(index_segment)
+    return if index_segment.nil?
+
+    if params[:action] == 'edit'
+      edit_interviews_interview_index_path({
+                                             id: index_segment.id,
+                                             time: index_segment.start_time
+                                           })
+    elsif params[:action] == 'edit_index'
+      edit_index_file_path({
+                             resource_file_id: params[:resource_file_id],
+                             file_index_id: params[:file_index_id],
+                             file_index_point_id: index_segment.id,
+                             time: index_segment.start_time
+                           })
+    end
+  end
 end
