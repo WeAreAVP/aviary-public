@@ -1016,3 +1016,12 @@ td:has(> select.assign_user) {
   top: -5px;
   left: 0px;
 }
+
+.inline_cancel {
+  border-radius: 0;
+}
+
+.inline_save {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}

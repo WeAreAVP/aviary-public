@@ -21,6 +21,7 @@ class FileIndex < ApplicationRecord
   scope :public_index, -> { where(is_public: true).order_index }
   scope :order_index, -> { order('sort_order ASC') }
 
+  before_save :rename_filename_on_s3
   after_save :update_solr
   after_destroy :update_solr
   after_create :update_default_index_template
@@ -168,6 +169,7 @@ class FileIndex < ApplicationRecord
       'language_ss' => 'Language',
       'description_ss' => 'Notes',
       'file_display_name_ss' => 'Media File',
+      'associated_file_file_name_ss' => 'Associated File File Name',
       'collection_resource_title_ss' => 'Resource Title',
       'associated_file_content_type_ss' => 'File Type',
       'updated_at_ds' => 'Date Updated',
@@ -213,5 +215,58 @@ class FileIndex < ApplicationRecord
       'file_index'
     end
     string :associated_file_content_type, stored: true
+    string :associated_file_file_name, stored: true
+  end
+
+
+  def rename_filename_on_s3
+    return unless associated_file_file_name_changed? && associated_file_file_name_was.present?
+
+    extension = File.extname(associated_file_file_name_was)
+    return if extension.blank?
+
+    associated_file_file_name_new = "#{associated_file_file_name.sub(/\.(xml|vtt|webvtt|txt)$/, '')}#{extension}"
+    if associated_file_file_name_new == associated_file_file_name_was
+      return associated_file.instance_write(:file_name, associated_file_file_name_was)
+    end
+
+    associated_file.instance_write(:file_name, associated_file_file_name_new)
+    associated_file_path_new = associated_file.s3_object.key
+
+    associated_file.instance_write(:file_name, associated_file_file_name_was)
+    associated_file_path_old = associated_file.s3_object.key
+
+    s3 = Aws::S3::Client.new(
+      access_key_id: ENV.fetch('AWS_ACCESS_KEY_ID'),
+      secret_access_key: ENV.fetch('AWS_SECRET_ACCESS_KEY'),
+      region: ENV.fetch('S3_REGION'),
+      endpoint: "https://#{ENV.fetch('S3_HOST_NAME')}"
+    )
+
+    begin
+      s3.copy_object(
+        bucket: associated_file.bucket_name,
+        copy_source: "#{associated_file.bucket_name}/#{associated_file_path_old}",
+        key: associated_file_path_new
+      )
+
+      # Verify the file was successfully copied
+      s3.head_object(
+        bucket: associated_file.bucket_name,
+        key: associated_file_path_new
+      )
+
+      s3.delete_object(
+        bucket: associated_file.bucket_name,
+        key: associated_file_path_old
+      )
+      associated_file.instance_write(:file_name, associated_file_file_name_new)
+    rescue StandardError => ex
+      Rails.logger.error ex
+
+      associated_file.instance_write(:file_name, associated_file_file_name_was)
+      errors.add(:associated_file_file_name, "can't be updated")
+      raise ActiveRecord::RecordInvalid
+    end
   end
 end
