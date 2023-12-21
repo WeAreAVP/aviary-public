@@ -179,7 +179,7 @@
   <% end %>
 <% end %>
 
-<% if current_user.present?
+<% if current_user.present? &&  @collection_resource.present?
      resource_list = ResourceList.find_by(user_id: current_user.id, resource_id: @collection_resource.id)
 %>
   <div class="resource_list_container" id="resource_list_container" data-listonly="true" data-organizationid="<%= @collection_resource.collection.organization.id %>" data-resourceid="<%= @collection_resource.id %>">
