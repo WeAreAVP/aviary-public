@@ -45,7 +45,7 @@ module Interviews
 
     def purify_value
       self.metadata_status = metadata_status.to_i
-      self.media_host = Interviews::Interview.media_hosts[media_host] if media_host == 'Host'
+      self.media_host = listing_media_host[media_host] if media_host == 'Host'
     end
 
     def interview_status_info
@@ -452,7 +452,14 @@ module Interviews
       rescue StandardError
         total_response = { 'response' => { 'numFound' => 0 } }
       end
-      query_params[:sort] = "#{sort_column} #{sort_direction}" if sort_column.present? && sort_direction.present?
+      query_params[:sort] = case sort_column.to_s
+                            when 'updated_at_ss'
+                              "updated_at_is #{sort_direction}"
+                            when 'created_at_ss'
+                              "created_at_is #{sort_direction}"
+                            else
+                              "#{sort_column} #{sort_direction}"
+                            end
       if params.present? && params.key?(:notes_only)
         query_params[:sort] = 'notes_unresolve_count_is desc'
       end

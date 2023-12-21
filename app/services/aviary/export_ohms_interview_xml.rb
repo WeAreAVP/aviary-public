@@ -90,7 +90,7 @@ module Aviary
                 end
                 formatted_info = formatted.split("\r\n")
                 line = formatted_info.length
-                sync += "|#{line}(#{formatted_info.last.split(' ').length})"
+                sync += "|#{line}(#{formatted_info.last.split(' ').length})" if formatted_info.present?
               end
               xml.sync sync
             else
