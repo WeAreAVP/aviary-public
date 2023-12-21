@@ -345,3 +345,8 @@ h5.MsoNormal span {
     border-bottom-right-radius: 3px;
     font-size: 15px;
 }
+
+
+.line-height-tight {
+    line-height: 14px;
+}

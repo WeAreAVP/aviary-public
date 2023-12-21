@@ -34,14 +34,14 @@
         </small>
       </div>
     </div>
-    <div class="row" id="index-associated-file-file-name">
+    <div class="row d-none" id="index-associated-file-file-name">
       <div class="col-md-12">
         <div class="form-group relative">
           <div class="field-title"><label for="title">Current Associated Index File Name</label></div>
           <%= form.text_field :associated_file_file_name, disabled: true, label: false, class: 'form-control' %>
           <a href="javascript:void(0)"><i class="fa fa-pencil bg-secondary text-white edit-pencil"></i></a>
           <div class="title text-danger"></div>
-          <small class="text-muted font-size-12px mt-3">
+          <small class="text-muted font-size-12px mt-2 line-height-tight d-block">
             This file name will be used as the file name for the exported index file. Please ensure to add the correct file extension and replace any spaces with '_' or '-'. Editing this file name will not replace the index. To replace the existing index, instead choose 'Select a Transcript to associate with this file."
           </small>
         </div>
