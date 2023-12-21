@@ -33,7 +33,7 @@ module Interviews
         errors.add(:interview_date, 'Date must be in the following formats: yyyy-mm-dd or yyyy-mm or yyyy')
       end
     end
-    
+
     def update_thesaurus
       thesaurus_settings = ::Thesaurus::ThesaurusSetting.where(organization_id: organization_id, is_global: true, thesaurus_type: 'index').try(:first)
       if thesaurus_settings.present?
@@ -452,7 +452,14 @@ module Interviews
       rescue StandardError
         total_response = { 'response' => { 'numFound' => 0 } }
       end
-      query_params[:sort] = "#{sort_column} #{sort_direction}" if sort_column.present? && sort_direction.present?
+      query_params[:sort] = case sort_column.to_s
+                            when 'updated_at_ss'
+                              "updated_at_is #{sort_direction}"
+                            when 'created_at_ss'
+                              "created_at_is #{sort_direction}"
+                            else
+                              "#{sort_column} #{sort_direction}"
+                            end
       if params.present? && params.key?(:notes_only)
         query_params[:sort] = 'notes_unresolve_count_is desc'
       end
