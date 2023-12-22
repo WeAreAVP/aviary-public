@@ -400,7 +400,12 @@ module Interviews
       interview_id = params[:interview_id]
       interview = Interview.find(interview_id)
       authorize! :manage, interview
-      msg = if interview.update(ohms_assigned_user_id: user_id)
+      full_name = ''
+      user = User.find(user_id)
+      if user.present?
+        full_name = user.full_name
+      end
+      msg = if interview.update(ohms_assigned_user_id: user_id, ohms_assigned_user_name: full_name)
               { success: true, message: t('updated_successfully') }
             else
               { success: false, message: t('error_update') }

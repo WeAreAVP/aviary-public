@@ -28,7 +28,10 @@ module Aviary
       return unless csv_raw.length.positive?
 
       csv_raw.each do |row|
-        process(organization, user, status, row)
+        response = process(organization, user, status, row)
+        if response.is_a?(Array)
+          return response
+        end
       end
 
       true
