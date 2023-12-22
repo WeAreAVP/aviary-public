@@ -32,9 +32,11 @@
         </div>
       </div>
     </div>
-    <% unless @resource_file.nil? %>
-      <%= render layout: 'collection_resources/show/media_carousel' do %>
-        <%= render partial: 'collection_resources/show/resource_listing' %>
+    <% if params["media_player"].to_s.to_boolean? %>
+      <% unless @resource_file.nil? %>
+        <%= render layout: 'collection_resources/show/media_carousel' do %>
+          <%= render partial: 'collection_resources/show/resource_listing' %>
+        <% end %>
       <% end %>
     <% end %>
     <%= render 'collection_resources/show/share_link' %>

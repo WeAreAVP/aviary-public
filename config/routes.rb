@@ -142,6 +142,7 @@ Rails.application.routes.draw do
   # get 'support', to: 'home#support', as: :support
   get 'about', to: 'home#about', as: :about
   get 'features', to: 'home#features', as: :features
+  get 'security', to: 'home#security', as: :security
   post 'submit_request', to: 'home#submit_request', as: :submit_request
   resources :organizations, only: %i[index show update]
   get '/organization_profile', to: 'organizations#edit', as: :edit_organization
@@ -298,7 +299,7 @@ Rails.application.routes.draw do
   get 'indexes/add/:resource_file_id/:file_index_id', to: 'indexes#add_index', as: 'add_index_file'
   get 'indexes/edit/:resource_file_id/:file_index_id/:file_index_point_id', to: 'indexes#edit_index', as: 'edit_index_file'
   patch 'indexes/update/:resource_file_id/:file_index_id/:file_index_point_id', to: 'indexes#update_index', as: 'update_index_file'
-  patch 'indexes/update_index_title/:file_index_id', to: 'indexes#update_index_title', as: 'update_index_title'
+  patch 'indexes/update_partial/:file_index_id', to: 'indexes#update_partial', as: 'update_partial'
   patch 'indexes/update_index_point_title/:file_index_point_id', to: 'indexes#update_index_point_title', as: 'update_index_point_title'
   post 'indexes/create/:resource_file_id', to: 'indexes#create_index', as: 'create_index'
   delete 'indexes/destroy/:index_file_point_id', to: 'indexes#destroy_index', as: 'destroy_index'

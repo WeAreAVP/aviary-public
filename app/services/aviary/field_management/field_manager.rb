@@ -9,9 +9,8 @@
 # Copyright (C) 2019 Audio Visual Preservation Solutions, Inc.
 
 module Aviary
+  # OrganizationFieldManagement Class for Organization Field Management and saving and fetching information
   module FieldManagement
-    # OrganizationFieldManagement Class for Organization Field Management and saving and fetching information
-
     # FieldManager
     class FieldManager
       attr_accessor :field_settings, :key

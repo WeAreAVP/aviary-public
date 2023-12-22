@@ -38,6 +38,9 @@ class IndexesController < ApplicationController
   def create
     if params[:file_index_id]
       file_index = FileIndex.find(params[:file_index_id])
+      if params[:file_index][:associated_file_file_name] && !params[:file_index][:assocated_file].present?
+        file_index.associated_file_file_name = params[:file_index][:associated_file_file_name]
+      end
       success = file_index.update(file_index_params)
     else
       file_index = FileIndex.new(file_index_params)
@@ -162,15 +165,15 @@ class IndexesController < ApplicationController
     end
   end
 
-  def update_index_title
+  def update_partial
     authorize! :manage, current_organization
     @file_index = FileIndex.find(params[:file_index_id])
     @file_index.title = params[:file_index][:title]
 
     if @file_index.save
-      render json: { message: 'Index title updated successfully.', status: 'success' }
+      render json: { message: 'File Index updated successfully.', status: 'success', file_index: @file_index }
     else
-      render json: { message: 'Unable to update Index title.', status: 'danger' }
+      render json: { message: 'Unable to update File Index', status: 'danger' }
     end
   end
 

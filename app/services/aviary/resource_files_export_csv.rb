@@ -50,7 +50,7 @@ module Aviary
         end
         csv_rows << col_data
       end
-      file_name = "#{current_organization.name.delete(' ')}_collection_resources_file_#{Date.today}_#{Time.now.to_i}.csv"
+      file_name = "#{current_organization.name.delete(' ')}_media_#{Date.today}_#{Time.now.to_i}.csv"
       file_data_org = Rails.root.join('public', file_name)
       CSV.open(file_data_org, 'w') do |writer|
         csv_rows.each do |c|

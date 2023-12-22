@@ -186,6 +186,7 @@ class HomeController < ApplicationController
   def about; end
 
   def features; end
+  def security; end
 
   def contact_us
     @support_request = SupportRequest.new

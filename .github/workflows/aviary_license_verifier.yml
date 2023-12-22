@@ -1,44 +1,24 @@
 name: Update License Information
 on: 
-  pull_request:
-    types:
-      - closed 
-    branches:
+  push:
+    branches-ignore:
       - dev
       - main
+    paths:
+      - 'Gemfile'
+      - 'Gemfile.lock'
 
 jobs:
-  verify_conditions: 
-    name: Verify Conditions
-    if: github.event.pull_request.merged == true
-    runs-on: ubuntu-20.04
-    outputs:
-      status: ${{ steps.verify_gemfile_lock_has_updated.outputs.gemfiles }}
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: Verify If A Gem Has Been Added
-        id: verify_gemfile_lock_has_updated
-        uses: dorny/paths-filter@v2
-        with:
-            filters: |
-              gemfiles:
-                - './Gemfile'
-                - './Gemfile.lock'
-      - run: echo ${{ steps.verify_gemfile_lock_has_updated.outputs.gemfiles }}
-
   update_license:
     name: Generate License Information Report
-    needs: [verify_conditions]
-    if: needs.verify_conditions.outputs.status == 'true'
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
         with:
-          ref: ${{ github.event.pull_request.base.ref }}
+          ref: ${{ github.event.pull_request.head.ref }}
           
       - name: Checkout Project Directory
-        run: cd /home/runner/work/aviary-public/aviary-public
+        run: cd /home/runner/work/aviaryplatform/aviaryplatform
 
       - name: Libs Installation
         run: sudo apt-get install libcurl4 libcurl4-openssl-dev
@@ -52,7 +32,7 @@ jobs:
         run: bundle install
 
       - name: Pull Current Branch
-        run: git pull origin ${{ github.event.pull_request.base.ref }}
+        run: git pull origin ${{ github.event.pull_request.head.ref }}
 
       - name: Run license_finder
         run: license_finder report --format=html --save=license_info.html
@@ -64,12 +44,3 @@ jobs:
           author_email: noumantayyab@gmail.com
           message: 'updated license infomation'
           add: './license_info.html'
-
-  delete_branch:
-      name: Delete Branch After Merge Is Complete
-      if: always() && github.event.pull_request.head.ref != 'main' && github.event.pull_request.head.ref != 'dev'
-      needs: [verify_conditions, update_license]
-      runs-on: ubuntu-20.04
-      steps:
-        - uses: actions/checkout@v2
-        - run: git push origin --delete ${{ github.event.pull_request.head.ref }}
