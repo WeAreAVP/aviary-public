@@ -1032,3 +1032,7 @@ td:has(> select.assign_user) {
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
 }
+
+.focus-orange:focus {
+  outline: 1px solid orange;
+}
