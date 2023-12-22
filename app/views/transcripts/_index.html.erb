@@ -1,7 +1,15 @@
 <% if !(@total_transcript_points <= Aviary::IndexTranscriptManager::POINTS_PER_PAGE && (params['page_type'] == 'next_page' || params['page_type'] == 'current_page')) %>
   <div class="row <%= params['page_type'] %>_type <%= params['page_number'] %>">
     <div class="col-md-12">
-      <div class="file_transcript file_transcript_<%= @file_transcript.id %> pb-10px pl-15px" data-cc="<%= @file_transcript.is_caption %>" data-language="<%= @file_transcript.language %>" data-title="<%= @file_transcript.title %>" data-public="<%= @file_transcript.is_public %>" data-webvtt="<%= (@file_transcript.associated_file_content_type.include?('vtt') || ['.vtt', '.webvtt'].include?(File.extname(@file_transcript.associated_file_file_name))) %>" data-json="<%= @file_transcript.timestamps.present? %>" data-access="<%= @can_access_transcript %>" data-edit="<%= @file_transcript.is_edit %>" data-annotation="<%= @file_transcript.annotation_set.try(:id) %>" data-annotation_access="<%= @can_access_transcript %>" data-description="<%= @file_transcript.description %>" data-downloadable="<%= @file_transcript.is_downloadable %>">
+      <div class="file_transcript file_transcript_<%= @file_transcript.id %> pb-10px pl-15px" data-cc="<%= @file_transcript.is_caption %>"
+        data-language="<%= @file_transcript.language %>" data-title="<%= @file_transcript.title %>"
+        data-public="<%= @file_transcript.is_public %>"
+        data-webvtt="<%= (@file_transcript.associated_file_content_type.include?('vtt') || ['.vtt', '.webvtt'].include?(File.extname(@file_transcript.associated_file_file_name))) %>"
+        data-json="<%= @file_transcript.timestamps.present? %>" data-access="<%= @can_access_transcript %>"
+        data-edit="<%= @file_transcript.is_edit %>" data-annotation="<%= @file_transcript.annotation_set.try(:id) %>"
+        data-annotation_access="<%= @can_access_transcript %>" data-description="<%= @file_transcript.description %>"
+        data-downloadable="<%= @file_transcript.is_downloadable %>"
+        data-associated-file-file-name="<%= @file_transcript.associated_file_file_name %>">
         <% if (can? :manage, @collection_resource) || @collection_resource.can_edit %>
           <% unless params[:from_playlist].to_s.to_boolean? %>
             <% if params['page_type'] == 'previous_page' %>

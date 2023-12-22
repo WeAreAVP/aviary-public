@@ -18,15 +18,15 @@
                   <% if @file_index.present? %>
                     <div class="d-flex" style="align-items: center;">
                       <div class="mr-2">Editing Index</div>
-                      <h1 id="index_title_heading" class="cursor-pointer"><%= @file_index.title %></h1>
+                      <h1 id="index_title_heading" class="cursor-pointer" style="text-transform: none;"><%= @file_index.title %></h1>
 
                       <%= simple_form_for @file_index, html: { class: 'd-none', id: "save_file_index_title_form" },
-                        url: update_index_title_path(@file_index.id) do |f| %>
+                        url: update_file_index_partial_path(@file_index.id) do |f| %>
                         <input class="string required form-control" id="edit_file_index_title" required="required" aria-required="true" type="text"
                           value="<%= @file_index.title %>" name="file_index[title]" />
 
-                        <input class="cancel_file_index_title btn btn-secondary" type="button" value="Cancel" />
-                        <input class="save_file_index_title btn btn-primary" type="submit" value="Save" />
+                        <input class="cancel_file_index_title inline_cancel btn btn-secondary" type="button" value="Cancel" />
+                        <input class="save_file_index_title inline_save btn btn-primary" type="submit" value="Save" />
                       <% end %>
                     </div>
                   <% end %>
@@ -48,7 +48,7 @@
             </div>
           </div>
         </div>
-        <div class="row">
+        <div class="flex-column-reverse flex-md-row row">
           <div class="col-md-6">
             <div class="accordion interview-accordion" id="accordionIndex">
               <div class="mb-2">
@@ -241,7 +241,7 @@
               </div>
             </div>
           </div>
-          <div class="col-md-6 video-box-section">
+          <div class="col-md-6 video-box-section mb-4 mb-md-0">
             <%= render 'indexes/form/content' %>
           </div>
         </div>

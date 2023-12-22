@@ -9,7 +9,10 @@
 
         <% if file_index.is_public || @collection_resource.can_view || @collection_resource.can_edit || (can? :edit, @collection_resource.collection.organization) || (can? :read, file_index) %>
           <div class="pt-10px font-size-13px <%= file_index.description.present? ? '' : 'd-none' %>"><b>Note:</b> <span class="font-weight-bold"><%= file_index.description %></span><hr/></div>
-          <div class="file_index file_index_<%= file_index.id %> pb-10px" data-language="<%= file_index.language %>" data-title="<%= file_index.title %>" data-public="<%= file_index.is_public %>" data-description="<%= file_index.description %>">
+          <div class="file_index file_index_<%= file_index.id %> pb-10px" data-language="<%= file_index.language %>"
+            data-title="<%= file_index.title %>" data-public="<%= file_index.is_public %>"
+            data-description="<%= file_index.description %>"
+            data-associated-file-file-name="<%= file_index.associated_file_file_name %>">
             <% @index_count = @index_time_wise = {} %>
             <% @session_video_text_all = params['keywords'] %>
             <% parent_id = 0 %>
