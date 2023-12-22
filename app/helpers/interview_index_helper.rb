@@ -316,6 +316,11 @@ module InterviewIndexHelper
     options.join("\n")
   end
 
+  def get_values(field)
+    values = field&.split('|||')
+    values.present? ? values : [':::']
+  end
+
   def next_navigation_button
     return unless %w[edit edit_index].include?(params[:action])
 
