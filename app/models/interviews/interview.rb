@@ -407,10 +407,7 @@ module Interviews
                 alter_search_wildcard = 'created_by_id_ss'
                 alter_search_wildcard_string = 'created_by_id_ss'
               end
-
               if alter_search_wildcard == 'ohms_assigned_user_id_is'
-                alter_search_wildcard = 'ohms_assigned_user_id_ss'
-                alter_search_wildcard_string = 'ohms_assigned_user_id_ss'
                 alter_search_wildcard = 'ohms_assigned_user_name_ss'
                 alter_search_wildcard_string = 'ohms_assigned_user_name_ss'
               end
