@@ -1,9 +1,5 @@
 class AddCollectionSortOrderFieldToOrganizations < ActiveRecord::Migration[6.1]
-  include Aviary::FieldManagement
-
   def change
-    @collection_field_manager = Aviary::FieldManagement::CollectionFieldManager.new
-
     Organization.all.each do  |org|
       all_fields = org.organization_field&.resource_fields.deep_dup
       next unless (all_fields.present?)
@@ -21,32 +17,19 @@ class AddCollectionSortOrderFieldToOrganizations < ActiveRecord::Migration[6.1]
         'system_name' => system_name,
         'is_vocabulary' => false,
         'vocabulary' => [],
-        'field_configuration' => {},
+        'field_configuration' => { special_purpose: true, visible_at: 'resource_listing' },
         'sort_order' => org.organization_field.resource_fields.keys.count.to_i + 1,
-        'description_display' => true,
+        'description_display' => false,
         'resource_table_display' => true,
-        'resource_table_search' => true,
-        'search_display' => true,
-        'solr_display_column' => 'description_collection_sort_order_is',
-        'solr_search_column' => 'description_collection_sort_order_search_texts',
+        'resource_table_search' => false,
+        'search_display' => false,
+        'solr_display_column' => 'collection_sort_order_ss',
+        'solr_search_column' => 'collection_sort_order_ss',
         'resource_table_sort_order' => org.organization_field.resource_fields.keys.count.to_i + 1,
         'search_sort_order' => org.organization_field.resource_fields.keys.count.to_i + 1,
       }
       org.organization_field.resource_fields = all_fields
       org.organization_field.save
-
-      org.collections.each do |col|
-        update_information = {
-          "system_name" => system_name,
-          "status" => true,
-          "tombstone" => false,
-          "sort_order" => 0
-        }
-
-        @collection_field_manager.update_field_settings_collection(
-          update_information, col, 'resource_fields'
-        )
-      end
     end
   end
 end

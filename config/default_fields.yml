@@ -1189,26 +1189,25 @@ fields:
       ris_label: ''
     collection_sort_order:
       label: 'Collection Sort Order'
-      help_text: 'Define sort order of resources within collection'
-      is_public: false
-      field_type: integer
-      is_default: true
-      is_repeatable: false
-      is_internal_only: true
-      field_level: resource
-      is_required: false
       system_name: collection_sort_order
+      field_type: integer
+      is_required: false
+      is_public: false
+      is_default: true
       is_vocabulary: false
       vocabulary: []
-      field_configuration: {}
-      sort_order: 33
-      description_display: true
+      help_text: null
+      is_repeatable: true
+      field_configuration: { special_purpose: true, visible_at: 'resource_listing' }
+      field_level: resource
+      sort_order: 0
+      description_display: false
       resource_table_display: true
       resource_table_search: true
-      search_display: true
-      solr_display_column: collection_sort_order_ss
-      solr_search_column: description_collection_sort_order_search_texts
+      solr_display_column: 'collection_sort_order_ss'
+      solr_search_column: 'collection_sort_order_ss'
       resource_table_sort_order: 33
+      search_display: false
       search_sort_order: 33
 
   collection:
