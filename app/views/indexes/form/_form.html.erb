@@ -17,7 +17,7 @@
             <%= params['action'] == 'edit_index' ? 'Editing' : 'Creating' %>
             Segment of Index
           </div>
-          <h1 id="index_title_heading" class="cursor-pointer"><%= @file_index.title %></h1>
+          <h1 id="index_title_heading" class="cursor-pointer" style="text-transform: none;"><%= @file_index.title %></h1>
 
           <%= simple_form_for @file_index, html: { class: 'd-none', id: "save_file_index_title_form" },
             url: update_index_title_path(@file_index.id) do |f| %>
@@ -60,7 +60,7 @@
     :url => @file_index_point.new_record? ? create_index_path(@resource_file.id) : update_index_file_path(@resource_file.id, @file_index.id, @file_index_point.id), html: { class: "interview_index_manager" } do |f|
   %>
     <div class="organization-section">
-      <div class="row">
+      <div class="flex-column-reverse flex-md-row row">
         <!-- Inner Form -->
         <div class="w-100 interview-index-form p-2 border rounded col-md-6">
           <div class="col-md-12">
@@ -69,7 +69,7 @@
         </div>
         <!-- Inner Form -->
 
-        <div class="col-md-6">
+        <div class="col-md-6 p-0 px-md-3">
           <div class="top-section-test-interview border rounded">
             <div class="row">
               <div class="col-md-12">
@@ -160,26 +160,14 @@
                   <div class="save_btn">
                     <div class="d-flex">
                       <!-- Navigate Previous Button -->
-                      <% if %w[edit edit_index].include?(params[:action]) %>
-                        <a class="d-inline-block mr-2 index-navigation-arrows btn btn-primary <%= @previous_index_point.nil? ? 'disable_btn' : '' %>"
-                          aria-label="Go to previous index segment <%= @previous_index_point.nil? ? '; disabled' : '' %>"
-                          href="<%= !@previous_index_point.nil? && params[:action] == 'edit_index' ? edit_index_file_path(params[:resource_file_id], params[:file_index_id], @previous_index_point&.id) : 'javascript:void(0)' %>">
-                          <i class="fa fa-angle-left" alt="Go to previous index segment"></i>
-                        </a>
-                      <% end %>
+                      <%== previous_navigation_button %>
                       <!-- Navigate Previous Button End -->
 
                       <%= f.submit 'Save & Close', class: 'btn btn-success mr-2' %>
                       <%= f.submit 'Save & Create New', class: 'btn btn-success save_and_new' %>
 
                       <!-- Navigate Next Button -->
-                      <% if %w[edit edit_index].include?(params[:action]) %>
-                        <a class="d-inline-block ml-2 index-navigation-arrows btn btn-primary <%= @next_index_point.nil? ? 'disable_btn' : ''  %>"
-                          aria-label="Go to next index segment <%= @next_index_point.nil? ? '; disabled' : '' %>"
-                          href="<%= !@next_index_point.nil? && params[:action] == 'edit_index' ? edit_index_file_path(params[:resource_file_id], params[:file_index_id], @next_index_point&.id) : 'javascript:void(0)' %>">
-                          <i class="fa fa-angle-right" alt="Go to next index segment"></i>
-                        </a>
-                      <% end %>
+                      <%== next_navigation_button %>
                       <!-- Navigate Next Button End -->
                     </div>
                   </div>
@@ -211,7 +199,12 @@
 </div>
 <script type="text/javascript">
     $(document).ready(function () {
-        $(".top-section-test-interview").sticky({topSpacing: 50, bottomSpacing: 395});
+        if ($(window).width() >= 992) {
+            $(".top-section-test-interview").sticky({topSpacing: 50, bottomSpacing: 113});
+        } else {
+            $(".top-section-test-interview").unstick();
+        }
+
         if ($('.left_space').text().length == 0) {
             $('.left_space').remove();
         }

@@ -816,12 +816,19 @@ function IndexTranscript() {
         $(".text-danger").html("");
         $('#' + that.cuePointType + '_update_btn').unbind('click').click(function () {
             current = $('#file_' + that.cuePointType + '_select');
+
             $('#new_file_' + that.cuePointType).attr('action', that.uploadUrl + '/' + current.val());
             $('#' + that.cuePointType + '_upload_title').html('Update "' + current.text() + '" ' + capitalize(that.cuePointType));
             $('#file_' + that.cuePointType + '_title').val(current.text());
             $('#file_' + that.cuePointType + '_language')[0].selectize.setValue($('.file_' + that.cuePointType + '_' + current.val()).data().language);
             $('#file_' + that.cuePointType + '_is_public')[0].selectize.setValue($('.file_' + that.cuePointType + '_' + current.val()).data().public.toString());
             $('#file_' + that.cuePointType + '_description').val($('.file_' + that.cuePointType + '_' + current.val()).data().description.toString());
+            $('#file_' + that.cuePointType + '_associated_file_file_name').prop('disabled', true);
+            $('#file_' + that.cuePointType + '_associated_file_file_name').val(
+                $('.file_' + that.cuePointType + '_' + current.val()).data().associatedFileFileName
+            );
+            $('#' + that.cuePointType + '-associated-file-file-name').removeClass('d-none');
+
             if (that.cuePointType == 'transcript') {
                 $('.is_downloadable_section').removeClass('d-none');
                 let download = $('.file_' + that.cuePointType + '_' + current.val()).data().downloadable;
@@ -858,6 +865,11 @@ function IndexTranscript() {
                 });
                 $(this).html("Processing... ");
             });
+
+            $('.edit-pencil').unbind('click').bind('click', function () {
+                $('#file_' + that.cuePointType + '_associated_file_file_name').prop('disabled', false);
+                $('#file_' + that.cuePointType + '_associated_file_file_name').focus();
+            });
         });
 
         $('#' + that.cuePointType + '_upload').on('hidden.bs.modal', function () {
@@ -867,6 +879,8 @@ function IndexTranscript() {
             $('#file_' + that.cuePointType + '_language')[0].selectize.setValue('en');
             $('#file_' + that.cuePointType + '_is_public')[0].selectize.setValue('false');
             $('.upload_' + that.cuePointType + '_btn').html('Upload ' + capitalize(that.cuePointType));
+            $('#' + that.cuePointType + '-associated-file-file-name').addClass('d-none');
+
             if (that.cuePointType == 'transcript') {
                 $('.is_caption_section').addClass('d-none');
                 $('#file_transcript_is_caption').prop('checked', false);

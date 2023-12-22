@@ -1,0 +1,17 @@
+name: Delete Branch
+on: 
+  pull_request:
+    types:
+      - closed 
+    branches:
+      - dev
+      - main
+
+jobs:
+  delete_branch:
+      name: Delete Branch After Merge Is Complete
+      if: github.event.pull_request.merged == true && github.event.pull_request.head.ref != 'main' && github.event.pull_request.head.ref != 'dev'
+      runs-on: ubuntu-20.04
+      steps:
+        - uses: actions/checkout@v2
+        - run: git push origin --delete ${{ github.event.pull_request.head.ref }}

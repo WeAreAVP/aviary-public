@@ -7,7 +7,7 @@
       <div class="heading-holder table-head">
         <div class="row">
           <div class="col-md-6">
-            <h1><%= @interview.present? ? @interview.title : @collection_resource.title %></h1>
+            <h1 style="text-transform: none;"><%= @interview.present? ? @interview.title : @collection_resource.title %></h1>
           </div>
           <div class="col-md-6">
             <div class="button-holder text-right pt-2">
@@ -83,38 +83,16 @@
               </div>
               <div class="save_btn">
                 <div class="d-flex">
-                  <% if %w[edit edit_index].include?(params[:action]) %>
-                    <% url = @previous_index_point.nil? ? 'javascript:void(0)' : if params[:action] == 'edit'
-                        edit_interviews_interview_index_path(@previous_index_point&.id)
-                      else
-                        edit_index_file_path(params[:resource_file_id], params[:file_index_id], @previous_index_point&.id)
-                      end
-                    %>
-
-                    <a class="h-30px d-inline-block mr-2 <%= @previous_index_point.nil? ? 'disable_btn' : '' %>"
-                      href="<%= url %>"
-                      aria-label="Go to previous index segment <%= @previous_index_point.nil? ? '; disabled' : '' %>">
-                      <img class="h-30px" src="<%= image_url('arrow-previous-icon.png') %>" alt="Go to previous index segment">
-                    </a>
-                  <% end %>
+                  <!-- Navigate Previous Button -->
+                  <%== previous_navigation_button %>
+                  <!-- Navigate Previous Button End -->
 
                   <%= f.submit 'Save & Close', class: 'btn btn-success mr-2' %>
                   <%= f.submit 'Save & Create New', class: 'btn btn-success save_and_new' %>
 
-                  <% if %w[edit edit_index].include?(params[:action]) %>
-                    <% url = @next_index_point.nil? ? 'javascript:void(0)' : if params[:action] == 'edit'
-                        edit_interviews_interview_index_path(@next_index_point&.id)
-                      else
-                        edit_index_file_path(params[:resource_file_id], params[:file_index_id], @next_index_point&.id)
-                      end
-                    %>
-
-                    <a class="h-30px d-inline-block ml-2 <%= @next_index_point.nil? ? 'disable_btn': ''  %>"
-                      href="<%= url %>"
-                      aria-label="Go to next index segment <%= @next_index_point.nil? ? '; disabled' : '' %>">
-                      <img class="h-30px" src="<%= image_url('arrow-next-icon.png') %>" alt="Go to next index segment">
-                    </a>
-                  <% end %>
+                  <!-- Navigate Next Button -->
+                  <%== next_navigation_button %>
+                  <!-- Navigate Next Button End -->
                 </div>
               </div>
             </div>
@@ -179,7 +157,6 @@
 </style>
 <script type="text/javascript">
     $(document).ready(function () {
-        $(".top-section-test-interview").sticky({topSpacing: 50});
         if ($('.left_space').text().length == 0) {
             $('.left_space').remove();
         }
