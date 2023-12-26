@@ -304,6 +304,9 @@ module Interviews
       integer :ohms_assigned_user_id, stored: true do
         ohms_assigned_user_id.present? ? ohms_assigned_user_id : 'None'
       end
+      text :ohms_assigned_user_name, stored: true do
+        ohms_assigned_user_name.present? ? ohms_assigned_user_name : 'None'
+      end
     end
 
     def self.solr_path
@@ -403,6 +406,10 @@ module Interviews
               if alter_search_wildcard == 'created_by_id_is'
                 alter_search_wildcard = 'created_by_id_ss'
                 alter_search_wildcard_string = 'created_by_id_ss'
+              end
+              if alter_search_wildcard == 'ohms_assigned_user_id_is'
+                alter_search_wildcard = 'ohms_assigned_user_name_ss'
+                alter_search_wildcard_string = 'ohms_assigned_user_name_ss'
               end
 
               alter_search_wildcard.sub! '_ss', '_texts'
