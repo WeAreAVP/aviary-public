@@ -130,7 +130,7 @@ function InterviewIndexManager() {
                     kdp.kBind('mediaLoaded', function () {
                         getIndexSegmentsTimeline(kdp.evaluate('{duration}'), host);
                     });
-                }, 1000);
+                }, 4000);
 
                 $('.player-section').css('visibility','unset');
             }
@@ -211,7 +211,9 @@ function InterviewIndexManager() {
                 player_widget = videojs('player', videoJsOptions, function onPlayerReady() {
                     setTimeout(function(){ 
                         $('#item_length').val(player_widget.duration());
-                    },6000);
+                        getIndexSegmentsTimeline(player_widget.duration(), host);
+                    }, 6000);
+
                     if(searchParams.has('time'))
                     {
                         startTime = parseFloat(searchParams.get('time'));
@@ -295,10 +297,6 @@ function InterviewIndexManager() {
                             }, 1000);
                         }
                     }
-
-                    player_widget.on("loadedmetadata", function () {
-                        getIndexSegmentsTimeline(player_widget.duration(), host);
-                    });
                     
                     $('.player-section').css('visibility','unset');
                 });
@@ -333,10 +331,11 @@ function InterviewIndexManager() {
                             })
                         });
                     } else {
-                        player_widget.on('constant-timeupdate', updateIndexPointer);
+                        player_widget.on('constant-timeupdate', () => {
+                            let progressPercent = player_widget.cache_.currentTime / total_duration;
+                            $('#media-index-timeline-pointer').css('left', `${progressPercent * 100}%`);
+                        });
 
-                        let progressPercent = player_widget.cache_.currentTime / total_duration;
-                        $('#media-index-timeline-pointer').css('left', `${progressPercent * 100}%`);
                     }
                 }
             }
@@ -347,6 +346,17 @@ function InterviewIndexManager() {
         let containerRepeatManager = new ContainerRepeatManager();
         containerRepeatManager.makeContainerRepeatable(".add_gps", ".remove_gps", '.container_gps_inner', '.container_gps', '.gps');
         containerRepeatManager.makeContainerRepeatable(".add_hyperlinks", ".remove_hyperlinks", '.container_hyperlinks_inner', '.container_hyperlinks', '.hyperlinks');
+
+        const fields = ['synopsis', 'publisher', 'identifier', 'contributor', 'partial_script', 'segment_date', 'rights'];
+        for (const field of fields) {
+            containerRepeatManager.makeContainerRepeatable(
+                `.add_${field}`, `.remove_${field}_field`,
+                `.single-field-container[data-system-name="${field}"]`,
+                `.container_field[data-system-name="${field}"]`,
+                `.${field}`
+            );
+        }
+
         document_level_binding_element('.update_time', 'click', function () {
             updateTime(this);
         });
@@ -434,7 +444,7 @@ function InterviewIndexManager() {
         
 
         document_level_binding_element('.save_and_new', 'click', function () {
-            if ($('timestamp-errors').length) {
+            if (!$('.timestamp-errors').length) {
                 var url = $('.interview_index_manager').attr("action")
                 if(!url.includes("new=1"))
                 {

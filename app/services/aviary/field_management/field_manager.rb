@@ -49,19 +49,19 @@ module Aviary
       end
 
       def required?
-        field_settings['is_required'].present? ? field_settings['is_required'].to_s.to_boolean? : false
+        field_settings['is_required'].to_s.to_boolean?
       end
 
       def public?
-        field_settings['is_public'].present? ? field_settings['is_public'].to_s.to_boolean? : false
+        field_settings['is_public'].to_s.to_boolean?
       end
 
       def default?
-        field_settings['is_default'].present? ? field_settings['is_default'].to_s.to_boolean? : false
+        field_settings['is_default'].to_s.to_boolean?
       end
 
       def vocabulary?
-        field_settings['is_vocabulary'].present? ? field_settings['is_vocabulary'].to_s.to_boolean? : false
+        field_settings['is_vocabulary'].to_s.to_boolean?
       end
 
       def vocabulary_list
@@ -77,7 +77,7 @@ module Aviary
       end
 
       def repeatable?
-        field_settings['is_repeatable'].present? ? field_settings['is_repeatable'].to_s.to_boolean? : false
+        field_settings['is_repeatable'].to_s.to_boolean?
       end
 
       def field_configuration
@@ -93,15 +93,15 @@ module Aviary
       end
 
       def should_display_on_detail_page
-        field_settings['description_display'].present? ? field_settings['description_display'].to_s.to_boolean? : false
+        field_settings['description_display'].to_s.to_boolean?
       end
 
       def should_display_on_resource_table
-        field_settings['resource_table_display'].present? ? field_settings['resource_table_display'].to_s.to_boolean? : false
+        field_settings['resource_table_display'].to_s.to_boolean?
       end
 
       def should_search_on_resource_table
-        field_settings['resource_table_search'].present? ? field_settings['resource_table_search'].to_s.to_boolean? : false
+        field_settings['resource_table_search'].to_s.to_boolean?
       end
 
       def solr_display_column_name
@@ -109,7 +109,7 @@ module Aviary
       end
 
       def tombstone?
-        field_settings['is_tombstone'].present? ? field_settings['is_tombstone'].to_s.to_boolean? : false
+        field_settings['is_tombstone'].to_s.to_boolean?
       end
 
       def solr_search_column_name
@@ -121,7 +121,7 @@ module Aviary
       end
 
       def should_display_on_search_page
-        field_settings['search_display'].present? ? field_settings['search_display'].to_s.to_boolean? : false
+        field_settings['search_display'].to_s.to_boolean?
       end
 
       def sort_order_on_search_page

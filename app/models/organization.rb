@@ -194,10 +194,15 @@ class Organization < ApplicationRecord
     fields_information = Rails.configuration.default_fields['fields']
     org_field = OrganizationField.find_or_create_by(organization: self)
     if (org_field.resource_fields.blank? && org_field.collection_fields.blank?) || org_field.blank?
-      return org_field.update(collection_fields: fields_information['collection'], resource_fields: fields_information['resource'])
+      return org_field.update(
+        collection_fields: fields_information['collection'],
+        resource_fields: fields_information['resource'],
+        index_fields: fields_information['index']
+      )
     end
     org_field.update(collection_fields: fields_information['collection']) if org_field.blank? || org_field.collection_fields.blank?
     org_field.update(resource_fields: fields_information['resource']) if org_field.blank? || org_field.resource_fields.blank?
+    org_field.update(index_fields: fields_information['index']) if org_field.blank? || org_field.index_fields.blank?
   end
 
   def self.field_list_with_options

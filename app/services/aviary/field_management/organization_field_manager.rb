@@ -51,7 +51,9 @@ module Aviary
           single_collection_field.each do |key, value|
             value = value.to_i if key.include? 'sort'
             fields[single_collection_field['system_name'].downcase][key] = value if fields[single_collection_field['system_name'].downcase].present?
-            fields[single_collection_field['system_name'].downcase][key] = false if key == 'is_internal_only' && acts_as_default(fields[single_collection_field['system_name'].downcase])
+            if key == 'is_internal_only' && acts_as_default(fields[single_collection_field['system_name'].downcase])
+              fields[single_collection_field['system_name'].downcase][key] = false
+            end
           end
         end
         organization.organization_field[type] = fields

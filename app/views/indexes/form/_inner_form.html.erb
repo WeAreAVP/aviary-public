@@ -1,127 +1,268 @@
-<div class="">
-  <%= f.hidden_field :id %>
+<% present(@file_index_point) do |presenter| %>
+  <div>
+    <%= f.hidden_field :id %>
 
-  <% if @index_template['fields']['title']['status'] %>
-    <div class="d-flex">
-      <div class="form-group">
-        <div class="field-title">
+    <!-- Segment Title -->
+    <% if @index_template['fields']['title']['status'] %>
+      <div class="d-flex">
+        <div class="form-group">
+          <div class="field-title">
+            <%= f.label :title do %>
+              Segment Title*
+              <button type="button" class="info-btn" data-content="WebVTT cue identifier field in VTT export."></button>
+            <% end %>
+          </div>
+          <%= f.input :title, required: true, label: false, input_html: { class: 'form-control title focusable' } %>
+        </div>
+      </div>
+    <% end %>
+
+
+    <!-- Segment Synopsis -->
+    <% if @index_template['fields']['synopsis']['status'] %>
+      <div class="form-group border p-4 rounded custom_form mt-5">
+        <div class="field-title border_title">
           <%= f.label :title do %>
-            Segment Title*
-            <button type="button" class="info-btn" data-content="WebVTT cue identifier field in VTT export."></button>
+            Segment Synopsis
+          <% end %>
+
+          <a href="javascript:void(0);" class="add_synopsis add_button_interview text-decoration-none" data-systen-name="synopsis">
+            +
+          </a>
+        </div>
+
+        <div class="container_field" data-system-name="synopsis" data-field-count="0">
+          <% values = get_values(@file_index_point.synopsis)
+            values.each do |synopsis| %>
+            <% value, vocabulary = synopsis.split(':::') %>
+            <div class="single-field-container" data-system-name="synopsis">
+              <a href="javascript://" class="remove_field remove_synopsis_field" title="Remove synopsis"><i class="remove_icon_image"></i></a>
+              <div class="d-flex">
+                <div class="form-group w-100 h-4">
+                  <div class="field-title"><%= f.label :vocabulary %></div>
+                  <select name="file_index_point[synopsis][][vocabulary]" style="height: 53px"
+                    id="file_index_point_synopsis_vocabular" class="optional form-control parent_id dont-apply-selectize synopsis">
+                    <option value>None</option>
+                    <%== presenter.generate_vocabulary_dropdown(@org_index_fields_conf['synopsis']['vocabulary'], vocabulary) %>
+                  </select>
+                </div>
+              </div>
+
+              <div class="d-flex">
+                <div class="form-group">
+                  <div class="field-title">
+                    <label for="file_index_point[synopsis][][value]">
+                      Value
+                    </label>
+                  </div>
+
+                  <div class="input text optional file_index_point_synopsis">
+                    <textarea class="text optional form-control synopsis" name="file_index_point[synopsis][][value]"
+                      id="file_index_point_synopsis_0_value" spellcheck="false"><%= value %></textarea>
+                  </div>
+                </div>
+              </div>
+            </div>
           <% end %>
         </div>
-        <%= f.input :title, required: true, label: false, input_html: { class: 'form-control title' } %>
       </div>
-    </div>
-  <% end %>
+    <% end %>
 
-  <% if @index_template['fields']['synopsis']['status'] %>
-    <div class="d-flex">
-      <div class="form-group">
-        <div class="field-title">
-          <%= f.label :title do %>
-            Segment Synopsis*
-            <button type="button" class="info-btn" data-content="WebVTT cue payload field in VTT export."></button>
+
+    <!-- Partial Transcript -->
+    <% if @index_template['fields']['partial_script']['status'] %>
+      <div class="form-group border p-4 rounded custom_form mt-5">
+        <div class="field-title border_title">
+          <%= f.label :partial_script, "Partial Transcript" %>
+
+          <a href="javascript:void(0);" class="add_partial_script add_button_interview text-decoration-none" data-systen-name="partial_script">
+            +
+          </a>
+        </div>
+
+        <div class="container_field" data-system-name="partial_script">
+          <% values = get_values(@file_index_point.partial_script)
+            values = [':::'] unless values.present?
+            values.each do |partial_script| %>
+            <% value, vocabulary = partial_script.split(':::') %>
+              <div class="single-field-container" data-system-name="partial_script">
+                <a href="javascript://" class="remove_field remove_partial_script_field" title="Remove partial transcript"><i class="remove_icon_image"></i></a>
+                <div class="d-flex">
+                  <div class="form-group w-100 h-4">
+                    <div class="field-title"><%= f.label :vocabulary %></div>
+                    <select name="file_index_point[partial_script][][vocabulary]" style="height: 53px"
+                      id="file_index_point_partial_script_vocabular" class="optional form-control parent_id dont-apply-selectize partial_script">
+                      <option value>None</option>
+                      <%== presenter.generate_vocabulary_dropdown(@org_index_fields_conf['partial_script']['vocabulary'], vocabulary) %>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="d-flex">
+                  <div class="form-group">
+                    <div class="field-title">
+                      <label for="file_index_point[partial_script][][value]">
+                        Value
+                      </label>
+                    </div>
+
+                    <input label="false" class="form-control partial_script" type="text" value="<%= value %>"
+                      name="file_index_point[partial_script][][value]" id="file_index_point_partial_script_0_value">
+                  </div>
+                </div>
+              </div>
+            <% end %>
+        </div>
+      </div>
+    <% end %>
+
+
+    <!-- Keywords -->
+    <% if @index_template['fields']['keywords']['status'] %>
+      <div class="d-flex">
+        <div class="form-group">
+          <div class="field-title"><%= f.label :keywords, "Keywords" %></div>
+          <%
+            thesaurus = @thesaurus_keywords.present? ? Thesaurus::Thesaurus.where(id: @thesaurus_keywords) : nil
+
+            keywords_data = {}
+            keywords_data[:selected_keys] = if @file_index_point.keywords.present?
+                                              @file_index_point.keywords.split(';').map.with_index do |keyword, i|
+                                                thesaurus.present? && thesaurus.length.positive? ? { id: i, label: keyword, value: keyword } : { id: keyword, name: keyword }
+                                              end
+                                            else
+                                              ''
+                                            end
+            if thesaurus.present? && thesaurus.length.positive?
+              keywords_data[:path] = autocomplete_thesaurus_manager_index_path
+              keywords_data[:t_id] = thesaurus.first.id
+              keywords_data[:type_of_list] = 'thesaurus'
+            end
+          %>
+          <%= f.text_area :keywords, required: false, label: false, class: 'form-control keywords tokenfield tokenfield_keywords', data: keywords_data.merge(max_suggest: ENV.fetch('MAX_SUGGEST', 100)) %>
+          <small class="form-text text-muted mt-1">Keywords should be separated by a semi-colon.</small>
+          <% if @thesaurus_keywords.present? %>
+            <% thesaurus = Thesaurus::Thesaurus.where(id: @thesaurus_keywords) %>
+            <% if thesaurus.length.positive? %>
+              <small class="form-text text-muted mt-1">Current Thesaurus: <strong><%= thesaurus.first.title %></strong></small>
+            <% end %>
           <% end %>
         </div>
-        <%= f.input :synopsis, required: false, label: false, input_html: { class: 'form-control title ohm_synopsis' } %>
       </div>
-    </div>
-  <% end %>
+    <% end %>
 
-  <% if @index_template['fields']['partial_script']['status'] %>
-    <div class="d-flex">
-      <div class="form-group">
-        <div class="field-title"><%= f.label :partial_script, "Partial Transcript" %></div>
-        <%= f.text_area :partial_script, required: false, label: false, class: 'form-control partial_script' %>
-      </div>
-    </div>
-  <% end %>
-  
-  <% if @index_template['fields']['keywords']['status'] %>
-    <div class="d-flex">
-      <div class="form-group">
-        <div class="field-title"><%= f.label :keywords, "Keywords" %></div>
-        <%
-          thesaurus = @thesaurus_keywords.present? ? Thesaurus::Thesaurus.where(id: @thesaurus_keywords) : nil
 
-          keywords_data = {}
-          keywords_data[:selected_keys] = if @file_index_point.keywords.present?
-                                            @file_index_point.keywords.split(';').map.with_index do |keyword, i|
-                                              thesaurus.present? && thesaurus.length.positive? ? { id: i, label: keyword, value: keyword } : { id: keyword, name: keyword }
+    <!-- Subjects -->
+    <% if @index_template['fields']['subjects']['status'] %>
+      <div class="d-flex">
+        <div class="form-group">
+          <div class="field-title"><%= f.label :subjects, "Subjects" %></div>
+          <%
+            thesaurus = @thesaurus_keywords.present? ? Thesaurus::Thesaurus.where(id: @thesaurus_subjects) : nil
+
+            subject_data = {}
+            subject_data[:selected_keys] = if @file_index_point.subjects.present?
+                                              @file_index_point.subjects.split(';').map.with_index do |subject, i|
+                                                thesaurus.present? && thesaurus.length.positive? ? { id: i, label: subject, value: subject } : { id: subject, name: subject }
+                                              end
+                                            else
+                                              ''
                                             end
-                                          else
-                                            ''
-                                          end
-          if thesaurus.present? && thesaurus.length.positive?
-            keywords_data[:path] = autocomplete_thesaurus_manager_index_path
-            keywords_data[:t_id] = thesaurus.first.id
-            keywords_data[:type_of_list] = 'thesaurus'
-          end
-        %>
-        <%= f.text_area :keywords, required: false, label: false, class: 'form-control keywords tokenfield tokenfield_keywords', data: keywords_data.merge(max_suggest: ENV.fetch('MAX_SUGGEST', 100)) %>
-        <small class="form-text text-muted mt-1">Keywords should be separated by a semi-colon.</small>
-        <% if @thesaurus_keywords.present? %>
-          <% thesaurus = Thesaurus::Thesaurus.where(id: @thesaurus_keywords) %>
-          <% if thesaurus.length.positive? %>
-            <small class="form-text text-muted mt-1">Current Thesaurus: <strong><%= thesaurus.first.title %></strong></small>
+
+            if thesaurus.present? && thesaurus.length.positive?
+              subject_data[:path] = autocomplete_thesaurus_manager_index_path
+              subject_data[:t_id] = thesaurus.first.id
+              subject_data[:type_of_list] = 'thesaurus'
+            end
+          %>
+          <%= f.text_area :subjects, required: false, label: false, class: 'form-control subjects tokenfield tokenfield_subjects', data: subject_data.merge(max_suggest: ENV.fetch('MAX_SUGGEST', 100)) %>
+          <small class="form-text text-muted mt-1">Subjects should be separated by a semi-colon.</small>
+          <% if @thesaurus_subjects.present? %>
+            <% thesaurus = Thesaurus::Thesaurus.where(id: @thesaurus_subjects) %>
+            <% if thesaurus.length.positive? %>
+              <small class="form-text text-muted mt-1">Current Thesaurus: <strong><%= thesaurus.first.title %></strong></small>
+            <% end %>
           <% end %>
-        <% end %>
+        </div>
       </div>
-    </div>
-  <% end %>
+    <% end %>
 
-  <% if @index_template['fields']['subjects']['status'] %>
-    <div class="d-flex">
-      <div class="form-group">
-        <div class="field-title"><%= f.label :subjects, "Subjects" %></div>
-        <%
-          thesaurus = @thesaurus_keywords.present? ? Thesaurus::Thesaurus.where(id: @thesaurus_subjects) : nil
 
-          subject_data = {}
-          subject_data[:selected_keys] = if @file_index_point.subjects.present?
-                                            @file_index_point.subjects.split(';').map.with_index do |subject, i|
-                                              thesaurus.present? && thesaurus.length.positive? ? { id: i, label: subject, value: subject } : { id: subject, name: subject }
-                                            end
-                                          else
-                                            ''
-                                          end
+    <!-- GPS -->
+    <% if @index_template['fields']['gps']['status'] %>
+      <div class="form-group border p-4 rounded custom_form mt-5">
+        <div class="field-title border_title"><%= f.label :gps %>
+          <a href="javascript:void(0);" class="add_gps add_button_interview text-decoration-none"> +
+          </a>
+        </div>
 
-          if thesaurus.present? && thesaurus.length.positive?
-            subject_data[:path] = autocomplete_thesaurus_manager_index_path
-            subject_data[:t_id] = thesaurus.first.id
-            subject_data[:type_of_list] = 'thesaurus'
-          end
-        %>
-        <%= f.text_area :subjects, required: false, label: false, class: 'form-control subjects tokenfield tokenfield_subjects', data: subject_data.merge(max_suggest: ENV.fetch('MAX_SUGGEST', 100)) %>
-        <small class="form-text text-muted mt-1">Subjects should be separated by a semi-colon.</small>
-        <% if @thesaurus_subjects.present? %>
-          <% thesaurus = Thesaurus::Thesaurus.where(id: @thesaurus_subjects) %>
-          <% if thesaurus.length.positive? %>
-            <small class="form-text text-muted mt-1">Current Thesaurus: <strong><%= thesaurus.first.title %></strong></small>
-          <% end %>
-        <% end %>
-      </div>
-    </div>
-  <% end %>
+        <div class="container_gps">
+          <% if !@file_index_point.send("gps_points").nil? && JSON.parse(@file_index_point.send("gps_points")).length.positive? %>
+            <% JSON.parse(@file_index_point.send("gps_points")).each do |gps | %>
+              <div class="container_gps_inner field_container custom_form">
 
-  <% if @index_template['fields']['gps']['status'] %>
-    <div class="form-group border p-4 rounded custom_form mt-5">
-      <div class="field-title border_title"><%= f.label :gps %>
-        <a href="javascript:void(0);" class="add_gps add_button_interview text-decoration-none"> +
-        </a>
-      </div>
+                <a href="javascript://" class="remove_gps" title="Remove gps"><i class="remove_icon_image"></i></a>
+                <div class="d-flex">
+                  <div class="form-group">
+                    <div class="field-title"><%= f.label :gps %></div>
+                    <input type='text' value="<%= gps["lat"] %>, <%= gps["long"] %>" name='<%= "file_index_point[gps_latitude][]"%>' id="interviews_interview_gps_value" class="json optional form-control gps "/>
+                    <small class="form-text text-muted mt-1">
+                      Coordinates are entered in the format "XX.XXX, YY.YYY" where X is latitude (north or south) and Y is longitude (east or west).
+                    </small>
+                  </div>
+                </div>
 
-      <div class="container_gps">
-        <% if !@file_index_point.send("gps_points").nil? && JSON.parse(@file_index_point.send("gps_points")).length.positive? %>
-          <% JSON.parse(@file_index_point.send("gps_points")).each_with_index do |gps , gps_index| %>
+                <div class="d-flex">
+                  <div class="form-group mb-2">
+                    <div class="field-title"><%= f.label :description %></div>
+                    <input type='text' value="<%= gps["description"] %>" name='<%= "file_index_point[gps_description][]"%>' id="interviews_interview_gps_description" class="json optional form-control gps "/>
+                  </div>
+                </div>
+
+                <div class="d-flex">
+                  <div class="form-group">
+                    <div class="field-title"><%= f.label :zoom %></div>
+                    <select name='<%= "file_index_point[zoom][]"%>' id="interviews_interview_gps_zoom" class="json optional form-control gps dont-apply-selectize">
+                      <optgroup label="World">
+                        <%for option in 1..5 do%>
+                          <option value="<%=option%>" <%= gps["zoom"].to_i == option ? "selected" : "" %>><%=option%></option>
+                        <%end%>
+                      </optgroup>
+                      <optgroup label="Country">
+                        <%for option in 6..10 do%>
+                          <option value="<%=option%>" <%= gps["zoom"].to_i == option ? "selected" : "" %>><%=option%></option>
+                        <%end%>
+
+                      </optgroup>
+                      <optgroup label="Regional">
+                        <%for option in 11..14 do%>
+                          <option value="<%=option%>" <%= gps["zoom"].to_i == option ? "selected" : "" %>><%=option%></option>
+                        <%end%>
+
+                      </optgroup>
+                      <optgroup label="Local">
+                        <%for option in 15..21 do%>
+                          <option value="<%=option%>" <%= gps["zoom"].to_i == option ? "selected" : "" %>><%=option%></option>
+                        <%end%>
+
+                      </optgroup>
+                    </select>
+
+                    <small class="form-text text-muted mt-1">This is a Google Maps zoom level. Default is 17.</small>
+                    <div class="border-top mt-4 mb-1"></div>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+          <% else %>
             <div class="container_gps_inner field_container custom_form">
 
               <a href="javascript://" class="remove_gps" title="Remove gps"><i class="remove_icon_image"></i></a>
+
               <div class="d-flex">
-                <div class="form-group">
+                <div class="form-group mb-2">
                   <div class="field-title"><%= f.label :gps %></div>
-                  <input type='text' value="<%= gps["lat"] %>, <%= gps["long"] %>" name='<%= "file_index_point[gps_latitude][]"%>' id="interviews_interview_gps_value" class="json optional form-control gps "/>
+                  <input type='text' name='<%= "file_index_point[gps_latitude][]"%>' id="interviews_interview_gps_value" class="json optional form-control gps "/>
                   <small class="form-text text-muted mt-1">
                     Coordinates are entered in the format "XX.XXX, YY.YYY" where X is latitude (north or south) and Y is longitude (east or west).
                   </small>
@@ -129,9 +270,9 @@
               </div>
 
               <div class="d-flex">
-                <div class="form-group mb-2">
+                <div class="form-group">
                   <div class="field-title"><%= f.label :description %></div>
-                  <input type='text' value="<%= gps["description"] %>" name='<%= "file_index_point[gps_description][]"%>' id="interviews_interview_gps_description" class="json optional form-control gps "/>
+                  <input type='text' name='<%= "file_index_point[gps_description][]"%>' id="interviews_interview_gps_description" class="json optional form-control gps "/>
                 </div>
               </div>
 
@@ -141,184 +282,327 @@
                   <select name='<%= "file_index_point[zoom][]"%>' id="interviews_interview_gps_zoom" class="json optional form-control gps dont-apply-selectize">
                     <optgroup label="World">
                       <%for option in 1..5 do%>
-                        <option value="<%=option%>" <%= gps["zoom"].to_i == option ? "selected" : "" %>><%=option%></option>
+                        <option value="<%=option%>"><%=option%></option>
                       <%end%>
                     </optgroup>
                     <optgroup label="Country">
                       <%for option in 6..10 do%>
-                        <option value="<%=option%>" <%= gps["zoom"].to_i == option ? "selected" : "" %>><%=option%></option>
+                        <option value="<%=option%>"><%=option%></option>
                       <%end%>
 
                     </optgroup>
                     <optgroup label="Regional">
                       <%for option in 11..14 do%>
-                        <option value="<%=option%>" <%= gps["zoom"].to_i == option ? "selected" : "" %>><%=option%></option>
+                        <option value="<%=option%>"><%=option%></option>
                       <%end%>
 
                     </optgroup>
                     <optgroup label="Local">
                       <%for option in 15..21 do%>
-                        <option value="<%=option%>" <%= gps["zoom"].to_i == option ? "selected" : "" %>><%=option%></option>
+                        <option value="<%=option%>" <%= option == 17 ? "selected" : "" %>><%=option%></option>
                       <%end%>
 
                     </optgroup>
                   </select>
-
                   <small class="form-text text-muted mt-1">This is a Google Maps zoom level. Default is 17.</small>
-                  <div class="border-top mt-4 mb-1"></div>
                 </div>
               </div>
             </div>
           <% end %>
-        <% else %>
-          <div class="container_gps_inner field_container custom_form">
-
-            <a href="javascript://" class="remove_gps" title="Remove gps"><i class="remove_icon_image"></i></a>
-
-            <div class="d-flex">
-              <div class="form-group mb-2">
-                <div class="field-title"><%= f.label :gps %></div>
-                <input type='text' name='<%= "file_index_point[gps_latitude][]"%>' id="interviews_interview_gps_value" class="json optional form-control gps "/>
-                <small class="form-text text-muted mt-1">
-                  Coordinates are entered in the format "XX.XXX, YY.YYY" where X is latitude (north or south) and Y is longitude (east or west).
-                </small>
-              </div>
-            </div>
-
-            <div class="d-flex">
-              <div class="form-group">
-                <div class="field-title"><%= f.label :description %></div>
-                <input type='text' name='<%= "file_index_point[gps_description][]"%>' id="interviews_interview_gps_description" class="json optional form-control gps "/>
-              </div>
-            </div>
-
-            <div class="d-flex">
-              <div class="form-group">
-                <div class="field-title"><%= f.label :zoom %></div>
-                <select name='<%= "file_index_point[zoom][]"%>' id="interviews_interview_gps_zoom" class="json optional form-control gps dont-apply-selectize">
-                  <optgroup label="World">
-                    <%for option in 1..5 do%>
-                      <option value="<%=option%>"><%=option%></option>
-                    <%end%>
-                  </optgroup>
-                  <optgroup label="Country">
-                    <%for option in 6..10 do%>
-                      <option value="<%=option%>"><%=option%></option>
-                    <%end%>
-
-                  </optgroup>
-                  <optgroup label="Regional">
-                    <%for option in 11..14 do%>
-                      <option value="<%=option%>"><%=option%></option>
-                    <%end%>
-
-                  </optgroup>
-                  <optgroup label="Local">
-                    <%for option in 15..21 do%>
-                      <option value="<%=option%>" <%= option == 17 ? "selected" : "" %>><%=option%></option>
-                    <%end%>
-
-                  </optgroup>
-                </select>
-                <small class="form-text text-muted mt-1">This is a Google Maps zoom level. Default is 17.</small>
-              </div>
-            </div>
-          </div>
-        <% end %>
+        </div>
       </div>
-    </div>
-  <% end %>
+    <% end %>
 
-  <% if @index_template['fields']['hyperlink']['status'] %>
-    <div class="form-group border p-4 rounded custom_form mt-5">
-      <div class="field-title border_title"><%= f.label :hyperlinks %>
-        <a href="javascript:void(0);" class="add_hyperlinks add_button_interview text-decoration-none"> +
-        </a>
-      </div>
 
-      <div class="container_hyperlinks">
-        <% if !@file_index_point.send("hyperlinks").nil? &&  JSON.parse(@file_index_point.send("hyperlinks")).length.positive? %>
-          <% JSON.parse(@file_index_point.send("hyperlinks")).each_with_index do |hyperlinks , hyperlink_index| %>
+    <!-- Hyperlink -->
+    <% if @index_template['fields']['hyperlink']['status'] %>
+      <div class="form-group border p-4 rounded custom_form mt-5">
+        <div class="field-title border_title"><%= f.label :hyperlinks %>
+          <a href="javascript:void(0);" class="add_hyperlinks add_button_interview text-decoration-none"> +
+          </a>
+        </div>
+
+        <div class="container_hyperlinks">
+          <% if !@file_index_point.send("hyperlinks").nil? &&  JSON.parse(@file_index_point.send("hyperlinks")).length.positive? %>
+            <% JSON.parse(@file_index_point.send("hyperlinks")).each do |hyperlinks | %>
+              <div class="container_hyperlinks_inner field_container custom_form">
+                <a href="javascript://" class="remove_hyperlinks" title="Remove hyperlinks"><i class="remove_icon_image"></i></a>
+                <div class="d-flex">
+                  <div class="form-group">
+                    <div class="field-title"><%= f.label :hyperlink %></div>
+                    <input type='text' value="<%= hyperlinks["hyperlink"] %>" name='<%= "file_index_point[hyperlink][]"%>' id="interviews_interview_hyperlinks_hyperlink" class="json optional form-control hyperlinks "/>
+                  </div>
+                </div>
+                <div class="d-flex">
+                  <div class="form-group">
+                    <div class="field-title"><%= f.label :description %></div>
+                    <input value="<%= hyperlinks["description"] %>" name="<%= "file_index_point[hyperlink_description][]"%>" id="interviews_interview_hyperlinks_description" class="json optional form-control hyperlinks "/>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+          <% else %>
             <div class="container_hyperlinks_inner field_container custom_form">
               <a href="javascript://" class="remove_hyperlinks" title="Remove hyperlinks"><i class="remove_icon_image"></i></a>
               <div class="d-flex">
                 <div class="form-group">
                   <div class="field-title"><%= f.label :hyperlink %></div>
-                  <input type='text' value="<%= hyperlinks["hyperlink"] %>" name='<%= "file_index_point[hyperlink][]"%>' id="interviews_interview_hyperlinks_hyperlink" class="json optional form-control hyperlinks "/>
+                  <input type='text' name='<%= "file_index_point[hyperlink][]"%>' id="interviews_interview_hyperlinks_hyperlink" class="json optional form-control hyperlinks "/>
                 </div>
               </div>
+
               <div class="d-flex">
                 <div class="form-group">
                   <div class="field-title"><%= f.label :description %></div>
-                  <input value="<%= hyperlinks["description"] %>" name="<%= "file_index_point[hyperlink_description][]"%>" id="interviews_interview_hyperlinks_description" class="json optional form-control hyperlinks "/>
+                  <input name="<%= "file_index_point[hyperlink_description][]"%>" id="interviews_interview_hyperlinks_description" class="json optional form-control hyperlinks "/>
                 </div>
               </div>
             </div>
           <% end %>
-        <% else %>
-          <div class="container_hyperlinks_inner field_container custom_form">
-            <a href="javascript://" class="remove_hyperlinks" title="Remove hyperlinks"><i class="remove_icon_image"></i></a>
-            <div class="d-flex">
-              <div class="form-group">
-                <div class="field-title"><%= f.label :hyperlink %></div>
-                <input type='text' name='<%= "file_index_point[hyperlink][]"%>' id="interviews_interview_hyperlinks_hyperlink" class="json optional form-control hyperlinks "/>
+        </div>
+      </div>
+    <% end %>
+
+
+    <!-- Publisher -->
+    <% if @index_template['fields']['publisher']['status'] %>
+      <div class="form-group border p-4 rounded custom_form mt-5">
+        <div class="field-title border_title">
+          <%= f.label :publisher %>
+
+          <a href="javascript:void(0);" class="add_publisher add_button_interview text-decoration-none" data-systen-name="publisher">
+            +
+          </a>
+        </div>
+
+        <div class="container_field" data-system-name="publisher">
+          <% values = get_values(@file_index_point.publisher)
+            values = [':::'] unless values.present?
+            values.each do |publisher| %>
+            <% value, vocabulary = publisher.split(':::') %>
+              <div class="single-field-container" data-system-name="publisher">
+                <a href="javascript://" class="remove_field remove_publisher_field" title="Remove publisher"><i class="remove_icon_image"></i></a>
+                <div class="d-flex">
+                  <div class="form-group w-100 h-4">
+                    <div class="field-title"><%= f.label :vocabulary %></div>
+                    <select name="file_index_point[publisher][][vocabulary]" style="height: 53px"
+                      id="file_index_point_publisher_vocabular" class="optional form-control parent_id dont-apply-selectize publisher">
+                      <option value>None</option>
+                      <%== presenter.generate_vocabulary_dropdown(@org_index_fields_conf['publisher']['vocabulary'], vocabulary) %>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="d-flex">
+                  <div class="form-group">
+                    <div class="field-title">
+                      <label for="file_index_point[publisher][][value]">
+                        Value
+                      </label>
+                    </div>
+
+                    <input label="false" class="form-control publisher" type="text" value="<%= value %>"
+                      name="file_index_point[publisher][][value]" id="file_index_point_publisher_0_value">
+                  </div>
+                </div>
+              </div>
+            <% end %>
+        </div>
+      </div>
+    <% end %>
+
+
+    <!-- Contrinutor -->
+    <% if @index_template['fields']['contributor']['status'] %>
+      <div class="form-group border p-4 rounded custom_form mt-5">
+        <div class="field-title border_title">
+          <%= f.label :contributor %>
+
+          <a href="javascript:void(0);" class="add_contributor add_button_interview text-decoration-none" data-systen-name="contributor">
+            +
+          </a>
+        </div>
+
+        <div class="container_field" data-system-name="contributor">
+          <% values = get_values(@file_index_point.contributor)
+            values = [':::'] unless values.present?
+            values.each do |contributor| %>
+            <% value, vocabulary = contributor.split(':::') %>
+            <div class="single-field-container" data-system-name="contributor">
+              <a href="javascript://" class="remove_field remove_contributor_field" title="Remove contributor"><i class="remove_icon_image"></i></a>
+              <div class="d-flex">
+                <div class="form-group w-100 h-4">
+                  <div class="field-title"><%= f.label :vocabulary %></div>
+                  <select name="file_index_point[contributor][][vocabulary]" style="height: 53px"
+                    id="file_index_point_contributor_vocabular" class="optional form-control parent_id dont-apply-selectize contributor">
+                    <option value>None</option>
+                    <%== presenter.generate_vocabulary_dropdown(@org_index_fields_conf['contributor']['vocabulary'], vocabulary) %>
+                  </select>
+                </div>
+              </div>
+
+              <div class="d-flex">
+                <div class="form-group">
+                  <div class="field-title">
+                    <label for="file_index_point[contributor][][value]">
+                      Value
+                    </label>
+                  </div>
+
+                  <input label="false" class="form-control contributor" type="text" value="<%= value %>"
+                    name="file_index_point[contributor][][value]" id="file_index_point_contributor_0_value">
+                </div>
               </div>
             </div>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
 
-            <div class="d-flex">
-              <div class="form-group">
-                <div class="field-title"><%= f.label :description %></div>
-                <input name="<%= "file_index_point[hyperlink_description][]"%>" id="interviews_interview_hyperlinks_description" class="json optional form-control hyperlinks "/>
+
+    <!-- Identifier -->
+    <% if @index_template['fields']['identifier']['status'] %>
+      <div class="form-group border p-4 rounded custom_form mt-5">
+        <div class="field-title border_title">
+          <%= f.label :identifier %>
+
+          <a href="javascript:void(0);" class="add_identifier add_button_interview text-decoration-none" data-systen-name="identifier">
+            +
+          </a>
+        </div>
+
+        <div class="container_field" data-system-name="identifier">
+          <% values = get_values(@file_index_point.identifier)
+            values = [':::'] unless values.present?
+            values.each do |identifier| %>
+            <% value, vocabulary = identifier.split(':::') %>
+            <div class="single-field-container" data-system-name="identifier">
+              <a href="javascript://" class="remove_field remove_identifier_field" title="Remove identifier"><i class="remove_icon_image"></i></a>
+              <div class="d-flex">
+                <div class="form-group w-100 h-4">
+                  <div class="field-title"><%= f.label :vocabulary %></div>
+                  <select name="file_index_point[identifier][][vocabulary]" style="height: 53px"
+                    id="file_index_point_identifier_vocabular" class="optional form-control parent_id dont-apply-selectize identifier">
+                    <option value>None</option>
+                    <%== presenter.generate_vocabulary_dropdown(@org_index_fields_conf['identifier']['vocabulary'], vocabulary) %>
+                  </select>
+                </div>
+              </div>
+
+              <div class="d-flex">
+                <div class="form-group">
+                  <div class="field-title">
+                    <label for="file_index_point[identifier][][value]">
+                      Value
+                    </label>
+                  </div>
+
+                  <input label="false" class="form-control identifier" type="text" value="<%= value %>"
+                    name="file_index_point[identifier][][value]" id="file_index_point_identifier_0_value">
+                </div>
               </div>
             </div>
-          </div>
-        <% end %>
+          <% end %>
+        </div>
       </div>
-    </div>
-  <% end %>
+    <% end %>
 
-  <% if @index_template['fields']['publisher']['status'] %>
-    <div class="d-flex">
-      <div class="form-group">
-        <div class="field-title"><%= f.label :publisher %></div>
-        <%= f.text_field :publisher, required: false, label: false, class: 'form-control publisher' %>
-      </div>
-    </div>
-  <% end %>
 
-  <% if @index_template['fields']['contributor']['status'] %>
-    <div class="d-flex">
-      <div class="form-group">
-        <div class="field-title"><%= f.label :contributor %></div>
-        <%= f.text_field :contributor, required: false, label: false, class: 'form-control contributor' %>
-      </div>
-    </div>
-  <% end %>
+    <!-- Segment Date -->
+    <% if @index_template['fields']['segment_date']['status'] %>
+      <div class="form-group border p-4 rounded custom_form mt-5">
+        <div class="field-title border_title">
+          <%= f.label :segment_date, "Segment Date" %>
 
-  <% if @index_template['fields']['identifier']['status'] %>
-    <div class="d-flex">
-      <div class="form-group">
-        <div class="field-title"><%= f.label :identifier %></div>
-        <%= f.text_field :identifier, required: false, label: false, class: 'form-control identifier' %>
-      </div>
-    </div>
-  <% end %>
+          <a href="javascript:void(0);" class="add_segment_date add_button_interview text-decoration-none" data-systen-name="segment_date">
+            +
+          </a>
+        </div>
 
-  <% if @index_template['fields']['segment_date']['status'] %>
-    <div class="d-flex">
-      <div class="form-group">
-        <div class="field-title"><%= f.label :segment_date, 'Segment Date' %></div>
-        <%= f.text_field :segment_date, required: false, label: false, class: 'form-control segment_date' %>
-      </div>
-    </div>
-  <% end %>
+        <div class="container_field" data-system-name="segment_date">
+          <% values = get_values(@file_index_point.segment_date)
+            values = [':::'] unless values.present?
+            values.each do |segment_date| %>
+            <% value, vocabulary = segment_date.split(':::') %>
+            <div class="single-field-container" data-system-name="segment_date">
+              <a href="javascript://" class="remove_field remove_segment_date_field" title="Remove segment date"><i class="remove_icon_image"></i></a>
+              <div class="d-flex">
+                <div class="form-group w-100 h-4">
+                  <div class="field-title"><%= f.label :vocabulary %></div>
+                  <select name="file_index_point[segment_date][][vocabulary]" style="height: 53px"
+                    id="file_index_point_segment_date_vocabular" class="optional form-control parent_id dont-apply-selectize segment_date">
+                    <option value>None</option>
+                    <%== presenter.generate_vocabulary_dropdown(@org_index_fields_conf['segment_date']['vocabulary'], vocabulary) %>
+                  </select>
+                </div>
+              </div>
 
-  <% if @index_template['fields']['rights']['status'] %>
-    <div class="d-flex">
-      <div class="form-group">
-        <div class="field-title"><%= f.label :rights %></div>
-        <%= f.text_area :rights, required: false, label: false, class: 'form-control rights' %>
+              <div class="d-flex">
+                <div class="form-group">
+                  <div class="field-title">
+                    <label for="file_index_point[segment_date][][value]">
+                      Value
+                    </label>
+                  </div>
+
+                  <input label="false" class="form-control segment_date" type="text" value="<%= value %>"
+                    name="file_index_point[segment_date][][value]" id="file_index_point_segment_date_0_value">
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </div>
       </div>
-    </div>
-  <% end %>
-</div>
+    <% end %>
+
+
+    <!-- Rights -->
+    <% if @index_template['fields']['rights']['status'] %>
+      <div class="form-group border p-4 rounded custom_form mt-5">
+        <div class="field-title border_title">
+          <%= f.label :rights %>
+
+          <a href="javascript:void(0);" class="add_rights add_button_interview text-decoration-none" data-systen-name="rights">
+            +
+          </a>
+        </div>
+
+        <div class="container_field" data-system-name="rights">
+          <% values = get_values(@file_index_point.rights)
+            values = [':::'] unless values.present?
+            values.each do |rights| %>
+            <% value, vocabulary = rights.split(':::') %>
+            <div class="single-field-container" data-system-name="rights">
+              <a href="javascript://" class="remove_field remove_rights_field" title="Remove rights"><i class="remove_icon_image"></i></a>
+              <div class="d-flex">
+                <div class="form-group w-100 h-4">
+                  <div class="field-title"><%= f.label :vocabulary %></div>
+                  <select name="file_index_point[rights][][vocabulary]" style="height: 53px"
+                    id="file_index_point_rights_vocabular" class="optional form-control parent_id dont-apply-selectize rights">
+                    <option value>None</option>
+                    <%== presenter.generate_vocabulary_dropdown(@org_index_fields_conf['rights']['vocabulary'], vocabulary) %>
+                  </select>
+                </div>
+              </div>
+
+              <div class="d-flex">
+                <div class="form-group">
+                  <div class="field-title">
+                    <label for="file_index_point[rights][][value]">
+                      Value
+                    </label>
+                  </div>
+
+                  <div class="input text optional file_index_point_rights">
+                    <textarea class="text optional form-control rights" name="file_index_point[rights][][value]"
+                      id="file_index_point_rights_0_value" spellcheck="false"><%= value %></textarea>
+                  </div>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+<% end %>
