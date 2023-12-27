@@ -15,14 +15,14 @@ class FileIndexPoint < ApplicationRecord
                 :gps_description_alt, :zoom_alt, :hyperlink_alt, :hyperlink_description_alt, :gps_points_alt, :hyperlinks_alt
 
   def dates_not_out_of_bound
-    duration = file_index.collection_resource_file&.duration || file_index.interview&.media_duration
+    duration = file_index.collection_resource_file&.duration
     return if !duration.present? || duration == 0
 
     if start_time < 0 || start_time > duration
       errors.add(:start_time, "can't be out of bound")
     end
 
-    return if end_time.present? && (end_time > 0 && end_time <= duration && end_time >= start_time)
+    return if end_time.nil? || (end_time.present? && (end_time <= duration && end_time >= start_time))
 
     errors.add(:end_time, "can't be out of bound")
   end

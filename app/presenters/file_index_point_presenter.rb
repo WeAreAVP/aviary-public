@@ -135,4 +135,169 @@ class FileIndexPointPresenter < BasePresenter
     end
     anchor.join(', ')
   end
+
+  def render_aviary_index_segment_fields(index_fields_conf)
+    html = ''
+
+    index_fields_conf.each do |field|
+      case field[0]
+      when 'title'
+        html += render_field(@model.title, 'Segment TItle')
+
+      when 'synopsis', 'publisher', 'contributor', 'identifier', 'segment_date', 'rights'
+        unless @model[field[0]].blank?
+          html += render_field(@model[field[0]], field[0].titleize)
+        end
+
+      when 'keywords', 'subjects'
+        f = @model[field[0]]
+        unless f.blank?
+          html += render_keywords_subjects(f, field[0].titleize)
+        end
+
+      when 'gps'
+        if JSON.parse(@model.gps_points).length.positive?
+          html += render_gps_points
+        end
+
+      when 'hyperlink'
+        if JSON.parse(@model.hyperlinks).length.positive?
+          html += render_hyperlink
+        end
+      end
+    end
+
+    html
+  end
+
+  def render_field(field, label)
+    html = <<-HTML
+      <li class="list-group-item d-flex justify-content-between">
+        <div class="w-50"><strong>#{label}:</strong></div>
+          <div class="w-50">
+    HTML
+
+    field.split('|||').each do |value|
+      value, vocabulary = value.split(':::')
+
+      html += <<-HTML
+            <div>
+      HTML
+
+      if vocabulary.present?
+        html += <<-HTML
+              <span class="badge badge-secondary">
+                #{vocabulary}
+              </span>
+        HTML
+      end
+
+      html += <<-HTML
+            <span>
+              #{value}
+            </span>
+          </div>
+      HTML
+    end
+
+    html + <<-HTML
+        </div>
+      </li>
+    HTML
+  end
+
+  def render_hyperlink
+    html = <<-HTML
+      <li class="list-group-item ">
+        <div class="w-100"><strong>Hyperlinks</strong></div>
+        <div class="w-100">
+          <div class="card-box">
+    HTML
+
+    JSON.parse(@model.hyperlinks).each_with_index do |hyperlink, _index|
+      html += <<-HTML
+        <ul class="list-group list-group-flush border mb-2">
+          <li class="list-group-item d-flex justify-content-between">
+            <div class="w-50"><strong>Hyperlink:</strong></div>
+            <div class="w-50">#{hyperlink['hyperlink']}</div>
+          </li>
+          <li class="list-group-item d-flex justify-content-between">
+            <div class="w-50"><strong>Hyperlink Description:</strong></div>
+            <div class="w-50">#{hyperlink['description']}</div>
+          </li>
+        </ul>
+      HTML
+    end
+
+    html + <<-HTML
+          </div>
+        </div>
+      </li>
+    HTML
+  end
+
+  def render_gps_points
+    html = <<-HTML
+      <li class="list-group-item ">
+        <div class="w-100"><strong>GPS</strong></div>
+        <div class="w-100">
+          <div class="card-box">
+    HTML
+
+    JSON.parse(@model.gps_points).each_with_index do |gps, _index|
+      html += <<-HTML
+        <ul class="list-group list-group-flush border mb-2">
+          <li class="list-group-item d-flex justify-content-between">
+            <div class="w-50"><strong>GPS:</strong></div>
+            <div class="w-50">#{gps['lat']}, #{gps['long']}</div>
+          </li>
+          <li class="list-group-item d-flex justify-content-between">
+            <div class="w-50"><strong>GPS Description:</strong></div>
+            <div class="w-50">#{gps['description']}</div>
+          </li>
+          <li class="list-group-item d-flex justify-content-between">
+            <div class="w-50"><strong>Zoom:</strong></div>
+            <div class="w-50">#{gps['zoom']}</div>
+          </li>
+        </ul>
+      HTML
+    end
+
+    html + <<-HTML
+          </div>
+        </div>
+      </li>
+    HTML
+  end
+
+  def render_keywords_subjects(terms, label)
+    html = <<-HTML
+      <li class="list-group-item d-flex justify-content-between">
+        <div class="w-50"><strong>#{label}:</strong></div>
+        <div class="w-50">
+    HTML
+
+    terms.split(/;(?=(?:(?:[^"]*"){2})*[^"]*$)/).each do |term|
+      html += <<-HTML
+        <span class="badge badge-secondary single_value_non_tombstone">#{term.strip}</span>
+      HTML
+    end
+
+    html + <<-HTML
+        </div>
+      </li>
+    HTML
+  end
+
+  def generate_vocabulary_dropdown(vocabulary, selected = '')
+    return nil unless vocabulary.present?
+
+    options = vocabulary.map do |term|
+      <<-HTML
+        <option value="#{term}" #{selected == term ? 'selected' : ''}>#{term}</option>
+      HTML
+    end
+
+    options.join("\n")
+  end
 end

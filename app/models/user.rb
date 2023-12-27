@@ -34,6 +34,11 @@ class User < ApplicationRecord
   validate :password_complexity
   scope :active_users, -> { where(status: true) }
   before_save :handle_extra_fields
+  after_update :update_name_on_request_accesses, if: proc { (previous_changes.keys & %w[first_name last_name email]).any? }
+
+  def update_name_on_request_accesses
+    UpdateRequestAccess.set(wait: 5.seconds).perform_later(:user_id, id)
+  end
 
   def handle_extra_fields
     self.username = 'aviary_username' if username.blank?

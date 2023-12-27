@@ -23,7 +23,7 @@ module CollectionResourceHelper
       custom_value = 'Custom Unique Identifier'
     else
       custom_value = value.to_s.split('_')
-      custom_value[0] = '' unless %w(id_ss title_ss collection_title supplemental_file_count_ss resource_file_count_ss transcripts_count_ss indexes_count_ss updated_at_ss access_ss).include? value
+      custom_value[0] = '' unless %w(id_ss title_ss collection_title supplemental_file_count_ss resource_file_count_ss transcripts_count_ss indexes_count_ss updated_at_ss access_ss collection_sort_order_is).include? value
       custom_value[custom_value.size - 1] = ''
       custom_value = custom_value.join(' ').titleize.strip
       custom_value = 'Public' if custom_value == 'Access'
