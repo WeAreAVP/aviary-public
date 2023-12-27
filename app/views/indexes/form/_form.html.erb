@@ -1,6 +1,7 @@
 <%
   index_fields_conf = YAML.load_file(Rails.root.join('config','index_fields.yml'))
   @index_template = index_fields_conf['index_template_items'][@resource_file.collection_resource.collection.index_template]
+  @org_index_fields_conf = @resource_file.collection_resource.collection.organization.organization_field.index_fields
 %>
 <div class="interview-index">
   <div class="breadcrumb resources-details">
@@ -20,7 +21,7 @@
           <h1 id="index_title_heading" class="cursor-pointer" style="text-transform: none;"><%= @file_index.title %></h1>
 
           <%= simple_form_for @file_index, html: { class: 'd-none', id: "save_file_index_title_form" },
-            url: update_index_title_path(@file_index.id) do |f| %>
+            url: update_file_index_partial_path(@file_index.id) do |f| %>
             <input class="string required form-control" id="edit_file_index_title" required="required" aria-required="true" type="text"
             value="<%= @file_index.title %>" name="file_index[title]" />
 
@@ -177,7 +178,7 @@
                     <div class="d-flex w-100">
                       <div class="form-group w-100 h-4">
                         <div class="field-title"><%= f.label :parent_id, "Part of" %></div>
-                        <select name='<%= "file_index_point[parent_id]"%>' style="height: 53px"
+                        <select name="file_index_point[parent_id]"style="height: 53px"
                           id="file_index_point_parent_id" class="optional form-control parent_id dont-apply-selectize">
                           <option value="0">Select Parent Index Segment</option>
                           <%== generate_segments_dropdown(@file_index, @file_index_point) %>

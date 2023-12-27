@@ -141,7 +141,8 @@ class Organization < ApplicationRecord
       '31' => { status: 'true', value: 'media_url_texts', sort_name: true },
       '32' => { status: 'true', value: 'right_statement_texts', sort_name: true },
       '33' => { status: 'true', value: 'created_at_is', sort_name: true },
-      '34' => { status: 'true', value: 'updated_at_is', sort_name: true }
+      '34' => { status: 'true', value: 'updated_at_is', sort_name: true },
+      '35' => { status: 'true', value: 'ohms_assigned_user_name_ss', sort_name: true }
     }.to_json
     update(interview_display_column: display_columns_update, interview_search_column: search_columns_update) if interview_search_column.blank? && interview_display_column.blank?
   end
@@ -194,10 +195,15 @@ class Organization < ApplicationRecord
     fields_information = Rails.configuration.default_fields['fields']
     org_field = OrganizationField.find_or_create_by(organization: self)
     if (org_field.resource_fields.blank? && org_field.collection_fields.blank?) || org_field.blank?
-      return org_field.update(collection_fields: fields_information['collection'], resource_fields: fields_information['resource'])
+      return org_field.update(
+        collection_fields: fields_information['collection'],
+        resource_fields: fields_information['resource'],
+        index_fields: fields_information['index']
+      )
     end
     org_field.update(collection_fields: fields_information['collection']) if org_field.blank? || org_field.collection_fields.blank?
     org_field.update(resource_fields: fields_information['resource']) if org_field.blank? || org_field.resource_fields.blank?
+    org_field.update(index_fields: fields_information['index']) if org_field.blank? || org_field.index_fields.blank?
   end
 
   def self.field_list_with_options

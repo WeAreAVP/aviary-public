@@ -74,7 +74,12 @@ module InterviewIndexHelper
     elsif interview.media_host == 'Vimeo'
       regex = %r{https?:\/\/(?:\w+\.)*vimeo\.com(?:[\/\w]*\/?)?\/(?<id>[0-9]+)[^\s]*}
       match = regex.match(interview.embed_code)
-      data['src'] = match[0]
+
+      if match.present?
+        data['src'] = match[0]
+      else
+        data['error'] = 'Error processing url. It can be because the provided url is not of vimeo.'
+      end
     end
     data
   end
@@ -147,6 +152,53 @@ module InterviewIndexHelper
     file_index_point.identifier = params[:file_index_point][:identifier] if params[:file_index_point][:identifier].present?
     file_index_point.rights = params[:file_index_point][:rights] if params[:file_index_point][:rights].present?
     file_index_point.segment_date = params[:file_index_point][:segment_date] if params[:file_index_point][:segment_date].present?
+    if params[:file_index_point][:end_time].present? && human_to_seconds(params[:file_index_point][:end_time]).to_f > file_index_point.start_time
+      file_index_point.end_time = human_to_seconds(params[:file_index_point][:end_time]).to_f
+      return file_index_point
+    end
+
+    set_end_time(file_index_point, params[:item_length].to_f)
+  end
+
+  def set_aviary_index_point_values(file_index_point, params)
+    lat = []
+    long = []
+
+    if params[:file_index_point]['zoom'].present? && params[:file_index_point]['gps_latitude'].present? && params[:file_index_point]['gps_description'].present?
+      unless params[:file_index_point]['zoom'].first.empty? && params[:file_index_point]['gps_latitude'].first.empty? && params[:file_index_point]['gps_description'].first.empty?
+        params[:file_index_point]['gps_latitude'].each_with_index do |gps, _index|
+          temp = gps.split(',')
+          if temp.length > 1
+            lat << temp[0].strip
+            long << temp[1].strip
+          end
+        end
+      end
+    end
+
+    file_index_point.gps_zoom = params[:file_index_point]['zoom'].to_json if params[:file_index_point]['zoom'].present?
+    file_index_point.gps_description = params[:file_index_point]['gps_description'].to_json if params[:file_index_point]['gps_description'].present?
+    file_index_point.gps_latitude = lat.to_json if lat.present?
+    file_index_point.gps_longitude = long.to_json if long.present?
+    file_index_point.hyperlink = params[:file_index_point]['hyperlink'].to_json if params[:file_index_point]['hyperlink'].present?
+    file_index_point.hyperlink_description = params[:file_index_point]['hyperlink_description'].to_json if params[:file_index_point]['hyperlink_description'].present?
+    file_index_point.keywords = params[:keywords].join(';') if params[:keywords].present?
+    file_index_point.subjects = params[:subjects].join(';') if params[:subjects].present?
+    file_index_point.parent_id = params[:file_index_point][:parent_id] if params[:file_index_point][:parent_id].present?
+
+    %i[publisher partial_script contributor identifier rights segment_date synopsis].each do |field|
+      if params[:file_index_point][field].present?
+        terms = params[:file_index_point][field].map do |term|
+          if term['value'].present?
+            value = term['value']
+            value + (term['vocabulary'].present? ? ":::#{term['vocabulary']}" : '')
+          end
+        end
+
+        file_index_point[field] = terms.join('|||')
+      end
+    end
+
     if params[:file_index_point][:end_time].present? && human_to_seconds(params[:file_index_point][:end_time]).to_f > file_index_point.start_time
       file_index_point.end_time = human_to_seconds(params[:file_index_point][:end_time]).to_f
       return file_index_point
@@ -262,6 +314,11 @@ module InterviewIndexHelper
     end
 
     options.join("\n")
+  end
+
+  def get_values(field)
+    values = field&.split('|||')
+    values.present? ? values : [':::']
   end
 
   def next_navigation_button
