@@ -13,11 +13,16 @@
               <div class="row custom-order-level">
                 <div class="col-xl-7 col-lg-6">
                   <div class="heading-holder table-head my-3">
-                    <div class="heading-holder d-flex align-items-center">
-                      <a id="back-to-search-btn" href="<%= ohms_records_path() %>">
-                        <span class="fa fa-angle-left "></span> <small>Return to OHMS Studio</small>
-                      </a>
-                      <h1><%= @interview.title %></h1>
+                    <div class="heading-holder table-head m-0">
+                      <div class="heading-box">
+                        <a id="back-to-search-btn" href="<%= ohms_records_path() %>">
+                          <span class="fa fa-angle-left "></span> <small class="py-2">Return to OHMS Studio</small>
+                        </a>
+                        <h1><%= @interview.title %></h1>
+                      </div>
+                      <% if @interview.present? %>
+                        <%= link_to 'Preview', preview_interviews_manager_path(@interview.id), class: 'btn-interview-preview' %>
+                      <% end %>
                     </div>
                   </div>
                 </div>

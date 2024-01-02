@@ -12,11 +12,11 @@
                 <div class="heading-box">
                   <% if @interview.present? %>
                     <%= link_to ohms_records_path, id: 'back-to-search-btn' do %>
-                      <span class="fa fa-angle-left "></span> <small>Back to OHMS Studio</small>
+                      <span class="fa fa-angle-left "></span> <small class="py-2">Back to OHMS Studio</small>
                     <% end %>
                   <% else %>
                     <%= link_to "#{collection_collection_resource_details_url(@collection_resource.collection, @collection_resource, @resource_file)}/index?", id: 'back-to-search-btn' do %>
-                      <span class="fa fa-angle-left "></span> <small>Back to My Resource</small>
+                      <span class="fa fa-angle-left "></span> <small class="py-2">Back to My Resource</small>
                     <% end %>
                   <% end %>
                   <h1 style="text-transform: none;"><%= @interview.present? ? @interview.title : @collection_resource.title %></h1>
