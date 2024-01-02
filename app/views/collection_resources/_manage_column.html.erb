@@ -50,7 +50,8 @@
                            end %>
                         <% next unless global_status %>
 
-                        <% label = single_collection_field['label'] %>
+                        <% label = single_collection_field['label']
+                           label += ' *' if single_collection_field['is_default'].to_s.to_boolean? %>
                         <% resource_table_display = single_collection_field['resource_table_display'] %>
 
                         <li id="<%= system_name %>" class="sortable-li">
@@ -86,7 +87,8 @@
                         <% visible_at = nil
                            visible_at = @resource_fields[system_name]['field_configuration']['visible_at'] if @resource_fields[system_name]['field_configuration'].present? && @resource_fields[system_name]['field_configuration']['special_purpose'].present? && @resource_fields[system_name]['field_configuration']['special_purpose'].to_s.to_boolean? %>
                         <% if visible_at.nil? || visible_at.include?('resource_search') %>
-                          <% label = single_collection_field['label'] %>
+                          <% label = single_collection_field['label']
+                             label += ' *' if single_collection_field['is_default'].to_s.to_boolean? %>
                           <% resource_table_search = single_collection_field['resource_table_search'] %>
                           <li id="<%= system_name %>" class="sortable-li">
                             <div class="form-check m-0 d-inline-block">
