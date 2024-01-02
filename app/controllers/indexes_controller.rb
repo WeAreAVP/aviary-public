@@ -36,28 +36,18 @@ class IndexesController < ApplicationController
   end
 
   def create
-    if params[:file_index_id]
-      file_index = FileIndex.find(params[:file_index_id])
-      if params[:file_index][:associated_file_file_name] && !params[:file_index][:assocated_file].present?
-        file_index.associated_file_file_name = params[:file_index][:associated_file_file_name]
-      end
-      success = file_index.update(file_index_params)
-    else
-      file_index = FileIndex.new(file_index_params)
-      file_index.user = current_user
-      resource_file = CollectionResourceFile.find(params[:resource_file_id])
-      file_index.collection_resource_file = resource_file
-      file_index.sort_order = resource_file.file_indexes.length + 1
-      success = file_index.save
+    FileIndex.transaction do
+      _success, is_new = params[:file_index_id] ? [update_file_index, false] : [create_file_index, true]
+
+      process_associated_file(is_new)
+    rescue StandardError
+      add_errors unless @file_index.errors.present?
+
+      raise ActiveRecord::Rollback
     end
+
     respond_to do |format|
-      if success
-        file_index.file_index_points.destroy_all if params[:file_index_id] && file_index_params[:associated_file].present?
-        Aviary::IndexTranscriptManager::IndexManager.new.process(file_index) if file_index_params[:associated_file].present?
-        format.json { render json: [errors: []] }
-      else
-        format.json { render json: [errors: file_index.errors] }
-      end
+      format.json { render json: [errors: @file_index.errors] }
     end
   end
 
@@ -216,6 +206,50 @@ class IndexesController < ApplicationController
     else
       render json: { message: 'Unable to update File Index Point title.', status: 'danger' }
     end
+  end
+
+  private
+
+  def update_associated_file_file_name
+    return unless should_update_associated_file_file_name?
+
+    @file_index.associated_file_file_name = params[:file_index][:associated_file_file_name]
+  end
+
+  def should_update_associated_file_file_name?
+    !params[:file_index][:assocated_file].present? && params[:file_index][:associated_file_file_name].present?
+  end
+
+  def create_file_index
+    @file_index = FileIndex.new(file_index_params)
+    @file_index.user = current_user
+    resource_file = CollectionResourceFile.find(params[:resource_file_id])
+    @file_index.collection_resource_file = resource_file
+    @file_index.sort_order = resource_file.file_indexes.length + 1
+    @file_index.save!
+  end
+
+  def update_file_index
+    @file_index = FileIndex.find(params[:file_index_id])
+    update_associated_file_file_name
+    @file_index.update!(file_index_params)
+  end
+
+  def process_associated_file(is_new)
+    return unless file_index_params[:associated_file].present?
+
+    Aviary::IndexTranscriptManager::IndexManager.new.process(@file_index, is_new)
+  end
+
+  def add_errors
+    errors = @file_index&.file_index_points&.map do |point|
+      point.errors.map(&:full_message)
+    end
+
+    @file_index.errors.add(
+      :associated_file,
+      errors.flatten.uniq
+    )
   end
 
   # Never trust parameters from the scary internet, only allow the white list through.
