@@ -61,7 +61,8 @@
                 <% if @file_index_point.errors && @file_index_point.errors.messages && @file_index_point.errors.messages.length.positive? && @file_index_point.errors.messages[:start_time] && @file_index_point.errors.messages[:start_time].first %>
                   <span class="form_error"><%= @file_index_point.errors.messages[:start_time].first %></span>
                 <% end %>
-                <a href="javascript:void(0);" class="btn btn-outline-dark update_time" style="right: 30px;">Update Time</a>
+                <a href="javascript:void(0);" class="btn btn-outline-dark update_time" data-toggle="tooltip" data-placement="bottom"
+                  title="Set time from current position" aria-label="Set time from current position" style="right: 30px;">Set Time</a>
               </div>
               <div class="buttons-box music_btn">
                 <a href="javascript:void(0);" class="btn btn-outline-dark update_step_backward"><i class="fa fa-step-backward"></i></a>

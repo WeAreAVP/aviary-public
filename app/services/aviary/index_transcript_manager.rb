@@ -22,28 +22,48 @@ module Aviary::IndexTranscriptManager
     step :map_hash_to_db
 
     def process(file_index, is_new = true, import = false)
-      file_path = ENV['RAILS_ENV'] == 'production' ? file_index.associated_file.expiring_url : file_index.associated_file.path
+      file_path = Rails.env.production? ? file_index.associated_file.expiring_url : file_index.associated_file.path
       if ['application/xml', 'text/xml'].include? file_index.associated_file_content_type
         doc = Nokogiri::XML(open(file_path))
         xml_hash = Hash.from_xml(doc.to_s)
         hash, alt_hash, language = parse_ohms_xml(xml_hash, file_index)
         map_hash_to_db(file_index, hash, is_new, alt_hash, language)
       else
-        require 'webvtt'
-        tmp = Tempfile.new("webvtt_#{Time.now.to_i}")
-        if ENV['RAILS_ENV'] == 'production'
-          tmp << URI.parse(file_path).read.force_encoding('UTF-8')
-          tmp.flush
-          file_path = tmp.path
-        end
-        webvtt = WebVTT.read(file_path)
-        tmp.close
-        hash = parse_webvtt(webvtt)
-        map_hash_to_db(file_index, hash, is_new)
+        process_webvtt(file_index, file_path, is_new)
       end
     rescue StandardError => ex
-      import.import_error_manager(BulkImportManager.error_reporting("<strong> Unable to process Index file #{file_path}")) if import.present?
-      puts ex
+      Rails.logger.error ex
+      return raise ex unless import.present?
+
+      import.import_error_manager(
+        BulkImportManager.error_reporting(
+          "<strong> Unable to process Index file #{file_path}"
+        )
+      )
+    end
+
+    def process_webvtt(file_index, file_path, is_new)
+      require 'webvtt'
+
+      tmp = Tempfile.new("webvtt_#{Time.now.to_i}")
+      unless Rails.env.test?
+        tmp << URI.parse(file_path).read.force_encoding('UTF-8')
+        tmp.flush
+
+        file_path = tmp.path
+      end
+
+      webvtt = WebVTT.read(file_path)
+      tmp.close
+
+      hash = parse_webvtt(webvtt)
+      map_hash_to_db(file_index, hash, is_new)
+
+      unless hash.length == file_index.file_index_points.count
+        return raise 'Error processing file index points'
+      end
+
+      Success
     end
 
     def parse_webvtt(webvtt)
@@ -218,6 +238,7 @@ module Aviary::IndexTranscriptManager
           update_existing_points(file_index, hash)
         end
       end
+
       update_parents(file_index)
       if alt_hash.present?
         file_index_alt = FileIndex.new
@@ -232,6 +253,7 @@ module Aviary::IndexTranscriptManager
         file_index_alt.file_index_points.create(alt_hash)
         update_parents(file_index_alt)
       end
+
       file_index.collection_resource_file.collection_resource.reindex_collection_resource
       Success
     end
@@ -240,7 +262,7 @@ module Aviary::IndexTranscriptManager
       file_index.file_index_points.each do |x1|
         file_index.file_index_points.each do |x2|
           if x1.id != x2.id && (x1.start_time.to_f >= x2.start_time.to_f && x1.end_time.to_f <= x2.end_time.to_f)
-            x1.parent_id = x2.id
+            x1.parent_id = x2.id || 0
             x1.save
           end
         end

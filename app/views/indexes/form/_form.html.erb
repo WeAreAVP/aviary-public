@@ -107,7 +107,9 @@
                           <span class="form_error"><%= @file_index_point.errors.messages[:start_time].first %></span>
                         <% end %>
 
-                        <a href="javascript:void(0);" data-time-target=".video_start_time" class="btn btn-outline-dark update_time float-right">Update Time</a>
+                        <a href="javascript:void(0);" data-time-target=".video_start_time" class="btn btn-outline-dark update_time float-right"
+                          data-toggle="tooltip" data-placement="bottom" title="Set time from current position"
+                          aria-label="Set time from current position">Set Time</a>
                       </div>
                     <% end %>
                     <!-- Start Time End -->
@@ -133,7 +135,9 @@
                           <span class="form_error"><%= @file_index_point.errors.messages[:end_time].first %></span>
                         <% end %>
 
-                        <a href="javascript:void(0);" data-time-target=".video_end_time" class="btn btn-outline-dark update_time float-right">Update Time</a>
+                        <a href="javascript:void(0);" data-time-target=".video_end_time" class="btn btn-outline-dark update_time float-right"
+                          data-toggle="tooltip" data-placement="bottom" title="Set time from current position"
+                          aria-label="Set time from current position">Set Time</a>
                       </div>
                     <% end %>
                     <!-- End Time End -->
