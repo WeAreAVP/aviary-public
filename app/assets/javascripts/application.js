@@ -542,8 +542,10 @@ function skip_to_content(){
 
     document_level_binding_element('.skiptocontent', 'keyup', function (event) {
         if (event.keyCode === 13 || event.keyCode === 32) {
-            if ($('.vjs-big-play-button').length)
+            if ($('.vjs-big-play-button').length && !$('.vjs-has-started').length)
                 $('.vjs-big-play-button').focus();
+            else if ($('.vjs-play-control'))
+                $('.vjs-play-control').focus();
             else
                 $('.focusable:first').focus();
         }
