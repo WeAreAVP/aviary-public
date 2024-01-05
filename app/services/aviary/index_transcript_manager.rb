@@ -79,8 +79,8 @@ module Aviary::IndexTranscriptManager
         single_hash['hyperlink'] = metadata['hyperlink'].present? ? metadata['hyperlink'].to_json : json_array
         single_hash['hyperlink_description'] = metadata['hyperlink_description'].present? ? metadata['hyperlink_description'].to_json : json_array
         single_hash['partial_script'] = metadata['partial_transcript'].present? ? metadata['partial_transcript'] : ''
-        single_hash['subjects'] = ''
-        single_hash['keywords'] = ''
+        single_hash['subjects'] = metadata['subjects'].to_s
+        single_hash['keywords'] = metadata['keywords'].to_s
         single_hash['title'] = cue.identifier.present? ? cue.identifier : index_hash.size + 1
         single_hash['start_time'] = cue.start.to_f
         single_hash['end_time'] = cue.end.to_f
@@ -103,8 +103,9 @@ module Aviary::IndexTranscriptManager
 
         key = data['label']['en'][0].strip.downcase.parameterize(separator: '_')
 
-        if %w[gps_description gps_zoom_level gps_coordinates hyperlink hyperlink_description].include?(key)
-          if key == 'gps_coordinates'
+        if %w[gps_description gps_zoom_level gps_coordinates hyperlink hyperlink_description keywords subjects].include?(key)
+          case key
+          when 'gps_coordinates'
             coordinates = data['value'].split(';')
             metadata['gps_lat'] = []
             metadata['gps_lng'] = []
@@ -116,6 +117,8 @@ module Aviary::IndexTranscriptManager
               metadata['gps_lat'].push(coordinate[0].strip)
               metadata['gps_lng'].push(coordinate[1].strip)
             end
+          when 'keywords', 'subjects'
+            metadata[key] = data['value'].split(';').map(&:strip).join(';')
           else
             metadata[key] = data['value'].split(',').map(&:strip)
           end

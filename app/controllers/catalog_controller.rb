@@ -335,7 +335,7 @@ class CatalogController < ApplicationController
     config.add_sort_field 'title_ss desc', label: 'Title (Z-A)'
     config.add_sort_field 'title_ss asc', label: 'Title (A-Z)'
     config.add_sort_field 'created_at_ds desc', label: 'Date Added'
-    config.add_sort_field 'description_collection_sort_order_is asc', label: 'Collection Sort Order'
+    config.add_sort_field 'collection_sort_order_is asc', label: 'Collection Sort Order'
 
     config.view.grid.partials = %i[index_header index]
     config.add_results_document_tool(:bookmark, partial: 'bookmark_control', if: false)
