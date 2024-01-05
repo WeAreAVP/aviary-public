@@ -44,7 +44,7 @@ class CollectionsController < ApplicationController
       resource_where = "( collection_resources.access IN(#{access_filter.join(', ')}) )"
       @featured_collection_resources = CollectionResource.list_resources(
         organization, @collection.id, resource_where, false, per_page,
-        'collection_resources.is_featured  DESC, collection_resources.collection_sort_order ASC, lower(collection_resources.title) ASC',
+        'collection_resources.is_featured  DESC, -collection_resources.collection_sort_order DESC, lower(collection_resources.title) ASC',
         offset
       )
 
