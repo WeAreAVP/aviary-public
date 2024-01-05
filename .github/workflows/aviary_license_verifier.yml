@@ -18,7 +18,7 @@ jobs:
           ref: ${{ github.event.pull_request.head.ref }}
           
       - name: Checkout Project Directory
-        run: cd /home/runner/work/aviaryplatform/aviaryplatform
+        run: cd /home/runner/work/aviary-public/aviary-public
 
       - name: Libs Installation
         run: sudo apt-get install libcurl4 libcurl4-openssl-dev
