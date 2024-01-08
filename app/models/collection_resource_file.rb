@@ -119,6 +119,21 @@ class CollectionResourceFile < ApplicationRecord
       'embed_code_texts' => 'Media Embed Code' }
   end
 
+  def self.media_file_field_label(system_name, organization = current_organization)
+    resource_fields = organization.organization_field.resource_fields
+    return fields_values[system_name] unless resource_fields[field_name(system_name)].present?
+
+    fields_values[system_name] + (add_asterisk?(resource_fields[field_name(system_name)]) ? ' *' : '')
+  end
+
+  def self.field_name(system_name)
+    system_name.sub(/_(ds|ss|is|sms|lms|texts)$/, '') if system_name.present?
+  end
+
+  def self.add_asterisk?(field)
+    field['is_default'].to_s.to_boolean?
+  end
+
   def self.date_time_format(date_time)
     date_time.to_datetime.strftime('%m-%d-%Y %H:%M:%S')
   end

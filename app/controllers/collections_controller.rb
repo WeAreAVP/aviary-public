@@ -42,8 +42,11 @@ class CollectionsController < ApplicationController
       per_page = 8
       offset = page_number * per_page
       resource_where = "( collection_resources.access IN(#{access_filter.join(', ')}) )"
-
-      @featured_collection_resources = CollectionResource.list_resources(organization, @collection.id, resource_where, false, per_page, 'collection_resources.is_featured  DESC, lower(collection_resources.title) ASC', offset)
+      @featured_collection_resources = CollectionResource.list_resources(
+        organization, @collection.id, resource_where, false, per_page,
+        'collection_resources.is_featured  DESC, -collection_resources.collection_sort_order DESC, lower(collection_resources.title) ASC',
+        offset
+      )
 
       render json: { partial: render_to_string(partial: 'home/resources_home_inner', locals: { from_lazy_load: params[:from_lazy_load].present?, featured_resources: @featured_collection_resources,
                                                                                                collection_wise_resources: [], featured: false }) }

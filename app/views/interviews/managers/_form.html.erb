@@ -9,7 +9,7 @@ thesaurus_settings = ::Thesaurus::ThesaurusSetting.where(organization_id: curren
     <div class="col-md-12 border-bottom mb-4 top-index-interview">
       <div class="row">
         <div class="col-md-5">
-          <div class="text-headline jumbotron mt-0 mb-4">
+          <div class="text-headline jumbotron my-0">
             <div class="heading-holder">
               <div class="heading-box">
                 <%= link_to '', ohms_records_path, id: 'back-to-search-btn', class: 'btn-back' %>
@@ -17,8 +17,13 @@ thesaurus_settings = ::Thesaurus::ThesaurusSetting.where(organization_id: curren
               </div>
             </div>
           </div>
-          
+         <div class="heading-holder">
+            <% if @interview.present? %>
+              <%= link_to 'Preview', preview_interviews_manager_path(@interview.id), class: 'btn-interview-preview' %>
+            <% end %>
+          </div>
         </div>
+
         <div class="col-md-7">
           <div class="d-flex flex-column ml-auto right-toolbar">
             <div class="status d-flex align-items-center m-1">
@@ -105,12 +110,12 @@ thesaurus_settings = ::Thesaurus::ThesaurusSetting.where(organization_id: curren
             <%= f.input :interview_date, label: false, input_html: { class: 'form-control', type: 'text', placeholder: 'yyyy-mm-dd or yyyy-mm or yyyy' } %>
           </div>
           <div class="form-group">
-            <div class="field-title"><%= f.label :media_type, 'Type' %></div>
-            <%= f.input :media_type, label: false, input_html: { class: 'form-control media_type' } %>
-          </div>
-          <div class="form-group">
             <div class="field-title"><%= f.label :date_non_preferred_format, 'Date (non-preferred format) ' %></div>
             <%= f.input :date_non_preferred_format, label: false, input_html: { class: 'form-control date_non_preferred_format' } %>
+          </div>
+          <div class="form-group">
+            <div class="field-title"><%= f.label :media_type, 'Type' %></div>
+            <%= f.input :media_type, label: false, input_html: { class: 'form-control media_type' } %>
           </div>
           <div class="form-group">
             <div class="field-title"><%= f.label :collection_id, 'Collection ID' %></div>

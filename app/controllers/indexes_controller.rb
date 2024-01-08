@@ -36,25 +36,18 @@ class IndexesController < ApplicationController
   end
 
   def create
-    if params[:file_index_id]
-      file_index = FileIndex.find(params[:file_index_id])
-      success = file_index.update(file_index_params)
-    else
-      file_index = FileIndex.new(file_index_params)
-      file_index.user = current_user
-      resource_file = CollectionResourceFile.find(params[:resource_file_id])
-      file_index.collection_resource_file = resource_file
-      file_index.sort_order = resource_file.file_indexes.length + 1
-      success = file_index.save
+    FileIndex.transaction do
+      _success, is_new = params[:file_index_id] ? [update_file_index, false] : [create_file_index, true]
+
+      process_associated_file(is_new)
+    rescue StandardError
+      add_errors unless @file_index.errors.present?
+
+      raise ActiveRecord::Rollback
     end
+
     respond_to do |format|
-      if success
-        file_index.file_index_points.destroy_all if params[:file_index_id] && file_index_params[:associated_file].present?
-        Aviary::IndexTranscriptManager::IndexManager.new.process(file_index) if file_index_params[:associated_file].present?
-        format.json { render json: [errors: []] }
-      else
-        format.json { render json: [errors: file_index.errors] }
-      end
+      format.json { render json: [errors: @file_index.errors] }
     end
   end
 
@@ -78,6 +71,11 @@ class IndexesController < ApplicationController
     authorize! :manage, current_organization
     @resource_file = CollectionResourceFile.find(params[:resource_file_id])
     @collection_resource = CollectionResource.find(@resource_file.collection_resource_id)
+    @collection_field_manager = Aviary::FieldManagement::CollectionFieldManager.new
+    @index_columns_collection = @collection_field_manager.sort_fields(
+      @collection_field_manager.collection_resource_field_settings(@collection_resource.collection, 'index_fields').index_fields, 'sort_order'
+    )
+
     if params[:file_index_id].nil?
       @file_index_point = []
     else
@@ -118,7 +116,7 @@ class IndexesController < ApplicationController
     @file_index_point.file_index_id = @file_index.id
     @file_index_point.start_time = human_to_seconds(params[:file_index_point][:start_time]).to_f
     start_time = @file_index_point.start_time
-    @file_index_point = set_custom_values(@file_index_point, '', params)
+    @file_index_point = set_aviary_index_point_values(@file_index_point, params)
     respond_to do |format|
       if @file_index_point.save
         url = "#{show_index_file_path(@resource_file.id, @file_index.id)}?time=#{start_time}"
@@ -142,7 +140,7 @@ class IndexesController < ApplicationController
     @file_index_point.update(file_index_point_params)
     @file_index_point.start_time = human_to_seconds(params[:file_index_point][:start_time]).to_f
     start_time = @file_index_point.start_time
-    @file_index_point = set_custom_values(@file_index_point, '', params)
+    @file_index_point = set_aviary_index_point_values(@file_index_point, params)
     respond_to do |format|
       if @file_index_point.save
         url = "#{show_index_file_path(@resource_file.id, @file_index.id)}?time=#{start_time}"
@@ -157,15 +155,15 @@ class IndexesController < ApplicationController
     end
   end
 
-  def update_index_title
+  def update_partial
     authorize! :manage, current_organization
     @file_index = FileIndex.find(params[:file_index_id])
     @file_index.title = params[:file_index][:title]
 
     if @file_index.save
-      render json: { message: 'Index title updated successfully.', status: 'success' }
+      render json: { message: 'File Index updated successfully.', status: 'success', file_index: @file_index }
     else
-      render json: { message: 'Unable to update Index title.', status: 'danger' }
+      render json: { message: 'Unable to update File Index', status: 'danger' }
     end
   end
 
@@ -208,6 +206,50 @@ class IndexesController < ApplicationController
     else
       render json: { message: 'Unable to update File Index Point title.', status: 'danger' }
     end
+  end
+
+  private
+
+  def update_associated_file_file_name
+    return unless should_update_associated_file_file_name?
+
+    @file_index.associated_file_file_name = params[:file_index][:associated_file_file_name]
+  end
+
+  def should_update_associated_file_file_name?
+    !params[:file_index][:assocated_file].present? && params[:file_index][:associated_file_file_name].present?
+  end
+
+  def create_file_index
+    @file_index = FileIndex.new(file_index_params)
+    @file_index.user = current_user
+    resource_file = CollectionResourceFile.find(params[:resource_file_id])
+    @file_index.collection_resource_file = resource_file
+    @file_index.sort_order = resource_file.file_indexes.length + 1
+    @file_index.save!
+  end
+
+  def update_file_index
+    @file_index = FileIndex.find(params[:file_index_id])
+    update_associated_file_file_name
+    @file_index.update!(file_index_params)
+  end
+
+  def process_associated_file(is_new)
+    return unless file_index_params[:associated_file].present?
+
+    Aviary::IndexTranscriptManager::IndexManager.new.process(@file_index, is_new)
+  end
+
+  def add_errors
+    errors = @file_index&.file_index_points&.map do |point|
+      point.errors.map(&:full_message)
+    end
+
+    @file_index.errors.add(
+      :associated_file,
+      errors.flatten.uniq
+    )
   end
 
   # Never trust parameters from the scary internet, only allow the white list through.

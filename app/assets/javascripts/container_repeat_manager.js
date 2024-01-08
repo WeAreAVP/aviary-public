@@ -24,7 +24,6 @@ function ContainerRepeatManager() {
             let cloned = $($(cloneContainer)[0]).clone();
             $(appendToContainer).append(cloned);
             $(cloned).find(fieldsReset).val('');
-
         });
 
         document_level_binding_element(removeButtonElement, 'click', function (e) {

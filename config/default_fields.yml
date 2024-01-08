@@ -1164,7 +1164,6 @@ fields:
       resource_table_sort_order: 28
       search_display: true
       search_sort_order: 28
-      
     created_at:
       label: 'Created At'
       system_name: created_at
@@ -1188,6 +1187,29 @@ fields:
       search_display: false
       search_sort_order: 32
       ris_label: ''
+    collection_sort_order:
+      label: 'Collection Sort Order'
+      system_name: collection_sort_order
+      field_type: integer
+      is_required: false
+      is_public: false
+      is_default: true
+      is_vocabulary: false
+      vocabulary: []
+      help_text: null
+      is_repeatable: true
+      field_configuration: { special_purpose: true, visible_at: 'resource_listing' }
+      field_level: resource
+      sort_order: 0
+      description_display: false
+      resource_table_display: true
+      resource_table_search: true
+      solr_display_column: 'collection_sort_order_ss'
+      solr_search_column: 'collection_sort_order_ss'
+      resource_table_sort_order: 33
+      search_display: false
+      search_sort_order: 33
+
   collection:
     identifier:
       label: 'Identifier'
@@ -1308,3 +1330,85 @@ fields:
       field_level: collection
       sort_order: 7
       display: true
+
+  index:
+    title:
+      system_name: 'title'
+      display_name: 'Segment Title'
+      sort_order: 0
+      display: true
+      required: true
+    synopsis:
+      system_name: 'synopsis'
+      display_name: 'Segment Synopsis'
+      sort_order: 1
+      display: true
+      required: false
+      vocabulary: []
+    partial_script:
+      system_name: 'partial_script'
+      display_name: 'Partial Transcript'
+      sort_order: 2
+      display: true
+      required: false
+      vocabulary: []
+    keywords:
+      system_name: 'keywords'
+      display_name: 'Keywords'
+      sort_order: 3
+      display: true
+      required: false
+    subjects:
+      system_name: 'subjects'
+      display_name: 'Subjects'
+      sort_order: 4
+      display: true
+      required: false
+    gps:
+      system_name: 'gps'
+      display_name: 'GPS'
+      sort_order: 5
+      display: true
+      required: false
+    hyperlink:
+      system_name: 'hyperlink'
+      display_name: 'Hyperlink'
+      sort_order: 6
+      display: true
+      required: false
+    publisher:
+      system_name: 'publisher'
+      display_name: 'Publisher'
+      sort_order: 7
+      display: true
+      required: false
+      vocabulary: []
+    contributor:
+      system_name: 'contributor'
+      display_name: 'Contributor'
+      sort_order: 8
+      display: true
+      required: false
+      vocabulary: []
+    segment_date:
+      system_name: 'segment_date'
+      display_name: 'Segment Date'
+      sort_order: 9
+      display: true
+      required: false
+      vocabulary: []
+    identifier:
+      system_name: 'identifier'
+      display_name: 'Identifier'
+      sort_order: 10
+      display: true
+      required: false
+      vocabulary: []
+    rights:
+      system_name: 'rights'
+      display_name: 'rights'
+      sort_order: 10
+      display: true
+      required: false
+      vocabulary: []
+    

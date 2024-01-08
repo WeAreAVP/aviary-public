@@ -347,7 +347,7 @@ class CollectionResourcesController < ApplicationController
   # Never trust parameters from the scary internet, only allow the white list through.
   def av_resource_params
     params.require(:collection_resource).permit(:resource_files, :collection_id, :is_featured, :access, :title, :custom_unique_identifier,
-                                                :add_rss_information, :include_in_rss_podcast_feed, :keywords, :explicit, :episode_type, :episode, :season, :content,
+                                                :add_rss_information, :include_in_rss_podcast_feed, :keywords, :explicit, :episode_type, :episode, :season, :content, :collection_sort_order,
                                                 collection_resource_field_values: %i[collection_resource_id value vocabularies_id collection_resource_field_id])
   end
 end

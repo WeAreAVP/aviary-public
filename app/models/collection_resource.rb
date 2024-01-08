@@ -151,18 +151,22 @@ class CollectionResource < ApplicationRecord
     boolean :status, stored: true
 
     string :external_resource_id, stored: true
+
     string :document_type, stored: true do
       'collection_resource'
     end
+
     string :created_at, stored: true
     string :updated_at, stored: true
     integer :collection_id, stored: true
     string :noid, multiple: false, stored: true
     text :custom_unique_identifier, stored: true
     string :custom_unique_identifier, stored: true
+
     integer :resource_collection_id, stored: false do
       collection_id
     end
+
     integer :resource_organization_id, stored: false do
       if collection.present?
         collection.organization_id
@@ -170,6 +174,7 @@ class CollectionResource < ApplicationRecord
         ''
       end
     end
+
     integer :organization_id, multiple: false, stored: true do
       if collection.present?
         collection.organization_id
@@ -177,6 +182,14 @@ class CollectionResource < ApplicationRecord
         ''
       end
     end
+
+    string :collection_sort_order, multiple: false, stored: true
+    integer :collection_sort_order, multiple: false, stored: true do
+      # We are assigning an arbitrarily large value if the collection_sort_order is not set
+      # so that null values will sort last
+      collection_sort_order || 100_000_000
+    end
+
     # resource_file_file_name
     string :thumbnail_link, multiple: false, stored: true do
       file = CollectionResourceFile.where(collection_resource_id: id)
@@ -230,11 +243,13 @@ class CollectionResource < ApplicationRecord
         trans_points_solr[single_mapper_definition.keys.first] if !trans_points_solr.nil? && trans_points_solr.key?(single_mapper_definition.keys.first)
       end
     end
+
     solr_mapper_index_point.each do |single_mapper_definition|
       text single_mapper_definition[single_mapper_definition.keys.first], stored: true do
         index_points_solr[single_mapper_definition.keys.first] if !index_points_solr.nil? && index_points_solr.key?(single_mapper_definition.keys.first)
       end
     end
+
     solr_mapper_definition.each do |single_mapper_definition|
       multiple = true
       multiple = false if %w[source_metadata_uri_search preferred_citation_search source_metadata_uri preferred_citation duration].include? single_mapper_definition.keys.first
@@ -390,7 +405,7 @@ class CollectionResource < ApplicationRecord
     solr_q_condition = '*:*'
     complex_phrase_def_type = false
     fq_filters = ' document_type_ss:collection_resource  '
-    sort_column = 'id_is' if sort_column == 'id_ss'
+    sort_column = sort_column.sub(/_ss$/, '_is') if %w(collection_sort_order_ss id_ss).include?(sort_column)
     sort_column = sort_column.sub(/_(ss|sms)$/, '_scis')
     if q.present? && q.match(/(\w+\.)+\w+(?=\s|$)/).present?
       # for this kind of pattern (hvt.1021.232)

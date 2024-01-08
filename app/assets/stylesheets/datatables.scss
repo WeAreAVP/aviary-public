@@ -277,3 +277,15 @@ div.dataTables_wrapper div.dataTables_info {
 .collections-datatable .dataTables_scrollBody th {
   border: none !important;
 }
+
+.dataTables_scrollBody {
+  min-height: 60px;
+  max-height: calc(100vh - 414px);
+  overflow-y: scroll;
+}
+
+@media (max-height: 600px) {
+  .dataTables_scrollBody {
+    min-height: 200px;
+  }
+}
