@@ -71,11 +71,26 @@ module Aviary
             elsif file_transcript.present?
               file_transcript_points = FileTranscriptPoint.where(file_transcript_id: file_transcript)
               sync = "#{file_transcript.timecode_intervals.to_i}:"
-
+              index_line = 0
+              notes_info = file_transcript.point_notes_info
               file_transcript_points.each do |point|
                 info = point.text.split("\n")
                 info.each do |section|
                   if section.present?
+                    if notes_info.present? && notes_info[index_line.to_s].present?
+                      notes = notes_info[index_line.to_s].split('|')
+                      prv_length = 0
+                      notes.each do |note|
+                        tag = note.split('-')
+                        temp = "[[footnote]]#{tag[0]}[[/footnote]]"
+                        begin
+                          section.insert((tag[1].to_i + prv_length), temp)
+                        rescue StandardError => ex
+                          Failure(ex.message)
+                        end
+                        prv_length += temp.length
+                      end
+                    end
                     breakup = section.split(' ')
                     new_line = ''
                     breakup.each_with_index do |word, k|
@@ -87,10 +102,17 @@ module Aviary
                     end
                     formatted = "#{formatted}\r\n"
                   end
+                  index_line += 1
                 end
                 formatted_info = formatted.split("\r\n")
                 line = formatted_info.length
                 sync += "|#{line}(#{formatted_info.last.split(' ').length})" if formatted_info.present?
+              end
+              note_array = []
+              note_array = JSON.parse(file_transcript.notes_info) if file_transcript.notes_info.present?
+              if note_array.present?
+                last = note_array.map { |item| '[[note]]' + item + "[[/note]]\n" }.join
+                formatted += "\n[[footnotes]]\n#{last}[[/footnotes]]"
               end
               xml.sync sync
             else

@@ -218,6 +218,7 @@ class Organization < ApplicationRecord
       format: { key: 'description_format_search_facet_sms', label: 'Format', single: false, type: 'text' },
       publisher: { key: 'description_publisher_search_facet_sms', label: 'Publisher', single: false, type: 'text' },
       agent: { key: 'description_agent_search_facet_sms', label: 'Agent', single: false, type: 'text' },
+      relation: { key: 'description_relation_search_facet_sms', label: 'Relation', single: false, type: 'text' },
       keyword: { key: 'description_keyword_search_facet_sms', label: 'Keyword', single: false, type: 'text' },
       subject: { key: 'description_subject_search_facet_sms', label: 'Subject', single: false, type: 'text' },
       type: { key: 'description_type_search_facet_sms', label: 'Type', single: false, type: 'text' },
