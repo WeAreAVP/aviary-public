@@ -57,6 +57,12 @@ module Interviews
       process_status = 'In Process'
 
       case metadata_status.to_s
+      when '1'
+        process_status = listing_metadata_status['1']
+        color = color_grading['1']
+      when '2'
+        process_status = listing_metadata_status['2']
+        color = color_grading['2']
       when '4'
         process_status = listing_metadata_status['4']
         color = color_grading['4']
@@ -459,14 +465,16 @@ module Interviews
       rescue StandardError
         total_response = { 'response' => { 'numFound' => 0 } }
       end
-      query_params[:sort] = case sort_column.to_s
-                            when 'updated_at_ss'
-                              "updated_at_is #{sort_direction}"
-                            when 'created_at_ss'
-                              "created_at_is #{sort_direction}"
-                            else
-                              "#{sort_column} #{sort_direction}"
-                            end
+      if sort_direction.present?
+        query_params[:sort] = case sort_column.to_s
+                              when 'updated_at_ss'
+                                "updated_at_is #{sort_direction}"
+                              when 'created_at_ss'
+                                "created_at_is #{sort_direction}"
+                              else
+                                "#{sort_column} #{sort_direction}"
+                              end
+      end
       if params.present? && params.key?(:notes_only)
         query_params[:sort] = 'notes_unresolve_count_is desc'
       end

@@ -1,5 +1,6 @@
 <% file_indexes = {}
    if @resource_file && @resource_file.file_indexes.present?
+      total_duration = @resource_file.duration
      if (can? :manage, @collection_resource) || @collection_resource.can_view
        file_indexes = @resource_file.file_indexes.order_index
      else
@@ -8,7 +9,6 @@
    end
 %>
 <%
-  total_duration = @resource_file.duration
   if file_indexes.present? %>
     <div>
       <div class="flex media-timeline my-2">
