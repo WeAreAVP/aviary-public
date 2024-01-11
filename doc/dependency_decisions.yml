@@ -89,3 +89,9 @@
     :why:
     :versions: []
     :when: 2022-04-23 12:45:05.787082000 Z
+- - :permit
+  - MIT AND (BSD-2-Clause OR GPL-2.0-or-later)
+  - :who:
+    :why:
+    :versions: []
+    :when: 2024-01-09 13:37:44.445597859 Z
