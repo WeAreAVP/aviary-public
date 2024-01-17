@@ -369,18 +369,23 @@ function InterviewIndexManager() {
         document_level_binding_element('.update_time', 'click', function () {
             updateTime(this);
         });
+
         document_level_binding_element('.update_backward', 'click', function () {
             updateBackward();
         });
+
         document_level_binding_element('.update_play', 'click', function () {
             updatePlay();
         });
+
         document_level_binding_element('.update_pause', 'click', function () {
             updatePause();
         });
+
         document_level_binding_element('.update_forward', 'click', function () {
             updateForward();
         });
+
         document_level_binding_element('.add_tag', 'click', function () {
             updateTimeInURL();
         });
@@ -388,9 +393,15 @@ function InterviewIndexManager() {
         document_level_binding_element('.update_step_backward', 'click', function () {
             updateStepBackward();
         });
+
+        document_level_binding_element('.restart_playback', 'click', function () {
+            restartMedia();
+        });
+
         document_level_binding_element('.add_gps', 'click', function () {
             $('select').not(':has(option:selected)').val(17)
         });
+
         document_level_binding_element('.index_status_select', 'change', function () {
             let formData = {
                 'index_status': $(this).val()
@@ -453,12 +464,16 @@ function InterviewIndexManager() {
         
 
         document_level_binding_element('.save_and_new', 'click', function () {
-            if (!$('.timestamp-errors').length) {
-                var url = $('.interview_index_manager').attr("action")
-                if(!url.includes("new=1"))
-                {
-                    $('.interview_index_manager').attr("action", url+"?new=1");
-                }
+            if (host == "SoundCloud") {
+                widget_soundcloud.getPosition(function (pos) {
+                    saveAndCreateNew(time)
+                });
+            } else if (host == 'Vimeo') {
+                player_widget.getCurrentTime().then((time) => {
+                    saveAndCreateNew(time)
+                });
+            } else {
+                saveAndCreateNew(getTime());
             }
         });
 
@@ -762,6 +777,19 @@ function InterviewIndexManager() {
         }
     };
 
+    const restartMedia = function () {
+        let time = 0;
+        if (host == "Kaltura") {
+            kdp.sendNotification('doSeek', time);
+        } else if (host == "SoundCloud") {
+            widget_soundcloud.seekTo(time);
+        } else if (host == 'Vimeo') {
+            player_widget.setCurrentTime(time);
+        } else {
+            player_widget.currentTime(time);
+        }
+    }
+
     const updateTimeInURL = function () {
         if(host == "SoundCloud")
         {
@@ -786,6 +814,17 @@ function InterviewIndexManager() {
                 
         }
     };
+
+    const saveAndCreateNew = function (time) {
+        if (!$('.timestamp-errors').length) {
+            let url = $('.interview_index_manager').attr("action");
+            url = url.includes("new=1") ? url : `${url}?new=1`;
+            url = `${url}${url.includes('?') ? '&' : '?'}time=${time}`;
+
+            $('.interview_index_manager').attr("action", url);
+        }
+    }
+
     this.handlecallback = function (response, container, requestData) {
         try {
             eval('this.' + requestData.action + '(response,container,requestData)');
