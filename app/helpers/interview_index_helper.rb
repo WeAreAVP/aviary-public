@@ -338,9 +338,9 @@ module InterviewIndexHelper
 
     <<-HTML
       <a class="d-inline-block mr-2 index-navigation-arrows btn btn-primary #{@previous_index_point.nil? ? 'disable_btn' : ''} "
-        aria-label="Go to next index segment #{@previous_index_point.nil? ? '; disabled' : ''}"
+        aria-label="Go to previous index segment #{@previous_index_point.nil? ? '; disabled' : ''}"
         href="#{href(@previous_index_point) || 'javascript:void(0)'}">
-        <i class="fa fa-angle-left" alt="Go to next index segment"></i>
+        <i class="fa fa-angle-left" alt="Go to previous index segment"></i>
       </a>
     HTML
   end
