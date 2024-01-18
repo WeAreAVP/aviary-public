@@ -89,7 +89,7 @@
 
                     <!-- Start Time -->
                     <% if @index_template['fields']['start_time']['status'] %>
-                      <div class="col">
+                      <div class="<%= @index_template['fields']['end_time']['status'] ? 'col-xl-6 col-md-12 col-sm-6' : 'col' %>">
                         <div class="field-title"><%= f.label :start_time, "Start Time*" %></div>
                         <input type="hidden" name="current_time" id="current_time"/>
 
@@ -116,7 +116,7 @@
 
                     <!-- End Time -->
                     <% if @index_template['fields']['end_time']['status'] %>
-                      <div class="col">
+                      <div class="col-xl-6 col-md-12 col-sm-6">
                         <div class="field-title"><%= f.label :end_time, "End Time" %></div>
                         <input type="hidden" name="current_time" id="current_time"/>
 
