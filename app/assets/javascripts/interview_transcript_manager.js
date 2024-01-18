@@ -77,6 +77,20 @@ function InterviewTranscriptManager() {
                     }, 6000);
                     $('.player-section').css('visibility', 'unset');
                 });
+            } else if (host === 'Vimeo') {
+                var iframe = document.querySelector('iframe');
+                iframe.setAttribute('height', 345);
+                iframe.style.backgroundColor = 'black';
+                player_widget = new Vimeo.Player(iframe);
+
+                const vimeoPlayer = new VimeoPlayer(player_widget, host);
+                vimeoPlayer.initializePlayer();
+
+                player_widget.on('timeupdate', () => {
+                    player_widget.getCurrentTime().then(function (time) {
+                        dryUpFunction(time);
+                    });
+                });
             } else {
                 let videoJsOptions = {
                     fluid: true,
@@ -108,77 +122,102 @@ function InterviewTranscriptManager() {
                         $('#item_length').val(player_widget.duration());
                     }, 6000);
 
-                    player_widget.on('constant-timeupdate', function (e) {
+                    player_widget.on('constant-timeupdate', function () {
                         updateTime();
-
-                        let playerTime = parseInt(this.currentTime(), 10);
-                        let playerState = false;
-                        var minVal = getMinVal();
-                        let rangeVal = parseInt($('.video_player_delay').val(), 10);
-                        let hours = Math.floor(playerTime / 3600);
-                        let minutes = Math.floor((playerTime - (hours * 3600)) / 60);
-                        let seconds = playerTime - ((hours * 3600) + (minutes * 60));
-
-                        hours = pad(hours, 2, '0');
-                        minutes = pad(minutes, 2, '0');
-                        seconds = pad(seconds, 2, '0');
-
-                        if (isNaN(hours))
-                            hours = '00';
-                        if (isNaN(minutes))
-                            minutes = '00';
-                        if (isNaN(seconds))
-                            seconds = '00';
-                        if (isNaN(minVal))
-                            minVal = 0;
-                        if (isNaN(rangeVal))
-                            rangeVal = 10;
-                        if (playerState == false) {
-
-
-                            if (minVal == 0) {
-                                if (playerTime == 0) {
-                                    that.audioBegin.pause();
-                                    that.audioBegin.play();
-                                }
-
-                                if (playerTime == rangeVal / 2) {
-                                    that.audioEnd.pause();
-                                    that.audioEnd.play();
-                                }
-                                if (playerTime >= rangeVal) {
-                                    player_widget.currentTime(0);
-                                }
-
-                            } else {
-
-
-                                if (playerTime < ((minVal * 60) - rangeVal) || playerTime > ((minVal * 60) + rangeVal)) {
-                                    player_widget.currentTime((minVal * 60) - rangeVal);
-                                    that.audioBegin.pause();
-                                }
-
-                                if (playerTime == ((minVal * 60) - rangeVal)) {
-                                    that.audioBegin.pause();
-                                    that.audioBegin.play();
-                                }
-
-                                if (playerTime == (minVal * 60)) {
-                                    that.audioEnd.pause();
-                                    that.audioEnd.play();
-                                }
-
-                                if (playerTime >= ((minVal * 60) + rangeVal)) {
-                                    player_widget.currentTime((minVal * 60) - rangeVal);
-                                }
-                            }
-                        }
+                        dryUpFunction(this.currentTime());
                     });
+
                     $('.player-section').css('visibility', 'unset');
                 });
             }
         }
     };
+
+
+    const dryUpFunction = function (time) {
+        let playerTime = parseInt(time, 10);
+        let playerState = false;
+        var minVal = getMinVal();
+        let rangeVal = parseInt($('.video_player_delay').val(), 10);
+        let hours = Math.floor(playerTime / 3600);
+        let minutes = Math.floor((playerTime - (hours * 3600)) / 60);
+        let seconds = playerTime - ((hours * 3600) + (minutes * 60));
+
+        hours = pad(hours, 2, '0');
+        minutes = pad(minutes, 2, '0');
+        seconds = pad(seconds, 2, '0');
+
+        if (isNaN(hours))
+            hours = '00';
+        if (isNaN(minutes))
+            minutes = '00';
+        if (isNaN(seconds))
+            seconds = '00';
+        if (isNaN(minVal))
+            minVal = 0;
+        if (isNaN(rangeVal))
+            rangeVal = 10;
+        if (playerState == false) {
+
+
+            if (minVal == 0) {
+                if (playerTime == 0) {
+                    that.audioBegin.pause();
+                    that.audioBegin.play();
+                }
+
+                if (playerTime == rangeVal / 2) {
+                    that.audioEnd.pause();
+                    that.audioEnd.play();
+                }
+
+                if (playerTime >= rangeVal) {
+                    switch (host) {
+                        case 'Vimeo':
+                            player_widget.setCurrentTime(0);
+                            break;
+                        default:
+                            player_widget.currentTime(0);
+                            break;
+                    }
+                }
+            } else {
+                if (playerTime < ((minVal * 60) - rangeVal) || playerTime > ((minVal * 60) + rangeVal)) {
+                    switch (host) {
+                        case 'Vimeo':
+                            player_widget.setCurrentTime((minVal * 60) - rangeVal);
+                            break;
+                        default:
+                            player_widget.currentTime((minVal * 60) - rangeVal);
+                            break;
+                    }
+
+                    that.audioBegin.pause();
+                }
+
+                if (playerTime == ((minVal * 60) - rangeVal)) {
+                    that.audioBegin.pause();
+                    that.audioBegin.play();
+                }
+
+                if (playerTime == (minVal * 60)) {
+                    that.audioEnd.pause();
+                    that.audioEnd.play();
+                }
+
+                if (playerTime >= ((minVal * 60) + rangeVal)) {
+                    switch (host) {
+                        case 'Vimeo':
+                            player_widget.setCurrentTime((minVal * 60) - rangeVal);
+                            break;
+                        default:
+                            player_widget.currentTime((minVal * 60) - rangeVal);
+                            break;
+                    }
+                }
+            }
+        }
+    }
 
     const syncUpdate = function () {
         if (typeof $(".single_word_transcript.cursor-pointer") != 'undefined') {
@@ -340,11 +379,14 @@ function InterviewTranscriptManager() {
         });
 
         document_level_binding_element('.single_word_transcript', 'click', function () {
-
             let currentPoint = parseFloat($('.player_state_transcript').val());
             if (currentPoint > 0) {
                 $('.transcript_point_code_' + currentPoint).remove();
-                $(this).after(' <span class="transcript_point_code text-dark transcript_point_code_' + currentPoint + '" data-time="' + currentPoint + '">[' + secondsToHuman(currentPoint) + ']</span> ');
+                $(this).after(/* html */ `
+                    <span class="transcript_point_code text-dark transcript_point_code_${currentPoint}" data-time="${currentPoint}">
+                        [${secondsToHuman(currentPoint)}]
+                    </span>`
+                );
             }
             $(this).addClass('bg-success');
             updateForward();
@@ -373,6 +415,8 @@ function InterviewTranscriptManager() {
             widget_soundcloud.getPosition(function (pos) {
                 widget_soundcloud.seekTo((addTime / 0.001));
             });
+        } else if (host == "Vimeo") {
+            player_widget.setCurrentTime(addTime);
         } else {
             player_widget.currentTime(addTime);
         }
@@ -393,6 +437,8 @@ function InterviewTranscriptManager() {
             widget_soundcloud.getPosition(function (pos) {
                 widget_soundcloud.seekTo((addTime / 0.001));
             });
+        } else if (host == "Vimeo") {
+            player_widget.setCurrentTime(addTime);
         } else {
             player_widget.currentTime(addTime);
         }
@@ -411,7 +457,11 @@ function InterviewTranscriptManager() {
             widget_soundcloud.getPosition(function (pos) {
                 let time = Math.floor(pos * 0.001);
                 $('.current_player_time').val(secondsToHuman(time));
-            })
+            });
+        } else if (host == 'Vimeo') {
+            player_widget.getCurrentTime().then((time) => {
+                $('.video_time').val(secondsToHuman(time));
+            });
         } else {
             if ($('.no-media').length > 0)
                 $('.current_player_time').val($('.video_input').val());

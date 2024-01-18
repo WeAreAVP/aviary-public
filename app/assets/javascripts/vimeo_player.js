@@ -1,16 +1,16 @@
 class VimeoPlayer {
-    constructor(player, host, IIM) {
+    constructor(player, host, caller = null) {
         this.player = player;
         this.host = host;
         this.startTime = 0;
-        this.IIM = IIM;
+        this.caller = caller;
     }
 
     initializePlayer() {
         this.player.ready().then(() => {
             const videoDuration = this.player.getDuration();
             $('#item_length').val(videoDuration);
-            this.IIM.getIndexSegmentsTimeline(videoDuration, this.host);
+            this.caller?.getIndexSegmentsTimeline(videoDuration, this.host);
             this.handleStartTime();
         });
     }
@@ -55,5 +55,9 @@ class VimeoPlayer {
 
         this.player.setVolume(0);
         setTimeout(() => this.player.play(), 1000);
+    }
+
+    currentTime(time) {
+        this.player.setCurrentTime(time);
     }
 }
