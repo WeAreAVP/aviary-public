@@ -622,9 +622,7 @@ function InterviewIndexManager() {
     };
 
     // Function to handle timecode click event
-    function playVideoFromTimecode(el) {
-        let currentTime = $(el).data().timecode;
-
+    function playVideoFromTimecode(currentTime) {
         if ($('#avalon_widget').length > 0) {
             player_widget('set_offset', { 'offset': currentTime });
             player_widget('play');
@@ -637,9 +635,11 @@ function InterviewIndexManager() {
             player_widget.currentTime(currentTime);
             player_widget.play();
         }
+    }
 
+    function scrollToAnnotationMarker(el) {
         // Scroll to annotation marker if clicked from annotation text
-        if ($(el).parent().hasClass('annotation_text')) {
+        if ($(el)?.parent()?.hasClass('annotation_text')) {
             $('.transcript_point_container').mCustomScrollbar("scrollTo", $('.annotation_marker.active'), {
                 scrollInertia: 10,
                 timeout: 1
@@ -650,10 +650,12 @@ function InterviewIndexManager() {
     function handleIndexSegmentClick() {
         let segmentId = $(this).data('target');
 
+        playVideoFromTimecode($(this).data('timecode'));
+        scrollToAnnotationMarker(`.segment-duration.play-timecode.${segmentId}`);
+
         let segmentButton = $(`.btn-collapse[data-target='#${segmentId}']`);
         if (segmentButton.attr('aria-expanded') === 'false') {
             segmentButton.click();
-            playVideoFromTimecode(`.segment-duration.play-timecode.${segmentId}`);
         } else {
             $('.frontdrop').removeClass('highlight');
         }
@@ -667,7 +669,7 @@ function InterviewIndexManager() {
         $(`#heading_${segmentId.replace('collapse_', '')}`).addClass('highlight');
 
         // Scroll the corresponding index segment into view
-        $(`.card.${segmentId}`)[0].scrollIntoView({ behavior: "smooth", block: "nearest", inline: "nearest" });
+        $(`.card.${segmentId}`)[0]?.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "nearest" });
     }
 
     function hideAllSegmentTitleInputs() {
