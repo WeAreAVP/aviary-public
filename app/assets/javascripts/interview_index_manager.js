@@ -447,28 +447,9 @@ function InterviewIndexManager() {
             }
         });
 
-        document_level_binding_element('.play-timecode', 'click', function () {
-            let currentTime = $(this).data().timecode;
-            if ($('#avalon_widget').length > 0) {
-                player_widget('set_offset', { 'offset': currentTime });
-                player_widget('play');
-            } else if (host === 'Vimeo') {
-                playerSpecificTimePlay = currentTime;
-                player_widget.setCurrentTime(currentTime);
-                player_widget.play();
-            } else {
-                playerSpecificTimePlay = currentTime;
-                player_widget.currentTime(currentTime);
-                player_widget.play();
-            }
-            if ($(this).parent().hasClass('annotation_text')) {
-                $('.transcript_point_container').mCustomScrollbar("scrollTo", $('.annotation_marker.active'), {
-                    scrollInertia: 10,
-                    timeout: 1
-                });
-            }
-        }, true)
-
+        document_level_binding_element(
+            '.play-timecode', 'click', handleIndexSegmentClick, true
+        );
 
         document_level_binding_element('.save_and_new', 'click', function () {
             if (host == "SoundCloud") {
@@ -504,28 +485,9 @@ function InterviewIndexManager() {
             }
         });
 
-        document_level_binding_element('.index-segment', 'click', function () {
-            let segmentId = $(this).data('target');
-
-            let segmentButton = $(`.btn-collapse[data-target='#${segmentId}']`);
-            if (segmentButton.attr('aria-expanded') === 'false') {
-                segmentButton.click();
-                $(`.segment-duration.play-timecode.${segmentId}`).click();
-            } else {
-                $('.frontdrop').removeClass('highlight');
-            }
-
-            // Highlight the active index segment on timeline
-            $('.index-segment').removeClass('active');
-            $(this).addClass('active');
-
-            // Highlight the corresponding index segment
-            $('.card-header').removeClass('highlight');
-            $(`#heading_${segmentId.replace('collapse_', '')}`).addClass('highlight');
-
-            // Scroll the corresponding index segment into view
-            $(`.card.${segmentId}`)[0].scrollIntoView({ behavior: "smooth", block: "nearest", inline: "nearest" });
-        });
+        document_level_binding_element(
+            '.index-segment', 'click', handleIndexSegmentClick
+        );
 
         document_level_binding_element('.btn-collapse', 'click', function () {
             // Highlight the active index segment on timeline
@@ -658,6 +620,55 @@ function InterviewIndexManager() {
             });
         });
     };
+
+    // Function to handle timecode click event
+    function playVideoFromTimecode(el) {
+        let currentTime = $(el).data().timecode;
+
+        if ($('#avalon_widget').length > 0) {
+            player_widget('set_offset', { 'offset': currentTime });
+            player_widget('play');
+        } else if (host === 'Vimeo') {
+            playerSpecificTimePlay = currentTime;
+            player_widget.setCurrentTime(currentTime);
+            player_widget.play();
+        } else {
+            playerSpecificTimePlay = currentTime;
+            player_widget.currentTime(currentTime);
+            player_widget.play();
+        }
+
+        // Scroll to annotation marker if clicked from annotation text
+        if ($(el).parent().hasClass('annotation_text')) {
+            $('.transcript_point_container').mCustomScrollbar("scrollTo", $('.annotation_marker.active'), {
+                scrollInertia: 10,
+                timeout: 1
+            });
+        }
+    }
+
+    function handleIndexSegmentClick() {
+        let segmentId = $(this).data('target');
+
+        let segmentButton = $(`.btn-collapse[data-target='#${segmentId}']`);
+        if (segmentButton.attr('aria-expanded') === 'false') {
+            segmentButton.click();
+            playVideoFromTimecode(`.segment-duration.play-timecode.${segmentId}`);
+        } else {
+            $('.frontdrop').removeClass('highlight');
+        }
+
+        // Highlight the active index segment on timeline
+        $('.index-segment').removeClass('active');
+        $(`.index-segment[data-target="${segmentId}"]`).addClass('active');
+
+        // Highlight the corresponding index segment
+        $('.card-header').removeClass('highlight');
+        $(`#heading_${segmentId.replace('collapse_', '')}`).addClass('highlight');
+
+        // Scroll the corresponding index segment into view
+        $(`.card.${segmentId}`)[0].scrollIntoView({ behavior: "smooth", block: "nearest", inline: "nearest" });
+    }
 
     function hideAllSegmentTitleInputs() {
         formChange = 0;

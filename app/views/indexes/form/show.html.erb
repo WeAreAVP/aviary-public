@@ -86,7 +86,9 @@
                               <% end %>
                             </div>
                           </div>
-                          <div class="segment-duration play-timecode collapse_<%= index %>" data-timecode="<%= data.start_time %>"><%= time_to_duration(data.start_time) %></div>
+                          <div class="segment-duration play-timecode collapse_<%= index %>" data-target="collapse_<%= index %>"
+                            data-timecode="<%= data.start_time %>"><%= time_to_duration(data.start_time) %>
+                          </div>
                         </div>
                         <div class="d-flex">
                           <div class="btn-group">
