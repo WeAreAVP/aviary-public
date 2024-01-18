@@ -279,7 +279,7 @@ module InterviewIndexHelper
           data-toggle="tooltip" data-placement="bottom"
           title="#{Time.at(point.start_time.to_f).utc.strftime('%H:%M:%S') + ' ' + point.title}"
           aria-label="Index segment at #{Time.at(point.start_time.to_f).utc.strftime('%H:%M:%S') + ' titled: ' + point.title}"
-          style="width: #{width.round(2) < 1 ? 1 : width.ceil(2)}%;"
+          style="width: max(#{width.round(2)}%, 5px);"
           data-target="collapse_#{index}">
         </button>
       HTML

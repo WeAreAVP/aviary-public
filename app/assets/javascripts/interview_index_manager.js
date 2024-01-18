@@ -323,26 +323,26 @@ function InterviewIndexManager() {
                     if (host === 'Kaltura') {
                         kdp.kBind('playerUpdatePlayhead', function (currentTime) {
                             let progressPercent = currentTime / total_duration;
-                            $('#media-index-timeline-pointer').css('left', `${progressPercent * 100}%`);
+                            $('#media-index-timeline-pointer').css('left', `calc(${progressPercent * 100}% - 4px)`);
                         });
                     } else if (host === 'SoundCloud') {
                         widget_soundcloud.bind(SC.Widget.Events.PLAY_PROGRESS, function () {
                             widget_soundcloud.getPosition(function (pos) {
                                 let progressPercent = pos * 0.001 / total_duration;
-                                $('#media-index-timeline-pointer').css('left', `${progressPercent * 100}%`);
+                                $('#media-index-timeline-pointer').css('left', `calc(${progressPercent * 100}% - 4px)`);
                             })
                         });
                     } else if (host === 'Vimeo') {
                         player_widget.on('timeupdate', () => {
                             player_widget.getCurrentTime().then((time) => {
                                 let progressPercent = time / total_duration;
-                                $('#media-index-timeline-pointer').css('left', `${progressPercent * 100}%`);
+                                $('#media-index-timeline-pointer').css('left', `calc(${progressPercent * 100}% - 4px)`);
                             });
                         });
                     } else {
                         player_widget.on('constant-timeupdate', () => {
-                            let progressPercent = player_widget.cache_.currentTime / total_duration;
-                            $('#media-index-timeline-pointer').css('left', `${progressPercent * 100}%`);
+                            let progressPercent = Math.ceil(player_widget.cache_.currentTime) / total_duration;
+                            $('#media-index-timeline-pointer').css('left', `calc(${progressPercent * 100}% - 4px)`);
                         });
 
                     }

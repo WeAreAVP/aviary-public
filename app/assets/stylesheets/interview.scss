@@ -980,6 +980,7 @@ td:has(> select.assign_user) {
   background-color: #003853;
   cursor: pointer;
   position: relative;
+  padding: 0;
 }
 
 .index-segment:focus, .index-segment:focus-visible {
@@ -993,7 +994,7 @@ td:has(> select.assign_user) {
 
 .index-segment:hover:not(.active) {
   opacity: 1;
-  transform: scale(1.1);
+  transform: scale(1.01);
 }
 
 .save_index_title {
@@ -1019,9 +1020,9 @@ td:has(> select.assign_user) {
 }
 
 .media-index-timeline {
-  background-color: gray;
+  background-color: rgb(78, 78, 78);;
   z-index: 10;
-  width: 7px;
+  width: 4px;
   height: 30px;
   position: absolute;
   top: -5px;
