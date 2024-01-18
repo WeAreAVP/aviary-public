@@ -979,6 +979,11 @@ td:has(> select.assign_user) {
 .index-segment {
   background-color: #003853;
   cursor: pointer;
+  position: relative;
+}
+
+.index-segment:focus, .index-segment:focus-visible {
+  outline: none;
 }
 
 .index-segment.active {
@@ -1003,18 +1008,14 @@ td:has(> select.assign_user) {
   position: relative;
 }
 
-.index-segment:hover::after {
-  content: attr(data-title);
-  position: absolute;
-  font-size: x-small;
-  color: black;
-  top: -30px;
-  background: #dbdbdb;
-  opacity: 1;
-  border: 1px solid black;
+.index-segment.active::after {
+  content: "▴";
+  position: relative;
   display: inline-block;
-  padding: 0 2px;
-  z-index: 20;
+  color: black;
+  top: 11px;
+  left: 0;
+  width: inherit;
 }
 
 .media-index-timeline {
