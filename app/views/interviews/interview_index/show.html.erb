@@ -21,7 +21,7 @@
                   <% end %>
                   <h1 style="text-transform: none;"><%= @interview.present? ? @interview.title : @collection_resource.title %></h1>
                 </div>
-                <% if @interview.present? %>
+                <% if @interview.present? && @interview.id.present? %>
                   <%= link_to 'Preview', preview_interviews_manager_path(@interview.id), class: 'btn-interview-preview' %>
 
                 <% end %>
