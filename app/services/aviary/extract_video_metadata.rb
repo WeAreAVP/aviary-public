@@ -109,11 +109,11 @@ module Aviary::ExtractVideoMetadata
       metadata['duration'] = 0
       metadata['title'] = ''
       metadata['thumbnail'] = ''
-      if video.available?
+      begin
         metadata['duration'] = video.duration
         metadata['title'] = video.title
         metadata['thumbnail'] = video.thumbnail
-      else
+      rescue StandardError
         begin
           doc = Nokogiri::HTML(open(video_url, read_timeout: 10))
           metadata['title'] = doc.search('//title')[0].children[0].text
