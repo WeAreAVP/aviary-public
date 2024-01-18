@@ -211,7 +211,6 @@ function InterviewIndexManager() {
                 player_widget = videojs('player', videoJsOptions, function onPlayerReady() {
                     setTimeout(function(){ 
                         $('#item_length').val(player_widget.duration());
-                        getIndexSegmentsTimeline(player_widget.duration(), host);
                     }, 6000);
 
                     if(searchParams.has('time'))
@@ -300,6 +299,16 @@ function InterviewIndexManager() {
                     
                     $('.player-section').css('visibility','unset');
                 });
+
+                durationInterval = setInterval(() => {
+                    if (player_widget.duration() >= 0) {
+                        that.getIndexSegmentsTimeline(player_widget.duration(), host);
+                        clearInterval(durationInterval);
+                    }
+                }, 1000);
+
+                // Try to get the index segments for 10 seconds.
+                setTimeout(() => clearInterval(durationInterval), 10000);
             }
             setInterval(function () {
                 $("#current_time").val(player_widget.currentTime());
