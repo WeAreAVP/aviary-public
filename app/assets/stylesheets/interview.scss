@@ -957,16 +957,6 @@ td:has(> select.assign_user) {
   padding: 0 12px;
 }
 
-.index-segment.active::before {
-  content: "▴";
-  position: relative;
-  display: inline-block;
-  color: black;
-  top: 12px;
-  text-align: center;
-  width: -webkit-fill-available;
-}
-
 .highlight {
   background-color: #ece4bc;
 }
