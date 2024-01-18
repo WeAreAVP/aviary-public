@@ -18,6 +18,7 @@ function InterviewIndexManager() {
     let formChange = 0;
     let widget_soundcloud;
     let host = "";
+    let durationInterval = null;
     this.initialize = function () {
         $('[data-toggle="tooltip"]').tooltip();
 
@@ -125,7 +126,7 @@ function InterviewIndexManager() {
 
                 setTimeout(function () {
                     kdp.kBind('mediaLoaded', function () {
-                        getIndexSegmentsTimeline(kdp.evaluate('{duration}'), host);
+                        that.getIndexSegmentsTimeline(kdp.evaluate('{duration}'), host);
                     });
                 }, 4000);
 
@@ -166,11 +167,19 @@ function InterviewIndexManager() {
                     $('.player-section').css('visibility', 'unset');
 
                     widget_soundcloud.getDuration(function (pos) {
-                        getIndexSegmentsTimeline(pos * 0.001, host);
+                        that.getIndexSegmentsTimeline(pos * 0.001, host);
                     });
 
                     $('.player-section').css('visibility', 'unset');
                 });
+            } else if (host === 'Vimeo') {
+                var iframe = document.querySelector('iframe');
+                player_widget = new Vimeo.Player(iframe);
+
+                iframe.setAttribute('height', 345);
+                iframe.style.backgroundColor = 'black';
+                const vimeoPlayer = new VimeoPlayer(player_widget, host, that);
+                vimeoPlayer.initializePlayer();
             } else {
                 let videoJsOptions = {
                     fluid: true,
@@ -300,7 +309,7 @@ function InterviewIndexManager() {
         }
     };
 
-    const getIndexSegmentsTimeline = function (total_duration, host) {
+    this.getIndexSegmentsTimeline = function (total_duration, host) {
         $.ajax({
             url: $('#index-segments-timeline').data('url'),
             data: {
@@ -322,6 +331,13 @@ function InterviewIndexManager() {
                                 let progressPercent = pos * 0.001 / total_duration;
                                 $('#media-index-timeline-pointer').css('left', `${progressPercent * 100}%`);
                             })
+                        });
+                    } else if (host === 'Vimeo') {
+                        player_widget.on('timeupdate', () => {
+                            player_widget.getCurrentTime().then((time) => {
+                                let progressPercent = time / total_duration;
+                                $('#media-index-timeline-pointer').css('left', `${progressPercent * 100}%`);
+                            });
                         });
                     } else {
                         player_widget.on('constant-timeupdate', () => {
@@ -436,6 +452,10 @@ function InterviewIndexManager() {
             if ($('#avalon_widget').length > 0) {
                 player_widget('set_offset', { 'offset': currentTime });
                 player_widget('play');
+            } else if (host === 'Vimeo') {
+                playerSpecificTimePlay = currentTime;
+                player_widget.setCurrentTime(currentTime);
+                player_widget.play();
             } else {
                 playerSpecificTimePlay = currentTime;
                 player_widget.currentTime(currentTime);
@@ -599,6 +619,10 @@ function InterviewIndexManager() {
                             videoDuration = widget_soundcloud.getDuration();
                             break;
 
+                        case 'Vimeo':
+                            window.videoDuration = player_widget.getDuration();
+                            break;
+
                         default:
                             videoDuration = player_widget.duration();
                             break;
@@ -663,6 +687,7 @@ function InterviewIndexManager() {
         } else if (host == "SoundCloud") {
             widget_soundcloud.pause();
         } else {
+            // This works for host === 'Vimeo' as well
             player_widget.pause();
         }
     }
@@ -673,6 +698,7 @@ function InterviewIndexManager() {
         } else if (host == "SoundCloud") {
             widget_soundcloud.play();
         } else {
+            // This works for host === 'Vimeo' as well
             player_widget.play();
         }
     }
@@ -683,7 +709,11 @@ function InterviewIndexManager() {
         } else if (host == "SoundCloud") {
             widget_soundcloud.getPosition(function (pos) {
                 widget_soundcloud.seekTo(pos + (timeDiffInSec / 0.001));
-            })
+            });
+        } else if (host == "Vimeo") {
+            player_widget.getCurrentTime().then((time) => {
+                player_widget.setCurrentTime(time + timeDiffInSec);
+            });
         } else {
             player_widget.currentTime(player_widget.currentTime() + timeDiffInSec);
         }
@@ -696,6 +726,10 @@ function InterviewIndexManager() {
             widget_soundcloud.getPosition(function (pos) {
                 widget_soundcloud.seekTo(pos - (timeDiffInSec / 0.001));
             });
+        } else if (host == "Vimeo") {
+            player_widget.getCurrentTime().then((time) => {
+                player_widget.setCurrentTime(time - timeDiffInSec);
+            });
         } else {
             player_widget.currentTime(player_widget.currentTime() - timeDiffInSec);
         }
@@ -707,6 +741,8 @@ function InterviewIndexManager() {
             kdp.sendNotification('doSeek', time);
         } else if (host == "SoundCloud") {
             widget_soundcloud.seekTo(time / 0.001);
+        } else if (host == 'Vimeo') {
+            player_widget.setCurrentTime(time);
         } else {
             player_widget.currentTime(time);
         }
@@ -725,7 +761,11 @@ function InterviewIndexManager() {
             widget_soundcloud.getPosition(function (pos) {
                 let time = Math.floor(pos * 0.001);
                 $('.video_time').val(secondsToHuman(time));
-            })
+            });
+        } else if (host == 'Vimeo') {
+            player_widget.getCurrentTime().then((time) => {
+                $('.video_time').val(secondsToHuman(time));
+            });
         } else {
             let selector = $(button).data('time-target') || '.video_time';
             if ($('.no-media').length > 0)
@@ -755,7 +795,13 @@ function InterviewIndexManager() {
                 time = time - timeSubInSec;
                 if (time < 0) time = 0;
                 window.location = $('.add_tag').data().url + '?time=' + time;
-            })
+            });
+        } else if (host == 'Vimeo') {
+            player_widget.getCurrentTime().then((time) => {
+                time -= timeSubInSec;
+                if (time < 0) time = 0;
+                window.location = $('.add_tag').data().url + '?time=' + time;
+            });
         } else {
             if ($('.no-media').length > 0)
                 window.location = $('.add_tag').data().url;

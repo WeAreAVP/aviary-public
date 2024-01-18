@@ -70,9 +70,24 @@
       ></video>
       <script src="https://players.brightcove.net/<%= video_info['account'] %>/<%= video_info['player'] %>_default/index.min.js"></script>
 
+    <% elsif @interview.media_host == 'Vimeo' %>
+      <% if video_info['error'].present? %>
+        <div class="no-media">
+          <div id="noAudio" class="text-center" style="height: auto;"><%= video_info['error'] %></div>
+        </div>
+      <% else %>
+        <div id="player_section" class="video-placeholder">
+          <%== video_info['src'] %>
+          <div class="title">
+            <strong><%= @interview.title %></strong>
+          </div>
+        </div>
+      <% end %>
     <% elsif @interview.media_format.include?("video") %>
       <% if video_info['error'].present? %>
-        <div class="text-center p-4"><%= video_info['error'] %></div>
+        <div class="no-media">
+          <div id="noAudio" class="text-center" style="height: auto;"><%= video_info['error'] %></div>
+        </div>
       <% else %>
         <div id="player_section" class="player-section video-placeholder">
           <div class="video-hold" oncontextmenu="return false;">
@@ -113,7 +128,7 @@
   </div>
   <% end %>
   <% if params[:action] == "show" || params[:action] == "show_index"  %>
-  <%= link_to 'Add Index Segment', 'javascript://', class: 'btn btn-outline-dark btn-block pull-left add_tag', data: { url: ohms_index_new_path } %>
+    <%= link_to 'Add Index Segment', 'javascript://', class: 'btn btn-outline-dark btn-block pull-left add_tag', data: { url: ohms_index_new_path } %>
   <% end %>
 <% else %>
   <div id="media_host" data-host="" style="width: 75%;" >
@@ -140,3 +155,4 @@
       opacity: 1 !important;
   }
 </style>
+<script src="https://player.vimeo.com/api/player.js"></script>

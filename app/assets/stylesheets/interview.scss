@@ -186,6 +186,9 @@ div#noMediaConnection {
 #media_host {
   iframe {
     width: 100% !important;
+  }
+
+  &:not([data-host="Vimeo"]) div#vidmeo-player {
     height: 300px !important;
   }
 
@@ -369,6 +372,14 @@ div#noMediaConnection {
           background: #dee2e6;
         }
       }
+    }
+  }
+}
+
+.video-box-section {
+  #media_host:not([data-host="Vimeo"]) {
+    iframe {
+      height: 100% !important;
     }
   }
 }
@@ -925,14 +936,6 @@ div#noMediaConnection {
   font-size: 14px;
   font-weight: bold;
   cursor: pointer;
-}
-
-.video-box-section {
-  #media_host {
-    iframe {
-      height: 100% !important;
-    }
-  }
 }
 
 td:has(> select.assign_user) {

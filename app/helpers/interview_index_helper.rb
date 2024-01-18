@@ -75,9 +75,8 @@ module InterviewIndexHelper
       regex = %r{https?:\/\/(?:\w+\.)*vimeo\.com(?:[\/\w]*\/?)?\/(?<id>[0-9]+)[^\s]*}
       match = regex.match(interview.embed_code)
 
-      if match.present?
-        data['src'] = match[0]
-      else
+      data['src'] = interview.embed_code
+      unless match.present?
         data['error'] = 'Error processing url. It can be because the provided url is not of vimeo.'
       end
     end
