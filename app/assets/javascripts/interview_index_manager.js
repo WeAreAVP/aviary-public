@@ -20,11 +20,14 @@ function InterviewIndexManager() {
     let host = "";
     this.initialize = function () {
         $('[data-toggle="tooltip"]').tooltip();
+
         bindEvents();
         setIterviewNotes();
+
         let searchParams = new URLSearchParams(window.location.search)
         host = $('#media_host').data('host')
-        if($('.tokenfield').length > 0){
+
+        if ($('.tokenfield').length > 0) {
             const keywords_options = {
                 minLength: 1,
                 delimiter: [';'],
@@ -33,7 +36,7 @@ function InterviewIndexManager() {
 
             if ($('.tokenfield_keywords').data('path') !== undefined) {
                 keywords_options.autocomplete = {
-                    source: function( request, response ) {
+                    source: function (request, response) {
                         $.ajax({
                             url: $('.tokenfield_keywords').data('path'),
                             dataType: "json",
@@ -42,8 +45,8 @@ function InterviewIndexManager() {
                                 tId: $('.tokenfield_keywords').data('tId'),
                                 typeOfList: $('.tokenfield_keywords').data('typeOfList')
                             },
-                            success: function( data ) {
-                              response( data );
+                            success: function (data) {
+                                response(data);
                             }
                         });
                     },
@@ -59,68 +62,62 @@ function InterviewIndexManager() {
             }
 
             if ($('.tokenfield_subjects').data('path') !== undefined) {
-            subjects_options.autocomplete = {
-                source: function( request, response ) {
-                    $.ajax({
-                        url: $('.tokenfield_subjects').data('path'),
-                        dataType: "json",
-                        data: {
-                            term: request.term,
-                            tId: $('.tokenfield_subjects').data('tId'),
-                            typeOfList: $('.tokenfield_subjects').data('typeOfList')
-                        },
-                        success: function( data ) {
-                          response( data );
-                        }
-                    });
-                },
-            }
+                subjects_options.autocomplete = {
+                    source: function (request, response) {
+                        $.ajax({
+                            url: $('.tokenfield_subjects').data('path'),
+                            dataType: "json",
+                            data: {
+                                term: request.term,
+                                tId: $('.tokenfield_subjects').data('tId'),
+                                typeOfList: $('.tokenfield_subjects').data('typeOfList')
+                            },
+                            success: function (data) {
+                                response(data);
+                            }
+                        });
+                    },
+                }
             }
 
             $('.tokenfield_subjects').tokenfield(subjects_options);
         }
-        if($('.no-media').length > 0)
-        {
+
+        if ($('.no-media').length > 0) {
             $('.music_btn').hide();
             $('.video_input').prop("disabled", false);
-            $(".video_input").mask("00:00:00",{
-                clearIfNotMatch : true
+            $(".video_input").mask("00:00:00", {
+                clearIfNotMatch: true
             });
             $('.interviews_interview_index_time').append('<small class="form-text text-muted mt-1">Timestamp should be in HH:MM:SS format.</small>');
-            $( ".video_input" ).change(function() {
+            $(".video_input").change(function () {
                 $('.video_time').val($('.video_input').val());
             });
-        }
-        else{
-            if(host == "Kaltura")
-            {
-                setTimeout(function(){ 
+        } else {
+            if (host == "Kaltura") {
+                setTimeout(function () {
                     $('#item_length').val(kdp.evaluate('{duration}'));
                 }, 6000);
-                if(searchParams.has('time'))
-                {
+
+                if (searchParams.has('time')) {
                     startTime = parseFloat(searchParams.get('time'));
-                    setTimeout(function(){ 
+                    setTimeout(function () {
                         kdp.sendNotification('doSeek', parseFloat(searchParams.get('time')));
                         $('.video_time').val(secondsToHuman(parseFloat(searchParams.get('time'))));
                         kdp.sendNotification('doPlay');
                     }, 4000);
-                }
-                else
-                {
+                } else {
                     var edit = $('.video_time').val();
-                    if(edit !== undefined && edit !== "00:00:00")
-                    {
+                    if (edit !== undefined && edit !== "00:00:00") {
                         let new_time = humanToSeconds(edit);
                         startTime = parseFloat(new_time);
-                        setTimeout(function(){ 
+                        setTimeout(function () {
                             kdp.sendNotification('doSeek', parseFloat(new_time));
                             $('.video_time').val(secondsToHuman(parseFloat(new_time)));
                             kdp.sendNotification('doPlay');
                         }, 4000);
-                    }
-                    else{
-                        setTimeout(function(){ 
+                    } else {
+                        setTimeout(function () {
                             kdp.sendNotification('doPlay');
                         }, 4000);
                     }
@@ -132,43 +129,36 @@ function InterviewIndexManager() {
                     });
                 }, 4000);
 
-                $('.player-section').css('visibility','unset');
-            }
-            else if(host == "SoundCloud")
-            {
+                $('.player-section').css('visibility', 'unset');
+            } else if (host == "SoundCloud") {
                 widget_soundcloud = SC.Widget(document.getElementById('soundcloud_widget'));
                 widget_soundcloud.bind(SC.Widget.Events.READY, function () {
-                    setTimeout(function(){ 
+                    setTimeout(function () {
                         widget_soundcloud.getDuration(function (pos) {
-                            $('#item_length').val(pos*0.001);
+                            $('#item_length').val(pos * 0.001);
                         })
-                    },6000);
-                    if(searchParams.has('time'))
-                    {
-                        startTime = parseFloat(searchParams.get('time')/0.001);
-                        setTimeout(function(){ 
-                            widget_soundcloud.seekTo(parseFloat(searchParams.get('time')/0.001));
+                    }, 6000);
+
+                    if (searchParams.has('time')) {
+                        startTime = parseFloat(searchParams.get('time') / 0.001);
+                        setTimeout(function () {
+                            widget_soundcloud.seekTo(parseFloat(searchParams.get('time') / 0.001));
                             $('.video_time').val(secondsToHuman(parseFloat(searchParams.get('time'))));
                             widget_soundcloud.play();
                         }, 3000);
-                    }
-                    else
-                    {
+                    } else {
                         var edit = $('.video_time').val();
-                        if(edit !== undefined && edit !== "00:00:00")
-                        {
+                        if (edit !== undefined && edit !== "00:00:00") {
                             let new_time = humanToSeconds(edit);
-                            startTime = parseFloat(new_time/0.001);
-                            setTimeout(function(){ 
-                                widget_soundcloud.seekTo(parseFloat(new_time/0.001));
+                            startTime = parseFloat(new_time / 0.001);
+                            setTimeout(function () {
+                                widget_soundcloud.seekTo(parseFloat(new_time / 0.001));
                                 $('.video_time').val(secondsToHuman(parseFloat(new_time)));
                                 widget_soundcloud.play();
                             }, 3000);
-                        }
-                        else
-                        {
-                            setTimeout(function(){
-                                widget_soundcloud.play(); 
+                        } else {
+                            setTimeout(function () {
+                                widget_soundcloud.play();
                             }, 2000);
                         }
                     }
@@ -179,11 +169,9 @@ function InterviewIndexManager() {
                         getIndexSegmentsTimeline(pos * 0.001, host);
                     });
 
-                    $('.player-section').css('visibility','unset');
+                    $('.player-section').css('visibility', 'unset');
                 });
-            }
-            else
-            {
+            } else {
                 let videoJsOptions = {
                     fluid: true,
                     playbackRates: [0.5, 1, 1.5, 2],
@@ -192,7 +180,7 @@ function InterviewIndexManager() {
                     preload: true,
                     soundcloudClientId: '95f22ed54a5c297b1c41f72d713623ef',
                     techOrder: ['html5', 'youtube', 'vimeo', 'brightcove'],
-                    youtube: {autohide: 1},
+                    youtube: { autohide: 1 },
                     plugins: {
                         airplayButton: {},
                         constantTimeupdate: {
@@ -201,29 +189,30 @@ function InterviewIndexManager() {
                         }
                     }
                 };
-                if ($('#player_section').hasClass('audio-player')){
+
+                if ($('#player_section').hasClass('audio-player')) {
                     videoJsOptions.aspectRatio = '1:0';
                     videoJsOptions.controlBar = {
                         "fullscreenToggle": false,
                         'pictureInPictureToggle': false
                     };
                 }
+
                 player_widget = videojs('player', videoJsOptions, function onPlayerReady() {
-                    setTimeout(function(){ 
+                    setTimeout(function () {
                         $('#item_length').val(player_widget.duration());
                     }, 6000);
 
-                    if(searchParams.has('time'))
-                    {
+                    if (searchParams.has('time')) {
                         startTime = parseFloat(searchParams.get('time'));
-                        setTimeout(function(){ 
+                        setTimeout(function () {
                             player_widget.currentTime(parseFloat(searchParams.get('time')));
                             $('.video_time').val(secondsToHuman(parseFloat(searchParams.get('time'))));
                             setTimeout(function () {
                                 let playPromise = undefined;
-                                    playPromise = player_widget.play();
-                                
-                    
+                                playPromise = player_widget.play();
+
+
                                 if (playPromise !== undefined) {
                                     playPromise.then(function () {
                                         player_widget.currentTime(parseFloat(searchParams.get('time')));
@@ -234,28 +223,25 @@ function InterviewIndexManager() {
                                             player_widget.muted(false);
                                         });
                                         player_widget.muted(true);
-                                        setTimeout(function(){  player_widget.play(); }, 1000);
-                                        
+                                        setTimeout(function () { player_widget.play(); }, 1000);
+
                                     });
                                 }
                             }, 1000);
                         }, 1000);
-                    }
-                    else
-                    {
+                    } else {
                         var edit = $('.video_time').val();
-                        if(edit !== undefined && edit !== "00:00:00")
-                        {
+                        if (edit !== undefined && edit !== "00:00:00") {
                             let new_time = humanToSeconds(edit);
                             startTime = parseFloat(new_time);
-                            setTimeout(function(){ 
+                            setTimeout(function () {
                                 player_widget.currentTime(parseFloat(new_time));
                                 $('.video_time').val(secondsToHuman(parseFloat(new_time)));
                                 setTimeout(function () {
                                     let playPromise = undefined;
-                                        playPromise = player_widget.play();
-                                    
-                        
+                                    playPromise = player_widget.play();
+
+
                                     if (playPromise !== undefined) {
                                         playPromise.then(function () {
                                             player_widget.currentTime(parseFloat(new_time));
@@ -266,20 +252,17 @@ function InterviewIndexManager() {
                                                 player_widget.muted(false);
                                             });
                                             player_widget.muted(true);
-                                            setTimeout(function(){  player_widget.play(); }, 1000);
-                                            
+                                            setTimeout(function () { player_widget.play(); }, 1000);
+
                                         });
                                     }
                                 }, 1000);
                             }, 1000);
-                        }
-                        else
-                        {
+                        } else {
                             setTimeout(function () {
                                 let playPromise = undefined;
-                                    playPromise = player_widget.play();
-                                
-                    
+                                playPromise = player_widget.play();
+
                                 if (playPromise !== undefined) {
                                     playPromise.then(function () {
                                         player_widget.play();
@@ -289,15 +272,15 @@ function InterviewIndexManager() {
                                             player_widget.muted(false);
                                         });
                                         player_widget.muted(true);
-                                        setTimeout(function(){  player_widget.play(); }, 1000);
-                                        
+                                        setTimeout(function () { player_widget.play(); }, 1000);
+
                                     });
                                 }
                             }, 1000);
                         }
                     }
-                    
-                    $('.player-section').css('visibility','unset');
+
+                    $('.player-section').css('visibility', 'unset');
                 });
 
                 durationInterval = setInterval(() => {
@@ -310,6 +293,7 @@ function InterviewIndexManager() {
                 // Try to get the index segments for 10 seconds.
                 setTimeout(() => clearInterval(durationInterval), 10000);
             }
+
             setInterval(function () {
                 $("#current_time").val(player_widget.currentTime());
             }, 1000);
@@ -323,16 +307,16 @@ function InterviewIndexManager() {
                 total_duration: total_duration,
                 active_point_id: $('#index-segments-timeline').data('activePointId'),
             },
-            success: function( response ) {
+            success: function (response) {
                 $('#index-segments-timeline').append(response);
 
                 if ($('#media-index-timeline-pointer')[0]) {
                     if (host === 'Kaltura') {
                         kdp.kBind('playerUpdatePlayhead', function (currentTime) {
-                                let progressPercent = currentTime / total_duration;
-                                $('#media-index-timeline-pointer').css('left', `${progressPercent * 100}%`);
+                            let progressPercent = currentTime / total_duration;
+                            $('#media-index-timeline-pointer').css('left', `${progressPercent * 100}%`);
                         });
-                    }  else if (host === 'SoundCloud') {
+                    } else if (host === 'SoundCloud') {
                         widget_soundcloud.bind(SC.Widget.Events.PLAY_PROGRESS, function () {
                             widget_soundcloud.getPosition(function (pos) {
                                 let progressPercent = pos * 0.001 / total_duration;
@@ -354,7 +338,9 @@ function InterviewIndexManager() {
     const bindEvents = function () {
         let containerRepeatManager = new ContainerRepeatManager();
         containerRepeatManager.makeContainerRepeatable(".add_gps", ".remove_gps", '.container_gps_inner', '.container_gps', '.gps');
-        containerRepeatManager.makeContainerRepeatable(".add_hyperlinks", ".remove_hyperlinks", '.container_hyperlinks_inner', '.container_hyperlinks', '.hyperlinks');
+        containerRepeatManager.makeContainerRepeatable(
+            ".add_hyperlinks", ".remove_hyperlinks", '.container_hyperlinks_inner', '.container_hyperlinks', '.hyperlinks'
+        );
 
         const fields = ['synopsis', 'publisher', 'identifier', 'contributor', 'partial_script', 'segment_date', 'rights'];
         for (const field of fields) {
@@ -389,7 +375,7 @@ function InterviewIndexManager() {
         document_level_binding_element('.add_tag', 'click', function () {
             updateTimeInURL();
         });
-        
+
         document_level_binding_element('.update_step_backward', 'click', function () {
             updateStepBackward();
         });
@@ -406,6 +392,7 @@ function InterviewIndexManager() {
             let formData = {
                 'index_status': $(this).val()
             }
+
             $.ajax({
                 url: $(this).data().url,
                 data: formData,
@@ -447,7 +434,7 @@ function InterviewIndexManager() {
         document_level_binding_element('.play-timecode', 'click', function () {
             let currentTime = $(this).data().timecode;
             if ($('#avalon_widget').length > 0) {
-                player_widget('set_offset', {'offset': currentTime});
+                player_widget('set_offset', { 'offset': currentTime });
                 player_widget('play');
             } else {
                 playerSpecificTimePlay = currentTime;
@@ -461,7 +448,7 @@ function InterviewIndexManager() {
                 });
             }
         }, true)
-        
+
 
         document_level_binding_element('.save_and_new', 'click', function () {
             if (host == "SoundCloud") {
@@ -660,115 +647,86 @@ function InterviewIndexManager() {
             $('#save_file_index_title_form').addClass('d-none');
             $('#save_file_index_title_form').removeClass('d-flex');
         }
-    }  
+    }
 
-    function unloadPage(){ 
-        if(formChange == 1){
+    function unloadPage() {
+        if (formChange == 1) {
             return "Are you sure you want to leave with unsaved changes?";
         }
     }
+
     window.onbeforeunload = unloadPage;
-    const updatePause = function ()
-    {
-        if(host == "Kaltura")
-        {
+
+    const updatePause = function () {
+        if (host == "Kaltura") {
             kdp.sendNotification('doPause');
-        }
-        else if(host == "SoundCloud")
-        {
+        } else if (host == "SoundCloud") {
             widget_soundcloud.pause();
-        }
-        else
-        {
+        } else {
             player_widget.pause();
         }
     }
-    const updatePlay = function ()
-    {
-        if(host == "Kaltura")
-        {
+
+    const updatePlay = function () {
+        if (host == "Kaltura") {
             kdp.sendNotification('doPlay');
-        }
-        else if(host == "SoundCloud")
-        {
+        } else if (host == "SoundCloud") {
             widget_soundcloud.play();
-        }
-        else
-        {
+        } else {
             player_widget.play();
         }
     }
-    const updateForward = function ()
-    {
-        if(host == "Kaltura")
-        {
-            kdp.sendNotification('doSeek',  kdp.evaluate('{video.player.currentTime}') + timeDiffInSec);
-        }
-        else if(host == "SoundCloud")
-        {
+
+    const updateForward = function () {
+        if (host == "Kaltura") {
+            kdp.sendNotification('doSeek', kdp.evaluate('{video.player.currentTime}') + timeDiffInSec);
+        } else if (host == "SoundCloud") {
             widget_soundcloud.getPosition(function (pos) {
-                widget_soundcloud.seekTo(pos + (timeDiffInSec/0.001));
+                widget_soundcloud.seekTo(pos + (timeDiffInSec / 0.001));
             })
-        }
-        else
-        {
+        } else {
             player_widget.currentTime(player_widget.currentTime() + timeDiffInSec);
         }
     }
-    const updateBackward = function ()
-    {
-        if(host == "Kaltura")
-        {
-            kdp.sendNotification('doSeek',  kdp.evaluate('{video.player.currentTime}') - timeDiffInSec);
-        }
-        else if(host == "SoundCloud")
-        {
+
+    const updateBackward = function () {
+        if (host == "Kaltura") {
+            kdp.sendNotification('doSeek', kdp.evaluate('{video.player.currentTime}') - timeDiffInSec);
+        } else if (host == "SoundCloud") {
             widget_soundcloud.getPosition(function (pos) {
-                widget_soundcloud.seekTo(pos - (timeDiffInSec/0.001));
-            })
-        }
-        else
-        {
+                widget_soundcloud.seekTo(pos - (timeDiffInSec / 0.001));
+            });
+        } else {
             player_widget.currentTime(player_widget.currentTime() - timeDiffInSec);
         }
     }
-    const updateStepBackward = function ()
-    {
+
+    const updateStepBackward = function () {
         let time = humanToSeconds($('#file_index_point_start_time').val())
-        if(host == "Kaltura")
-        {
-            kdp.sendNotification('doSeek',  time);
-        }
-        else if(host == "SoundCloud")
-        {
-            widget_soundcloud.seekTo(time/0.001);
-        }
-        else
-        {
+        if (host == "Kaltura") {
+            kdp.sendNotification('doSeek', time);
+        } else if (host == "SoundCloud") {
+            widget_soundcloud.seekTo(time / 0.001);
+        } else {
             player_widget.currentTime(time);
         }
     }
-    const getTime = function ()
-    {
-        if(host == "Kaltura")
-        {
+
+    const getTime = function () {
+        if (host == "Kaltura") {
             return kdp.evaluate('{video.player.currentTime}')
-        }    
-        else
-        {
-            return player_widget.currentTime();  
+        } else {
+            return player_widget.currentTime();
         }
     }
+
     const updateTime = function (button) {
-        if(host == "SoundCloud")
-        {
+        if (host == "SoundCloud") {
             widget_soundcloud.getPosition(function (pos) {
                 let time = Math.floor(pos * 0.001);
                 $('.video_time').val(secondsToHuman(time));
             })
-        }
-        else
-        {
+        } else {
             let selector = $(button).data('time-target') || '.video_time';
             if ($('.no-media').length > 0)
                 $(selector).val($('.video_input').val());
@@ -791,27 +749,23 @@ function InterviewIndexManager() {
     }
 
     const updateTimeInURL = function () {
-        if(host == "SoundCloud")
-        {
+        if (host == "SoundCloud") {
             widget_soundcloud.getPosition(function (pos) {
                 let time = Math.floor(pos * 0.001);
                 time = time - timeSubInSec;
                 if (time < 0) time = 0;
-                window.location = $('.add_tag').data().url+'?time='+time;
+                window.location = $('.add_tag').data().url + '?time=' + time;
             })
-        }
-        else
-        {
-            if($('.no-media').length > 0)
+        } else {
+            if ($('.no-media').length > 0)
                 window.location = $('.add_tag').data().url;
-            else
-            {
+            else {
                 let time = getTime();
                 time = time - timeSubInSec;
                 if (time < 0) time = 0;
-                window.location = $('.add_tag').data().url+'?time='+time;
+                window.location = $('.add_tag').data().url + '?time=' + time;
             }
-                
+
         }
     };
 
