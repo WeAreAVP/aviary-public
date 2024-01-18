@@ -18,7 +18,7 @@ thesaurus_settings = ::Thesaurus::ThesaurusSetting.where(organization_id: curren
             </div>
           </div>
          <div class="heading-holder">
-            <% if @interview.present? %>
+            <% if @interview.present? && @interview.id.present? %>
               <%= link_to 'Preview', preview_interviews_manager_path(@interview.id), class: 'btn-interview-preview' %>
             <% end %>
           </div>
