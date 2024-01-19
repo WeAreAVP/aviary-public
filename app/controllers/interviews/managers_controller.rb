@@ -401,7 +401,7 @@ module Interviews
       interview = Interview.find(interview_id)
       authorize! :manage, interview
       full_name = ''
-      user = User.find(user_id)
+      user = User.where(id: user_id).try(:first)
       if user.present?
         full_name = user.full_name
       end
