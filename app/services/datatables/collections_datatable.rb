@@ -3,7 +3,7 @@
 # Aviary is an audiovisual content publishing platform with sophisticated features for search and permissions controls.
 # Copyright (C) 2019 Audio Visual Preservation Solutions, Inc.
 class CollectionsDatatable < ApplicationDatatable
-  delegate :link_to, :collection_url, :edit_collection_path, :collection_path, :list_resources_collection_path, :can?, to: :@view
+  delegate :link_to, :collection_url, :edit_collection_path, :collection_path, :list_resources_collection_path, :bulk_resource_list_collections_path, :can?, to: :@view
 
   def initialize(view, current_organization)
     @view = view
@@ -16,6 +16,12 @@ class CollectionsDatatable < ApplicationDatatable
     all_collections, count = collections
     collections_data = all_collections.map do |collection|
       [].tap do |column|
+        column << %(
+          <label><span class="sr-only">Aviary collection with ID #{collection.id} titled #{collection.title}</span>
+            <input type='checkbox' class='resources_selections resources_selections-#{collection.id}'
+                data-url='#{bulk_resource_list_collections_path(collection_id: collection.id)}' data-id='#{collection.id}' />
+          </label>
+        )
         column << collection.title
         column << collection.collection_resources_count
         column << status(collection.is_featured)

@@ -18,6 +18,35 @@ class CollectionsController < ApplicationController
     end
   end
 
+  def bulk_edit_operation
+    if session[:collection_bulk_edit].present?
+      collection_ids = { id: session[:collection_bulk_edit] }
+      case params['check_type']
+      when 'change_status'
+        Collection.where(collection_ids).update_all(is_public: params['status'].to_i)
+      when 'change_featured'
+        Collection.where(collection_ids).update_all(is_featured: params['featured'].to_i)
+      when 'preferred_default_tab'
+        Collection.where(collection_ids).update_all(default_tab_selection: params['preferred_default_tab'])
+      when 'disable_player_and_resource_embed'
+        Collection.where(collection_ids).update_all(disable_player: params['disable_player_and_resource_embed'].to_i)
+      when 'click_through'
+        Collection.where(collection_ids).update_all(click_through: params['click_through'].to_i)
+      when 'automated_access_approval'
+        Collection.where(collection_ids).update_all(automated_access_approval: params['automated_access_approval'].to_i)
+      when 'bulk_delete'
+        Collection.where(collection_ids).update_all(status: Collection.statuses[:deleted])
+        DeleteCollectionsWorker.perform_in(1.minutes)
+      else
+        return
+      end
+    end
+
+    respond_to do |format|
+      format.html { redirect_to collections_path, notice: t('updated_successfully') }
+    end
+  end
+
   def show
     organization = current_organization
     if organization.nil?

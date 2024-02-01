@@ -7,8 +7,7 @@
             <div class="col-md-6"><h1>Collections</h1></div>
             <div class="col-md-6">
               <%= link_to 'Add Collection', new_collection_path, class: 'btn btn-primary btn-xs pull-right' %>
-              <%= link_to 'Export to CSV', export_collections_path(export_type: 'collection'), class: 'btn btn-outline-primary btn-xs pull-right mr-2 export_btn d-none' %>
-            </div>
+              <%= render partial: 'collection_resources/show/collection_resource_buttons', locals: {from: 'collection'} %>            </div>
           </div>
         </div>
       </div>
@@ -16,6 +15,7 @@
         <%= content_tag :table, role: :datatable, class: ["table", "table-striped", 'table-bordered'], id: 'collection_data_table', data: { url: collections_path(format: :json)} do %>
           <thead>
           <tr>
+            <th><input type="checkbox" class="select_all_checkbox_resources" data-url="<%= bulk_resource_list_collections_path %>"/></th>
             <th>Name</th>
             <th>Resources</th>
             <th>Featured</th>
@@ -28,6 +28,130 @@
         <% end %>
       </div>
     </main>
+  </div>
+</div>
+<div class="modal fade bulk-edit-resource-file-modal bulk-edit-modal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <%= form_tag bulk_edit_operation_collections_path, {id: 'bulk_edit_form'} do %>
+        <div class="modal-header">
+          <h1 class="font-weight-bold modal-title" style="font-size: 21px;">Bulk Edit</h1>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <input value="assign_to_collection" type="hidden" name="bulk_edit[type_of_bulk_operation]" id="bulk_edit_type_of_bulk_operation">
+            <div class="col-md-12">
+              <div class="row">
+                <div class="col-12 float-left">
+                  <select class="bulk_operation" name="check_type">
+                    <option value="change_status">Change Status</option>
+                    <option value="change_featured">Change Featured</option>
+                    <option value="preferred_default_tab">Preferred Default Tab</option>
+                    <option value="disable_player_and_resource_embed">Disable Player and Resource Embed</option>
+                    <option value="click_through">Click Through</option>
+                    <option value="automated_access_approval">Enable automated access request approvals</option>
+                    <option value="bulk_delete">Bulk Delete</option>
+
+                  </select>
+                </div>
+              </div>
+            </div>
+            <input type="hidden" name='action' value="bulk_edit_operation"/>
+            <div class="col-md-12 mt-20px">
+              <div class="bulk_change_status_content operation_content">
+                <h1 class="font-size-18px text-left">Change the access status of selected collections:</h1>
+                <select class="bulk_operation_change_status" name="status">
+                    <option value="1">Yes</option>
+                    <option value="0">No</option>
+                  </select>
+              </div>
+
+              <div class="bulk_change_featured_content operation_content d-none">
+                <h1 class="font-size-18px text-left">Change the featured status of selected collections:</h1>
+                <select class="bulk_operation_change_featured" name="featured">
+                    <option value="1">Yes</option>
+                    <option value="0">No</option>
+                  </select>
+              </div>
+
+              <div class="bulk_preferred_default_tab_content operation_content d-none">
+                <h1 class="font-size-18px text-left">Select which is the default tab displayed for selected collections:</h1>
+                <select class="bulk_operation_preferred_default_tab" name="preferred_default_tab">
+                <% Collection.default_tab_selections.each do | default_tab_selection | %>
+                    <option value="<%=default_tab_selection[0]%>"><%=default_tab_selection[0].humanize%></option>
+                <%end%>
+                </select>
+              </div>
+
+
+              <div class="bulk_disable_player_and_resource_embed_content operation_content d-none">
+                <h1 class="font-size-18px text-left">Change whether player and resource embed is disabled:</h1>
+                <select class="bulk_operation_disable_player_and_resource_embed" name="disable_player_and_resource_embed">
+                    <option value="1">Yes</option>
+                    <option value="0">No</option>
+                </select>
+              </div>
+
+              <div class="bulk_click_through_content operation_content d-none">
+                <h1 class="font-size-18px text-left">Select collections where access requests should have click-throughs:</h1>
+                <select class="bulk_operation_click_through" name="click_through">
+                    <option value="1">Yes</option>
+                    <option value="0">No</option>
+                </select>
+              </div>
+
+              <div class="bulk_automated_access_approval_content operation_content d-none">
+                <h1 class="font-size-18px text-left">Select collections where access requests should have automated approvals:</h1>
+                <select class="bulk_operation_automated_access_approval" name="automated_access_approval">
+                    <option value="1">Yes</option>
+                    <option value="0">No</option>
+                </select>
+              </div>
+
+              <div class="bulk_bulk_delete_content operation_content d-none">
+                <h1 class="font-size-18px text-left">Delete selected collections.</h1>
+              </div>
+            </div>
+            <div class="col-12 mt-20px">
+              <span id="number_of_bulk_selected_popup" class="float-right"></span>
+            </div>
+          </div>
+        </div>
+      <% end %>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button class="btn btn-primary bulk-edit-submit" data-url="<%= fetch_bulk_edit_resource_list_collections_path %>" onclick="$('.bulk-edit-review-modal').modal()" data-dismiss="modal">Apply</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade bd-example-modal-lg bulk-edit-review-modal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
+  <div class="modal-dialog modal-xl" role="document">
+
+    <div class="modal-content ">
+
+      <div class="modal-header">
+        <h1 class="font-weight-bold modal-title" style="font-size: 21px;">Bulk Edit Review</h1>
+      </div>
+      <div class="modal-body">
+        <h1 class="alert-danger font-size-21px text-center mb-20px p-2 "> Are you sure you want to
+          <span id="confirm_msg_pop_bulk">change the access status of the collections listed below</span>? </h1>
+        <table class="table table-hover review_resources table-sm " style="width: 100%;">
+          <thead>
+          <tr>
+            <td  class="font-weight-bold"> ID</td>
+            <td  class="font-weight-bold"> Collection Name</td>
+          </tr>
+          </thead>
+          <tbody class="bulk-edit-review-content">
+          </tbody>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button class="btn btn-primary bulk-edit-do-it" onclick="$('#bulk_edit_form').submit();">Apply</button>
+      </div>
+    </div>
   </div>
 </div>
 <script type="text/javascript">
