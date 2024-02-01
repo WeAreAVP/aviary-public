@@ -94,8 +94,9 @@
                               <% end %>
                             </div>
                           </div>
-                          <div class="segment-duration play-timecode" data-timecode="<%= data.start_time %>"><%= time_to_duration(data.start_time) %></div>
-                        </div>
+                          <div class="segment-duration play-timecode collapse_<%= index %>" data-target="collapse_<%= index %>"
+                            data-timecode="<%= data.start_time %>"><%= time_to_duration(data.start_time) %>
+                          </div>                        </div>
                         <div class="d-flex">
                           <div class="btn-group">
                             <a href="<%= @interview.present? ? ohms_index_edit_path(data.id) : edit_index_file_path(@resource_file.id, @file_index.id, data.id) %>?time=<%= data.start_time %>" class="btn btn-outline-dark"><i class="fa fa-edit"></i></a>
