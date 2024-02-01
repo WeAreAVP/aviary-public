@@ -529,7 +529,7 @@ function CollectionResource() {
 
                 function updateIndexPointer() {
                     let progressPercent = player_widget.cache_.currentTime / player_widget.cache_.duration;
-                    $('#media-index-timeline-pointer').css('left', `${progressPercent * 100}%`);
+                    $('#media-index-timeline-pointer').css('left', `calc(${progressPercent * 100}% - 4px)`);
                 }
             }
         }

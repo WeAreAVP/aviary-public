@@ -70,15 +70,9 @@ class FileIndexPoint < ApplicationRecord
       if FileIndexPoint.where(file_index_id: file_index_id).where(start_time: start_time).where.not(id: id).first
         errors.add(:start_time, 'Entry already exists for time point.')
         return false
-      elsif FileIndexPoint.where(file_index_id: file_index_id).where(title: title).where.not(id: id).first
-        errors.add(:title, 'Entry already exists with same Segment Title. Please change it and save the entry again.')
-        return false
       end
     elsif FileIndexPoint.where(file_index_id: file_index_id).where(start_time: start_time).first
       errors.add(:start_time, 'Entry already exists for time point.')
-      return false
-    elsif FileIndexPoint.where(file_index_id: file_index_id).where(title: title).first
-      errors.add(:title, 'Entry already exists with same Segment Title. Please change it and save the entry again.')
       return false
     end
     true

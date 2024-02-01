@@ -75,9 +75,8 @@ module InterviewIndexHelper
       regex = %r{https?:\/\/(?:\w+\.)*vimeo\.com(?:[\/\w]*\/?)?\/(?<id>[0-9]+)[^\s]*}
       match = regex.match(interview.embed_code)
 
-      if match.present?
-        data['src'] = match[0]
-      else
+      data['src'] = interview.embed_code
+      unless match.present?
         data['error'] = 'Error processing url. It can be because the provided url is not of vimeo.'
       end
     end
@@ -280,8 +279,9 @@ module InterviewIndexHelper
           data-toggle="tooltip" data-placement="bottom"
           title="#{Time.at(point.start_time.to_f).utc.strftime('%H:%M:%S') + ' ' + point.title}"
           aria-label="Index segment at #{Time.at(point.start_time.to_f).utc.strftime('%H:%M:%S') + ' titled: ' + point.title}"
-          style="width: #{width.round(2) < 1 ? 1 : width.ceil(2)}%;"
-          data-target="collapse_#{index}">
+          style="width: max(#{width.round(2)}%, 5px);"
+          data-target="collapse_#{index}"
+          type="button">
         </button>
       HTML
     end
@@ -338,9 +338,9 @@ module InterviewIndexHelper
 
     <<-HTML
       <a class="d-inline-block mr-2 index-navigation-arrows btn btn-primary #{@previous_index_point.nil? ? 'disable_btn' : ''} "
-        aria-label="Go to next index segment #{@previous_index_point.nil? ? '; disabled' : ''}"
+        aria-label="Go to previous index segment #{@previous_index_point.nil? ? '; disabled' : ''}"
         href="#{href(@previous_index_point) || 'javascript:void(0)'}">
-        <i class="fa fa-angle-left" alt="Go to next index segment"></i>
+        <i class="fa fa-angle-left" alt="Go to previous index segment"></i>
       </a>
     HTML
   end

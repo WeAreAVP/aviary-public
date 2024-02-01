@@ -140,11 +140,12 @@ class IndexesController < ApplicationController
     @file_index_point.update(file_index_point_params)
     @file_index_point.start_time = human_to_seconds(params[:file_index_point][:start_time]).to_f
     start_time = @file_index_point.start_time
+    start_time = params[:time] if params[:new].present? && params[:time].present?
     @file_index_point = set_aviary_index_point_values(@file_index_point, params)
     respond_to do |format|
       if @file_index_point.save
         url = "#{show_index_file_path(@resource_file.id, @file_index.id)}?time=#{start_time}"
-        url = "#{add_index_file_path(@resource_file.id, @file_index.id)}?time=#{start_time}" if params['new'].present?
+        url = "#{add_index_file_path(@resource_file.id, @file_index.id)}?time=#{start_time}" if params[:new].present?
 
         format.html { redirect_to url, notice: 'Index segment was successfully Saved.' }
         format.json { render :show_index, status: :created, location: @file_index_point }
