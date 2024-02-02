@@ -452,13 +452,29 @@ function InterviewIndexManager() {
         }, true)
         
 
-        document_level_binding_element('.save_and_new', 'click', function () {
-            if (!$('.timestamp-errors').length) {
-                var url = $('.interview_index_manager').attr("action")
-                if(!url.includes("new=1"))
-                {
-                    $('.interview_index_manager').attr("action", url+"?new=1");
+        document_level_binding_element('.save_and_new', 'click', function (e) {
+            e.preventDefault();
+
+            try {
+                if (host == "SoundCloud") {
+                    widget_soundcloud.getPosition(function (pos) {
+                        saveAndCreateNew(pos * 0.001, e)
+                    });
+                } else if (host == 'Vimeo') {
+                    player_widget.getCurrentTime()
+                        .then((time) => {
+                            saveAndCreateNew(time, e)
+                        })
+                        .catch((error) => {
+                            console.error("Error with Vimeo promise:", error);
+                            alert("An error occurred while fetching Vimeo media. Please try again or check your connection.");
+                        });
+                } else {
+                    saveAndCreateNew(getTime(), e);
                 }
+            } catch (error) {
+                console.error("Error with Vimeo promise:", error);
+                alert("An error occurred while fetching Vimeo media. Please try again or check your connection.");
             }
         });
 
@@ -769,8 +785,8 @@ function InterviewIndexManager() {
                 let time = Math.floor(pos * 0.001);
                 time = time - timeSubInSec;
                 if (time < 0) time = 0;
-                window.location = $('.add_tag').data().url+'?time='+time;
-            })
+                window.location = $('.add_tag').data().url + '?time=' + time;
+            });
         }
         else
         {
@@ -786,6 +802,19 @@ function InterviewIndexManager() {
                 
         }
     };
+
+    const saveAndCreateNew = function (time) {
+        if (!$('.timestamp-errors').length) {
+            let url = $('.interview_index_manager').attr("action");
+            url = url.includes("new=1") ? url : `${url}?new=1`;
+            url = `${url}${url.includes('?') ? '&' : '?'}time=${time}`;
+
+            $('.interview_index_manager').attr("action", url);
+
+            $('.interview_index_manager').submit();
+        }
+    };
+
     this.handlecallback = function (response, container, requestData) {
         try {
             eval('this.' + requestData.action + '(response,container,requestData)');
