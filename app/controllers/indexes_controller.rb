@@ -115,14 +115,11 @@ class IndexesController < ApplicationController
     @file_index_point = FileIndexPoint.new(file_index_point_params)
     @file_index_point.file_index_id = @file_index.id
     @file_index_point.start_time = human_to_seconds(params[:file_index_point][:start_time]).to_f
-    start_time = @file_index_point.start_time
     @file_index_point = set_aviary_index_point_values(@file_index_point, params)
+
     respond_to do |format|
       if @file_index_point.save
-        url = "#{show_index_file_path(@resource_file.id, @file_index.id)}?time=#{start_time}"
-        url = "#{add_index_file_path(@resource_file.id, @file_index.id)}?time=#{start_time}" if params['new'].present?
-
-        format.html { redirect_to url, notice: 'Index segment was successfully Saved.' }
+        format.html { redirect_to redirect_url, notice: 'Index segment was successfully saved.' }
         format.json { render :show_index, status: :created, location: @file_index_point }
       else
         format.html { render template: 'indexes/form/new' }
@@ -133,21 +130,18 @@ class IndexesController < ApplicationController
 
   def update_index
     authorize! :manage, current_organization
+
     @resource_file = CollectionResourceFile.find(params[:resource_file_id])
     @collection_resource = CollectionResource.find(@resource_file.collection_resource_id)
     @file_index = FileIndex.find(params[:file_index_id])
+
     @file_index_point = FileIndexPoint.find(params[:file_index_point_id])
     @file_index_point.update(file_index_point_params)
     @file_index_point.start_time = human_to_seconds(params[:file_index_point][:start_time]).to_f
-    start_time = @file_index_point.start_time
-    start_time = params[:time] if params[:new].present? && params[:time].present?
     @file_index_point = set_aviary_index_point_values(@file_index_point, params)
     respond_to do |format|
       if @file_index_point.save
-        url = "#{show_index_file_path(@resource_file.id, @file_index.id)}?time=#{start_time}"
-        url = "#{add_index_file_path(@resource_file.id, @file_index.id)}?time=#{start_time}" if params[:new].present?
-
-        format.html { redirect_to url, notice: 'Index segment was successfully Saved.' }
+        format.html { redirect_to redirect_url, notice: 'Index segment was successfully saved.' }
         format.json { render :show_index, status: :created, location: @file_index_point }
       else
         format.html { render template: 'indexes/form/edit' }
@@ -260,5 +254,14 @@ class IndexesController < ApplicationController
 
   def file_index_point_params
     params.require(:file_index_point).permit(:id, :start_time, :title, :synopsis, :partial_script, :keywords, :subjects, :gps_latitude, :gps_zoom, :gps_description, :gps_points, :hyperlinks)
+  end
+
+  def redirect_url
+    start_time = @file_index_point.start_time
+    start_time = params[:time] if params[:new].present? && params[:time].present?
+
+    return "#{add_index_file_path(@resource_file.id, @file_index.id)}?time=#{start_time}" if params[:bew].present?
+
+    "#{show_index_file_path(@resource_file.id, @file_index.id)}?time=#{start_time}"
   end
 end
