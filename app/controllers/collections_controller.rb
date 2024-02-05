@@ -37,13 +37,12 @@ class CollectionsController < ApplicationController
       when 'bulk_delete'
         Collection.where(collection_ids).update_all(status: Collection.statuses[:deleted])
         DeleteCollectionsWorker.perform_in(1.minutes)
-      else
-        return
       end
     end
 
     respond_to do |format|
       format.html { redirect_to collections_path, notice: t('updated_successfully') }
+      format.json { render json: [message: t('updated_successfully')] }
     end
   end
 
