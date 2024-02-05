@@ -1,6 +1,10 @@
 require 'rails_helper'
+require 'indexes_controller_helper'
+
 RSpec.describe IndexesController, type: :controller do
   include ApplicationHelper
+  include IndexesControllerHelper
+
   let(:file_index) { create(:file_index) }
   let(:file_index_point) { create :file_index_point, file_index: file_index }
 
@@ -120,6 +124,7 @@ RSpec.describe IndexesController, type: :controller do
         [{ hyperlink: 'https://hyperlink.com', description: 'A random hyperlink' }]
       )
     end
+  end
 
   describe "PATCH Sort" do
     it "has a 200 status code with no error" do
