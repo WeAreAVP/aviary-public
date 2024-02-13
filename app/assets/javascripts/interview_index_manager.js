@@ -452,16 +452,28 @@ function InterviewIndexManager() {
         );
 
         document_level_binding_element('.save_and_new', 'click', function () {
-            if (host == "SoundCloud") {
-                widget_soundcloud.getPosition(function (pos) {
-                    saveAndCreateNew(time)
-                });
-            } else if (host == 'Vimeo') {
-                player_widget.getCurrentTime().then((time) => {
-                    saveAndCreateNew(time)
-                });
-            } else {
-                saveAndCreateNew(getTime());
+            e.preventDefault();
+
+            try {
+                if (host == "SoundCloud") {
+                    widget_soundcloud.getPosition(function (pos) {
+                        saveAndCreateNew(pos * 0.001, e)
+                    });
+                } else if (host == 'Vimeo') {
+                    player_widget.getCurrentTime()
+                        .then((time) => {
+                            saveAndCreateNew(time, e)
+                        })
+                        .catch((error) => {
+                            console.error("Error with Vimeo promise:", error);
+                            alert("An error occurred while fetching Vimeo media. Please try again or check your connection.");
+                        });
+                } else {
+                    saveAndCreateNew(getTime(), e);
+                }
+            } catch (error) {
+                console.error("Error with Vimeo promise:", error);
+                alert("An error occurred while fetching Vimeo media. Please try again or check your connection.");
             }
         });
 
@@ -835,6 +847,8 @@ function InterviewIndexManager() {
             url = `${url}${url.includes('?') ? '&' : '?'}time=${time}`;
 
             $('.interview_index_manager').attr("action", url);
+
+            $('.interview_index_manager').submit();
         }
     }
 
