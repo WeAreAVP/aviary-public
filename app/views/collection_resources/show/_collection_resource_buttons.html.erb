@@ -1,9 +1,11 @@
-<div class="dropdown float-left">
+<div class="dropdown <%= from == 'collection' ? 'float-right': 'float-left' %>">
   <button type="button" class="btn mr-2 btn-outline-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
     Table Options
   </button>
   <div class="dropdown-menu dropdown-menu-right">
-    <% if from != 'automated_metadata' %>
+    <% if from == 'collection' %>
+      <%= link_to 'Export to CSV', export_collections_path(export_type: 'collection'), class: 'dropdown-item export_btn d-none' %>
+    <% elsif from != 'automated_metadata' %>
       <button class="dropdown-item manage-resource-columns-btn"> Manage Table</button>
       <%= link_to 'Export Resources to CSV', export_collections_path(collection_id: params[:id], export_type: 'resources'), class: 'dropdown-item export_btn d-none' %>
     <% end %>

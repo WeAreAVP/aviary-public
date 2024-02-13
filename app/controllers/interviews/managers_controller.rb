@@ -220,7 +220,8 @@ module Interviews
       if request.post? || request.patch?
         @interview.update(sync_status: params['interviews_interview']['sync_status'])
         file_transcripts_update = @interview.file_transcripts.where(interview_transcript_type: 'main').try(:first)
-        main_transcript = Sanitize.fragment(params['interviews_interview']['main_transcript'])
+        main_transcript = Sanitize.fragment(params['interviews_interview']['main_transcript'].strip)
+        main_transcript = main_transcript.gsub("\r", "\n").gsub("\n\n", "\n").gsub("\n \n", '').gsub("\n [", '[')
         file = Tempfile.new('content')
         file.path
         file.write(main_transcript)

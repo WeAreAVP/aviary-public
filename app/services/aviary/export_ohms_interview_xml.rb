@@ -14,6 +14,7 @@ module Aviary
     include ApplicationHelper
     def export(interview)
       date = interview.interview_date
+
       builder = Nokogiri::XML::Builder.new(encoding: 'UTF-8') do |xml|
         xml.ROOT('xmlns' => 'https://www.weareavp.com/nunncenter/ohms', 'xmlns:xsi' => 'http://www.w3.org/2001/XMLSchema-instance', 'xsi:schemaLocation' => 'https://www.weareavp.com/nunncenter/ohms/ohms.xsd') {
           xml.record('id' => interview.id, 'dt' => DateTime.now.strftime('%Y-%m-%d')) {
@@ -65,16 +66,13 @@ module Aviary
             xml.file_name interview.media_filename
             file_transcript = FileTranscript.find_by(interview_id: interview.id)
             formatted = ''
-            alt_formatted = ''
-            if interview.transcript_sync_data.present?
-              xml.sync interview.transcript_sync_data
-            elsif file_transcript.present?
+            if file_transcript.present?
               file_transcript_points = FileTranscriptPoint.where(file_transcript_id: file_transcript)
               sync = "#{file_transcript.timecode_intervals.to_i}:"
               index_line = 0
               notes_info = file_transcript.point_notes_info
               file_transcript_points.each do |point|
-                info = point.text.split("\n")
+                info = point.text.split("\n").reject(&:empty?)
                 info.each do |section|
                   if section.present?
                     if notes_info.present? && notes_info[index_line.to_s].present?
@@ -84,27 +82,29 @@ module Aviary
                         tag = note.split('-')
                         temp = "[[footnote]]#{tag[0]}[[/footnote]]"
                         begin
-                          section.insert((tag[1].to_i + prv_length), temp)
+                          section.insert((tag[1].to_i + prv_length), temp) if section.length >= tag[1].to_i
                         rescue StandardError => ex
                           Failure(ex.message)
                         end
                         prv_length += temp.length
                       end
                     end
+
                     breakup = section.split(' ')
                     new_line = ''
                     breakup.each_with_index do |word, k|
                       if "#{new_line}#{word}".length > 80 || k == breakup.length - 1
-                        formatted = "#{formatted}#{new_line.strip}#{k == breakup.length - 1 ? " #{word}" : ''}\r\n"
+                        formatted = "#{formatted}#{new_line.strip}#{k == breakup.length - 1 ? " #{word}" : ''}\n"
                         new_line = ''
                       end
                       new_line = "#{new_line}#{word} "
                     end
-                    formatted = "#{formatted}\r\n"
                   end
+                  formatted = "#{formatted}\n"
                   index_line += 1
                 end
-                formatted_info = formatted.split("\r\n")
+                formatted = formatted.delete_suffix("\n")
+                formatted_info = formatted.split("\n")
                 line = formatted_info.length
                 sync += "|#{line}(#{formatted_info.last.split(' ').length})" if formatted_info.present?
               end
@@ -115,6 +115,8 @@ module Aviary
                 formatted += "\n[[footnotes]]\n#{last}[[/footnotes]]"
               end
               xml.sync sync
+            elsif interview.transcript_sync_data.present?
+              xml.sync interview.transcript_sync_data
             else
               xml.sync ''
             end
@@ -132,17 +134,18 @@ module Aviary
                     new_line = ''
                     breakup.each_with_index do |word, k|
                       if "#{new_line}#{word}".length > 80 || k == breakup.length - 1
-                        alt_formatted = "#{alt_formatted}#{new_line.strip}#{k == breakup.length - 1 ? " #{word}" : ''}\r\n"
+                        formatted = "#{formatted}#{new_line.strip}#{k == breakup.length - 1 ? " #{word}" : ''}\n"
                         new_line = ''
                       end
                       new_line = "#{new_line}#{word} "
                     end
-                    alt_formatted = "#{alt_formatted}\r\n"
+                  else
+                    formatted = "#{formatted}\n"
                   end
                 end
-                alt_formatted_info = alt_formatted.split("\r\n")
-                line = alt_formatted_info.length
-                sync_alt += "|#{line}(#{alt_formatted_info.last.split(' ').length})"
+                formatted_info = formatted.split("\n")
+                line = formatted_info.length
+                sync_alt += "|#{line}(#{formatted_info.last.split(' ').length})"
               end
             end
             xml.sync_alt sync_alt
@@ -162,6 +165,7 @@ module Aviary
             xml.kembed interview.embed_code.present? ? interview.embed_code : ''
             xml.language interview.language_info
             xml.user_notes interview.miscellaneous_user_notes
+
             file_index = FileIndex.find_by(interview_id: interview.id, language: interview_lang_info(interview.language_info.gsub(/(\w+)/, &:capitalize)))
             file_index_alt = FileIndex.find_by(interview_id: interview.id, language: interview_lang_info(interview.language_for_translation.gsub(/(\w+)/, &:capitalize)))
             xml.index {
@@ -220,6 +224,7 @@ module Aviary
             xml.type interview.media_type
             xml.description interview.summary
             xml.rel interview.try('rel').present? ? interview.rel : ''
+
             file_transcript = FileTranscript.find_by(interview_id: interview.id)
             transcript_manager = Aviary::OhmsTranscriptManager.new
             if formatted.present?
@@ -228,7 +233,6 @@ module Aviary
               xml.transcript transcript_manager.read_notes_info(file_transcript)
             end
             transcript_alt = ''
-            file_transcript_alt = FileTranscript.where(interview_id: interview.id)
             if file_transcript_alt.length == 2
               transcript_alt_file = file_transcript_alt.last
               transcript_alt = transcript_manager.read_notes_info(transcript_alt_file)
@@ -238,6 +242,7 @@ module Aviary
             xml.fmt interview.media_format
             xml.usage interview.usage_statement
             xml.userestrict interview.miscellaneous_use_restrictions? ? 1 : 0
+
             ohms_configuration = OhmsConfiguration.where('organization_id', interview.organization.id).try(:first)
             xml.xmllocation "#{ohms_configuration.configuration}/render.php?cachefile=#{interview.miscellaneous_ohms_xml_filename.gsub(/\s+/, '_')}" if ohms_configuration.present?
             xml.xmlfilename interview.miscellaneous_ohms_xml_filename

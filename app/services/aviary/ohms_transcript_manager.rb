@@ -83,6 +83,7 @@ module Aviary
         end
       else
         file_content = Rails.env.production? ? URI.parse(file_path).read : File.read(open(file_path))
+        file_content = file_content.strip.gsub("\r", "\n").gsub("\n\n", "\n").gsub("\n \n", "\n").gsub("\n [", '[')
         hash = if ohms_data.length.positive?
                  parse_ohms_text(file_content, file_transcript, ohms_data)
                else
