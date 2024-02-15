@@ -236,7 +236,7 @@ thesaurus_settings = ::Thesaurus::ThesaurusSetting.where(organization_id: curren
 
           <div class="form-group embed_code dynamic_control_interview">
             <div class="field-title"><%= f.label :embed_code, 'Embed Code' %></div>
-            <%= f.input :embed_code, label: false, input_html: { class: 'form-control embed_code' } %>
+            <%= f.input :embed_code, label: false, input_html: { class: 'form-control embed_code', id: 'embed_code_input' } %>
           </div>
 
           <div class="form-group media_host_account_id dynamic_control_interview">
@@ -345,7 +345,7 @@ thesaurus_settings = ::Thesaurus::ThesaurusSetting.where(organization_id: curren
   <div class="row mt-4">
     <div class="col-md-12 text-right">
       <%= link_to 'Return To OHMS Studio', ohms_records_path, class: 'btn btn-outline-secondary mr-2' %>
-      <%= f.submit 'Save', class: 'btn btn-success' %>
+      <%= f.submit 'Save', class: 'btn btn-success', onclick: 'return validateForm()' %>
     </div>
   </div>
   <br/>
@@ -361,4 +361,12 @@ thesaurus_settings = ::Thesaurus::ThesaurusSetting.where(organization_id: curren
         interviews_manager.keywordField(<%= raw @keys %>, <%= raw @selected_keyword_ids %>);
         interviews_manager.searchField(<%= raw @subjects %>, <%= raw @selected_subjects_ids %>);
     })
+
+    function validateForm() {
+      var embedCodeInput = document.getElementById('embed_code_input');
+      var embedCodeValue = embedCodeInput.value;
+      var scriptTagRegex = /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi
+      embedCodeValue = embedCodeValue.replace(scriptTagRegex, '');
+      $(embedCodeInput).val(embedCodeValue);
+    }
 </script>

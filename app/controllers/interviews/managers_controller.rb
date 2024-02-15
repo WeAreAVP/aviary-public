@@ -222,6 +222,7 @@ module Interviews
         file_transcripts_update = @interview.file_transcripts.where(interview_transcript_type: 'main').try(:first)
         main_transcript = Sanitize.fragment(params['interviews_interview']['main_transcript'].strip)
         main_transcript = main_transcript.gsub("\r", "\n").gsub("\n\n", "\n").gsub("\n \n", '').gsub("\n [", '[')
+        main_transcript = fix_line_breaks(main_transcript) if params[:fix_linebreaks]&.to_boolean?
         file = Tempfile.new('content')
         file.path
         file.write(main_transcript)
