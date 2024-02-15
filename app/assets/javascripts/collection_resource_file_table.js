@@ -53,7 +53,7 @@ function CollectionResourceFileTable() {
         $('.check_all_fields, .uncheck_all_fields').on('click', function () {
             $('.' + $(this).data('search-field')).prop('checked', $(this).data('search-status'));
         });
-
+        manageTable();
     };
     this.handlecallback = function (response, container, requestData) {
         try {

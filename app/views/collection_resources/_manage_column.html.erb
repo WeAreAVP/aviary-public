@@ -34,6 +34,12 @@
                     </select>
                   </div>
                 </div>
+                <div class="col-md-6">
+                  <p class="small mt-4">
+                  <i class="fa fa-info-circle" aria-hidden="true"></i>
+                  <small class="text-muted">To re-order the columns in this table with a keyboard, <kbd>TAB</kbd> to focus on the appropriate field, then hold down the <kbd>SHIFT</kbd> key and click on the <kbd>↑</kbd> or <kbd>↓</kbd> key to change the order.</small>
+                  </p>
+                </div>
               </div>
               <div class="row">
                 <div class="col-12">
@@ -55,7 +61,7 @@
                         <% resource_table_display = single_collection_field['resource_table_display'] %>
 
                         <li id="<%= system_name %>" class="sortable-li">
-                          <i class="fa fa-ellipsis-v text-muted handle pr-10px pl-10px"></i>
+                          <a href="javascript:void(0)" class="fa fa-ellipsis-v text-muted handle pr-10px pl-10px"></a>
                           <div class="form-check m-0 d-inline-block">
                             <label for="<%= system_name %>_status">
                               <input id="<%= system_name %>_status" class=" all_fields_identifier ml-5px" type="checkbox" <%= resource_table_display.to_s.to_boolean? ? 'checked' : '' %>/>
