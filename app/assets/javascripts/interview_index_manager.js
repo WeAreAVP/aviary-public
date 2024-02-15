@@ -19,6 +19,7 @@ function InterviewIndexManager() {
     let widget_soundcloud;
     let host = "";
     let durationInterval = null;
+    const indexTemplateName = $('#index_template_name').data('value');
     this.initialize = function () {
         $('[data-toggle="tooltip"]').tooltip();
 
@@ -848,6 +849,10 @@ function InterviewIndexManager() {
 
             $('.interview_index_manager').attr("action", url);
 
+            if ($('#index_template_name').data('value') === 'AES60-2011') {
+                $('.video_end_time').val(secondsToHuman(time));
+                alert('The current playback time of the resource will be set as the "End Time" for this index segment.');
+            }
             $('.interview_index_manager').submit();
         }
     }

@@ -23,6 +23,7 @@ module Interviews
       @interview = Interview.find(params[:id])
       @file_index_points = FileIndexPoint.where(file_index_id: @interview.file_indexes&.first&.id)
       @file_index_point = FileIndexPoint.new
+      @file_index_point.start_time = params[:time] if params[:time].present?
       set_thesaurus
       OhmsBreadcrumbPresenter.new(@interview, view_context).breadcrumb_manager('edit', @interview, 'index')
     end
