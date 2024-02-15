@@ -57,6 +57,7 @@ function CollectionResourceTable() {
             $('.' + $(this).data('search-field')).prop('checked', $(this).data('search-status'));
         });
         importCsvFile();
+        manageTable();
     };
     const importCsvFile = function () {
         $('#import_csv_file').fileupload({

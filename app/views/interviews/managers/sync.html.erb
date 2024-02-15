@@ -109,7 +109,7 @@
                       <% end %>
                       
                       <% if @data_main.length > counter %>
-                        <span class="transcript_point_code text-dark transcript_point_code_<%= hms_to_number(single_point[:end_time]) %>" data-timecode="<%= hms_to_number(single_point[:end_time]) %>">[<%= single_point[:end_time] %>]</span>
+                        <span class="merge_transcript_point_code transcript_point_code text-dark transcript_point_code_<%= hms_to_number(single_point[:end_time]) %>" data-timecode="<%= hms_to_number(single_point[:end_time]) %>">[<%= single_point[:end_time] %>]</span>
                       <% end %>
                       <% counter = counter + 1 %>
                       <% end %>

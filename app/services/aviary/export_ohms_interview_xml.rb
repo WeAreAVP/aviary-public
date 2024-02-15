@@ -68,7 +68,7 @@ module Aviary
             formatted = ''
             if file_transcript.present?
               file_transcript_points = FileTranscriptPoint.where(file_transcript_id: file_transcript)
-              sync = "#{file_transcript.timecode_intervals.to_i}:"
+              sync = "#{file_transcript.timecode_intervals.to_f}:"
               index_line = 0
               notes_info = file_transcript.point_notes_info
               file_transcript_points.each do |point|
@@ -125,7 +125,7 @@ module Aviary
             if file_transcript_alt.length == 2
               file_transcript_last = file_transcript_alt.last
               file_transcript_points = FileTranscriptPoint.where(file_transcript_id: file_transcript_last)
-              sync_alt = "#{file_transcript_last.timecode_intervals.to_i}:"
+              sync_alt = "#{file_transcript_last.timecode_intervals.to_f}:"
               file_transcript_points.each do |point|
                 info = point.text.split("\n")
                 info.each do |section|
