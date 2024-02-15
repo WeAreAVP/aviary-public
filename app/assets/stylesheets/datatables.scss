@@ -289,3 +289,18 @@ div.dataTables_wrapper div.dataTables_info {
     min-height: 200px;
   }
 }
+
+#dataTables_accessibility_text {
+  span {
+    font-size: 13px;
+    background: rgb(228, 227, 227);
+    padding: 5px 10px;
+    border-radius: 5px;
+    text-align: center;
+    display: inline-block;
+
+    kbd {
+      padding: 0 3px;
+    }
+  }
+}

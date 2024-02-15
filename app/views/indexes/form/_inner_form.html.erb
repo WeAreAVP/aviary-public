@@ -1,4 +1,6 @@
 <% present(@file_index_point) do |presenter| %>
+  <div class="d-none" id="index_template_name" data-value="<%= @index_template['name'] %>"></div>
+
   <div>
     <%= f.hidden_field :id %>
 

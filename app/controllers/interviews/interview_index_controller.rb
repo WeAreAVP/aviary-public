@@ -23,6 +23,7 @@ module Interviews
       @interview = Interview.find(params[:id])
       @file_index_points = FileIndexPoint.where(file_index_id: @interview.file_indexes&.first&.id)
       @file_index_point = FileIndexPoint.new
+      @file_index_point.start_time = params[:time] if params[:time].present?
       set_thesaurus
       OhmsBreadcrumbPresenter.new(@interview, view_context).breadcrumb_manager('edit', @interview, 'index')
     end
@@ -94,8 +95,8 @@ module Interviews
       @file_index_point = FileIndexPoint.find(params[:id])
       @file_index_point.update(file_index_point_params)
       start_time = human_to_seconds(params[:file_index_point][:start_time])
-      start_time = params[:time] if params[:new].present? && params[:time].present?
       @file_index_point.start_time = start_time.to_f
+      start_time = params[:time] if params[:new].present? && params[:time].present?
       @file_index_point = set_custom_values(@file_index_point, '', params)
       @file_index = FileIndex.find(@file_index_point.file_index_id)
       @interview = Interview.find(@file_index.interview_id)
@@ -168,6 +169,7 @@ module Interviews
       @file_index_point.file_index_id = @file_index.id
       start_time = human_to_seconds(params[:file_index_point][:start_time])
       @file_index_point.start_time = start_time.to_f
+      start_time = params[:time] if params[:new].present? && params[:time].present?
       @file_index_point = set_custom_values(@file_index_point, '', params)
       respond_to do |format|
         if @file_index_point.save
@@ -182,7 +184,6 @@ module Interviews
             @file_index_point_alt.start_time = start_time.to_f
             @file_index_point_alt = set_custom_values(@file_index_point_alt, '_alt', params)
             if @file_index_point_alt.save
-              start_time = params[:current_time].to_f if params[:current_time].present?
               url = "#{ohms_index_path(@file_index.interview_id)}?time=#{start_time}"
               url = "#{ohms_index_new_path(@file_index.interview_id)}?time=#{start_time}" if params['new'].present?
               format.html { redirect_to url, notice: 'Interview Index was successfully created.' }
@@ -193,7 +194,6 @@ module Interviews
             end
 
           else
-            start_time = params[:current_time].to_f if params[:current_time].present?
             url = "#{ohms_index_path(@file_index.interview_id)}?time=#{start_time}"
             url = "#{ohms_index_new_path(@file_index.interview_id)}?time=#{start_time}" if params['new'].present?
             format.html { redirect_to url, notice: 'Interview Index was successfully created.' }

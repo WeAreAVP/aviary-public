@@ -51,7 +51,10 @@ $(document).on('init.dt', function () {
 $(document).on('draw.dt', function () {
   $('.page-item:not(.previous, .next) a').each(function () {
     $(this).attr('aria-label', `Go to page ${$(this).text()}`);
-  })
+  });
+
+  removeAccessibilityText();
+  addAccessibilityText();
 });
 
 $(document).on('preInit.dt', function(e, settings) {
@@ -81,3 +84,22 @@ $(document).on('turbolinks:before-cache', function() {
     return dataTable = null;
   }
 });
+
+function addAccessibilityText() {
+  $('.dataTables_filter').parent().parent().append(/* html */`
+    <div class="col-md-12 text-center" id="dataTables_accessibility_text">
+      <span>
+        <i class="fa fa-info-circle"></i>
+        In order to re-sort the data in this table by different columns with a keyboard,
+        <kbd>Tab</kbd>
+        to the appropriate column and hit
+        <kbd>Enter</kbd>
+        key to change the sort
+      </span>
+    </div>
+  `);
+}
+
+function removeAccessibilityText() {
+  $('#dataTables_accessibility_text').remove();
+}

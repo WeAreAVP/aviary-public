@@ -6,6 +6,8 @@
 # Aviary is an audiovisual content publishing platform with sophisticated features for search and permissions controls.
 # Copyright (C) 2019 Audio Visual Preservation Solutions, Inc.
 class FileIndexPoint < ApplicationRecord
+  include ActionView::Helpers
+
   belongs_to :file_index
   before_save :manage_gps_points, :manage_hyperlinks
   validate :validate_time_uniqueness
@@ -19,12 +21,12 @@ class FileIndexPoint < ApplicationRecord
     return if !duration.present? || duration == 0
 
     if start_time < 0 || start_time > duration
-      errors.add(:start_time, "can't be out of bound")
+      errors.add(:start_time, "Select a time between 00:00:00 and #{time_to_duration(duration)}")
     end
 
     return if end_time.nil? || (end_time.present? && (end_time <= duration && end_time >= start_time))
 
-    errors.add(:end_time, "can't be out of bound")
+    errors.add(:end_time, "Select a time between 00:00:00 and #{time_to_duration(duration)}")
   end
 
   def manage_gps_points
