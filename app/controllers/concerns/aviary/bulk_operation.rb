@@ -14,9 +14,11 @@ module Aviary::BulkOperation
     current_key = :file_index_bulk_edit if params['type'] == :file_index_bulk_edit.to_s
     current_key = :file_transcript_bulk_edit if params['type'] == :file_transcript_bulk_edit.to_s
     current_key = :interview_bulk if params['type'] == :interview_bulk.to_s
+    current_key = :collection_bulk_edit if params['type'] == :collection_bulk_edit.to_s
     collection_resource_file_id = params['type'] == 'collection_resource_files' ? params['collection_resource_file_id'] : params['collection_resource_id']
     collection_resource_file_id = params['collection_resource_file_id'] if [:file_index_bulk_edit.to_s, :file_transcript_bulk_edit.to_s, :interview_bulk.to_s].include?(params['type'])
     collection_resource_file_id = params['id'] if [:interview_bulk.to_s].include?(params['type'])
+    collection_resource_file_id = params['collection_id'] if [:collection_bulk_edit.to_s].include?(params['type'])
     session[current_key] ||= []
     session['is_selected_all'] ||= false
     if params[:status] == 'add'
@@ -131,6 +133,8 @@ module Aviary::BulkOperation
                    Interviews::Interview.where(id: session[:interview_bulk])
                  elsif session[:resource_list_bulk_edit].present? && !session[:resource_list_bulk_edit].empty?
                    CollectionResource.where(id: session[:resource_list_bulk_edit])
+                 elsif session[:collection_bulk_edit].present? && !session[:collection_bulk_edit].empty?
+                   Collection.where(id: session[:collection_bulk_edit])
                  end
     render partial: 'fetch_bulk_edit_resource_list'
   end

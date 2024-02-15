@@ -1,0 +1,33 @@
+WEBVTT
+
+TItle
+00:00:00.000 --> 01:47:13.000
+Synopsis:::First Term|||Second Synopsis:::Second Term|||Third Synopsis:::Third Term
+{"type":"TextualBody","value":"Keywords;Subjects","format":"text/plain","label":{"en":["Keywords"]}}
+{"type":"TextualBody","value":"Subject;Keyword","format":"text/plain","label":{"en":["Subjects"]}}
+{"type":"TextualBody","value":"Partial Script","format":"text/plain","label":{"en":["Partial Transcript"]}}
+{"type":"TextualBody","value":"Point 1,Point 2","format":"text/plain","label":{"en":["GPS description"]}}
+{"type":"TextualBody","value":"17,17","format":"text/plain","label":{"en":["GPS Zoom Level"]}}
+{"type":"TextualBody","value":"12.345,21.543;543.21,345.12","format":"text/plain","label":{"en":["GPS Coordinates"]}}
+{"type":"TextualBody","value":"www.link1.com,www.link2.com","format":"text/plain","label":{"en":["Hyperlink"]}}
+{"type":"TextualBody","value":"Link 1,Link 2","format":"text/plain","label":{"en":["Hyperlink Description"]}}
+
+Exporter
+01:47:13.000 --> 02:00:00.000
+Synopsis
+{"type":"TextualBody","value":"","format":"text/plain","label":{"en":["GPS description"]}}
+{"type":"TextualBody","value":"17","format":"text/plain","label":{"en":["GPS Zoom Level"]}}
+{"type":"TextualBody","value":"","format":"text/plain","label":{"en":["Hyperlink"]}}
+{"type":"TextualBody","value":"","format":"text/plain","label":{"en":["Hyperlink Description"]}}
+
+Introduction
+02:00:00.000 --> 02:22:16.000
+PBD introduces a Jordan B Peterson
+{"type":"TextualBody","value":"Jordan B. Peterson","format":"text/plain","label":{"en":["Keywords"]}}
+{"type":"TextualBody","value":"Introduction","format":"text/plain","label":{"en":["Subjects"]}}
+{"type":"TextualBody","value":"There were UN observers","format":"text/plain","label":{"en":["Partial Transcript"]}}
+{"type":"TextualBody","value":"Random point on the map","format":"text/plain","label":{"en":["GPS description"]}}
+{"type":"TextualBody","value":"17","format":"text/plain","label":{"en":["GPS Zoom Level"]}}
+{"type":"TextualBody","value":"11.211,21.121","format":"text/plain","label":{"en":["GPS Coordinates"]}}
+{"type":"TextualBody","value":"https://hyperlink.com","format":"text/plain","label":{"en":["Hyperlink"]}}
+{"type":"TextualBody","value":"A random hyperlink","format":"text/plain","label":{"en":["Hyperlink Description"]}}

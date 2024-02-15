@@ -140,7 +140,13 @@ module Interviews
       string :status, stored: true
       string :record_status, multiple: false, stored: true
       string :interviewee, multiple: true, stored: true
+      string :interviewee, stored: true do
+        interviewee.is_a?(Array) ? interviewee.join(',') : interviewee
+      end
       string :interviewer, multiple: true, stored: true
+      string :interviewer, stored: true do
+        interviewer.is_a?(Array) ? interviewer.join(',') : interviewer
+      end
       string :interview_date, stored: true
       string :date_non_preferred_format, stored: true
       string :collection_name, stored: true
@@ -150,8 +156,17 @@ module Interviews
       string :series_link, stored: true
       string :media_format, stored: true
       text :summary, stored: true
+      string :summary, stored: true do
+        summary.is_a?(Array) ? summary.join(',') : summary
+      end
       string :keywords, multiple: true, stored: true
+      string :keywords, stored: true do
+        keywords.is_a?(Array) ? keywords.join(',') : keywords
+      end
       string :subjects, multiple: true, stored: true
+      string :subjects, stored: true do
+        subjects.is_a?(Array) ? subjects.join(',') : subjects
+      end
       string :collection_id_series_id, stored: true do
         (collection_id.gsub(' ', '') + ' ' + series_id.gsub(' ', '')).strip
       end
@@ -417,6 +432,30 @@ module Interviews
                 alter_search_wildcard = 'ohms_assigned_user_name_ss'
                 alter_search_wildcard_string = 'ohms_assigned_user_name_ss'
               end
+              if alter_search_wildcard == 'summary_texts'
+                alter_search_wildcard = 'summary_ss'
+                alter_search_wildcard_string = 'summary_ss'
+              end
+
+              if alter_search_wildcard == 'interviewee_texts'
+                alter_search_wildcard = 'interviewee_ss'
+                alter_search_wildcard_string = 'interviewee_ss'
+              end
+
+              if alter_search_wildcard == 'interviewer_texts'
+                alter_search_wildcard = 'interviewer_ss'
+                alter_search_wildcard_string = 'interviewer_ss'
+              end
+
+              if alter_search_wildcard == 'keywords_texts'
+                alter_search_wildcard = 'keywords_ss'
+                alter_search_wildcard_string = 'keywords_ss'
+              end
+
+              if alter_search_wildcard == 'subjects_texts'
+                alter_search_wildcard = 'subjects_ss'
+                alter_search_wildcard_string = 'subjects_ss'
+              end
 
               alter_search_wildcard.sub! '_ss', '_texts'
               alter_search_wildcard.sub! '_sms', '_texts'
@@ -466,6 +505,7 @@ module Interviews
         total_response = { 'response' => { 'numFound' => 0 } }
       end
       if sort_direction.present?
+        sort_column = sort_column.to_s.gsub(/_(sms|texts)$/, '_ss')
         query_params[:sort] = case sort_column.to_s
                               when 'updated_at_ss'
                                 "updated_at_is #{sort_direction}"
