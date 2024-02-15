@@ -80,4 +80,15 @@ module InterviewsHelper
     end
     csv_rows
   end
+
+  def ends_with_punctuation?(line)
+    line.strip =~ /[[:punct:]]\z/ ? true : false
+  end
+
+  def fix_line_breaks(transcript)
+    processed_transcript = ''
+    transcript.split("\n").each { |line| processed_transcript += "#{line}#{line.present? && ends_with_punctuation?(line) ? "\n" : ''}" }
+    flash[:notice] = 'Successfully fixed line breaks'
+    processed_transcript
+  end
 end
