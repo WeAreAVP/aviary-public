@@ -4,7 +4,7 @@ namespace :aviary do
   namespace :solr_index do
     desc 'Index all objects of Collection for Solr; in descending order'
     task default: :environment do
-      %w'Organization Collection CollectionResource CollectionResourceFile FileIndex FileTranscript'.each do |klass|
+      %w'Organization Collection CollectionResource CollectionResourceFile FileIndex FileTranscript Interviews::Interview'.each do |klass|
         klass = klass.titleize.delete(' ').constantize
         failed = []
         puts "IDs of #{klass} which are successfully indexed"
