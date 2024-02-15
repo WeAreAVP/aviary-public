@@ -4,10 +4,10 @@ set -e
 context_exists=$(docker context ls --format "{{.Name}}" | grep -w "aviary-ecs")
 
 if [ -n "$context_exists" ]; then
-  echo "Context aviary-ecs exists. \n switching to context"
+  printf "Context aviary-ecs exists. \n switching to context"
   docker context use aviary-ecs
 else
-  echo "Context aviary-ecs does not exist. \n Creating context... \n Please follow instructions \n"
+  printf "Context aviary-ecs does not exist. \n Creating context... \n Please follow instructions \n"
   docker context create ecs aviary-ecs
 fi
 
