@@ -917,3 +917,35 @@ function getResponse(opt)
         },
     });
 }
+
+function manageTable()
+{
+    $('.ui-sortable li a').focus(function() {
+        $(this).addClass("ui-selecting");
+    }); 
+    $('.ui-sortable li a').focusout(function() {
+        $(this).removeClass("ui-selecting");
+    });
+    $('.ui-sortable li a').bind('keydown', function(event) {
+        if(event.which == 40 && event.shiftKey)
+        {
+            moveDown($(this).parent())
+            $(this).focus();
+        }
+        if(event.which == 38 && event.shiftKey)
+        {
+            moveUp($(this).parent())
+            $(this).focus();
+        }
+    });
+}
+
+function moveUp($item) {
+    $before = $item.prev();
+    $item.insertBefore($before);
+}
+
+function moveDown($item) {
+    $after = $item.next();
+    $item.insertAfter($after);
+}

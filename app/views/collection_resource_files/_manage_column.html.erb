@@ -36,6 +36,12 @@
               </div>
               <div class="row">
                 <div class="col-12">
+                  <p class="small mt-4">
+                  <i class="fa fa-info-circle" aria-hidden="true"></i>
+                  <small class="text-muted">To re-order the columns in this table with a keyboard, <kbd>TAB</kbd> to focus on the appropriate field, then hold down the <kbd>SHIFT</kbd> key and click on the <kbd>↑</kbd> or <kbd>↓</kbd> key to change the order.</small>
+                  </p>
+                </div>
+                <div class="col-12">
                   <h1 class="mt-4 font-weight-bold font-size-16px"> Search Fields Status:
                     <span class="btn btn-light font-size-13px mb-5px float-right font-weight-bold uncheck_all_fields " data-search-status="false" data-search-field="all_fields_identifier" id="uncheck_all_fields"> Disable all</span>
                     <span class="btn btn-light mb-5px float-right mr-5px font-size-13px font-weight-bold check_all_fields" data-search-status="true" data-search-field="all_fields_identifier" id="check_all_fields">Enable all</span>
@@ -45,7 +51,7 @@
                     <% columns_details.each do |_, value| %>
                       <% if CollectionResourceFile.fields_values[value['value']].present? %>
                         <li id="<%= value['value'] %>" class="sortable-li">
-                          <i class="fa fa-ellipsis-v handle pr-10px pl-10px"></i>
+                          <a href="javascript:void(0)" class="fa fa-ellipsis-v handle pr-10px pl-10px"></a>
                           <div class="form-check m-0 d-inline-block">
                             <label for="<%= value['value'] %>_status">
                               <input id="<%= value['value'] %>_status" class=" all_fields_identifier ml-5px" type="checkbox" <%= !value['status'].blank? && value['status'] == 'true' ? 'checked' : '' %>/>
