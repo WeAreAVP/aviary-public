@@ -452,7 +452,7 @@ function InterviewIndexManager() {
             '.play-timecode', 'click', handleIndexSegmentClick, true
         );
 
-        document_level_binding_element('.save_and_new', 'click', function () {
+        document_level_binding_element('.save_and_new', 'click', function (e) {
             e.preventDefault();
 
             try {
@@ -784,6 +784,8 @@ function InterviewIndexManager() {
     }
 
     const updateTime = function (button) {
+        $(`span#${$(button).data('timeTarget').replace('.', '')}-error`).remove();
+
         if (host == "SoundCloud") {
             widget_soundcloud.getPosition(function (pos) {
                 let time = Math.floor(pos * 0.001);
