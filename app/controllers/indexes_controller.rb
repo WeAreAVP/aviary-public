@@ -261,7 +261,7 @@ class IndexesController < ApplicationController
     start_time = @file_index_point.start_time
     start_time = params[:time] if params[:new].present? && params[:time].present?
 
-    return "#{add_index_file_path(@resource_file.id, @file_index.id)}?time=#{start_time}" if params[:bew].present?
+    return "#{add_index_file_path(@resource_file.id, @file_index.id)}?time=#{start_time}" if params[:new].present?
 
     "#{show_index_file_path(@resource_file.id, @file_index.id)}?time=#{start_time}"
   end
