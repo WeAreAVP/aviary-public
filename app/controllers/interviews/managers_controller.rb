@@ -7,27 +7,26 @@ module Interviews
   # ManagerController
   class ManagersController < ApplicationController
     include XMLFileHandler
+    include DeprecatedHelper
     include InterviewsHelper
     include Aviary::BulkOperation
     include Aviary::ZipperService
     before_action :authenticate_user!, except: :export
 
     before_action :set_interview, only: %i[show edit update destroy sync preview]
+    before_action :check_resource_limit, only: :export_to_avairy
 
     def ohms_configuration
       authorize! :manage, Interviews::Interview
-      @ohms_configuration = OhmsConfiguration.where('organization_id', current_organization.id).try(:first)
-      @ohms_configuration = OhmsConfiguration.new if @ohms_configuration.nil?
+      @ohms_configuration = current_organization.ohms_configuration
+      @ohms_configuration = OhmsConfiguration.create(organization_id: current_organization.id) if @ohms_configuration.nil?
     end
 
     def ohms_configuration_update
       authorize! :manage, Interviews::Interview
-      @ohms_configuration = OhmsConfiguration.where('organization_id', current_organization.id).try(:first)
-      if @ohms_configuration.nil?
-        @ohms_configuration = OhmsConfiguration.new
-        @ohms_configuration.organization_id = current_organization.id
-      end
-      @ohms_configuration.update(ohms_configuration_params)
+      current_organization.ohms_configuration.update(ohms_configuration_params)
+      redirect_to ohms_configuration_url
+    rescue StandardError
       redirect_to ohms_configuration_url
     end
 
@@ -106,11 +105,11 @@ module Interviews
 
       selected_keyword_ids = @interview[:keywords].present? ? @interview[:keywords] : []
       selected_keyword_ids = Thesaurus::ThesaurusTerms.where(id: selected_keyword_ids)
-      @selected_keyword_ids = selected_keyword_ids.present? ? get_thesaurus_terms_as_json(selected_keyword_ids) : get_thesaurus_terms_as_json(@interview[:keywords])
+      @selected_keyword_ids = selected_keyword_ids.present? ? get_thesaurus_terms_as_json(selected_keyword_ids) : @selected_keyword_ids = get_thesaurus_terms_as_json(@interview[:keywords])
 
       selected_subjects_ids = @interview[:keywords].present? ? @interview[:subjects] : []
       selected_subjects_ids = Thesaurus::ThesaurusTerms.where(id: selected_subjects_ids)
-      @selected_subjects_ids = selected_subjects_ids.present? ? get_thesaurus_terms_as_json(selected_subjects_ids) : get_thesaurus_terms_as_json(@interview[:subjects])
+      @selected_subjects_ids = selected_subjects_ids.present? ? get_thesaurus_terms_as_json(selected_subjects_ids) : @selected_subjects_ids = get_thesaurus_terms_as_json(@interview[:subjects])
     end
 
     def preview
@@ -134,14 +133,6 @@ module Interviews
         respond_to do |format|
           format.html { redirect_to ohms_records_path, notice: t('updated_successfully') }
         end
-      elsif params['check_type'] == 'mark_online'
-        Interviews::Interview.where(id: session[:interview_bulk]).each do |interview|
-          interview.update(record_status: 'Online')
-          interview.reindex
-        end
-        respond_to do |format|
-          format.html { redirect_to ohms_records_path, notice: t('updated_successfully') }
-        end
       elsif params['check_type'] == 'mark_not_restricted'
         Interviews::Interview.where(id: session[:interview_bulk]).each do |interview|
           interview.update(miscellaneous_use_restrictions: false)
@@ -153,6 +144,14 @@ module Interviews
       elsif params['check_type'] == 'mark_restricted'
         Interviews::Interview.where(id: session[:interview_bulk]).each do |interview|
           interview.update(miscellaneous_use_restrictions: true)
+          interview.reindex
+        end
+        respond_to do |format|
+          format.html { redirect_to ohms_records_path, notice: t('updated_successfully') }
+        end
+      elsif params['check_type'] == 'mark_online'
+        Interviews::Interview.where(id: session[:interview_bulk]).each do |interview|
+          interview.update(record_status: 'Online')
           interview.reindex
         end
         respond_to do |format|
@@ -236,10 +235,6 @@ module Interviews
         file.unlink
         main_transcript
       end
-      @data_main = []
-      @data_translation = []
-      @secondary_transcript = nil
-      @main_transcript = nil
 
       @data_main = []
       @data_translation = []
@@ -274,9 +269,10 @@ module Interviews
         end
       end
       OhmsBreadcrumbPresenter.new(@interview, view_context).breadcrumb_manager('show', @interview, 'sync')
+
       respond_to do |format|
         format.html
-        format.json { render json: { response: { data_main: data_main, data_translation: data_translation } } }
+        format.json { render json: { response: { data_main: @data_main, data_translation: data_translation } } }
       end
     end
 
@@ -383,12 +379,16 @@ module Interviews
                    else
                      Aviary::ImportOhmsInterviewXml.new.import(data, current_organization, current_user, params[:status].to_i)
                    end
-        response_body = if response.is_a?(Array)
+        response_body = if response == true
+                          { errors: false }
+                        elsif response.is_a?(Array)
                           { error: true, message: response.first.to_s.capitalize + ' ' + response.second.first }
                         elsif response.is_a?(String)
                           { error: true, message: response }
+                        elsif response.class.name.match('CSV::MalformedCSVError').present?
+                          { error: true, message: 'Malformed CSV Error' }
                         else
-                          { errors: false }
+                          { error: true, message: response }
                         end
         if response_body[:errors]
           break
@@ -397,6 +397,96 @@ module Interviews
       render json: response_body
     end
 
+    # POST /interviews/1/export_to_avairy
+    def export_to_avairy
+      interview = Interviews::Interview.find(params[:id])
+      export_text = Aviary::ExportOhmsInterviewXml.new.export(interview)
+
+      import = Import.new
+      import.organization_id = current_organization.id
+      import.collection_id = params[:collection_id].to_i
+      import.import_type = 1
+      import.user_id = current_user.id
+      import.title = params[:title]
+      import.status = Import::StatusType::IN_PROGRESS
+      import.sync_info = {
+        'interview_id' => interview.id,
+        'title' => params[:title],
+        'access' => params[:access].to_i,
+        'is_featured' => params[:is_featured].to_sym
+      }
+      import.save
+
+      file = Tempfile.new(["content#{Time.now.to_i}", '.xml'])
+      file.write(export_text.to_xml)
+      file.rewind
+      path = file.path
+
+      associated_file = File.open(path)
+      import_file = import.import_files.new(
+        associated_file: associated_file,
+        file_type: ImportFile::FileType::XML,
+        permission_object: {}.to_json
+      )
+      import_file.save
+
+      file.close
+      BulkImportWorker.new.perform(import.id)
+
+      import.reload
+      collection_resource_id = CollectionResource.where(external_resource_id: interview.id, external_type: 'ohms_interview').try(:first).try(:id)
+      if collection_resource_id.present?
+        redirect_to collection_collection_resource_add_resource_file_url(import.collection_id, collection_resource_id)
+      else
+        flash[:error] = 'OHMS metadata to Aviary resource mapping failed'
+        redirect_back(fallback_location: root_path)
+      end
+    end
+
+    # PUT /interviews/1/update_aviary_resource
+    def update_aviary_resource
+      interview = Interviews::Interview.find(params[:id])
+      export_text = Aviary::ExportOhmsInterviewXml.new.export(interview)
+
+      collection_resource = CollectionResource.where(external_resource_id: interview.id, external_type: 'ohms_interview').try(:first)
+
+      import = Import.new
+      import.organization_id = current_organization.id
+      import.collection_id = collection_resource.collection.id
+      import.import_type = 1
+      import.user_id = current_user.id
+      import.title = collection_resource.title
+      import.status = Import::StatusType::IN_PROGRESS
+      import.sync_info = {
+        'collection_resource_id' => collection_resource.id,
+        'interview_id' => interview.id,
+        'title' => collection_resource.title,
+        'access' => CollectionResource.accesses[CollectionResource.first.access],
+        'is_featured' => collection_resource.is_featured.to_s.to_sym
+      }
+      import.save
+
+      file = Tempfile.new(["content#{Time.now.to_i}", '.xml'])
+      file.write(export_text.to_xml)
+      file.rewind
+      path = file.path
+
+      associated_file = File.open(path)
+      import_file = import.import_files.new(
+        associated_file: associated_file,
+        file_type: ImportFile::FileType::XML,
+        permission_object: {}.to_json
+      )
+      import_file.save
+
+      file.close
+      BulkImportWorker.new.perform(import.id)
+
+      flash[:notice] = 'OHMS metadata to Aviary resource mapping successfull'
+      redirect_to collection_collection_resource_url(import.collection_id, collection_resource.id)
+    end
+
+    # GET ohms_records/user_assignments/:interview_id/:user_id
     def ohms_assignments
       user_id = params[:user_id]
       interview_id = params[:interview_id]
@@ -439,14 +529,12 @@ module Interviews
                                                    []
                                                  end
 
-      params.require(:interviews_interview)
-            .permit(:title, :accession_number, :interview_date, :date_non_preferred_format, :collection_id, :collection_name, :collection_link, :series_id, :series,
-                    :series_link, :summary, :thesaurus_keywords, :thesaurus_subjects, :thesaurus_titles, :transcript_sync_data, :transcript_sync_data_translation,
-                    :media_format, :media_host, :media_url, :media_duration, :media_filename, :media_type, :right_statement, :usage_statement, :acknowledgment,
-                    :language_info, :include_language, :language_for_translation, :miscellaneous_cms_record_id, :miscellaneous_ohms_xml_filename,
-                    :miscellaneous_use_restrictions, :miscellaneous_sync_url, :miscellaneous_user_notes, :interview_status, :status, :avalon_target_domain,
-                    :metadata_status, :embed_code, :media_host_account_id, :media_host_player_id, :media_host_item_id,
-                    interviewee: [], interviewer: [], keywords: [], subjects: [], format_info: [])
+      params.require(:interviews_interview).permit(:title, :accession_number, :interview_date, :date_non_preferred_format, :collection_id, :collection_name, :collection_link, :series_id, :series,
+                                                   :series_link, :summary, :thesaurus_keywords, :thesaurus_subjects, :thesaurus_titles, :transcript_sync_data, :transcript_sync_data_translation, :media_format, :media_host, :media_url, :media_duration, :media_filename, :media_type, :right_statement, :usage_statement, :acknowledgment,
+                                                   :language_info, :include_language, :language_for_translation, :miscellaneous_cms_record_id, :miscellaneous_ohms_xml_filename,
+                                                   :miscellaneous_use_restrictions, :miscellaneous_sync_url, :miscellaneous_user_notes, :interview_status, :status, :avalon_target_domain,
+                                                   :metadata_status, :embed_code, :media_host_account_id, :media_host_player_id, :media_host_item_id,
+                                                   interviewee: [], interviewer: [], keywords: [], subjects: [], format_info: [])
     end
 
     def ohms_configuration_params
@@ -466,6 +554,14 @@ module Interviews
         end
       end
       keys.to_json
+    end
+
+    def check_resource_limit
+      allowed = current_organization.subscription.plan.max_resources
+      used = current_organization.resource_count
+      return unless allowed > 0 && allowed - used <= 0
+      flash[:notice] = t('export_to_aviary_resource_limit')
+      redirect_back(fallback_location: root_path)
     end
   end
 end

@@ -3,11 +3,11 @@
     <main>
       <div class=" ">
         <div class="px-3">
-            <div class="breadcrumb resources-details">
+          <div class="breadcrumb resources-details">
             <%= render_breadcrumbs %>
           </div>
         </div>
-        <%= simple_form_for @interview, :url => sync_interviews_manager_path(@interview), html: {class: "interview_manager"} do |f| %>
+        <%= simple_form_for @interview, :url => sync_interviews_manager_path(@interview), html: { class: "interview_manager" } do |f| %>
           <div class="col-md-12 top-index-interview">
             <div class="border-bottom mb-4">
               <div class="row custom-order-level">
@@ -26,17 +26,16 @@
                     </div>
                   </div>
                 </div>
+                
                 <div class="col-xl-5 col-lg-6">
                   <div class="d-flex flex-column ml-auto right-toolbar">
-                    <div class="status d-flex align-items-center m-1">
-                      <label><input type="checkbox" name="fix_linebreaks" value="true" style="margin-right: 0.5em">Fix line breaks</label>
-                    </div>
                     <div class="status d-flex align-items-center m-1">
                       <% if @interview.present? && @interview.id.present? %>
                         <span>Status</span>
                         <%= f.select :sync_status, options_for_select(@interview.listing_metadata_status.map { |key, index| [index, key] }, @interview.sync_status), {}, required: false, label: false, class: 'custom-placeholder dont-apply-selectize form-control' %>
                       <% end %>
                     </div>
+
                     <div class="button-holder right-button-holder">
                       <% if @interview.present? && @interview.id.present? %>
                         <%= render partial: 'shared/ohms/buttons', locals: { interview: @interview, edit_transcript: true, sync_save: true } %>
@@ -44,6 +43,7 @@
                     </div>
                   </div>
                 </div>
+
               </div>
             </div>
             <div>
@@ -52,17 +52,30 @@
                 <div class="col-xl-7 col-lg-4">
                   <span class="mr-2">Language: </span>
                   <div class="btn-group">
-                    <%= link_to @interview.language_info.present? ? @interview.language_info : 'English', 'javascript:void(0)', class: 'btn btn-primary main_transcript', data: {opposite: 'translation_transcript', showdiv: 'main_transcript_for_edit', hidediv: 'translation_transcript_for_edit'} %>
+                    <%= link_to @interview.language_info.present? ? @interview.language_info : 'English', 'javascript:void(0)', class: 'btn btn-primary main_transcript', data: { opposite: 'translation_transcript', showdiv: 'main_transcript_for_edit', hidediv: 'translation_transcript_for_edit' } %>
                     <% if @interview.include_language %>
-                      <%= link_to @interview.language_for_translation, 'javascript:void(0)', class: 'btn btn-outline-secondary translation_transcript ', data: {opposite: 'main_transcript', showdiv: 'translation_transcript_for_edit', hidediv: 'main_transcript_for_edit'} %>
+                      <%= link_to @interview.language_for_translation, 'javascript:void(0)', class: 'btn btn-outline-secondary translation_transcript ', data: { opposite: 'main_transcript', showdiv: 'translation_transcript_for_edit', hidediv: 'main_transcript_for_edit' } %>
                     <% end %>
                   </div>
                 </div>
 
                 <div class="col-xl-5 col-lg-8">
-                  <div class="status d-flex align-items-center justify-content-end mb-3" id="timecode_intervals_url" data-url="<%= change_sync_interval_interviews_transcript_path(@interview) %>">
-                    <span class="mr-2"><%= f.label :syncing_time_interval %>:</span>
-                    <%= f.select :timecode_intervals, [["30 seconds", '0.5'], ['1 minute (Default)', '1'], ['2 minute', '2'], ['3 minute', '3'], ['4 minutes', '4'], ['5 minutes', '5']], selected: @main_transcript.present? ? @main_transcript.timecode_intervals.to_i.to_s : '1' %>
+                  <div class="status d-flex align-items-end justify-content-end mb-3" id="timecode_intervals_url" data-url="<%= change_sync_interval_interviews_transcript_path(@interview) %>" style="flex-direction: column">
+                    <div class="status d-flex align-items-center mr-3">
+                      <label>
+                        <input type="checkbox" name="fix_linebreaks" value="true" style="margin-right: 0.5em">
+                        <span class="string optional m-0">
+                          Fix line breaks 
+                          <a href="https://coda.aviaryplatform.com/7-transcript-module-126#Table-11_tukCt/r5&view=modal" target="_blank" title="More information about automatically removing line breaks">
+                            <i class="fa fa-question-circle-o" aria-hidden="true"></i>
+                          </a>
+                        </span>
+                      </label>
+                    </div>
+                    <div class="status d-flex align-items-center m-1">
+                      <span class="mr-2"><%= f.label :syncing_time_interval %>:</span>
+                      <%= f.select :timecode_intervals, [["30 seconds", '0.5'], ['1 minute (Default)', '1'], ['2 minute', '2'], ['3 minute', '3'], ['4 minutes', '4'], ['5 minutes', '5']], selected: @main_transcript.present? ? @main_transcript.timecode_intervals.to_i.to_s : '1' %>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -78,48 +91,53 @@
                     <% notes_info = @main_transcript.point_notes_info %>
                     <% @data_main.each do |single_point| %>
                       <% if single_point[:text].present? %>
-                      <% list_line = single_point[:text].split("\n") %>
-                      <% list_line.each_with_index do |single_list_line, line_index| %>
-                        <% 
-                          if notes_info.present? && notes_info[line_counter.to_s].present?
-                            notes = notes_info[line_counter.to_s].split('|')
-                            prv_length = 0
-                            notes.each do | note |
-                              tag = note.split('-')
-                              temp = "<sup&nbsp;id=\"sup#{tag[0]}\"><a&nbsp;href=\"#footnote#{tag[0]}\"&nbsp;class=\"note_sup\">#{tag[0]}</a></sup>".html_safe
-                              begin
-                                list_line[line_index+ (counter-1)].insert((tag[1].to_i+prv_length),temp)
-                              rescue => exception
-
-                              end
-                              prv_length = prv_length + (temp.length)
-                            end
-                          end
-                        %>
-                        <% list = list_line[line_index].split %>
-                        <% if list.present? %>
-                          <div class='single_point_transcript p-1' style='color: gray;'>
-                          <% list.each do |single_word| %>
-                            <% if single_word.include?('a&nbsp;') %>
-                                <%= single_word.gsub('&nbsp;',' ').html_safe %>
-                            <% else %>
-                                <span class='single_word_transcript cursor-pointer'> <%= single_word.gsub('&nbsp;',' ').html_safe %> </span>
-                            <% end %>
-                          <% end %>
-                          </div>
-                        <% end %>
-                        <% line_counter = line_counter + 1 %>
-                      <% end %>
                       
-                      <% if @data_main.length > counter %>
+                        <% list_line = single_point[:text].split("\n") %>
+
+                        <% list_line.each_with_index do |single_list_line, line_index| %>
+                          <%
+                            if notes_info.present? && notes_info[line_counter.to_s].present?
+                              notes = notes_info[line_counter.to_s].split('|')
+                              prv_length = 0
+                              notes.each do |note|
+                                tag = note.split('-')
+                                temp = "<sup&nbsp;id=\"sup#{tag[0]}\"><a&nbsp;href=\"#footnote#{tag[0]}\"&nbsp;class=\"note_sup\">#{tag[0]}</a></sup>".html_safe
+                                begin
+                                                                  list_line[line_index + (counter - 1)]&.insert((tag[1].to_i + prv_length), temp)
+
+                                rescue => exception
+                                  
+                                end
+                                prv_length = prv_length + (temp.length)
+                              end
+                            end
+                          %>
+                          <% list = list_line[line_index].split %>
+                          <% if list.present? %>
+                            <div class='single_point_transcript p-1' style='color: gray;'>
+                              <% list.each_with_index do |single_word, word_index| %>
+                                <% if single_word.include?('a&nbsp;') %>
+                                  <%= single_word.gsub('&nbsp;', ' ').html_safe %>
+                                <% else %>
+                                  <span class='<%=((line_index == (list_line.length - 1) && (word_index == (list.length - 1))) ? "merge_word" : "")%> single_word_transcript cursor-pointer'> <%= single_word.gsub('&nbsp;', ' ').html_safe %> </span>
+                                <% end %>
+                              <% end %>
+                            </div>
+                          <% end %>
+                          <% line_counter = line_counter + 1 %>
+                        <% end %>
+
+                        <% if @data_main.length > counter %>
                         <span class="merge_transcript_point_code transcript_point_code text-dark transcript_point_code_<%= hms_to_number(single_point[:end_time]) %>" data-timecode="<%= hms_to_number(single_point[:end_time]) %>">[<%= single_point[:end_time] %>]</span>
-                      <% end %>
-                      <% counter = counter + 1 %>
+                        <% end %>
+                        <% counter = counter + 1 %>
                       <% end %>
                     <% end %>
                     <% if @main_transcript.notes_info.present? %>
                       <% JSON.parse(@main_transcript.notes_info).each_with_index do |note, note_index| %>
-                        <div><a id="footnote<%=note_index+1%>"></a><a class="note_sup" href="#sup<%=note_index+1%>"><%=note_index+1%></a>. <%=note%></div>
+                        <div>
+                          <a id="footnote<%= note_index + 1 %>"></a><a class="note_sup" href="#sup<%= note_index + 1 %>"><%= note_index + 1 %></a>. <%= note %>
+                        </div>
                       <% end %>
                     <% end %>
                   <% end %>
@@ -140,7 +158,6 @@
                         <span class="transcript_point_code text-dark transcript_point_code_<%= hms_to_number(single_point[:end_time]) %>" data-timecode="<%= hms_to_number(single_point[:end_time]) %>">[<%= single_point[:end_time] %>]</span>
                       <% end %>
                       <% counter_translation = counter_translation + 1 %>
-
                     <% end %>
                   <% end %>
                 </div>
@@ -172,11 +189,15 @@
               </div>
         <% end %>
         </div>
-        </main>
+
+        <!--        </main>-->
+        </div>
+      </div>
+    </main>
   </div>
 </div>
 <%= render 'interviews/managers/notes' %>
-<script type="text/javascript">
+<script>
     let interview_manager = new InterviewManager();
     let interviews_transcript_manager = new InterviewTranscriptManager();
     interviews_transcript_manager.timecode = '<%= @main_transcript.timecode_intervals %>';
@@ -185,22 +206,20 @@
         interviews_transcript_manager.initialize();
         interviews_transcript_manager.audioBegin = new Audio("<%= root_url %>/sounds/site_swf_startBeep.mp3");
         interviews_transcript_manager.audioEnd = new Audio("<%= root_url %>/sounds/site_swf_midBeep.mp3");
-        $('.note_sup').click(function() {
+
+        $('.note_sup').click(function () {
             event.preventDefault();
-            var topPos = document.getElementById($.attr(this, 'href').replace('#','')).offsetTop;
-            document.getElementById('main_transcript_for_edit').scrollTop = topPos-40;
+            var topPos = document.getElementById($.attr(this, 'href').replace('#', '')).offsetTop;
+            document.getElementById('main_transcript_for_edit').scrollTop = topPos - 40;
             var targetVal = $.attr(this, 'href');
-            if(targetVal.includes("sup"))
-            {
-              $($.attr(this, 'href')).addClass("bg-success border rounded text-dart");
-              document.body.scrollBottom = document.documentElement.scrollBottom = 0;
-              setTimeout(function() {
-                $(targetVal).removeClass("bg-success border rounded text-dart")
-              }, 3000);
-            }
-            else
-            {
-              window.scrollTo(0, document.body.scrollHeight);
+            if (targetVal.includes("sup")) {
+                $($.attr(this, 'href')).addClass("bg-success border rounded text-dart");
+                document.body.scrollBottom = document.documentElement.scrollBottom = 0;
+                setTimeout(function () {
+                    $(targetVal).removeClass("bg-success border rounded text-dart")
+                }, 3000);
+            } else {
+                window.scrollTo(0, document.body.scrollHeight);
             }
         });
     });

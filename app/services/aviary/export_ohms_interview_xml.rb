@@ -72,41 +72,44 @@ module Aviary
               index_line = 0
               notes_info = file_transcript.point_notes_info
               file_transcript_points.each do |point|
-                info = point.text.split("\n").reject(&:empty?)
-                info.each do |section|
-                  if section.present?
-                    if notes_info.present? && notes_info[index_line.to_s].present?
-                      notes = notes_info[index_line.to_s].split('|')
-                      prv_length = 0
-                      notes.each do |note|
-                        tag = note.split('-')
-                        temp = "[[footnote]]#{tag[0]}[[/footnote]]"
-                        begin
-                          section.insert((tag[1].to_i + prv_length), temp) if section.length >= tag[1].to_i
-                        rescue StandardError => ex
-                          Failure(ex.message)
+                if point.text.present?
+                  info = point.text.split("\n").reject(&:empty?)
+                  info.each do |section|
+                    if section.present?
+                      if notes_info.present? && notes_info[index_line.to_s].present?
+                        notes = notes_info[index_line.to_s].split('|')
+                        prv_length = 0
+                        notes.each do |note|
+                          tag = note.split('-')
+                          temp = "[[footnote]]#{tag[0]}[[/footnote]]"
+                          begin
+                            section.insert((tag[1].to_i + prv_length), temp) if section.length >= tag[1].to_i
+                          rescue StandardError => ex
+                            Failure(ex.message)
+                          end
+                          prv_length += temp.length
                         end
-                        prv_length += temp.length
                       end
-                    end
 
-                    breakup = section.split(' ')
-                    new_line = ''
-                    breakup.each_with_index do |word, k|
-                      if "#{new_line}#{word}".length > 80 || k == breakup.length - 1
-                        formatted = "#{formatted}#{new_line.strip}#{k == breakup.length - 1 ? " #{word}" : ''}\n"
-                        new_line = ''
+                      breakup = section.split(' ')
+                      new_line = ''
+                      breakup.each_with_index do |word, k|
+                        if "#{new_line}#{word}".length > 80 || k == breakup.length - 1
+                          formatted = "#{formatted}#{new_line.strip}#{k == breakup.length - 1 ? " #{word}" : ''}\n"
+                          new_line = ''
+                        end
+                        new_line = "#{new_line}#{word} "
                       end
-                      new_line = "#{new_line}#{word} "
                     end
+                    formatted = "#{formatted}\n"
+                    index_line += 1
                   end
-                  formatted = "#{formatted}\n"
-                  index_line += 1
+                  formatted = formatted.delete_suffix("\n")
+                  formatted_info = formatted.split("\n")
+                  line = formatted_info.length
+                  column = formatted_info.last.split(' ').length + 1
+                  sync += "|#{line}(#{column})" if formatted_info.present?
                 end
-                formatted = formatted.delete_suffix("\n")
-                formatted_info = formatted.split("\n")
-                line = formatted_info.length
-                sync += "|#{line}(#{formatted_info.last.split(' ').length})" if formatted_info.present?
               end
               note_array = []
               note_array = JSON.parse(file_transcript.notes_info) if file_transcript.notes_info.present?
@@ -243,7 +246,7 @@ module Aviary
             xml.usage interview.usage_statement
             xml.userestrict interview.miscellaneous_use_restrictions? ? 1 : 0
 
-            ohms_configuration = OhmsConfiguration.where('organization_id', interview.organization.id).try(:first)
+            ohms_configuration = interview.organization.ohms_configuration
             xml.xmllocation "#{ohms_configuration.configuration}/render.php?cachefile=#{interview.miscellaneous_ohms_xml_filename.gsub(/\s+/, '_')}" if ohms_configuration.present?
             xml.xmlfilename interview.miscellaneous_ohms_xml_filename
             xml.collection_link interview.collection_link
