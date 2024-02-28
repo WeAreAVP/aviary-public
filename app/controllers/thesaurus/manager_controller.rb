@@ -208,15 +208,11 @@ module Thesaurus
       json_data = if type_of_list == 'thesaurus'
                     thesaurus_information = ::Thesaurus::Thesaurus.find_by(id: t_id)
                     thesaurus_id = thesaurus_information.present? && thesaurus_information.parent_id.present? && thesaurus_information.parent_id > 0 ? thesaurus_information.parent_id : t_id
-
-                    if term.present?
-                      terms_all = term.split(' ')
-                      terms_all = terms_all.map { |item| "#{item.gsub(/[^0-9a-zA-Z ]/i, '')}*" }
-                    end
+                    terms_to_search = [term] if term.present?
 
                     thesaurus = ::Thesaurus::ThesaurusTerms.fetch_resources(
                       1, ENV.fetch('MAX_SUGGEST', 100).to_i, 'term_ss', 'asc',
-                      terms_all, thesaurus_id
+                      terms_to_search, thesaurus_id
                     )
                     thesaurus unless thesaurus.present?
 

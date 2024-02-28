@@ -90,6 +90,7 @@ class IndexesController < ApplicationController
     @resource_file = CollectionResourceFile.find(params[:resource_file_id])
     @collection_resource = CollectionResource.find(@resource_file.collection_resource_id)
     @file_index_point = FileIndexPoint.new
+    @file_index_point.start_time = params[:time] if params[:time].present?
     if params[:file_index_id].present? && !params[:file_index_id].empty?
       @file_index = FileIndex.find(params[:file_index_id])
       @file_index_points = @file_index.file_index_points
@@ -260,7 +261,7 @@ class IndexesController < ApplicationController
     start_time = @file_index_point.start_time
     start_time = params[:time] if params[:new].present? && params[:time].present?
 
-    return "#{add_index_file_path(@resource_file.id, @file_index.id)}?time=#{start_time}" if params[:bew].present?
+    return "#{add_index_file_path(@resource_file.id, @file_index.id)}?time=#{start_time}" if params[:new].present?
 
     "#{show_index_file_path(@resource_file.id, @file_index.id)}?time=#{start_time}"
   end

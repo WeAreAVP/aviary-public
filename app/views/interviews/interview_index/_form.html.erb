@@ -62,7 +62,8 @@
                   <span class="form_error"><%= @file_index_point.errors.messages[:start_time].first %></span>
                 <% end %>
                 <a href="javascript:void(0);" class="btn btn-outline-dark update_time" data-toggle="tooltip" data-placement="bottom"
-                  title="Set time from current position" aria-label="Set time from current position" style="right: 30px;">Set Time</a>
+                  title="Set time from current position" aria-label="Set time from current position" style="right: 30px;"
+                  data-time-target=".video_time">Set Time</a>
               </div>
               <div class="buttons-box music_btn">
                 <a href="javascript:void(0)" class="btn btn-outline-dark restart_playback" data-time-target="0.0"

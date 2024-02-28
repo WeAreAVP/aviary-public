@@ -19,6 +19,7 @@ function InterviewIndexManager() {
     let widget_soundcloud;
     let host = "";
     let durationInterval = null;
+    const indexTemplateName = $('#index_template_name').data('value');
     this.initialize = function () {
         $('[data-toggle="tooltip"]').tooltip();
 
@@ -451,7 +452,7 @@ function InterviewIndexManager() {
             '.play-timecode', 'click', handleIndexSegmentClick, true
         );
 
-        document_level_binding_element('.save_and_new', 'click', function () {
+        document_level_binding_element('.save_and_new', 'click', function (e) {
             e.preventDefault();
 
             try {
@@ -605,7 +606,8 @@ function InterviewIndexManager() {
                     $(`span#${$(this).data('timeTarget').replace('.', '')}-error`).remove();
                     const timeInSeconds = (parseInt(timeArray[0], 10) * 3600) + (parseInt(timeArray[1], 10) * 60) + parseInt(timeArray[2], 10);
                     if (timeInSeconds > videoDuration) {
-                        $(`<span id="${$(this).data('timeTarget').replace('.', '')}-error" class="timestamp-errors form_error">Can't be out of bound</span>`).insertAfter(
+                         $(`<span id="${$(this).data('timeTarget').replace('.', '')}-error" class="timestamp-errors form_error">
+                            Select a time between 00:00:00 and ${secondsToHuman(videoDuration)}</span>`).insertAfter(
                             $(`input${$(this).data('timeTarget')}.form-control`)
                         );
                     }
@@ -782,6 +784,8 @@ function InterviewIndexManager() {
     }
 
     const updateTime = function (button) {
+        $(`span#${$(button).data('timeTarget').replace('.', '')}-error`).remove();
+
         if (host == "SoundCloud") {
             widget_soundcloud.getPosition(function (pos) {
                 let time = Math.floor(pos * 0.001);
@@ -848,6 +852,10 @@ function InterviewIndexManager() {
 
             $('.interview_index_manager').attr("action", url);
 
+            if ($('#index_template_name').data('value') === 'AES60-2011') {
+                $('.video_end_time').val(secondsToHuman(time));
+                alert('The current playback time of the resource will be set as the "End Time" for this index segment.');
+            }
             $('.interview_index_manager').submit();
         }
     }

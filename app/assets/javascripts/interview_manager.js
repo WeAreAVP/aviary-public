@@ -150,6 +150,7 @@ function InterviewManager() {
         updateTranscriptInfo();
         assignUser();
         bulkAssignUser();
+        manageTable();
     };
 
     this.datatableInitComplete = function (settings) {
