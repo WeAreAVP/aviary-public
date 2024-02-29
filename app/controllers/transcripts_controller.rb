@@ -184,12 +184,16 @@ class TranscriptsController < ApplicationController
   end
 
   def process_transcript_based_on_type
+    return render json: { success: false } unless valid_transcript_type?(@transcript)
+
     if @transcript.saved_slate_js.present?
       ['slatejs', @transcript.slate_js]
-    elsif @transcript.timestamps.present?
+    elsif @transcript.associated_file.present? && ['text/vtt', 'text/plain'].include?(@transcript.associated_file_content_type)
+      process_file_transcript
+    elsif @transcript.timestamps.present? && @transcript.original_transcript_type == 'IBM Watson'
       process_ibm_transcript
     else
-      process_vtt_transcript
+      render json: { success: false }
     end
   end
 
@@ -199,13 +203,13 @@ class TranscriptsController < ApplicationController
     ['ibm', ibm_watson.to_json]
   end
 
-  def process_vtt_transcript
+  def process_file_transcript
     url = URI.parse(@transcript.associated_file.url)
     response = Net::HTTP.get_response(url)
-    ['vtt', response.body]
+    [@transcript.associated_file_content_type.split('/')[1], response.body]
   rescue StandardError
     content = File.read(@transcript.associated_file.path)
-    ['vtt', content]
+    [@transcript.associated_file_content_type.split('/')[1], content]
   end
 
   def fetch_media_url
