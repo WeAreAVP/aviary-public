@@ -82,7 +82,7 @@ module InterviewsHelper
   end
 
   def ends_with_punctuation?(line)
-    line.strip =~ /[[:punct:]]\z/ ? true : false
+    line.strip =~ %r{[!"#.$&'*+\-/<=>?@^_`{|}~]\z} ? true : false
   end
 
   def fix_line_breaks(transcript)
