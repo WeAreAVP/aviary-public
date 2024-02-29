@@ -311,7 +311,7 @@ module Aviary
       file
     end
 
-    def parse_doc_text(file, file_transcript, regex = /\[([0-9]{2}:[0-9:.]+)\]|([0-9]{2}:[0-9:.]+)/)
+    def parse_doc_text(file, file_transcript, regex = /\[([0-9:.]+)\]/)
       start_end_regex = /([0-9:.]+)\t([0-9:.]+)/ ## This is used when both start and end time is given in transcript
       time_regex = /(^[0-9:.]+)/
       file = file.force_encoding('UTF-8')

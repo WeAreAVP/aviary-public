@@ -24,10 +24,8 @@ function InterviewTranscriptManager() {
 
     this.initialize = function () {
         timeDiffInSec = parseFloat($('#interviews_interview_timecode_intervals').val()) * 60;
-
         bindEvents();
         setIterviewNotes();
-
         let searchParams = new URLSearchParams(window.location.search);
         host = $('#media_host').data('host');
         if ($('.tokenfield').length > 0) {
@@ -39,7 +37,6 @@ function InterviewTranscriptManager() {
                 },
                 showAutocompleteOnFocus: false
             });
-
             $('.tokenfield_subjects').tokenfield({
                 delimiter: ';',
                 autocomplete: {
@@ -49,7 +46,7 @@ function InterviewTranscriptManager() {
                 showAutocompleteOnFocus: false
             });
         }
-
+        // ######
         if ($('.no-media').length > 0) {
             $('.music_btn').hide();
             $('.video_input').prop("disabled", false);
@@ -99,7 +96,7 @@ function InterviewTranscriptManager() {
                     preload: true,
                     soundcloudClientId: '95f22ed54a5c297b1c41f72d713623ef',
                     techOrder: ['html5', 'youtube', 'vimeo', 'brightcove'],
-                    youtube: { autohide: 1 },
+                    youtube: {autohide: 1},
                     plugins: {
                         airplayButton: {},
                         constantTimeupdate: {
@@ -133,12 +130,47 @@ function InterviewTranscriptManager() {
         }
     };
 
+    const syncUpdate = function () {
+        if (typeof $(".single_word_transcript.cursor-pointer") != 'undefined') {
+            $(".single_word_transcript.cursor-pointer").contents().unwrap();
+        }
+
+        if (typeof $(".single_point_transcript") != 'undefined') {
+            $('.single_point_transcript').each(function(){
+                let text = $(this).text();
+                text = text.replaceAll('\n' , '');
+                $(this).text(text);
+            });
+        }
+
+        if (typeof $(".single_point_transcript") != 'undefined') {
+            $('.transcript_point_code').each(function() {
+                let text = $(this).text();
+                if ($(this).next().length > 0 ){
+                    let tagetElement = $(this).next();
+                    text = text + $(tagetElement).text()
+                    text = text.replaceAll("\n" , '');
+                    $(tagetElement).text(text);
+                } else if($(this).prev().length > 0 ) {
+                    let tagetElement = $(this).prev();
+                    $(tagetElement).text($(tagetElement).text() + text);
+                }
+                $(this).remove();
+                return false; 
+            });
+        }
+
+        if (typeof $(".single_point_transcript") != 'undefined') {
+            $('.single_point_transcript').contents().unwrap();
+            $('#main_transcript_textarea').text($('.main_transcript_for_edit').text().replace(/  +/g, ' '));
+        }  
+    };
 
     const dryUpFunction = function (time) {
         let playerTime = parseInt(time, 10);
         let playerState = false;
         var minVal = getMinVal();
-        let rangeVal = parseInt($('.video_player_delay').val(), 10);
+        let rangeVal = parseInt($('.video_player_delay').val());
         let hours = Math.floor(playerTime / 3600);
         let minutes = Math.floor((playerTime - (hours * 3600)) / 60);
         let seconds = playerTime - ((hours * 3600) + (minutes * 60));
@@ -158,8 +190,6 @@ function InterviewTranscriptManager() {
         if (isNaN(rangeVal))
             rangeVal = 10;
         if (playerState == false) {
-
-
             if (minVal == 0) {
                 if (playerTime == 0) {
                     that.audioBegin.pause();
@@ -217,50 +247,14 @@ function InterviewTranscriptManager() {
                 }
             }
         }
-    }
-
-    const syncUpdate = function () {
-        if (typeof $(".single_word_transcript.cursor-pointer") != 'undefined') {
-            $(".single_word_transcript.cursor-pointer").contents().unwrap();
-        }
-
-        if (typeof $(".single_point_transcript") != 'undefined') {
-            $('.single_point_transcript').each(function () {
-                let text = $(this).text();
-                text = text.replaceAll('\n', '');
-                $(this).text(text);
-            });
-        }
-
-        if (typeof $(".single_point_transcript") != 'undefined') {
-            $('.transcript_point_code').each(function () {
-                let text = $(this).text();
-                if ($(this).next().length > 0) {
-                    let tagetElement = $(this).next();
-                    text = text + $(tagetElement).text()
-                    text = text.replaceAll("\n", '');
-                    $(tagetElement).text(text);
-                } else if ($(this).prev().length > 0) {
-                    let tagetElement = $(this).prev();
-                    $(tagetElement).text($(tagetElement).text() + text);
-                }
-
-                $(this).remove();
-                return false;
-            });
-        }
-
-        if (typeof $(".single_point_transcript") != 'undefined') {
-            $('.single_point_transcript').contents().unwrap();
-            $('#main_transcript_textarea').text($('.main_transcript_for_edit').text().replace(/  +/g, ' '));
-        }
     };
 
     this.kalturaManager = function (kdp) {
+              
         var playerTime = Math.floor(kdp.evaluate('{video.player.currentTime}'));
         let playerState = false;
         var minVal = getMinVal();
-        let rangeVal = parseInt($('.video_player_delay').val(), 10);
+        let rangeVal = parseInt($('.video_player_delay').val());
         let hours = Math.floor(playerTime / 3600);
         let minutes = Math.floor((playerTime - (hours * 3600)) / 60);
         let seconds = playerTime - ((hours * 3600) + (minutes * 60));
@@ -280,35 +274,35 @@ function InterviewTranscriptManager() {
         if (isNaN(rangeVal))
             rangeVal = 10;
         if (playerState == false) {
-            if (minVal == 0) {
-                if (playerTime == 0) {
-                    that.audioBegin.pause();
-                    that.audioBegin.play();
-                }
-                if (playerTime == rangeVal / 2) {
-                    that.audioEnd.pause();
-                    that.audioEnd.play();
-                }
-                if (playerTime >= rangeVal) {
-                    kdp.sendNotification('doSeek', 0);
-                }
-            } else {
-                if (playerTime < ((minVal * 60) - rangeVal) || playerTime > ((minVal * 60) + rangeVal)) {
-                    kdp.sendNotification('doSeek', ((minVal * 60) - rangeVal));
-                    that.audioBegin.pause();
-                }
-                if (playerTime == ((minVal * 60) - rangeVal)) {
-                    that.audioBegin.pause();
-                    that.audioBegin.play();
-                }
-                if (playerTime == (minVal * 60)) {
-                    that.audioEnd.pause();
-                    that.audioEnd.play();
-                }
-                if (playerTime >= ((minVal * 60) + rangeVal)) {
-                    kdp.sendNotification('doSeek', ((minVal * 60) - rangeVal));
-                }
-            }
+          if (minVal == 0) {
+              if (playerTime == 0) {
+                  that.audioBegin.pause();
+                  that.audioBegin.play();
+              }
+              if (playerTime == rangeVal / 2) {
+                  that.audioEnd.pause();
+                  that.audioEnd.play();
+              }
+              if (playerTime >= rangeVal) {
+                  kdp.sendNotification('doSeek', 0);
+              }
+          } else {
+              if (playerTime < ((minVal * 60) - rangeVal) || playerTime > ((minVal * 60) + rangeVal)) {
+                  kdp.sendNotification('doSeek', ((minVal * 60) - rangeVal));
+                  that.audioBegin.pause();
+              }
+              if (playerTime == ((minVal * 60) - rangeVal)) {
+                  that.audioBegin.pause();
+                  that.audioBegin.play();
+              }
+              if (playerTime == (minVal * 60)) {
+                  that.audioEnd.pause();
+                  that.audioEnd.play();
+              }
+              if (playerTime >= ((minVal * 60) + rangeVal)) {
+                  kdp.sendNotification('doSeek', ((minVal * 60) - rangeVal));
+              }
+          }
         }
         $('.current_player_time').val(hours + ':' + minutes + ':' + seconds);
     };
@@ -319,15 +313,15 @@ function InterviewTranscriptManager() {
         var mhours = 0;
         if (mtime.indexOf(':') !== -1) {
             var parts = mtime.split(":");
-            var minVal = parseInt(parts[1], 10);
-            mSecs = parseInt(parts[2], 10);
-            mhours = parseInt(parts[0], 10);
+            var minVal = parseInt(parts[1]);
+            mSecs = parseInt(parts[2]);
+            mhours = parseInt(parts[0]);
         } else {
-            var minVal = parseInt(mtime, 10);
+            var minVal = parseInt(mtime);
         }
-
+        
         if (mhours > 0) {
-            minVal = minVal + (mhours * 60);
+            minVal = minVal + (mhours * 60) ;
         }
 
         if (mSecs == 30) {
@@ -337,7 +331,7 @@ function InterviewTranscriptManager() {
         return minVal;
     };
 
-
+    
     const bindEvents = function () {
 
         document_level_binding_element('#interviews_interview_timecode_intervals', 'change', function () {
@@ -370,18 +364,22 @@ function InterviewTranscriptManager() {
         });
 
         document_level_binding_element('#save_transcript_information', 'click', function (e) {
-            appHelper.show_loader();
-            e.preventDefault();
-            syncUpdate();
-            setTimeout(function () {
+            appHelper.show_loader();   
+             e.preventDefault();
+             syncUpdate();
+             setTimeout(function () {
                 $('form.interview_manager').submit();
-            }, 1000);
+             }, 1000);
         });
 
         document_level_binding_element('.single_word_transcript', 'click', function () {
+
             let currentPoint = parseFloat($('.player_state_transcript').val());
-            if (currentPoint > 0) {
+            if (currentPoint > 0){
                 $('.transcript_point_code_' + currentPoint).remove();
+                $('.merge_word').parent().addClass("merge_word")
+                $('.merge_word').parent().next().addClass("merge_word")
+                $("input[name='fix_linebreaks']").prop( "checked", true );
                 $(this).after(/* html */ `
                     <span class="transcript_point_code text-dark transcript_point_code_${currentPoint}" data-time="${currentPoint}">
                         [${secondsToHuman(currentPoint)}]
@@ -408,7 +406,7 @@ function InterviewTranscriptManager() {
         $('.player_state_transcript').val(parseFloat($('.player_state_transcript').val()) + timeDiffInSec);
         $('.current_transcript_point').val(secondsToHuman(parseFloat($('.player_state_transcript').val())));
         let addTime = parseFloat($('.player_state_transcript').val()) - delay;
-
+    
         if (host == "Kaltura") {
             kdp.sendNotification('doSeek', addTime);
         } else if (host == "SoundCloud") {
@@ -416,7 +414,9 @@ function InterviewTranscriptManager() {
                 widget_soundcloud.seekTo((addTime / 0.001));
             });
         } else if (host == "Vimeo") {
-            player_widget.setCurrentTime(addTime);
+            player_widget.getCurrentTime().then((time) => {
+                player_widget.setCurrentTime(time + timeDiffInSec);
+            });
         } else {
             player_widget.currentTime(addTime);
         }
@@ -438,7 +438,9 @@ function InterviewTranscriptManager() {
                 widget_soundcloud.seekTo((addTime / 0.001));
             });
         } else if (host == "Vimeo") {
-            player_widget.setCurrentTime(addTime);
+            player_widget.getCurrentTime().then((time) => {
+                player_widget.setCurrentTime(time - timeDiffInSec);
+            });
         } else {
             player_widget.currentTime(addTime);
         }
@@ -457,7 +459,7 @@ function InterviewTranscriptManager() {
             widget_soundcloud.getPosition(function (pos) {
                 let time = Math.floor(pos * 0.001);
                 $('.current_player_time').val(secondsToHuman(time));
-            });
+            })
         } else if (host == 'Vimeo') {
             player_widget.getCurrentTime().then((time) => {
                 $('.video_time').val(secondsToHuman(time));
@@ -469,4 +471,4 @@ function InterviewTranscriptManager() {
                 $('.current_player_time').val(secondsToHuman(getTime()));
         }
     };
-};
+}
