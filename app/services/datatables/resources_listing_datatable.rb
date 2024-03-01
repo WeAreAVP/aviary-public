@@ -3,8 +3,9 @@
 # Aviary is an audiovisual content publishing platform with sophisticated features for search and permissions controls.
 # Copyright (C) 2019 Audio Visual Preservation Solutions, Inc.
 class ResourcesListingDatatable < ApplicationDatatable
-  delegate :time_to_duration, :html_safe, :strip_tags, :truncate, :check_valid_array, :edit_collection_collection_resource_path, :collection_collection_resource_path,
-           :bulk_resource_list_collections_path, :collection_resource_path, :current_organization, :boolean_value, :can?, to: :@view
+  delegate :time_to_duration, :html_safe, :strip_tags, :truncate, :check_valid_array, :collection_resource_path,
+           :collection_collection_resource_path, :edit_collection_collection_resource_path, :current_organization,
+           :bulk_resource_list_collections_path, :boolean_value, :can?, to: :@view
 
   def initialize(view, caller, called_from = '', additional_data = {}, resource_fields = {})
     @view = view
@@ -114,6 +115,8 @@ class ResourcesListingDatatable < ApplicationDatatable
       resource[system_name].to_date
     elsif system_name == 'access_ss'
       resource[system_name].present? ? resource[system_name].titleize : resource[system_name]
+    elsif system_name == 'collection_sort_order_ss'
+      resource[system_name]&.==(CollectionResource::COLLECTION_SORT_ORDER_DEFAULT) ? 'none' : resource[system_name]
     else
       check_valid_array(resource[system_name], system_name)
     end

@@ -2,41 +2,48 @@
 # Aviary is an audiovisual content publishing platform with sophisticated features for search and permissions controls.
 # Copyright (C) 2019 Audio Visual Preservation Solutions, Inc.
 class CollectionResource < ApplicationRecord
-  attr_accessor :can_edit, :can_view
-
   include Aviary::SolrIndexer
 
+  COLLECTION_SORT_ORDER_DEFAULT = 'zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz'.freeze
+
+  attr_accessor :can_edit, :can_view, :is_3d, :tab_resource_file, :sort_order, :file_url, :embed_code, :embed_type,
+                :target_domain, :trans_points_solr, :index_points_solr, :description_values_solr, :resource_file_id,
+                :supplemental_files_solr, :collection_values_solr, :custom_description_solr, :meta_date_updated,
+                :collection_resource_files_list, :file_indexes_list, :file_transcripts_list, :dynamic_initializer
+
   belongs_to :collection, counter_cache: ENV['RAILS_ENV'] != 'test'
+
   has_many :playlist_resources, dependent: :destroy
   has_many :playlist_items, dependent: :destroy
   has_many :collection_resource_files, dependent: :destroy
   has_many :annotation_sets, dependent: :destroy
   has_many :public_access_urls
   has_one :resource_description_value, dependent: :destroy
+
   validates :noid, uniqueness: { message: 'PURL already taken.' }
   validate :unique_custom_unique_identifier
+
   accepts_nested_attributes_for :collection_resource_files, reject_if: :all_blank, allow_destroy: true
-  attr_accessor :tab_resource_file, :sort_order, :file_url, :embed_code, :embed_type, :target_domain, :trans_points_solr, :index_points_solr, :description_values_solr, :collection_values_solr, :resource_file_id, :custom_description_solr
 
   scope :featured, -> { where(access: accesses[:access_public], is_featured: true) }
   scope :public_visible, -> { where(access: accesses[:access_public]) }
+
   enum access: %i[access_restricted access_public access_private]
-  before_save :index_points_fetch, :transcript_points_fetch, :description_values_fetch, :update_attributes_solr
-  before_create :generate_noid
+
   after_save :update_duration
   after_destroy :remove_from_solr
   after_create :update_resource_count
+
+  before_create :generate_noid
+  before_save :index_points_fetch, :transcript_points_fetch, :description_values_fetch, :update_attributes_solr
   before_update :updated_collection_name
-  attr_accessor :meta_date_updated, :collection_resource_files_list, :file_indexes_list, :file_transcripts_list
-  # custom_fields?
-  attr_accessor :dynamic_initializer
 
   def self.readable_status(status)
     readable_status = status.split('_').second.humanize
     readable_statuses = {
-      access_restricted: readable_status + ' - Public and logged-in users will see “Request Access” button',
-      access_public: readable_status + ' - Visible to all',
-      access_private: readable_status + ' - Only organization users and those granted direct access will see these resources'
+      access_restricted: "#{readable_status} - Public and logged-in users will see “Request Access” button",
+      access_public: "#{readable_status} - Visible to all",
+      access_private: "#{readable_status} - Only organization users and those granted direct access will see these resources"
     }
     readable_statuses[status.to_sym]
   end
@@ -183,11 +190,10 @@ class CollectionResource < ApplicationRecord
       end
     end
 
-    string :collection_sort_order, multiple: false, stored: true
-    integer :collection_sort_order, multiple: false, stored: true do
+    string :collection_sort_order, multiple: false, stored: true do
       # We are assigning an arbitrarily large value if the collection_sort_order is not set
       # so that null values will sort last
-      collection_sort_order || 100_000_000
+      collection_sort_order || COLLECTION_SORT_ORDER_DEFAULT
     end
 
     # resource_file_file_name
@@ -405,7 +411,7 @@ class CollectionResource < ApplicationRecord
     solr_q_condition = '*:*'
     complex_phrase_def_type = false
     fq_filters = ' document_type_ss:collection_resource  '
-    sort_column = sort_column.sub(/_ss$/, '_is') if %w(collection_sort_order_ss id_ss).include?(sort_column)
+    sort_column = sort_column.sub(/_ss$/, '_is') if %w(id_ss).include?(sort_column)
     sort_column = sort_column.sub(/_(ss|sms)$/, '_scis')
     if q.present? && q.match(/(\w+\.)+\w+(?=\s|$)/).present?
       # for this kind of pattern (hvt.1021.232)
