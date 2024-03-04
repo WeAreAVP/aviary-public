@@ -88,7 +88,7 @@
                   </div>
                 </div>
                 <div class="grey-box playlist_operations_actions ml-0">
-                  <input type="text" id="search_playlist_resource" placeholder="Search within playlist" class="form-control mb-1 mt-1"/>
+                  <input type="text" id="search_playlist_resource" placeholder="Filter playlist by resource metadata" class="form-control mb-1 mt-1"/>
                 </div>
                 <% if !@playlist_show.present? && !@playlist_show && (can? :manage, @playlist) %>
                   <div class="grey-box ml-0">
@@ -385,8 +385,19 @@
         e.preventDefault;
 
         $(document).ready(function () {
-            $('.render.form-check.autoplay_flag label').append('Do not allow playlist to autoplay upon page load. <span class="icon-check"></span>');
-            $('.render.form-check.is_audio_only label').append('Render as Audio Player<span class="icon-check"></span>');
-        })
+            $('.render.form-check.autoplay_flag label')
+              .append('Do not allow playlist to autoplay upon page load. <span class="icon-check"></span>');
+            $('.render.form-check.is_audio_only label')
+              .append('Render as Audio Player<span class="icon-check"></span>');
+
+          open_metadata_list_tab_if_required();
+        });
     });
+
+    function open_metadata_list_tab_if_required() {
+      const urlParams = new URLSearchParams(window.location.search);
+
+      if (urlParams.get('keywords[]') && urlParams.get('keywords[]') !== '')
+        $('#metadata-list-tab').click();
+    }
 </script>
