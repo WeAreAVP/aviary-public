@@ -189,6 +189,8 @@ Rails.application.routes.draw do
       get :delete_custom_meta_fields
       get :list_resources
       post :list_resources
+      get :list_media
+      post :list_media
       get 'collection_resources/new', to: 'collection_resources#new'
       post :import, to: 'collections#import'
       get :reset_default_tombstone_fields

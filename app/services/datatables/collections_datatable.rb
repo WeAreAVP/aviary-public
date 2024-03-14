@@ -3,7 +3,7 @@
 # Aviary is an audiovisual content publishing platform with sophisticated features for search and permissions controls.
 # Copyright (C) 2019 Audio Visual Preservation Solutions, Inc.
 class CollectionsDatatable < ApplicationDatatable
-  delegate :link_to, :collection_url, :edit_collection_path, :collection_path, :list_resources_collection_path, :bulk_resource_list_collections_path, :can?, to: :@view
+  delegate :link_to, :collection_url, :edit_collection_path, :collection_path, :list_resources_collection_path, :list_media_collection_path, :bulk_resource_list_collections_path, :can?, to: :@view
 
   def initialize(view, current_organization)
     @view = view
@@ -48,7 +48,9 @@ class CollectionsDatatable < ApplicationDatatable
     # Manage Resources button
     advance_action_html += link_to 'Manage Resources', list_resources_collection_path(path), class: 'btn-sm btn-primary'
     advance_action_html += '&nbsp;'
-    advance_action_html
+    # Manage Media button
+    advance_action_html += link_to 'Manage Media', list_media_collection_path(path), class: 'btn-sm btn-primary'
+    advance_action_html + '&nbsp;'
   end
 
   def count; end
