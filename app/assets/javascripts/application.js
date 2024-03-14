@@ -555,7 +555,9 @@ function skip_to_content(){
 $(function () {
     skip_to_content();
     setTimeout(function () {
-        $('[data-toggle="tooltip"]').tooltip();
+        $('[data-toggle="tooltip"]').tooltip({
+            trigger: 'hover'
+        });
     }, 1000);
     if ($('#sidebar-main').length == 0) {
         $(".main-content").removeClass('open');
