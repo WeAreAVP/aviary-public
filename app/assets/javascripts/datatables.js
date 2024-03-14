@@ -48,13 +48,13 @@ $(document).on('init.dt', function () {
   $('table.dataTable:not(.DTFC_Cloned) th:nth-child(2)').first().addClass('focusable');
 });
 
-$(document).on('draw.dt', function () {
+$(document).on('draw.dt', function (e) {
   $('.page-item:not(.previous, .next) a').each(function () {
     $(this).attr('aria-label', `Go to page ${$(this).text()}`);
   });
 
-  removeAccessibilityText();
-  addAccessibilityText();
+  removeAccessibilityText($(e.target).parent().parent().parent().parent().parent());
+  addAccessibilityText($(e.target).parent().parent().parent().parent().parent());
 });
 
 $(document).on('preInit.dt', function(e, settings) {
@@ -85,8 +85,8 @@ $(document).on('turbolinks:before-cache', function() {
   }
 });
 
-function addAccessibilityText() {
-  $('.dataTables_filter').parent().parent().append(/* html */`
+function addAccessibilityText(table) {
+  $(table).find('.dataTables_filter').parent().parent().append(/* html */`
     <div class="col-md-12 text-center" id="dataTables_accessibility_text">
       <span>
         <i class="fa fa-info-circle"></i>
@@ -100,6 +100,6 @@ function addAccessibilityText() {
   `);
 }
 
-function removeAccessibilityText() {
-  $('#dataTables_accessibility_text').remove();
+function removeAccessibilityText(table) {
+  $(table).find('#dataTables_accessibility_text').remove();
 }
