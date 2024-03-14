@@ -78,6 +78,7 @@ class CollectionsDatatable < ApplicationDatatable
   end
 
   def columns
-    %w[title collection_resources_count is_featured is_public action]
+    # Patch here as click_through to handle displaying checkboxes on the frontend but starting the sorting from title column instead
+    %w[click_through title collection_resources_count is_featured is_public action]
   end
 end
