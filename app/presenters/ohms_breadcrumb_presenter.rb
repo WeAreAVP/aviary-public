@@ -24,7 +24,8 @@ class OhmsBreadcrumbPresenter < BasePresenter
         add_breadcrumb "<a href='#{ohms_index_path(interview.id)}'>Index</a>".html_safe
         add_breadcrumb "<a #{active_link}>Index Editor</a>".html_safe
       elsif option == 'sync'
-        add_breadcrumb "<a href='#{sync_interviews_manager_path(interview.interview.id)}'>Transcript Sync</a>".html_safe
+        # interview variable has transcript object in this context so we need to do interview.interview.id to get interview.id
+        add_breadcrumb "<a href='#{sync_interviews_manager_path(interview.try(:interview).try(:id) || interview.id)}'>Transcript Sync</a>".html_safe
         add_breadcrumb "<a #{active_link}>Transcript Editor</a>".html_safe
       else
         add_breadcrumb "<a #{active_link}>Metadata Editor</a>".html_safe
