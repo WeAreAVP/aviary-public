@@ -294,14 +294,11 @@ function InterviewIndexManager() {
                 });
 
                 durationInterval = setInterval(() => {
-                    if (player_widget.duration() >= 0) {
+                    if (player_widget.duration() > 0) {
                         that.getIndexSegmentsTimeline(player_widget.duration(), host);
                         clearInterval(durationInterval);
                     }
                 }, 1000);
-
-                // Try to get the index segments for 10 seconds.
-                setTimeout(() => clearInterval(durationInterval), 10000);
             }
 
             setInterval(function () {
