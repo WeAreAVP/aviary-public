@@ -15,6 +15,7 @@ addons:
 cache:
   bundler: true
 before_install:
+- cp .env.test.example .env.test
 - gem update bundler
 - gem install bundler
 before_script:
