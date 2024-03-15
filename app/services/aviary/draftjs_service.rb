@@ -62,15 +62,15 @@ module Aviary
     end
 
     def generate_webvtt(points, tmp_file)
-      timestamp_words = points[0]['children'][0]['words']
+      timestamp_words = generate_timestamp_words(points)
       webvtt_timestamp = ''
       webvtt_text = "WEBVTT\n\n"
       words = []
       timestamp_words.each do |timestamp_word|
-        webvtt_timestamp = timestamp_word['start'] if webvtt_timestamp.blank?
-        words << timestamp_word['text']
-        if timestamp_word['end'] - webvtt_timestamp >= 4 || (webvtt_timestamp.present? && timestamp_word.equal?(timestamp_words.last))
-          webvtt_text += "#{Time.at(webvtt_timestamp).utc.strftime('%H:%M:%S.%L')} --> #{Time.at(timestamp_word['end']).utc.strftime('%H:%M:%S.%L')}\n"
+        webvtt_timestamp = timestamp_word[:start] if webvtt_timestamp.blank?
+        words << timestamp_word[:text]
+        if timestamp_word[:end] - webvtt_timestamp >= 4 || (webvtt_timestamp.present? && timestamp_word.equal?(timestamp_words.last))
+          webvtt_text += "#{Time.at(webvtt_timestamp).utc.strftime('%H:%M:%S.%L')} --> #{Time.at(timestamp_word[:end]).utc.strftime('%H:%M:%S.%L')}\n"
           webvtt_text += "#{words.join(' ')}\n\n"
           webvtt_timestamp = ''
           words = []
@@ -79,6 +79,32 @@ module Aviary
       tmp_file << webvtt_text
       tmp_file.flush
       tmp_file.path
+    end
+
+    def generate_timestamp_words(points)
+      word_timestamp = []
+      words = points[0]['children'][0]['words']
+      start_time = 0
+      end_time = 0
+      points.each_with_index do |point, idx|
+        data = point['children'][0]
+        text = data['text']
+        paragraph_words = text.split(' ')
+        speaker = point['speaker'].present? && point['speaker'].downcase != 'add speaker' ? point['speaker'] : ''
+        paragraph_words.each_with_index do |word, index|
+          start_time = point['start'].floor
+          end_time = points.length >= idx + 1 && points[idx + 1] ? points[idx + 1]['start'].floor : words.last['end'].floor
+          word_duration = (end_time - start_time) / paragraph_words.length.to_f
+
+          word_timestamp << {
+            start: start_time + (word_duration * index),
+            end: end_time - (word_duration * (paragraph_words.length - index)) + word_duration,
+            speaker: speaker,
+            text: word
+          }
+        end
+      end
+      word_timestamp
     end
   end
 end

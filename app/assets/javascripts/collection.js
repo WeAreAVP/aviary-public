@@ -161,7 +161,7 @@ function Collection() {
                     lengthMenu: " _MENU_ "
                 },
                 columnDefs: [
-                    {orderable: false, targets: 0}
+                    {orderable: false, targets: [0, -1]},
                 ],
                 ajax: $("#collection_data_table").data("url"),
                 "initComplete": function() {
