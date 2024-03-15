@@ -357,7 +357,7 @@ thesaurus_settings = ::Thesaurus::ThesaurusSetting.where(organization_id: curren
     let interviews_manager = new InterviewManager();
     $(function () {
         interviews_manager.initialize();
-        $('[data-toggle="tooltip"]').tooltip()
+        $('[data-toggle="tooltip"]').tooltip({ trigger: 'hover' })
         interviews_manager.keywordField(<%= raw @keys %>, <%= raw @selected_keyword_ids %>);
         interviews_manager.searchField(<%= raw @subjects %>, <%= raw @selected_subjects_ids %>);
     })

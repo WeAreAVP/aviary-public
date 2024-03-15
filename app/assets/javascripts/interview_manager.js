@@ -175,7 +175,7 @@ function InterviewManager() {
     };
     
     this.datatableInitDraw = function () {
-        $('[data-toggle="tooltip"]').tooltip();
+        $('[data-toggle="tooltip"]').tooltip({ trigger: 'hover' });
         setTimeout(function () {
             if (typeof that.resource_bulk_edit != "undefined") {
                 that.resource_bulk_edit.re_init_bulk();

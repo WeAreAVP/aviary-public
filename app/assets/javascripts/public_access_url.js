@@ -95,7 +95,7 @@ function PublicAccessUrl() {
             appHelper.classAction($(this).data('url'), data, 'HTML', 'GET', '', that, true);
         });
 
-        $('[data-toggle="tooltip"]').tooltip();
+        $('[data-toggle="tooltip"]').tooltip({ trigger: 'hover' });
         var clipboard = new Clipboard('.copy-public-access-url');
         clipboard.on('success', function (e) {
             jsMessages('success', 'Copied!');

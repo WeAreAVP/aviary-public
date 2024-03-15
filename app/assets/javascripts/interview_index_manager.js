@@ -21,7 +21,7 @@ function InterviewIndexManager() {
     let durationInterval = null;
     const indexTemplateName = $('#index_template_name').data('value');
     this.initialize = function () {
-        $('[data-toggle="tooltip"]').tooltip();
+        $('[data-toggle="tooltip"]').tooltip({ trigger: 'hover' });
 
         bindEvents();
         setIterviewNotes();

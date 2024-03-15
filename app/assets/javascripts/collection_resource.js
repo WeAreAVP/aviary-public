@@ -289,7 +289,7 @@ function CollectionResource() {
         $('.timeline-bar-parent-div').html($('.timeline-bar-parent-div-tmp').html());
         $('.timeline-bar-parent-div-tmp').remove();
         initTimeline();
-        $('[data-toggle="tooltip"]').tooltip();
+        $('[data-toggle="tooltip"]').tooltip({ trigger: 'hover' });
         let sectionHeight = $('.two_col_custom').height();
         if(sectionHeight > 650)
             sectionHeight = 650;
@@ -347,7 +347,7 @@ function CollectionResource() {
                 setTimeout(function (){
                     $('body').css('overflow', 'hidden');
                     $('#form_edit_custom').addClass('open');
-                    $('[data-toggle="tooltip"]').tooltip();
+                    $('[data-toggle="tooltip"]').tooltip({ trigger: 'hover' });
                     let thesaurus_manager = new ThesaurusManager();
                     thesaurus_manager.auto_complete();
 

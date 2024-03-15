@@ -442,6 +442,7 @@ function checkMenuType(layout) {
         }
 
         $('[data-toggle="tooltip"]').tooltip({
+            trigger: 'hover',
             template: '<div class="tooltip sidebartooltip"><div class="arrow"></div><div class="tooltip-inner"></div></div>'
         });
     } else {
@@ -526,7 +527,7 @@ function initToolTip(element){
     if (typeof element != 'undefined' && element)
         $(element).tooltip();
     else
-        $('[data-toggle="tooltip"]').tooltip();
+        $('[data-toggle="tooltip"]').tooltip({ trigger: 'hover' });
 }
 
 function initTooltipAccessibility() {
