@@ -3,12 +3,13 @@
 # Aviary is an audiovisual content publishing platform with sophisticated features for search and permissions controls.
 # Copyright (C) 2019 Audio Visual Preservation Solutions, Inc.
 class CollectionsController < ApplicationController
-  before_action :set_collection, only: %I[edit update destroy reset_default_tombstone_fields]
+  before_action :set_collection, only: %I[edit update destroy reset_default_tombstone_fields list_media]
   before_action :authenticate_user!, except: :show
   load_and_authorize_resource except: :show
   include Aviary::BulkOperation
   include Aviary::FieldManagement
   include CollectionResourceHelper
+  include CollectionResourceFileHelper
 
   def index
     authorize! :manage, current_organization
@@ -203,6 +204,24 @@ class CollectionsController < ApplicationController
     end
     @collection.create_update_dynamic(params['custom_fields_field'], id)
     redirect_back(fallback_location: edit_collection_path(@collection))
+  end
+
+  def list_media
+    authorize! :manage, current_organization
+    session[:media_list_params] = params
+    unless request.xhr?
+      session[:media_list_bulk_edit] = []
+      session[:media_list_params] = []
+      record_last_bread_crumb(request.fullpath, "Back to <strong>#{@collection.title}</strong>")
+    end
+    @media_types = media_types
+    @organization_field_manager = Aviary::FieldManagement::OrganizationFieldManager.new
+    @media_fields = @organization_field_manager.organization_field_settings(current_organization, nil, 'media_fields', 'media_table_sort_order')
+    @fixed_columns = current_organization.try(:organization_field).try(:fixed_column) || 0
+    respond_to do |format|
+      format.html
+      format.json { render json: MediaListingDatatable.new(view_context, @collection, 'listing_media_collection_wise', {}, @media_fields) }
+    end
   end
 
   def update_sort_fields

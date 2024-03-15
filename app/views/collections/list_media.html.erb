@@ -1,0 +1,31 @@
+<div id="main_container" class="container-fluid">
+  <div class="main_contain">
+    <main>
+      <div class="heading-holder table-head mb-4 text-headline jumbotron">
+        <div class="row">
+          <div class="col-md-7"><h1><%= @collection.title %> </h1></div>
+            <div class="col-md-5 ">
+              <%= render partial: 'collection_resource_files/collection_resource_files_buttons' %>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="data-table">
+        <%= content_tag :table, role: :datatable, class: ['table', 'table-striped','table-bordered'], id: 'collection_media_datatable', data: { url: list_media_collection_path(@collection, format: :json) } do %>
+          <%= render partial: 'collection_resource_files/files_listing_table', locals: {table_called_from: 'media_files_index', columns_details: JSON.parse(current_organization.resource_file_display_column)['columns_status'], organization_id: current_organization.id } %>
+        <% end %>
+      </div>
+    </main>
+  </div>
+</div>
+<span id="url_form_progress" data-url="<%= update_progress_files_collections_path %>"></span>
+<%= render partial: 'collection_resource_files/manage_column', locals: { columns_details: JSON.parse(current_organization.resource_file_display_column)['columns_status'], search_columns_details: JSON.parse(current_organization.resource_file_search_column), organization_id: current_organization.id } %>
+<%= render partial: 'collection_resource_files/bulk_edit_resource_file' %>
+<%= render partial: 'collection_resource_files/import_csv' %>
+<script type="text/javascript">
+    var collection_media_table = new CollectionMediaTable();
+    $(function () {
+
+        collection_media_table.initialize('<%== current_organization.resource_file_display_column %>', '<%= session[:resource_file_list_bulk_edit] %>');
+    });
+</script>
