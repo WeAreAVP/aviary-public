@@ -40,8 +40,9 @@ class IndexesController < ApplicationController
       _success, is_new = params[:file_index_id] ? [update_file_index, false] : [create_file_index, true]
 
       process_associated_file(is_new)
-    rescue StandardError
+    rescue StandardError => ex
       add_errors unless @file_index.errors.present?
+      Rails.logger.error "#{ex.message}\n#{ex.backtrace[1..5].join("\n")}"
 
       raise ActiveRecord::Rollback
     end
