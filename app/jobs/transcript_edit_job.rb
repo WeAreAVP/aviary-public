@@ -30,6 +30,15 @@ class TranscriptEditJob < ApplicationJob
     file_path = create_slate_file(payload[:params]['slatejs'].to_json)
     transcript.saved_slate_js = open(file_path)
     transcript.save
-    transcript.update(is_edit: payload[:params]['is_edit'], user_id: payload[:current_user_id], title: payload[:params]['title'])
+    transcript.update(
+      is_edit: payload[:params]['is_edit'],
+      user_id: payload[:current_user_id],
+      title: payload[:params]['title'],
+      is_caption: payload[:params]['is_caption'],
+      is_public: payload[:params]['is_public'],
+      is_downloadable: payload[:params]['is_downloadable'],
+      description: payload[:params]['description'],
+      language: payload[:params]['language']
+    )
   end
 end
