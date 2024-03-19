@@ -175,7 +175,7 @@ function InterviewManager() {
     };
     
     this.datatableInitDraw = function () {
-        $('[data-toggle="tooltip"]').tooltip();
+        $('[data-toggle="tooltip"]').tooltip({ trigger: 'hover' });
         setTimeout(function () {
             if (typeof that.resource_bulk_edit != "undefined") {
                 that.resource_bulk_edit.re_init_bulk();
@@ -608,8 +608,10 @@ function InterviewManager() {
                 $.each(data.files, function (index, file) {
                     let filename = file.name;
                     let fileExt = filename.split('.').pop();
-                    if ((file.type != '' && file.type != 'text/xml' && file.type != 'text/csv' && file.type != 'application/xml' && file.type != 'application/vnd.ms-excel') || (file.type == '' && fileExt != 'xml')) {
-                        jsMessages('danger', 'Only XML or CSV file allowed.');
+                    if ((file.type != '' && file.type != 'text/xml' && file.type != 'text/csv' && file.type != 'application/xml'
+                        && file.type != 'application/vnd.ms-excel') || (file.type == '' && fileExt != 'xml')) {
+
+                        jsMessages('danger', 'Only XML, CSV, Docx, or Doc file allowed.');
                         return false;
                     } else {
                         $("#import_file_name").append("Selected File: " + file.name + "<br/>");

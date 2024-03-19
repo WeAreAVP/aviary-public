@@ -7,6 +7,7 @@
 # Copyright (C) 2019 Audio Visual Preservation Solutions, Inc.
 class FileIndexPoint < ApplicationRecord
   include ActionView::Helpers
+  include ApplicationHelper
 
   belongs_to :file_index
   before_save :manage_gps_points, :manage_hyperlinks

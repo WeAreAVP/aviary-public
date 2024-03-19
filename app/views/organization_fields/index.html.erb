@@ -688,7 +688,7 @@
         organization_fields_management.initialize();
         <% if ENV['OHMS_DEVELOPMENT_ONLY'].to_s == '1' %>
         ohms_manager.initialize();
-          $('[data-toggle="tooltip"]').tooltip()
+          $('[data-toggle="tooltip"]').tooltip({ trigger: 'hover' })
 
 
         <% end %>

@@ -161,7 +161,7 @@ function Collection() {
                     lengthMenu: " _MENU_ "
                 },
                 columnDefs: [
-                    {orderable: false, targets: 0}
+                    {orderable: false, targets: [0, -1]},
                 ],
                 ajax: $("#collection_data_table").data("url"),
                 "initComplete": function() {
@@ -387,6 +387,6 @@ function Collection() {
     }
 
     $(window).on('load', function () {
-        $('[data-toggle="tooltip"]').tooltip();
+        $('[data-toggle="tooltip"]').tooltip({ trigger: 'hover' });
     });
 }

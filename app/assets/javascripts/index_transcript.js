@@ -986,7 +986,7 @@ function IndexTranscript() {
 
         });
 
-        $('[data-toggle="tooltip"]').tooltip();
+        $('[data-toggle="tooltip"]').tooltip({ trigger: 'hover' });
     };
 
     let activate_export = function (currentId) {
