@@ -188,10 +188,12 @@ class TranscriptsController < ApplicationController
 
     if @transcript.saved_slate_js.present?
       ['slatejs', @transcript.slate_js]
-    elsif @transcript.associated_file.present? && ['text/vtt', 'text/plain'].include?(@transcript.associated_file_content_type)
-      process_file_transcript
     elsif @transcript.timestamps.present? && @transcript.original_transcript_type == 'IBM Watson'
       process_ibm_transcript
+    elsif @transcript.timestamps.present? && @transcript.original_transcript_type == 'Deepgram'
+      process_deepgram_transcript
+    elsif @transcript.associated_file.present? && ['text/vtt', 'text/plain'].include?(@transcript.associated_file_content_type)
+      process_file_transcript
     else
       render json: { success: false }
     end
@@ -201,6 +203,10 @@ class TranscriptsController < ApplicationController
     ibm_watson = JSON.parse(@transcript.timestamps.gsub('=>', ':'))
     ibm_watson['results'].first['speaker_labels'] ||= []
     ['ibm', ibm_watson.to_json]
+  end
+
+  def process_deepgram_transcript
+    ['deepgram', @transcript.timestamps]
   end
 
   def process_file_transcript

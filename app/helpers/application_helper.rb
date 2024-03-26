@@ -7,7 +7,7 @@ module ApplicationHelper
   include InterviewIndexHelper
   include DeprecatedHelper
   require 'securerandom'
-  VALID_TRANSCRIPT_TYPES = ['IBM Watson', 'Manual'].freeze
+  VALID_TRANSCRIPT_TYPES = ['IBM Watson', 'Deepgram', 'Manual'].freeze
 
   def organization_layout?
     nil
@@ -221,7 +221,7 @@ module ApplicationHelper
       valid_transcript_type?(data) &&
       (data.saved_slate_js.present? ||
       ['text/vtt', 'text/plain'].include?(data.associated_file_content_type) ||
-      (data.original_transcript_type == 'IBM Watson' && valid_json?(data.timestamps&.gsub('=>', ':'))))
+      (valid_transcript_type?(data) && valid_json?(data.timestamps&.gsub('=>', ':'))))
   end
 
   def valid_transcript_type?(transcript)
