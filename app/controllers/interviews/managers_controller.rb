@@ -274,9 +274,17 @@ module Interviews
         end
       end
       OhmsBreadcrumbPresenter.new(@interview, view_context).breadcrumb_manager('show', @interview, 'sync')
-      respond_to do |format|
-        format.html
-        format.json { render json: { response: { data_main: data_main, data_translation: data_translation } } }
+      if params[:fix_linebreaks].present? && params[:fix_linebreaks]&.to_boolean?
+        flash[:notice] = 'Successfully fixed line breaks'
+        respond_to do |format|
+          format.html { redirect_back(fallback_location: root_path) }
+          format.json { render json: { response: { data_main: @data_main, data_translation: data_translation } } }
+        end
+      else
+        respond_to do |format|
+          format.html
+          format.json { render json: { response: { data_main: @data_main, data_translation: data_translation } } }
+        end
       end
     end
 
