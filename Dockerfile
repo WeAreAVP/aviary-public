@@ -1,35 +1,51 @@
-FROM ruby:2.6.3
+# Stage 1: Build and install dependencies
+FROM ruby:3.1.0
 
-RUN gem install bundler -v 2.1.4
-
-RUN apt-get update -qq && apt-get install -y --no-install-recommends build-essential
-
-RUN apt-get install -y default-libmysqlclient-dev
-
-RUN apt-get install -y libxml2-dev libxslt1-dev
-
-RUN apt-get install -y nodejs
-
-RUN apt-get install -y netcat
-
-RUN apt-get install -y p7zip-full
-
-RUN apt-get install -y ffmpeg
-
-RUN apt-get install -y imagemagick
-
-RUN apt-get install -y cron
-
+# Set environment variables
+ENV LANG C.UTF-8
+ENV BUNDLER_VERSION=2.3.3
 ENV APP_HOME /aviary
+# Set user and group IDs as build arguments
+ARG USER_ID=${USER_ID:-1000}
+ARG GROUP_ID=${GROUP_ID:-1000}
 
-RUN mkdir $APP_HOME
 
+# Create a non-root user and group with specified IDs
+RUN groupadd -g $USER_ID appgroup && \
+    useradd -u $GROUP_ID -g appgroup -s /bin/bash -m appuser
+
+# Set bundler jobs to the number of available CPU cores
+RUN bundle config set jobs "$(nproc)"
+
+# Install system dependencies
+RUN apt-get update -qq && apt-get install -y --no-install-recommends \
+    build-essential \
+    default-libmysqlclient-dev \
+    libxml2-dev libxslt1-dev \
+    nodejs \
+    netcat \
+    p7zip-full \
+    ffmpeg \
+    imagemagick \
+    cron \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN mkdir -p $APP_HOME
 WORKDIR $APP_HOME
 
-ADD Gemfile* $APP_HOME/
+RUN chown -R root:root $APP_HOME
 
-RUN bundle install
+# Set the PATH environment variable
+ENV PATH $APP_HOME/bin:$PATH
 
-ADD . $APP_HOME
+# Install bundler
+RUN gem install bundler -v $BUNDLER_VERSION
 
-CMD ["docker/startup.sh"]
+COPY Gemfile Gemfile.lock ./
+
+RUN bundle check || bundle install
+
+COPY . ./
+
+CMD ["./bin/docker/prepare-to-start-rails", "rails", "server", "-p", "3000", "-b", "0.0.0.0"]
