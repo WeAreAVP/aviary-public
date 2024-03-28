@@ -126,6 +126,12 @@ module SearchHelper
     title
   end
 
+  def render_playlist_facet_value(id)
+    return '' unless id.present?
+
+    Playlist.exists?(id: id) ? Playlist.find(id).name : id
+  end
+
   def avairy_to_solr_description(single = nil)
     mapper = {
       'title' => :description_title_sms, 'publisher' => :description_publisher_sms,

@@ -559,3 +559,12 @@ $size: 24px;
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   opacity: 0.8;
 }
+
+.inactive-breadcrum {
+  cursor: default;
+  text-decoration: none !important;
+}
+
+.inactive-breadcrum:hover {
+  opacity: 1;
+}

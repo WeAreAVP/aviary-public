@@ -244,6 +244,10 @@ class CollectionResource < ApplicationRecord
       !index_points_solr.nil? && !index_points_solr.empty? && !index_points_solr[:title].empty? ? 'Yes' : 'No'
     end
 
+    integer :playlist, multiple: true, stored: true do
+      playlist_resources.map(&:playlist)&.map(&:id) || []
+    end
+
     solr_mapper_transcript_point.each do |single_mapper_definition|
       text single_mapper_definition[single_mapper_definition.keys.first], stored: true do
         trans_points_solr[single_mapper_definition.keys.first] if !trans_points_solr.nil? && trans_points_solr.key?(single_mapper_definition.keys.first)

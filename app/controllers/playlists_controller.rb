@@ -29,18 +29,15 @@ class PlaylistsController < ApplicationController
 
   def create
     @playlist = current_organization.playlists.create(playlist_params.merge(user_id: current_user.id))
-    if @playlist.save
-      if request.xhr?
-        collection_resource = CollectionResource.find(params[:collection_resource_id])
-        collection_resource_playlist_ids = collection_resource.playlist_resources.pluck(:playlist_id)
-        render partial: 'single_playlist', locals: { playlist: @playlist, collection_resource: collection_resource, collection_resource_playlist_ids: collection_resource_playlist_ids,
-                                                     from_action: 'listing_for_add_to_playlist', organization: current_organization }
-      else
-        redirect_to playlists_path, notice: t('playlist_created')
-      end
-    else
-      render 'new'
-    end
+    render 'new' and return unless @playlist.save
+    redirect_to playlists_path, notice: t('playlist_created') and return unless request.xhr?
+
+    collection_resource = CollectionResource.find(params[:collection_resource_id])
+    collection_resource_playlist_ids = collection_resource.playlist_resources.pluck(:playlist_id)
+    render partial: 'single_playlist', locals: { playlist: @playlist, collection_resource: collection_resource,
+                                                 collection_resource_playlist_ids: collection_resource_playlist_ids,
+                                                 from_action: 'listing_for_add_to_playlist',
+                                                 organization: current_organization }
   end
 
   def edit

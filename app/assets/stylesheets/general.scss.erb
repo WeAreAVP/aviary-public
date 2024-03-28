@@ -875,11 +875,6 @@ li.admin .dropdown-submenu > a:focus + .dropdown-menu {
   margin-right: unset !important;
 }
 
-/* Hides hamburger for navbar toggles when screen is small */
-.navbar-toggler {
-  display: none;
-}
-
 .text-headline {
   background: #fff;
   border: none;
@@ -8518,4 +8513,10 @@ Copyright (c) 2013 Daniel Eden
   padding-top: 0px !important;
   padding-bottom: 0px !important;
   line-height: 25px !important;
+}
+
+@media (max-width: 768px) {
+  .navbar-nav {
+    display: block !important;
+  }
 }

@@ -33,15 +33,13 @@ class MediaListingDatatable < ApplicationDatatable
 
   def sort_column
     columns_allowed = ['id_is']
-    if @current_organization&.resource_file_display_column&.present?
-      resource_display_column_list = JSON.parse(@current_organization.resource_file_display_column)['columns_status'].collect { |_k, v| v }
-      resource_display_column_list.each do |value|
-        if !value['status'].blank? && value['status'].to_s.to_boolean?
-          columns_allowed << value['value']
-        end
-      end
+    if current_organization.try(:resource_file_display_column).present?
+      resource_display_column_list = JSON.parse(current_organization.resource_file_display_column)['columns_status']
+                                         .collect { |_k, v| v }
+      resource_display_column_list.each { |val| columns_allowed << val['value'] if val['status'].to_s.to_boolean? }
     end
-    columns_allowed&.[](params[:order]&.[]('0')&.[](:column)&.to_i).to_s
+
+    columns_allowed.try(:[], params[:order].try(:[], '0').try(:[], :column).try(:to_i)).to_s
   end
 
   def data
@@ -182,13 +180,17 @@ class MediaListingDatatable < ApplicationDatatable
     if @external_id.present?
       extra_conditions << '+external_resource_id_ss:[* TO *]'
     end
-    CollectionResourceFile.fetch_file_list(page, per_page, sort_column, sort_direction, params, "#{table_of_caller}:#{@caller.id}", media_fields: @media_fields, export: false, current_organization: current_organization,
-                                                                                                                                    called_from: @called_from, extra_conditions: extra_conditions)
+    CollectionResourceFile.fetch_file_list(page, per_page, sort_column, sort_direction, params,
+                                           "#{table_of_caller}:#{@caller.id}", media_fields: @media_fields,
+                                                                               export: false,
+                                                                               current_organization: current_organization,
+                                                                               called_from: @called_from,
+                                                                               extra_conditions: extra_conditions)
   end
 
   def columns(resource_file_search_column = false)
     columns_allowed = ['id_is']
-    if resource_file_search_column&.present?
+    if resource_file_search_column.present?
       resource_file_search_column.each_value do |value|
         if !value['status'].blank? && value['status'] == 'true'
           columns_allowed << value['value']
