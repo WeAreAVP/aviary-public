@@ -10,10 +10,14 @@
         <div class="row">
           <div class="col-md-6">
             <div class="d-flex align-items-center">
-              <a id="back-to-search-btn" class="collection_resource_edit_title" >
-                <span class="fa fa-angle-left "></span> <small class="mx-3">Back to <%= @file_transcript.interview.title %> </small>
+              <a id="back-to-search-btn" class="collection_resource_edit_title"
+                 href="<%= sync_interviews_manager_path(@file_transcript.interview.id) %>">
+                <span class="fa fa-angle-left "></span>
+                <small class="mx-3">Back to <%= @file_transcript.interview.title %></small>
               </a>
-              <h1 class="h3 text-left m-0"> <%= @file_transcript.interview.title %> - Edit Transcript </h1>
+              <h1 class="h3 text-left m-0">
+                <%= @file_transcript.interview.title %> - Edit Transcript
+              </h1>
             </div>          
           </div>
           <div class="col-md-6">
@@ -27,12 +31,16 @@
           </div>
         </div>
       </div>
-      <%= simple_form_for @file_transcript, :url => edit_interviews_transcript_path(@file_transcript), html: { class: "interview_manager" } do |f| %>
+      <%= simple_form_for @file_transcript, :url => edit_interviews_transcript_path(@file_transcript),
+          html: { class: "interview_manager" } do |f| %>
         <div class="form-group">
-          <%= f.input :text, :as => :text, :input_html => { style: 'height: 300px;border-radius: 6px !important;padding: 20px;', value: @text, class: 'form-control' } %>
+          <%= f.input :text, :as => :text, :input_html => { value: @text, class: 'form-control'
+                                           style: 'height: 300px;border-radius: 6px !important;padding: 20px;' } %>
         </div>
         <div class="mt-4">
-          <a type="button" href="<%= sync_interviews_manager_path(@interview.id)%>" class="btn btn-outline-dark"> Cancel</a>
+          <a type="button" href="<%= sync_interviews_manager_path(@interview.id)%>" class="btn btn-outline-dark">
+            Cancel
+          </a>
           <button class="btn btn-primary"> Save</button>
         </div>
       <% end %>
