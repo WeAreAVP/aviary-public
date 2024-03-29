@@ -142,11 +142,46 @@ function InterviewManager() {
         $('.check_all_fields, .uncheck_all_fields').on('click', function () {
             $('.' + $(this).data('search-field')).prop('checked', $(this).data('search-status'));
         });
+
+        $('.manage-interview-import-xml-modal').on('shown.bs.modal', function () {
+            initImportXmlFile();
+        });
+
+        $('.manage-interview-import-xml-modal').on('hidden.bs.modal	', function () {
+            $('#import_xml_file').fileupload('destroy');
+        });
+
+        $('#modalPopupUpload').on('shown.bs.modal', function () {
+            $('#interview_transcript_associated_file').on('change', function (e) {
+                if (!['txt', 'docx', 'doc'].includes($(this).val().split('.').pop())) {
+                    jsMessages('danger', 'Only Txt, Docx, and Doc file allowed');
+                    $(this).val('')
+                    $('#selected_file_associated_file').text('');
+                    e.preventDefault();
+                    return false;
+                }
+            });
+
+            $('#interview_transcript_translation').on('change', function (e) {
+                if (!['txt', 'docx', 'doc'].includes($(this).val().split('.').pop())) {
+                    jsMessages('danger', 'Only Txt, Docx, and Doc file allowed');
+                    $(this).val('')
+                    $('#selected_file_translation').text('');
+                    e.preventDefault();
+                    return false;
+                }
+            });
+        });
+
+        $('#modalPopupUpload').on('hidden.bs.modal	', function () {
+            $('#interview_transcript_associated_file').fileupload('destroy');
+            $('#interview_transcript_translation').fileupload('destroy');
+        });
+
         initDeletePopup();
         initDeleteInterviewPopup();
         initNotesPopup();
         bulk_option_selection();
-        initImportXmlFile();
         updateTranscriptInfo();
         assignUser();
         bulkAssignUser();
