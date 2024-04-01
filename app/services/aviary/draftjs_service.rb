@@ -19,33 +19,36 @@ module Aviary
       slate_js_blocks.each_with_index do |point, idx|
         data = point['children'][0]
         text = data['text']
-        paragraph_words = text.split(' ')
-        speaker = point['speaker'].present? && point['speaker'].downcase != 'add speaker' ? point['speaker'] : ''
-        word_timestamp = []
+        if text.present?
+          paragraph_words = text.split(' ')
+          speaker = point['speaker'].to_s.downcase != 'add speaker' ? point['speaker'] : ''
+          word_timestamp = []
 
-        paragraph_words.each do |word|
-          start_time = point['start']
-          end_time = slate_js_blocks.length >= idx + 1 && slate_js_blocks[idx + 1] ? slate_js_blocks[idx + 1]['start'] : words.last['end']
-          word_timestamp << {
-            start: start_time,
-            end: end_time,
-            speaker: speaker,
-            text: word
-          }
+          paragraph_words.each do |word|
+            start_time = point['start']
+            end_time = slate_js_blocks.length >= idx + 1 && slate_js_blocks[idx + 1] ? slate_js_blocks[idx + 1]['start'] : words.last['end']
+            word_timestamp << {
+              start: start_time,
+              end: end_time,
+              speaker: speaker,
+              text: word
+            }
+          end
+
+          start_time = word_timestamp.first[:start]
+          end_time = word_timestamp.last[:end]
+          duration = end_time - start_time
+          single_hash = {}
+          single_hash['text'] = text
+          single_hash['speaker'] = speaker
+          single_hash['start_time'] = start_time
+          single_hash['end_time'] = end_time
+          single_hash['duration'] = duration
+          single_hash['word_timestamp'] = word_timestamp
+          transcript_point_hash << single_hash
         end
-
-        start_time = word_timestamp.first[:start]
-        end_time = word_timestamp.last[:end]
-        duration = end_time - start_time
-        single_hash = {}
-        single_hash['text'] = text
-        single_hash['speaker'] = speaker
-        single_hash['start_time'] = start_time
-        single_hash['end_time'] = end_time
-        single_hash['duration'] = duration
-        single_hash['word_timestamp'] = word_timestamp
-        transcript_point_hash << single_hash
       end
+
       transcript_point_hash
       FileTranscriptPoint.transaction do
         Aviary::IndexTranscriptManager::TranscriptManager.new.update_existing_points(transcript, transcript_point_hash)
@@ -76,6 +79,7 @@ module Aviary
           words = []
         end
       end
+
       tmp_file << webvtt_text
       tmp_file.flush
       tmp_file.path
@@ -90,7 +94,7 @@ module Aviary
         data = point['children'][0]
         text = data['text']
         paragraph_words = text.split(' ')
-        speaker = point['speaker'].present? && point['speaker'].downcase != 'add speaker' ? point['speaker'] : ''
+        speaker = point['speaker'].to_s.downcase != 'add speaker' ? point['speaker'] : ''
         paragraph_words.each_with_index do |word, index|
           start_time = point['start'].floor
           end_time = points.length >= idx + 1 && points[idx + 1] ? points[idx + 1]['start'].floor : words.last['end'].floor
