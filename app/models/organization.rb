@@ -224,7 +224,9 @@ class Organization < ApplicationRecord
       type: { key: 'description_type_search_facet_sms', label: 'Type', single: false, type: 'text' },
       access_ss: { key: 'access_ss', label: 'Access', single: false, type: 'text' },
       description_duration_ls: { key: 'description_duration_ls', label: 'Duration', single: true, partial: 'blacklight_range_limit/range_limit_panel',
-                                 range: { segments: false }, tag: 'description_duration_ls', ex: 'description_duration_ls-tag', type: 'date' }
+                                 range: { segments: false }, tag: 'description_duration_ls', ex: 'description_duration_ls-tag', type: 'date' },
+      playlist_ims: { key: 'playlist_ims', label: 'Playlist', single: false, type: 'integer',
+                      helper_method: :render_playlist_facet_value }
     }
   end
 

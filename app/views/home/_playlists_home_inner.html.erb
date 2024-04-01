@@ -35,6 +35,14 @@
             </div>
           </div>
           <div class="browse-org">
+            <a target="_blank" class="float-left"
+               href="<%= search_catalog_path({ f: { playlist_ims: [playlist.id] }, indexes: [], keywords: [],
+                                                    op: [], resource_description: [], search_field: 'advanced',
+                                                    search_type: 'simple', title_text: '', transcript: [],
+                                                    type_of_search: ['simple'] }) %>">
+              Search Playlist <i class="fa fa-external-link"></i>
+            </a>
+
             <a target="_blank" href="<%= playlist_show_path(playlist) %>"> View Playlist <i class="fa fa-external-link"></i></a>
           </div>
         </div>
