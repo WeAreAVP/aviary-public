@@ -29,7 +29,7 @@
                 <div class="col-xl-5 col-lg-6">
                   <div class="d-flex flex-column ml-auto right-toolbar">
                     <div class="status d-flex align-items-center m-1">
-                      <label><input type="checkbox" name="fix_linebreaks" value="true" style="margin-right: 0.5em">Fix line breaks</label>
+                      <label><%= check_box_tag 'fix_linebreaks' %>Fix line breaks</label>
                     </div>
                     <div class="status d-flex align-items-center m-1">
                       <% if @interview.present? && @interview.id.present? %>

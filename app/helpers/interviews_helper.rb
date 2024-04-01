@@ -88,7 +88,6 @@ module InterviewsHelper
   def fix_line_breaks(transcript)
     processed_transcript = ''
     transcript.split("\n").each { |line| processed_transcript += "#{line}#{line.present? && ends_with_punctuation?(line) ? "\n" : ''}" }
-    flash[:notice] = 'Successfully fixed line breaks' if params[:fix_linebreaks]&.to_boolean?
     processed_transcript
   end
 end
