@@ -16,7 +16,9 @@ module Aviary
       date = interview.interview_date
 
       builder = Nokogiri::XML::Builder.new(encoding: 'UTF-8') do |xml|
-        xml.ROOT('xmlns' => 'https://www.weareavp.com/nunncenter/ohms', 'xmlns:xsi' => 'http://www.w3.org/2001/XMLSchema-instance', 'xsi:schemaLocation' => 'https://www.weareavp.com/nunncenter/ohms/ohms.xsd') {
+        xml.ROOT('xmlns' => 'https://www.weareavp.com/nunncenter/ohms',
+                 'xmlns:xsi' => 'http://www.w3.org/2001/XMLSchema-instance',
+                 'xsi:schemaLocation' => 'https://www.weareavp.com/nunncenter/ohms/ohms.xsd') {
           xml.record('id' => interview.id, 'dt' => DateTime.now.strftime('%Y-%m-%d')) {
             xml.version 5.4
             xml.date('value' => date, 'format' => 'yyyy-mm-dd')
@@ -72,7 +74,7 @@ module Aviary
               index_line = 0
               notes_info = file_transcript.point_notes_info
               file_transcript_points.each do |point|
-                info = point.text.split("\n").reject(&:empty?)
+                info = point.text.split("\n")
                 info.each do |section|
                   if section.present?
                     if notes_info.present? && notes_info[index_line.to_s].present?
