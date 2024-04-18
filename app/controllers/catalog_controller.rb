@@ -107,6 +107,11 @@ class CatalogController < ApplicationController
           @blacklight_config.add_facet_field('has_index_ss', field_settings)
           next
         end
+        if system_name == 'playlist'
+          field_settings = Organization.field_list_with_options[:playlist_ims]
+          field_settings[:label] = @resource_fields[system_name]['label'] if @resource_fields[system_name].present?
+          @blacklight_config.add_facet_field("#{system_name}_ims", field_settings)
+        end
         if single_collection_field['is_default'].to_s.to_boolean?
           default_field_info = Organization.field_list_with_options[system_name.to_sym]
           next unless default_field_info.present?

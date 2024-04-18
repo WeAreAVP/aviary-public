@@ -10,7 +10,7 @@ class PlaylistResource < ApplicationRecord
   has_many :playlist_items, dependent: :destroy
   has_attached_file :thumbnail, styles: { small: '450x230>', processors: %i[thumbnail compression] }, default_url: ''
   validates_attachment_content_type :thumbnail, content_type: %r[\Aimage\/.*\z]
-  after_save :update_description
+  after_save :update_description, :reindex_collection_resource
 
   def update_description
     if description.strip_tags.blank? && collection_resource.custom_field_value('description').present? && !collection_resource.custom_field_value('description').first['value'].strip_tags.blank?
@@ -19,5 +19,9 @@ class PlaylistResource < ApplicationRecord
     end
   rescue StandardError => e
     Rails.logger.error e
+  end
+
+  def reindex_collection_resource
+    collection_resource.reindex_collection_resource
   end
 end

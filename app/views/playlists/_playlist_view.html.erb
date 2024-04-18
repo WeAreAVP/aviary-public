@@ -82,6 +82,14 @@
               <div class="loadingCus text-center" style="display: none;">…</div>
               <div id='resource-list-container' class='float-left w-100 tab-pane fade in <%= (active_tab.include? 'show_playlist') ? 'active show' : '' %>' data-url="<%= sort_playlist_playlist_resources_path(@playlist) %>">
                 <div class="grey-box ml-0">
+                  <a target="_blank" class="float-left" style="font-size: 14px"
+                    href="<%= search_catalog_path({ f: { playlist_ims: [@playlist.id] }, indexes: [], keywords: [],
+                                                          op: [], resource_description: [], search_field: 'advanced',
+                                                          search_type: 'simple', title_text: '', transcript: [],
+                                                          type_of_search: ['simple'] }) %>">
+                    Search all content in this playlist <i class="fa fa-external-link"></i>
+                  </a>
+
                   <div class="playlist_duration">
                     <strong>Playlist Duration: </strong>
                     <span class="single_value"> <%= time_to_duration(@playlist.duration) %></span>

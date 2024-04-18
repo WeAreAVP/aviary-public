@@ -1209,6 +1209,28 @@ fields:
       resource_table_sort_order: 33
       search_display: false
       search_sort_order: 33
+    playlist:
+      label: 'Playlist'
+      system_name: playlist
+      field_type: integer
+      is_required: false
+      is_public: false
+      is_default: true
+      is_vocabulary: false
+      vocabulary: []
+      help_text: null
+      is_repeatable: true
+      field_configuration: { special_purpose: true, visible_at: 'resource_listing,resource_search' }
+      field_level: resource
+      sort_order: 34
+      description_display: false
+      resource_table_display: true
+      resource_table_search: true
+      solr_display_column: 'playlist_ims'
+      solr_search_column: 'playlist_ims'
+      resource_table_sort_order: 34
+      search_display: true
+      search_sort_order: 34
 
   collection:
     identifier:
