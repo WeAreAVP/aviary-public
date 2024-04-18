@@ -290,8 +290,11 @@ module Interviews
 
     # GET /interviews/1/export.format
     def export
-      authenticate_user! unless params[:viewer] == ENV['PREVIEW_KEY']
-      authorize! :manage, Interviews::Interview unless params[:viewer] == ENV['PREVIEW_KEY']
+      unless params[:viewer] == ENV.fetch('PREVIEW_KEY', nil)
+        authenticate_user!
+        authorize! :manage, Interviews::Interview
+      end
+
       interview = Interviews::Interview.find(params[:id])
       export_text = Aviary::ExportOhmsInterviewXml.new.export(interview)
       doc = Nokogiri::XML(export_text.to_xml)

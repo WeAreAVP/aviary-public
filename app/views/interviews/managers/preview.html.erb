@@ -26,15 +26,19 @@
           <div class="row">
             <div class="col-md-12">
               <div class="d-flex align-items-center">
-                <a id="back-to-search-btn" class="collection_edit_title" href="<%= (url_for(:back) == "javascript:history.back()" ? ohms_index_path(params[:id]) : url_for(:back)) %>">
-                  <span class="fa fa-angle-left "></span> <small class="mx-3">Back to 
-                  <% if url_for(:back).include? "managers" %>
-                    <strong>Interview Manager</strong>
-                  <% else %>
-                    <strong>Interview Index</strong>
-                  <% end %>
+                <a id="back-to-search-btn" class="collection_edit_title"
+                   href="<%= (url_for(:back) == "javascript:history.back()" ? ohms_index_path(params[:id]) : url_for(:back)) %>">
+                  <span class="fa fa-angle-left "></span>
+                  <small class="mx-3">
+                    Back to
+                    <% if url_for(:back).include? "managers" %>
+                      <strong>Interview Manager</strong>
+                    <% else %>
+                      <strong>Interview Index</strong>
+                    <% end %>
                   </small>
                 </a>
+
                 <h1 class="h3 text-left m-0">Interview Preview</h1>
               </div>
             </div>
@@ -42,7 +46,11 @@
         </div>
       </div>
       <div class="iframe_container">
-        <iframe class="responsive-iframe" src="https://viewer.aviaryplatform.com?cachefile=<%= export_interviews_manager_url(params[:id], 'xml') + '?viewer=' + ENV['PREVIEW_KEY'] %>&external=true"></iframe>
+        <iframe class="responsive-iframe"
+                src="https://viewer.aviaryplatform.com?cachefile=<%=
+                  export_interviews_manager_url(params[:id], 'xml') + '?viewer=' + ENV['PREVIEW_KEY']
+                %>&external=true">
+        </iframe>
       </div>
     </main>
 
