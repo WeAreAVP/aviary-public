@@ -306,6 +306,7 @@ Rails.application.routes.draw do
   post 'indexes/create/:resource_file_id', to: 'indexes#create_index', as: 'create_index'
   delete 'indexes/destroy/:index_file_point_id', to: 'indexes#destroy_index', as: 'destroy_index'
   post 'transcripts/upload/:resource_file_id(/:file_transcript_id)', to: 'transcripts#create', as: 'transcript_upload'
+  get 'transcripts/edit/(:transcript_id)', to: 'transcripts#edit', as: :edit_transcript
   patch 'transcripts/sort/:resource_file_id', to: 'transcripts#sort', as: 'transcript_sort'
   delete 'transcripts/delete/:id', to: 'transcripts#destroy', as: 'transcript_delete'
   get 'transcripts/export/:type(/:id)', to: 'transcripts#export', as: 'transcript_export'
