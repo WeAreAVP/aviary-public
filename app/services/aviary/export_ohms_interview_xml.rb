@@ -28,8 +28,6 @@ module Aviary
             formatted = add_sync(xml, interview, file_transcript)
             file_transcript_alt, formatted_alt = add_sync_alt(xml, interview)
 
-            xml.file_name interview.media_filename
-
             xml.transcript_alt_lang interview.language_for_translation
             xml.translate interview.include_language? ? 1 : 0
             xml.media_id interview.try('media_id').present? ? interview.media_id : ''
@@ -70,7 +68,7 @@ module Aviary
       builder
     end
 
-   def add_attributes(xml, interview)
+    def add_attributes(xml, interview)
       xml.version 5.4
       xml.date('value' => interview.interview_date, 'format' => 'yyyy-mm-dd')
       xml.date_nonpreferred_format interview.date_non_preferred_format
