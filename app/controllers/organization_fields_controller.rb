@@ -197,39 +197,69 @@ class OrganizationFieldsController < ApplicationController
       params['custom_fields']['dropdown_options'] = str_to_array(params['custom_fields']['dropdown_options']) if params['custom_fields']['dropdown_options'].present?
       type = :notice
       if params['meta_field_id'].blank?
-        all_fields = current_organization.organization_field.resource_fields
-        system_name = params['custom_fields']['label'].parameterize.underscore
-        all_fields[system_name] = {
-          'label' => params['custom_fields']['label'],
-          'help_text' => params['custom_fields']['help_text'],
-          'is_public' => params['custom_fields']['is_public'].to_boolean?,
-          'field_type' => params['custom_fields']['field_type'],
-          'is_default' => false,
-          'is_repeatable' => params['custom_fields']['is_repeatable'].to_boolean?,
-          'is_internal_only' => params['custom_fields']['is_internal_only'].to_boolean?,
-          'field_level' => 'resource',
-          'is_required' => params['custom_fields']['is_required'].to_boolean?,
-          'system_name' => system_name,
-          'is_vocabulary' => params['custom_fields']['vocabulary'].present?,
-          'vocabulary' => params['custom_fields']['vocabulary'].present? ? params['custom_fields']['vocabulary'] : [],
-          'field_configuration' => { 'dropdown_options' => params['custom_fields']['dropdown_options'].present? ? params['custom_fields']['dropdown_options'] : [] },
-          'sort_order' => current_organization.organization_field.resource_fields.keys.count.to_i + 1,
-          'description_display' => true,
-          'resource_table_display' => false,
-          'resource_table_search' => false,
-          'search_display' => false,
-          'solr_display_column' => Aviary::SolrIndexer.define_custom_field_system_name(system_name, params['custom_fields']['field_type'], true),
-          'solr_search_column' => Aviary::SolrIndexer.define_custom_field_system_name(system_name) + '_texts',
-          'resource_table_sort_order' => current_organization.organization_field.resource_fields.keys.count.to_i + 1,
-          'search_sort_order' => current_organization.organization_field.resource_fields.keys.count.to_i + 1
-        }
-        if Rails.configuration.default_fields['fields']['resource'].keys.include?(system_name)
-          type = :danger
-          message = "\"#{params['custom_fields']['label']}\" is reserved field name. Please use a different field name."
+        if params['type'] == 'collection_fields'
+          all_fields = current_organization.organization_field.collection_fields
+          system_name = params['custom_fields']['label'].parameterize.underscore
+          all_fields[system_name] = {
+            label: params['custom_fields']['label'],
+            default_name: params['custom_fields']['label'],
+            system_name: system_name,
+            field_type: params['custom_fields']['field_type'],
+            is_required: params['custom_fields']['is_required'].to_boolean?,
+            is_public: params['custom_fields']['is_public'].to_boolean?,
+            is_default: false,
+            is_vocabulary: params['custom_fields']['vocabulary'].present?,
+            tombstone: false,
+            vocabulary: params['custom_fields'].try(:[], 'vocabulary') || [],
+            help_text: params['custom_fields']['help_text'],
+            is_repeatable: params['custom_fields']['is_repeatable'].to_boolean?,
+            field_configuration: { 'dropdown_options' => params['custom_fields'].try(:[], 'dropdown_options') || [] },
+            field_level: 'collection',
+            sort_order: current_organization.organization_field.resource_fields.keys.count.to_i + 1,
+            display: true
+          }
+          if Rails.configuration.default_fields['fields']['collection'].keys.include?(system_name)
+            type = :danger
+            message = "\"#{params['custom_fields']['label']}\" is reserved field name. Please use a different field name."
+          else
+            current_organization.organization_field.collection_fields = all_fields
+            current_organization.organization_field.save
+          end
         else
-          temp = current_organization.organization_field
-          temp.resource_fields = all_fields
-          temp.save
+          all_fields = current_organization.organization_field.resource_fields
+          system_name = params['custom_fields']['label'].parameterize.underscore
+          all_fields[system_name] = {
+            'label' => params['custom_fields']['label'],
+            'help_text' => params['custom_fields']['help_text'],
+            'is_public' => params['custom_fields']['is_public'].to_boolean?,
+            'field_type' => params['custom_fields']['field_type'],
+            'is_default' => false,
+            'is_repeatable' => params['custom_fields']['is_repeatable'].to_boolean?,
+            'is_internal_only' => params['custom_fields']['is_internal_only'].to_boolean?,
+            'field_level' => 'resource',
+            'is_required' => params['custom_fields']['is_required'].to_boolean?,
+            'system_name' => system_name,
+            'is_vocabulary' => params['custom_fields']['vocabulary'].present?,
+            'vocabulary' => params['custom_fields']['vocabulary'].present? ? params['custom_fields']['vocabulary'] : [],
+            'field_configuration' => { 'dropdown_options' => params['custom_fields']['dropdown_options'].present? ? params['custom_fields']['dropdown_options'] : [] },
+            'sort_order' => current_organization.organization_field.resource_fields.keys.count.to_i + 1,
+            'description_display' => true,
+            'resource_table_display' => false,
+            'resource_table_search' => false,
+            'search_display' => false,
+            'solr_display_column' => Aviary::SolrIndexer.define_custom_field_system_name(system_name, params['custom_fields']['field_type'], true),
+            'solr_search_column' => Aviary::SolrIndexer.define_custom_field_system_name(system_name) + '_texts',
+            'resource_table_sort_order' => current_organization.organization_field.resource_fields.keys.count.to_i + 1,
+            'search_sort_order' => current_organization.organization_field.resource_fields.keys.count.to_i + 1
+          }
+          if Rails.configuration.default_fields['fields']['resource'].keys.include?(system_name)
+            type = :danger
+            message = "\"#{params['custom_fields']['label']}\" is reserved field name. Please use a different field name."
+          else
+            temp = current_organization.organization_field
+            temp.resource_fields = all_fields
+            temp.save
+          end
         end
 
       else
