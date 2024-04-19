@@ -222,8 +222,9 @@ class OrganizationFieldsController < ApplicationController
             type = :danger
             message = "\"#{params['custom_fields']['label']}\" is reserved field name. Please use a different field name."
           else
-            current_organization.organization_field.collection_fields = all_fields
-            current_organization.organization_field.save
+            temp = current_organization.organization_field
+            temp.collection_fields = all_fields
+            temp.save
           end
         else
           all_fields = current_organization.organization_field.resource_fields
