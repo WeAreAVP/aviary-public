@@ -253,6 +253,9 @@ module Interviews
       end
 
       if interview_file_transcript.present?
+        @main_transcript_formatted = Aviary::ExportOhmsInterviewXml.new.insert_footnotes(@main_transcript)
+                                                                   .split(Aviary::ExportOhmsInterviewXml::SEPARATOR)
+
         interview_file_transcript.each do |single_info|
           @data_main << { id: single_info.id, text: single_info.text,
                           start_time: single_info.start_time.present? ? time_to_duration(single_info.start_time) : '00:00:00',

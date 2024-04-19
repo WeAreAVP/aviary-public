@@ -120,4 +120,13 @@ class FileTranscriptPointPresenter < BaseIndexTranscriptPresenter
     end
     [replacement, text]
   end
+
+  def replace_footnotes(line)
+    line.gsub(%r(\[\[footnote\]\]\d+\[\[\/footnote\]\])) do |match|
+      match.scan(/\d+/).map do |tag|
+        "<sup&nbsp;id=\"sup#{tag}\"><a&nbsp;href=\"#footnote#{tag}\"&nbsp;class=\"note_sup\">#{tag}</a></sup>"
+          .html_safe
+      end.join
+    end
+  end
 end

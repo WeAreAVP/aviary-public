@@ -78,41 +78,32 @@
                     <% notes_info = @main_transcript.point_notes_info %>
                     <% @data_main.each do |single_point| %>
                       <% if single_point[:text].present? %>
-                      <% list_line = single_point[:text].split("\n") %>
-                      <% list_line.each_with_index do |single_list_line, line_index| %>
-                        <% 
-                          if notes_info.present? && notes_info[line_counter.to_s].present?
-                            notes = notes_info[line_counter.to_s].split('|')
-                            prv_length = 0
-                            notes.each do | note |
-                              tag = note.split('-')
-                              temp = "<sup&nbsp;id=\"sup#{tag[0]}\"><a&nbsp;href=\"#footnote#{tag[0]}\"&nbsp;class=\"note_sup\">#{tag[0]}</a></sup>".html_safe
-                              begin
-                                list_line[line_index+ (counter-1)].insert((tag[1].to_i+prv_length),temp)
-                              rescue => exception
-
-                              end
-                              prv_length = prv_length + (temp.length)
-                            end
-                          end
-                        %>
-                        <% list = list_line[line_index].split %>
-                        <% if list.present? %>
-                          <div class='single_point_transcript p-1' style='color: gray;'>
-                          <% list.each do |single_word| %>
-                            <% if single_word.include?('a&nbsp;') %>
-                                <%= single_word.gsub('&nbsp;',' ').html_safe %>
-                            <% else %>
-                                <span class='single_word_transcript cursor-pointer'> <%= single_word.gsub('&nbsp;',' ').html_safe %> </span>
-                            <% end %>
-                          <% end %>
-                          </div>
+                        <% present(FileTranscriptPoint.find(single_point[:id])) do |presenter| %>
                         <% end %>
-                        <% line_counter = line_counter + 1 %>
+                          <% list_line = @main_transcript_formatted[index].split("\n") %>
+                          <% list_line.each_with_index do |single_list_line, line_index| %>
+                            <% line = presenter.replace_footnotes(single_list_line) %>
+                            <% list = line.split %>
+                            <% if list.present? %>
+                              <div class='single_point_transcript p-1' style='color: gray;'>
+                                <% list.each_with_index do |single_word, word_index| %>
+                                  <% if single_word.include?('a&nbsp;') %>
+                                    <%= single_word.gsub('&nbsp;', ' ').html_safe %>
+                                  <% else %>
+                                    <span class='single_word_transcript cursor-pointer'> <%= single_word.gsub('&nbsp;',' ').html_safe %> </span>
+                                  <% end %>
+                                <% end %>
+                              </div>
+                            <% end %>
+                          <% line_counter = line_counter + 1 %>
+                        <% end %>
                       <% end %>
                       
                       <% if @data_main.length > counter %>
-                        <span class="merge_transcript_point_code transcript_point_code text-dark transcript_point_code_<%= hms_to_number(single_point[:end_time]) %>" data-timecode="<%= hms_to_number(single_point[:end_time]) %>">[<%= single_point[:end_time] %>]</span>
+                        <span class="merge_transcript_point_code transcript_point_code text-dark transcript_point_code_<%= hms_to_number(single_point[:end_time]) %>"
+                              data-timecode="<%= hms_to_number(single_point[:end_time]) %>">
+                          [<%= single_point[:end_time] %>]
+                        </span>
                       <% end %>
                       <% counter = counter + 1 %>
                       <% end %>
