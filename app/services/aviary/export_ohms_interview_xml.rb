@@ -16,8 +16,6 @@ module Aviary
     SEPARATOR = '--point--'.freeze
 
     def export(interview)
-      date = interview.interview_date
-
       builder = Nokogiri::XML::Builder.new(encoding: 'UTF-8') do |xml|
         xml.ROOT('xmlns' => 'https://www.weareavp.com/nunncenter/ohms',
                  'xmlns:xsi' => 'http://www.w3.org/2001/XMLSchema-instance',

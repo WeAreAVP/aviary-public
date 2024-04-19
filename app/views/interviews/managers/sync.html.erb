@@ -76,10 +76,9 @@
                     <% line_counter = 0 %>
                     <% @main_transcript.point_notes_info = "" if @main_transcript.point_notes_info.nil? %>
                     <% notes_info = @main_transcript.point_notes_info %>
-                    <% @data_main.each do |single_point| %>
+                    <% @data_main.each_with_index do |single_point, index| %>
                       <% if single_point[:text].present? %>
                         <% present(FileTranscriptPoint.find(single_point[:id])) do |presenter| %>
-                        <% end %>
                           <% list_line = @main_transcript_formatted[index].split("\n") %>
                           <% list_line.each_with_index do |single_list_line, line_index| %>
                             <% line = presenter.replace_footnotes(single_list_line) %>
