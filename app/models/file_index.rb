@@ -95,10 +95,17 @@ class FileIndex < ApplicationRecord
       fq_filters_inner = ''
       JSON.parse(export_and_current_organization[:current_organization][:file_index_search_column]).each do |_, value|
         if value['status'] == 'true' || value['status'].to_s.to_boolean?
-          unless value['value'].to_s == 'id_is' && q.to_i <= 0
-            fq_filters_inner = fq_filters_inner + (counter != 0 ? ' OR ' : ' ') + " #{CollectionResource.search_perp(q, value['value'].to_s)} "
-            counter += 1
-          end
+          fq_filters_inner += (counter != 0 ? ' OR ' : ' ')
+          fq_filters_inner += if value['value'].to_s == 'id_is' && q.match(/^\d*$/)
+                                # Instead of indexing another column like `id_ss`, we are using an already indexed
+                                # column `id`. The match is performed to ensure we only search for numerical value.
+                                # Because the `id` column value is of the following pattern`FileIndex {id}`
+                                " #{CollectionResource.search_perp(q, 'id')} "
+                              else
+                                " #{CollectionResource.search_perp(q, value['value'].to_s)} "
+                              end
+
+          counter += 1
         end
       end
       fq_filters += " AND (#{fq_filters_inner}) " unless fq_filters_inner.blank?
