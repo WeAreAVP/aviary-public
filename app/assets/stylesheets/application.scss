@@ -568,3 +568,15 @@ $size: 24px;
 .inactive-breadcrum:hover {
   opacity: 1;
 }
+
+div + br.break, p + br.break {
+  display: none;
+}
+
+.truncate-5-lines {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 5;
+  text-overflow: ellipsis;
+}

@@ -66,11 +66,23 @@ function DisplaySettings() {
     this.toggleCollectionSection = function () {
         $('.link-toggle-collection a').click(function (e) {
             e.preventDefault();
-            $('#collection_resource_container').slideToggle('slow');
-            $('#about_collection_container').slideToggle('slow');
+            $('#all-resources-container').slideToggle('slow');
         });
 
     };
+    this.toggleCollectionMetadataSection = function () {
+        show = false;
+        $('.read-more-link').click(function (e) {
+            e.preventDefault();
+            $('.search-detail-main').slideToggle('show', function () {
+                $('#collection-about').toggleClass('truncate-5-lines');
+
+                $('.read-more-link').text(
+                    `Read ${$('.search-detail-main').is(':visible') ? 'less' : 'more'} about this collection`
+                );
+            });
+        })
+    }
     const call_lazy_loader = function () {
         $('#loader-gif-laxy').removeClass('d-none');
         that.load_resource_again = false;

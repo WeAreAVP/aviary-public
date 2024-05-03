@@ -1,0 +1,20 @@
+<% if @collection_fields.present? %>
+  <% @collection_fields.each do |(_system_name, single_collection_field)| %>
+    <% next unless single_collection_field['display'].to_s.to_boolean?
+
+      value = @collection_fields_and_value.try(:collection_field_values)
+                                          .try(:[], single_collection_field['system_name'])
+                                          .try(:[], 'values').try(:map) do |single_value|
+        single_value['value'].presence
+      end
+    %>
+    <% if value.try(:compact).present? %>
+      <li>
+        <strong><%= single_collection_field['label'] %>:</strong>
+        <div class="details">
+          <span> <%= value.join('<br class="break" />').html_safe %> </span>
+        </div>
+      </li>
+    <% end %>
+  <% end %>
+<% end %>
