@@ -70,7 +70,7 @@
               <div class="row ">
                 <textarea id="main_transcript_textarea" name="interviews_interview[main_transcript]" class="d-none"></textarea>
                 <textarea id="translation_transcript_textarea" class="d-none" name="interviews_interview[translation_transcript]"></textarea>
-                <div class="col-xl-7 col-lg-6 main_transcript_for_edit" style='max-height: 600px;  overflow: scroll;' id="main_transcript_for_edit">
+                <div class="col-xl-7 col-lg-6 main_transcript_for_edit" style='max-height: 600px;  overflow: scroll;' id="main_transcript_for_edit" dir="<%=check_rtl_language(@main_transcript.language)%>">
                   <% if @data_main.present? %>
                     <% counter = 1 %>
                     <% line_counter = 0 %>
