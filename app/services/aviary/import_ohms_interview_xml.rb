@@ -22,9 +22,9 @@ module Aviary
       xml_hash = Hash.from_xml(doc.to_s)
       xml_data = xml_hash['ROOT']['record']
 
-      interview = Interviews::Interview.find_by(ohms_row_id: xml_data['id'].to_i)
+      interview = Interviews::Interview.find_by(ohms_row_id: xml_data['id']) if xml_data['id'].present?
       interview = Interviews::Interview.new if interview.nil?
-      interview.ohms_row_id = xml_data['id'].to_i
+      interview.ohms_row_id = xml_data['id']
       interview.organization_id = organization.id
       interview.title = xml_data['title'].present? ? xml_data['title'] : ''
       interview.accession_number = xml_data['accession'].present? ? xml_data['accession'] : ''

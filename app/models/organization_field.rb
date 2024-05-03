@@ -12,8 +12,9 @@ class OrganizationField < ApplicationRecord
     TEXT = 'text'.freeze
     TOKEN = 'tokens'.freeze
     TEXTAREA = 'editor'.freeze
+    GEOLOCATION = 'geolocation'.freeze
 
-    NAMES = { DROPDOWN => 'dropdown', DATE => 'date', TEXT => 'text', TEXTAREA => 'editor' }.freeze
+    NAMES = { DROPDOWN => 'dropdown', DATE => 'date', TEXT => 'text', TEXTAREA => 'editor', GEOLOCATION => 'geolocation' }.freeze
 
     def self.for_select
       NAMES.invert.to_a

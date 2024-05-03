@@ -79,6 +79,7 @@ module Interviews
                      error_main_transcript = validate_transcript(params['interview_transcript']['associated_file'], params['interview_transcript']['timecode_intervals'])
                      if error_main_transcript == 0 && params[:interview_transcript][:associated_file].present?
                        interview_transcript = upload_transcript('main', params[:interview_transcript][:associated_file], interview)
+                       interview_transcript.language = interview_lang_info(interview.language_info)
                        if interview_transcript.present? && interview_transcript.save
                          begin
                            remove_title = ''
@@ -101,6 +102,7 @@ module Interviews
                      error_translation_transcript = validate_transcript(params['interview_transcript']['translation'], params['interview_transcript']['timecode_intervals'])
                      if error_translation_transcript == 0 && params[:interview_transcript][:translation].present?
                        interview_transcript_translation = upload_transcript('translation', params[:interview_transcript][:translation], interview)
+                       interview_transcript_translation.language = interview_lang_info(interview.language_for_translation)
                        if interview_transcript_translation.present? && interview_transcript_translation.save
                          begin
                            remove_title = ''

@@ -32,7 +32,7 @@
                 </div>
               </div>
 
-              <div class="col-md-6 <%= meta_field_info['is_default'].present? && meta_field_info['is_default'].to_s.to_boolean? ? 'd-none' : '' %>">
+              <div class="col-md-6 <%= meta_field_info['is_default'].present? &&  meta_field_info["system_name"] != "coverage" && meta_field_info['is_default'].to_s.to_boolean? ? 'd-none' : '' %>">
                 <div class="form-group">
                   <div class="field-title">
                     <label for="">Field Type <sup>*</sup></label>
