@@ -127,75 +127,24 @@ class OrganizationFieldsController < ApplicationController
     redirect_back(fallback_location: organization_fields_path)
   end
 
-  def update_information
+def update_information
     authorize! :manage, current_organization
-    message = 'information updated successfully'
+
     case params['js_action']
-    when 'updateSort'
-      organization = current_organization
-      field_values = @org_field_manager.organization_field_settings(organization, nil, params['type'])
-      @org_field_manager.update_field_settings(field_values, JSON.parse(params['info'].to_json), organization, params['type']) if params['info'].present?
-      current_organization.organization_field.update(fixed_column: params['fixed_column']) if params['fixed_column'].present?
+    when 'updateSort', 'updateRis'
+      update_sort_or_ris
     when 'updateSortCollection'
-      collection = Collection.find_by_id(params['collection_id'])
-      @collection_field_manager.update_field_settings(JSON.parse(params['info'].to_json), collection, 'resource_fields')
-      collection.solr_index
+      update_sort_collection('resource_fields')
     when 'updateSortCollectionIndexFields'
-      collection = Collection.find_by_id(params['collection_id'])
-      @collection_field_manager.update_field_settings(JSON.parse(params['info'].to_json), collection, 'index_fields')
-      collection.solr_index
+      update_sort_collection('index_fields')
     when 'editVocabulary'
-      if params[:type] == 'index_fields'
-        index_fields_settings = current_organization.organization_field.index_fields
-
-        case params[:update_type]
-        when '1'
-          index_fields_settings[params[:field]]['vocabulary'].append(params['vocabulary'].split(',').map(&:strip)).flatten
-        else
-          index_fields_settings[params[:field]]['vocabulary'] = params['vocabulary'].split(',').map(&:strip)
-        end
-
-        current_organization.organization_field.update(index_fields: index_fields_settings)
-      else
-        list_type = params['list_type']
-        params['vocabulary'] = str_to_array(params['vocabulary'])
-        field_values = @org_field_manager.organization_field_settings(current_organization, nil, params['type'])
-        if list_type == 'dropdown_options'
-          exiting_vocab = case params['update_type']
-                          when 'reset_to_default'
-                            Rails.configuration.default_fields['fields']['resource'][params['field']]['vocabulary']
-                          when '1'
-                            field_values[params['field']]['field_configuration']['dropdown_options'].append(params['vocabulary']).flatten
-                          else
-                            params['vocabulary']
-                          end
-          exiting_vocab = exiting_vocab.uniq if exiting_vocab.present?
-          update_information = { '0' => { 'system_name' => params['field'], 'field_configuration' => { 'dropdown_options' => exiting_vocab.uniq } } }
-        else
-
-          exiting_vocab = case params['update_type']
-                          when 'reset_to_default'
-                            Rails.configuration.default_fields['fields']['resource'][params['field']]['vocabulary']
-                          when '1'
-                            field_values[params['field']]['vocabulary'].append(params['vocabulary']).flatten
-                          else
-                            params['vocabulary']
-                          end
-
-          exiting_vocab = exiting_vocab.uniq if exiting_vocab.present?
-          update_information = { '0' => { 'system_name' => params['field'], 'vocabulary' => exiting_vocab.uniq, 'is_vocabulary' => exiting_vocab.present? } }
-        end
-
-        @org_field_manager.update_field_settings(field_values, update_information, current_organization, params['type'])
-      end
+      params[:type] == 'index_fields' ? update_index_fields_vocabulary : edit_vocabulary
     when 'addFieldToSelectCollection'
-      update_information = { 'system_name' => params['field'], 'status' => params['status'].present? ? params['status'].to_s.to_boolean? : true,
-                             'tombstone' => params['tombstone'].present? ? params['tombstone'].to_s.to_boolean? : false, 'sort_order' => params['sort_order'].present? ? params['sort_order'].to_i : 0 }
-      collection = Collection.find_by_id(params['collection_id'])
-      @collection_field_manager.update_field_settings_collection(update_information, collection, 'resource_fields')
+      add_field_to_select_collection
     when 'updateInformation'
       message, type = create_update_organization_fields
     end
+
     if request.xhr?
       render json: { response: message }
     else
