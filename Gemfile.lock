@@ -1,4 +1,10 @@
 GIT
+  remote: https://github.com/UsmanLhrpk/webvtt-ruby
+  revision: 9ed0d2d35187f711330f16b2192cd03e288d8e08
+  specs:
+    webvtt-ruby (0.3.3)
+
+GIT
   remote: https://github.com/jquery-ui-rails/jquery-ui-rails
   revision: c7460b447589eb04aa948ecaf0d1245c88f6ff45
   specs:
@@ -20,12 +26,6 @@ GIT
     paperclip-compression (2.0.0)
       kt-paperclip (>= 7.0.1)
       os (~> 1.0.0)
-
-GIT
-  remote: https://github.com/UsmanLhrpk/webvtt-ruby
-  revision: 9ed0d2d35187f711330f16b2192cd03e288d8e08
-  specs:
-    webvtt-ruby (0.3.3)
 
 GEM
   remote: https://rails-assets.org/

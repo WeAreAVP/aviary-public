@@ -47,6 +47,10 @@ class FileTranscript < ApplicationRecord
     File.read(saved_slate_js.path)
   end
 
+  def original_transcript_type
+    (auto_service_id.present? && Transcription.find_by(watson_id: auto_service_id)&.service_name) || 'Manual'
+  end
+
   def validate_file
     return if associated_file.present? && associated_file.queued_for_write[:original].nil?
     file_content_type = associated_file.queued_for_write[:original].content_type

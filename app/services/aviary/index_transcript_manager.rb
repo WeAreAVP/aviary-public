@@ -429,6 +429,8 @@ module Aviary::IndexTranscriptManager
       end
       annotation_set_db.dublin_core = dublin_core.to_json
       annotation_set_db.save
+
+      annotation_set_db
     end
 
     def parse_doc(doc, file_transcript)

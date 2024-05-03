@@ -279,4 +279,4 @@ group :development, :test do
 end
 
 # # Process WebVTT file
-gem 'webvtt-ruby', git: 'https://github.com/smntb/webvtt-ruby'
+gem 'webvtt-ruby', git: 'https://github.com/UsmanLhrpk/webvtt-ruby'
