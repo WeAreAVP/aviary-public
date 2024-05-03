@@ -88,7 +88,7 @@ function InterviewTranscriptManager() {
 
                 player_widget.on('timeupdate', () => {
                     player_widget.getCurrentTime().then(function (time) {
-                        dryUpFunction(time);
+                        syncSeekManager(time);
                     });
                 });
             } else {
@@ -124,7 +124,7 @@ function InterviewTranscriptManager() {
 
                     player_widget.on('constant-timeupdate', function () {
                         updateTime();
-                        dryUpFunction(this.currentTime());
+                        syncSeekManager(this.currentTime());
                     });
 
                     $('.player-section').css('visibility', 'unset');
@@ -134,7 +134,7 @@ function InterviewTranscriptManager() {
     };
 
 
-    const dryUpFunction = function (time) {
+    const syncSeekManager = function (time) {
         let playerTime = parseInt(time, 10);
         let playerState = false;
         var minVal = getMinVal();
@@ -164,59 +164,61 @@ function InterviewTranscriptManager() {
                 if (playerTime == 0) {
                     that.audioBegin.pause();
                     that.audioBegin.play();
-                }
-
-                if (playerTime == rangeVal / 2) {
+                } else if (playerTime == rangeVal / 2) {
                     that.audioEnd.pause();
                     that.audioEnd.play();
-                }
-
-                if (playerTime >= rangeVal) {
-                    switch (host) {
-                        case 'Vimeo':
-                            player_widget.setCurrentTime(0);
-                            break;
-                        default:
-                            player_widget.currentTime(0);
-                            break;
-                    }
+                } else if (playerTime >= rangeVal) {
+                    seekToTime(0)
                 }
             } else {
                 if (playerTime < ((minVal * 60) - rangeVal) || playerTime > ((minVal * 60) + rangeVal)) {
-                    switch (host) {
-                        case 'Vimeo':
-                            player_widget.setCurrentTime((minVal * 60) - rangeVal);
-                            break;
-                        default:
-                            player_widget.currentTime((minVal * 60) - rangeVal);
-                            break;
-                    }
-
+                    seekToTime(((minVal * 60) - rangeVal));
                     that.audioBegin.pause();
-                }
-
-                if (playerTime == ((minVal * 60) - rangeVal)) {
+                } else if (playerTime == ((minVal * 60) - rangeVal)) {
                     that.audioBegin.pause();
                     that.audioBegin.play();
-                }
-
-                if (playerTime == (minVal * 60)) {
+                } else if (playerTime == (minVal * 60)) {
                     that.audioEnd.pause();
                     that.audioEnd.play();
-                }
-
-                if (playerTime >= ((minVal * 60) + rangeVal)) {
-                    switch (host) {
-                        case 'Vimeo':
-                            player_widget.setCurrentTime((minVal * 60) - rangeVal);
-                            break;
-                        default:
-                            player_widget.currentTime((minVal * 60) - rangeVal);
-                            break;
-                    }
+                } else if (playerTime >= ((minVal * 60) + rangeVal)) {
+                    seekToTime(((minVal * 60) - rangeVal));
                 }
             }
         }
+
+        if (host === 'Kaltura') {
+            $('.current_player_time').val(hours + ':' + minutes + ':' + seconds);
+        }
+    }
+
+    const seekToTime = (time) => {
+        console.log(kdp, host);
+        switch (host) {
+            case 'Kaltura':
+                kdp.sendNotification('doSeek', time);
+                break;
+            case 'Vimeo':
+                player_widget.setCurrentTime(time);
+                break;
+            default:
+                player_widget.currentTime(time);
+                break;
+        }
+    }
+
+    this.KalturaManager = function (kdp) {
+        host ||= $('#media_host').data('host');
+
+        kdp.kBind('playerPlayed', function () {
+            $('#item_length').val(kdp.evaluate('{duration}'));
+
+            kdp.kBind('playerUpdatePlayhead', function () {
+                syncSeekManager(kdp.evaluate('{video.player.currentTime}'));
+            });
+        });
+        kdp.kBind('playerPaused', function () {
+            that.audioBegin.pause();
+        });
     }
 
     const syncUpdate = function () {
@@ -256,63 +258,6 @@ function InterviewTranscriptManager() {
         }
     };
 
-    this.kalturaManager = function (kdp) {
-        var playerTime = Math.floor(kdp.evaluate('{video.player.currentTime}'));
-        let playerState = false;
-        var minVal = getMinVal();
-        let rangeVal = parseInt($('.video_player_delay').val(), 10);
-        let hours = Math.floor(playerTime / 3600);
-        let minutes = Math.floor((playerTime - (hours * 3600)) / 60);
-        let seconds = playerTime - ((hours * 3600) + (minutes * 60));
-
-        hours = pad(hours, 2, '0');
-        minutes = pad(minutes, 2, '0');
-        seconds = pad(seconds, 2, '0');
-
-        if (isNaN(hours))
-            hours = '00';
-        if (isNaN(minutes))
-            minutes = '00';
-        if (isNaN(seconds))
-            seconds = '00';
-        if (isNaN(minVal))
-            minVal = 0;
-        if (isNaN(rangeVal))
-            rangeVal = 10;
-        if (playerState == false) {
-            if (minVal == 0) {
-                if (playerTime == 0) {
-                    that.audioBegin.pause();
-                    that.audioBegin.play();
-                }
-                if (playerTime == rangeVal / 2) {
-                    that.audioEnd.pause();
-                    that.audioEnd.play();
-                }
-                if (playerTime >= rangeVal) {
-                    kdp.sendNotification('doSeek', 0);
-                }
-            } else {
-                if (playerTime < ((minVal * 60) - rangeVal) || playerTime > ((minVal * 60) + rangeVal)) {
-                    kdp.sendNotification('doSeek', ((minVal * 60) - rangeVal));
-                    that.audioBegin.pause();
-                }
-                if (playerTime == ((minVal * 60) - rangeVal)) {
-                    that.audioBegin.pause();
-                    that.audioBegin.play();
-                }
-                if (playerTime == (minVal * 60)) {
-                    that.audioEnd.pause();
-                    that.audioEnd.play();
-                }
-                if (playerTime >= ((minVal * 60) + rangeVal)) {
-                    kdp.sendNotification('doSeek', ((minVal * 60) - rangeVal));
-                }
-            }
-        }
-        $('.current_player_time').val(hours + ':' + minutes + ':' + seconds);
-    };
-
     const getMinVal = function () {
         var mtime = $('.current_transcript_point').val();
         var mSecs = 0;
@@ -344,7 +289,11 @@ function InterviewTranscriptManager() {
             if ($(this).val() != interviews_transcript_manager.timecode) {
                 $('#general_modal_close_cust_success').attr('href', $('#timecode_intervals_url').data('url') + '?timecode=' + $(this).val());
                 $('#general_modal_close_cust_success').removeClass('d-none');
-                appHelper.show_modal_message('Confirmation', '<strong>Changing the sync interval will delete all previously added sync points. Are you sure you want to continue?</strong><br/><br/>', 'danger', null);
+                appHelper.show_modal_message(
+                    'Confirmation',
+                    '<strong>Changing the sync interval will delete all previously added sync points. Are you sure you want to continue?</strong><br/><br/>',
+                    'danger', null
+                );
             }
         });
 

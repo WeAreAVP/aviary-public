@@ -37,13 +37,7 @@
                           },
                   readyCallback: function (playerId) {
                       window.kdp = document.getElementById(playerId);
-                      setInterval( function () {
-                        if(!$('.largePlayBtnBorder').is(":visible")){
-                          interviewTranscriptManagerKaltura.kalturaManager(kdp);
-                        } else {
-                          interviewTranscriptManagerKaltura.audioBegin.pause();
-                        }
-                      }, 900);
+                      interviewTranscriptManagerKaltura.KalturaManager(kdp)
                   }
               });
           </script>
