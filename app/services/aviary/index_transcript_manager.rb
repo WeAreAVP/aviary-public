@@ -355,7 +355,12 @@ module Aviary::IndexTranscriptManager
           language_code = ISO_639.find_by_code(language).try(:alpha2)
           file_transcript.update(language: language_code) if language_code.present?
         end
-        Success(map_hash_to_db(file_transcript, hash, is_new))
+        annotation_set = webvtt.annotation_set
+        annotation_set_content = annotation_set.metadata.to_a.map { |data| data.join(': ') }
+        if annotation_set_content.present?
+          annotation_set_db = create_annotation_set(file_transcript, annotation_set_content)
+        end
+        Success(map_hash_to_db(file_transcript, hash, is_new, nil, nil, annotation_set_db))
       else
         file_content = Rails.env.production? ? URI.parse(file_path).read : File.read(open(file_path))
         hash = parse_text(file_content, file_transcript)
@@ -374,27 +379,7 @@ module Aviary::IndexTranscriptManager
       split_content = content.split("ANNOTATIONS BEGIN\n\n")[1].split("\n\nANNOTATIONS END")[0]
       annotation_split = split_content.split("\n\n")
       annotation_set_content = annotation_split[0].split("\n")
-      annotation_set_db = AnnotationSet.new
-      annotation_set_db.is_public = transcript.is_public
-      annotation_set_db.organization = transcript.collection_resource_file.collection_resource.collection.organization
-      annotation_set_db.collection_resource = transcript.collection_resource_file.collection_resource
-      annotation_set_db.created_by_id = transcript.user_id
-      annotation_set_db.updated_by_id = transcript.user_id
-      annotation_set_db.file_transcript_id = transcript.id
-      dublin_core = []
-
-      annotation_set_content.each do |annotation_set|
-        key_value = annotation_set.split(':', 2)
-        key = key_value[0].gsub('Annotation Set ', '')
-        value = key_value[1].strip
-        if key == 'Title'
-          annotation_set_db.title = value
-        else
-          dublin_core << { key: key, value: value }
-        end
-      end
-      annotation_set_db.dublin_core = dublin_core.to_json
-      annotation_set_db.save
+      annotation_set_db = create_annotation_set(transcript, annotation_set_content)
       counter = 0
       annotations_content = annotation_split[1]
       annotations_content_split = annotations_content.split(/\[[0-9]+\]/)
@@ -420,6 +405,30 @@ module Aviary::IndexTranscriptManager
       end
     rescue StandardError
       'failed to process annotations content'
+    end
+
+    def create_annotation_set(transcript, annotation_set_content)
+      annotation_set_db = AnnotationSet.new
+      annotation_set_db.is_public = transcript.is_public
+      annotation_set_db.organization = transcript.collection_resource_file.collection_resource.collection.organization
+      annotation_set_db.collection_resource = transcript.collection_resource_file.collection_resource
+      annotation_set_db.created_by_id = transcript.user_id
+      annotation_set_db.updated_by_id = transcript.user_id
+      annotation_set_db.file_transcript_id = transcript.id
+      dublin_core = []
+
+      annotation_set_content.each do |annotation_set|
+        key_value = annotation_set.split(':', 2)
+        key = key_value[0].gsub('Annotation Set ', '')
+        value = key_value[1].strip
+        if key == 'Title'
+          annotation_set_db.title = value
+        else
+          dublin_core << { key: key, value: value }
+        end
+      end
+      annotation_set_db.dublin_core = dublin_core.to_json
+      annotation_set_db.save
     end
 
     def parse_doc(doc, file_transcript)
@@ -658,6 +667,7 @@ module Aviary::IndexTranscriptManager
         single_hash['text'] = cue.text.gsub(%r{<\/?[^>]*>}, '')
         single_hash['speaker'] = speaker
         single_hash['writing_direction'] = cue.style.present? ? cue.style : ''
+        single_hash['annotations'] = cue.annotations
         if points_hash.last.present? && single_hash['text'].include?(points_hash.last['text'])
           points_hash.last['end_time'] = single_hash['end_time'] if single_hash['text'] == points_hash.last['text']
           single_hash['text'] = single_hash['text'].gsub(points_hash.last['text'], '').strip
@@ -734,10 +744,11 @@ module Aviary::IndexTranscriptManager
       [hash, alt_hash, language]
     end
 
-    def update_existing_points(file_transcript, full_hash)
+    def update_existing_points(file_transcript, full_hash, annotation_set = nil)
       existing_transcript = file_transcript.file_transcript_points
       existing_ids = existing_transcript.map(&:id)
       update_ids = []
+      counter = 0
       full_hash.each_with_index do |hash, index|
         if existing_transcript[index].present?
           existing_transcript[index].update(title: hash['title'].to_s,
@@ -750,20 +761,68 @@ module Aviary::IndexTranscriptManager
                                             word_timestamp: hash['word_timestamp'])
           update_ids << existing_transcript[index].id
         else
-          new_point = file_transcript.file_transcript_points.create(hash)
+          new_point = file_transcript.file_transcript_points.create(hash.except('annotations'))
           update_ids << new_point.id
+        end
+
+        if annotation_set.try(:id).present? && hash['annotations'].present?
+          value['annotations'].each do |annotation|
+            annotation_db = Annotation.new
+            annotation_db.annotation_set = annotation_set
+            annotation_db.sequence = counter + 1
+            annotation_db.body_type = :text
+            annotation_db.body_content = annotation[:annotation].strip
+            annotation_db.body_format = :html
+            annotation_db.target_type = :text
+            annotation_db.target_content = :FileTranscript
+            annotation_db.target_content_id = file_transcript.id
+            annotation_db.target_info = { time: point.start_time, text: annotation[:text].strip,
+                                          startOffset: annotation[:start], pointId: point.id,
+                                          endOffset: annotation[:end] }.to_json
+            annotation_db.created_by_id = annotation_set.created_by_id
+            annotation_db.updated_by_id = annotation_set.updated_by_id
+            annotation_db.target_sub_id = update_ids.last
+            annotation_db.save
+            counter += 1
+          end
         end
       end
       deletable_ids = existing_ids - update_ids
       file_transcript.file_transcript_points.where(id: deletable_ids).destroy_all if deletable_ids.present?
     end
 
-    def map_hash_to_db(file_transcript, hash, is_new, alt_hash = nil, language = nil)
+    def map_hash_to_db(file_transcript, hash, is_new, alt_hash = nil, language = nil, annotation_set = nil)
       FileTranscriptPoint.transaction do
         if is_new
-          raise ActiveRecord::Rollback unless file_transcript.file_transcript_points.create(hash.value!)
+          counter = 0
+          hash.value!.each do |value|
+            point = file_transcript.file_transcript_points.create(value.except('annotations'))
+            raise ActiveRecord::Rollback unless point
+
+            if annotation_set.try(:id).present? && value['annotations'].present?
+              value['annotations'].each do |annotation|
+                annotation_db = Annotation.new
+                annotation_db.annotation_set = annotation_set
+                annotation_db.sequence = counter + 1
+                annotation_db.body_type = :text
+                annotation_db.body_content = annotation[:annotation].strip
+                annotation_db.body_format = :html
+                annotation_db.target_type = :text
+                annotation_db.target_content = :FileTranscript
+                annotation_db.target_content_id = file_transcript.id
+                annotation_db.target_info = { time: point.start_time, text: annotation[:text].strip,
+                                              startOffset: annotation[:start], pointId: point.id,
+                                              endOffset: annotation[:end] }.to_json
+                annotation_db.created_by_id = annotation_set.created_by_id
+                annotation_db.updated_by_id = annotation_set.updated_by_id
+                annotation_db.target_sub_id = point.id
+                annotation_db.save
+                counter += 1
+              end
+            end
+          end
         else
-          update_existing_points(file_transcript, hash.value!)
+          update_existing_points(file_transcript, hash.value!, annotation_set)
         end
       end
       if alt_hash.present?

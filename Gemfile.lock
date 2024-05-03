@@ -22,8 +22,8 @@ GIT
       os (~> 1.0.0)
 
 GIT
-  remote: https://github.com/smntb/webvtt-ruby
-  revision: e0541eaebe5f6e1ad94383041cb711a36e1d560c
+  remote: https://github.com/UsmanLhrpk/webvtt-ruby
+  revision: 9ed0d2d35187f711330f16b2192cd03e288d8e08
   specs:
     webvtt-ruby (0.3.3)
 
