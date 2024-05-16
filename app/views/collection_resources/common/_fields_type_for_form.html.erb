@@ -1,5 +1,18 @@
 <% single_value_raw = single_value.present? && single_value['value'].present? ? single_value['value'] : '' %>
 <% case field_settings.info_of_attribute('field_type').to_s %>
+<% when OrganizationField::TypeInformation::GEOLOCATION.to_s %>
+  <div class="gps_wizard">
+    <div class="gps_input m-1">
+    <label class="add_gps_label">GPS</label>
+    <%= text_field_tag("collection_resource[collection_resource_field_values][][geolocation][gps]", single_value_raw.present? ? single_value_raw["gps"] : '', class: "form-control add_wanted_class w-350 #{system_name} #{type_for_view}", placeholder: 'XX.XXX,YY.YYY') %>
+    </div><div class="gps_input m-1">
+    <label class="add_gps_label">Description</label>
+    <%= text_field_tag("collection_resource[collection_resource_field_values][][geolocation][description]", single_value_raw.present? ? single_value_raw["description"] : '', class: "form-control add_wanted_class w-350 #{system_name} #{type_for_view}", placeholder: '') %>
+    </div><div class="gps_input m-1">
+    <label class="add_gps_label">Zoom</label>
+    <%= text_field_tag("collection_resource[collection_resource_field_values][][geolocation][zoom]", single_value_raw.present? ? single_value_raw["zoom"] : '', class: "form-control add_wanted_class w-350 #{system_name} #{type_for_view}", placeholder: 'Google Maps zoom level. Default is 17.') %>
+    </div>
+  </div>
 <% when OrganizationField::TypeInformation::TOKEN.to_s %>
   <%= text_field_tag("collection_resource[collection_resource_field_values][][value]", single_value_raw.present? ? single_value_raw : '', class: "form-control add_wanted_class  #{system_name} #{type_for_view}") %>
 <% when OrganizationField::TypeInformation::DATE.to_s %>

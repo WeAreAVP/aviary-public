@@ -9,6 +9,8 @@
         <% end %>
 
         <% case field_settings.info_of_attribute('field_type').to_s %>
+        <% when OrganizationField::TypeInformation::GEOLOCATION.to_s %>
+        <a class="single_value_non_tombstone" target="_blank" href="https://maps.google.com/?q=<%= single_value["value"]["gps"]%>&z=<%=(single_value["value"]["zoom"].present? ? single_value["value"]["zoom"] : "17")%>">  <%= single_value["value"]["description"].present? ? single_value["value"]["description"] : "GPS Location" %> </a>
         <% when OrganizationField::TypeInformation::TOKEN.to_s %>
           <% single_value['value'].split(',').each do |single_token| %>
             <span class="tag single_value_non_tombstone">  <%= single_token %> </span>
