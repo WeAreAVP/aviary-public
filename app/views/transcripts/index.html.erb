@@ -21,7 +21,7 @@
   </div>
 </div>
 
-
+<span id="url_form_progress" data-url="<%= update_progress_transcripts_collections_path %>"></span>
 <%= render partial: 'transcripts/manage_column', locals: { columns_details: JSON.parse(current_organization.transcript_display_column)['columns_status'], search_columns_details: JSON.parse(current_organization.transcript_search_column), organization_id: current_organization.id } %>
 <%= render partial: 'transcripts/bulk_edit_file_transcript' %>
 <script type="text/javascript">

@@ -25,7 +25,9 @@ function TranscriptBulkEdit(ids_session_raw) {
         if (typeof selfRBE.ids_session == 'undefined' || selfRBE.ids_session.length <= 0) {
             selfRBE.ids_session = [];
         }
-
+        if (typeof selfRBE.select_all_session == 'undefined') {
+            selfRBE.select_all_session = '';
+        }
         if (selfRBE.ids_session_raw && selfRBE.ids_session_raw.length > 0) {
             selfRBE.ids_session = selfRBE.ids_session_raw.replace(/&quot;/g, '"');
             selfRBE.ids_session = JSON.parse(selfRBE.ids_session);
@@ -109,6 +111,7 @@ function TranscriptBulkEdit(ids_session_raw) {
         bulk_option_selection();
         binding_single_checkbox();
         binding_select_all();
+        binging_select_all_records();
         $('.bluk-edit-btn').on('click', function () {
             if (selfRBE.ids_session.length <= 0) {
                 jsMessages('danger', 'Please select transcript before doing bulk operations.');
@@ -144,10 +147,59 @@ function TranscriptBulkEdit(ids_session_raw) {
             var form_data = $(this).serialize();
             $('.loadingtextCus').html('<strong class="font-size-21px">Please Do not close this window. Closing this window will disturb this process. This process might take little longer. <br/> <span id="num_of_rec_updated">0</span> of record updated out of  ' + selfRBE.ids_session.length + '</strong>');
             selfRBE.app_helper.show_loader_text();
+            setTimeout(function () {
+                get_progress_status();
+            }, 5000);
             form_data.action = 'bulk_file_transcript_edit';
             selfRBE.app_helper.classAction($('#bulk_edit_form').attr('action'), form_data, 'JSON', 'POST', '', selfRBE);
             e.preventDefault();
         });
+    };
+    const binging_select_all_records = function () {
+        $('#select_all_records').unbind('click');
+        document_level_binding_element('#select_all_records', 'click',function () {
+            selfRBE.app_helper.show_loader();
+            $(".resources_selections").prop('checked', false);
+            $(".select_all_checkbox_resources").prop('checked', false);
+            const searchval = $('#transcripts_datatable_filter label input').val()
+            var data = {
+                action: 'bulk_resource_list',
+                ids: 'all',
+                type: 'file_transcript_bulk_edit',
+                bulk: 1,
+                searchValue: searchval
+            };
+
+            data.status = 'add';
+            const res = selfRBE.app_helper.classAction($(this).data().url, data, 'JSON', 'GET', '', selfRBE, false);
+            res.then((response) => {
+                if(response[0]?.is_selected_all == true) {
+                    updateCount(selfRBE.total_records)
+                    var ids = response[0]['ids'].split(',');
+                    if (ids != '' && ids.length > 0) {
+                        ids.forEach((id) => {
+                            var index = selfRBE.ids_session.indexOf(id);
+                            if($(".resources_selections-"+id).prop('checked') == false){
+                                $(".resources_selections-"+id).prop('checked', true);
+                            }
+                            if (index < 0) {
+                                selfRBE.ids_session.push(id);
+                            }
+                        })
+                    }
+                }
+            })
+        })
+    }
+    const get_progress_status = function () {
+        selfRBE.app_helper.classAction($('#url_form_progress').data('url'), {
+            action: 'update_progress_transcripts',
+            bulk_edit_type_of_bulk_operation: $('#bulk_edit_type_of_bulk_operation').val(),
+            bulk_access_type: $('#bulk_access_type').val(),
+            bulk_caption: $('#bulk_caption').val(),
+            bulk_is_download: $('#bulk_is_download').val(),
+            ids: selfRBE.ids_session
+        }, 'JSON', 'GET', '', selfRBE, false);
     };
 
     const bulk_option_selection = function () {
@@ -270,6 +322,7 @@ function TranscriptBulkEdit(ids_session_raw) {
             let text = (number_selected > 1) ? 'transcripts' : 'transcript';
             $('#transcripts_datatable_filter label').append('<span style="color:#204f92" class="ml-10px font-weight-bold" id="resource_selected"> <strong  class="font-size-16px ">' + number_selected + '</strong> ' + text + ' selected | </span> ');
             $('#transcripts_datatable_filter label').append('<a href="javascript://" id="clear_all_selection">Clear selected</a>');
+            $('#transcripts_datatable_filter label').append('<span style="color:#204f92" class="ml-10px font-weight-bold" id="select_all_records_span">| <a href="javascript://" class="font-weight-bold" id="select_all_records" data-url="/collections/bulk_resource_list">Select All (' + selfRBE.total_records +' records)</a> </span>');
             $('#number_of_bulk_selected_popup').html('<span style="color:#204f92" class="ml-10px font-weight-bold" id="resource_selected">  ( <strong  class="font-size-16px ">' + number_selected + '</strong> ' + text + ' will be affected ) </span>');
         }
         $('#clear_all_selection').unbind('click');
@@ -297,6 +350,14 @@ function TranscriptBulkEdit(ids_session_raw) {
         $('#resource_selected').remove();
         $('#number_of_bulk_selected_popup').html('');
         $('#clear_all_selection').remove();
+        $('#select_all_records_span').remove();
+    };
+
+    this.update_progress = function (response) {
+        $('#num_of_rec_updated').html(response[0].count);
+        setTimeout(function () {
+            get_progress_status();
+        }, 5000);
     };
 
     const update_bulk_edit_view = function (selected_type) {
@@ -325,4 +386,7 @@ function TranscriptBulkEdit(ids_session_raw) {
 
         }
     };
+    this.getTotalCount = function (total) {
+        selfRBE.total_records = total
+    }
 }
