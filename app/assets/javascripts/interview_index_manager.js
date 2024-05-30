@@ -9,10 +9,12 @@
  */
 "use strict";
 
-function InterviewIndexManager() {
+function InterviewIndexManager(forward_duration, backward_duration, url) {
     let that = this;
     let player_widget;
-    let timeDiffInSec = 10;
+    let timeDiffInSecFowward = forward_duration;
+    let timeDiffInSecBackward = backward_duration;
+    let updateSkipDurationChangeUrl = url;
     let timeSubInSec = 5;
     let startTime = 0;
     let formChange = 0;
@@ -591,6 +593,10 @@ function InterviewIndexManager() {
             });
         });
 
+        document_level_binding_element('.update_duration_option', 'click', function () {
+            handleSkipDurationChange($(this))
+        });
+
         setTimeout(() => {
             document_level_binding_element('.edit-time', 'click', function (e) {
                 let timecode = prompt('Change timecode (HH:MM:SS)', $($(this).data('timeTarget')).val());
@@ -813,34 +819,67 @@ function InterviewIndexManager() {
 
     const updateForward = function () {
         if (host == "Kaltura") {
-            kdp.sendNotification('doSeek', kdp.evaluate('{video.player.currentTime}') + timeDiffInSec);
+            kdp.sendNotification('doSeek', kdp.evaluate('{video.player.currentTime}') + timeDiffInSecFowward);
         } else if (host == "SoundCloud") {
             widget_soundcloud.getPosition(function (pos) {
-                widget_soundcloud.seekTo(pos + (timeDiffInSec / 0.001));
+                widget_soundcloud.seekTo(pos + (timeDiffInSecFowward / 0.001));
             });
         } else if (host == "Vimeo") {
             player_widget.getCurrentTime().then((time) => {
-                player_widget.setCurrentTime(time + timeDiffInSec);
+                player_widget.setCurrentTime(time + timeDiffInSecFowward);
             });
         } else {
-            player_widget.currentTime(player_widget.currentTime() + timeDiffInSec);
+            player_widget.currentTime(player_widget.currentTime() + timeDiffInSecFowward);
         }
     }
 
     const updateBackward = function () {
         if (host == "Kaltura") {
-            kdp.sendNotification('doSeek', kdp.evaluate('{video.player.currentTime}') - timeDiffInSec);
+            kdp.sendNotification('doSeek', kdp.evaluate('{video.player.currentTime}') - timeDiffInSecBackward);
         } else if (host == "SoundCloud") {
             widget_soundcloud.getPosition(function (pos) {
-                widget_soundcloud.seekTo(pos - (timeDiffInSec / 0.001));
+                widget_soundcloud.seekTo(pos - (timeDiffInSecBackward / 0.001));
             });
         } else if (host == "Vimeo") {
             player_widget.getCurrentTime().then((time) => {
-                player_widget.setCurrentTime(time - timeDiffInSec);
+                player_widget.setCurrentTime(time - timeDiffInSecBackward);
             });
         } else {
-            player_widget.currentTime(player_widget.currentTime() - timeDiffInSec);
+            player_widget.currentTime(player_widget.currentTime() - timeDiffInSecBackward);
         }
+    }
+
+    const handleSkipDurationChange = function (el) {
+        const target = el.attr('data-target');
+        const duration = el.attr('data-value');
+
+        $(`.${target}`).attr('data-duration', duration);
+        $(`#${target}_duration`).text(duration);
+
+        let data = { authenticity_token: $('input[name="authenticity_token"]').val() };
+        data[`index_${target}_duration`] = duration;
+
+        if (target === 'update_forward') {
+            timeDiffInSecFowward = parseInt(duration, 10);
+            var title = `Forward ${duration} seconds`;
+            $(`.${target}`).attr('data-title', title);
+        } else {
+            timeDiffInSecBackward = parseInt(duration, 10);
+            var title = `Rewind ${duration} seconds`;
+            $(`.${target}`).attr('data-title', title);
+        }
+
+        $(`.${target}`).tooltip('dispose')
+        $(`.${target}`).tooltip({
+            trigger: 'hover',
+            title: title
+        });
+
+        $.ajax({
+            url: updateSkipDurationChangeUrl,
+            method: 'POST',
+            data: data
+        });
     }
 
     const updateStepBackward = function () {

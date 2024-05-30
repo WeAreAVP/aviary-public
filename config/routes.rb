@@ -277,6 +277,7 @@ Rails.application.routes.draw do
     collection do
       post :data_table, to: 'indexes#index'
       post :bulk_file_index_edit
+      post :update_skip_duration
     end
   end
   resources :transcripts, only: %i[index edit] do
