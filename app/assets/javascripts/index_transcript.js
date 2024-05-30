@@ -1018,6 +1018,9 @@ function IndexTranscript() {
                 if (dataInfo.webvtt) {
                     $('.webvtt_export').removeClass('d-none');
                     $('.webvtt_export').attr('href', $('.webvtt_export').data('url') + '/' + currentId);
+                    $('.webvtt_export_with_annotations').attr(
+                        'href', `${$('.webvtt_export_with_annotations').data('url')}/${currentId}?include_annotations=true`
+                    );
                 } else {
                     $('.webvtt_export').addClass('d-none');
                     $('.webvtt_export').attr('href', 'javascript://;');

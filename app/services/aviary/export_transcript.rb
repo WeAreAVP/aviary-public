@@ -12,7 +12,7 @@ module Aviary
   class ExportTranscript
     delegate :url_helpers, to: 'Rails.application.routes'
 
-    def export(transcript, type)
+    def export(transcript, type, include_annotations = false)
       data = case type
              when 'webvtt'
                Rails.env.production? ? URI.parse(transcript.associated_file.url).read.force_encoding('UTF-8') : File.read(transcript.associated_file.path)
