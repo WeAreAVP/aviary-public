@@ -1,0 +1,93 @@
+<div class="tab-pane fade " id="collection_field_settings_content" role="tabpanel"
+      aria-labelledby="collection_field_settings_content">
+
+  <div class="row">
+    <div class="col-12 p-5">
+      <div class="add-new-field-holder">
+        <a class="btn btn-light btn-sm edit-custom-field-button edit-custom-field-button-new-custom-spec"
+            data-url="<%= new_edit_custom_field_organization_fields_path(methodtype: 'new')%>"
+            data-method-type="new" data-fieldtype="collection_fields">
+          Add Custom Fields
+        </a>
+      </div>
+
+      <div class="holder custom_fields_container border">
+        <table class="table table-hover border-0">
+          <thead>
+          <tr class="">
+            <th style="width: 70% !important;"><h2>Field Name</h2></th>
+            <th style="width: 10% !important; "><h2>Status</h2></th>
+            <th style="width: 20% !important; "><h2>Action</h2></th>
+          </tr>
+          </thead>
+        </table>
+
+        <table class="table border-0" id="sort_facet_fields_table">
+          <tbody id='collection_field_preview_org' data-type="collection_fields" data-order-custom="sort_order"
+                 data-status-columns="display">
+
+            <% if @collection_fields.present? %>
+              <% @collection_fields.each do |(system_name, single_collection_field)| %>
+                <% label = single_collection_field['label']
+                   is_default_field = single_collection_field['is_default']
+                   type = single_collection_field['field_type']
+                %>
+
+                <tr class="facet_field <%= single_collection_field['system_name'] %>" data-field="<%= system_name %>"
+                    data-field-type="<%= type %>" data-label="<%= label %>" data-collection="<%= '' %>"
+                    data-is-default-field="<%= is_default_field %>">
+
+                  <td width="70%">
+                    <i class="fa fa-ellipsis-v handle mx-2" style="color: lightgrey;cursor: move;"></i>
+                    <span><%= label %></span>
+
+                    <% if acts_as_default(single_collection_field) %>
+                      <i class="fa fa-asterisk color-grey font-size-8px" data-toggle="tooltip" data-placement="top"
+                         title="" aria-hidden="true" data-original-title="This is a default field of collection.">
+                      </i>
+                    <% end %>
+                    <% if single_collection_field['default_name'].present? &&
+                          single_collection_field['default_name'] != single_collection_field['label'] %>
+                      <small class="mt-2 form-text font-size-12px text-muted d-inline">
+                        <%= single_collection_field['default_name'] %>
+                      </small>
+                    <% end %>
+                  </td>
+
+                  <td width="10%">
+                    <label class="toggle-switch">
+                      <%= check_box_tag 'display' + single_collection_field['system_name'],
+                                        single_collection_field['display'],
+                                        single_collection_field['display'].to_s.to_boolean?,
+                          class: "display toggle-switch__input template-data-is-facetable " \
+                                "template-data-field-is-facetable" 
+                      %>
+                      <span class="toggle-switch__slider"></span>
+                    </label>
+                  </td>
+
+                  <td width="20%">
+                    <a data-url="<%= new_edit_custom_field_organization_fields_path(system_name: system_name,
+                                                                                    methodtype: 'edit') %>"
+                        class="btn btn-sm btn-success ml-1 text-white edit_custom_field_info"
+                        data-fieldtype="collection_fields" data-field="<%= system_name %>">
+                      Edit
+                    </a>
+                  </td>
+                </tr>
+              <% end %>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="add-new-field-holder">
+        <a class="btn btn-light btn-sm edit-custom-field-button edit-custom-field-button-new-custom-spec"
+            data-url="<%= new_edit_custom_field_organization_fields_path(methodtype: 'new')%>"
+            data-method-type="new" data-fieldtype="collection_fields">
+          Add Custom Fields
+        </a>
+      </div>
+    </div>
+  </div>
+</div>

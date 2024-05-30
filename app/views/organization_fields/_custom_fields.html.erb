@@ -4,7 +4,8 @@
       <div class="modal-header">
         <h4 class="h4 mb-0">Add/Edit Custom Field</h4>
       </div>
-      <%= form_for :custom_fields, url: update_information_organization_fields_path(update_form_info: true, js_action: 'updateInformation'), method: :post, html: { id: "custom_fields_form" } do |ff| %>
+      <%= form_for :custom_fields, url: update_information_organization_fields_path(update_form_info: true, js_action: 'updateInformation'), method: :post,
+                   html: { id: "custom_fields_form" } do |ff| %>
         <div class="modal-body">
           <%= hidden_field_tag "meta_field_id", meta_field_info.present? ? meta_field_info['system_name'] : '' %>
           <div class="container">
@@ -22,7 +23,7 @@
                   </div>
                 </div>
               <% end %>
-              <%#= f.fields_for meta_field do |ff| %>
+
               <div class="col-md-6">
                 <div class="form-group">
                   <div class="field-title">
@@ -37,7 +38,8 @@
                   <div class="field-title">
                     <label for="">Field Type <sup>*</sup></label>
                   </div>
-                  <%= ff.select :field_type, options_for_select(OrganizationField::TypeInformation.for_select, meta_field_info.present? ? meta_field_info['field_type'] : 'text'), {}, { class: "meta-type-select field_type_manager" } %>
+                  <%= ff.select :field_type, options_for_select(OrganizationField::TypeInformation.for_select, meta_field_info.present? ? meta_field_info['field_type'] : 'text'), {},
+                                { class: "meta-type-select field_type_manager" } %>
                 </div>
               </div>
 
@@ -62,6 +64,7 @@
             <% if meta_field_info['thesaurus'].present? && meta_field_info['thesaurus']['vocabulary'] && meta_field_info['thesaurus']['vocabulary']['id'].present? %>
               <% thesaurus_vocabulary = ::Thesaurus::Thesaurus.find_by_id(meta_field_info['thesaurus']['vocabulary']['id']) %>
             <% end %>
+
             <div class="row">
               <div class="col-md-6 meta-custom-vocabulary-div <%= source_type == 'collection_fields' ? 'd-none' : '' %>">
                 <div class="form-group">
@@ -136,13 +139,15 @@
                   Repeatable
                 </label>
               </div>
-              <div class="col-md-3  <%= meta_field_info['is_default'].present? && meta_field_info['is_default'].to_s.to_boolean? ? 'd-none' : '' %>">
-                <label>
-                  <%= ff.check_box :is_internal_only, checked: meta_field_info.present? && meta_field_info['is_internal_only'].present? &&
-                    meta_field_info['is_internal_only'].to_s.to_boolean? %>
-                  Internal Only?
-                </label>
-              </div>
+
+              <% unless source_type == 'collection_fields' %>
+                <div class="col-md-3  <%= acts_as_default(meta_field_info) ? 'd-none' : '' %>">
+                  <label>
+                    <%= ff.check_box :is_internal_only, checked: meta_field_info.present? && meta_field_info['is_internal_only'].present? && meta_field_info['is_internal_only'].to_s.to_boolean? %>
+                    Internal Only?
+                  </label>
+                </div>
+              <% end %>
             </div>
 
           </div>
