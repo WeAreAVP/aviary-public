@@ -17,6 +17,7 @@ function InterviewIndexManager() {
     let startTime = 0;
     let formChange = 0;
     let widget_soundcloud;
+    let kdpPaused = true;
     let host = "";
     let durationInterval = null;
     const indexTemplateName = $('#index_template_name').data('value');
@@ -100,6 +101,10 @@ function InterviewIndexManager() {
                 setTimeout(function () {
                     $('#item_length').val(kdp.evaluate('{duration}'));
                 }, 6000);
+
+                setTimeout(function () {
+                    that.bindKdpEvents();
+                }, 4000);
 
                 if (searchParams.has('time')) {
                     startTime = parseFloat(searchParams.get('time'));
@@ -306,6 +311,16 @@ function InterviewIndexManager() {
             }, 1000);
         }
     };
+
+    this.bindKdpEvents = function () {
+        kdp.kBind('playerPlayed', function () {
+            kdpPaused = false;
+        });
+
+        kdp.kBind('playerPaused', function () {
+            kdpPaused = true;
+        });
+    }
 
     this.getIndexSegmentsTimeline = function (total_duration, host) {
         $.ajax({
@@ -630,7 +645,63 @@ function InterviewIndexManager() {
                 },
             });
         });
+
+        $(window).on('keydown', (event) => {
+            handleKeyEvent(event);
+        });
+
+        document_level_binding_element('.save_file_index_title', 'click', function (event) {
+            event.preventDefault();
+
+            if ($('#index_title_heading').text().trim() === $('#edit_file_index_title').val())
+                return;
+
+            $.ajax({
+                url: $('#save_file_index_title_form')[0].action,
+                data: $('#save_file_index_title_form').serialize(),
+                type: 'POST',
+                success: function (response) {
+                    jsMessages(response.status, response.message);
+                    $('#index_title_heading').text(
+                        $('#edit_file_index_title').val()
+                    );
+                    hideAllSegmentTitleInputs();
+                },
+                error: function (error) {
+                    jsMessages('danger', error);
+                }
+            });
+        });
     };
+
+    function handleKeyEvent(event) {
+        const ctrlKey = event.ctrlKey || event.metaKey; // On Mac, use the CMD instead of ctrlKey
+        const shiftKey = event.shiftKey;
+        const keyCode = event.keyCode;
+
+        if (ctrlKey || shiftKey) {
+            event.preventDefault();
+            switch (keyCode) {
+                case 80: // P - Play/Pause
+                    isPaused() ? $('.update_play').click() : $('.update_pause').click();
+                    break;
+                case 82: // R - Back
+                    $('.update_backward').click();
+                    break;
+                case 70: // F - Forward
+                    $('.update_forward').click();
+                    break;
+                case 89: // Y - Set Current Index Start Time
+                    $('.update_time').first().click();
+                    break;
+                case 83: // S - Save
+                    $('.simple_form').submit();
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
 
     // Function to handle timecode click event
     function playVideoFromTimecode(currentTime) {
@@ -713,6 +784,19 @@ function InterviewIndexManager() {
         } else {
             // This works for host === 'Vimeo' as well
             player_widget.pause();
+        }
+    }
+
+    const isPaused = function () {
+        if (host == "Kaltura") {
+            return kdpPaused;
+        } else if (host == "SoundCloud") {
+            return widget_soundcloud.isPaused();
+        } else if (host === 'Vimeo') {
+            return player_widget.getPaused()
+        } else {
+            // This works for host === 'Vimeo' as well
+            return player_widget.paused();
         }
     }
 
