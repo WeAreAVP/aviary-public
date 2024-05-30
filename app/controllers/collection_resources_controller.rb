@@ -104,7 +104,7 @@ class CollectionResourcesController < ApplicationController
                 }
               end
               updated_field_values[value['collection_resource_field_id']][:values] << {
-                value: value['geolocation'].to_s.strip, vocab_value: value['vocabularies_id'].to_s.strip
+                value: value['value'].to_s.strip, vocab_value: value['vocabularies_id'].to_s.strip
               }
             end
           end
