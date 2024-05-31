@@ -201,8 +201,7 @@ module OrganizationFieldsHelper
       type = :danger
       message = "\"#{field_configs['label']}\" is reserved field name. Please use a different field name."
     else
-      current_organization.organization_field[field_type] = all_fields
-      current_organization.organization_field.save
+      current_organization.organization_field.update(field_type.to_sym => all_fields)
     end
 
     [message || 'Information updated successfully', type || :notice]
