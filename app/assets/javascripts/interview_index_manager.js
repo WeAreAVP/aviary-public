@@ -9,7 +9,7 @@
  */
 "use strict";
 
-function InterviewIndexManager(forward_duration, backward_duration, url) {
+function InterviewIndexManager(forward_duration = 10, backward_duration = 10, url = '') {
     let that = this;
     let player_widget;
     let timeDiffInSecFowward = forward_duration;

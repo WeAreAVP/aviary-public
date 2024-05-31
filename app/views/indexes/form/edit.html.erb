@@ -7,7 +7,9 @@
 </div>
 <%= render 'interviews/managers/notes' %>
 <script type="text/javascript">
-    new InterviewIndexManager(parseInt('<%= @forward_duration %>', 10), parseInt('<%= @backward_duration %>', 10), '<%= update_skip_duration_indexes_url %>');
+    const interviews_index_manager = new InterviewIndexManager(
+      parseInt('<%= @forward_duration %>', 10), parseInt('<%= @backward_duration %>', 10), '<%= update_skip_duration_indexes_url %>'
+    );
     $(function () {
       interviews_index_manager.initialize();
     });
