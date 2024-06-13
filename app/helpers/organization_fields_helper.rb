@@ -259,13 +259,14 @@ module OrganizationFieldsHelper
   def update_field(field_configs)
     field_values = field_settings(current_organization, nil, params['type'].presence || 'resource_fields')
 
+    field_configs['field_type'] = field_configs['column_type'].presence || field_configs['field_type']
+
     field_configs.delete('is_custom')
     field_configs.delete('vocabulary')
     field_configs.delete('is_vocabulary')
     field_configs.delete('column_type')
     field_configs.delete('dropdown_options')
 
-    field_configs['field_type'] = field_configs['column_type'].presence
     field_configs['is_public'] = field_configs['is_public'].to_s.to_boolean?
     field_configs['is_repeatable'] = field_configs['is_repeatable'].to_s.to_boolean?
     field_configs['is_required'] = field_configs['is_required'].to_s.to_boolean?
