@@ -30,13 +30,20 @@ class FileIndexPoint < ApplicationRecord
     errors.add(:end_time, "Select a time between 00:00:00 and #{time_to_duration(duration)}")
   end
 
+  
   def manage_gps_points
     points = []
-    unless gps_latitude.nil? && gps_longitude.nil?
-      gps_latitude = JSON.parse(self.gps_latitude)
-      gps_longitude = JSON.parse(self.gps_longitude)
-      gps_zoom = JSON.parse(self.gps_zoom)
-      gps_description = JSON.parse(self.gps_description)
+    self.gps_latitude = '[]' if gps_latitude.nil?
+    self.gps_longitude = '[]' if gps_longitude.nil?
+
+    gps_latitude = JSON.parse(self.gps_latitude)
+    gps_longitude = JSON.parse(self.gps_longitude)
+    gps_zoom = JSON.parse(self.gps_zoom)
+    gps_description = JSON.parse(self.gps_description)
+    gps_latitude = gps_latitude.reject(&:empty?)
+    gps_longitude = gps_longitude.reject(&:empty?)
+    gps_latitude = gps_latitude.reject(&:empty?)
+    if gps_latitude.length.positive?
       gps_latitude.each_with_index do |gps, index|
         row = {}
         unless gps.empty? && gps_longitude[index].empty?
@@ -44,6 +51,17 @@ class FileIndexPoint < ApplicationRecord
           row[:long] = gps_longitude[index]
           row[:zoom] = gps_zoom[index]
           row[:description] = gps_description[index]
+          points << row
+        end
+      end
+    elsif gps_description.length.positive?
+      gps_description.each_with_index do |gps_desc, index|
+        row = {}
+        unless gps_desc.empty?
+          row[:lat] = gps_longitude[index]
+          row[:long] = gps_longitude[index]
+          row[:zoom] = gps_zoom[index]
+          row[:description] = gps_desc
           points << row
         end
       end
