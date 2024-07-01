@@ -90,6 +90,7 @@ class FileTranscript < ApplicationRecord
       fq_filters_inner = ''
       JSON.parse(export_and_current_organization[:current_organization][:transcript_search_column]).each do |_, value|
         if value['status'] == 'true' || value['status'].to_s.to_boolean?
+          value['value'] = value['value'].sub(/_(ss|sms)$/, '_scis')
           unless value['value'].to_s == 'id_is' && q.to_i <= 0
             fq_filters_inner = fq_filters_inner + (counter != 0 ? ' OR ' : ' ') + " #{CollectionResource.search_perp(q, value['value'].to_s)} "
             counter += 1
