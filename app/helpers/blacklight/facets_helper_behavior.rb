@@ -55,20 +55,15 @@ module Blacklight::FacetsHelperBehavior
   # @return [String]
   def render_facet_limit(display_facet, options = {})
     return unless should_render_facet?(display_facet)
-    if %w[organization_id_is collection_id_is].include?(display_facet.name)
-      type = display_facet.name == 'organization_id_is' ? 'organization' : 'collection'
-      render_collection_org_facet(type)
-    else
-      options = options.dup
-      options[:partial] ||= facet_partial_name(display_facet)
-      options[:layout] ||= 'facet_layout' unless options.key?(:layout)
-      options[:locals] ||= {}
-      options[:locals][:field_name] ||= display_facet.name
-      options[:locals][:solr_field] ||= display_facet.name # deprecated
-      options[:locals][:facet_field] ||= facet_configuration_for_field(display_facet.name)
-      options[:locals][:display_facet] ||= display_facet
-      render(options)
-    end
+    options = options.dup
+    options[:partial] ||= facet_partial_name(display_facet)
+    options[:layout] ||= 'facet_layout' unless options.key?(:layout)
+    options[:locals] ||= {}
+    options[:locals][:field_name] ||= display_facet.name
+    options[:locals][:solr_field] ||= display_facet.name # deprecated
+    options[:locals][:facet_field] ||= facet_configuration_for_field(display_facet.name)
+    options[:locals][:display_facet] ||= display_facet
+    render(options)
   end
 
   ##
