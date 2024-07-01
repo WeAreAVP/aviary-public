@@ -85,15 +85,34 @@ class CollectionResourcesController < ApplicationController
       if @collection_resource
         updated_field_values = {}
         av_resource_params[:collection_resource_field_values].each do |value|
-          unless value['value'].empty? && value['vocabularies_id'].empty?
-            if updated_field_values[value['collection_resource_field_id']].nil?
-              updated_field_values[value['collection_resource_field_id']] = { system_name: value['collection_resource_field_id'], values: [] }
+          if value['geolocation'].present?
+            if value['geolocation']['gps'].present?
+              if updated_field_values[value['collection_resource_field_id']].nil?
+                updated_field_values[value['collection_resource_field_id']] = {
+                  system_name: value['collection_resource_field_id'], values: []
+                }
+              end
+              updated_field_values[value['collection_resource_field_id']][:values] << {
+                value: value['geolocation'], vocab_value: value['vocabularies_id'].to_s.strip
+              }
             end
-            updated_field_values[value['collection_resource_field_id']][:values] << { value: value['value'].to_s.strip, vocab_value: value['vocabularies_id'].to_s.strip }
+          else
+            unless value['value'].empty? && value['vocabularies_id'].empty?
+              if updated_field_values[value['collection_resource_field_id']].nil?
+                updated_field_values[value['collection_resource_field_id']] = {
+                  system_name: value['collection_resource_field_id'], values: []
+                }
+              end
+              updated_field_values[value['collection_resource_field_id']][:values] << {
+                value: value['value'].to_s.strip, vocab_value: value['vocabularies_id'].to_s.strip
+              }
+            end
           end
         end
 
-        resource_description_value = ResourceDescriptionValue.find_or_create_by(collection_resource_id: @collection_resource.id)
+        resource_description_value = ResourceDescriptionValue.find_or_create_by(
+          collection_resource_id: @collection_resource.id
+        )
         resource_description_value.resource_field_values = updated_field_values
         resource_description_value.save
 
@@ -348,6 +367,6 @@ class CollectionResourcesController < ApplicationController
   def av_resource_params
     params.require(:collection_resource).permit(:resource_files, :collection_id, :is_featured, :access, :title, :custom_unique_identifier,
                                                 :add_rss_information, :include_in_rss_podcast_feed, :keywords, :explicit, :episode_type, :episode, :season, :content, :collection_sort_order,
-                                                collection_resource_field_values: %i[collection_resource_id value vocabularies_id collection_resource_field_id])
+                                                collection_resource_field_values: [:id, :collection_resource_id, :value, :vocabularies_id, :collection_resource_field_id, { geolocation: %i[gps description zoom] }])
   end
 end

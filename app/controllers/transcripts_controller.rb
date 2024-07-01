@@ -138,7 +138,13 @@ class TranscriptsController < ApplicationController
       collection_resource = file_transcript.collection_resource_file.collection_resource
       if file_transcript.is_downloadable.positive? && (file_transcript.is_public || collection_resource.can_view || collection_resource.can_edit || (can? :edit, collection_resource.collection.organization))
         export_text = Aviary::ExportTranscript.new.export(file_transcript, params[:type])
-        send_data(export_text, filename: file_transcript.associated_file_file_name.sub(/(webvtt|json|txt|srt)$/, params[:type]))
+        resultant_file_type = params[:type] == 'txtanno' ? 'txt' : params[:type]
+        send_data(
+          export_text,
+          filename: file_transcript.associated_file_file_name.sub(
+            /\.[^.]+$/, ".#{resultant_file_type}"
+          )
+        )
       else
         flash[:notice] = 'You don\'t have the access to download the transcript'
         redirect_back(fallback_location: root_path)
