@@ -139,8 +139,8 @@ module InterviewIndexHelper
 
     file_index_point.gps_zoom = params[:file_index_point]['zoom'].to_json if params[:file_index_point]['zoom'].present?
     file_index_point.gps_description = params[:file_index_point]["gps_description#{alt}"].to_json if params[:file_index_point]["gps_description#{alt}"].present?
-    file_index_point.gps_latitude = lat.to_json if lat.present?
-    file_index_point.gps_longitude = long.to_json if long.present?
+    file_index_point.gps_latitude = lat.to_json
+    file_index_point.gps_longitude = long.to_json
     file_index_point.hyperlink = params[:file_index_point]['hyperlink'].to_json if params[:file_index_point]['hyperlink'].present?
     file_index_point.hyperlink_description = params[:file_index_point]["hyperlink_description#{alt}"].to_json if params[:file_index_point]["hyperlink_description#{alt}"].present?
     file_index_point.keywords = params[:keywords].join(';') if params[:keywords].present?

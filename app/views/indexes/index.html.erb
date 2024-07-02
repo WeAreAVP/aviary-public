@@ -20,6 +20,7 @@
     </main>
   </div>
 </div>
+<span id="url_form_progress" data-url="<%= update_progress_indexes_collections_path %>"></span>
 
 <%= render partial: 'indexes/manage_column', locals: { columns_details: JSON.parse(current_organization.file_index_display_column)['columns_status'], search_columns_details: JSON.parse(current_organization.file_index_search_column), organization_id: current_organization.id } %>
 <%= render partial: 'indexes/bulk_edit_file_index' %>

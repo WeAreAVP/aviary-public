@@ -46,7 +46,7 @@
             <div class="col-md-12">
               <div class="row">
                 <div class="col-12 float-left">
-                  <select class="bulk_operation_collection_file" name="check_type">
+                  <select class="bulk_operation_collection_file"  id="bulk_edit_type_of_bulk_operation" name="check_type">
                     <option value="change_status">Change Status</option>
                     <option value="bulk_delete">Bulk Delete</option>
                   </select>
@@ -63,7 +63,7 @@
                 <h1 class="font-size-18px text-left"> Change the access status of <span id="typeofchildaction"></span>
                   of selected index files </h1>
                 <label class="font-weight-bold text-left d-block mb-1">Select Status</label>
-                <select name="access_type" class="change_status_select_option">
+                <select name="access_type"  id="bulk_access_type" class="change_status_select_option">
                   <option value="no"> Private</option>
                   <option value="yes"> Public</option>
                 </select>
