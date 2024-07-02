@@ -5,6 +5,8 @@
 module InterviewsHelper
   def self.display_field_title_interview(field)
     case field.to_s
+    when 'id_is', 'id_ss'
+      'ID'
     when 'title_accession_number_ss'
       'Title | Accession Number'
     when 'collection_id_ss'

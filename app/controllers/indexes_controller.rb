@@ -12,6 +12,8 @@
 # Copyright (C) 2019 Audio Visual Preservation Solutions, Inc.
 class IndexesController < ApplicationController
   before_action :authenticate_user!
+  include IndexesHelper
+
   def index
     authorize! :manage, current_organization
     session[:file_index_bulk_edit] = [] unless request.xhr?
@@ -182,6 +184,7 @@ class IndexesController < ApplicationController
     @file_index_points = @file_index.file_index_points
     @file_index_point = FileIndexPoint.find(params[:file_index_point_id])
     @previous_index_point, @next_index_point = adjacent_index_points
+    @forward_duration, @backward_duration = retrieve_skip_durations
 
     set_thesaurus
     render template: 'indexes/form/edit'

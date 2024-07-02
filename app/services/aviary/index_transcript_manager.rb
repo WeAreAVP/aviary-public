@@ -646,7 +646,7 @@ module Aviary::IndexTranscriptManager
       points_hash = []
       webvtt.cues.each do |cue|
         next if cue.text.match(%r{<c>.+?</c>}).present?
-        regex = /<v(.*?)>/ # regex to match the speaker tag in the text of webvtt
+        regex = /<v\s?(.*?)>/ # regex to match the speaker tag in the text of webvtt
         match_result = regex.match(cue.text)
         speaker = match_result.present? ? match_result[1] : ''
         speaker = speaker
@@ -655,7 +655,7 @@ module Aviary::IndexTranscriptManager
         single_hash['start_time'] = cue.start.to_f
         single_hash['end_time'] = cue.end.to_f
         single_hash['duration'] = single_hash['end_time'] - single_hash['start_time']
-        single_hash['text'] = cue.text.gsub(%r{<\/?[^>]*>}, '')
+        single_hash['text'] = cue.text.gsub(%r{<\/?[^>]*>\s?}, '')
         single_hash['speaker'] = speaker
         single_hash['writing_direction'] = cue.style.present? ? cue.style : ''
         if points_hash.last.present? && single_hash['text'].include?(points_hash.last['text'])

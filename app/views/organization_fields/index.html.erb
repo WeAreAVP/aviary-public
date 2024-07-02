@@ -53,77 +53,23 @@
                       </div>
                       <div class="tab">
                         <div class="tab-content">
+                          <%= render 'collection_field_settings' %>
 
-                          <div class="tab-pane fade " id="collection_field_settings_content" role="tabpanel" aria-labelledby="collection_field_settings_content">
-                            <div class="row">
-                              <div class="col-12 p-5">
-                                <div class="holder custom_fields_container border">
-                                  <table class="table table-hover border-0">
-                                    <thead>
-                                    <tr class="">
-                                      <th style="width: 70% !important;"><h2>Field Name</h2></th>
-                                      <th style="width: 10% !important; "><h2>Status</h2></th>
-                                      <th style="width: 20% !important; "><h2>Action</h2></th>
-                                    </tr>
-                                    </thead>
-                                  </table>
-                                  <table class="table border-0" id="sort_facet_fields_table">
-                                    <tbody id='collection_field_preview_org' data-type="collection_fields" data-order-custom="sort_order" data-status-columns="display" data-internal-only-columns="is_internal_only">
-                                    <% if @collection_fields.present? %>
-                                      <% @collection_fields.each_with_index do |(system_name, single_collection_field), _index| %>
-                                        <% label = single_collection_field['label'] %>
-                                        <% is_default_field = single_collection_field['is_default'] %>
-                                        <% type = single_collection_field['field_type'] %>
-                                        <tr class="facet_field <%= single_collection_field['system_name'] %>" data-field="<%= system_name %>" data-field-type="<%= type %>" data-label="<%= label %>" data-collection="<%= '' %>" data-is-default-field="<%= is_default_field %>">
-                                          <td width="70%">
-                                            <i class="fa fa-ellipsis-v handle mx-2" style="color: lightgrey;cursor: move;"></i>
-                                            <span>
-                                              <%= label %>
-                                            </span>
-
-                                            <% if is_default_field %>
-                                              <i class="fa fa-asterisk color-grey font-size-8px" data-toggle="tooltip" data-placement="top" title="" aria-hidden="true" data-original-title="This is a default field of collection."></i>
-                                            <% end %>
-                                            <% if single_collection_field['default_name'].present? && single_collection_field['default_name'] != single_collection_field['label'] %>
-                                              <small class="mt-2 form-text font-size-12px text-muted d-inline">
-                                                <%= single_collection_field['default_name'] %>
-                                              </small>
-                                            <% end %>
-                                          </td>
-                                          <td width="10%">
-                                            <label class="toggle-switch">
-                                              <%= check_box_tag 'display' + single_collection_field['system_name'], single_collection_field['display'], single_collection_field['display'].to_s.to_boolean?, class: "display toggle-switch__input template-data-is-facetable template-data-field-is-facetable" %>
-                                              <span class="toggle-switch__slider"></span>
-                                            </label>
-                                          </td>
-                                          <td width="20%">
-                                            <a class="btn btn-sm btn-success ml-1 text-white edit_custom_field_info" data-fieldtype="collection_fields" data-field="<%= system_name %>" data-url="<%= new_edit_custom_field_organization_fields_path(system_name: system_name, methodtype: 'edit') %>">
-                                              Edit </a>
-                                          </td>
-                                        </tr>
-                                      <% end %>
-                                    <% end %>
-                                    </tbody>
-                                  </table>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-
-                          <div class="tab-pane fade w-100" style="z-index: 999999" id="organization_field_settings_content" role="tabpanel" aria-labelledby="organization_field_settings_content">
+                          <div class="tab-pane fade w-100" style="z-index: 999999"
+                               id="organization_field_settings_content" role="tabpanel"
+                               aria-labelledby="organization_field_settings_content">
                             <ul class="nav nav-tabs bg-white" id="manage_fields_options" role="tablist">
                               <li class="nav-item">
-                                <a class="nav-link active show field_config_menu" id="display_settings" data-tab="display_settings_content" data-toggle="tab" href="#display_settings_content" role="tab" aria-controls="display_settings_content" aria-selected="true">Global
-                                  Metadata Fields</a>
+                                <a class="nav-link active show field_config_menu" id="display_settings" data-tab="display_settings_content" data-toggle="tab" href="#display_settings_content"
+                                   role="tab" aria-controls="display_settings_content" aria-selected="true">Global Metadata Fields</a>
                               </li>
                               <li class="nav-item">
-                                <a class="nav-link field_config_menu" id="table_configuration" data-tab="table_configuration_content" data-toggle="tab" href="#table_configuration_content" role="tab" aria-controls="table_configuration_content" aria-selected="true">Resource
-                                  Table
-                                  Configuration</a>
+                                <a class="nav-link field_config_menu" id="table_configuration" data-tab="table_configuration_content" data-toggle="tab" href="#table_configuration_content"
+                                   role="tab" aria-controls="table_configuration_content" aria-selected="true">Resource Table Configuration</a>
                               </li>
                               <li class="nav-item">
-                                <a class="nav-link field_config_menu" id="search_configuration" data-tab="search_configuration" data-toggle="tab" href="#search_configuration_content" role="tab" aria-controls="search_configuration" aria-selected="false">Search
-                                  Configuration</a>
+                                <a class="nav-link field_config_menu" id="search_configuration" data-tab="search_configuration" data-toggle="tab" href="#search_configuration_content" role="tab"
+                                   aria-controls="search_configuration" aria-selected="false">Search Configuration</a>
                               </li>
                             </ul>
                             <div class="tab">
@@ -132,8 +78,8 @@
                                   <div class="row">
                                     <div class="col-12 p-5">
                                       <div class="add-new-field-holder">
-                                        <a class="btn btn-light btn-sm edit-custom-field-button edit-custom-field-button-new-custom-spec" data-method-type="new" data-url="<%= request.GET["type"].nil? ? new_edit_custom_field_organization_fields_path(methodtype: 'new') : "#{new_edit_custom_field_organization_fields_path(methodtype: 'new')}?type=ohms" %>">Add
-                                          Custom Fields</a>
+                                        <a class="btn btn-light btn-sm edit-custom-field-button edit-custom-field-button-new-custom-spec" data-method-type="new"
+                                           data-url="<%= request.GET["type"].nil? ? new_edit_custom_field_organization_fields_path(methodtype: 'new') : "#{new_edit_custom_field_organization_fields_path(methodtype: 'new')}?type=ohms" %>">Add Custom Fields</a>
                                       </div>
                                       <div class="holder custom_fields_container border">
                                         <table class="table table-hover border-0">

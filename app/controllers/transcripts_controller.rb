@@ -137,7 +137,8 @@ class TranscriptsController < ApplicationController
     if file_transcript.present? && %w[webvtt txt json].include?(params[:type])
       collection_resource = file_transcript.collection_resource_file.collection_resource
       if file_transcript.is_downloadable.positive? && (file_transcript.is_public || collection_resource.can_view || collection_resource.can_edit || (can? :edit, collection_resource.collection.organization))
-        export_text = Aviary::ExportTranscript.new.export(file_transcript, params[:type])
+        export_text = Aviary::ExportTranscript.new.export(file_transcript, params[:type],
+                                                          params[:include_annotations].to_s.to_boolean?)
         resultant_file_type = params[:type] == 'txtanno' ? 'txt' : params[:type]
         send_data(
           export_text,

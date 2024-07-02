@@ -121,7 +121,7 @@ function OrganizationFieldsManagement() {
                 js_action: 'editVocabulary',
                 action: 'editVocabulary',
                 field: $('.edit_dropdown_option').data('field'),
-                type: 'resource_fields',
+                type: $('.edit_dropdown_option').data('fieldType') || 'resource_fields',
                 update_type: $('#update_dropdown_options').val(),
                 vocabulary: $('#new_update_dropdown_options').val(),
                 list_type: 'dropdown_options'

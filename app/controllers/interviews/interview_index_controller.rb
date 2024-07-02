@@ -9,6 +9,8 @@ module Interviews
     before_action :authenticate_user!
     include ApplicationHelper
     include InterviewIndexHelper
+    include IndexesHelper
+
     # GET /interview_index
     # GET /interview_index
     def show
@@ -24,6 +26,8 @@ module Interviews
       @file_index_points = FileIndexPoint.where(file_index_id: @interview.file_indexes&.first&.id)
       @file_index_point = FileIndexPoint.new
       @file_index_point.start_time = params[:time] if params[:time].present?
+      @forward_duration, @backward_duration = retrieve_skip_durations
+
       set_thesaurus
       OhmsBreadcrumbPresenter.new(@interview, view_context).breadcrumb_manager('edit', @interview, 'index')
     end
