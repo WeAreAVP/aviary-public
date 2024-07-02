@@ -18,7 +18,7 @@ class ThesaurusTermsWriterWorker
     file = File.open(file_path, 'r')
 
     thesaurus_terms = if file.present?
-                        file.respond_to?(:read) ? CSV.foreach(file.path, encoding: 'iso-8859-1:utf-8').map { |row| row[0] } : []
+                        file.respond_to?(:read) ? CSV.foreach(file.path, encoding: 'w:utf-8').map { |row| row[0] } : []
                       else
                         []
                       end

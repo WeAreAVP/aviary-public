@@ -203,6 +203,8 @@ Rails.application.routes.draw do
       get :fetch_bulk_edit_resource_list
       get :update_progress
       get :update_progress_files
+      get :update_progress_transcripts
+      get :update_progress_indexes
     end
     resources :collection_resources do
       get :add_resource_file
