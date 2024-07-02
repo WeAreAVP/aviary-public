@@ -59,6 +59,10 @@ function InterviewManager() {
 
     this.initializeTable = function () {
         let data_url = $('#interviews_data_table').data('url');
+        const thHeaders = Array.prototype.filter.call($('.interviews_data_table_head')[0].childNodes, (node) => node.tagName === 'TH');
+        const headersArray = Array.prototype.map.call(thHeaders, (th) => th.textContent);
+        let sortIndex = headersArray.indexOf("Updated At");
+        sortIndex = sortIndex > 0 ? [sortIndex,'desc']  : [1,'asc']
         if(window.location.href.includes('notes_only=1'))
         {
             data_url = $('#interviews_data_table').data('url')+'?notes_only=1'
@@ -95,7 +99,7 @@ function InterviewManager() {
             columnDefs: [
                 {orderable: false, targets: [0, -1, -2] }
             ],
-            order: [[1, 'asc']],
+            order: [sortIndex],
             drawCallback: function (settings) {
                 try {
                     that.datatableInitDraw(settings);
@@ -186,6 +190,11 @@ function InterviewManager() {
         assignUser();
         bulkAssignUser();
         manageTable();
+        $('#interviews_data_table tbody').on('click', 'td .text-custom-dropdown', function (e) {
+            e.stopPropagation(); // Prevent KeyTable from handling the click
+            // Your dropdown action code here
+            $(this).dropdown('toggle');
+        });
     };
 
     this.datatableInitComplete = function (settings) {
