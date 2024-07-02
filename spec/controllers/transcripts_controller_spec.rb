@@ -71,7 +71,7 @@ RSpec.describe TranscriptsController, type: :controller do
       get :export, params: { id: file_points.file_transcript.id, type: 'txt' }
       expect(controller.headers['Content-Transfer-Encoding']).to eq('binary')
     end
-    xit "has a 200 status code with binary webvtt file" do
+    it "has a 200 status code with binary webvtt file" do
       get :export, params: { id: file_transcript_webvtt.id, type: 'webvtt' }
       expect(controller.headers['Content-Transfer-Encoding']).to eq('binary')
     end
