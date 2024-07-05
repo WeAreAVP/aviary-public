@@ -25,16 +25,9 @@
               id="dropdownMenuButton" data-toggle="dropdown" type="button">
       </button>
 
-      <div class="dropdown-menu" style="min-width: auto;" aria-labelledby="dropdownMenuButton">
-        <a class="dropdown-item update_duration_option" data-target="update_backward" data-value="10">10s</a>
-        <a class="dropdown-item update_duration_option" data-target="update_backward" data-value="15">15s</a>
-        <a class="dropdown-item update_duration_option" data-target="update_backward" data-value="20">20s</a>
-        <a class="dropdown-item update_duration_option" data-target="update_backward" data-value="30">30s</a>
-        <a class="dropdown-item update_duration_option" data-target="update_backward" data-value="40">40s</a>
-        <a class="dropdown-item update_duration_option" data-target="update_backward" data-value="45">45s</a>
-        <a class="dropdown-item update_duration_option" data-target="update_backward" data-value="50">50s</a>
-        <a class="dropdown-item update_duration_option" data-target="update_backward" data-value="60">60s</a>
-      </div>
+      <ul class="dropdown-menu" role="menu" style="min-width: auto;" aria-labelledby="ReverseDropdownMenuOptions">
+        <%== skip_duration_options_html('update_backward') %>
+      </ul>
     </div>
   </div>
 
@@ -64,16 +57,9 @@
               id="dropdownMenuButton" data-toggle="dropdown" type="button">
       </button>
 
-      <div class="dropdown-menu" style="min-width: auto;" aria-labelledby="dropdownMenuButton">
-        <a class="dropdown-item update_duration_option" data-target="update_forward" data-value="10">10s</a>
-        <a class="dropdown-item update_duration_option" data-target="update_forward" data-value="15">15s</a>
-        <a class="dropdown-item update_duration_option" data-target="update_forward" data-value="20">20s</a>
-        <a class="dropdown-item update_duration_option" data-target="update_forward" data-value="30">30s</a>
-        <a class="dropdown-item update_duration_option" data-target="update_forward" data-value="40">40s</a>
-        <a class="dropdown-item update_duration_option" data-target="update_forward" data-value="45">45s</a>
-        <a class="dropdown-item update_duration_option" data-target="update_forward" data-value="50">50s</a>
-        <a class="dropdown-item update_duration_option" data-target="update_forward" data-value="60">60s</a>
-      </div>
+      <ul class="dropdown-menu" role="menu" style="min-width: auto;" aria-labelledby="forwardDropdownMenuOptions">
+        <%== skip_duration_options_html('update_forward') %>
+      </ul>
     </div>
   </div>
 </div>
