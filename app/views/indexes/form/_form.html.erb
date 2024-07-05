@@ -144,32 +144,7 @@
                   </div>
 
                   <!-- Navigation Buttons -->
-                  <div class="buttons-box music_btn">
-                    <a href="javascript:void(0)" class="btn btn-outline-dark restart_playback" data-time-target="0.0"
-                      data-title="Return to start of media file" data-toggle="tooltip" data-placement="bottom">
-                      <i class="fa fa-fast-backward"></i>
-                    </a>
-                    <a href="javascript:void(0)" class="btn btn-outline-dark update_step_backward"
-                      data-title="Return to start of segment" data-toggle="tooltip" data-placement="bottom">
-                      <i class="fa fa-step-backward"></i>
-                    </a>
-                    <a href="javascript:void(0)" class="btn btn-outline-dark update_backward"
-                      data-title="Rewind 10 seconds" data-toggle="tooltip" data-placement="bottom">
-                      <%= image_tag("rewind.png", :alt => "Rewind 10 sec") %>
-                    </a>
-                    <a href="javascript:void(0)" class="btn btn-outline-dark update_play"
-                      data-title="Play" data-toggle="tooltip" data-placement="bottom">
-                      <i class="fa fa-play"></i>
-                    </a>
-                    <a href="javascript:void(0)" class="btn btn-outline-dark update_pause"
-                      data-title="Stop" data-toggle="tooltip" data-placement="bottom">
-                      <i class="fa fa-stop"></i>
-                    </a>
-                    <a href="javascript:void(0)" class="btn btn-outline-dark update_forward"
-                      data-title="Forward 10 seconds" data-toggle="tooltip" data-placement="bottom">
-                      <%= image_tag("fast-forward.png", :alt => "Forward 10 sec") %>
-                    </a>
-                  </div>
+                  <%= render 'indexes/form/navigation_buttons' %>
                   <!-- Navigation Buttons End -->
 
                   <!-- Cancel Button -->
