@@ -119,6 +119,10 @@ function TranscriptTable() {
                     data: function (d) {
                         d.called_from = called_from;
                         d.additionalData = additionalData;
+                    },
+                    dataSrc: function ( json ) {
+                        that._bulk_edit.getTotalCount(json.recordsTotal)
+                        return json.data;
                     }
                 },
                 drawCallback: function (settings) {
