@@ -134,6 +134,7 @@ class InterviewsDatatable < ApplicationDatatable
         end
       end
     end
+    columns_allowed.delete('ohms_assigned_user_id_is')
     columns_allowed&.[](params[:order]&.[]('0')&.[](:column)&.to_i).to_s
   end
 
