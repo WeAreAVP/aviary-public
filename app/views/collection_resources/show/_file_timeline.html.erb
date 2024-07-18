@@ -23,7 +23,7 @@
                 <% current_page = (current_page <= 0 ? 0 : current_page) %>
                 <%
                   html = ''
-                  if index_number == 0 && point.start_time != 0
+                  if index_number == 0 && point.start_time != 0 && point.start_time.present?
                     width = point.start_time / total_duration * 100
                     if width > 0
                       html += <<-HTML
@@ -32,23 +32,22 @@
                         </div>
                       HTML
                     end
+                    index_duration = (point.end_time || index_points[index_number + 1]&.start_time ||
+                      total_duration) - point.start_time
+
+                    width = index_duration / total_duration * 100
+                    html += <<-HTML
+                      <button class="index-segment border-0 play-timecode timeline-point index_timeline index_#{index.id} #{color} d-none point_index_#{point.id}"
+                        data-type="index" data-page-number="#{current_page}" tabindex="0"
+                        data-point="#{point.id}" data-timecode="#{point.start_time}"
+                        data-toggle="tooltip" data-placement="bottom"
+                        title="#{Time.at(point.start_time.to_f).utc.strftime('%H:%M:%S') + ' ' + point.title}"
+                        aria-label="Index segment at #{Time.at(point.start_time.to_f).utc.strftime('%H:%M:%S') + ' titled: ' + point.title}"
+                        style="width: #{width.round(2) < 1 ? 1 : width.ceil(2)}%;"
+                        data-target="collapse_#{index_number}">
+                      </button>
+                    HTML
                   end
-
-                  index_duration = (point.end_time || index_points[index_number + 1]&.start_time ||
-                    total_duration) - point.start_time
-
-                  width = index_duration / total_duration * 100
-                  html += <<-HTML
-                    <button class="index-segment border-0 play-timecode timeline-point index_timeline index_#{index.id} #{color} d-none point_index_#{point.id}"
-                      data-type="index" data-page-number="#{current_page}" tabindex="0"
-                      data-point="#{point.id}" data-timecode="#{point.start_time}"
-                      data-toggle="tooltip" data-placement="bottom"
-                      title="#{Time.at(point.start_time.to_f).utc.strftime('%H:%M:%S') + ' ' + point.title}"
-                      aria-label="Index segment at #{Time.at(point.start_time.to_f).utc.strftime('%H:%M:%S') + ' titled: ' + point.title}"
-                      style="width: #{width.round(2) < 1 ? 1 : width.ceil(2)}%;"
-                      data-target="collapse_#{index_number}">
-                    </button>
-                  HTML
 
                   next_starting_time = index_points[index_number + 1]&.start_time || total_duration
                   if point.end_time.present? && point.end_time != next_starting_time

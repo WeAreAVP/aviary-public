@@ -36,10 +36,10 @@ class FileIndexPoint < ApplicationRecord
     self.gps_latitude = '[]' if gps_latitude.nil?
     self.gps_longitude = '[]' if gps_longitude.nil?
 
-    gps_latitude = JSON.parse(self.gps_latitude)
-    gps_longitude = JSON.parse(self.gps_longitude)
-    gps_zoom = JSON.parse(self.gps_zoom)
-    gps_description = JSON.parse(self.gps_description)
+    gps_latitude = (self.gps_latitude.present? ? JSON.parse(self.gps_latitude) : [])
+    gps_longitude = (self.gps_longitude.present? ? JSON.parse(self.gps_longitude) : [])
+    gps_zoom = (self.gps_zoom.present? ? JSON.parse(self.gps_zoom) : [])
+    gps_description = (self.gps_description.present? ? JSON.parse(self.gps_description) : [])
     gps_latitude = gps_latitude.reject(&:empty?)
     gps_longitude = gps_longitude.reject(&:empty?)
     gps_latitude = gps_latitude.reject(&:empty?)
