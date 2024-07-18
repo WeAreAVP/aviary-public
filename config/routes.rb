@@ -99,8 +99,9 @@ Rails.application.routes.draw do
       member do
         get 'change_sync_interval', to: 'transcripts#change_sync_interval', as: 'change_sync_interval'
         match :create, via: %i[get post]
-        match :edit, via: %i[get post patch]
+        match :edit, via: %i[post patch]
       end
+      get 'edit/(:transcript_id)', to: 'transcripts#edit', as: :edit_transcript
     end
 
     get 'interview/notes/:id.:format', to: 'notes#index', as: :list_notes
@@ -202,6 +203,8 @@ Rails.application.routes.draw do
       get :fetch_bulk_edit_resource_list
       get :update_progress
       get :update_progress_files
+      get :update_progress_transcripts
+      get :update_progress_indexes
     end
     resources :collection_resources do
       get :add_resource_file
@@ -277,6 +280,7 @@ Rails.application.routes.draw do
     collection do
       post :data_table, to: 'indexes#index'
       post :bulk_file_index_edit
+      post :update_skip_duration
     end
   end
   resources :transcripts, only: %i[index edit] do

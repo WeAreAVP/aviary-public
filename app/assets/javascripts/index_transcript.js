@@ -1018,6 +1018,9 @@ function IndexTranscript() {
                 if (dataInfo.webvtt) {
                     $('.webvtt_export').removeClass('d-none');
                     $('.webvtt_export').attr('href', $('.webvtt_export').data('url') + '/' + currentId);
+                    $('.webvtt_export_with_annotations').attr(
+                        'href', `${$('.webvtt_export_with_annotations').data('url')}/${currentId}?include_annotations=true`
+                    );
                 } else {
                     $('.webvtt_export').addClass('d-none');
                     $('.webvtt_export').attr('href', 'javascript://;');
@@ -1025,9 +1028,12 @@ function IndexTranscript() {
                 if (dataInfo.edit) {
                     $('#delete_transcript').hide();
                     $('#transcript_update_btn').hide();
+                    $('#transcript_edit_btn').hide();
                 } else {
                     $('#delete_transcript').show();
                     $('#transcript_update_btn').show();
+                    $('#transcript_edit_btn').attr('data-url', $('#transcript_edit_btn').data('url') + '/' + currentId);
+                    $('#transcript_edit_btn').show();
                 }
             } catch (e) {
                 e;
@@ -1131,7 +1137,7 @@ function IndexTranscript() {
     const editTranscript = function () {
         if ($('.edit_transcript').length > 0) {
             $('.edit_transcript').unbind('click').bind('click', function () {
-                let url = btoa($(this).data().url);
+                let url = btoa($(this).attr('data-url'));
                 let width = $(window).width() - 150;
                 let height = $(window).height();
                 window.open('/transcript-editor/index.html?transcript=' + url, 'winname', 'directories=0,titlebar=0,toolbar=0,location=0,status=0,menubar=0,scrollbars=no,resizable=no,width=' + width + ',height=' + height);

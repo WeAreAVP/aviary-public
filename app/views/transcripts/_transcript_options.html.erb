@@ -64,7 +64,12 @@
                 </li>
                 <li>
                   <a href="javascript:void(0);" data-toggle="modal" id="transcript_update_btn" data-target="#transcript_upload" class="dropdown-item"><i class="fa fa-refresh" aria-hidden="true"></i>
-                    Update this transcript
+                    Update transcript metadata
+                  </a>
+                </li>
+                <li>
+                  <a href="javascript:void(0);" id="transcript_edit_btn" class="edit_transcript dropdown-item" data-url="<%= edit_transcript_url() %>"><i class="fa fa-pencil" aria-hidden="true"></i>
+                    Edit this transcript
                   </a>
                 </li>
                 <li>
@@ -81,22 +86,33 @@
             <div class="dropdown-divider download_transcript_menu"></div>
             <li class="dropdown-submenu download_transcript_menu">
               <a class="dropdown-item dropdown-toggle"><i class="fa fa-download" aria-hidden="true"></i>
-                Download
-                this
-                transcript</a>
+                Download this transcript</a>
               <ul class="dropdown-menu">
-
-                <li>
-                  <a class="dropdown-item text_export" href="javascript://;" data-url="<%= transcript_export_path('txt') %>">Export
-                    to Text</a></li>
-                <li>
-                  <a class="dropdown-item webvtt_export" href="javascript://;" data-url="<%= transcript_export_path('webvtt') %>">Export
-                    to WebVTT</a></li>
                 <li>
                   <a class="dropdown-item json_export" href="javascript://;" data-url="<%= transcript_export_path('json') %>">
-                    Export to Json</a></li>
+                    Export to Json
+                  </a>
+                </li>
                 <li>
-                  <a class="dropdown-item textanno_export" href="javascript://;" data-url="<%= transcript_export_path('txtanno') %>">Export to Text with <br/>Annotations</a></li>
+                  <a class="dropdown-item textanno_export" href="javascript://;" data-url="<%= transcript_export_path('txtanno') %>">
+                    Export to Text with <br/>Annotations
+                  </a>
+                </li>
+                <li>
+                  <a class="dropdown-item webvtt_export" href="javascript://;" data-url="<%= transcript_export_path('webvtt') %>">
+                    Export to WebVTT
+                  </a>
+                </li>
+                <li>
+                  <a class="dropdown-item textanno_export" href="javascript://;" data-url="<%= transcript_export_path('txtanno') %>">
+                    Export to Text with <br/>Annotations
+                  </a>
+                </li>
+                <li>
+                  <a class="dropdown-item text_export" href="javascript://;" data-url="<%= transcript_export_path('txt') %>">
+                    Export to Text
+                  </a>
+                </li>
                 <li>
               </ul>
             </li>

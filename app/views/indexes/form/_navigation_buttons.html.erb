@@ -1,0 +1,65 @@
+<div class="buttons-box music_btn">
+  <a href="javascript:void(0)" class="col-2 btn btn-outline-dark restart_playback" data-time-target="0.0"
+    data-title="Return to start of media file" data-toggle="tooltip" data-placement="bottom">
+    <i class="fa fa-backward-fast"></i>
+  </a>
+
+  <a href="javascript:void(0)" class="col-2 btn btn-outline-dark update_step_backward"
+    data-title="Return to start of segment" data-toggle="tooltip" data-placement="bottom">
+    <i class="fa fa-step-backward"></i>
+  </a>
+
+  <div class="col-2 mx-0 px-2 row w-100">
+    <a href="javascript:void(0)" class="btn btn-outline-dark col-7 pr-0 update_backward"
+        data-title="Rewind <%= @backward_duration %> seconds" data-toggle="tooltip"
+        data-placement="bottom" data-duration="<%= @backward_duration %>">
+
+      <i class="fa">
+        <i class="fa fa-backward"></i>
+        <span id="update_backward_duration" class="skip_duration"><%= @backward_duration %></span>
+      </i>
+    </a>
+
+    <div class="col-5 dropdown mx-0 px-0">
+      <button href="javascript:void(0)" class="btn btn-outline-dark dropdown-toggle update_backward_dropdown"
+              id="dropdownMenuButton" data-toggle="dropdown" type="button">
+      </button>
+
+      <ul class="dropdown-menu" role="menu" style="min-width: auto;" aria-labelledby="ReverseDropdownMenuOptions">
+        <%== skip_duration_options_html('update_backward') %>
+      </ul>
+    </div>
+  </div>
+
+  <a href="javascript:void(0)" class="col-2 btn btn-outline-dark update_play"
+    data-title="Play" data-toggle="tooltip" data-placement="bottom">
+    <i class="fa fa-play"></i>
+  </a>
+
+  <a href="javascript:void(0)" class="col-2 btn btn-outline-dark update_pause"
+    data-title="Stop" data-toggle="tooltip" data-placement="bottom">
+    <i class="fa fa-stop"></i>
+  </a>
+
+  <div class="col-2 mx-0 px-2 row w-100">
+    <a href="javascript:void(0)" class="btn btn-outline-dark col-7 pr-0 update_forward"
+       data-title="Forward  <%= @forward_duration %> seconds" data-toggle="tooltip" data-placement="bottom"
+       data-duration="<%= @forward_duration %>">
+
+      <i class="fa">
+        <span id="update_forward_duration" class="skip_duration"><%= @forward_duration %></span>
+        <i class="fa fa-forward"></i>
+      </i>
+    </a>
+
+    <div class="col-5 dropdown mx-0 px-0">
+      <button href="javascript:void(0)" class="btn btn-outline-dark dropdown-toggle update_forward_dropdown"
+              id="dropdownMenuButton" data-toggle="dropdown" type="button">
+      </button>
+
+      <ul class="dropdown-menu" role="menu" style="min-width: auto;" aria-labelledby="forwardDropdownMenuOptions">
+        <%== skip_duration_options_html('update_forward') %>
+      </ul>
+    </div>
+  </div>
+</div>

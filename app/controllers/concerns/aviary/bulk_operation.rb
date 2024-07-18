@@ -30,6 +30,10 @@ module Aviary::BulkOperation
           limit_resource = "#{table_of_caller}:#{current_organization.id}"
           data = if params['type'] == 'collection_resource_files'
                    CollectionResourceFile.fetch_file_list(0, 0, 'id_is', 'desc', search_info, limit_resource, { export: true, current_organization: current_organization })
+                 elsif params['type'] == 'file_transcript_bulk_edit'
+                   FileTranscript.fetch_transcript_list(0, 0, 'id_is', 'desc', search_info, limit_resource, { export: true, current_organization: current_organization })
+                 elsif params['type'] == 'file_index_bulk_edit'
+                   FileIndex.fetch_index_list(0, 0, 'id_is', 'desc', search_info, limit_resource, { export: true, current_organization: current_organization })
                  else
                    organization_field_manager = Aviary::FieldManagement::OrganizationFieldManager.new
                    resource_fields = organization_field_manager.organization_field_settings(current_organization, nil, 'resource_fields', 'resource_table_sort_order')
@@ -61,6 +65,44 @@ module Aviary::BulkOperation
     end
     respond_to do |format|
       format.json { render json: [ids: session[current_key].join(','), status: :created, is_selected_all: session['is_selected_all'], error: flash[:danger] ||= '', message: 'clear'] }
+    end
+  end
+
+  def update_progress_indexes
+    count = 0
+    begin
+      case params['bulk_edit_type_of_bulk_operation']
+      when 'bulk_delete'
+        count = params[:ids].length.to_i - FileTranscript.where(id: params[:ids]).length.to_i
+      when 'change_status'
+        count = FileIndex.where(id: params[:ids], is_public: params[:bulk_access_type].to_i).length
+      end
+    rescue StandardError
+      count = 0
+    end
+    respond_to do |format|
+      format.json { render json: [count: count, action: 'update_progress_indexes', status: :created, error: flash[:danger] ||= ''] }
+    end
+  end
+
+  def update_progress_transcripts
+    count = 0
+    begin
+      case params['bulk_edit_type_of_bulk_operation']
+      when 'bulk_delete'
+        count = params[:ids].length.to_i - FileTranscript.where(id: params[:ids]).length.to_i
+      when 'change_status'
+        count = FileTranscript.where(id: params[:ids], is_public: params[:bulk_access_type].to_i).length
+      when 'transcript_caption'
+        count = FileTranscript.where(id: params[:ids], is_caption: params[:bulk_caption].to_i).length
+      when 'transcript_download'
+        count = FileTranscript.where(id: params[:ids], is_downloadable: params[:bulk_is_download].to_i).length
+      end
+    rescue StandardError
+      count = 0
+    end
+    respond_to do |format|
+      format.json { render json: [count: count, action: 'update_progress_transcripts', status: :created, error: flash[:danger] ||= ''] }
     end
   end
 
