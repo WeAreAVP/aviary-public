@@ -6,7 +6,6 @@ RSpec.describe UsersController, type: :controller do
 	let(:user1) { create(:user, email: 'hellow1test@gmail.com')}
 
 	before do
-		request[:subdomain] = organization.url
 		allow(controller).to receive(:current_organization).and_return(organization)
 		allow(controller).to receive(:current_user).and_return(organization)
 		sign_in(organization.user)

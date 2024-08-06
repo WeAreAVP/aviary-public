@@ -9,7 +9,6 @@ RSpec.describe IndexesController, type: :controller do
   let(:file_index_point) { create :file_index_point, file_index: file_index }
 
   before do
-    request[:subdomain] = file_index.collection_resource_file.collection_resource.collection.organization.url
     allow(controller).to receive(:current_organization).and_return(file_index.collection_resource_file.collection_resource.collection.organization)
     allow(controller).to receive(:current_user).and_return(file_index.collection_resource_file.collection_resource.collection.organization.user)
     sign_in(file_index.collection_resource_file.collection_resource.collection.organization.user)

@@ -1,5 +1,5 @@
 FactoryBot.define do
-  factory :fields, class: CustomFields::Field do
+  factory :fields do
     sequence(:label) { |n| "label_#{n}" }
     sequence(:system_name) { |n| "system_name_#{n}" }
     sequence(:is_vocabulary) { |n| 0 }
