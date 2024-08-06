@@ -190,7 +190,7 @@ module Interviews
         session[:interview_bulk].each do |single_interview|
           interview = Interviews::Interview.find_by(id: single_interview)
           if interview.present?
-            export_text = Aviary::ExportOhmsInterviewXml.new.export(interview)
+            export_text = Aviary::ExportOhmsInterviewXML.new.export(interview)
             doc = Nokogiri::XML(export_text.to_xml)
             error_messages = xml_validation(doc)
             unless error_messages.any?
@@ -296,7 +296,7 @@ module Interviews
       end
 
       interview = Interviews::Interview.find(params[:id])
-      export_text = Aviary::ExportOhmsInterviewXml.new.export(interview)
+      export_text = Aviary::ExportOhmsInterviewXML.new.export(interview)
       doc = Nokogiri::XML(export_text.to_xml)
       error_messages = xml_validation(doc)
 
