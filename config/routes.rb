@@ -95,7 +95,7 @@ Rails.application.routes.draw do
         match :sync, via: %i[get post patch]
       end
     end
-    resources :transcripts do
+    resources :transcripts, only: %i[index] do
       member do
         get 'change_sync_interval', to: 'transcripts#change_sync_interval', as: 'change_sync_interval'
         match :create, via: %i[get post]
