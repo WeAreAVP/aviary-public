@@ -166,8 +166,8 @@ class CatalogController < ApplicationController
     if unsafe_params.key?('reset_facets')
       session[:search_facets] = {}
     else
-      session[:search_facets]['range'] = params[:range] if params.key?(:range)
-      session[:search_facets]['all'] = params[:f] if params.key?(:f)
+      session[:search_facets]['range'] = unsafe_params[:range] if unsafe_params.key?(:range)
+      session[:search_facets]['all'] = unsafe_params[:f] if unsafe_params.key?(:f)
     end
   end
 
