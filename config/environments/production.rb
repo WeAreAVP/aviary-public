@@ -69,8 +69,7 @@ Rails.application.configure do
   # Use a different cache store in production.
   config.cache_store = :redis_cache_store, { url: ENV['ACTION_CABLE_REDIS'] || 'localhost' }
   # config.session_store :cache_store, key: ENV['SESSION_KEY'] || '_aviary_key', domain: :all
-  config.session_store :cache_store, key: ENV['SESSION_KEY'] || '_aviary_key',
-                                     domain: %w(.lvh.me .localhost .aviaryplatform.com .www.kznarchives.gov.za .archive.culturalmediaarchive.org .avcollections.library.yale.edu .aviary.ecds.emory.edu .aviary.libraries.emory.edu .aviary.library.vanderbilt.edu .www.beneathourskin.org .hlavmass.lib.harvard.edu .hlavsandbox.lib.harvard.edu .oralhistory.iu.edu .qatartalkingarchives.org .streaming.peabody.jhu.edu .video.eastview.com)
+  config.session_store :cache_store, key: ENV['SESSION_KEY'] || '_aviary_key', domain: :all
 
   # Use a real queuing backend for Active Job (and separate queues per environment).
   # config.active_job.queue_adapter = :resque
