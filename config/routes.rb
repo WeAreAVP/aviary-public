@@ -281,10 +281,7 @@ Rails.application.routes.draw do
       post :update_skip_duration
     end
   end
-  resources :transcripts, only: %i[index edit] do
-    member do
-      post 'edit', to: 'transcripts#update', format: :json
-    end
+  resources :transcripts, only: %i[index] do
     collection do
       post :data_table, to: 'transcripts#index'
       post :bulk_file_transcript_edit
