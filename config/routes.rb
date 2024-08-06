@@ -99,7 +99,6 @@ Rails.application.routes.draw do
       member do
         get 'change_sync_interval', to: 'transcripts#change_sync_interval', as: 'change_sync_interval'
         match :create, via: %i[get post]
-        match :edit, via: %i[post patch]
       end
     end
 
