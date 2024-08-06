@@ -665,10 +665,7 @@ collection_field_manager = [
   }
 
 ]
-collection_field_manager.each do |single_field|
-  field = CustomFields::Field.where(system_name: single_field[:system_name], source_type: single_field[:source_type]).first_or_initialize
-  field.update(single_field)
-end
+
 
 puts '============================ Plans ============================='
 puts '================================================================'

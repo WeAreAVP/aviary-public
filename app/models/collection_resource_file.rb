@@ -9,7 +9,9 @@ class CollectionResourceFile < ApplicationRecord
   has_many :file_indexes, dependent: :destroy
   has_many :file_transcripts, dependent: :destroy
   has_many :playlist_items, dependent: :destroy
+  attribute :access, :integer
   enum access: %i[no yes]
+  attribute :transcode_status, :integer
   enum transcode_status: { pending: 0, in_progress: 1, completed: 2, not_needed: 3 }
   has_attached_file :resource_file, { default_url: '', validate_media_type: false }.merge(USE_STORAGE_PARAMS_FOR_ATTACHMENTS ? STORAGE_FOR_ATTACHMENTS : {})
   has_attached_file :thumbnail, styles: { small: '450x230>', medium: '2000x411>', processors: %i[thumbnail compression] }, default_url: ''

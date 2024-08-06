@@ -2,9 +2,9 @@
 #
 # Aviary is an audiovisual content publishing platform with sophisticated features for search and permissions controls.
 # Copyright (C) 2019 Audio Visual Preservation Solutions, Inc.
-module Thesaurus
+module Datatables::Thesaurus
   # ThesaurusDatatable
-  class InformationDatatable < ApplicationDatatable
+  class InformationDatatable < Datatables::ApplicationDatatable
     delegate :link_to, :edit_thesaurus_manager_path, :thesaurus_manager_path, :strip_tags, :truncate, to: :@view
 
     def initialize(view, current_organization, field_has_thesaurus)

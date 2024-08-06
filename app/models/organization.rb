@@ -4,7 +4,7 @@
 # Copyright (C) 2019 Audio Visual Preservation Solutions, Inc.
 class Organization < ApplicationRecord
   includes ApplicationHelper
-
+  attribute :storage_type, :integer
   enum storage_type: { free_storage: 0, no_storage: 1, wasabi_storage: 2 }
   belongs_to :user, optional: true
   has_one :organization_field, dependent: :destroy
@@ -22,6 +22,9 @@ class Organization < ApplicationRecord
   validates :logo_image, attachment_presence: true
   validates :banner_image, attachment_presence: true
   validate :validate_url
+  attribute :banner_type, :integer
+  attribute :banner_title_type, :integer
+  attribute :default_tab_selection, :integer
   enum banner_type: %i[banner_image featured_resources_slider]
   enum banner_title_type: %i[banner_title_image banner_title_text]
   # playlists

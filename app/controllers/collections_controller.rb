@@ -164,7 +164,7 @@ class CollectionsController < ApplicationController
   def list_resources
     authorize! :manage, current_organization
     collection = this_collection
-    session[:resource_list_params] = params
+    session[:resource_list_params] = params.to_unsafe_h
     session[:resource_list_bulk_edit] = [] unless request.xhr?
     session[:resource_list_params] = [] unless request.xhr?
     record_last_bread_crumb(request.fullpath, "Back to <strong>#{@collection.title}</strong>") unless request.xhr?
@@ -208,7 +208,7 @@ class CollectionsController < ApplicationController
 
   def list_media
     authorize! :manage, current_organization
-    session[:media_list_params] = params
+    session[:media_list_params] = params.to_unsafe_h
     unless request.xhr?
       session[:media_list_bulk_edit] = []
       session[:media_list_params] = []
@@ -225,7 +225,7 @@ class CollectionsController < ApplicationController
   end
 
   def update_sort_fields
-    FieldSettingsJob.perform_later(@collection, params['collection_resource_field'].values, 'CollectionResource')
+    FieldSettingsJob.perform_later(@collection, params.permit!['collection_resource_field'].values, 'CollectionResource')
     render json: { status: 'success' }
   end
 

@@ -33,7 +33,7 @@ module Thesaurus
       end
       respond_to do |format|
         format.html
-        format.json { render json: Datatables::InformationDatatable.new(view_context, current_organization, @field_has_thesaurus) }
+        format.json { render json: Datatables::Thesaurus::InformationDatatable.new(view_context, current_organization, @field_has_thesaurus) }
       end
     end
 

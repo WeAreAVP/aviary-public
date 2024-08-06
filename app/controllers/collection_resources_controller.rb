@@ -4,16 +4,16 @@
 # Copyright (C) 2019 Audio Visual Preservation Solutions, Inc.
 class CollectionResourcesController < ApplicationController
   before_action :set_av_resource, except: %I[new show create embed_file]
-  before_action :authenticate_user!, except: %I[show search_text load_resource_details_template load_time_line_template embed_file show_search_counts load_index_template load_transcript_template file_wise_counts]
+  before_action :authenticate_user!, except: %I[show load_resource_details_template embed_file show_search_counts load_index_template load_transcript_template file_wise_counts]
   before_action :check_resource_limit, only: %I[new create]
   before_action :check_if_playlist
-  load_and_authorize_resource except: %I[create search_text load_resource_details_template load_time_line_template embed_file show_search_counts load_index_template load_transcript_template file_wise_counts]
+  load_and_authorize_resource except: %I[create load_resource_details_template embed_file show_search_counts load_index_template load_transcript_template file_wise_counts]
   include ApplicationHelper
   include Aviary::ResourceFileManagement
 
   def index
     authorize! :manage, current_organization
-    session[:resource_list_params] = params
+    session[:resource_list_params] = params.to_unsafe_h
     record_last_bread_crumb(request.fullpath, 'Back to My Resources') unless request.xhr?
     session[:resource_list_bulk_edit] = [] unless request.xhr?
     session[:resource_list_params] = [] unless request.xhr?

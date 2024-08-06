@@ -52,7 +52,7 @@ group :development do
   gem 'spring'
   gem 'letter_opener'
 
-  gem 'meta_request'
+  # gem 'meta_request'
   gem 'better_errors'
   gem 'binding_of_caller'
   gem 'rails-erd'
@@ -137,7 +137,7 @@ gem 'rails-autocomplete'
 gem 'cocoon'
 gem 'jquery-fileupload-rails'
 #
-gem 'attr_encrypted', '~> 3.0.0'
+# gem 'attr_encrypted', '~> 3.0.0'
 gem 'bootstrap-tagsinput-rails'
 gem 'bootstrap-datepicker-rails'
 gem "rack-cors", ">= 1.0.4"

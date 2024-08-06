@@ -27,7 +27,7 @@ class CollectionResource < ApplicationRecord
 
   scope :featured, -> { where(access: accesses[:access_public], is_featured: true) }
   scope :public_visible, -> { where(access: accesses[:access_public]) }
-
+  attribute :access, :integer
   enum access: %i[access_restricted access_public access_private]
 
   after_save :update_duration
@@ -388,11 +388,15 @@ class CollectionResource < ApplicationRecord
   end
 
   def self.fetch_collections(export_and_current_organization, solr)
-    collections_raw = solr.post "select?#{URI.encode_www_form({ q: '*:*', start: 0, rows: 1000, fq: ['document_type_ss:collection', 'status_ss:active', "organization_id_is:#{export_and_current_organization[:current_organization].id}"], wt: 'json', fl: %w[id_is title_ss] })}"
+    query_params = { q: '*:*', start: 0, rows: 1000, fl: %w[id_is title_ss],
+                     fq: ['document_type_ss:collection', 'status_ss:active',
+                          "organization_id_is:#{export_and_current_organization[:current_organization].id}"], wt: 'json' }
+    collections_raw = solr.post "select?#{URI.encode_www_form(query_params)}"
     collections = {}
     collections_raw['response']['docs'].each do |single_collection|
       collections[single_collection['id_is'].to_s] = single_collection['title_ss']
     end
+
     collections
   end
 

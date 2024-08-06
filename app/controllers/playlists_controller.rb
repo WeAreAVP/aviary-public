@@ -6,7 +6,7 @@ class PlaylistsController < ApplicationController
   include PlaylistHelper
 
   before_action :set_config
-  before_action :set_playlist, only: %I[edit update show destroy toggle_item_in_playlist_resource add_resource_to_playlist]
+  before_action :set_playlist, only: %I[edit update show destroy add_resource_to_playlist]
   before_action :authenticate_user!, except: %I[show listing_for_add_to_playlist update_selected_tab]
   load_and_authorize_resource except: %I[listing_for_add_to_playlist]
 
