@@ -2,12 +2,10 @@
 class Aviary::Blacklight::SearchService < Blacklight::SearchService
   def search_results
     builder = search_builder.with(search_state)
-    builder.transliteration_status = search_state.to_h['transliteration_status']
     builder.current_params = search_state.params if search_state.params.present?
     builder.session_solr = search_state.params['session_solr']
     builder.current_user = search_state.params['current_user']
     builder.current_organization = search_state.params['current_organization']
-    builder.current_flock = search_state.params['current_flock']
     builder.user_ip = search_state.params['user_ip']
     builder.request_is_xhr = search_state.params['request_is_xhr']
     builder.resource_list = search_state.params['resource_list']

@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe UserDecorator, type: :Decorator do
+RSpec.describe UserPresenter, type: :Decorator do
 
   let!(:user) { create(:user) }
 
