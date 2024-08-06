@@ -12,6 +12,7 @@ class Aviary::Blacklight::SearchService < Blacklight::SearchService
     builder.myresources = search_state.params['myresources']
     builder.page = search_state.page
     builder.rows = search_state.per_page
+
     builder = yield(builder) if block_given?
     response = repository.search(builder)
 
