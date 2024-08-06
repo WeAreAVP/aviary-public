@@ -91,13 +91,13 @@ module OrganizationFieldsHelper
   end
 
   def update_sort_collection(fields_type)
-    collection = current_organization.collections.find_by_id(params['collection_id'])
+    collection = current_organization.collections.find_by(id: params['collection_id'])
     @collection_field_manager.update_field_settings(JSON.parse(params['info'].to_json), collection, fields_type)
     collection.solr_index
   end
 
   def add_field_to_select_collection
-    collection = current_organization.collections.find_by_id(params['collection_id'])
+    collection = current_organization.collections.find_by(id: params['collection_id'])
     @collection_field_manager.update_field_settings_collection(update_information_hash, collection, 'resource_fields')
   end
 

@@ -64,7 +64,7 @@ class OrganizationsController < ApplicationController
   end
 
   def confirm_invite
-    organization_user = OrganizationUser.find_by_token(params[:token])
+    organization_user = OrganizationUser.find_by(token: params[:token])
     if organization_user.present?
       organization_user.update(status: true, token: nil)
       message = 'Your new status has been confirmed!'

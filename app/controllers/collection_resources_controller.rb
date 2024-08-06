@@ -24,7 +24,7 @@ class CollectionResourcesController < ApplicationController
 
     respond_to do |format|
       format.html
-      format.json { render json: ResourcesListingDatatable.new(view_context, current_organization, params['called_from'], params[:additionalData], @resource_fields) }
+      format.json { render json: Datatables::ResourcesListingDatatable.new(view_context, current_organization, params['called_from'], params[:additionalData], @resource_fields) }
     end
   end
 
@@ -66,7 +66,7 @@ class CollectionResourcesController < ApplicationController
 
   def file_wise_counts
     session_video_text_all = params[:search_text_val]
-    collection_resource = CollectionResource.find_by_id(params[:collection_resource_id])
+    collection_resource = CollectionResource.find_by(id: params[:collection_resource_id])
     count_file_wise = {}
     if collection_resource.present? && session_video_text_all.present?
       collection_resource_presenter = CollectionResourcePresenter.new(@collection_resource, view_context)
@@ -275,7 +275,7 @@ class CollectionResourcesController < ApplicationController
 
   def resource_file_sort
     params[:resource_file_sort].each do |key, value|
-      CollectionResourceFile.find_by_id(key).update(sort_order: value, partial: true)
+      CollectionResourceFile.find_by(id: key).update(sort_order: value, partial: true)
     end
     render json: [errors: []]
   end

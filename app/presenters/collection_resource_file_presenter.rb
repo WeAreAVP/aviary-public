@@ -50,7 +50,7 @@ class CollectionResourceFilePresenter < BasePresenter
 
   def audio_poster(is_audio_only)
     return if is_audio_only
-    @model.embed_code.present? ? @model.thumbnail.url : "https://#{ENV['S3_HOST_CDN']}/public/images/audio-default.png"
+    @model.embed_code.present? ? @model.thumbnail.url : "https://#{ENV.fetch('S3_HOST_CDN', nil)}/public/images/audio-default.png"
   end
 
   def audio_source_tag

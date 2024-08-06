@@ -329,7 +329,7 @@ module ApplicationHelper
   end
 
   def lock_image(classes = '')
-    "<img class='#{classes}' src='https://#{ENV['S3_HOST_CDN']}/public/lock.png' alt='content locked'>".html_safe
+    "<img class='#{classes}' src='https://#{ENV.fetch('S3_HOST_CDN', nil)}/public/lock.png' alt='content locked'>".html_safe
   end
 
   def key_hash_manager(string)

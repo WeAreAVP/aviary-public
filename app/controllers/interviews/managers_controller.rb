@@ -35,7 +35,7 @@ module Interviews
     # GET /interviews.json
     def index
       if request.path.include?('my_ohms_assignment')
-        @organization_user = OrganizationUser.find_by_user_id(current_user.id)
+        @organization_user = OrganizationUser.find_by(user_id: current_user.id)
         user_current_organization = @organization_user.organization
         @search_columns = user_current_organization.interview_search_column
         @display_columns = user_current_organization.interview_display_column
@@ -63,13 +63,13 @@ module Interviews
         user_current_organization = organization_user.organization
         respond_to do |format|
           format.html
-          format.json { render json: InterviewsDatatable.new(view_context, user_current_organization, '', organization_user, (current_organization.nil? ? false : true)) }
+          format.json { render json: Datatables::InterviewsDatatable.new(view_context, user_current_organization, '', organization_user, (current_organization.nil? ? false : true)) }
         end
       else
         organization_user = OrganizationUser.find_by user_id: current_user.id, organization_id: current_organization.id
         respond_to do |format|
           format.html
-          format.json { render json: InterviewsDatatable.new(view_context, current_organization, '', organization_user, true) }
+          format.json { render json: Datatables::InterviewsDatatable.new(view_context, current_organization, '', organization_user, true) }
         end
       end
     end
@@ -392,7 +392,7 @@ module Interviews
         response = if data.content_type.include? 'csv'
                      Aviary::ImportOhmsInterviewCsv.new.import(data, current_organization, current_user, params[:status].to_i)
                    else
-                     Aviary::ImportOhmsInterviewXml.new.import(data, current_organization, current_user, params[:status].to_i)
+                     Aviary::ImportOhmsInterviewXML.new.import(data, current_organization, current_user, params[:status].to_i)
                    end
         response_body = if response.is_a?(Array)
                           { error: true, message: response.first.to_s.capitalize + ' ' + response.second.first }

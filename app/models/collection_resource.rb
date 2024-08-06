@@ -388,7 +388,7 @@ class CollectionResource < ApplicationRecord
   end
 
   def self.fetch_collections(export_and_current_organization, solr)
-    collections_raw = solr.post "select?#{URI.encode_www_form({ q: '*:*', start: 0, rows: 1000, fq: ['document_type_ss:collection', 'status_ss:active', "organization_id_is:#{export_and_current_organization[:current_organization].id}"], fl: %w[id_is title_ss] })}"
+    collections_raw = solr.post "select?#{URI.encode_www_form({ q: '*:*', start: 0, rows: 1000, fq: ['document_type_ss:collection', 'status_ss:active', "organization_id_is:#{export_and_current_organization[:current_organization].id}"], wt: 'json', fl: %w[id_is title_ss] })}"
     collections = {}
     collections_raw['response']['docs'].each do |single_collection|
       collections[single_collection['id_is'].to_s] = single_collection['title_ss']
@@ -598,9 +598,9 @@ class CollectionResource < ApplicationRecord
   end
 
   def self.bulk_edit_collection_operation(single_resource_id, collections)
-    resource = CollectionResource.find_by_id(single_resource_id)
+    resource = CollectionResource.find_by(id: single_resource_id)
     resource_fields = resource.all_fields['CollectionResource']
-    assigned_col = Collection.find_by_id(collections)
+    assigned_col = Collection.find_by(id: collections)
     col_fields = assigned_col.dynamic_attributes['settings']['CollectionResource']
     updated_values = []
     resource_fields.each do |field|
@@ -658,7 +658,7 @@ class CollectionResource < ApplicationRecord
     collection_limiter = limit_condition.clone
     collection_limiter.sub! 'collection_id_is', 'id_is'
     collection_title_condition = CollectionResource.search_perp(query, 'collection_title_text')
-    collections_raw = solr.post "select?#{URI.encode_www_form({ q: '*:*', fq: ['document_type_ss:collection', 'status_ss:active', collection_limiter, collection_title_condition], fl: %w[id_is title_ss] })}"
+    collections_raw = solr.post "select?#{URI.encode_www_form({ q: '*:*', fq: ['document_type_ss:collection', 'status_ss:active', collection_limiter, collection_title_condition], wt: 'json', fl: %w[id_is title_ss] })}"
     collections_raw['response']['docs'].each do |single_collection|
       fq_filters_inner = fq_filters_inner + (counter != 0 ? ' OR ' : ' ') + "collection_id_is: #{single_collection['id_is']}"
       counter += 1

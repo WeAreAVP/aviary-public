@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "#{Rails.root.join('app', 'services', 'blacklight')}/aviary_blacklight_search_service.rb" # TODO: make sure rails autoloads this (Was unable to autoload so had to resort to this for the moment)
 # The Searchable module can be included onto classes that need to initialize a SearchService.
 # There are three dependencies you must provide on the including class. Typically these
 # would be provided by Blacklight::Controller
@@ -14,10 +13,9 @@ require "#{Rails.root.join('app', 'services', 'blacklight')}/aviary_blacklight_s
 module Blacklight::Searchable
   # @return [Blacklight::SearchService]
   # include Aviary::Blacklight
-  include Aviary
 
   def search_service
-    Aviary::SearchService.new(config: blacklight_config, search_state: search_state, user_params: search_state.to_h, **search_service_context)
+    Aviary::Blacklight::SearchService.new(config: blacklight_config, search_state: search_state, user_params: search_state.to_h, **search_service_context)
   end
 
   # def search_service

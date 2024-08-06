@@ -13,14 +13,14 @@ class PublicAccessUrlsController < ApplicationController
   def index
     authorize! :manage, current_organization
     if request.xhr?
-      render json: PublicAccessUrlDatatable.new(view_context, current_organization)
+      render json: Datatables::PublicAccessUrlDatatable.new(view_context, current_organization)
     else
       render 'public_access_urls/public_access_urls'
     end
   end
 
   def edit
-    @public_access_url = PublicAccessUrl.find_by_id(params[:id])
+    @public_access_url = PublicAccessUrl.find_by(id: params[:id])
     @type = params[:type]
     render partial: 'public_access_urls/form'
   end
@@ -29,7 +29,7 @@ class PublicAccessUrlsController < ApplicationController
     authorize! :manage, current_organization
     flag = false
     msg = t('error_update')
-    public_access_url = PublicAccessUrl.find_by_id(params[:id])
+    public_access_url = PublicAccessUrl.find_by(id: params[:id])
     if public_access_url.present?
       if params['action_type'] == 'updateStatus' && public_access_url.update(status: params[:status].to_s.to_boolean?)
         msg = ' Access ' + t('status_successfully_updated')

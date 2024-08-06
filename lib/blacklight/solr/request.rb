@@ -18,7 +18,7 @@ class Blacklight::Solr::Request < ActiveSupport::HashWithIndifferentAccess
       super()
       update(constructor)
     else
-      super(constructor)
+      super
     end
     ARRAY_KEYS.each do |key|
       self[key] ||= []

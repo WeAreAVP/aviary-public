@@ -180,13 +180,13 @@ module Interviews
         interview_notes.where(status: true).count
       end
       string :thesaurus_keywords, stored: true do
-        ::Thesaurus::Thesaurus.find_by_id(thesaurus_keywords).try(:title)
+        ::Thesaurus::Thesaurus.find_by(id: thesaurus_keywords).try(:title)
       end
       string :thesaurus_subjects, stored: true do
-        ::Thesaurus::Thesaurus.find_by_id(thesaurus_subjects).try(:title)
+        ::Thesaurus::Thesaurus.find_by(id: thesaurus_subjects).try(:title)
       end
       string :thesaurus_titles, stored: true do
-        ::Thesaurus::Thesaurus.find_by_id(thesaurus_titles).try(:title)
+        ::Thesaurus::Thesaurus.find_by(id: thesaurus_titles).try(:title)
       end
       text :transcript_sync_data, stored: true
       text :transcript_sync_data_translation, stored: true
