@@ -8,8 +8,8 @@ class UsersController < ApplicationController
   before_action :authenticate_user!, :permissions?
 
   def change_org_status
-    user = User.find_by_id(params[:user_id])
-    organization = Organization.find_by_id(params[:org_id])
+    user = User.find_by(id: params[:user_id])
+    organization = Organization.find_by(id: params[:org_id])
 
     organization_user = organization.organization_users.where(user_id: user.id).first
 
@@ -44,7 +44,7 @@ class UsersController < ApplicationController
     @member_invites += current_organization.organization_users.where.not(token: nil)
     respond_to do |format|
       format.html
-      format.json { render json: UsersDatatable.new(view_context, current_user, current_organization) }
+      format.json { render json: Datatables::UsersDatatable.new(view_context, current_user, current_organization) }
     end
   end
 
@@ -59,7 +59,7 @@ class UsersController < ApplicationController
   def edit; end
 
   def add_new_member
-    organization = Organization.find_by_id(current_organization.id)
+    organization = Organization.find_by(id: current_organization.id)
     add_users = params[:user]
     hash = { messages: [], already_member: [], invitation_sent: [], user_successfully_added: [] }
     add_users.each do |user_email|

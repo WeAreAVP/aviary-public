@@ -23,6 +23,8 @@ Gemfile.lock, .ruby-version, .ruby-gemset
 # Ignore the default SQLite database.
 /db/*.sqlite3
 /db/*.sqlite3-journal
+db/test.sqlite3-shm
+db/test.sqlite3-wal
 /db/schema.rb
 
 # Ignore all test tmp files.

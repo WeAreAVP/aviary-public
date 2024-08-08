@@ -4,7 +4,7 @@
 # Copyright (C) 2019 Audio Visual Preservation Solutions, Inc.
 module PlaylistHelper
   def set_playlist
-    @playlist = Playlist.find_by_id(params[:playlist_id] || params[:id]) if params[:playlist_id] || params[:id]
+    @playlist = Playlist.find_by(id: params[:playlist_id] || params[:id]) if params[:playlist_id] || params[:id]
     if @playlist.nil?
       flash[:error] = 'Playlist not found.'
       redirect_to root_path
@@ -14,11 +14,11 @@ module PlaylistHelper
   end
 
   def set_playlist_resource
-    @playlist_resource = PlaylistResource.find_by_id(params[:playlist_resource_id] || params[:id]) if params[:playlist_resource_id] || params[:id]
+    @playlist_resource = PlaylistResource.find_by(id: params[:playlist_resource_id] || params[:id]) if params[:playlist_resource_id] || params[:id]
   end
 
   def set_playlist_item
-    @playlist_item = PlaylistResource.find_by_id(params[:playlist_item_id] || params[:id]) if params[:playlist_item_id] || params[:id]
+    @playlist_item = PlaylistResource.find_by(id: params[:playlist_item_id] || params[:id]) if params[:playlist_item_id] || params[:id]
   end
 
   def set_config

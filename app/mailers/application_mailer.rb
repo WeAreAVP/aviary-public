@@ -4,6 +4,6 @@
 # Copyright (C) 2019 Audio Visual Preservation Solutions, Inc.
 class ApplicationMailer < ActionMailer::Base
   include ApplicationHelper
-  default from: "AVIARY <#{ENV['FROM_EMAIL']}>"
+  default from: "AVIARY <#{ENV.fetch('FROM_EMAIL', nil)}>"
   layout 'mailer'
 end

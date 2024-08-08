@@ -11,7 +11,7 @@ class UserMailer < ApplicationMailer
 
   def support_request_received(support_request)
     @support_request = support_request
-    mail(to: ENV['SUPPORT_EMAIL'], subject: "Aviary - #{support_request.request_type} Request")
+    mail(to: ENV.fetch('SUPPORT_EMAIL', nil), subject: "Aviary - #{support_request.request_type} Request")
   end
 
   def invite_message(user, organization)

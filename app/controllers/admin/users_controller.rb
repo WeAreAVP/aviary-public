@@ -11,7 +11,7 @@ class Admin::UsersController < AdminController
   def index
     respond_to do |format|
       format.html
-      format.json { render json: Admin::UsersDatatable.new(view_context) }
+      format.json { render json: Datatables::Admin::UsersDatatable.new(view_context) }
     end
   end
 
@@ -84,7 +84,7 @@ class Admin::UsersController < AdminController
 
   def set_user
     id = params[:user_id].present? ? params[:user_id] : params[:id]
-    @user = User.find_by_id(id)
+    @user = User.find_by(id: id)
   end
 
   def export

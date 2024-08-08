@@ -62,7 +62,7 @@
               <input type="hidden" name='type' value='collection_fields'/>
             <% end %>
             <% if meta_field_info['thesaurus'].present? && meta_field_info['thesaurus']['vocabulary'] && meta_field_info['thesaurus']['vocabulary']['id'].present? %>
-              <% thesaurus_vocabulary = ::Thesaurus::Thesaurus.find_by_id(meta_field_info['thesaurus']['vocabulary']['id']) %>
+              <% thesaurus_vocabulary = ::Thesaurus::Thesaurus.find_by(id: meta_field_info['thesaurus']['vocabulary']['id']) %>
             <% end %>
 
             <div class="row">
@@ -97,7 +97,7 @@
                     <label for="">Dropdown Options<sup>*</sup></label>
                   </div>
                   <% if meta_field_info['thesaurus'].present? && meta_field_info['thesaurus']['dropdown'] && meta_field_info['thesaurus']['dropdown']['id'].present? %>
-                    <% thesaurus_dropdown = ::Thesaurus::Thesaurus.find_by_id(meta_field_info['thesaurus']['dropdown']['id']) %>
+                    <% thesaurus_dropdown = ::Thesaurus::Thesaurus.find_by(id: meta_field_info['thesaurus']['dropdown']['id']) %>
                   <% end %>
                   <% if meta_field_info['thesaurus'].present? && meta_field_info['thesaurus']['dropdown'] && meta_field_info['thesaurus']['dropdown']['id'].present? && thesaurus_dropdown.try(:id).present? %>
                     <label for="" class="float-left">Assigned Thesaurus</label>app/assets/javascripts/aviary_app.js

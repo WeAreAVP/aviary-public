@@ -11,7 +11,6 @@ RSpec.describe CollectionsController, type: :controller do
   let(:collection_resource_file_5) { create(collection_resource_file, collection_resource: collection_resource_2) }
 
   before do
-    request[:subdomain] = collection.organization.url
     allow(controller).to receive(:current_organization).and_return(collection.organization)
     allow(controller).to receive(:current_user).and_return(collection.organization.user)
     sign_in(collection.organization.user)

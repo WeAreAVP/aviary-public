@@ -665,10 +665,7 @@ collection_field_manager = [
   }
 
 ]
-collection_field_manager.each do |single_field|
-  field = CustomFields::Field.where(system_name: single_field[:system_name], source_type: single_field[:source_type]).first_or_initialize
-  field.update(single_field)
-end
+
 
 puts '============================ Plans ============================='
 puts '================================================================'
@@ -690,7 +687,7 @@ plans = [
 ]
 
 plans.each do |plan|
-  if Plan.find_by_name_and_frequency(plan[:name], plan[:frequency]).nil?
+  if Plan.find_by(name: plan[:name], frequency: plan[:frequency]).nil?
     Plan.create(plan)
   end
 end
@@ -719,7 +716,7 @@ org_user = user.organization_users.where(organization_id: organization.id, role_
 org_user.status = true
 org_user.save
 
-plan = Plan.find_by_name_and_frequency('Premium Max', Plan::Frequency::YEARLY)
+plan = Plan.find_by(name: 'Premium Max', frequency: Plan::Frequency::YEARLY)
 end_time = Time.now + 1.year
 
 

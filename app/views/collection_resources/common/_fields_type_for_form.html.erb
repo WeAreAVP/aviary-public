@@ -20,7 +20,7 @@
 <% when OrganizationField::TypeInformation::DROPDOWN.to_s %>
   <% thesaurus = field_settings.info_of_attribute('thesaurus') %>
   <% if thesaurus.present? && thesaurus.present? && thesaurus['dropdown'] && thesaurus['dropdown']['id'].present? %>
-    <% thesaurus_dropdown = ::Thesaurus::Thesaurus.find_by_id(thesaurus['dropdown']['id']) %>
+    <% thesaurus_dropdown = ::Thesaurus::Thesaurus.find_by(id: thesaurus['dropdown']['id']) %>
     <% assigned_thesaurus = thesaurus_dropdown.present? ? thesaurus_dropdown.id : '' %>
     <% type = 'thesaurus' %>
     <input name="collection_resource[collection_resource_field_values][][value]" type="text" id="thesaurus_term_autocomplete_<%= field_settings.system_name %>" value="<%= single_value_raw.present? ? single_value_raw : '' %>" class="form-control thesaurus_term_autocomplete" autocomplete="nope" placeholder="Enter a term" data-type-of-list="<%= type %>" data-assigned-thesaurus="<%= assigned_thesaurus %>" data-path="<%= autocomplete_thesaurus_manager_index_path %>"/>

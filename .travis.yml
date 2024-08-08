@@ -1,5 +1,5 @@
 sudo: true
-dist: focal
+dist: jammy
 language: ruby
 services:
   - redis-server
@@ -7,7 +7,7 @@ services:
 jdk:
   - openjdk11
 rvm:
-  - 3.1.0
+  - 3.3.3
 addons:
   apt:
     packages:
@@ -26,9 +26,6 @@ before_script:
 script:
 - bundle exec rspec
 - bundle exec license_finder
-conditions:
-  # Only run builds on pull requests
-  - type: pull_request
 env:
   global:
   - secure: vzd+BkkXxRcLdz9pCVtP03lvbq6QXfAhXFfNb3Aso8gWhvWKJf+15NJ/9RAZsQHFvXjYr3XbdcQLeJlONOEkSbmKCMSadQ/s8jrXkVdF3q8meArIZgGKaMAz/9bfVjPxEjHYIKCqGT67K4STVVl5HYxwheCJ9qaL1V/i/r+L8pzhTdYJNetBTiKl34UiU+kv1a4F6GkgvrjJiD5b7B6t77yuYvoigxqCAv3SHzZwDWcGSLg35Cu1sopPW+VTUy+CaUXvAzG3GD8EYOzTd2aDDG/+HNgl8tPPDWfsJtyEHfGxYuAgXTXmD8qSmKYpHbd4WwDN5XJGcmCTuUwWzQ9seSCMPi88G78W+pU6UWe3FikuKuUKF8NCxUUVhsrqARuBp3NrLIWcZbNLTKFsgzju3yfZmQvHTtdbsOYahW2MXfpz7y4eGChMoaiUfsql7RTxOlTGx0XHVdFe7rR6yum5SWyXGfrN0l6gUmq/Jb4iWJnWdfp4ndETtwwMVylL+9BBNf7Mg9agisq3XOvEC9jMNR74lDecHC3R54XqGiUVKSyF887+AwTMpkmA+lzR7mVr+kuWmtmD0kksZhtQ4a8wx75SsDZpiZeJHTN+wzZ2UVXfFQnzXXV/B4sfhwbwSDtfr+TACUVCxmOUW6oh9VQmKQWlJnTX6iNmGVtqc8QXfGs=

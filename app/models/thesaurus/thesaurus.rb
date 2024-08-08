@@ -14,6 +14,8 @@ module Thesaurus
 
     has_attached_file :ohms_integrations_vocabulary, validate_media_type: false, default_url: ''
     validates_attachment_content_type :ohms_integrations_vocabulary, content_type: ['text/csv', 'text/plain']
+    attribute :status, :integer
+    attribute :operation_type, :integer
     enum status: %i[active in_active]
     enum operation_type: ['Overwrite Existing Terms', 'Append to Existing Terms']
 

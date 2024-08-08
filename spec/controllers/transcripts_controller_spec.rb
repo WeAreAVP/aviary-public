@@ -3,7 +3,6 @@ RSpec.describe TranscriptsController, type: :controller do
   let(:file_transcript) { create(:file_transcript) }
   let(:file_transcript_webvtt) { create :file_transcript, attributes_for(:file_transcript, :use_webvtt) }
   before do
-    request[:subdomain] = file_transcript.collection_resource_file.collection_resource.collection.organization.url
     allow(controller).to receive(:current_organization).and_return(file_transcript.collection_resource_file.collection_resource.collection.organization)
     allow(controller).to receive(:current_user).and_return(file_transcript.collection_resource_file.collection_resource.collection.organization.user)
     sign_in(file_transcript.collection_resource_file.collection_resource.collection.organization.user)

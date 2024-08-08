@@ -11,7 +11,7 @@
       media_url_inner = if @playlist_action == 'edit'
                           playlist_edit_url(param_inner)
                         else
-                          current_playlist_item = @playlist_resource.present? && @playlist_resource.playlist_items.present? ? @playlist_resource.playlist_items.find_by_collection_resource_file_id(single_file.id) : nil
+                          current_playlist_item = @playlist_resource.present? && @playlist_resource.playlist_items.present? ? @playlist_resource.playlist_items.find_by(collection_resource_file_id: single_file.id) : nil
                           param_inner[:pst] = current_playlist_item.start_time.to_f if current_playlist_item.present? and current_playlist_item.start_time.present?
                           param_inner[:pet] = current_playlist_item.end_time.to_f if current_playlist_item.present? and current_playlist_item.end_time.present?
                           param_inner[:share] = params[:share] if params[:share].present?

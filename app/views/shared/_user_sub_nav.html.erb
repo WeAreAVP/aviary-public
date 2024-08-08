@@ -61,7 +61,7 @@
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
               <%= link_to "Profile", profile_path, class: "dropdown-item #{'active' if request.path.include?("profile_settings")}" %>
-              <% organization_user = OrganizationUser.find_by_user_id(current_user.id) %>
+              <% organization_user = OrganizationUser.find_by(user_id: current_user.id) %>
               <% if organization_user.role.system_name == 'ohms_assigned_user' %>
               <%= link_to "My OHMS Assignments", my_ohms_assignment_url(subdomain: false), class: "dropdown-item #{'active' if request.path.include?("ohms_records")}" %>
               <% end %>

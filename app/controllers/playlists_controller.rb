@@ -6,7 +6,7 @@ class PlaylistsController < ApplicationController
   include PlaylistHelper
 
   before_action :set_config
-  before_action :set_playlist, only: %I[edit update show destroy toggle_item_in_playlist_resource add_resource_to_playlist]
+  before_action :set_playlist, only: %I[edit update show destroy add_resource_to_playlist]
   before_action :authenticate_user!, except: %I[show listing_for_add_to_playlist update_selected_tab]
   load_and_authorize_resource except: %I[listing_for_add_to_playlist]
 
@@ -14,7 +14,7 @@ class PlaylistsController < ApplicationController
     authorize! :manage, current_organization
     respond_to do |format|
       format.html
-      format.json { render json: PlaylistsDatatable.new(view_context, current_organization) }
+      format.json { render json: Datatables::PlaylistsDatatable.new(view_context, current_organization) }
     end
   end
 
@@ -41,7 +41,7 @@ class PlaylistsController < ApplicationController
   end
 
   def edit
-    @playlist_resource = PlaylistResource.find_by_id(params[:playlist_resource_id])
+    @playlist_resource = PlaylistResource.find_by(id: params[:playlist_resource_id])
     @collection_resource ||= @playlist_resource.collection_resource if @playlist_resource
 
     if @collection_resource.nil? && @playlist.playlist_resources.count > 0
@@ -56,7 +56,7 @@ class PlaylistsController < ApplicationController
       @collection = nil
     end
     if @collection_resource.present?
-      @resource_file = @collection_resource.collection_resource_files.find_by_id(params[:collection_resource_file_id])
+      @resource_file = @collection_resource.collection_resource_files.find_by(id: params[:collection_resource_file_id])
       if @resource_file.nil? && @collection_resource.collection_resource_files.count > 0
         redirect_to playlist_edit_path(@playlist.id, playlist_resource_id: @playlist_resource.id, collection_resource_file_id: @collection_resource.collection_resource_files.order_file.first)
         return
@@ -68,7 +68,7 @@ class PlaylistsController < ApplicationController
     if @collection.present?
       @resource_columns_collection = @collection_field_manager.sort_fields(@collection_field_manager.collection_resource_field_settings(@collection, 'resource_fields').resource_fields, 'sort_order')
     end
-    @current_playlist_item = @playlist_resource.playlist_items.find_by_collection_resource_file_id(@resource_file.id) if @resource_file.present?
+    @current_playlist_item = @playlist_resource.playlist_items.find_by(collection_resource_file_id: @resource_file.id) if @resource_file.present?
     @playlist_files = {}
     @playlist_files = @collection_resource.collection_resource_files.order_file if @collection_resource.present? && @collection_resource.collection_resource_files.present?
     @detail_page = true
@@ -95,7 +95,7 @@ class PlaylistsController < ApplicationController
 
   def show
     @playlist_show = true
-    @playlist_resource = PlaylistResource.find_by_id(params[:playlist_resource_id])
+    @playlist_resource = PlaylistResource.find_by(id: params[:playlist_resource_id])
     @collection_resource ||= @playlist_resource.collection_resource if @playlist_resource.present?
     @organization_field_manager = Aviary::FieldManagement::OrganizationFieldManager.new
     @collection_field_manager = Aviary::FieldManagement::CollectionFieldManager.new
@@ -107,7 +107,7 @@ class PlaylistsController < ApplicationController
       return
     end
 
-    @resource_file = @collection_resource.collection_resource_files.find_by_id(params[:collection_resource_file_id]) if @playlist_resource.present?
+    @resource_file = @collection_resource.collection_resource_files.find_by(id: params[:collection_resource_file_id]) if @playlist_resource.present?
     begin
       @collection = @collection_resource.collection
     rescue StandardError
@@ -115,7 +115,7 @@ class PlaylistsController < ApplicationController
     end
 
     authorize! :read, @playlist
-    @current_playlist_item = @playlist_resource.playlist_items.find_by_collection_resource_file_id(@resource_file.id) if @resource_file.present?
+    @current_playlist_item = @playlist_resource.playlist_items.find_by(collection_resource_file_id: @resource_file.id) if @resource_file.present?
     @playlist_files = {}
     @playlist_files = CollectionResourceFile.where(id: @playlist_resource.playlist_items.pluck(:collection_resource_file_id)).order(:sort_order) if @playlist_resource.present? && @playlist_resource.playlist_items.present?
     @detail_page = true
