@@ -7,7 +7,6 @@ class CollectionsController < ApplicationController
   before_action :authenticate_user!, except: :show
   load_and_authorize_resource except: :show
   include Aviary::BulkOperation
-  include Aviary::FieldManagement
   include CollectionResourceHelper
   include CollectionResourceFileHelper
 
@@ -15,7 +14,7 @@ class CollectionsController < ApplicationController
     authorize! :manage, current_organization
     respond_to do |format|
       format.html
-      format.json { render json: CollectionsDatatable.new(view_context, current_organization) }
+      format.json { render json: Datatables::CollectionsDatatable.new(view_context, current_organization) }
     end
   end
 
@@ -118,11 +117,12 @@ class CollectionsController < ApplicationController
     @resource_file = @collection_resource.try { |collection_resource| collection_resource.collection_resource_files.order_file.first }
     if request.xhr?
       @data_hash ||= {}
-      @data_hash = PreviewScript.new(@collection, params, @resource_fields, @resource_columns_collection).update_data_hash(eval(params['previous_hash']))
+      @data_hash = Aviary::PreviewScript.new(@collection, params, @resource_fields, @resource_columns_collection)
+                                        .update_data_hash(string_hash_to_hash(params['previous_hash']))
       render partial: 'collection_resource_preview', locals: { data_hash: @data_hash, resource_file: @resource_file }
     else
       @detail_page = false
-      @data_hash = PreviewScript.new(@collection, nil, @resource_fields, @resource_columns_collection).data_hash(@collection_resource, {})
+      @data_hash = Aviary::PreviewScript.new(@collection, nil, @resource_fields, @resource_columns_collection).data_hash(@collection_resource, {})
     end
   end
 
@@ -164,7 +164,7 @@ class CollectionsController < ApplicationController
   def list_resources
     authorize! :manage, current_organization
     collection = this_collection
-    session[:resource_list_params] = params
+    session[:resource_list_params] = params.to_unsafe_h
     session[:resource_list_bulk_edit] = [] unless request.xhr?
     session[:resource_list_params] = [] unless request.xhr?
     record_last_bread_crumb(request.fullpath, "Back to <strong>#{@collection.title}</strong>") unless request.xhr?
@@ -173,7 +173,7 @@ class CollectionsController < ApplicationController
     @fixed_columns = current_organization.organization_field.present? && current_organization.organization_field.fixed_column.present? ? current_organization.organization_field.fixed_column : 0
     respond_to do |format|
       format.html
-      format.json { render json: ResourcesListingDatatable.new(view_context, collection, 'listing_resource_collection_wise', {}, @resource_fields) }
+      format.json { render json: Datatables::ResourcesListingDatatable.new(view_context, collection, 'listing_resource_collection_wise', {}, @resource_fields) }
     end
   end
 
@@ -208,7 +208,7 @@ class CollectionsController < ApplicationController
 
   def list_media
     authorize! :manage, current_organization
-    session[:media_list_params] = params
+    session[:media_list_params] = params.to_unsafe_h
     unless request.xhr?
       session[:media_list_bulk_edit] = []
       session[:media_list_params] = []
@@ -220,12 +220,12 @@ class CollectionsController < ApplicationController
     @fixed_columns = current_organization.try(:organization_field).try(:fixed_column) || 0
     respond_to do |format|
       format.html
-      format.json { render json: MediaListingDatatable.new(view_context, @collection, 'listing_media_collection_wise', {}, @media_fields) }
+      format.json { render json: Datatables::MediaListingDatatable.new(view_context, @collection, 'listing_media_collection_wise', {}, @media_fields) }
     end
   end
 
   def update_sort_fields
-    FieldSettingsJob.perform_later(@collection, params['collection_resource_field'].values, 'CollectionResource')
+    FieldSettingsJob.perform_later(@collection, params.permit!['collection_resource_field'].values, 'CollectionResource')
     render json: { status: 'success' }
   end
 
@@ -321,7 +321,7 @@ class CollectionsController < ApplicationController
   private
 
   def this_collection
-    current_organization.collections.find_by_id(params[:id]) if params[:id]
+    current_organization.collections.find_by(id: params[:id]) if params[:id]
   end
 
   def clone_collection(clone_collection_id, collection_params)
@@ -384,7 +384,7 @@ class CollectionsController < ApplicationController
       embeded_resource = "<iframe src='#{link}?embed=true' height='400' width='1200' style='width: 100%'></iframe>"
       begin
         purl = noid_url(noid: resource['noid_ss'], host: Utilities::AviaryDomainHandler.subdomain_handler(current_organization))
-        db_resource = CollectionResource.find_by_id(resource['id_is'])
+        db_resource = CollectionResource.find_by(id: resource['id_is'])
         db_resource.collection_resource_files.each do |resource_file|
           resource_file_embed << "<iframe src='#{embed_file_url(host: Utilities::AviaryDomainHandler.subdomain_handler(current_organization), resource_file_id: resource_file.id)}' height='400' width='600'></iframe>"
         end

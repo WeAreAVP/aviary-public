@@ -9,7 +9,9 @@ class CollectionResourceFile < ApplicationRecord
   has_many :file_indexes, dependent: :destroy
   has_many :file_transcripts, dependent: :destroy
   has_many :playlist_items, dependent: :destroy
+  attribute :access, :integer
   enum access: %i[no yes]
+  attribute :transcode_status, :integer
   enum transcode_status: { pending: 0, in_progress: 1, completed: 2, not_needed: 3 }
   has_attached_file :resource_file, { default_url: '', validate_media_type: false }.merge(USE_STORAGE_PARAMS_FOR_ATTACHMENTS ? STORAGE_FOR_ATTACHMENTS : {})
   has_attached_file :thumbnail, styles: { small: '450x230>', medium: '2000x411>', processors: %i[thumbnail compression] }, default_url: ''
@@ -240,9 +242,9 @@ class CollectionResourceFile < ApplicationRecord
     if thumbnail.present?
       thumbnail.url(:small)
     elsif embed_type.to_s.include?('video') || resource_file_content_type.to_s.include?('video')
-      "https://#{ENV['S3_HOST_CDN']}/public/images/video-default.png"
+      "https://#{ENV.fetch('S3_HOST_CDN', nil)}/public/images/video-default.png"
     else
-      "https://#{ENV['S3_HOST_CDN']}/public/images/audio-default.png"
+      "https://#{ENV.fetch('S3_HOST_CDN', nil)}/public/images/audio-default.png"
     end
   end
 
@@ -436,7 +438,7 @@ class CollectionResourceFile < ApplicationRecord
   end
 
   def self.collection_sorter(limit_condition, sort_direction, solr)
-    collections_raw = solr.post "select?#{URI.encode_www_form({ q: '*:*', fq: ['document_type_ss:collection', 'status_ss:active', limit_condition], fl: %w[id_is], sort: 'title_ss desc' })}"
+    collections_raw = solr.post "select?#{URI.encode_www_form({ q: '*:*', fq: ['document_type_ss:collection', 'status_ss:active', limit_condition], wt: 'json', fl: %w[id_is], sort: 'title_ss desc' })}"
     response = collections_raw['response'].present? && collections_raw['response']['docs'].present? ? collections_raw['response']['docs'] : nil
     if response.present? && !response.size.zero?
       sort = ''

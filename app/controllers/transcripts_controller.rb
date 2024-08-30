@@ -24,7 +24,7 @@ class TranscriptsController < ApplicationController
     session[:file_transcript_bulk_edit] = [] unless request.xhr?
     respond_to do |format|
       format.html
-      format.json { render json: TranscriptsDatatable.new(view_context, current_organization, params['called_from'], params[:additionalData]) }
+      format.json { render json: Datatables::TranscriptsDatatable.new(view_context, current_organization, params['called_from'], params[:additionalData]) }
     end
   end
 
@@ -133,7 +133,7 @@ class TranscriptsController < ApplicationController
   end
 
   def export
-    file_transcript = FileTranscript.find_by_id(params[:id])
+    file_transcript = FileTranscript.find_by(id: params[:id])
     if file_transcript.present? && %w[webvtt txt json].include?(params[:type])
       collection_resource = file_transcript.collection_resource_file.collection_resource
       if file_transcript.is_downloadable.positive? && (file_transcript.is_public || collection_resource.can_view || collection_resource.can_edit || (can? :edit, collection_resource.collection.organization))
@@ -157,7 +157,7 @@ class TranscriptsController < ApplicationController
 
   def refresh_hits_annotation
     annotation_count = {}
-    file_transcript = FileTranscript.find_by_id(params[:transcript_id])
+    file_transcript = FileTranscript.find_by(id: params[:transcript_id])
     annotation_count = FileTranscriptPresenter.new(file_transcript, view_context).count_annotation_occurrence_present(file_transcript.id, annotation_count)
     respond_to do |format|
       format.json { render json: { annotation_count: annotation_count }, status: :accepted }

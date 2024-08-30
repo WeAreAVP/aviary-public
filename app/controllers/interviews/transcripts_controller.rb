@@ -66,7 +66,7 @@ module Interviews
       end
       @text = @file_transcript.file_transcript_points.pluck(:text).join(' ')
       transcript_manager = Aviary::OhmsTranscriptManager.new
-      @text =  transcript_manager.read_notes_info(@file_transcript, @text)
+      @text = transcript_manager.read_notes_info(@file_transcript, @text)
       OhmsBreadcrumbPresenter.new(@file_transcript, view_context).breadcrumb_manager('edit', @file_transcript, 'sync')
     end
 

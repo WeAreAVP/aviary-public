@@ -62,4 +62,23 @@ module CollectionResourceHelper
                  end
     iframe_url
   end
+
+  def string_hash_to_hash(ruby_hash_text)
+    # Transform object string symbols to quoted strings
+    ruby_hash_text.gsub!(/([{,]\s*):([^>\s]+)\s*=>/, '\1"\2"=>')
+
+    # Transform object string numbers to quoted strings
+    ruby_hash_text.gsub!(/([{,]\s*)([0-9]+\.?[0-9]*)\s*=>/, '\1"\2"=>')
+
+    # Transform object value symbols to quotes strings
+    ruby_hash_text.gsub!(/([{,]\s*)(".+?"|[0-9]+\.?[0-9]*)\s*=>\s*:([^,}\s]+\s*)/, '\1\2=>"\3"')
+
+    # Transform array value symbols to quotes strings
+    ruby_hash_text.gsub!(/([\[,]\s*):([^,\]\s]+)/, '\1"\2"')
+
+    # Transform object string object value delimiter to colon delimiter
+    ruby_hash_text.gsub!(/([{,]\s*)(".+?"|[0-9]+\.?[0-9]*)\s*=>/, '\1\2:')
+
+    JSON.parse(ruby_hash_text)
+  end
 end

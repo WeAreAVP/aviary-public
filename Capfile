@@ -10,7 +10,7 @@ require 'capistrano/deploy'
 
 require 'capistrano/rbenv'
 set :rbenv_type, :user
-set :rbenv_ruby, '3.1.0'
+set :rbenv_ruby, '3.3.4'
 
 require 'capistrano/scm/git'
 

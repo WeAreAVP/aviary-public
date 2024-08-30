@@ -11,6 +11,7 @@ class Playlist < ApplicationRecord
   has_many :playlist_items, dependent: :destroy
   has_attached_file :thumbnail, styles: { small: '450x230>', processors: %i[thumbnail compression] }, default_url: ''
   validates_attachment_content_type :thumbnail, content_type: %r[\Aimage\/.*\z]
+  attribute :access, :integer
   enum access: %i[access_private access_public]
   scope :is_featured, -> { where(is_public: true, is_featured: true) }
   scope :is_featured_only, -> { where(is_featured: true) }

@@ -13,7 +13,7 @@ class Ahoy::Visit < ApplicationRecord
     self.ip = Rails.env.development? ? '101.53.254.80' : ip
     if country.blank?
       begin
-        db = MaxMindDB.new(ENV['GEO_DB_PATH'])
+        db = MaxMindDB.new(ENV.fetch('GEO_DB_PATH', nil))
         ret = db.lookup(ip)
         region = ret.subdivisions.most_specific.name if region.blank?
         country = ret.country.name if country.blank?

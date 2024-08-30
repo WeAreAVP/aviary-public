@@ -4,16 +4,16 @@
 # Copyright (C) 2019 Audio Visual Preservation Solutions, Inc.
 class CollectionResourcesController < ApplicationController
   before_action :set_av_resource, except: %I[new show create embed_file]
-  before_action :authenticate_user!, except: %I[show search_text load_resource_details_template load_time_line_template embed_file show_search_counts load_index_template load_transcript_template file_wise_counts]
+  before_action :authenticate_user!, except: %I[show load_resource_details_template embed_file show_search_counts load_index_template load_transcript_template file_wise_counts]
   before_action :check_resource_limit, only: %I[new create]
   before_action :check_if_playlist
-  load_and_authorize_resource except: %I[create search_text load_resource_details_template load_time_line_template embed_file show_search_counts load_index_template load_transcript_template file_wise_counts]
+  load_and_authorize_resource except: %I[create load_resource_details_template embed_file show_search_counts load_index_template load_transcript_template file_wise_counts]
   include ApplicationHelper
   include Aviary::ResourceFileManagement
 
   def index
     authorize! :manage, current_organization
-    session[:resource_list_params] = params
+    session[:resource_list_params] = params.to_unsafe_h
     record_last_bread_crumb(request.fullpath, 'Back to My Resources') unless request.xhr?
     session[:resource_list_bulk_edit] = [] unless request.xhr?
     session[:resource_list_params] = [] unless request.xhr?
@@ -24,7 +24,7 @@ class CollectionResourcesController < ApplicationController
 
     respond_to do |format|
       format.html
-      format.json { render json: ResourcesListingDatatable.new(view_context, current_organization, params['called_from'], params[:additionalData], @resource_fields) }
+      format.json { render json: Datatables::ResourcesListingDatatable.new(view_context, current_organization, params['called_from'], params[:additionalData], @resource_fields) }
     end
   end
 
@@ -66,7 +66,7 @@ class CollectionResourcesController < ApplicationController
 
   def file_wise_counts
     session_video_text_all = params[:search_text_val]
-    collection_resource = CollectionResource.find_by_id(params[:collection_resource_id])
+    collection_resource = CollectionResource.find_by(id: params[:collection_resource_id])
     count_file_wise = {}
     if collection_resource.present? && session_video_text_all.present?
       collection_resource_presenter = CollectionResourcePresenter.new(@collection_resource, view_context)
@@ -275,7 +275,7 @@ class CollectionResourcesController < ApplicationController
 
   def resource_file_sort
     params[:resource_file_sort].each do |key, value|
-      CollectionResourceFile.find_by_id(key).update(sort_order: value, partial: true)
+      CollectionResourceFile.find_by(id: key).update(sort_order: value, partial: true)
     end
     render json: [errors: []]
   end

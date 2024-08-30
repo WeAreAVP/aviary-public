@@ -118,7 +118,7 @@ class HomeController < ApplicationController
   end
 
   def noid
-    collection_resource = CollectionResource.find_by_noid!(params[:noid])
+    collection_resource = CollectionResource.find_by!(noid: params[:noid])
     session[:share] = params[:share] if params[:share].present?
     session[:access] = params[:access] if params[:access].present?
     if params[:media].present?
@@ -133,7 +133,7 @@ class HomeController < ApplicationController
 
   def playlist_share
     playlist_id = Base64.urlsafe_decode64(params[:encoded_id]).gsub('share', '')
-    playlist = Playlist.find_by_id!(playlist_id)
+    playlist = Playlist.find_by!(id: playlist_id)
     session[:share] = params[:share] if params[:share].present?
     redirect_to playlist_show_path(playlist, share: params[:share])
   rescue StandardError
@@ -166,7 +166,7 @@ class HomeController < ApplicationController
   end
 
   def media
-    resource_file = CollectionResourceFile.find_by_id!(Base64.decode64(params[:id]))
+    resource_file = CollectionResourceFile.find_by!(id: Base64.decode64(params[:id]))
     tracking_param = JSON.parse(params.to_json)
     tracking_param['target_id'] = Base64.decode64(params[:id])
     tracking_param['organization_id'] = current_organization.id

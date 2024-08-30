@@ -4,7 +4,7 @@
       <% vocabulary_list = field_settings.vocabulary_list %>
       <% thesaurus = field_settings.info_of_attribute('thesaurus') %>
       <% if thesaurus.present? && thesaurus.present? && thesaurus['vocabulary'] && thesaurus['vocabulary']['id'].present? %>
-        <% thesaurus_vocabulary = ::Thesaurus::Thesaurus.find_by_id(thesaurus['vocabulary']['id']) %>
+        <% thesaurus_vocabulary = ::Thesaurus::Thesaurus.find_by(id: thesaurus['vocabulary']['id']) %>
         <% if thesaurus_vocabulary.present? %>
           <div class="col-md-6">
             <div class="form--group">

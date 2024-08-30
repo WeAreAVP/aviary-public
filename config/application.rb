@@ -7,11 +7,18 @@ require 'rails/all'
 Bundler.require(*Rails.groups)
 
 module Aviary
-  # Main Application class
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
-    config.load_defaults 6.1
+    config.load_defaults 7.0
+    # config.active_support.cache_format_version = 6.1
     config.encoding = 'utf-8'
+    # Please, add to the `ignore` list any other `lib` subdirectories that do
+    # not contain `.rb` files, or that should not be reloaded or eager loaded.
+    # Common ones are `templates`, `generators`, or `middleware`, for example.
+    config.autoload_lib(ignore: %w(assets tasks))
+    # config.add_autoload_paths_to_load_path = true
+
+    config.autoloader = :classic
     # Configuration for the application, engines, and railties goes here.
     #
     # These settings can be overridden in specific environments using the files
@@ -19,29 +26,17 @@ module Aviary
     #
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
-    config.autoloader = :classic
-    # config.autoload_paths << config.root.join('lib')
-    # config.autoload_paths << config.root.join('services')
-    # onfig.assets.paths << Rails.root.join('vendor', 'app', 'assets', 'fonts')
-    # config.middleware.insert_before 0, Rack::Cors do
-    #   allow do
-    #     origins '*'
-    #     resource '*', headers: :any,
-    #              methods: %i[get post put patch delete options head],
-    #              expose: %w[access-token expiry token-type uid client organization-id]
-    #   end
-    # end
-    # config.action_dispatch.default_headers = {
-    #   'Access-Control-Allow-Origin' => '*',
-    #   'Access-Control-Request-Method' => %w{GET POST OPTIONS}.join(',')
-    # }
-    config.autoload_paths += Dir["#{config.root}/lib/**/", "#{config.root}/app/services/**/", "#{config.root}/app/services/aviary/ssl_certificate_manager/**",
-                                 "#{config.root}/app/services/aviary/field_management/base_field_manager.rb", "#{config.root}/app/services/aviary/field_management/**",
-                                 ]
+    # config.autoload_paths += Dir["#{config.root}/app/services/**/", "#{config.root}/app/services/aviary/ssl_certificate_manager/**/",
+    #                               "#{config.root}/app/services/aviary/field_management/**/" ]
+    # config.autoload_paths << "#{Rails.root}/app/services"
+    # config.eager_load_paths << "#{Rails.root}/app/services"
     config.active_job.queue_adapter = :sidekiq
     config.time_zone = 'America/New_York' # Your local time zone
-    config.active_record.default_timezone = :local
+    # config.active_record.default_timezone = :local
     config.active_record.time_zone_aware_attributes = false
-    config.active_record.use_yaml_unsafe_load = true
+    config.active_record.yaml_column_permitted_classes = [Symbol, Hash, Array, ActiveSupport::HashWithIndifferentAccess]
+    config.active_record.encryption.primary_key = ENV.fetch('ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY', nil)
+    config.active_record.encryption.deterministic_key = ENV.fetch('ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY', nil)
+    config.active_record.encryption.key_derivation_salt = ENV.fetch('ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT', nil)
   end
 end

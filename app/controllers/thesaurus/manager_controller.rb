@@ -33,7 +33,7 @@ module Thesaurus
       end
       respond_to do |format|
         format.html
-        format.json { render json: InformationDatatable.new(view_context, current_organization, @field_has_thesaurus) }
+        format.json { render json: Datatables::Thesaurus::InformationDatatable.new(view_context, current_organization, @field_has_thesaurus) }
       end
     end
 
@@ -182,7 +182,7 @@ module Thesaurus
     def edit
       authorize! :manage, current_organization
       error = t('access_information_not_available')
-      return redirect_to organization_fields_path, flash: { error: error } if @thesaurus.parent_id.to_i > 0 || ::Thesaurus::Thesaurus.where(id: @thesaurus, organization_id: current_organization.id).blank?
+      redirect_to organization_fields_path, flash: { error: error } if @thesaurus.parent_id.to_i > 0 || ::Thesaurus::Thesaurus.where(id: @thesaurus, organization_id: current_organization.id).blank?
     end
 
     def export
@@ -258,7 +258,7 @@ module Thesaurus
     def current_thesaurus
       @thesaurus = nil
       id = params[:id].present? ? params[:id] : params[:manager_id]
-      @thesaurus = id.present? ? ::Thesaurus::Thesaurus.find_by_id(id) : nil
+      @thesaurus = id.present? ? ::Thesaurus::Thesaurus.find_by(id: id) : nil
     end
 
     def write_terms(file, thesaurus, append)

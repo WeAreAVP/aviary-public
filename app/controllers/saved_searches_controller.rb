@@ -13,7 +13,7 @@ class SavedSearchesController < ApplicationController
   before_action :set_saved_search, only: %i[edit update destroy]
 
   def index
-    return render json: SavedSearchDatatable.new(view_context) if request.xhr?
+    render json: Datatables::SavedSearchDatatable.new(view_context) if request.xhr?
   end
 
   def new

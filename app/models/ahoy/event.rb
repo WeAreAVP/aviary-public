@@ -10,5 +10,5 @@ class Ahoy::Event < ApplicationRecord
   belongs_to :visit
   belongs_to :user, optional: true
   has_many :search_trackings
-  serialize :properties, JSON
+  serialize :properties, coder: JSON
 end

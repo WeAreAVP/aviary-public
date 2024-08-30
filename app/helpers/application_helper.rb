@@ -7,7 +7,6 @@ module ApplicationHelper
   include InterviewIndexHelper
   include DeprecatedHelper
   require 'securerandom'
-  VALID_TRANSCRIPT_TYPES = ['IBM Watson', 'Manual'].freeze
 
   def organization_layout?
     nil
@@ -217,15 +216,7 @@ module ApplicationHelper
   end
 
   def allow_editor?(data)
-    !data.is_edit &&
-      valid_transcript_type?(data) &&
-      (data.saved_slate_js.present? ||
-      ['text/vtt', 'text/plain'].include?(data.associated_file_content_type) ||
-      (data.original_transcript_type == 'IBM Watson' && valid_json?(data.timestamps&.gsub('=>', ':'))))
-  end
-
-  def valid_transcript_type?(transcript)
-    VALID_TRANSCRIPT_TYPES.include?(transcript.original_transcript_type)
+    !data.is_edit && ['text/vtt', 'text/plain'].include?(data.associated_file_content_type)
   end
 
   def valid_json?(json)
@@ -329,7 +320,7 @@ module ApplicationHelper
   end
 
   def lock_image(classes = '')
-    "<img class='#{classes}' src='https://#{ENV['S3_HOST_CDN']}/public/lock.png' alt='content locked'>".html_safe
+    "<img class='#{classes}' src='https://#{ENV.fetch('S3_HOST_CDN', nil)}/public/lock.png' alt='content locked'>".html_safe
   end
 
   def key_hash_manager(string)

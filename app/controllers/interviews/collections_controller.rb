@@ -23,7 +23,7 @@ module Interviews
       authorize! :manage, current_organization
       respond_to do |format|
         format.html
-        format.json { render json: InterviewsCollectionsDatatable.new(view_context, current_organization) }
+        format.json { render json: Datatables::InterviewsCollectionsDatatable.new(view_context, current_organization) }
       end
     end
 
@@ -54,11 +54,11 @@ module Interviews
 
     def interviews_list
       authorize! :manage, current_organization
-      organization_user = OrganizationUser.find_by_user_id(current_user.id)
+      organization_user = OrganizationUser.find_by(user_id: current_user.id)
 
       respond_to do |format|
         format.html
-        format.json { render json: InterviewsDatatable.new(view_context, current_organization, '', organization_user) }
+        format.json { render json: Datatables::InterviewsDatatable.new(view_context, current_organization, '', organization_user) }
       end
     end
 
