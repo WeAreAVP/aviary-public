@@ -10,7 +10,7 @@ module Interviews
     has_many :interview_notes, dependent: :destroy
     has_many :file_transcripts, dependent: :destroy
     has_many :file_indexes, dependent: :destroy
-    before_save :purify_value, :interview_status_info
+    before_save :purify_value, :interview_status_info, :trim_language_inputs
     before_create :update_thesaurus
     validates_presence_of :language_for_translation, if: :include_language?
     validate :validate_date_format, if: :interview_date?
@@ -641,6 +641,11 @@ module Interviews
     def reindex
       Sunspot.index self
       Sunspot.commit
+    end
+
+    def trim_language_inputs
+      self.language_info = language_info.strip if language_info.present?
+      self.language_for_translation = language_for_translation.strip if language_for_translation.present?
     end
   end
 end
