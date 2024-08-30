@@ -84,6 +84,8 @@ module InterviewIndexHelper
   end
 
   def interview_lang_info_helper(language)
+    language = language.try(:strip)
+
     if language.length > 2
       temp = languages_array_simple[0].find { |_i, value| value == language }
       if language == 'Undefined' || temp.nil?
@@ -360,6 +362,16 @@ module InterviewIndexHelper
                              file_index_point_id: index_segment.id,
                              time: index_segment.start_time
                            })
+    end
+  end
+
+  def interview_index_form_url
+    if @file_index_point.new_record?
+      @interview.present? ? interviews_interview_index_create_path(@interview.id) : create_index_path(@resource_file.id)
+    elsif @interview.present?
+      interviews_interview_index_path(@file_index_point.id)
+    else
+      update_index_file_path(@resource_file.id, @file_index.id, @file_index_point.id)
     end
   end
 end
