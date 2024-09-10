@@ -696,8 +696,7 @@ GEM
       mime-types (>= 1.16, < 4.0)
       netrc (~> 0.8)
     retriable (3.1.2)
-    rexml (3.3.3)
-      strscan
+    rexml (3.3.7)
     rouge (4.3.0)
     rqrcode (2.2.0)
       chunky_png (~> 1.0)
@@ -765,7 +764,7 @@ GEM
       ansi
       ast
     ruby-progressbar (1.13.0)
-    ruby-saml (1.16.0)
+    ruby-saml (1.17.0)
       nokogiri (>= 1.13.10)
       rexml
     ruby2_keywords (0.0.5)
@@ -847,7 +846,6 @@ GEM
     stripe_event (2.3.1)
       activesupport (>= 3.1)
       stripe (>= 2.8, < 6)
-    strscan (3.1.0)
     sunspot (2.7.1)
       bigdecimal
       pr_geohash (~> 1.0)
