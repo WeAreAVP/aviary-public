@@ -562,19 +562,6 @@ GEM
     oga (3.4)
       ast
       ruby-ll (~> 2.1)
-    omniauth (2.1.2)
-      hashie (>= 3.4.6)
-      rack (>= 2.2.3)
-      rack-protection
-    omniauth-multi-provider-saml (0.1.0)
-      omniauth
-      omniauth-saml
-    omniauth-rails_csrf_protection (1.0.2)
-      actionpack (>= 4.2)
-      omniauth (~> 2.0)
-    omniauth-saml (2.1.0)
-      omniauth (~> 2.0)
-      ruby-saml (~> 1.12)
     open_uri_redirections (0.2.1)
     orm_adapter (0.5.0)
     os (1.0.1)
@@ -609,9 +596,6 @@ GEM
       rack (>= 1.0, < 4)
     rack-cors (2.0.2)
       rack (>= 2.0.0)
-    rack-protection (4.0.0)
-      base64 (>= 0.1.0)
-      rack (>= 3.0.0, < 4)
     rack-session (2.0.0)
       rack (>= 3.0.0)
     rack-test (2.1.0)
@@ -696,8 +680,7 @@ GEM
       mime-types (>= 1.16, < 4.0)
       netrc (~> 0.8)
     retriable (3.1.2)
-    rexml (3.3.3)
-      strscan
+    rexml (3.3.7)
     rouge (4.3.0)
     rqrcode (2.2.0)
       chunky_png (~> 1.0)
@@ -765,9 +748,6 @@ GEM
       ansi
       ast
     ruby-progressbar (1.13.0)
-    ruby-saml (1.16.0)
-      nokogiri (>= 1.13.10)
-      rexml
     ruby2_keywords (0.0.5)
     rubyzip (2.3.2)
     safely_block (0.4.0)
@@ -847,7 +827,6 @@ GEM
     stripe_event (2.3.1)
       activesupport (>= 3.1)
       stripe (>= 2.8, < 6)
-    strscan (3.1.0)
     sunspot (2.7.1)
       bigdecimal
       pr_geohash (~> 1.0)
@@ -1005,8 +984,6 @@ DEPENDENCIES
   nginx-conf
   noid-rails!
   nokogiri
-  omniauth-multi-provider-saml
-  omniauth-rails_csrf_protection
   open_uri_redirections
   paperclip-compression!
   paranoia (~> 2.2)
@@ -1076,6 +1053,9 @@ DEPENDENCIES
   with_model
   wkhtmltopdf-binary
   yomu!
+
+RUBY VERSION
+   ruby 3.3.4p94
 
 BUNDLED WITH
    2.3.3

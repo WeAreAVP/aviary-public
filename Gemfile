@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-# ruby '3.3.4'
+ruby '3.3.4'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails', branch: 'main'
 gem 'rails', '>= 7.1.3.4'
@@ -193,8 +193,7 @@ gem 'maxminddb'
 gem 'breadcrumbs_on_rails'
 gem 'rack-attack'
 gem 'simple_uuid'
-gem 'omniauth-multi-provider-saml'
-gem "omniauth-rails_csrf_protection"
+
 gem 'activerecord_json_validator'
 gem 'rails-letsencrypt'
 gem 'aws-sdk-glacier', '~> 1.0.0.rc1'
