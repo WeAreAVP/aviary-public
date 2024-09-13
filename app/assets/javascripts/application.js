@@ -555,6 +555,7 @@ function skip_to_content(){
 
 $(function () {
     skip_to_content();
+    removeScriptTag();
     setTimeout(function () {
         $('[data-toggle="tooltip"]').tooltip({
             trigger: 'hover'
@@ -951,4 +952,16 @@ function moveUp($item) {
 function moveDown($item) {
     $after = $item.next();
     $item.insertAfter($after);
+}
+
+function removeScriptTag() {
+    document_level_binding_element('textarea', 'blur', function (event) {
+
+        let text = $(this).val();
+        var SCRIPT_REGEX = /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi;
+        while (SCRIPT_REGEX.test(text)) {
+            text = text.replace(SCRIPT_REGEX, "");
+        }
+        $(this).val(text);
+    });
 }
