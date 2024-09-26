@@ -5,7 +5,7 @@
 # Aviary is an audiovisual content publishing platform with sophisticated features for search and permissions controls.
 # Copyright (C) 2019 Audio Visual Preservation Solutions, Inc.
 class OrganizationsController < ApplicationController
-  before_action :set_organization, only: %I[edit update show display_settings color_contrast autocomplete_resources]
+  before_action :set_organization, only: %I[edit update show display_settings color_contrast]
   before_action :authenticate_user!, except: %I[index show confirm_invite]
   include Aviary::ManageOrganization
 
@@ -64,7 +64,7 @@ class OrganizationsController < ApplicationController
   end
 
   def confirm_invite
-    organization_user = OrganizationUser.find_by_token(params[:token])
+    organization_user = OrganizationUser.find_by(token: params[:token])
     if organization_user.present?
       organization_user.update(status: true, token: nil)
       message = 'Your new status has been confirmed!'

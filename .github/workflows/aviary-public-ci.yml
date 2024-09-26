@@ -36,7 +36,7 @@ jobs:
       env:
         RAILS_ENV: test
       with:
-        ruby-version: 3.1.0
+        ruby-version: 3.3.4
         bundler-cache: true
 
     - name: Build and run test

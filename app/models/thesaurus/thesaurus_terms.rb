@@ -34,6 +34,7 @@ module Thesaurus
       if query.present?
         fq += ' AND ( '
         query.each_with_index do |term, i|
+          term.gsub!(/[^\d\w\s]/, '?')
           fq += ' OR ' if i != 0
           fq += " term_scis:\"#{term}\" OR term_scis:#{term.gsub(' ', '\ ')}*" if term.present?
         end
@@ -52,6 +53,7 @@ module Thesaurus
       begin
         response = Curl.post(select_url, URI.encode_www_form(query_params))
         response = JSON.parse(response.body_str)
+        response = { 'response' => { 'docs' => {} } } if response['error'].present?
       rescue StandardError
         response = { 'response' => { 'docs' => {} } }
       end

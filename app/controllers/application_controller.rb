@@ -60,7 +60,7 @@ class ApplicationController < ActionController::Base
                  end
                  information = { start_time: params['start_time_status'].to_s.to_boolean? ? params['start_time'] : nil, end_time: params['end_time_status'].to_s.to_boolean? ? params['end_time'] : nil,
                                  start_time_status: params['start_time_status'], end_time_status: params['end_time_status'] }
-                 public_access_url = update_access_url_id.present? ? PublicAccessUrl.find_by_id(update_access_url_id) : nil
+                 public_access_url = update_access_url_id.present? ? PublicAccessUrl.find_by(id: update_access_url_id) : nil
 
                  object = { access_type: params['type'], status: true, collection_resource_id: collection_resource_id, url: '' }
                  object[:duration] = params['type'] == 'ever_green_url' ? 'Ongoing' : params['duration']
@@ -71,7 +71,7 @@ class ApplicationController < ActionController::Base
                                      else
                                        PublicAccessUrl.create(object)
                                      end
-                 encrypted_string = EnDecryptor.encrypt(public_access_url.id.to_s + '--' + random_string).strip
+                 encrypted_string = Aviary::EnDecryptor.encrypt(public_access_url.id.to_s + '--' + random_string).strip
                  param_noid = { noid: CollectionResource.find(collection_resource_id).noid, host: Utilities::AviaryDomainHandler.subdomain_handler(current_organization), access: encrypted_string }
                  unless params['type'] == 'ever_green_url'
                    param_noid[:t] = human_to_seconds(information[:start_time]) if information[:start_time].present?
@@ -88,7 +88,11 @@ class ApplicationController < ActionController::Base
   end
 
   def remove_image_for_assets
-    remove_image(eval(params['target_type'].capitalize).find_by_id(params['target_id']), params['target_attr']) if params['target_type'].present? && params['target_id'].present? && params['target_attr'].present?
+    allowed_class_names = %w[Organization Collection CollectionResourceFile]
+    if allowed_class_names.include?(params['target_type'])
+      model_name = params['target_type']
+      remove_image(model_name.constantize.find_by(id: params['target_id']), params['target_attr']) if params['target_type'].present? && params['target_id'].present? && params['target_attr'].present?
+    end
     redirect_back(fallback_location: root_path)
   end
 

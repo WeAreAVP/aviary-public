@@ -12,7 +12,7 @@ class PlaylistResourcesController < ApplicationController
   before_action :set_json_variables
 
   def toggle_item
-    @playlist_item = @playlist_resource.playlist_items.find_by_collection_resource_file_id(params[:mediafile])
+    @playlist_item = @playlist_resource.playlist_items.find_by(collection_resource_file_id: params[:mediafile])
     crf = CollectionResourceFile.find(params[:mediafile])
     if @playlist_item.nil?
       set_json_variables({ state: 'success', action: 'added', msg: 'Added to playlist' }, 200) if create_playlist_item(crf)
@@ -39,7 +39,7 @@ class PlaylistResourcesController < ApplicationController
 
   def list_playlist_items
     @playlist_show = params[:view_type].to_boolean?
-    @playlist_resource = PlaylistResource.find_by_id(params[:playlist_resource_id])
+    @playlist_resource = PlaylistResource.find_by(id: params[:playlist_resource_id])
     @collection_resource ||= @playlist_resource.collection_resource if @playlist_resource
     @playlist_resources = @playlist.playlist_resources.order(:sort_order).includes(:organization, :collection_resource, :playlist_items).offset(params[:per_page].to_i * params[:page_number].to_i).limit(params[:per_page])
     if params[:query].present?

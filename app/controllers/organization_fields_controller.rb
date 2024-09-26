@@ -53,7 +53,7 @@ class OrganizationFieldsController < ApplicationController
       flash[:notice] = 'Field deleted from this organization successfully'
       @org_field_manager.delete_field(current_organization, params['system_name'], params['type'])
     else
-      collection = Collection.find_by_id(params['collection_id'])
+      collection = Collection.find_by(id: params['collection_id'])
       @collection_field_manager.delete_field(collection, params['type'], params['system_name'])
       flash[:notice] = 'Field deleted from this collection successfully'
     end

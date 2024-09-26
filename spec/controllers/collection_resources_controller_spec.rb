@@ -11,7 +11,6 @@ RSpec.describe CollectionResourcesController, type: :controller do
   let(:sample_file) { fixture_file_upload("#{Rails.root}/spec/fixtures/small.mp4", 'video/mp4') }
 
   before do
-    request[:subdomain] = collection_resource.collection.organization.url
     allow(controller).to receive(:current_organization).and_return(collection_resource.collection.organization)
     allow(controller).to receive(:current_user).and_return(collection_resource.collection.organization.user)
     subscription.organization = collection_resource.collection.organization

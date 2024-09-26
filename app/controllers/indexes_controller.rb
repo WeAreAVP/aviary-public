@@ -19,7 +19,7 @@ class IndexesController < ApplicationController
     session[:file_index_bulk_edit] = [] unless request.xhr?
     respond_to do |format|
       format.html
-      format.json { render json: IndexesDatatable.new(view_context, current_organization, params['called_from'], params[:additionalData]) }
+      format.json { render json: Datatables::IndexesDatatable.new(view_context, current_organization, params['called_from'], params[:additionalData]) }
     end
   end
 

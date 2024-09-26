@@ -22,17 +22,16 @@ jobs:
 
       - name: Libs Installation
         run: sudo apt-get install libcurl4 libcurl4-openssl-dev
+      - name: Pull Current Branch
+        run: git pull origin ${{ github.event.pull_request.head.ref }}
 
       - name: Install Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 3.1.0
+          ruby-version: 3.3.4
 
       - name: Install license_finder gem
         run: bundle install
-
-      - name: Pull Current Branch
-        run: git pull origin ${{ github.event.pull_request.head.ref }}
 
       - name: Run license_finder
         run: license_finder report --format=html --save=license_info.html
@@ -42,5 +41,5 @@ jobs:
         with:
           author_name: Nouman Tayyab
           author_email: noumantayyab@gmail.com
-          message: 'updated license infomation'
+          message: 'updated license information'
           add: './license_info.html'

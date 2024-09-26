@@ -17,4 +17,6 @@
 
 ActiveSupport::Inflector.inflections do |inflect|
     inflect.irregular 'index', 'indexes'
+    inflect.acronym "CC"
+    inflect.acronym "XML"
 end

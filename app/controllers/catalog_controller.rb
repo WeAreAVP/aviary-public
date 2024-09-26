@@ -152,21 +152,22 @@ class CatalogController < ApplicationController
       facet_lists = %w[f keywords title_text resource_description indexes transcript collection_title op description_duration_ls description_date_search_lms]
       session[:old_facets] = {} unless session[:old_facets].present?
       facet_lists.each do |single_facet|
-        unless session[:old_facets][single_facet] == params[single_facet]
+        unless session[:old_facets][single_facet] == params.to_unsafe_h[single_facet]
           flag_param_changed = true
         end
-        session[:old_facets][single_facet] = params[single_facet]
+        session[:old_facets][single_facet] = params.to_unsafe_h[single_facet]
       end
     end
     session[:search_playlist_id] = {} if flag_param_changed
     session[:search_facets] = {}
     session[:search_facets]['all'] ||= {}
     session[:search_facets]['range'] ||= {}
-    if params.key?('reset_facets')
+    unsafe_params = params.to_unsafe_h
+    if unsafe_params.key?('reset_facets')
       session[:search_facets] = {}
     else
-      session[:search_facets]['range'] = params[:range] if params.key?(:range)
-      session[:search_facets]['all'] = params[:f] if params.key?(:f)
+      session[:search_facets]['range'] = unsafe_params[:range] if unsafe_params.key?(:range)
+      session[:search_facets]['all'] = unsafe_params[:f] if unsafe_params.key?(:f)
     end
   end
 

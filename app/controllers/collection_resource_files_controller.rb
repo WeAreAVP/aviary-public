@@ -9,7 +9,7 @@ class CollectionResourceFilesController < ApplicationController
     session[:resource_file_list_bulk_edit] = [] unless request.xhr?
     respond_to do |format|
       format.html
-      format.json { render json: ResourceFilesDatatable.new(view_context, current_organization) }
+      format.json { render json: Datatables::ResourceFilesDatatable.new(view_context, current_organization) }
     end
   end
 
@@ -38,7 +38,7 @@ class CollectionResourceFilesController < ApplicationController
   end
 
   def media_thumbnail_remove
-    @resource_file = CollectionResourceFile.find_by_id(params[:collection_resource_file_id]) if params[:collection_resource_file_id].present?
+    @resource_file = CollectionResourceFile.find_by(id: params[:collection_resource_file_id]) if params[:collection_resource_file_id].present?
     render partial: 'collection_resource_files/thumbnail_remove'
   end
 

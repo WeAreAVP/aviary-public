@@ -20,7 +20,7 @@ Rails.application.routes.draw do
   end
   devise_for :admins
   root 'home#index'
-  get '/collection', to: 'catalog#index', as: :org_collection
+  get '/collection', to: 'catalog#index', as: :org_collection, constraints: RestrictJsonRequest.new
   get '/playlist', to: 'home#index', as: :org_playlist
   get '/aboutus', to: 'home#index', as: :org_aboutus
   get '/robots.:format' => 'home#robots', constraints: { format: /(txt)/ }
@@ -95,13 +95,11 @@ Rails.application.routes.draw do
         match :sync, via: %i[get post patch]
       end
     end
-    resources :transcripts do
+    resources :transcripts, only: %i[index] do
       member do
         get 'change_sync_interval', to: 'transcripts#change_sync_interval', as: 'change_sync_interval'
         match :create, via: %i[get post]
-        match :edit, via: %i[post patch]
       end
-      get 'edit/(:transcript_id)', to: 'transcripts#edit', as: :edit_transcript
     end
 
     get 'interview/notes/:id.:format', to: 'notes#index', as: :list_notes
@@ -283,10 +281,7 @@ Rails.application.routes.draw do
       post :update_skip_duration
     end
   end
-  resources :transcripts, only: %i[index edit] do
-    member do
-      post 'edit', to: 'transcripts#update', format: :json
-    end
+  resources :transcripts, only: %i[index] do
     collection do
       post :data_table, to: 'transcripts#index'
       post :bulk_file_transcript_edit
@@ -310,6 +305,8 @@ Rails.application.routes.draw do
   post 'indexes/create/:resource_file_id', to: 'indexes#create_index', as: 'create_index'
   delete 'indexes/destroy/:index_file_point_id', to: 'indexes#destroy_index', as: 'destroy_index'
   post 'transcripts/upload/:resource_file_id(/:file_transcript_id)', to: 'transcripts#create', as: 'transcript_upload'
+  get 'transcripts/edit/(:transcript_id)', to: 'transcripts#edit', as: :edit_transcript
+  post 'transcripts/edit/:transcript_id', to: 'transcripts#update', as: :update_transcript
   patch 'transcripts/sort/:resource_file_id', to: 'transcripts#sort', as: 'transcript_sort'
   delete 'transcripts/delete/:id', to: 'transcripts#destroy', as: 'transcript_delete'
   get 'transcripts/export/:type(/:id)', to: 'transcripts#export', as: 'transcript_export'

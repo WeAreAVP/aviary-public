@@ -10,7 +10,7 @@ module Interviews
     has_many :interview_notes, dependent: :destroy
     has_many :file_transcripts, dependent: :destroy
     has_many :file_indexes, dependent: :destroy
-    before_save :purify_value, :interview_status_info
+    before_save :purify_value, :interview_status_info, :trim_language_inputs
     before_create :update_thesaurus
     validates_presence_of :language_for_translation, if: :include_language?
     validate :validate_date_format, if: :interview_date?
@@ -180,13 +180,13 @@ module Interviews
         interview_notes.where(status: true).count
       end
       string :thesaurus_keywords, stored: true do
-        ::Thesaurus::Thesaurus.find_by_id(thesaurus_keywords).try(:title)
+        ::Thesaurus::Thesaurus.find_by(id: thesaurus_keywords).try(:title)
       end
       string :thesaurus_subjects, stored: true do
-        ::Thesaurus::Thesaurus.find_by_id(thesaurus_subjects).try(:title)
+        ::Thesaurus::Thesaurus.find_by(id: thesaurus_subjects).try(:title)
       end
       string :thesaurus_titles, stored: true do
-        ::Thesaurus::Thesaurus.find_by_id(thesaurus_titles).try(:title)
+        ::Thesaurus::Thesaurus.find_by(id: thesaurus_titles).try(:title)
       end
       text :transcript_sync_data, stored: true
       text :transcript_sync_data_translation, stored: true
@@ -641,6 +641,11 @@ module Interviews
     def reindex
       Sunspot.index self
       Sunspot.commit
+    end
+
+    def trim_language_inputs
+      self.language_info = language_info.strip if language_info.present?
+      self.language_for_translation = language_for_translation.strip if language_for_translation.present?
     end
   end
 end

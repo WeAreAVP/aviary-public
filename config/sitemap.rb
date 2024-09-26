@@ -1,5 +1,5 @@
 # Set the host name for URL creation
-SitemapGenerator::Sitemap.default_host = root_url(host: ENV['APP_HOST'])
+SitemapGenerator::Sitemap.default_host = root_url(host: ENV.fetch('APP_HOST', nil))
 SitemapGenerator::Sitemap.compress = false
 SitemapGenerator::Sitemap.create do
   add pricing_path
@@ -14,7 +14,7 @@ SitemapGenerator::Sitemap.create do
   add new_user_registration_path
 end
 Organization.where(status: true).each do |organization|
-  domain = organization.custom_domain.present? ? organization.custom_domain : "#{organization.url}.#{ENV['APP_HOST']}"
+  domain = organization.custom_domain.present? ? organization.custom_domain : "#{organization.url}.#{ENV.fetch('APP_HOST', nil)}"
   SitemapGenerator::Sitemap.default_host = root_url(host: domain)
   SitemapGenerator::Sitemap.compress = false
   SitemapGenerator::Sitemap.sitemaps_path = "sitemaps/#{organization.id}"

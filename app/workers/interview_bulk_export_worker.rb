@@ -31,7 +31,7 @@ class InterviewBulkExportWorker
     FileUtils.mkdir_p(tmp_user_folder)
     interviews.try(:first).each do |interview_solr|
       interview = Interviews::Interview.find_by(id: interview_solr['id_is'])
-      export_text = Aviary::ExportOhmsInterviewXml.new.export(interview)
+      export_text = Aviary::ExportOhmsInterviewXML.new.export(interview)
       doc = Nokogiri::XML(export_text.to_xml)
       error_messages = xml_validation(doc)
       unless error_messages.any?

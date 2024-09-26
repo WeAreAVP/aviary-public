@@ -10,6 +10,7 @@ class Subscription < ApplicationRecord
 
   belongs_to :organization
   belongs_to :plan
+  attribute :status, :integer
   enum status: { inactive: 0, active: 1 }
   accepts_nested_attributes_for :organization
 end

@@ -21,7 +21,7 @@ module DetailPageHelper
   end
 
   def add_loader(extra_class)
-    image_link = "https://#{ENV['S3_HOST_CDN']}/public/images/ajax-loader.gif"
+    image_link = "https://#{ENV.fetch('S3_HOST_CDN', nil)}/public/images/ajax-loader.gif"
     "<div class='#{extra_class}'>
       <div class='img'>
         <div class='hold'>#{image_tag(image_link)}
