@@ -343,7 +343,8 @@ class Organization < ApplicationRecord
               '21' => { status: 'true', value: 'sort_order_is', sort_name: true },
               '22' => { status: 'true', value: 'is_downloadable_ss', sort_name: true },
               '23' => { status: 'true', value: 'is_cc_on_ss', sort_name: true },
-              '24' => { status: 'true', value: 'embed_code_texts', sort_name: false }
+              '24' => { status: 'true', value: 'embed_code_texts', sort_name: false },
+              '25' => { status: 'true', value: 'embed_code_type_ss', sort_name: true }
             }
     }.to_json
 

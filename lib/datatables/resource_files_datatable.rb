@@ -59,6 +59,8 @@ class Datatables::ResourceFilesDatatable < Datatables::ApplicationDatatable
                               resource[value['value']].present? ? CollectionResourceFile.date_time_format(resource[value['value']]) : ''
                             elsif value['value'] == 'access_ss'
                               resource[value['value']].titleize
+                            elsif value['value'] == 'embed_code_type_ss'
+                              resource[value['value']].present? ? ApplicationHelper.get_embed_content_type(resource[value['value']]) : ApplicationHelper.get_embed_content_type(0)
                             elsif value['value'] == 'resource_file_content_type_ss'
                               resource[value['value']].present? ? resource[value['value']] : ''
                             elsif value['value'] == 'thumbnail_ss'
@@ -84,7 +86,7 @@ height='400' width='1200' style='width: 100%;'></iframe>"
                               " #{button} <textarea class='hide-copy-textarea' id='resource_detail_embed_html_#{resource['id_is']}'>#{iframe}</textarea>"
                             elsif value['value'] == 'embed_code_texts'
                               if resource[value['value']]
-                                embed_code = check_valid_array(resource[value['value']], value['value'])
+                                embed_code = resource[value['value']].try(:first)
                                 button = "<button #{common_classes} data-clipboard-target='#embed_code_texts_#{resource['id_is']}'  >Click to Copy</button>"
                                 " #{button} <textarea class='hide-copy-textarea' id='embed_code_texts_#{resource['id_is']}'>#{embed_code}</textarea>"
                               else

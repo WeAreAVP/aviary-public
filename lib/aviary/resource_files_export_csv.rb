@@ -25,6 +25,10 @@ module Aviary
                         resource[value].present? ? resource[value].to_date.strftime('%m-%d-%Y') : ''
                       elsif value == 'access_ss'
                         resource[value].titleize
+                      elsif value == 'embed_code_texts'
+                        resource[value].present? ? resource[value].join(';') : ''
+                      elsif value == 'embed_code_type_ss'
+                        resource[value].present? ? ApplicationHelper.get_embed_content_type(resource[value]) : ApplicationHelper.get_embed_content_type(0)
                       elsif value == 'resource_file_content_type_ss'
                         resource[value].present? ? resource[value] : ''
                       elsif value == 'duration_ss'

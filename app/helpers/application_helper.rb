@@ -332,4 +332,8 @@ module ApplicationHelper
   def speaker_regex
     /([A-Za-z0-9._\' ]+: )/
   end
+
+  def self.get_embed_content_type(embed_content_type)
+    CollectionResourceFile.embed_type_name(embed_content_type.to_i)
+  end
 end

@@ -140,6 +140,7 @@ function UploadManager(app_helper) {
 
             $('.manage-media-thumbnail').on('click', function () {
                 removeImageCustom();
+                $('#embeded-information').html('');
                 $("#downloadable_duration").addClass("d-none");
                 $('.single-file-upload-form-thumbnail').attr('action', $(this).data('url'));
                 var file_status = $(this).data('file-status');
@@ -165,7 +166,20 @@ function UploadManager(app_helper) {
                 $('#other-info-holder').html($('#other-info').html());
                 binding_embed_local('.manage-media-modal ');
                 saveTabFocus(this);
-            });
+                var embedType = $(this).data('embeded_type');
+                var embedUrl = $(this).data('embeded_url');
+                var displayName = $(this).data('display_name');
+                let html = '<div class="text-headline jumbotron my-2"><h3>Information</h3>';
+                html += '<p><b>File Name:</b> '+displayName+'</p>';
+                if(embedType && embedUrl)
+                {
+                    html += '<p><b>Embeded Type:</b> '
+                    +embedType+'</p><p><b>Embeded URL:</b> <br><a target="_blank" href="'
+                    +embedUrl+'">'+embedUrl+'</a></p>';
+                }
+                html += '</div>';
+                $('#embeded-information').html(html);
+                });
         });
 
         $(".manage-media-modal-close-button").on("click", function(){
