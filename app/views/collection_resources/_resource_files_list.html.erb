@@ -27,8 +27,13 @@
                 <i class="fa fa-pencil edit_title ml-2"></i>
               </div>
               <div class="remove_video">
-                <a href="javascript://" class="btn btn-outline-primary manage-media manage-media-thumbnail text-white" data-url="<%= collection_collection_resource_update_thumbnail_path(collection, @collection_resource, collection_resource_file_id: file.id) %>" data-remove-url="<%= collection_resource_file_media_thumbnail_remove_path(file.id) %>" data-file-id="<%= file.id %>" data-sort="<%= file.sort_order %>" data-file-status="<%= file.access %>" data-file-downloadable="<%= file.is_downloadable %>" data-file-download_enabled_for="<%= file.download_enabled_for %>" data-file-downloadable_till="<%= file.downloadable_duration %>" data-3d="<%= file.is_3d %>" data-is_cc_on="<%= file.is_cc_on %>">
-                  Manage Media </a>
+                <a href="javascript://" class="btn btn-outline-primary manage-media manage-media-thumbnail text-white"
+                data-display_name="<%= file.resource_file_file_name %>" data-embeded_type="<%=CollectionResourceFile.embed_type_name(file.embed_type)%>"
+                data-embeded_url="<%=file.embed_code%>" data-url="<%= collection_collection_resource_update_thumbnail_path(collection, @collection_resource, collection_resource_file_id: file.id) %>"
+                data-remove-url="<%= collection_resource_file_media_thumbnail_remove_path(file.id) %>" data-file-id="<%= file.id %>" data-sort="<%= file.sort_order %>"
+                data-file-status="<%= file.access %>" data-file-downloadable="<%= file.is_downloadable %>" data-file-download_enabled_for="<%= file.download_enabled_for %>"
+                data-file-downloadable_till="<%= file.downloadable_duration %>" data-3d="<%= file.is_3d %>" data-is_cc_on="<%= file.is_cc_on %>">
+                Manage Media </a>
                 <%= link_to collection_collection_resource_delete_resource_file_path(@collection, @collection_resource, file), class: "btn btn-light delete-resource-file", style: "float: right;" do %>
                   Remove
                 <% end %>
@@ -65,16 +70,21 @@
           <div class="tab-pane fade" id="tab-two">
             <%= form_for :collection_resource_file, url: '', method: :post, html: { class: "single-file-upload-form-thumbnail" } do |f| %>
               <div class="row">
-                <div class="col-md-12">
+                <div class="col-md-6">
                   <div class="text-headline jumbotron my-2">
                     <h3>Set Thumbnail</h3>
                     <p>Select Thumbnail files to upload from your local
                       environment.</p>
                   </div>
-                </div>
-                <div class="col-md-12">
                   <div id="show-thumbnail-image" class="show-thumbnail-image-container">
                   </div>
+                </div>
+                -<div class="col-md-6" id="embeded-information">
+
+
+                </div>
+                <div class="col-md-12">
+                  
                   <div class="form-group">
                     <div class="field-title"><label>Select Media</label></div>
                     <%= f.file_field :thumbnail, accept: '.jpeg,.png,.jpg', multiple: false, class: 'form-control', data: { url: '' } %>

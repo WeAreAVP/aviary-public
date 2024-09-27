@@ -30,6 +30,7 @@ class FileIndexPoint < ApplicationRecord
     errors.add(:end_time, "Select a time between 00:00:00 and #{time_to_duration(duration)}")
   end
 
+  
   def manage_gps_points
     points = []
     self.gps_latitude = '[]' if gps_latitude.nil?

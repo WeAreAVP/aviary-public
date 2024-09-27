@@ -192,20 +192,24 @@ fields:
       is_searchable_at_media_table: false
       field_purpose: 'special_purpose'
     media_embed_url_ss:
-      label: 'Media Embed URL'
+      label: 'Aviary Media Embed URL'
       is_searchable_at_media_table: false
       field_purpose: 'special_purpose'
     player_embed_html_ss:
-      label: 'Player Embed HTML'
+      label: 'Aviary Player Embed HTML'
       is_searchable_at_media_table: false
       field_purpose: 'special_purpose'
     resource_detail_embed_html_ss:
-      label: 'Resource Detail Embed HTML'
+      label: 'Aviary Resource Detail Embed HTML'
       is_searchable_at_media_table: false
       field_purpose: 'special_purpose'
     target_domain_ss:
       label: 'Target Domain'
       is_searchable_at_media_table: true
+      field_purpose: 'special_purpose'
+    embed_code_type_ss:
+      label: 'Embed Code Type'
+      is_searchable_at_media_table: false
       field_purpose: 'special_purpose'
     duration_ss:
       label: 'Duration'

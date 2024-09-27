@@ -90,6 +90,9 @@ class CollectionResourceFile < ApplicationRecord
     long :duration, stored: true
     string :is_downloadable, stored: true
     text :embed_code, stored: true
+    string :embed_code_type, stored: true do
+      embed_type.present? ? embed_type : 0
+    end
   end
 
   def self.fields_values
@@ -108,9 +111,9 @@ class CollectionResourceFile < ApplicationRecord
       'file_display_name_ss' => 'Display name',
       'aviary_url_path_ss' => 'Aviary URL',
       'aviary_purl_ss' => 'Aviary PURL',
-      'media_embed_url_ss' => 'Media Embed URL',
-      'player_embed_html_ss' => 'Player Embed HTML',
-      'resource_detail_embed_html_ss' => 'Resource Detail Embed HTML',
+      'media_embed_url_ss' => 'Aviary Media Embed URL',
+      'player_embed_html_ss' => 'Aviary Player Embed HTML',
+      'resource_detail_embed_html_ss' => 'Aviary Resource Detail Embed HTML',
       'target_domain_ss' => 'Target Domain',
       'duration_ss' => 'Duration',
       'collection_title_text' => 'Collection Title',
@@ -118,7 +121,8 @@ class CollectionResourceFile < ApplicationRecord
       'sort_order_is' => 'Sequence #',
       'is_downloadable_ss' => 'Downloadable?',
       'is_cc_on_ss' => 'Turn on CC?',
-      'embed_code_texts' => 'Media Embed Code' }
+      'embed_code_texts' => 'Media Embed Code',
+      'embed_code_type_ss' => 'Embed Code Type' }
   end
 
   def self.media_file_field_label(system_name, organization = current_organization)
