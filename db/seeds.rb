@@ -701,16 +701,17 @@ user.agreement = 1
 user.status = true
 user.save(validate: false)
 user.confirm
-
+Organization.skip_callback(:create, :before, :create_bucket)
 organization = Organization.where(url: 'public').first_or_initialize
 organization.user = user
 organization.name = 'Public'
 organization.storage_type = :free_storage
+organization.skip_bucket_create = true
 organization.bucket_name = 'aviary-p_public'
 organization.logo_image = open("#{Rails.root}/public/aviary_default_logo.png")
 organization.banner_image = open("#{Rails.root}/public/aviary_default_banner.png")
 organization.save(validate: false)
-
+Organization.set_callback(:create, :before, :create_bucket)
 org_user = user.organization_users.where(organization_id: organization.id, role_id: Role.role_organization_owner.id).first_or_initialize
 org_user.status = true
 org_user.save
