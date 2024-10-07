@@ -666,7 +666,6 @@ collection_field_manager = [
 
 ]
 
-
 puts '============================ Plans ============================='
 puts '================================================================'
 plans = [
@@ -719,7 +718,6 @@ org_user.save
 plan = Plan.find_by(name: 'Premium Max', frequency: Plan::Frequency::YEARLY)
 end_time = Time.now + 1.year
 
-
 subscription = Subscription.where(plan_id: plan.id, organization_id: organization.id).first_or_initialize
 
 subscription.plan = plan
@@ -729,4 +727,145 @@ subscription.renewal_date = end_time
 subscription.current_price = 0.0
 subscription.status = :active
 subscription.save(validate: false)
+
+collection = organization.collections.new
+collection.title = 'How to Aviary'
+collection.about = 'This series of quick videos will introduce you to the basics of Aviary, AVP’s next-generation platform for streaming audio and video content. '
+collection.is_featured = true
+collection.is_public = true
+collection.image = open("#{Rails.root}/public/banner.png")
+collection.favicon = open("#{Rails.root}/public/fav.ico")
+collection.save
+collection_field_sort = Aviary::FieldManagement::OrganizationFieldManager.new.organization_field_settings(collection.organization, nil, 'collection_fields', 'sort_order')
+metadata = JSON.parse({
+                        "Creator": [
+                          {
+                            "value": "AVP"
+                          }
+                        ],
+                        "Language": [
+                          {
+                            "value": "English, Spanish"
+                          }
+                        ]
+                      }.to_json)
+updated_field_values = {}
+collection_field_sort.each do |(system_name, value)|
+  if value['label'].present? && metadata.present? && metadata[value['label']]
+    if updated_field_values[system_name].nil?
+      updated_field_values[system_name] = { field_id: system_name, values: [] }
+    end
+    metadata[value['label']].each do |meta|
+      updated_field_values[system_name][:values] << {
+        value: meta['value'].to_s.strip, vocab_value: ''
+      }
+    end
+  end
+end
+collection_field_value = CollectionFieldsAndValue.find_or_create_by(collection_id: collection.id)
+collection_field_value.collection_field_values = updated_field_values
+collection_field_value.save unless updated_field_values.nil?
+
+resource = collection.collection_resources.new
+resource.title = 'Intro to Aviary'
+resource.is_featured = true
+resource.access = 'access_restricted'
+resource.status = true
+resource.save
+
+resource_metadata = JSON.parse({
+                                 "Date": [
+                                   {
+                                     "value": "2019",
+                                     "vocabulary": "created"
+                                   }
+                                 ],
+                                 "Agent": [
+                                   {
+                                     "value": "AVP",
+                                     "vocabulary": "Creator"
+                                   }
+                                 ],
+                                 "Preferred Citation": [
+                                   {
+                                     "value": "Aviary Introduction, AVP, 2019",
+
+                                   }
+                                 ],
+                                 "Rights Statement": [
+                                   {
+                                     "value": "CC BY 4.0",
+
+                                   }
+                                 ],
+                                 "Publisher": [
+                                   {
+                                     "value": "AVP",
+
+                                   }
+                                 ],
+                                 "Keyword": [
+                                   {
+                                     "value": "multi-tenant",
+
+                                   },
+                                   {
+                                     "value": "audiovisual search",
+
+                                   },
+                                   {
+                                     "value": "synced transcripts",
+
+                                   },
+                                   {
+                                     "value": "synced indexes",
+
+                                   },
+                                   {
+                                     "value": "audiovisual",
+
+                                   },
+                                   {
+                                     "value": "media files",
+
+                                   }
+
+                                 ]
+                               }.to_json)
+
+updated_resource_field_values = {}
+resource_metadata.each do |(system_name, value)|
+  k = system_name.gsub(' ', '_').downcase
+  updated_resource_field_values[k] = { system_name: k, values: [] }
+  value.each do |v|
+    v = v.is_a?(Hash) ? [v] : v
+    v.each do |single|
+      updated_resource_field_values[k][:values] << { value: single['value'].to_s.strip, vocab_value: single['vocabulary'].present? ? single['vocabulary'] : '' }
+    end
+  end
+
+end
+
+ResourceDescriptionValue.find_by(collection_resource_id: resource.id)&.destroy
+resource_description_value = ResourceDescriptionValue.find_or_create_by(collection_resource_id: resource.id)
+resource_description_value.resource_field_values = updated_resource_field_values
+resource_description_value.save
+resource.update(updated_at: Time.now)
+resource = CollectionResource.find(resource.id)
+resource.reindex_collection_resource
+
+url = 'https://d9jk7wjtjpu5g.cloudfront.net/aviary-intro.mp4'
+
+param_collection_resource = { title: 'Aviary Demo.mp4', duration: 84, embed_type: 0 }
+embed_name = CollectionResourceFile.embed_type_name(param_collection_resource[:embed_type].to_i)
+param_collection_resource = { title: 'Aviary Demo.mp4', duration: 84, embed_type: 0 }
+video_metadata = Aviary::ExtractVideoMetadata::VideoEmbed.new(embed_name, url, param_collection_resource).metadata
+
+thumbnail = ''
+
+embed_code_hash = { embed_code: video_metadata['url'], embed_type: param_collection_resource[:embed_type],
+                    resource_file_file_name: video_metadata['title'], embed_content_type: video_metadata['content_type'], thumbnail: thumbnail, duration: video_metadata['duration'] }
+embed_code_hash[:file_display_name] = video_metadata['title'] if param_collection_resource[:embed_type].to_i.zero?
+
+media_file = resource.collection_resource_files.create(embed_code_hash.merge!(sort_order: 1))
 
