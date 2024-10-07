@@ -690,7 +690,8 @@ plans.each do |plan|
     Plan.create(plan)
   end
 end
-
+puts '======================== Default User =========================='
+puts '================================================================'
 user = User.where(email: 'user@demo.com').first_or_initialize
 user.first_name = 'AVIARY'
 user.last_name = 'User'
@@ -701,6 +702,8 @@ user.agreement = 1
 user.status = true
 user.save(validate: false)
 user.confirm
+puts '==================== Public Organization ======================='
+puts '================================================================'
 Organization.skip_callback(:create, :before, :create_bucket)
 organization = Organization.where(url: 'public').first_or_initialize
 organization.user = user
@@ -728,6 +731,8 @@ subscription.current_price = 0.0
 subscription.status = :active
 subscription.save(validate: false)
 
+puts '==================== Default Collection ========================'
+puts '================================================================'
 collection = organization.collections.new
 collection.title = 'How to Aviary'
 collection.about = 'This series of quick videos will introduce you to the basics of Aviary, AVP’s next-generation platform for streaming audio and video content. '
@@ -765,7 +770,8 @@ end
 collection_field_value = CollectionFieldsAndValue.find_or_create_by(collection_id: collection.id)
 collection_field_value.collection_field_values = updated_field_values
 collection_field_value.save unless updated_field_values.nil?
-
+puts '====================== Default Resource ========================'
+puts '================================================================'
 resource = collection.collection_resources.new
 resource.title = 'Intro to Aviary'
 resource.is_featured = true
@@ -853,12 +859,13 @@ resource_description_value.save
 resource.update(updated_at: Time.now)
 resource = CollectionResource.find(resource.id)
 resource.reindex_collection_resource
-
+puts '======================== Default Media ========================='
+puts '================================================================'
 url = 'https://d9jk7wjtjpu5g.cloudfront.net/aviary-intro.mp4'
 
-param_collection_resource = { title: 'Aviary Demo.mp4', duration: 84, embed_type: 0 }
+param_collection_resource = { title: 'AviaryDemo.mp4', duration: 84, embed_type: 0 }
 embed_name = CollectionResourceFile.embed_type_name(param_collection_resource[:embed_type].to_i)
-param_collection_resource = { title: 'Aviary Demo.mp4', duration: 84, embed_type: 0 }
+param_collection_resource = { title: 'AviaryDemo.mp4', duration: 84, embed_type: 0 }
 video_metadata = Aviary::ExtractVideoMetadata::VideoEmbed.new(embed_name, url, param_collection_resource).metadata
 
 thumbnail = ''
@@ -869,3 +876,31 @@ embed_code_hash[:file_display_name] = video_metadata['title'] if param_collectio
 
 media_file = resource.collection_resource_files.create(embed_code_hash.merge!(sort_order: 1))
 
+puts '====================== Default Transcript ======================'
+puts '================================================================'
+transcript = media_file.file_transcripts.new
+transcript.user = media_file.collection_resource.collection.organization.user
+transcript.title = 'WHISPER_AviaryDemo'
+transcript.language = 'en'
+transcript.is_public = true
+transcript.sort_order = 1
+transcript.is_caption = true
+transcript.description = ''
+transcript.associated_file = open("#{Rails.root}/spec/fixtures/seed_transcript.webvtt")
+transcript.save
+
+Aviary::IndexTranscriptManager::TranscriptManager.new.process(transcript, 1)
+
+puts '======================== Default Index ========================='
+puts '================================================================'
+index = media_file.file_indexes.new
+index.user = media_file.collection_resource.collection.organization.user
+index.title = 'Assembly_AI_AviaryDemo'
+index.language = 'en'
+index.is_public = true
+index.sort_order = 1
+index.description = ''
+index.associated_file = open("#{Rails.root}/spec/fixtures/Assembly_AI_AviaryDemo.webvtt")
+index.save
+
+Aviary::IndexTranscriptManager::IndexManager.new.process(index, true)
