@@ -706,7 +706,6 @@ organization = Organization.where(url: 'public').first_or_initialize
 organization.user = user
 organization.name = 'Public'
 organization.storage_type = :free_storage
-organization.skip_bucket_create = true
 organization.bucket_name = 'aviary-p_public'
 organization.logo_image = open("#{Rails.root}/public/aviary_default_logo.png")
 organization.banner_image = open("#{Rails.root}/public/aviary_default_banner.png")
