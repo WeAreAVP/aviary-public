@@ -886,7 +886,7 @@ transcript.is_public = true
 transcript.sort_order = 1
 transcript.is_caption = true
 transcript.description = ''
-transcript.associated_file = open("#{Rails.root}/spec/fixtures/seed_transcript.webvtt")
+transcript.associated_file = open("#{Rails.root}/spec/fixtures/WHISPER_AviaryDemo.webvtt")
 transcript.save
 
 Aviary::IndexTranscriptManager::TranscriptManager.new.process(transcript, 1)
