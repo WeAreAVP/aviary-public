@@ -30,7 +30,7 @@ function ResourcePageCommon() {
 
             let unique_identifier = 'select_option_new_added' + identifier;
             if (new_html.includes("select_option")) {
-                new_html = new_html.replace('select_option', ' select_option_new_added ' + unique_identifier);
+                new_html = new_html.replaceAll('select_option', ' select_option_new_added ' + unique_identifier);
             }
 
             $(this).parents('.current-parent').find('.single_row_dynamic_form').append(new_html);
