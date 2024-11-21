@@ -87,7 +87,8 @@
           <tr class="interviews_data_table_head">
             <% unless @organization_user&.role&.system_name == "ohms_assigned_user" %>
             <th>
-              <input type="checkbox" class="select_all_checkbox_interview" data-url="<%= bulk_resource_list_interviews_managers_path %>" data-bulk_delete="<%= fetch_bulk_edit_resource_list_collections_path %>"/>
+              <input type="checkbox" class="select_all_checkbox_interview" data-url="<%= bulk_resource_list_interviews_managers_path %>"
+                     data-bulk_delete="<%= fetch_bulk_edit_resource_list_collections_path %>" aria-label="Select all ohms records" />
             </th>
             <% end %>
             <% if @display_columns.present? %>

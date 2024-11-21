@@ -15,7 +15,10 @@
         <%= content_tag :table, role: :datatable, class: ["table", "table-striped", 'table-bordered'], id: 'collection_data_table', data: { url: collections_path(format: :json)} do %>
           <thead>
           <tr>
-            <th><input type="checkbox" class="select_all_checkbox_resources" data-url="<%= bulk_resource_list_collections_path %>"/></th>
+            <th>
+              <input type="checkbox" class="select_all_checkbox_resources" data-url="<%= bulk_resource_list_collections_path %>"
+                     aria-label="Select all collections" />
+            </th>
             <th>Name</th>
             <th>Resources</th>
             <th>Featured</th>
