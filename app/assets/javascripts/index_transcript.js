@@ -850,7 +850,7 @@ function IndexTranscript() {
                 }
             }
 
-            $('.upload_' + that.cuePointType + '_btn').html('Update ' + capitalize(that.cuePointType));
+            $('.upload_' + that.cuePointType + '_btn').html('Save');
             $('.upload_' + that.cuePointType + '_btn').unbind("click").bind("click", function () {
 
                 $(this).prop("disabled", true);
@@ -1123,7 +1123,7 @@ function IndexTranscript() {
         $(".modal-body .organization-section .text-danger").html("");
         if (Object.size(result.errors) > 0) {
             $('#progress .progress-bar').css("width", "0%");
-            $('.upload_' + that.cuePointType + '_btn').html("Upload " + capitalize(that.cuePointType)).prop("disabled", false);
+            $('.upload_' + that.cuePointType + '_btn').prop("disabled", false);
             for (cnt in result.errors) {
                 $('.modal-body .organization-section .' + cnt).html(result.errors[cnt]);
             }

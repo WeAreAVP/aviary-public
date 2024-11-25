@@ -11,7 +11,8 @@
     <% end %>
   <% else %>
     <th>
-      <input type="checkbox" class="select_all_checkbox_resources" data-url="<%= bulk_resource_list_collections_path %>"/>
+      <input type="checkbox" class="select_all_checkbox_resources" data-url="<%= bulk_resource_list_collections_path %>"
+             aria-label="Select all file indexes" />
     </th>
     <% columns_details.each do |_k, h| %>
       <% if h['status'] == 'true' %>
