@@ -848,7 +848,7 @@ GEM
       model_attribute (~> 3.2)
     terrapin (1.0.1)
       climate_control
-    thor (1.3.2)
+    thor (1.4.0)
     thread_safe (0.3.6)
     tilt (2.0.10)
     timeout (0.4.3)
