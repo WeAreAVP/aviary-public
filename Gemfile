@@ -4,7 +4,8 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 ruby '3.3.4'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails', branch: 'main'
-gem 'rails', '>= 7.1.5.2'
+gem 'rails', '7.2.3.1'
+
 group :development, :production do
   # Use mysql as the database for Active Record
   gem 'mysql2', '~> 0.5'
@@ -225,8 +226,8 @@ gem 'invisible_captcha'
 #
 #
 # # API
-gem 'devise_token_auth'
-gem "paranoia", "~> 2.2"
+gem 'devise_token_auth', git: 'https://github.com/lynndylanhurley/devise_token_auth', branch: 'master'
+gem 'paranoia', '~> 3.1'
 # gem 'rails_same_site_cookie'
 #
 gem 'docx'
@@ -279,3 +280,5 @@ end
 
 # # Process WebVTT file
 gem 'webvtt-ruby', git: 'https://github.com/smntb/webvtt-ruby'
+
+gem 'connection_pool', '~> 2.5'
